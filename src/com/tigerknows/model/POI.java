@@ -456,6 +456,8 @@ public class POI extends BaseData {
     
     private DataQuery commentQuery = null;
     
+    private DataQuery hotCommentQuery = null;
+    
     private DataQuery couponQuery = null;
     
     private int resultType = 0;
@@ -617,6 +619,14 @@ public class POI extends BaseData {
     
     public DataQuery getCommentQuery() {
         return this.commentQuery;
+    }
+    
+    public void setHotCommentQuery(DataQuery hotCommentQuery) {
+        this.hotCommentQuery = hotCommentQuery;
+    }
+    
+    public DataQuery getHotCommentQuery() {
+        return this.hotCommentQuery;
     }
     
     public void setCouponQuery(DataQuery couponQuery) {

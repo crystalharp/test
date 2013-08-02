@@ -4,6 +4,7 @@
 
 package com.tigerknows.ui.poi;
 
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Hashtable;
@@ -36,7 +37,9 @@ import com.tigerknows.R;
 import com.tigerknows.TKConfig;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
+import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.Comment;
+import com.tigerknows.model.DataOperation;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.Response;
@@ -51,7 +54,7 @@ import com.tigerknows.widget.SpringbackListView.OnRefreshListener;
 /**
  * @author Peng Wenyue
  */
-public class CommentListActivity extends BaseActivity {
+public class CommentListActivity extends BaseActivity implements View.OnClickListener {
     
     static final String TAG = "POICommentList";
     
@@ -59,14 +62,13 @@ public class CommentListActivity extends BaseActivity {
 
     private static POI sPOI = null;
     
+    private Button mHotBtn;
     private POI mPOI = null;
     private SpringbackListView mCommentLsv = null;
     private DataQuery mCommentQuery;
     private List<Comment> mCommentArrayList = new ArrayList<Comment>();
     private CommentAdapter mCommentAdapter;
-    
     private boolean mTurnPageHeader = false;
-    
     private boolean mTurnPageFooter = false;
     
     private Runnable mTurnPageRun = new Runnable() {
@@ -76,6 +78,24 @@ public class CommentListActivity extends BaseActivity {
             if (mCommentLsv.getLastVisiblePosition() >= mCommentLsv.getCount()-2 &&
                     mCommentLsv.getFirstVisiblePosition() == 0) {
                 mCommentLsv.getView(false).performClick();
+            }
+        }
+    };
+
+    private SpringbackListView mHotCommentLsv = null;
+    private DataQuery mHotCommentQuery;
+    private List<Comment> mHotCommentArrayList = new ArrayList<Comment>();
+    private CommentAdapter mHotCommentAdapter;
+    private boolean mHotTurnPageHeader = false;
+    private boolean mHotTurnPageFooter = false;
+    
+    private Runnable mHotTurnPageRun = new Runnable() {
+        
+        @Override
+        public void run() {
+            if (mHotCommentLsv.getLastVisiblePosition() >= mHotCommentLsv.getCount()-2 &&
+                    mHotCommentLsv.getFirstVisiblePosition() == 0) {
+                mHotCommentLsv.getView(false).performClick();
             }
         }
     };
@@ -101,6 +121,9 @@ public class CommentListActivity extends BaseActivity {
 
         mCommentAdapter = new CommentAdapter(mThis, mCommentArrayList);
         mCommentLsv.setAdapter(mCommentAdapter);
+
+        mHotCommentAdapter = new CommentAdapter(mThis, mHotCommentArrayList);
+        mHotCommentLsv.setAdapter(mHotCommentAdapter);
         
         mTitleBtn.setText(R.string.all_comment);
         mRightBtn.setVisibility(View.GONE);
@@ -108,22 +131,7 @@ public class CommentListActivity extends BaseActivity {
         
         mPOI = sPOI;
         if (mPOI != null) {
-            mCommentLsv.setFooterSpringback(false);
-            DataQuery dataQuery = mPOI.getCommentQuery();
-            if (dataQuery == null) {
-                Hashtable<String, String> criteria = new Hashtable<String, String>();
-                criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_DIANPING);
-                criteria.put(DataQuery.SERVER_PARAMETER_POI_ID, mPOI.getUUID());
-                criteria.put(DataQuery.SERVER_PARAMETER_REFER, DataQuery.REFER_POI);
-                dataQuery = new DataQuery(mThis);
-                dataQuery.setup(criteria, Globals.getCurrentCityInfo().getId(), mId, mId, null, false, false, mPOI);
-                mCommentLsv.changeHeaderViewByState(false, SpringbackListView.REFRESHING);
-                queryStart(dataQuery);
-            } else {
-                mCommentLsv.onRefreshComplete(true);
-                setData(dataQuery);
-                mCommentAdapter.notifyDataSetChanged();
-            }
+            changeMode(true);
 
             if (mPOI.isGoldStamp() || mPOI.isSilverStamp()) {
                 mCommentTipEdt.setHint(R.string.comment_tip_hit1);
@@ -133,26 +141,46 @@ public class CommentListActivity extends BaseActivity {
         } else {
             finish();
         }
+        
+        String json = Comment.draft2Json(mThis);
+        if (json != null) {
+            uploadCommend(json);
+        }
     }
 
     protected void findViews() {
         super.findViews();
+        mHotBtn = (Button) findViewById(R.id.hot_btn);
         mCommentLsv = (SpringbackListView)findViewById(R.id.comment_lsv);
         View v = mLayoutInflater.inflate(R.layout.loading, null);
 //        mCommentLsv.addHeaderView(v);
 //        v = mLayoutInflater.inflate(R.layout.loading, null);
         mCommentLsv.addFooterView(v);
+        mHotCommentLsv = (SpringbackListView)findViewById(R.id.hot_comment_lsv);
+        v = mLayoutInflater.inflate(R.layout.loading, null);
+//        mCommentLsv.addHeaderView(v);
+//        v = mLayoutInflater.inflate(R.layout.loading, null);
+        mHotCommentLsv.addFooterView(v);
         mCommentTipView = findViewById(R.id.tip_view);
         mCommentTipEdt = (Button) findViewById(R.id.comment_tip_btn);
     }
     
     protected void setListener() {
         super.setListener();
+        mTitleBtn.setOnClickListener(this);
+        mHotBtn.setOnClickListener(this);
         mCommentLsv.setOnRefreshListener(new OnRefreshListener() {
             
             @Override
             public void onRefresh(boolean isHeader) {
-                turnPage(isHeader);
+                turnPage(true, isHeader);
+            }
+        });
+        mHotCommentLsv.setOnRefreshListener(new OnRefreshListener() {
+            
+            @Override
+            public void onRefresh(boolean isHeader) {
+                turnPage(false, isHeader);
             }
         });
 
@@ -188,6 +216,15 @@ public class CommentListActivity extends BaseActivity {
         });
     }
     
+    void uploadCommend(String json) {
+        DataOperation dataOperation = new DataOperation(mThis);
+        Hashtable<String, String> criteria = new Hashtable<String, String>();
+        criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_DIANPING);
+        criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, URLEncoder.encode(json));
+        dataOperation.setup(criteria);
+        queryStart(dataOperation);
+    }
+    
     protected void onResume() {
         super.onResume();
         if (isReLogin()) {
@@ -210,8 +247,26 @@ public class CommentListActivity extends BaseActivity {
         }
      }
     
-    public void turnPage(boolean isHeader){
+    public void turnPage(boolean isNormal, boolean isHeader){
         synchronized (this) {
+            SpringbackListView mCommentLsv;
+            DataQuery mCommentQuery;
+            List<Comment> mCommentArrayList;
+            boolean mTurnPageHeader;
+            boolean mTurnPageFooter;
+            if (isNormal) {
+                mCommentLsv = this.mCommentLsv;
+                mCommentQuery = this.mCommentQuery;
+                mCommentArrayList = this.mCommentArrayList;
+                mTurnPageHeader = this.mTurnPageHeader;
+                mTurnPageFooter = this.mTurnPageFooter;
+            } else {
+                mCommentLsv = this.mHotCommentLsv;
+                mCommentQuery = this.mHotCommentQuery;
+                mCommentArrayList = this.mHotCommentArrayList;
+                mTurnPageHeader = this.mHotTurnPageHeader;
+                mTurnPageFooter = this.mHotTurnPageFooter;
+            }
         if (mCommentQuery == null) {
             mCommentLsv.changeHeaderViewByState(isHeader, SpringbackListView.DONE);
             return;
@@ -220,12 +275,20 @@ public class CommentListActivity extends BaseActivity {
             if (mTurnPageHeader) {
                 return;
             }
-            mTurnPageHeader = true;
+            if (isNormal) {
+                this.mTurnPageHeader = true;
+            } else {
+                this.mHotTurnPageHeader = true;
+            }
         } else {
             if (mTurnPageFooter) {
                 return;
             }
-            mTurnPageFooter = true;
+            if (isNormal) {
+                this.mTurnPageFooter = true;
+            } else {
+                this.mHotTurnPageFooter = true;
+            }
         }
 
         mActionLog.addAction(mActionTag+ActionLog.ListViewItemMore);
@@ -263,7 +326,22 @@ public class CommentListActivity extends BaseActivity {
     }
 
     @SuppressWarnings("unchecked")
-    public void setData(DataQuery dataQuery) {
+    public void setData(boolean isNormal, DataQuery dataQuery) {
+        SpringbackListView mCommentLsv;
+        DataQuery mCommentQuery;
+        List<Comment> mCommentArrayList;
+        CommentAdapter mCommentAdapter;
+        if (isNormal) {
+            mCommentLsv = this.mCommentLsv;
+            mCommentQuery = this.mCommentQuery;
+            mCommentArrayList = this.mCommentArrayList;
+            mCommentAdapter = this.mCommentAdapter;
+        } else {
+            mCommentLsv = this.mHotCommentLsv;
+            mCommentQuery = this.mHotCommentQuery;
+            mCommentArrayList = this.mHotCommentArrayList;
+            mCommentAdapter = this.mHotCommentAdapter;
+        }
         POI poi = dataQuery.getPOI();
         if (poi == null) {
             finish();
@@ -274,10 +352,18 @@ public class CommentListActivity extends BaseActivity {
             if (criteria.containsKey(DataQuery.SERVER_PARAMETER_DIRECTION)) {
                 String direction = criteria.get(DataQuery.SERVER_PARAMETER_DIRECTION);
                 if (DataQuery.DIRECTION_AFTER.equals(direction)) {
+                    if (isNormal) {
                     mTurnPageHeader = false;
+                    } else {
+                        mHotTurnPageHeader = false;
+                    }
                     isHeader = true;
                 } else if (DataQuery.DIRECTION_BEFORE.equals(direction)) {
+                    if (isNormal) {
                     mTurnPageFooter = false;
+                    } else {
+                        mHotTurnPageFooter = false;
+                    }
                     isHeader = false;
                 }
             }
@@ -313,8 +399,16 @@ public class CommentListActivity extends BaseActivity {
                 }
             }
         } else {
+            if (isNormal) {
             mTurnPageHeader = false;
+            } else {
+                mHotTurnPageHeader = false;
+            }
+            if (isNormal) {
             mTurnPageFooter = false;
+            } else {
+                mHotTurnPageFooter = false;
+            }
             mCommentArrayList.clear();
             Response response = dataQuery.getResponse();
             if (response != null && response instanceof CommentResponse) {
@@ -324,7 +418,11 @@ public class CommentListActivity extends BaseActivity {
                 if (commentList != null) {
                     List<Comment> commentArrayList = commentList.getList();
                     if (commentArrayList != null && commentArrayList.size() > 0) {
-                        mCommentQuery = dataQuery;
+                        if (isNormal) {
+                            this.mCommentQuery = dataQuery;
+                        } else {
+                            this.mHotCommentQuery = dataQuery;
+                        }
                         mCommentArrayList.addAll(commentArrayList);
                         Collections.sort(mCommentArrayList, Comment.COMPARATOR);
                         mCommentAdapter.notifyDataSetChanged();
@@ -341,14 +439,18 @@ public class CommentListActivity extends BaseActivity {
             }
             
             if (mCommentArrayList.isEmpty()) {
+                if (isNormal) {
                 finish();
+                }
             }
         }
         
         if (mCommentLsv.isFooterSpringback()) {
-            mHandler.postDelayed(mTurnPageRun, 1000);
+            mHandler.postDelayed(isNormal ? mTurnPageRun : mHotTurnPageRun, 1000);
         }
+        if (isNormal) {
         mCommentTipView.setVisibility(View.VISIBLE);
+        }
     }
     
     private class CommentAdapter extends ArrayAdapter<Comment>{
@@ -374,8 +476,13 @@ public class CommentListActivity extends BaseActivity {
                 TextView dateTxv = (TextView) view.findViewById(R.id.date_txv);
                 TextView commentTxv = (TextView) view.findViewById(R.id.comment_txv);
                 TextView srcTxv = (TextView) view.findViewById(R.id.src_txv);
+                Button commend = (Button)view.findViewById(R.id.commend_btn);
                 
                 Comment comment = getItem(position);
+                commend.setTag(comment);
+                commend.setOnClickListener(CommentListActivity.this);
+                commend.setText(String.valueOf(comment.getLikes()));
+                
                 float grade = comment.getGrade()/2.0f;
                 gradeRtb.setRating(grade);
                 
@@ -475,7 +582,12 @@ public class CommentListActivity extends BaseActivity {
     @Override
     public void onPostExecute(TKAsyncTask tkAsyncTask) {
         super.onPostExecute(tkAsyncTask);
+        BaseQuery baseQuery = (tkAsyncTask.getBaseQuery());
+        if (baseQuery instanceof DataOperation) {
+            return;
+        }
         DataQuery dataQuery = (DataQuery)(tkAsyncTask.getBaseQuery());
+        
 
         if (BaseActivity.checkReLogin(dataQuery, mThis, mSourceUserHome, mId, mId, mId, mCancelLoginListener)) {
             isReLogin = true;
@@ -486,20 +598,36 @@ public class CommentListActivity extends BaseActivity {
         
         boolean isHeader = true;
         Hashtable<String, String> criteria = dataQuery.getCriteria();
+        boolean isNormal = (criteria.containsKey(DataQuery.SERVER_PARAMETER_BIAS) == false);
         if (criteria.containsKey(DataQuery.SERVER_PARAMETER_DIRECTION)) {
             String direction = criteria.get(DataQuery.SERVER_PARAMETER_DIRECTION);
             if (DataQuery.DIRECTION_AFTER.equals(direction)) {
+                if (isNormal) {
                 mTurnPageHeader = false;
+                } else {
+                    mHotTurnPageHeader = false;
+                }
                 isHeader = true;
             } else if (DataQuery.DIRECTION_BEFORE.equals(direction)) {
+                if (isNormal) {
                 mTurnPageFooter = false;
+                } else {
+                    mHotTurnPageFooter = false;
+                }
                 isHeader = false;
             }
+        }
+
+        SpringbackListView mCommentLsv;
+        if (isNormal) {
+            mCommentLsv = this.mCommentLsv;
+        } else {
+            mCommentLsv = this.mHotCommentLsv;
         }
         mCommentLsv.onRefreshComplete(isHeader);
         mCommentLsv.setFooterSpringback(false);
         
-        setData(dataQuery);
+        setData(isNormal, dataQuery);
     }
     @Override
     public void onCancelled(TKAsyncTask tkAsyncTask) {
@@ -507,16 +635,90 @@ public class CommentListActivity extends BaseActivity {
         DataQuery commentQuery = (DataQuery)(tkAsyncTask.getBaseQuery());
         boolean isHeader = true;
         Hashtable<String, String> criteria = commentQuery.getCriteria();
+        boolean isNormal = (criteria.containsKey(DataQuery.SERVER_PARAMETER_BIAS) == false);
         if (criteria.containsKey(DataQuery.SERVER_PARAMETER_DIRECTION)) {
             String direction = criteria.get(DataQuery.SERVER_PARAMETER_DIRECTION);
             if (DataQuery.DIRECTION_AFTER.equals(direction)) {
+                if (isNormal) {
                 mTurnPageHeader = false;
+                } else {
+                    mHotTurnPageHeader = false;
+                }
                 isHeader = true;
             } else if (DataQuery.DIRECTION_BEFORE.equals(direction)) {
+                if (isNormal) {
                 mTurnPageFooter = false;
+                } else {
+                    mHotTurnPageFooter = false;
+                }
                 isHeader = false;
             }
         }
+        SpringbackListView mCommentLsv;
+        if (isNormal) {
+            mCommentLsv = this.mCommentLsv;
+        } else {
+            mCommentLsv = this.mHotCommentLsv;
+        }
         mCommentLsv.onRefreshComplete(isHeader);
+    }
+
+    @Override
+    public void onClick(View v) {
+        int id = v.getId();
+        if (id == R.id.title_btn) {
+            changeMode(true);
+        } else if (id == R.id.hot_btn) {
+            changeMode(false);
+        } else if (id == R.id.commend_btn) {
+            Comment comment = (Comment) v.getTag();
+            if (comment.isCommend() == false) {
+                comment.setCommend(true);
+                String uuid = comment.getUid();
+                Comment.addCommend(mThis, uuid, false);
+                Comment.addCommend(mThis, uuid, true);
+                uploadCommend(Comment.uuid2Json(mThis, uuid));
+            }
+        }
+    }
+    
+    void changeMode(boolean isNormal) {
+        SpringbackListView mCommentLsv;
+        CommentAdapter mCommentAdapter;
+        if (isNormal) {
+            mCommentLsv = this.mCommentLsv;
+            mCommentAdapter = this.mCommentAdapter;
+            this.mCommentLsv.setVisibility(View.VISIBLE);
+            this.mHotCommentLsv.setVisibility(View.GONE);
+        } else {
+            mCommentLsv = this.mHotCommentLsv;
+            mCommentAdapter = this.mHotCommentAdapter;
+            this.mCommentLsv.setVisibility(View.GONE);
+            this.mHotCommentLsv.setVisibility(View.VISIBLE);
+        }
+        mCommentLsv.setFooterSpringback(false);
+        DataQuery dataQuery;
+        if (isNormal) {
+            dataQuery = mPOI.getCommentQuery();
+        } else {
+            dataQuery = mPOI.getHotCommentQuery();
+        }
+        if (dataQuery == null) {
+            Hashtable<String, String> criteria = new Hashtable<String, String>();
+            criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_DIANPING);
+            criteria.put(DataQuery.SERVER_PARAMETER_POI_ID, mPOI.getUUID());
+            criteria.put(DataQuery.SERVER_PARAMETER_REFER, DataQuery.REFER_POI);
+            if (isNormal == false) {
+                criteria.put(DataQuery.SERVER_PARAMETER_BIAS, DataQuery.BIAS_HOT);
+            }
+            dataQuery = new DataQuery(mThis);
+            dataQuery.setup(criteria, Globals.getCurrentCityInfo().getId(), mId, mId, null, false, false, mPOI);
+            mCommentLsv.changeHeaderViewByState(false, SpringbackListView.REFRESHING);
+            queryStart(dataQuery);
+        } else {
+            mCommentLsv.onRefreshComplete(true);
+            setData(isNormal, dataQuery);
+            mCommentAdapter.notifyDataSetChanged();
+        }
     }
 }

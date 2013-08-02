@@ -168,6 +168,9 @@ public final class DataQuery extends BaseQuery {
     // bias string  false   是否对搜索结果有特殊要求，在“我要点评”请求中bias='1' 
     public static final String BIAS_MY_COMMENT = "1";
     
+    // bias="hot"表示获取热门点评 
+    public static final String BIAS_HOT = "hot";
+    
     private boolean isTurnPage = false;
     
     // POI Request Begin
@@ -704,7 +707,7 @@ public final class DataQuery extends BaseQuery {
             requestParameters.add(SERVER_PARAMETER_NEED_FIELD, Comment.NEED_FIELD);
             requestParameters.add(SERVER_PARAMETER_COMMENT_VERSION, COMMENT_VERSION);
             addParameter(new String[]{SERVER_PARAMETER_REFER});
-            addParameter(new String[]{SERVER_PARAMETER_TIME, SERVER_PARAMETER_DIRECTION, SERVER_PARAMETER_POI_ID}, false);
+            addParameter(new String[]{SERVER_PARAMETER_TIME, SERVER_PARAMETER_DIRECTION, SERVER_PARAMETER_POI_ID, SERVER_PARAMETER_BIAS}, false);
         } else if (DATA_TYPE_PULL_MESSAGE.equals(dataType)) {
             addParameter(new String[]{SERVER_PARAMETER_LOCATION_CITY, SERVER_PARAMETER_LONGITUDE, SERVER_PARAMETER_LATITUDE, SERVER_PARAMETER_LOCATION_LONGITUDE, SERVER_PARAMETER_LOCATION_LATITUDE});
             addParameter(new String[]{SERVER_PARAMETER_MESSAGE_ID_LIST, SERVER_PARAMETER_LAST_PULL_DATE}, false);

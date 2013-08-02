@@ -5,12 +5,112 @@
     android:layout_height="fill_parent"
     android:orientation="vertical"
     android:background="@color/white">
-    <include android:id="@+id/title_view"
-        layout="@layout/title" 
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content" />        
+    <RelativeLayout
+	    android:id="@+id/title_view"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:paddingRight="8dp"
+	    android:background="@drawable/bg_title"
+	    >
+	    <RelativeLayout
+	        android:id="@+id/left_view"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:layout_centerVertical="true"
+	        android:paddingRight="4dp"
+	        >
+	
+	        <Button android:id="@+id/left_btn"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_centerInParent="true"
+	            android:background="@drawable/btn_back"
+	            android:textSize="14sp"
+	            android:textColor="@color/btn_title"
+	            android:gravity="center"
+	            />
+	    </RelativeLayout>
+	
+	    <RelativeLayout
+	        android:id="@+id/right_view"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentRight="true"
+	        android:layout_centerVertical="true"
+	        >
+	
+	        <Button android:id="@+id/right_btn"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_centerInParent="true"
+	            android:background="@color/transparent"
+	            android:textSize="14sp"
+	            android:textColor="@color/btn_title"
+	            android:gravity="center"
+	            />
+	    </RelativeLayout>
+	
+	
+	    <LinearLayout
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:orientation="horizontal"
+	        android:layout_centerVertical="true"
+	        android:layout_toRightOf="@id/left_view"
+	        >
+		    <Button 
+		        android:id="@+id/title_btn"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_marginRight="44dp"
+		        android:background="@color/transparent"
+		        android:padding="0dp"
+		        android:text="@string/app_name"
+		        android:textSize="20sp"
+		        android:textColor="@color/white"
+		        android:singleLine="true"
+		        android:ellipsize="end"
+		        android:gravity="left|center_vertical"
+		        android:shadowDx="0"
+		        android:shadowDy="1"
+		        android:shadowColor="#a77a00"
+		        android:shadowRadius="1"
+		        >
+		     </Button>
+		
+		    <Button 
+		        android:id="@+id/hot_btn"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:background="@color/transparent"
+		        android:padding="0dp"
+		        android:text="@string/app_name"
+		        android:textSize="20sp"
+		        android:textColor="@color/white"
+		        android:singleLine="true"
+		        android:ellipsize="end"
+		        android:gravity="left|center_vertical"
+		        android:shadowDx="0"
+		        android:shadowDy="1"
+		        android:shadowColor="#a77a00"
+		        android:shadowRadius="1"
+		        >
+		     </Button>
+	     </LinearLayout>
+	</RelativeLayout>        
                 
     <com.tigerknows.widget.SpringbackListView android:id="@+id/comment_lsv"
+        android:layout_width="fill_parent" 
+        android:layout_height="fill_parent"
+        android:layout_below="@id/title_view"
+        android:divider="@drawable/bg_line_split"
+        android:footerDividersEnabled="false"
+        android:fadingEdge="none"
+        android:scrollingCache="false"
+        android:paddingBottom="50dp"/>
+                
+    <com.tigerknows.widget.SpringbackListView android:id="@+id/hot_comment_lsv"
         android:layout_width="fill_parent" 
         android:layout_height="fill_parent"
         android:layout_below="@id/title_view"
