@@ -1405,8 +1405,10 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                 }
                 
             } else if (baseQuery instanceof DataOperation) {
+                if (BaseQuery.DATA_TYPE_DIANPING.equals(dataType)) {
+                    return;
                 // 查询POI的结果
-                if (BaseQuery.DATA_TYPE_POI.equals(dataType)) {
+                } else if (BaseQuery.DATA_TYPE_POI.equals(dataType)) {
                     if (poi.getName() == null && poi.getUUID() != null) {
                         if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, BaseActivity.SHOW_ERROR_MSG_TOAST, POIDetailFragment.this, true)) {
                             mActionLog.addAction(mActionTag+ActionLog.POIDetailPullFailed);

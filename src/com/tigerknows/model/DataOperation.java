@@ -152,7 +152,7 @@ public class DataOperation extends BaseQuery {
                 response = new Response(responseXMap);
                 if (response.getResponseCode() == Response.RESPONSE_CODE_OK) {
                     operationCode = URLDecoder.decode(operationCode);
-                    operationCode = operationCode.substring(Comment.JsonHeader.length()+1, operationCode.length()-2);
+                    operationCode = operationCode.substring(Comment.JsonHeader.length()+1, operationCode.length()-3);
                     String[] uuids = operationCode.split("\",\"");
                     Comment.deleteCommend(context, uuids, false);
                 }

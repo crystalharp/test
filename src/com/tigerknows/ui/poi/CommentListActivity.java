@@ -35,6 +35,7 @@ import android.widget.TextView;
 import com.decarta.Globals;
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
+import com.tigerknows.android.app.TKActivity;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BaseQuery;
@@ -144,7 +145,7 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
         
         String json = Comment.draft2Json(mThis);
         if (json != null) {
-            uploadCommend(json);
+            uploadCommend(this, json);
         }
     }
 
@@ -216,13 +217,13 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
         });
     }
     
-    void uploadCommend(String json) {
-        DataOperation dataOperation = new DataOperation(mThis);
+    public static void uploadCommend(TKActivity tkActivity, String json) {
+        DataOperation dataOperation = new DataOperation(tkActivity);
         Hashtable<String, String> criteria = new Hashtable<String, String>();
         criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_DIANPING);
         criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, URLEncoder.encode(json));
         dataOperation.setup(criteria);
-        queryStart(dataOperation);
+        tkActivity.queryStart(dataOperation);
     }
     
     protected void onResume() {
@@ -677,7 +678,7 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
                 String uuid = comment.getUid();
                 Comment.addCommend(mThis, uuid, false);
                 Comment.addCommend(mThis, uuid, true);
-                uploadCommend(Comment.uuid2Json(mThis, uuid));
+                uploadCommend(this, Comment.uuid2Json(mThis, uuid));
             }
         }
     }

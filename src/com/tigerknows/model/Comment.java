@@ -601,7 +601,7 @@ public class Comment extends BaseData {
         return result;
     }
     
-    public static final String JsonHeader = "entity: \"up\":[";
+    public static final String JsonHeader = "json{\"up\":[";
 
     public static String uuid2Json(Context context, String uuid) {
         StringBuilder json = new StringBuilder();
@@ -609,7 +609,7 @@ public class Comment extends BaseData {
         json.append('"');
         json.append(uuid);
         json.append('"');
-        json.append(']');
+        json.append("]}");
         return json.toString();
     }
 
@@ -634,7 +634,7 @@ public class Comment extends BaseData {
                     i++;
                 }
             }
-            json.append(']');
+            json.append("]}");
             br.close();
         } catch (Exception e) {
             // TODO Auto-generated catch block
