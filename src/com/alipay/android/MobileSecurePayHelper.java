@@ -64,8 +64,8 @@ public class MobileSecurePayHelper {
 			// retrieveApkFromAssets(mContext, PartnerConfig.ALIPAY_PLUGIN_NAME,
 			//		cachePath);
 
-			mProgress = BaseHelper.showProgress(mContext, null, "正在检测安全支付服务版本",
-					false, true);
+			//mProgress = BaseHelper.showProgress(mContext, null, "正在检测安全支付服务版本",
+			//		false, true);
 
 			// 实例新线程检测是否有新版本进行下载
 			new Thread(new Runnable() {
