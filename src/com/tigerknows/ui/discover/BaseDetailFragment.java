@@ -101,7 +101,7 @@ public class BaseDetailFragment extends DiscoverBaseFragment implements View.OnC
             return;
         }
         
-        mPrevImageView.setVisibility(View.GONE);
+        mNextImageView.setVisibility(View.GONE);
         mPrevImageView.setVisibility(View.GONE);
     }
 
@@ -189,10 +189,9 @@ public class BaseDetailFragment extends DiscoverBaseFragment implements View.OnC
      * 刷新当前位置以及左右两边的详情页
      */
     public void refreshViews(int position) {
-        if (this.position == position) {
-            return;
-        }
         this.position = position;
+        updateNextPrevControls();
+        scheduleDismissOnScreenControls();
     }
 
     /**
