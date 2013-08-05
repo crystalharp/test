@@ -454,9 +454,10 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         mExtraPOIInfoList.add(mExtraSubwayPOI);
     }
     
-    private void initExtraView() {
+    private void initExtraView(POI poi) {
         for (DynamicPOIView extraView : mExtraPOIInfoList) {
             mExtraViewList.addAll(extraView.getViewList());
+            extraView.initData(poi);
         }
         
         for (DynamicPOIViewBlock block : mExtraViewList) {
@@ -1031,12 +1032,9 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         }
         //这两个函数放在前面初始化动态POI信息
         clearDynamicView(DPOIViewBlockList);
-        //初始化和动态POI信息无关的动态布局，执行addToParent的顺序决定出现的顺序
-        mExtraViewList.addAll(mExtraSubwayPOI.getViewList());
         //初始化和动态POI信息相关的动态布局
         initDynamicPOIView(mPOI);
-        initExtraView();
-        mExtraSubwayPOI.initData(poi);
+        initExtraView(mPOI);
         if (mExtraSubwayPOI.isExist()) {
             mExtraSubwayPOI.refresh();
         }
