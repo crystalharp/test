@@ -4065,7 +4065,12 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     mMapView.zoomTo(TKConfig.ZOOM_LEVEL_LOCATION, myPosition);
                     resetShowInPreferZoom();
                 } else if (MyLocation.MODE_NAVIGATION == mMyLocation.mode || MyLocation.MODE_ROTATION == mMyLocation.mode) {
-                    mMapView.panToPosition(myPosition);
+                    try {
+                        mMapView.centerOnPosition(myPosition);
+                    } catch (APIException e) {
+                        resetLoactionButtonState();
+                        e.printStackTrace();
+                    }
                 }
             } else {
                 resetLoactionButtonState();

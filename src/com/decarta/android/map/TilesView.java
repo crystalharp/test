@@ -1247,6 +1247,10 @@ public class TilesView extends GLSurfaceView {
      * centers the map on a given position and renders tiles
      * @param position
      */
+    public void centerOnPosition(Position position) throws APIException{
+        centerOnPosition(position, zoomLevel, false);
+    }
+    
     public void centerOnPosition(Position position, float zoomLevel) throws APIException{
         centerOnPosition(position, zoomLevel, false);
     }
