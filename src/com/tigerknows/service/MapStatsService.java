@@ -198,6 +198,23 @@ public class MapStatsService extends Service {
         }
         return serverRegionDataInfoMap;
     }
+    
+    /*
+     * 查询指定城市的最新Region信息（大小、版本等等）
+     */
+    public static HashMap<Integer, ServerRegionDataInfo> queryServerRegionDataInfoMapInternally(Context context, CityInfo cityInfo) {
+        MapEngine mapEngine = MapEngine.getInstance();
+            
+        List<Integer> allRegionIdList = new ArrayList<Integer>();
+        allRegionIdList.addAll(mapEngine.getRegionIdList(cityInfo.getCName()));
+        
+        // 查询服务器上最新的Region信息
+        MapVersionQuery mapVersionQuery = new MapVersionQuery(context);
+        mapVersionQuery.setup(allRegionIdList);
+        mapVersionQuery.query();
+        HashMap<Integer, ServerRegionDataInfo> serverRegionDataInfoMap = mapVersionQuery.getServerRegionDataInfoMap();
+        return serverRegionDataInfoMap;
+    }
 
     @Override
     public void onStart(final Intent intent, int startId) {
