@@ -464,6 +464,15 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             block.addToParent();
         }
     }
+    
+    private final void refreshNavigation() {
+        if (mDynamicHotelPOI.isExist()) {
+            mNavigationWidget.setVisibility(View.VISIBLE);
+        } else {
+            mNavigationWidget.setVisibility(View.GONE);
+        }
+    }
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -541,6 +550,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         if (mPOI.getHotel().getUuid() != null) {
             mDynamicHotelPOI.refreshPicture();
         }
+        refreshNavigation();
         
         if (poi.getName() == null && poi.getUUID() != null) {
             mActionLog.addAction(mActionTag + ActionLog.POIDetailFromWeixin);
@@ -561,13 +571,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             poiQuery.setup(criteria, cityId, getId(), getId(), mSphinx.getString(R.string.doing_and_wait));
             baseQueryList.add(poiQuery);
             mSphinx.queryStart(baseQueryList);
-            mNavigationWidget.setVisibility(View.GONE);
-        } else {
-            if (poi.getHotel().getUuid() != null) {
-                mNavigationWidget.setVisibility(View.VISIBLE);
-            } else {
-                mNavigationWidget.setVisibility(View.GONE);
-            }
         }
         
         if (isReLogin()) {
@@ -1037,11 +1040,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         if (mExtraSubwayPOI.isExist()) {
             mExtraSubwayPOI.refresh();
         }
-        if (poi.getHotel().getUuid() != null) {
-            mNavigationWidget.setVisibility(View.VISIBLE);
-        } else {
-            mNavigationWidget.setVisibility(View.GONE);
-        }
+        refreshNavigation();
         mDoingView.setVisibility(View.VISIBLE);
         if (poi.getName() == null && poi.getUUID() != null) {
             return;
@@ -1435,6 +1434,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                             initDynamicPOIView(mPOI);
                             refreshDetail();
                             refreshComment();
+                            refreshNavigation();
 
                             if (mDynamicHotelPOI.isExist()) {
                                 mDynamicHotelPOI.initDate();
