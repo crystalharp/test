@@ -141,6 +141,11 @@ public class TilesView extends GLSurfaceView {
     private Timer drawMyLocationTimer;
     boolean isMyLocation = false;
     public boolean stopRefreshMyLocation = false;
+    public void setRefreshMapText(boolean refresh) {
+        synchronized (drawingLock) {
+            this.mapText.refresh = refresh;
+        }
+    }
     
     private MapText mapText = new MapText();
 
@@ -2972,14 +2977,14 @@ public class TilesView extends GLSurfaceView {
 	                    if (Math.abs(mapTextMercXY.x - centerXY.x) > 8
 	                            || Math.abs(mapTextMercXY.y - centerXY.y) > 8
 	                            || mapTextZoomLevel != centerXYZ.z
-	                            || (mapText.drawNum != drawNum)) {
+	                            || mapText.refresh) {
 	                        same = false;
 	                    }
 	                    if (!same && refreshText) {
 	                        mapText.mercXYGetting.x = centerXY.x;
 	                        mapText.mercXYGetting.y = centerXY.y;
 	                        mapText.zoomLevelGetting = centerXYZ.z;
-	                        mapText.drawNum = drawNum;
+                            mapText.refresh = false;
 	                        mapText.screenTextGetting = true;
 	                        mapText.lastTime = time;
 	                    }
@@ -3493,7 +3498,7 @@ public class TilesView extends GLSurfaceView {
             
             mapText.screenTextGetting=true;
             mapText.lastTime = 0;
-            mapText.drawNum = 0;
+            mapText.refresh = false;
             
             Iterator<Bitmap> iterator6=textBitmapPool.values().iterator();
             while(iterator6.hasNext()){
