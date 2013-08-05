@@ -351,6 +351,10 @@ public class InfoWindow implements com.decarta.android.event.EventSource{
      * @param screenXY the screen coordinate of the anchor point of the info window
      */
     public RectF getInfoWindowRecF(){
+        if (mercXY == null) {
+            return new RectF();
+        }
+        synchronized (mercXY) {
     	XYFloat screenXY=new XYFloat(0,0);
     	
     	if(type.equals(InfoWindow.InfoWindowType.VIEWGROUP)){
@@ -398,6 +402,8 @@ public class InfoWindow implements com.decarta.android.event.EventSource{
     				screenXY.y-infoWindowHeight-InfoWindow.INFO_TRIANGLE_HEIGHT,screenXY.x+infoWindowWidth/2,screenXY.y-InfoWindow.INFO_TRIANGLE_HEIGHT);
     		return infoWindowRect;
     	}
+        
+        }
     }
 	
     /**

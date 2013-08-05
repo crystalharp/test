@@ -13,9 +13,11 @@ import java.util.List;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.InputFilter;
 import android.text.Selection;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -55,6 +57,7 @@ import com.tigerknows.model.xobject.XMap;
 import com.tigerknows.provider.HotelOrderTable;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
+import com.tigerknows.util.ByteUtil;
 import com.tigerknows.util.CalendarUtil;
 import com.tigerknows.util.Utility;
 import com.tigerknows.util.ValidateUtil;
@@ -96,6 +99,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     private Calendar mCheckOut;
 
     private static final long MAX_ROOM_HOWMANY = 5;
+    private static final long MAX_NAME_LENGTH = 50;
     
     // 酒店订单相关数据
     private int mRTimeWhich;
@@ -202,6 +206,38 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
             }
         };
         mBookUsernameEdt.setOnTouchListener(edtTouchListener);
+        mBookUsernameEdt.addTextChangedListener(new TextWatcher() {
+			
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+		        Editable editable = mBookUsernameEdt.getText();  
+		        int len = ByteUtil.getCharArrayLength(editable.toString());
+		        if(len > MAX_NAME_LENGTH){
+		        	int selEndIndex = Selection.getSelectionEnd(editable); 
+		        	String str = editable.toString();
+		        	while(len > MAX_NAME_LENGTH){  
+		        		//截取新字符串
+		        		str = str.substring(0,selEndIndex-1) + str.substring(selEndIndex,str.length());
+		        		//新字符串的长度
+		        		len = ByteUtil.getCharArrayLength(str);
+		        		selEndIndex--;
+		        	}  
+		        	mBookUsernameEdt.setText(str);  
+		        	editable = mBookUsernameEdt.getText();  
+		    		//设置新光标所在的位置
+		        	Selection.setSelection(editable, selEndIndex);  
+		        }				
+			}
+			
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count,
+					int after) {
+			}
+			
+			@Override
+			public void afterTextChanged(Editable s) {
+			}
+		});
         mRoomMobileNumberEdt.setOnTouchListener(edtTouchListener);
     }
 
@@ -351,7 +387,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         txv.setText(mSphinx.getString(R.string.hotel_room_person_name));
         txv.setGravity(Gravity.LEFT|Gravity.CENTER_VERTICAL);
         
-        EditText edt = new EditText(mContext);
+        final EditText edt = new EditText(mContext);
         edt.setId(id);
         edt.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
         edt.setFilters(new InputFilter[]{new InputFilter.LengthFilter(50)});
@@ -364,6 +400,38 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         edt.setSingleLine(true);
         edt.setEllipsize(TextUtils.TruncateAt.valueOf("END"));
         edt.setBackgroundColor(getResources().getColor(R.color.transparent));
+        edt.addTextChangedListener(new TextWatcher() {
+			
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+		        Editable editable = edt.getText();  
+		        int len = ByteUtil.getCharArrayLength(editable.toString());
+		        if(len > MAX_NAME_LENGTH){
+		        	int selEndIndex = Selection.getSelectionEnd(editable); 
+		        	String str = editable.toString();
+		        	while(len > MAX_NAME_LENGTH){  
+		        		//截取新字符串
+		        		str = str.substring(0,selEndIndex-1) + str.substring(selEndIndex,str.length());
+		        		//新字符串的长度
+		        		len = ByteUtil.getCharArrayLength(str);
+		        		selEndIndex--;
+		        	}  
+		        	edt.setText(str);  
+		        	editable = edt.getText();  
+		    		//设置新光标所在的位置
+		        	Selection.setSelection(editable, selEndIndex);  
+		        }				
+			}
+			
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count,
+					int after) {
+			}
+			
+			@Override
+			public void afterTextChanged(Editable s) {
+			}
+		});
         
         
         person2.addView(txv);
