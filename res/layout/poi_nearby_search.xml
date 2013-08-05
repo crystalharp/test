@@ -15,7 +15,7 @@
 		    android:layout_width="fill_parent"
 		    android:layout_height="fill_parent">
         
-		<FrameLayout
+		<RelativeLayout
 		    android:layout_width="fill_parent"
 		    android:layout_height="fill_parent"
 		    >
@@ -29,10 +29,11 @@
 		        android:id="@+id/page_indicator_view"
 		        android:layout_width="fill_parent"
 		        android:layout_height="wrap_content"
+		        android:layout_marginTop="4dp"
 		        android:orientation="horizontal"
 		        android:gravity="center_horizontal"
 		        />
-		</FrameLayout>
+		</RelativeLayout>
 
 		<!-- 投影 -->
 		<LinearLayout 

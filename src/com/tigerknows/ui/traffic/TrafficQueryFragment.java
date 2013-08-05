@@ -351,6 +351,9 @@ public class TrafficQueryFragment extends BaseFragment {
             initStartContent();
         }
         
+        if (currentState == TrafficViewSTT.State.Normal) {
+            mBackBtn.setVisibility(View.GONE);
+        }
 	}
     
     /**
