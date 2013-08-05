@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.tigerknows.R;
@@ -22,6 +23,7 @@ public class HotelIntroFragment extends BaseFragment {
     View longDescriptionBlock;
     View roomDescriptionBlock;
     View hotelServiceBlock;
+    ScrollView hotelScrollView;
     
     Hotel mHotel;
     POI mPOI;
@@ -42,6 +44,7 @@ public class HotelIntroFragment extends BaseFragment {
 		longDescriptionBlock = mRootView.findViewById(R.id.hotel_long_desc_block);
 		roomDescriptionBlock = mRootView.findViewById(R.id.hotel_room_desc_block);
 		hotelServiceBlock = mRootView.findViewById(R.id.hotel_service_block);
+		hotelScrollView = (ScrollView) mRootView.findViewById(R.id.hotel_scrollView);
 		return super.onCreateView(inflater, container, savedInstanceState);
 	}
 
@@ -50,6 +53,7 @@ public class HotelIntroFragment extends BaseFragment {
 		super.onResume();
 		mTitleBtn.setText(mSphinx.getString(R.string.hotel_description));
 		hotelNameTxv.setText(mPOI.getName());
+		hotelScrollView.scrollTo(0, 0);
 		String longDescription = mHotel.getLongDescription();
 		String roomDescription = mHotel.getRoomDescription();
 		String hotelService = mHotel.getService();

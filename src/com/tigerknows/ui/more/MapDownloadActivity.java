@@ -1072,7 +1072,7 @@ public class MapDownloadActivity extends BaseActivity implements View.OnClickLis
             CityInfo cityInfo = list.get(i);
             DownloadCity addDownloadCity = getDownloadCity(mDownloadCityList, cityInfo);
             if (addDownloadCity != null && addDownloadCity.state == state) {
-                MapStatsService.statsDownloadCity(addDownloadCity, MapStatsService.getServerRegionDataInfoMap());
+                MapStatsService.statsDownloadCity(addDownloadCity, null);
                 continue;
             } else {
                 if (mMapEngine.isExternalStorage() == false && state == DownloadCity.STATE_WAITING) {
@@ -1100,7 +1100,7 @@ public class MapDownloadActivity extends BaseActivity implements View.OnClickLis
         }
         downloadCity = new DownloadCity(cityInfo);
         downloadCity.state = state;
-        MapStatsService.statsDownloadCity(downloadCity, MapStatsService.getServerRegionDataInfoMap());
+        MapStatsService.statsDownloadCity(downloadCity, null);
         addDownloadCity(mThis, mDownloadCityList, downloadCity, isManual);
         if (state == DownloadCity.STATE_WAITING
                 || state == DownloadCity.STATE_DOWNLOADING) {
