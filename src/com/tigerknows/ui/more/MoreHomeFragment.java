@@ -175,9 +175,21 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         
         refreshUserEntrance();
         refreshMoreBtn();
+        refreshSatisfyRate();
         refreshCity(Globals.getCurrentCityInfo().getCName());
     }
-    
+    private void refreshSatisfyRate() {
+    	if (TextUtils.isEmpty(TKConfig.getPref(mContext, TKConfig.PREFS_SATISFY_RATE_OPENED, ""))){
+    		Drawable[] drawables = mSatisfyRateBtn.getCompoundDrawables();
+    		drawables[2] = mContext.getResources().getDrawable(R.drawable.ic_satisfy_new);
+    		drawables[2].setBounds(0, 0, drawables[2].getIntrinsicWidth(), drawables[2].getIntrinsicHeight());
+    		mSatisfyRateBtn.setCompoundDrawables(drawables[0], drawables[1], drawables[2], drawables[3]);
+    		mSatisfyRateBtn.setCompoundDrawablePadding(Utility.dip2px(mContext, 20));
+    	}else{
+    		Drawable[] drawables = mSatisfyRateBtn.getCompoundDrawables();
+    		mSatisfyRateBtn.setCompoundDrawables(drawables[0], drawables[1], null, drawables[3]);
+    	}
+    }    
     public void refreshMoreBtn() {
         
     	refreshMoreData();
