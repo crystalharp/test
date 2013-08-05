@@ -1236,6 +1236,7 @@ public class TKConfig {
      * @return
      */
     public static String getIMEI() {
+    	if(TextUtils.isEmpty(sIMEI))return "0";
         return sIMEI;
     }
     

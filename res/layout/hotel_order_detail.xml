@@ -473,7 +473,7 @@
 	                    android:textColor="@color/black_light"
 	                    android:textSize="16sp"
 	                    android:text="入  住  人"
-	                    android:singleLine="true"
+	                    android:singleLine="false"
 	                    android:focusable="false"
 	                    />
 	                
