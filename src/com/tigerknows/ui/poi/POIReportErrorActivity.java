@@ -519,6 +519,7 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
             mDescriptionEdt.clearFocus();
             hideSoftInput();
             mDescriptionLly.setVisibility(View.GONE);
+            mDescriptionEdt.requestFocus();		//无法正常清除光标，故让隐藏的Edt获取光标的方式以实现清除光标
         }
         refreshSubmitBtn();
         mSubmitBtn.setTextColor(mSubmitBtn.isEnabled() 
