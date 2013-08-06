@@ -49,7 +49,7 @@ public class MapText implements com.decarta.android.event.EventSource{
 	private MapWord[] mapWords = null;
     public XYInteger canvasSize=new XYInteger(0,0);
     public Bitmap bitmap = null;
-    public int drawNum = -1;
+    public boolean refresh = false;
 	
 	public MapText(){
 		

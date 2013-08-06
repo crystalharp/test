@@ -149,12 +149,16 @@ public class DownloadThread extends Thread implements MapTileDataDownload.ITileD
 					try{
                             int size = downloadingTiles.size();
                             if (size > 0) {
+                                boolean result = false;
                                 try {
                                     int statusCode = 0;
                                     if (downloadingTiles.get(0).getLength() == 0 && downloadingTiles.get(0).getOffset() == 0) {
                                         statusCode = downloadMetaData(downloadingTiles.get(0).getRid());
                                     } else if (downloadingTiles.get(0).getLength() > 0) {
                                         statusCode = downloadTiles(downloadingTiles);
+                                        if (statusCode == BaseQuery.STATUS_CODE_NETWORK_OK) {
+                                            result = true;
+                                        }
                                     }
                                     if (statusCode != BaseQuery.STATUS_CODE_NETWORK_OK) {
                                         tilesView.noticeDownload(DownloadEventListener.STATE_DOWNLOAD_ERROR);
@@ -175,6 +179,9 @@ public class DownloadThread extends Thread implements MapTileDataDownload.ITileD
                                         DownloadingTiles.remove(tileDownload);
                                         tilesWaitForDownLoading.remove(tileDownload);
                                     }
+                                }
+                                if (result) {
+                                    tilesView.setRefreshMapText(DownloadingTiles.isEmpty());
                                 }
                                 tilesView.refreshMap();
                             }
