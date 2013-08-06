@@ -9,6 +9,7 @@
         android:layout_gravity="center"
         android:background="@drawable/bg_picture_hotel_none"
         android:contentDescription="@string/app_name"
+        android:scaleType="fitXY"
         />
     <TextView android:id="@+id/app_name_txv"
         android:layout_width="wrap_content"
