@@ -4,6 +4,11 @@
     android:orientation="horizontal"
     android:layout_height="wrap_content"
     android:layout_width="wrap_content"
+    >
+    <LinearLayout
+    android:orientation="horizontal"
+    android:layout_height="wrap_content"
+    android:layout_width="wrap_content"
     android:gravity="center"
     android:padding="4dp"
     >
@@ -72,4 +77,5 @@
         android:paddingRight="8dp"
         android:paddingBottom="8dp"
         />
+    </LinearLayout>
 </LinearLayout>

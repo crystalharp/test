@@ -1,6 +1,7 @@
 
 package com.tigerknows.model;
 
+import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.TKConfig;
@@ -54,6 +55,7 @@ public final class FileUpload extends BaseQuery {
         if (criteria != null) {
             try {
                 makeRequestParameters();
+                addCommonParameters(requestParameters, Globals.getCurrentCityInfo().getId());
 
                 addParameter(new String[] {
                         SERVER_PARAMETER_FILE_TYPE, SERVER_PARAMETER_CHECKSUM,
