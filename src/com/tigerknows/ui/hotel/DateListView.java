@@ -418,7 +418,7 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
                 if (position == checkoutPosition) {
                     textTxv.setTextColor(TKConfig.COLOR_ORANGE);
                 } else {
-                    textTxv.setTextColor(TKConfig.COLOR_BLACK_LIGHT);
+                    textTxv.setTextColor(TKConfig.COLOR_BLACK_DARK);
                 }
                 view.setBackgroundResource(R.drawable.list_selector_background_gray_dark);
             }

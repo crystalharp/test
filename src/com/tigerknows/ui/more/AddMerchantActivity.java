@@ -25,6 +25,7 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
@@ -173,6 +174,11 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
         mDeletePhotoBtn.setVisibility(View.GONE);
 
         mPickTimeView = mLayoutInflater.inflate(R.layout.more_add_merchant_pick_time, null, false);
+        View v = mLayoutInflater.inflate(R.layout.time_list_item, (ViewGroup)mPickTimeView, false);
+        v.setBackgroundResource(R.drawable.list_selector_background_gray_dark);
+        v.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        int h = v.getMeasuredHeight();
+        mPickTimeView.findViewById(R.id.body_view).getLayoutParams().height = h*5+(int)(Globals.g_metrics.density*8);
         mStartTimeListView = (TimeListView) mPickTimeView.findViewById(R.id.start_tlv);
         mEndTimeListView = (TimeListView) mPickTimeView.findViewById(R.id.end_tlv);
         mTimeConfirmBtn = (Button) mPickTimeView.findViewById(R.id.time_confirm_btn);
