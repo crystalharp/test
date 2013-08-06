@@ -11,7 +11,6 @@ import org.apache.http.client.HttpClient;
 
 import java.io.ByteArrayInputStream;
 import java.lang.ref.SoftReference;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -25,11 +24,14 @@ import android.os.Handler;
 
 public class AsyncImageLoader {
     
+    static final String TAG = "AsyncImageLoader";
+    
+    static final int THREAD_COUNT = 1;
     
     // 为了加快速度，在内存中开启缓存（主要应用于重复图片较多时，或者同一个图片要多次被访问，比如在ListView时来回滚动）
     public LinkedHashMap<String, SoftReference<BitmapDrawable>> imageCache = new LinkedHashMap<String, SoftReference<BitmapDrawable>>(TKConfig.IMAGE_CACHE_SIZE_MEMORY,0.75f,true);
 
-    private ExecutorService executorService = null; // 固定五个线程来执行任务
+    private ExecutorService executorService = null; // 固定n个线程来执行任务
 
     private final Handler handler = new Handler();
     
@@ -108,8 +110,8 @@ public class AsyncImageLoader {
         executorService.submit(new Runnable() {
             public void run() {
             	
+                BitmapDrawable bitmapDrawable = null;
                 try {
-                	  BitmapDrawable bitmapDrawable;
                 	  bitmapDrawable = checkMemoryAndDisk(context, imageUrl);
                 	  if(bitmapDrawable == null){
                 		  String signal = testAndPutUrlInList(imageUrl.url);
@@ -138,11 +140,12 @@ public class AsyncImageLoader {
                 			  
                 		  }
                 	  }
-              	      handler.post(new CallbackBitmapRunnable(callback, bitmapDrawable));
               	  
                    
                 } catch (Exception e) {
                     throw new RuntimeException(e);
+                } finally {
+                    handler.post(new CallbackBitmapRunnable(callback, bitmapDrawable));
                 }
             }
         });
@@ -190,8 +193,6 @@ public class AsyncImageLoader {
             }
             
             try {
-            	long start = System.currentTimeMillis();
-            	LogWrapper.d("AsyncImageLoader", "imageUrl.url="+imageUrl.url);
 				byte[] data = HttpManager.openUrl(context, mHttpClient, imageUrl.url, "GET", new WeiboParameters());
 				ImageCache imageCache1 = Globals.getImageCache();
 				final String name = imageUrl.url.substring(imageUrl.url.lastIndexOf("/")+1);
@@ -201,14 +202,10 @@ public class AsyncImageLoader {
 //				URL url = new URL(imageUrl.url);
 //				BitmapDrawable bm = (BitmapDrawable) BitmapDrawable.createFromStream(url.openConnection().getInputStream(), "image.png");
 
-                LogWrapper.d("AsyncImageLoader", "Downloaded imageUrl.url="+imageUrl.url);
-                
-                LogWrapper.d("AsyncImageLoader", "Downloaded Time: " + (System.currentTimeMillis()-start)/1000.0);
-                
                 bm.setTargetDensity(Globals.g_metrics);
                 return bm;
             } catch (Exception e) {
-                LogWrapper.d("AsyncImageLoader", "Failed="+imageUrl.url);
+                LogWrapper.d(TAG, "loadImageFromUrl() Failed="+imageUrl.url);
                 mHttpClient = null;
                 e.printStackTrace();
             }
@@ -234,7 +231,7 @@ public class AsyncImageLoader {
     
     public void onResume() {
         if (executorService == null || executorService.isShutdown()) {
-            executorService = Executors.newFixedThreadPool(1); // 固定五个线程来执行任务
+            executorService = Executors.newFixedThreadPool(THREAD_COUNT);
         }
     }
     
