@@ -1445,8 +1445,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         final String mimetype = intent.resolveType(this);
         
         // 拦截通过URL查看指定经纬度的位置信息的Intent，在地图显示位置信息
+        int fromThirdParty = 0;
         if ("http".equals(scheme)) {
             mFromThirdParty = THIRD_PARTY_HTTP;
+            fromThirdParty = THIRD_PARTY_HTTP;
             if (onlyCheck) {
                 return true;
             }
@@ -1505,6 +1507,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             }
         } else if ("geo".equals(scheme)) {   // 拦截通过URL查看指定经纬度的位置信息的Intent，在地图显示位置信息
             mFromThirdParty = THIRD_PARTY_GEO;
+            fromThirdParty = THIRD_PARTY_GEO;
             if (onlyCheck) {
                 return true;
             }
@@ -1565,6 +1568,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             
         } else if (type == SNAP_TYPE_MYLOCATION) {
             mFromThirdParty = THIRD_PARTY_SONY_MY_LOCATION;
+            fromThirdParty = THIRD_PARTY_SONY_MY_LOCATION;
             if (onlyCheck) {
                 return true;
             }
@@ -1583,6 +1587,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             showView(R.id.view_result_map);
         } else if (type == SNAP_TYPE_QUERY_POI) {
             mFromThirdParty = THIRD_PARTY_SONY_QUERY_POI;
+            fromThirdParty = THIRD_PARTY_SONY_QUERY_POI;
             if (onlyCheck) {
                 return true;
             }
@@ -1591,6 +1596,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             showView(R.id.view_poi_input_search);
         } else if ("vnd.android.cursor.item/postal-address_v2".equals(mimetype)) {
             mFromThirdParty = THIRD_PARTY_CONTACT;
+            fromThirdParty = THIRD_PARTY_CONTACT;
             if (onlyCheck) {
                 return true;
             }
@@ -1632,6 +1638,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             }
         } else if (intent.getBooleanExtra(EXTRA_WEIXIN, false)) { //   来自微信的调用，为其提供POI数据作为返回
         	mFromThirdParty = THIRD_PARTY_WENXIN_REQUET;
+            fromThirdParty = THIRD_PARTY_WENXIN_REQUET;
             if (onlyCheck) {
                 return true;
             }
@@ -1640,12 +1647,12 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             uiStackClose(new int[]{R.id.view_poi_home});
             showView(R.id.view_poi_home);
         } else if (checkFromWeixin(intent, onlyCheck)) {
-            
+            fromThirdParty = THIRD_PARTY_WENXIN_WEB;
         } else if (checkFromPullMessage(intent, onlyCheck)) {
-            
+            fromThirdParty = THIRD_PARTY_PULL;
         }
         
-        result = mFromThirdParty > 0;
+        result = fromThirdParty > 0;
         if (result && onlyCheck == false) {
             setIntent(null);
         }
@@ -1762,6 +1769,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         if (newIntent != null) {
             com.tigerknows.model.PullMessage.Message message = newIntent.getParcelableExtra(Sphinx.EXTRA_PULL_MESSAGE);
             if (message != null) {
+                mFromThirdParty = THIRD_PARTY_PULL;
                 if (onlyCheck) {
                     return true;
                 }
