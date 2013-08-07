@@ -134,7 +134,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 
 		@Override
 		public void run() {
-			if(mPagecount > 0){
+			if(mPagecount > 1){
 				mViewPager.setCurrentItem(mViewPager.getCurrentItem()+1);
 			}
 		}
@@ -201,13 +201,13 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         refreshMoreData();
         refreshCity(Globals.getCurrentCityInfo().getCName());
         refreshCurrentNoticeDrawable();
-        if(mPagecount > 0){
+        if(mPagecount > 1){
         	// 这两行代码用来解决onResume之后，首次定时器触发后，动画不正确的问题……
+        	// 并且这样就不需要在onResume里调用mHandler.postDelayed(mNoticeNextRun, 4000);了
         	// 原理未知，反正试出来的。--fengtianxiao 2013.08.07
         	mViewPager.setCurrentItem(mViewPager.getCurrentItem()+1);
         	mViewPager.setCurrentItem(mViewPager.getCurrentItem()-1);
         }
-        mHandler.postDelayed(mNoticeNextRun, 4000);
     }
     public void refreshMoreData() {
     	refreshMoreNotice(null);
@@ -234,7 +234,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         		if(mNoticeResult != null){
         			mPagecount = (int)mNoticeResult.getNum();
         			mNoticeList = mNoticeResult.getNoticeList();
-        	        if(mPagecount > 0){
+        	        if(mPagecount > 1){
         	        	Utility.pageIndicatorInit(mSphinx, mPageIndicatorView, mPagecount, 0, R.drawable.ic_learn_dot_normal, R.drawable.ic_learn_dot_selected);
         	        	mNoticeRly.setVisibility(View.VISIBLE);
         	        	mViewPager.setCurrentItem(mPagecount * VIEW_PAGE_LEFT);
@@ -260,6 +260,10 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         	        			index = index % mPagecount;
         	        		}
         	        	});
+        	        }else if(mPagecount == 1){
+        	        	mNoticeRly.setVisibility(View.VISIBLE);
+        	        	mViewPager.setCurrentItem(0);
+        	        	mPosition = 0;
         	        }
         		}
         	}else if(mPagecount < 0){
@@ -479,7 +483,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     }
     
     private void refreshCurrentNoticeDrawable(){
-    	if(mPagecount >= 0 && getView(mPosition).getClass() == ImageView.class){
+    	if(mPagecount > 0 && getView(mPosition).getClass() == ImageView.class){
     		refreshDrawable(mNoticeList.get(mPosition).getpicTkDrawable(), (ImageView)getView(mPosition), R.drawable.txt_app_name);
     	}
     }
@@ -529,6 +533,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 	    @Override
 	    public int getCount() {
 	    	if(mPagecount < 0) return 0;
+	    	else if(mPagecount == 1)return 1;
 	        return mPagecount*VIEW_PAGE_LEFT*VIEW_PAGE_MULTIPLIER;
 	    }
 	
