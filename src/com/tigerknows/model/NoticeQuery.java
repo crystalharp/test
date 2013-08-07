@@ -160,7 +160,7 @@ public class NoticeQuery extends BaseQuery {
 					this.webTitle = getStringFromData(FIELD_WEB_TITLE);
 					if(this.picUrl != null){
 						TKDrawable tkDrawable = new TKDrawable();
-						tkDrawable.setUrl(Utility.getPictureUrlByWidthHeight(this.picUrl, Globals.getPicWidthHeight(TKConfig.PICTURE_MORE_NOTICE)));
+						tkDrawable.setUrl(this.picUrl);
 						picTKDrawable = tkDrawable;
 					}
 				}

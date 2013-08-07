@@ -14,6 +14,8 @@ import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -45,6 +47,7 @@ import com.tigerknows.model.TKDrawable;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.ui.BrowserActivity;
 import com.tigerknows.ui.more.MapDownloadActivity.DownloadCity;
+import com.tigerknows.ui.more.MoreHomeFragment.MyAdapter;
 import com.tigerknows.ui.user.UserBaseActivity;
 import com.tigerknows.ui.user.UserLoginActivity;
 import com.tigerknows.util.Utility;
@@ -123,9 +126,24 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         
         @Override
         public void run() {
-        	// do nothing
+        	refreshCurrentNoticeDrawable();
         }
     };
+    
+    private Runnable mNoticeNextRun = new Runnable() {
+
+		@Override
+		public void run() {
+			if(mPagecount > 0){
+				mViewPager.setCurrentItem(mViewPager.getCurrentItem()+1);
+			}
+		}
+    };
+    
+    private Handler mHandler;
+
+	private MyAdapter mMyAdapter;
+	private int mPosition;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -138,11 +156,6 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
             Bundle savedInstanceState) {
         
         mRootView = mLayoutInflater.inflate(R.layout.more_home, container, false);
-//        mListLsv = (ListView) mRootView.findViewById(R.id.list_lsv);
-//        
-//        View headerview = mLayoutInflater.inflate(R.layout.more_home, mListLsv, false);
-//        mListLsv.addHeaderView(headerview);
-//        mListLsv.setAdapter(null);
     	mRightBtn = mSphinx.getTitleFragment().getRightTxv();        
         findViews();        
 
@@ -161,6 +174,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
             mGiveFavourableCommentBtn.setVisibility(View.GONE);
             mGiveFavourableCommentImv.setVisibility(View.GONE);
         }
+        mHandler = new Handler();
 
         return mRootView;
     }
@@ -186,7 +200,14 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         refreshSatisfyRate();
         refreshMoreData();
         refreshCity(Globals.getCurrentCityInfo().getCName());
-
+        refreshCurrentNoticeDrawable();
+        if(mPagecount > 0){
+        	// 这两行代码用来解决onResume之后，首次定时器触发后，动画不正确的问题……
+        	// 原理未知，反正试出来的。--fengtianxiao 2013.08.07
+        	mViewPager.setCurrentItem(mViewPager.getCurrentItem()+1);
+        	mViewPager.setCurrentItem(mViewPager.getCurrentItem()-1);
+        }
+        mHandler.postDelayed(mNoticeNextRun, 4000);
     }
     public void refreshMoreData() {
     	refreshMoreNotice(null);
@@ -217,13 +238,17 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         	        	Utility.pageIndicatorInit(mSphinx, mPageIndicatorView, mPagecount, 0, R.drawable.ic_learn_dot_normal, R.drawable.ic_learn_dot_selected);
         	        	mNoticeRly.setVisibility(View.VISIBLE);
         	        	mViewPager.setCurrentItem(mPagecount * VIEW_PAGE_LEFT);
+        	        	mPosition = 0;
         	        	mViewPager.setOnPageChangeListener(new OnPageChangeListener() {
         	        		
         	        		@Override
         	        		public void onPageSelected(int index) {
-        	        			index = index % mPagecount;
-        	        			Utility.pageIndicatorChanged(mSphinx, mPageIndicatorView, index, R.drawable.ic_learn_dot_normal, R.drawable.ic_learn_dot_selected);
-        	        			mActionLog.addAction(mActionTag+ActionLog.ViewPageSelected, index);
+        	        			LogWrapper.d("Trap", "Select:"+index);
+        	        			mHandler.removeCallbacks(mNoticeNextRun);
+        	        			mHandler.postDelayed(mNoticeNextRun, 4000);
+        	        			mPosition = index % mPagecount;
+        	        			Utility.pageIndicatorChanged(mSphinx, mPageIndicatorView, mPosition, R.drawable.ic_learn_dot_normal, R.drawable.ic_learn_dot_selected);
+        	        			mActionLog.addAction(mActionTag+ActionLog.ViewPageSelected, mPosition);
         	        		}
         	        		
         	        		@Override
@@ -279,6 +304,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     @Override
     public void onPause() {
         super.onPause();
+        mHandler.removeCallbacks(mNoticeNextRun);
     }
     
     protected void findViews() {
@@ -342,7 +368,8 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 				}
 			});
         }
-        mViewPager.setAdapter(new MyAdapter());
+        mMyAdapter = new MyAdapter();
+        mViewPager.setAdapter(mMyAdapter);
     }
 
     @Override
@@ -451,6 +478,12 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         }
     }
     
+    private void refreshCurrentNoticeDrawable(){
+    	if(mPagecount >= 0 && getView(mPosition).getClass() == ImageView.class){
+    		refreshDrawable(mNoticeList.get(mPosition).getpicTkDrawable(), (ImageView)getView(mPosition), R.drawable.txt_app_name);
+    	}
+    }
+    
 
     
     private void refreshDrawable(TKDrawable tkDrawable, ImageView imageView, int defaultResId){
@@ -511,14 +544,12 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 	
 	    @Override
 	    public void destroyItem(View contain, int position, Object arg2) {
-	    	LogWrapper.d("Trap", "Remove:"+position);
 	         ((ViewPager) contain).removeView(getView(position));
 	    }
 	
 	    @Override
 	    public Object instantiateItem(ViewGroup contain, int position) {
 	        View view = getView(position);
-	        LogWrapper.d("Trap", "Pos:"+position);
 	        final int fPosition = position;
 	        view.setOnClickListener(new OnClickListener() {
 				
