@@ -400,6 +400,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     public void onCancelled(TKAsyncTask tkAsyncTask) {
         super.onCancelled(tkAsyncTask);
         logi("onCancelled");
+        Toast.makeText(mContext, mSphinx.getString(R.string.response_null_hotel_order_sync), Toast.LENGTH_LONG).show();
     }
     
     Handler mLoadOrderHandler = new Handler(){
