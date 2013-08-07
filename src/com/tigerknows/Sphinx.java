@@ -450,7 +450,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         
         mContext = getBaseContext();
         mSensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
-        Sensor sensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
+        mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
         
         mMapEngine = MapEngine.getInstance();
         try {
@@ -477,7 +477,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             findViews();
             setListener();
 
-            if (sensor != null) {
+            if (mSensor != null) {
                 mSensorOrientation = true;
             }
             
@@ -493,10 +493,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             mMyLocationOverlay.addOverlayItem(mMyLocation);
             
             mMapView.addOverlay(mMyLocationOverlay);
-
-            if (mSensorOrientation) {
-                mSensorManager.registerListener(mSensorListener, sensor, SensorManager.SENSOR_DELAY_NORMAL);
-            }
             
             CityInfo lastCityInfo = Globals.getLastCityInfo(getApplicationContext());
             if(lastCityInfo != null && lastCityInfo.isAvailably()){
@@ -1134,6 +1130,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 		    mTrafficQueryFragment = null;
 		}
 
+        if (mSensorOrientation) {
+            mSensorManager.registerListener(mSensorListener, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        }
+
         Globals.setConnectionFast(Utility.isConnectionFast(this));
         Globals.getAsyncImageLoader().onResume();
         
@@ -1208,9 +1208,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         }
         Globals.getImageCache().stopWritingAndRemoveOldTiles();
 		LogWrapper.i("Sphinx","onDestroy()");
-        if (mSensorOrientation) {
-            mSensorManager.unregisterListener(mSensorListener);
-        }
         if(DiscoverChildListFragment.viewQueueForChangciItems!=null){
         	DiscoverChildListFragment.viewQueueForChangciItems.clear();
         }
@@ -1843,6 +1840,11 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         LogWrapper.i(TAG, "onPause");
         mActionLog.onPause();
         mOnPause = true;
+
+        if (mSensorOrientation) {
+            mSensorManager.unregisterListener(mSensorListener);
+        }
+        
         int id = uiStackPeek();
         BaseFragment baseFragment = getFragment(id);
         if (baseFragment != null) {
@@ -4085,6 +4087,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 
     protected boolean mSensorOrientation = false;
     private SensorManager mSensorManager=null;
+    private Sensor mSensor;
     private float rotateZ = 365;
     private SensorEventListener mSensorListener=new SensorEventListener() {
         public void onSensorChanged(SensorEvent event) {
