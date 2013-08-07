@@ -164,6 +164,11 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     DateListView getDateListView() {
         if (mDateListView == null) {
             DateListView view = new DateListView(mSphinx);
+            View v = mInflater.inflate(R.layout.time_list_item, view, false);
+            v.setBackgroundResource(R.drawable.list_selector_background_gray_dark);
+            v.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+            int h = v.getMeasuredHeight();
+            view.findViewById(R.id.body_view).getLayoutParams().height = h*5-(int)(Globals.g_metrics.density*8);
             view.setData(this, mPOIDetailFragment.mActionTag);
             mDateListView = view;
         }
