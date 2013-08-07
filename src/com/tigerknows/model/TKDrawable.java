@@ -78,11 +78,9 @@ public class TKDrawable extends XMapData implements Parcelable {
                 new ImageCallback() {
                     // 请参见实现：如果第一次加载url时下面方法会执行
                     public void imageLoaded(BitmapDrawable imageDrawable) {
-                        if (imageDrawable == null) {
-                            return;
-                        }
-                        if (activity != null && action != null)
+                        if (activity != null && action != null) {
                             activity.runOnUiThread(action);
+                        }
                     }
                 });
         drawable = cacheImage;

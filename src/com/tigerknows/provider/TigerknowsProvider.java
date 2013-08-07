@@ -8,6 +8,7 @@ import com.decarta.android.util.LogWrapper;
 import com.tigerknows.TKConfig;
 import com.tigerknows.provider.Tigerknows.Favorite;
 import com.tigerknows.provider.Tigerknows.History;
+import com.tigerknows.provider.Tigerknows.TransitPlan;
 
 import android.content.ContentProvider;
 import android.content.ContentResolver;
@@ -333,11 +334,13 @@ public class TigerknowsProvider extends ContentProvider {
                 break;
                 
             case TRANSITPLAN:
+                deletePlanDetail(url, where, whereArgs);
                 count = db.delete("transitplan", where, whereArgs);
                 break;
                 
             case TRANSITPLAN_ID:
-                myWhere = "_id=" + url.getPathSegments().get(1) + (!TextUtils.isEmpty(where) ? " AND (" + where + ")" : "");  
+                myWhere = "_id=" + url.getPathSegments().get(1) + (!TextUtils.isEmpty(where) ? " AND (" + where + ")" : "");
+                deletePlanDetail(TransitPlan.CONTENT_URI, where, whereArgs);  
                 count = db.delete("transitplan", myWhere, whereArgs);
                 break;
                 
@@ -478,6 +481,41 @@ public class TigerknowsProvider extends ContentProvider {
                         default:
                             break;
                     }
+                    c.moveToNext();
+                }
+            }
+            c.close();
+        }
+    }
+    
+    private void deletePlanDetail(Uri url, String where, String[] whereArgs) {
+        // Cursor c = query(url, null, where, whereArgs, null);
+        // 因为上一行的query()有Limit为20的限制，导致不能全部删除，所以用qb.query()查询表中所有行
+        SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
+        qb.setTables("transitplan");
+        qb.setProjectionMap(TRANSITPLAN_LIST_PROJECTION_MAP);
+        SQLiteDatabase db = mOpenHelper.getReadableDatabase();
+        Cursor c = qb.query(db, null, where, whereArgs,
+                null, null, null, null);
+        if (c != null) {
+            int count = c.getCount();
+            if (count > 0) {
+                c.moveToFirst();
+                int id;
+                StringBuilder s = new StringBuilder();
+                for(int i = 0; i < count; i++) {
+                    id = c.getInt(c.getColumnIndex(TransitPlan.START));
+                    s.append("(");
+                    s.append(Tigerknows.POI._ID);
+                    s.append("=");
+                    s.append(id);
+                    s.append(") OR (");
+                    id = c.getInt(c.getColumnIndex(TransitPlan.END));
+                    s.append(Tigerknows.POI._ID);
+                    s.append("=");
+                    s.append(id);
+                    s.append(")");
+                    delete(Tigerknows.POI.CONTENT_URI, s.toString(), null);
                     c.moveToNext();
                 }
             }

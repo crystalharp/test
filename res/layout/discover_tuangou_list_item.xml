@@ -92,7 +92,7 @@
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/price_txv"
         android:layout_above="@id/buyer_num_txv"
-        android:textColor="@color/black_light"
+        android:textColor="@color/orange"
         android:textSize="14sp"
         android:text="@string/rmb_text"
         android:singleLine="true"

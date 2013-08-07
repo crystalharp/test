@@ -16,8 +16,11 @@
 
 package com.tigerknows.util;
 
+import com.tigerknows.TKConfig;
+
 import android.content.Context;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
@@ -44,7 +47,7 @@ public abstract class PinyinUtil {
         StringBuffer sb = new StringBuffer("");
         RandomAccessFile is = null;
         try {
-            is = new RandomAccessFile(PinyinSource.getFile(context), "r");
+            is = new RandomAccessFile(new File(TKConfig.getDataPath(false)+"pinyin4android"), "r");
             for (int i = 0; i < hanzi.length(); i++) {
                 char ch = hanzi.charAt(i);
                 if (ch >= 'A' && ch <= 'Z') {
