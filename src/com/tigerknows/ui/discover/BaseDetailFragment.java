@@ -108,6 +108,8 @@ public class BaseDetailFragment extends DiscoverBaseFragment implements View.OnC
     @Override
     public void dismiss() {
         super.dismiss();
+        mNextImageView.setVisibility(View.GONE);
+        mPrevImageView.setVisibility(View.GONE);
         for(int i = mCyclePagerAdapter.viewList.size()-1; i >= 0; i--) {
             BaseDetailView view = (BaseDetailView) mCyclePagerAdapter.viewList.get(i);
             view.dismiss();
