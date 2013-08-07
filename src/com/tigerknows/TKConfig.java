@@ -508,6 +508,11 @@ public class TKConfig {
     public static final String PREFS_HINT_POI_HOME_HOTEL = "prefs_hint_poi_home_hotel";
 
     /**
+     * 是否已显示POI主页界面的指定点搜索的引导
+     */
+    public static final String PREFS_HINT_POI_HOME_LOCATION = "prefs_hint_poi_home_location";
+
+    /**
      * 是否已显示酒店主页界面的用户引导
      */
     public static final String PREFS_HINT_HOTEL_HOME = "prefs_hint_hotel_home";
