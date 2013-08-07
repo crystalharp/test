@@ -22,6 +22,7 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.PopupWindow.OnDismissListener;
+import android.widget.Toast;
 
 import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
@@ -604,6 +605,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
 
             if (baseQuery instanceof DataOperation) {
                 if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, false, this, false)) {
+                    Toast.makeText(mSphinx, mSphinx.getString(R.string.network_failed), Toast.LENGTH_SHORT).show();
                     loadSucceed(false);
                     refresh();
                     return;
