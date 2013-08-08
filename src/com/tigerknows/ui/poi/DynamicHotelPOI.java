@@ -8,6 +8,7 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 
+import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.text.Html;
@@ -44,6 +45,7 @@ import com.tigerknows.model.ProxyQuery;
 import com.tigerknows.model.Response;
 import com.tigerknows.model.Hotel.RoomType;
 import com.tigerknows.model.TKDrawable;
+import com.tigerknows.model.TKDrawable.LoadImageRunnable;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.hotel.DateListView;
 import com.tigerknows.ui.hotel.DateWidget;
@@ -425,24 +427,11 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         if (picList != null && picList.size() > 0) {
             final TKDrawable tkDrawable = picList.get(0).getTKDrawable();
             if (tkDrawable != null) {
-                Drawable hotelImageDraw = tkDrawable.loadDrawable(mSphinx, new Runnable() {
-    
-                    @Override
-                    public void run() {
-                        Drawable drawable = tkDrawable.loadDrawable(null, null, null);
-                        if (drawable != null) {
-                            if(drawable.getBounds().width() != hotelImage.getWidth() || drawable.getBounds().height() != hotelImage.getHeight() ){
-                                hotelImage.setBackgroundDrawable(null);
-                            }
-                            hotelImage.setBackgroundDrawable(drawable);
-//                        } else {
-//                            hotelImage.setBackgroundResource(R.drawable.bg_picture_hotel);
-                        }
-                    }
-                    
-                }, mPOIDetailFragment.toString());
+                LoadImageRunnable loadImageRunnable = new LoadImageRunnable(mSphinx, tkDrawable, hotelImage, R.drawable.bg_picture_hotel, mPOIDetailFragment.toString());
+                Drawable hotelImageDraw = tkDrawable.loadDrawable(mSphinx, loadImageRunnable, mPOIDetailFragment.toString());
                 if (hotelImageDraw != null) {
-                    if(hotelImageDraw.getBounds().width() != hotelImage.getWidth() || hotelImageDraw.getBounds().height() != hotelImage.getHeight() ){
+                    Rect bounds = hotelImageDraw.getBounds();
+                    if(bounds != null && bounds.width() != hotelImage.getWidth() || bounds.height() != hotelImage.getHeight() ){
                         hotelImage.setBackgroundDrawable(null);
                     }
                     hotelImage.setBackgroundDrawable(hotelImageDraw);

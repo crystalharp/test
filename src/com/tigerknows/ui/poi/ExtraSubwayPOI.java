@@ -90,7 +90,12 @@ public class ExtraSubwayPOI extends DynamicPOIView {
             final TextView busstopTxv = (TextView) v.findViewById(R.id.busstop_txv);
             
             exitTxv.setText(exit.getExit());
-            landmarkTxv.setText(exit.getLandmark());
+            String landmark = exit.getLandmark();
+            if (TextUtils.isEmpty(landmark)) {
+                landmarkTxv.setVisibility(View.GONE);
+            } else {
+                landmarkTxv.setText(exit.getLandmark());
+            }
             
             View busstopView = v.findViewById(R.id.busstop_view);
             List<Busstop> s = exit.getBusstops();
