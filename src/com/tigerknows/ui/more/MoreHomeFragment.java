@@ -53,7 +53,7 @@ import com.tigerknows.ui.user.UserLoginActivity;
 import com.tigerknows.util.Utility;
 
 /**
- * @author Peng Wenyue
+ * @author Peng Wenyue, Feng Tianxiao
  */
 public class MoreHomeFragment extends BaseFragment implements View.OnClickListener {
     
@@ -144,7 +144,8 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 
 	private MyAdapter mMyAdapter;
 	private int mPosition;
-    @Override
+
+	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mActionTag = ActionLog.More;
@@ -177,138 +178,6 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         mHandler = new Handler();
 
         return mRootView;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        mMenuFragment.updateMenuStatus(R.id.more_btn);
-        mLeftBtn.setVisibility(View.INVISIBLE);
-        mTitleBtn.setText(R.string.more);
-        mRightBtn = mSphinx.getTitleFragment().getRightTxv();
-        mRightBtn.setOnClickListener(this);
-        mRightBtn.setVisibility(View.VISIBLE);
-        mRightBtn.setEnabled(true);
-        mRightBtn.setBackgroundDrawable(getResources().getDrawable(R.drawable.btn_settings));
-        if (mDismissed) {
-            //mListLsv.setSelection(0);
-        }
-
-        mMenuFragment.display();
-        
-        refreshUserEntrance();
-        refreshSatisfyRate();
-        refreshMoreData();
-        refreshCity(Globals.getCurrentCityInfo().getCName());
-        refreshCurrentNoticeDrawable();
-        if(mPagecount > 1){
-        	// 这两行代码用来解决onResume之后，首次定时器触发后，动画不正确的问题……
-        	// 并且这样就不需要在onResume里调用mHandler.postDelayed(mNoticeNextRun, 4000);了
-        	// 原理未知，反正试出来的。--fengtianxiao 2013.08.07
-        	mViewPager.setCurrentItem(mViewPager.getCurrentItem()+1);
-        	mViewPager.setCurrentItem(mViewPager.getCurrentItem()-1);
-        }
-    }
-    public void refreshMoreData() {
-    	refreshMoreNotice(null);
-    	refreshAppRecommendData();
-    }
-    private void refreshSatisfyRate() {
-    	if (TextUtils.isEmpty(TKConfig.getPref(mContext, TKConfig.PREFS_SATISFY_RATE_OPENED, ""))){
-    		Drawable[] drawables = mSatisfyRateBtn.getCompoundDrawables();
-    		drawables[2] = mContext.getResources().getDrawable(R.drawable.ic_satisfy_new);
-    		drawables[2].setBounds(0, 0, drawables[2].getIntrinsicWidth(), drawables[2].getIntrinsicHeight());
-    		mSatisfyRateBtn.setCompoundDrawables(drawables[0], drawables[1], drawables[2], drawables[3]);
-    		mSatisfyRateBtn.setCompoundDrawablePadding(Utility.dip2px(mContext, 20));
-    	}else{
-    		Drawable[] drawables = mSatisfyRateBtn.getCompoundDrawables();
-    		mSatisfyRateBtn.setCompoundDrawables(drawables[0], drawables[1], null, drawables[3]);
-    	}
-    }        
-    public void refreshMoreNotice(NoticeResultResponse noticeResultResponse) {
-    	
-    	if(mNoticeResultResponse == null){
-        	mNoticeResultResponse = noticeResultResponse;
-        	if(mNoticeResultResponse != null){
-        		mNoticeResult = mNoticeResultResponse.getNoticeResult();
-        		if(mNoticeResult != null){
-        			mPagecount = (int)mNoticeResult.getNum();
-        			mNoticeList = mNoticeResult.getNoticeList();
-        	        if(mPagecount > 1){
-        	        	Utility.pageIndicatorInit(mSphinx, mPageIndicatorView, mPagecount, 0, R.drawable.ic_learn_dot_normal, R.drawable.ic_learn_dot_selected);
-        	        	mNoticeRly.setVisibility(View.VISIBLE);
-        	        	mViewPager.setCurrentItem(mPagecount * VIEW_PAGE_LEFT);
-        	        	mPosition = 0;
-        	        	mViewPager.setOnPageChangeListener(new OnPageChangeListener() {
-        	        		
-        	        		@Override
-        	        		public void onPageSelected(int index) {
-        	        			LogWrapper.d("Trap", "Select:"+index);
-        	        			mHandler.removeCallbacks(mNoticeNextRun);
-        	        			mHandler.postDelayed(mNoticeNextRun, 4000);
-        	        			mPosition = index % mPagecount;
-        	        			Utility.pageIndicatorChanged(mSphinx, mPageIndicatorView, mPosition, R.drawable.ic_learn_dot_normal, R.drawable.ic_learn_dot_selected);
-        	        			mActionLog.addAction(mActionTag+ActionLog.ViewPageSelected, mPosition);
-        	        		}
-        	        		
-        	        		@Override
-        	        		public void onPageScrolled(int arg0, float arg1, int arg2) {
-        	        		}
-        	        		
-        	        		@Override
-        	        		public void onPageScrollStateChanged(int index) {
-        	        			index = index % mPagecount;
-        	        		}
-        	        	});
-        	        }else if(mPagecount == 1){
-        	        	mNoticeRly.setVisibility(View.VISIBLE);
-        	        	mViewPager.setCurrentItem(0);
-        	        	mPosition = 0;
-        	        }
-        		}
-        	}else if(mPagecount < 0){
-             	NoticeQuery noticeQuery = new NoticeQuery(mSphinx);
-                Hashtable<String, String> criteria = new Hashtable<String, String>();
-                noticeQuery.setup(criteria, Globals.getCurrentCityInfo().getId());
-                mSphinx.queryStart(noticeQuery);        		
-        	}
-    	}
-    	LogWrapper.d("Trap", "size:"+(mNoticeList == null ? -1 : mNoticeList.size()));
-        
-        // 满意度评分(不是button)
-        if(TextUtils.isEmpty(TKConfig.getPref(mContext, TKConfig.PREFS_SATISFY_RATE_OPENED, ""))){
-        	mSphinx.getMenuFragment().setFragmentMessage(View.VISIBLE);
-        	return;
-        }
-    }
-    
-    public void refreshAppRecommendData(){
-    	BootstrapModel bootstrapModel = Globals.g_Bootstrap_Model;
-        if (bootstrapModel != null) {
-            Recommend recommend = bootstrapModel.getRecommend();
-            if (recommend != null) {
-                if (recommend.getRecommendAppList() == null) {
-                    return;
-                }
-                mRecommendAppList.clear();
-                mRecommendAppList.addAll(recommend.getRecommendAppList());
-                final int len = Math.min(mRecommendAppList.size(), NUM_APP_RECOMMEND);
-                for (int i=0; i<NUM_APP_RECOMMEND && i<len; i++){
-                	refreshDrawable(mRecommendAppList.get(i).getIcon(), mAppRecommendImv[i], R.drawable.bg_picture_hotel_none);
-                	mAppRecommendTxv[i].setText(mRecommendAppList.get(i).getName());
-                }
-            }
-        }else{
-            Bootstrap bootstrap = new Bootstrap(mSphinx);
-            bootstrap.setup(null, Globals.getCurrentCityInfo().getId());
-            mSphinx.queryStart(bootstrap);        	
-        }
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        mHandler.removeCallbacks(mNoticeNextRun);
     }
     
     protected void findViews() {
@@ -374,6 +243,43 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         }
         mMyAdapter = new MyAdapter();
         mViewPager.setAdapter(mMyAdapter);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mMenuFragment.updateMenuStatus(R.id.more_btn);
+        mLeftBtn.setVisibility(View.INVISIBLE);
+        mTitleBtn.setText(R.string.more);
+        mRightBtn = mSphinx.getTitleFragment().getRightTxv();
+        mRightBtn.setOnClickListener(this);
+        mRightBtn.setVisibility(View.VISIBLE);
+        mRightBtn.setEnabled(true);
+        mRightBtn.setBackgroundDrawable(getResources().getDrawable(R.drawable.btn_settings));
+        if (mDismissed) {
+            //mListLsv.setSelection(0);
+        }
+
+        mMenuFragment.display();
+        
+        refreshUserEntrance();
+        refreshSatisfyRate();
+        refreshMoreData();
+        refreshCity(Globals.getCurrentCityInfo().getCName());
+        refreshCurrentNoticeDrawable();
+        if(mPagecount > 1){
+        	// 这两行代码用来解决onResume之后，首次定时器触发后，动画不正确的问题……
+        	// 并且这样就不需要在onResume里调用mHandler.postDelayed(mNoticeNextRun, 4000);了
+        	// 原理未知，反正试出来的。--fengtianxiao 2013.08.07
+        	mViewPager.setCurrentItem(mViewPager.getCurrentItem()+1);
+        	mViewPager.setCurrentItem(mViewPager.getCurrentItem()-1);
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mHandler.removeCallbacks(mNoticeNextRun);
     }
 
     @Override
@@ -454,6 +360,104 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         localIntent.setData(Uri.parse(str));  
         return localIntent;
     }
+
+    public void refreshMoreData() {
+    	refreshMoreNotice(null);
+    	refreshAppRecommendData();
+    }
+
+    public void refreshMoreNotice(NoticeResultResponse noticeResultResponse) {
+    	
+    	if(mNoticeResultResponse == null){
+        	mNoticeResultResponse = noticeResultResponse;
+        	if(mNoticeResultResponse != null){
+        		mNoticeResult = mNoticeResultResponse.getNoticeResult();
+        		if(mNoticeResult != null){
+        			mPagecount = (int)mNoticeResult.getNum();
+        			mNoticeList = mNoticeResult.getNoticeList();
+        	        if(mPagecount > 1){
+        	        	Utility.pageIndicatorInit(mSphinx, mPageIndicatorView, mPagecount, 0, R.drawable.ic_learn_dot_normal, R.drawable.ic_learn_dot_selected);
+        	        	mNoticeRly.setVisibility(View.VISIBLE);
+        	        	mViewPager.setCurrentItem(mPagecount * VIEW_PAGE_LEFT);
+        	        	mPosition = 0;
+        	        	mViewPager.setOnPageChangeListener(new OnPageChangeListener() {
+        	        		
+        	        		@Override
+        	        		public void onPageSelected(int index) {
+        	        			LogWrapper.d("Trap", "Select:"+index);
+        	        			mHandler.removeCallbacks(mNoticeNextRun);
+        	        			mHandler.postDelayed(mNoticeNextRun, 4000);
+        	        			mPosition = index % mPagecount;
+        	        			Utility.pageIndicatorChanged(mSphinx, mPageIndicatorView, mPosition, R.drawable.ic_learn_dot_normal, R.drawable.ic_learn_dot_selected);
+        	        			mActionLog.addAction(mActionTag+ActionLog.ViewPageSelected, mPosition);
+        	        		}
+        	        		
+        	        		@Override
+        	        		public void onPageScrolled(int arg0, float arg1, int arg2) {
+        	        		}
+        	        		
+        	        		@Override
+        	        		public void onPageScrollStateChanged(int index) {
+        	        			index = index % mPagecount;
+        	        		}
+        	        	});
+        	        }else if(mPagecount == 1){
+        	        	mNoticeRly.setVisibility(View.VISIBLE);
+        	        	mViewPager.setCurrentItem(0);
+        	        	mPosition = 0;
+        	        }
+        		}
+        	}else if(mPagecount < 0){
+             	NoticeQuery noticeQuery = new NoticeQuery(mSphinx);
+                Hashtable<String, String> criteria = new Hashtable<String, String>();
+                noticeQuery.setup(criteria, Globals.getCurrentCityInfo().getId());
+                mSphinx.queryStart(noticeQuery);        		
+        	}
+    	}
+    	LogWrapper.d("Trap", "size:"+(mNoticeList == null ? -1 : mNoticeList.size()));
+        
+        // 满意度评分(不是button)
+        if(TextUtils.isEmpty(TKConfig.getPref(mContext, TKConfig.PREFS_SATISFY_RATE_OPENED, ""))){
+        	mSphinx.getMenuFragment().setFragmentMessage(View.VISIBLE);
+        	return;
+        }
+    }
+    
+    public void refreshAppRecommendData(){
+    	BootstrapModel bootstrapModel = Globals.g_Bootstrap_Model;
+        if (bootstrapModel != null) {
+            Recommend recommend = bootstrapModel.getRecommend();
+            if (recommend != null) {
+                if (recommend.getRecommendAppList() == null) {
+                    return;
+                }
+                mRecommendAppList.clear();
+                mRecommendAppList.addAll(recommend.getRecommendAppList());
+                final int len = Math.min(mRecommendAppList.size(), NUM_APP_RECOMMEND);
+                for (int i=0; i<NUM_APP_RECOMMEND && i<len; i++){
+                	refreshDrawable(mRecommendAppList.get(i).getIcon(), mAppRecommendImv[i], R.drawable.bg_picture_hotel_none);
+                	mAppRecommendTxv[i].setText(mRecommendAppList.get(i).getName());
+                }
+            }
+        }else{
+            Bootstrap bootstrap = new Bootstrap(mSphinx);
+            bootstrap.setup(null, Globals.getCurrentCityInfo().getId());
+            mSphinx.queryStart(bootstrap);        	
+        }
+    }
+
+    private void refreshSatisfyRate() {
+    	if (TextUtils.isEmpty(TKConfig.getPref(mContext, TKConfig.PREFS_SATISFY_RATE_OPENED, ""))){
+    		Drawable[] drawables = mSatisfyRateBtn.getCompoundDrawables();
+    		drawables[2] = mContext.getResources().getDrawable(R.drawable.ic_satisfy_new);
+    		drawables[2].setBounds(0, 0, drawables[2].getIntrinsicWidth(), drawables[2].getIntrinsicHeight());
+    		mSatisfyRateBtn.setCompoundDrawables(drawables[0], drawables[1], drawables[2], drawables[3]);
+    		mSatisfyRateBtn.setCompoundDrawablePadding(Utility.dip2px(mContext, 20));
+    	}else{
+    		Drawable[] drawables = mSatisfyRateBtn.getCompoundDrawables();
+    		mSatisfyRateBtn.setCompoundDrawables(drawables[0], drawables[1], null, drawables[3]);
+    	}
+    }        
     
     public void refreshCity(String cityName) {
         mCityName = cityName;
@@ -488,8 +492,6 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     	}
     }
     
-
-    
     private void refreshDrawable(TKDrawable tkDrawable, ImageView imageView, int defaultResId){
     	if (tkDrawable != null) {
     		Drawable drawable = tkDrawable.loadDrawable(mSphinx, mLoadedDrawableRun, MoreHomeFragment.this.toString());
@@ -500,7 +502,6 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     		}
     	}
     }
-
 
     public View getView(int position) {
     	position = position % mPagecount;
@@ -525,6 +526,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         	return view;
         }
     }    
+
 	public class MyAdapter extends PagerAdapter {
 	    
 	    public MyAdapter() {
