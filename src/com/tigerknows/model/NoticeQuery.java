@@ -2,13 +2,10 @@ package com.tigerknows.model;
 
 import java.util.List;
 
-import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
 import com.tigerknows.TKConfig;
 import com.tigerknows.model.test.NoticeQueryTest;
 import com.tigerknows.model.xobject.XMap;
-import com.tigerknows.util.Utility;
-
 import android.content.Context;
 
 public class NoticeQuery extends BaseQuery {

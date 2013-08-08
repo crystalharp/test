@@ -96,12 +96,9 @@ public class UserUpdateNickNameActivity extends UserBaseActivity {
 					return;
 				}
 				
-				String nickName = null;
 				User user = Globals.g_User;
 				if (user == null) {
 				    onBack();
-				} else {
-				    nickName = user.getNickName();
 				}
 				if (!UserRegistActivity.class.getName().equals(getCallingActivity().getClassName())
 						&& !TextUtils.equals(nickNameEdt.getText().toString().trim(), getString(R.string.default_nick_name))

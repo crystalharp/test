@@ -38,7 +38,6 @@ import com.tigerknows.TKConfig;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BaseQuery;
-import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.HotelOrder;
 import com.tigerknows.model.HotelOrderOperation;
 import com.tigerknows.model.HotelOrderOperation.HotelOrderSyncResponse;
@@ -87,15 +86,11 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
      */
     private TextView mServiceHotlineTxv;
 
-    private DataQuery mDataQuery;
-
-	private HotelOrderAdapter hotelOrderAdapter;
+    private HotelOrderAdapter hotelOrderAdapter;
     
 	private int orderTotal = 0;
 	
 	private List<HotelOrder> orders = new ArrayList<HotelOrder>();
-    
-    private int fragmentState;
     
     /**
      * 需要查询状态的订单的buffer
@@ -136,7 +131,6 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     public void dismiss() {
         super.dismiss();
         clearOrders();
-        mDataQuery = null;
     }
     
     /**
@@ -405,6 +399,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     
     Handler mLoadOrderHandler = new Handler(){
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
@@ -489,7 +484,8 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     /**
      * Launch make and launch state query from list {@code ordersQuerying}
      */
-    private void launchStateQuery(){
+    @SuppressWarnings("unused")
+	private void launchStateQuery(){
 
     	System.out.println("launchStateQuery");
     	
