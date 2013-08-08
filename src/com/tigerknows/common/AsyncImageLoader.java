@@ -26,7 +26,7 @@ public class AsyncImageLoader {
     
     static final String TAG = "AsyncImageLoader";
     
-    static final int THREAD_COUNT = 1;
+    static final int THREAD_COUNT = 3;
     
     // 为了加快速度，在内存中开启缓存（主要应用于重复图片较多时，或者同一个图片要多次被访问，比如在ListView时来回滚动）
     public LinkedHashMap<String, SoftReference<BitmapDrawable>> imageCache = new LinkedHashMap<String, SoftReference<BitmapDrawable>>(TKConfig.IMAGE_CACHE_SIZE_MEMORY,0.75f,true);
@@ -40,7 +40,7 @@ public class AsyncImageLoader {
      */
     static final int NEW_HTTP_CLIENT_TIME_INTERVAL = 500;
     
-    private HttpClient mHttpClient;
+    private List<HttpClient> mHttpClientList = new ArrayList<HttpClient>();
     
     private String viewToken = "";
 
@@ -136,7 +136,7 @@ public class AsyncImageLoader {
 
                 			  synchronized (imageUrl.url) {
                     			  imageUrl.url.notifyAll();	
-							}
+							  }
                 			  
                 		  }
                 	  }
@@ -188,12 +188,20 @@ public class AsyncImageLoader {
                 return null;
             }
             
-            if (mHttpClient == null) {
-                mHttpClient = HttpManager.getNewHttpClient();
+            HttpClient mHttpClient = null;
+            synchronized (mHttpClientList) {
+                if (mHttpClientList.size() > 0) {
+                    mHttpClient = mHttpClientList.remove(0);
+                } else {
+                    mHttpClient = HttpManager.getNewHttpClient();
+                }
             }
             
             try {
 				byte[] data = HttpManager.openUrl(context, mHttpClient, imageUrl.url, "GET", new WeiboParameters());
+                synchronized (mHttpClientList) {
+                    mHttpClientList.add(mHttpClient);
+                }
 				ImageCache imageCache1 = Globals.getImageCache();
 				final String name = imageUrl.url.substring(imageUrl.url.lastIndexOf("/")+1);
 				imageCache1.putImage(name, data);
@@ -206,13 +214,10 @@ public class AsyncImageLoader {
                 return bm;
             } catch (Exception e) {
                 LogWrapper.d(TAG, "loadImageFromUrl() Failed="+imageUrl.url);
-                mHttpClient = null;
                 e.printStackTrace();
             }
             
-            if (mHttpClient == null) {
-                Thread.sleep(NEW_HTTP_CLIENT_TIME_INTERVAL);
-            }
+            Thread.sleep(NEW_HTTP_CLIENT_TIME_INTERVAL);
             
             return null;
 
@@ -236,7 +241,13 @@ public class AsyncImageLoader {
     }
     
     public void onDestory() {
-        stop("");
+        setViewToken("");
+        synchronized (mHttpClientList) {
+            for(int i = mHttpClientList.size()-1; i >=0 ; i--) {
+                HttpClient httpClient = mHttpClientList.remove(i);
+                httpClient.getConnectionManager().shutdown();
+            }
+        }
         if (executorService != null && executorService.isShutdown() == false) {
             executorService.shutdown();
         }
@@ -246,15 +257,6 @@ public class AsyncImageLoader {
     
     public void setViewToken(String viewToken) {
         this.viewToken = viewToken;
-    }
-    
-    public void stop(String viewToken) {
-        this.viewToken = "";
-        HttpClient httpClient = mHttpClient;
-        if (httpClient != null) {
-            httpClient.getConnectionManager().shutdown();
-            mHttpClient = null;
-        }
     }
     
     public static class TKURL {

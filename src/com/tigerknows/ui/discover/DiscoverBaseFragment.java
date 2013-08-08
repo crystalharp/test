@@ -23,7 +23,6 @@ public class DiscoverBaseFragment extends BaseFragment {
     @Override
     public void onPause() {
         super.onPause();
-        Globals.getAsyncImageLoader().stop(toString());
     }
 
     @Override
