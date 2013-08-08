@@ -3023,6 +3023,12 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             mDragHintView.removeAllViews();
             mDragHintView.setVisibility(View.VISIBLE);
             mLayoutInflater.inflate(R.layout.hint_poi_home_hotel, mDragHintView, true);
+        } else if (TKConfig.getPref(this, TKConfig.PREFS_HINT_POI_HOME_LOCATION) == null &&
+                mDragHintView.getVisibility() != View.VISIBLE) {
+            TKConfig.setPref(mThis, TKConfig.PREFS_HINT_POI_HOME_LOCATION, "1");
+            mDragHintView.removeAllViews();
+            mDragHintView.setVisibility(View.VISIBLE);
+            mLayoutInflater.inflate(R.layout.hint_poi_home_location, mDragHintView, true);
         }
         return true;
     }
@@ -3032,6 +3038,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             TKConfig.setPref(mThis, TKConfig.PREFS_HINT_POI_HOME_HOTEL, "1");
             mDragHintView.removeAllViews();
             mLayoutInflater.inflate(R.layout.hint_poi_home_hotel, mDragHintView, true);
+        } else if (TKConfig.getPref(mThis, TKConfig.PREFS_HINT_POI_HOME_LOCATION) == null) {
+            TKConfig.setPref(mThis, TKConfig.PREFS_HINT_POI_HOME_LOCATION, "1");
+            mDragHintView.removeAllViews();
+            mLayoutInflater.inflate(R.layout.hint_poi_home_location, mDragHintView, true);
         } else {
         	mDragHintView.setVisibility(View.GONE);
     		if (dialogId != -1) {
