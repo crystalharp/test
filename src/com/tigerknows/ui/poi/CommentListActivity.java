@@ -29,6 +29,7 @@ import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -127,6 +128,7 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
         mHotCommentLsv.setAdapter(mHotCommentAdapter);
         
         mTitleBtn.setText(R.string.all_comment);
+        mTitleBtn.setBackgroundResource(R.drawable.btn_all_comment_focused);
         mRightBtn.setVisibility(View.GONE);
         mCommentTipView.setVisibility(View.GONE);
         
@@ -477,13 +479,22 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
                 TextView dateTxv = (TextView) view.findViewById(R.id.date_txv);
                 TextView commentTxv = (TextView) view.findViewById(R.id.comment_txv);
                 TextView srcTxv = (TextView) view.findViewById(R.id.src_txv);
-                Button commend = (Button)view.findViewById(R.id.commend_btn);
+                View commendView = view.findViewById(R.id.commend_view);
+                TextView commendTxv = (TextView)view.findViewById(R.id.commend_txv);
+                ImageView commendImv = (ImageView)view.findViewById(R.id.commend_imv);
                 TextView avgTxv = (TextView) view.findViewById(R.id.avg_txv);
                 
                 Comment comment = getItem(position);
-                commend.setTag(comment);
-                commend.setOnClickListener(CommentListActivity.this);
-                commend.setText(String.valueOf(comment.getLikes()));
+                commendView.setTag(comment);
+                commendView.setOnClickListener(CommentListActivity.this);
+                commendTxv.setText(String.valueOf(comment.getLikes()));
+                if (comment.isCommend()) {
+                    commendTxv.setTextColor(TKConfig.COLOR_ORANGE);
+                    commendImv.setImageResource(R.drawable.ic_commend_enabled);
+                } else {
+                    commendTxv.setTextColor(TKConfig.COLOR_BLACK_LIGHT);
+                    commendImv.setImageResource(R.drawable.ic_commend_disabled);
+                }
                 
                 long avg = comment.getAvg();
                 if (avg > 0) {
@@ -577,6 +588,7 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
                     srcTxv.setMovementMethod(LinkMovementMethod.getInstance()); 
                 }
             } catch (Exception e) {
+                e.printStackTrace();
             }
             
             return view;
@@ -679,7 +691,7 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
             changeMode(true);
         } else if (id == R.id.hot_btn) {
             changeMode(false);
-        } else if (id == R.id.commend_btn) {
+        } else if (id == R.id.commend_view) {
             Comment comment = (Comment) v.getTag();
             if (comment.isCommend() == false) {
                 comment.setCommend(true);
@@ -687,6 +699,8 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
                 Comment.addCommend(mThis, uuid, false);
                 Comment.addCommend(mThis, uuid, true);
                 uploadCommend(this, Comment.uuid2Json(mThis, uuid));
+                mCommentAdapter.notifyDataSetChanged();
+                mHotCommentAdapter.notifyDataSetChanged();
             }
         }
     }
@@ -699,11 +713,15 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
             mCommentAdapter = this.mCommentAdapter;
             this.mCommentLsv.setVisibility(View.VISIBLE);
             this.mHotCommentLsv.setVisibility(View.GONE);
+            mTitleBtn.setBackgroundResource(R.drawable.btn_all_comment_focused);
+            mHotBtn.setBackgroundResource(R.drawable.btn_hot_comment);
         } else {
             mCommentLsv = this.mHotCommentLsv;
             mCommentAdapter = this.mHotCommentAdapter;
             this.mCommentLsv.setVisibility(View.GONE);
             this.mHotCommentLsv.setVisibility(View.VISIBLE);
+            mTitleBtn.setBackgroundResource(R.drawable.btn_all_comment);
+            mHotBtn.setBackgroundResource(R.drawable.btn_hot_comment_focused);
         }
         mCommentLsv.setFooterSpringback(false);
         DataQuery dataQuery;
