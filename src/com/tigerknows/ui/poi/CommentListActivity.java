@@ -27,10 +27,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RatingBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.decarta.Globals;
@@ -489,9 +492,12 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
                 TextView avgTxv = (TextView) view.findViewById(R.id.avg_txv);
                 
                 Comment comment = getItem(position);
-                commendView.setTag(comment);
+                commendView.setTag(R.id.commend_view, comment);
+                commendView.setTag(R.id.commend_imv, commendImv);
+                commendView.setTag(R.id.commend_txv, commendTxv);
                 commendView.setOnClickListener(CommentListActivity.this);
-                commendTxv.setText(String.valueOf(comment.getLikes()));
+                String likes = String.valueOf(comment.getLikes());
+                commendTxv.setText(likes);
                 if (comment.isCommend()) {
                     commendTxv.setTextColor(TKConfig.COLOR_ORANGE);
                     commendImv.setImageResource(R.drawable.ic_commend_enabled);
@@ -499,6 +505,8 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
                     commendTxv.setTextColor(TKConfig.COLOR_BLACK_LIGHT);
                     commendImv.setImageResource(R.drawable.ic_commend_disabled);
                 }
+                float right = likes.length()*Globals.g_metrics.density*8 + Globals.g_metrics.density*12;
+                ((RelativeLayout.LayoutParams) commendImv.getLayoutParams()).rightMargin = (int)right;
                 
                 long avg = comment.getAvg();
                 if (avg > 0) {
@@ -696,15 +704,20 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
         } else if (id == R.id.hot_btn) {
             changeMode(false);
         } else if (id == R.id.commend_view) {
-            Comment comment = (Comment) v.getTag();
+            Comment comment = (Comment) v.getTag(R.id.commend_view);
+            ImageView commendImv = (ImageView) v.getTag(R.id.commend_imv);
+            TextView commendTxv = (TextView) v.getTag(R.id.commend_txv);
             if (comment.isCommend() == false) {
                 comment.setCommend(true);
                 String uuid = comment.getUid();
                 Comment.addCommend(mThis, uuid, false);
                 Comment.addCommend(mThis, uuid, true);
                 uploadCommend(this, Comment.uuid2Json(mThis, uuid));
-                mCommentAdapter.notifyDataSetChanged();
-                mHotCommentAdapter.notifyDataSetChanged();
+                
+                commendTxv.setTextColor(TKConfig.COLOR_ORANGE);
+                commendImv.setImageResource(R.drawable.ic_commend_enabled);
+                Animation animation = AnimationUtils.loadAnimation(mThis, R.anim.commend);
+                commendImv.startAnimation(animation);
             }
         }
     }

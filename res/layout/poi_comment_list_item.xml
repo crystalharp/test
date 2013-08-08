@@ -29,21 +29,16 @@
 	        android:orientation="horizontal"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content" 
+	        android:layout_marginTop="8dp"
 	        android:layout_alignParentRight="true"
-	        android:padding="8dp"
+	        android:padding="10dp"
 	        android:gravity="center_vertical"
 	        android:background="@drawable/btn_subway_busstop">
-		    <ImageView
-		        android:id="@+id/commend_imv" 
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content" 
-		        android:src="@drawable/icon_right"
-		        android:background="@color/transparent"/>
 		    <TextView
 		        android:id="@+id/commend_txv" 
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content" 
-		        android:layout_marginLeft="12dp"
+		        android:layout_marginLeft="22dp"
 		        android:textColor="@color/black_light"
 		        android:textSize="12sp"
 		        android:autoLink="none"
@@ -51,6 +46,14 @@
 		        android:singleLine="true"
 		        android:ellipsize="end"/>
 	    </LinearLayout>
+	    <ImageView
+	        android:id="@+id/commend_imv" 
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content" 
+	        android:src="@drawable/ic_commend_disabled"
+	        android:background="@color/transparent"
+	        android:layout_marginTop="14dp"
+	        android:layout_alignParentRight="true"/>
 	    <RatingBar android:id="@+id/grade_rtb"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
