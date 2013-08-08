@@ -224,8 +224,7 @@ public class HelpActivity extends BaseActivity {
         
     };
     
-    @SuppressWarnings("deprecation")
-	private void updateAnimViews(AbsoluteLayout container){
+    private void updateAnimViews(AbsoluteLayout container){
     	
     	
     	for (int i = 0; i < animItems.length; i++) {
