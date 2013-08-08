@@ -37,6 +37,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -645,13 +646,14 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             int hotelPicWidth = 0;
             Hotel hotel = poi.getHotel();
             if (BaseQuery.SUB_DATA_TYPE_HOTEL.equals(subDataType) && hotel.getUuid() != null) {
-                if (hotel.getImageThumb() != null) {
-                    TKDrawable tkDrawable = hotel.getImageThumb();
+                TKDrawable tkDrawable = hotel.getImageThumb();
+                if (tkDrawable != null) {
                     Drawable drawable = tkDrawable.loadDrawable(activity, loadedDrawableRun, viewToken);
                     if(drawable != null) {
                         //To prevent the problem of size change of the same pic 
                         //After it is used at a different place with smaller size
-                        if( drawable.getBounds().width() != pictureImv.getWidth() || drawable.getBounds().height() != pictureImv.getHeight() ){
+                        Rect bounds = drawable.getBounds();
+                        if(bounds != null && bounds.width() != pictureImv.getWidth() || bounds.height() != pictureImv.getHeight() ){
                             pictureImv.setBackgroundDrawable(null);
                         }
                         pictureImv.setBackgroundDrawable(drawable);

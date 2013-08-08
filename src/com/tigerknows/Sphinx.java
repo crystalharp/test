@@ -20,6 +20,7 @@ import android.content.DialogInterface.OnDismissListener;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.AnimationDrawable;
@@ -2309,8 +2310,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 
                 int max = Globals.g_metrics.widthPixels - (int)(Globals.g_metrics.density*(188));
                 layoutInfoWindow(nameTxv, max);
-                if (hotel.getImageThumb() != null) {
-                    TKDrawable tkDrawable = hotel.getImageThumb();
+                TKDrawable tkDrawable = hotel.getImageThumb();
+                if (tkDrawable != null) {
                     Drawable drawable = tkDrawable.loadDrawable(mThis, mLoadedDrawableRun, getResultMapFragment().toString());
                     if(drawable != null) {
                         Drawable imageInfoWindow = hotel.getImageInfoWindow(); 
@@ -2418,7 +2419,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 if(drawable != null) {
                 	//To prevent the problem of size change of the same pic 
                 	//After it is used at a different place with smaller size
-                	pictureImv.setBackgroundDrawable(null);
+                    Rect bounds = drawable.getBounds();
+                    if(bounds != null && bounds.width() != pictureImv.getWidth() || bounds.height() != pictureImv.getHeight() ){
+                        pictureImv.setBackgroundDrawable(null);
+                    }
                 	pictureImv.setBackgroundDrawable(drawable);
                 } else {
                     pictureImv.setBackgroundResource(R.drawable.bg_picture_dianying);
@@ -2463,7 +2467,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 if(drawable != null) {
                 	//To prevent the problem of size change of the same pic 
                 	//After it is used at a different place with smaller size
-                    pictureImv.setBackgroundDrawable(null);
+                    Rect bounds = drawable.getBounds();
+                    if(bounds != null && bounds.width() != pictureImv.getWidth() || bounds.height() != pictureImv.getHeight() ){
+                        pictureImv.setBackgroundDrawable(null);
+                    }
                     pictureImv.setBackgroundDrawable(drawable);
                 } else {
                     pictureImv.setBackgroundResource(R.drawable.bg_picture_tuangou);
