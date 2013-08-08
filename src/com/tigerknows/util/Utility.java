@@ -16,6 +16,7 @@ import java.net.URI;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Formatter;
 import java.util.LinkedList;
@@ -1623,6 +1624,22 @@ public class Utility {
         } catch (Exception e) {
             return null;
         }
+    }
+    
+    /**
+     * 把若干个同类数组合并到一个数组中
+     * @param arrays
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T[] mergeArray(T[] ...arrays) {
+        List<T> tmp = new LinkedList<T>();
+        for (T[] a : arrays) {
+            if (a != null) {
+                tmp.addAll(Arrays.asList(a));
+            }
+        }
+        return (T[]) tmp.toArray();
     }
 
 }

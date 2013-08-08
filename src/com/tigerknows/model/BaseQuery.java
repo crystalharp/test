@@ -390,8 +390,11 @@ public abstract class BaseQuery {
             requestParameters.add("ss", String.valueOf(TKConfig.getSignalStrength()));
         }
         
-        //FIXME:为什么这些请求不能发at？
-        if (API_TYPE_PROXY.equals(apiType) == false && API_TYPE_HOTEL_ORDER.equals(apiType) == false && API_TYPE_FILE_UPLOAD.equals(apiType) == false && API_TYPE_NOTICE.equals(apiType) == false) {
+        //服务器的约定，这些类别的请求不能含有at
+        if (API_TYPE_PROXY.equals(apiType) == false 
+                && API_TYPE_HOTEL_ORDER.equals(apiType) == false 
+                && API_TYPE_FILE_UPLOAD.equals(apiType) == false 
+                && API_TYPE_NOTICE.equals(apiType) == false) {
             requestParameters.add(SERVER_PARAMETER_API_TYPE, apiType);
             requestParameters.add(SERVER_PARAMETER_VERSION, version);
         }
@@ -598,7 +601,12 @@ public abstract class BaseQuery {
     
     //FIXME:确定一下这些参数哪些必须哪些可选
     String[] CommonEssentialKeys = new String[]{"c", "e", "d", "m", "vs", "pk", "clientuid", "uuid"};
-    String[] CommonOptionalKeys = new String[]{"lc", "lx", "ly", "lt", "mcc", "mnc", "lac", "ci", "ss"};
+    /**
+     * 放在OptionalKeys里面的key也可以在某些query中放在EssentialKey中作为必要的key来检查，不影响可选key
+     * 这样原来的addSession(false)可以不用再理会，而addSession(true)在自己的必选key中加入即可。
+     */
+    String[] CommonOptionalKeys = new String[]{"lc", "lx", "ly", "lt", "mcc", "mnc", "lac", "ci", "ss", "at", "v", "info", "dsrc", "ddst",
+            SERVER_PARAMETER_SESSION_ID, SERVER_PARAMETER_CLIENT_ID};
      
     /**
      * 这个函数用来检测参数,顺便可以兼容以前添加公共参数的行为.
@@ -983,7 +991,7 @@ public abstract class BaseQuery {
      * @param need
      * @throws APIException
      */
-    //FIXME:去掉这个参数，在别的地方添加上检测的key
+    //FIXME:去掉这个参数，在别的地方添加上检测的key. 注：还没写关于clientid的检查
     void addSessionId(boolean need) {
         String sessionId = Globals.g_Session_Id;
         if (!TextUtils.isEmpty(sessionId)) {
@@ -1027,7 +1035,7 @@ public abstract class BaseQuery {
     @SuppressWarnings("unchecked")
     protected void debugCheckParameters(String[] essentialKeys, String[] optionalKeys) throws APIException{
         checkParameter = requestParameters.clone();
-        for (int i = 0; i < essentialKeys.length; i++) {
+        for (int i = 0; essentialKeys != null && i < essentialKeys.length; i++) {
             debugCheckParameter(essentialKeys[i]);
             checkParameter.remove(essentialKeys[i]);
         }
@@ -1036,7 +1044,7 @@ public abstract class BaseQuery {
             checkParameter.remove(CommonEssentialKeys[i]);
         }
         
-        for (int i = 0; i < optionalKeys.length; i++) {
+        for (int i = 0; optionalKeys != null && i < optionalKeys.length; i++) {
             checkParameter.remove(optionalKeys[i]);
         }
         for (int i = 0; i < CommonOptionalKeys.length; i++) {

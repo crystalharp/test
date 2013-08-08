@@ -74,8 +74,11 @@ public final class BuslineQuery extends BaseQuery {
         if (cityId < MapEngine.CITY_ID_BEIJING) {
             throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_CITY);
         }
-        
-        addCommonParameters(cityId);
+    }
+    
+    @Override
+    protected void addCommonParameters() {
+        super.addCommonParameters(cityId);
         
         addParameter(SERVER_PARAMETER_KEYWORD, keyword);
         addParameter(SERVER_PARAMETER_INDEX, String.valueOf(startPos));

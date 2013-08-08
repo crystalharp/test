@@ -55,14 +55,12 @@ public class ProxyQuery extends BaseQuery {
 
     @Override
     protected void checkRequestParameters() throws APIException {
-//        addCommonParameters(cityId);
         String task = getParameter(SERVER_PARAMETER_TASK);
         if (task.equals(TASK_ROOM_TYPE_DYNAMIC)) {
             debugCheckParameters(ROOM_TYPE_DYNAMIC_EKEYS, ROOM_TYPE_DYNAMIC_OKEYS);
         } else {
             throw APIException.wrapToMissingRequestParameterException("task type invalid.");
         }
-//        addSessionId(false);
     }
     
     @Override

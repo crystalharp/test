@@ -163,6 +163,11 @@ public class LocationQuery extends BaseQuery {
 
     @Override
     protected void checkRequestParameters() throws APIException {
+        
+    }
+    
+    @Override
+    protected void addCommonParameters() {
         addCommonParameters(Globals.getCurrentCityInfo(false).getId(), true);
         
         if (wifiManager != null) {
@@ -188,20 +193,6 @@ public class LocationQuery extends BaseQuery {
                 }
             }
         }
-//        List<NeighboringCellInfo> list = TigerknowsConfig.getNeighboringCellList();
-//        if (list != null
-//                && (Build.VERSION.SDK.equals("3") || Build.VERSION.SDK.equals("4"))
-//                && (TigerknowsConfig.getNetworkType() == TelephonyManager.NETWORK_TYPE_GPRS
-//                        || TigerknowsConfig.getNetworkType() == TelephonyManager.NETWORK_TYPE_EDGE || TigerknowsConfig
-//                        .getNetworkType() == TelephonyManager.NETWORK_TYPE_CDMA)) {
-//            int cid;
-//            for (NeighboringCellInfo neighboringCellInfo : list) {
-//                cid = neighboringCellInfo.getCid();
-//                parameters.add("n8b_lac[]", String.valueOf(String.valueOf(cid >>> 16))));
-//                parameters.add("n8b_ci[]", String.valueOf(cid & 0xffff)));
-//                parameters.add("n8b_ss[]", String.valueOf(neighboringCellInfo.getRssi())));
-//            }
-//        }
         addParameter("radio_type", TKConfig.getRadioType());
     }
 

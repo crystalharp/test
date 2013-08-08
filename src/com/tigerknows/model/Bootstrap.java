@@ -45,9 +45,11 @@ public final class Bootstrap extends BaseQuery {
 
     @Override
     protected void checkRequestParameters() throws APIException {
-        addCommonParameters();
-        // TODO 这个参数必须要，那怕是空？！
-//        requestParameters.add("fe", "");
+    }
+    
+    @Override
+    protected void addCommonParameters() {
+        super.addCommonParameters();
         addParameter("fe", "");
     }
 
