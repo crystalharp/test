@@ -577,6 +577,9 @@ public class Comment extends BaseData {
     
     public static boolean findCommend(Context context, String uuid, boolean sent) {
         boolean result = false;
+        if (uuid == null) {
+            return result;
+        }
         File file = getFile(context, sent);
         try {
             BufferedReader br=new BufferedReader(new InputStreamReader(new FileInputStream(file)));

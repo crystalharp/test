@@ -416,7 +416,11 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
             Response response = dataQuery.getResponse();
             if (response != null && response instanceof CommentResponse) {
                 CommentResponse commentResponse = (CommentResponse)response;
-                poi.setCommentQuery(dataQuery);
+                if (isNormal) {
+                    poi.setCommentQuery(dataQuery);
+                } else {
+                    poi.setHotCommentQuery(dataQuery);
+                }
                 CommentList commentList = commentResponse.getList();
                 if (commentList != null) {
                     List<Comment> commentArrayList = commentList.getList();
@@ -723,6 +727,7 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
             mTitleBtn.setBackgroundResource(R.drawable.btn_all_comment);
             mHotBtn.setBackgroundResource(R.drawable.btn_hot_comment_focused);
         }
+        mCommentAdapter.notifyDataSetChanged();
         mCommentLsv.setFooterSpringback(false);
         DataQuery dataQuery;
         if (isNormal) {
