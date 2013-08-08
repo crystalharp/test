@@ -96,8 +96,8 @@
     <string name="cancel_all_select">取消全选</string>
     <string name="feature">特点：</string>
 
-    <string name="doing_and_wait">处理中，请稍候</string>
-    <string name="network_failed">网络异常，请稍后重试。</string>
+    <string name="doing_and_wait">奋力请求中，请稍后</string>
+    <string name="network_failed">嘘，网络断了~请稍后重试</string>
     <string name="no_network">无网络可用，请检查网络后重试！</string>
     <string name="network_error">网络错误！</string>
     
@@ -358,7 +358,7 @@
     <string name="telephone_num">010-58874009</string>
     <string name="about_copyright">北京老虎宝典科技有限责任公司版权所有\n</string>
     
-    <string name="searching">正在搜索...</string>
+    <string name="searching">奋力加载中......</string>
     <string name="at_city_searching">正在%1$s市搜索...</string>
     <string name="at_location_searching">正在所选位置搜索...</string>
     
@@ -401,8 +401,8 @@
     
     <string name="place">地点</string>
     <string name="traffic">交通</string>
-    <string name="loading">正在加载</string>
-    <string name="pull_to_refresh">加载更多</string>
+    <string name="loading">奋力加载中</string>
+    <string name="pull_to_refresh">加油上拉，加载更多</string>
     <string name="bus_transfer_">公交换乘方案：%1$d</string>
     <string name="drive_">自驾方案：</string>    
     <string name="tiger_search">老虎搜索</string>
@@ -971,7 +971,7 @@
     <string name="shanghu_xingxi">商户信息</string>
     <string name="call_telephone">拨打电话</string>
 
-    <string name="touch_screen_and_retry">点击屏幕，重新加载</string>
+    <string name="touch_screen_and_retry">嘘，网络断了~戳屏幕，重新加载</string>
     <string name="are_you_exit_add_merchart">你确定要放弃添加商户？</string>
     <string name="searching_title">搜索中…</string>
     <string name="public_welfarre">传递正能量，手机照亮失踪宝贝回家之路</string>
