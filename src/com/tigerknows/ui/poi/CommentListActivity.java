@@ -715,6 +715,11 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
                 uploadCommend(this, Comment.uuid2Json(mThis, uuid));
                 
                 commendTxv.setTextColor(TKConfig.COLOR_ORANGE);
+                String txt = commendTxv.getText().toString();
+                if (txt.length() > 0) {
+                    int val = Integer.parseInt(txt);
+                    commendTxv.setText(String.valueOf(val+1));
+                }
                 commendImv.setImageResource(R.drawable.ic_commend_enabled);
                 Animation animation = AnimationUtils.loadAnimation(mThis, R.anim.commend);
                 commendImv.startAnimation(animation);
