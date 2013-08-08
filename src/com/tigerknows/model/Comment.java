@@ -132,6 +132,7 @@ public class Comment extends BaseData {
 
     public void setCommend(boolean isCommend) {
         this.isCommend = isCommend;
+        likes += 1;
     }
 
     public Comment() {
@@ -172,7 +173,12 @@ public class Comment extends BaseData {
             this.data = null;
         }
         
-        isCommend = findCommend(TKApplication.getInstance(), this.uid, true);
+        boolean draft = findCommend(TKApplication.getInstance(), this.uid, false);
+        if (draft) {
+            setCommend(draft);
+        } else {
+            isCommend = findCommend(TKApplication.getInstance(), this.uid, true);
+        }
     }
     
     public XMap getData() {
@@ -571,6 +577,9 @@ public class Comment extends BaseData {
     
     public static boolean findCommend(Context context, String uuid, boolean sent) {
         boolean result = false;
+        if (uuid == null) {
+            return result;
+        }
         File file = getFile(context, sent);
         try {
             BufferedReader br=new BufferedReader(new InputStreamReader(new FileInputStream(file)));

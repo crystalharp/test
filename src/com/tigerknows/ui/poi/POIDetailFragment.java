@@ -1277,11 +1277,13 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             TextView dateTxv = (TextView) view.findViewById(R.id.date_txv);
             TextView commentTxv = (TextView) view.findViewById(R.id.comment_txv);
             TextView srcTxv = (TextView) view.findViewById(R.id.src_txv);
-            Button commend = (Button)view.findViewById(R.id.commend_btn);
+            View commendView = view.findViewById(R.id.commend_view);
+            ImageView commendImv = (ImageView)view.findViewById(R.id.commend_imv);
             TextView avgTxv = (TextView) view.findViewById(R.id.avg_txv);
             
-            commend.setVisibility(View.GONE);
+            commendView.setVisibility(View.GONE);
             avgTxv.setVisibility(View.GONE);
+            commendImv.setVisibility(View.GONE);
             
             float grade = comment.getGrade()/2.0f;
             gradeRtb.setRating(grade);
@@ -1370,6 +1372,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                 srcTxv.setMovementMethod(LinkMovementMethod.getInstance()); 
             }
         } catch (Exception e) {
+            e.printStackTrace();
         }
         
         return view;

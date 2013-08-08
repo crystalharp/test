@@ -27,9 +27,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RatingBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.decarta.Globals;
@@ -127,6 +131,7 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
         mHotCommentLsv.setAdapter(mHotCommentAdapter);
         
         mTitleBtn.setText(R.string.all_comment);
+        mTitleBtn.setBackgroundResource(R.drawable.btn_all_comment_focused);
         mRightBtn.setVisibility(View.GONE);
         mCommentTipView.setVisibility(View.GONE);
         
@@ -414,7 +419,11 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
             Response response = dataQuery.getResponse();
             if (response != null && response instanceof CommentResponse) {
                 CommentResponse commentResponse = (CommentResponse)response;
-                poi.setCommentQuery(dataQuery);
+                if (isNormal) {
+                    poi.setCommentQuery(dataQuery);
+                } else {
+                    poi.setHotCommentQuery(dataQuery);
+                }
                 CommentList commentList = commentResponse.getList();
                 if (commentList != null) {
                     List<Comment> commentArrayList = commentList.getList();
@@ -477,13 +486,27 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
                 TextView dateTxv = (TextView) view.findViewById(R.id.date_txv);
                 TextView commentTxv = (TextView) view.findViewById(R.id.comment_txv);
                 TextView srcTxv = (TextView) view.findViewById(R.id.src_txv);
-                Button commend = (Button)view.findViewById(R.id.commend_btn);
+                View commendView = view.findViewById(R.id.commend_view);
+                TextView commendTxv = (TextView)view.findViewById(R.id.commend_txv);
+                ImageView commendImv = (ImageView)view.findViewById(R.id.commend_imv);
                 TextView avgTxv = (TextView) view.findViewById(R.id.avg_txv);
                 
                 Comment comment = getItem(position);
-                commend.setTag(comment);
-                commend.setOnClickListener(CommentListActivity.this);
-                commend.setText(String.valueOf(comment.getLikes()));
+                commendView.setTag(R.id.commend_view, comment);
+                commendView.setTag(R.id.commend_imv, commendImv);
+                commendView.setTag(R.id.commend_txv, commendTxv);
+                commendView.setOnClickListener(CommentListActivity.this);
+                String likes = String.valueOf(comment.getLikes());
+                commendTxv.setText(likes);
+                if (comment.isCommend()) {
+                    commendTxv.setTextColor(TKConfig.COLOR_ORANGE);
+                    commendImv.setImageResource(R.drawable.ic_commend_enabled);
+                } else {
+                    commendTxv.setTextColor(TKConfig.COLOR_BLACK_LIGHT);
+                    commendImv.setImageResource(R.drawable.ic_commend_disabled);
+                }
+                float right = likes.length()*Globals.g_metrics.density*8 + Globals.g_metrics.density*12;
+                ((RelativeLayout.LayoutParams) commendImv.getLayoutParams()).rightMargin = (int)right;
                 
                 long avg = comment.getAvg();
                 if (avg > 0) {
@@ -577,6 +600,7 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
                     srcTxv.setMovementMethod(LinkMovementMethod.getInstance()); 
                 }
             } catch (Exception e) {
+                e.printStackTrace();
             }
             
             return view;
@@ -679,14 +703,21 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
             changeMode(true);
         } else if (id == R.id.hot_btn) {
             changeMode(false);
-        } else if (id == R.id.commend_btn) {
-            Comment comment = (Comment) v.getTag();
+        } else if (id == R.id.commend_view) {
+            Comment comment = (Comment) v.getTag(R.id.commend_view);
+            ImageView commendImv = (ImageView) v.getTag(R.id.commend_imv);
+            TextView commendTxv = (TextView) v.getTag(R.id.commend_txv);
             if (comment.isCommend() == false) {
                 comment.setCommend(true);
                 String uuid = comment.getUid();
                 Comment.addCommend(mThis, uuid, false);
                 Comment.addCommend(mThis, uuid, true);
                 uploadCommend(this, Comment.uuid2Json(mThis, uuid));
+                
+                commendTxv.setTextColor(TKConfig.COLOR_ORANGE);
+                commendImv.setImageResource(R.drawable.ic_commend_enabled);
+                Animation animation = AnimationUtils.loadAnimation(mThis, R.anim.commend);
+                commendImv.startAnimation(animation);
             }
         }
     }
@@ -699,12 +730,17 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
             mCommentAdapter = this.mCommentAdapter;
             this.mCommentLsv.setVisibility(View.VISIBLE);
             this.mHotCommentLsv.setVisibility(View.GONE);
+            mTitleBtn.setBackgroundResource(R.drawable.btn_all_comment_focused);
+            mHotBtn.setBackgroundResource(R.drawable.btn_hot_comment);
         } else {
             mCommentLsv = this.mHotCommentLsv;
             mCommentAdapter = this.mHotCommentAdapter;
             this.mCommentLsv.setVisibility(View.GONE);
             this.mHotCommentLsv.setVisibility(View.VISIBLE);
+            mTitleBtn.setBackgroundResource(R.drawable.btn_all_comment);
+            mHotBtn.setBackgroundResource(R.drawable.btn_hot_comment_focused);
         }
+        mCommentAdapter.notifyDataSetChanged();
         mCommentLsv.setFooterSpringback(false);
         DataQuery dataQuery;
         if (isNormal) {
