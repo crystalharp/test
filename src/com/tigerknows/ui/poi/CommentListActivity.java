@@ -478,11 +478,19 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
                 TextView commentTxv = (TextView) view.findViewById(R.id.comment_txv);
                 TextView srcTxv = (TextView) view.findViewById(R.id.src_txv);
                 Button commend = (Button)view.findViewById(R.id.commend_btn);
+                TextView avgTxv = (TextView) view.findViewById(R.id.avg_txv);
                 
                 Comment comment = getItem(position);
                 commend.setTag(comment);
                 commend.setOnClickListener(CommentListActivity.this);
                 commend.setText(String.valueOf(comment.getLikes()));
+                
+                long avg = comment.getAvg();
+                if (avg > 0) {
+                    avgTxv.setText(getString(R.string.yuan, avg));
+                } else {
+                    avgTxv.setText("");
+                }
                 
                 float grade = comment.getGrade()/2.0f;
                 gradeRtb.setRating(grade);
