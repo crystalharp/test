@@ -36,7 +36,7 @@ public class TigerknowsProvider extends ContentProvider {
 
     private static final String DATABASE_NAME = "tigerknows.db";
 
-    private static final int DATABASE_VERSION = 8;
+    private static final int DATABASE_VERSION = 9;
     
     private static HashMap<String, String> HISTORY_LIST_PROJECTION_MAP;
     
@@ -207,6 +207,22 @@ public class TigerknowsProvider extends ContentProvider {
                         db.endTransaction();
                     }
                     break;
+                case 8:
+                    if (newVersion <= 8) {
+                        return;
+                    }
+
+                    db.beginTransaction();
+                    try {
+                        upgradeDatabaseToVersion9(db);
+                        db.setTransactionSuccessful();
+                    } catch (Throwable ex) {
+                        Log.e(TAG, ex.getMessage(), ex);
+                        break;
+                    } finally {
+                        db.endTransaction();
+                    }
+                    break;
                 default:
                     break;
             }
@@ -278,6 +294,41 @@ public class TigerknowsProvider extends ContentProvider {
         
         private void upgradeDatabaseToVersion8(SQLiteDatabase db) {
             db.execSQL("ALTER TABLE poi ADD _comment_data BLOB;");
+            upgradeDatabaseToVersion9(db);
+        }
+        
+        private void upgradeDatabaseToVersion9(SQLiteDatabase db) {
+            SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
+            qb.setTables("poi");
+            Cursor c = qb.query(db, new String[]{com.tigerknows.provider.Tigerknows.POI._ID}, com.tigerknows.provider.Tigerknows.POI.STORE_TYPE+"="+Tigerknows.STORE_TYPE_OTHER, null,
+                    null, null, null, null);
+            if (c != null) {
+                int count = c.getCount();
+                if (count > 0) {
+                    c.moveToFirst();
+                    int id;
+                    boolean delete;
+                    SQLiteQueryBuilder qbt = new SQLiteQueryBuilder();
+                    qbt.setTables("transitplan");
+                    for(int i = 0; i < count; i++) {
+                        delete = true;
+                        id = c.getInt(c.getColumnIndex(com.tigerknows.provider.Tigerknows.POI._ID));
+                        Cursor t = qbt.query(db, new String[]{TransitPlan._ID}, "(" + TransitPlan.START+"="+id + ") OR (" + TransitPlan.END + "=" + id + ")", null,
+                                null, null, null, null);
+                        if (t != null) {
+                            if (t.getCount() > 0) {
+                                delete = false;
+                            }
+                            t.close();
+                        }
+                        if (delete) {
+                            db.delete("poi", com.tigerknows.provider.Tigerknows.POI._ID+"="+id, null);
+                        }
+                        c.moveToNext();
+                    }
+                }
+                c.close();
+            }
         }
         
         private void createTables(SQLiteDatabase db) {
