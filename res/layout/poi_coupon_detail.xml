@@ -221,7 +221,7 @@
                 <ImageView 
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/bg_broken_line"
+                    android:background="@drawable/bg_line_split"
                     android:layout_marginLeft="8dp"
                     android:layout_marginRight="8dp"
                     />
