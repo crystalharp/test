@@ -10,6 +10,7 @@ import java.util.List;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -19,9 +20,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ImageView.ScaleType;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.decarta.Globals;
+import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
@@ -553,6 +556,10 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     		Drawable drawable = tkDrawable.loadDrawable(mSphinx, mLoadedDrawableRun, MoreHomeFragment.this.toString());
     		if(drawable != null){
     			result = true;
+    			Rect bounds = drawable.getBounds();
+    			if(bounds != null && (bounds.width() != imageView.getWidth() || bounds.height() != imageView.getHeight())){
+    				imageView.setBackgroundDrawable(null);
+    			}
     			imageView.setBackgroundDrawable(drawable);
     		}
     	}
