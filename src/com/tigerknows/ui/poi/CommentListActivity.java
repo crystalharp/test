@@ -39,7 +39,6 @@ import android.widget.TextView;
 import com.decarta.Globals;
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
-import com.tigerknows.android.app.TKActivity;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BaseQuery;
@@ -150,7 +149,7 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
         
         String json = Comment.draft2Json(mThis);
         if (json != null) {
-            uploadCommend(this, json);
+            makeCommendDataOperation(this, json);
         }
     }
 
@@ -222,13 +221,13 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
         });
     }
     
-    public static void uploadCommend(TKActivity tkActivity, String json) {
-        DataOperation dataOperation = new DataOperation(tkActivity);
+    public static DataOperation makeCommendDataOperation(Context context, String json) {
+        DataOperation dataOperation = new DataOperation(context);
         Hashtable<String, String> criteria = new Hashtable<String, String>();
         criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_DIANPING);
         criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, URLEncoder.encode(json));
         dataOperation.setup(criteria);
-        tkActivity.queryStart(dataOperation);
+        return dataOperation;
     }
     
     protected void onResume() {
@@ -709,10 +708,31 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
             TextView commendTxv = (TextView) v.getTag(R.id.commend_txv);
             if (comment.isCommend() == false) {
                 comment.setCommend(true);
-                String uuid = comment.getUid();
-                Comment.addCommend(mThis, uuid, false);
-                Comment.addCommend(mThis, uuid, true);
-                uploadCommend(this, Comment.uuid2Json(mThis, uuid));
+                final String uuid = comment.getUid();
+                new Thread(new Runnable() {
+                    
+                    @Override
+                    public void run() {
+                        List<Comment> mCommentArrayList;
+                        if (mHotCommentLsv.getVisibility() == View.VISIBLE) {
+                            mCommentArrayList = CommentListActivity.this.mCommentArrayList;
+                        } else {
+                            mCommentArrayList = CommentListActivity.this.mHotCommentArrayList;
+                        }
+                        for(int i = mCommentArrayList.size()-1; i >= 0; i--) {
+                            Comment c = mCommentArrayList.get(i);
+                            if (uuid != null && uuid.equals(c.getUid())) {
+                                c.setCommend(true);
+                                break;
+                            }
+                        }
+                        
+                        Comment.addCommend(mThis, uuid, false);
+                        Comment.addCommend(mThis, uuid, true);
+                        DataOperation dataOperation = makeCommendDataOperation(mThis, Comment.uuid2Json(mThis, uuid));
+                        dataOperation.query();
+                    }
+                }).start();
                 
                 commendTxv.setTextColor(TKConfig.COLOR_ORANGE);
                 String txt = commendTxv.getText().toString();
