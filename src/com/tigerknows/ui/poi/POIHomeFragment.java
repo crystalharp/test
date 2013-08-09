@@ -51,13 +51,11 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.GridView;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ImageView.ScaleType;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -105,7 +103,6 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
     private View mTransPaddingView;
     private ImageView mCategoryTagImv;
     private int mScreenWidth;
-    private int mScreenHeight;
     private int mDragViewWidth;
     private int mDragViewHeight;
     private int mDragViewParentX;
@@ -121,12 +118,8 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
     private CategoryAdapter mCategoryAdapter;
     private int mCategoryTop;
     private int mMyLocationViewHeight;
-    private int mCategoryBtnPadding;
     private int mCategoryPadding = 0;
 
-    private View mHeaderView;
-    private View mFooterView;
-    
     private String[] mCategoryNameList;
     List<Category> mCategorylist = new ArrayList<Category>();
     private final int[] mCategoryResIdList = {
@@ -400,25 +393,11 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
         setListener();
         
         mScreenWidth = Globals.g_metrics.widthPixels;
-        mScreenHeight = Globals.g_metrics.heightPixels;
 
         mSubCategoryAdapter = new ArrayAdapter<String>(mContext, R.layout.poi_home_drag_view_item, new ArrayList<String>());
         mSubCategoryGrid.setAdapter(mSubCategoryAdapter);
         
         mCategoryNameList = getResources().getStringArray(R.array.home_category);
-
-        int screenWidth = Math.min(Globals.g_metrics.widthPixels, Globals.g_metrics.heightPixels);
-        mCategoryBtnPadding = Util.dip2px(Globals.g_metrics.density, 2);
-        
-        View view = getImageButton();
-        view.setBackgroundResource(mCategoryResIdList[0]);
-        view.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-        int viewWidth = view.getMeasuredWidth()+2*mCategoryBtnPadding;
-
-        int columnWidth = screenWidth / viewWidth;
-        if (columnWidth > 2) {
-            columnWidth = 2;
-        }
 
         for(int i = 0, length = mCategoryResIdList.length; i < length; i++) {
                 Category category = new Category();
@@ -426,9 +405,6 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
                 category.name = mCategoryNameList[i];
                 mCategorylist.add(category);
         }
-        
-        mHeaderView = new LinearLayout(mContext);
-        mFooterView = new LinearLayout(mContext);
         
         mCategoryAdapter = new CategoryAdapter(mContext, mCategorylist);
         mCategoryLsv.setAdapter(mCategoryAdapter);
@@ -662,13 +638,6 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
             mLastTime = currentTime;
         }
             
-    }
-
-    public ImageButton getImageButton() {
-        ImageButton imageButton = new ImageButton(mContext);
-        imageButton.setScaleType(ScaleType.CENTER);
-        imageButton.setImageResource(R.drawable.btn_category);
-        return imageButton;
     }
     
     private static class Category {
