@@ -774,6 +774,7 @@
     <string name="publish_comment_failed">发表点评失败！</string>
     <string name="modify_comment">修改点评</string>
     <string name="poi_comment_go_tip">快去写你的第一条点评吧！</string>
+    <string name="poi_no_hot_comment">暂无热门点评！</string>
     <string name="poi_comment_must">还需%1$s字</string>
     <string name="poi_comment_sum">共%1$s字</string>
     

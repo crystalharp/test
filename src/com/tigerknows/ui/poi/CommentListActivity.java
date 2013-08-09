@@ -106,6 +106,8 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
     
     private View mCommentTipView;
     
+    private View mEmptyView;
+    
     private Button mCommentTipEdt;
     
     public static void setPOI(POI poi) {
@@ -168,6 +170,7 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
         mHotCommentLsv.addFooterView(v);
         mCommentTipView = findViewById(R.id.tip_view);
         mCommentTipEdt = (Button) findViewById(R.id.comment_tip_btn);
+        mEmptyView = findViewById(R.id.empty_txv);
     }
     
     protected void setListener() {
@@ -450,6 +453,8 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
             if (mCommentArrayList.isEmpty()) {
                 if (isNormal) {
                 finish();
+                } else {
+                    mEmptyView.setVisibility(View.VISIBLE);
                 }
             }
         }
@@ -498,9 +503,11 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
                 String likes = String.valueOf(comment.getLikes());
                 commendTxv.setText(likes);
                 if (comment.isCommend()) {
+                    commendView.setBackgroundResource(R.drawable.btn_subway_busstop_normal);
                     commendTxv.setTextColor(TKConfig.COLOR_ORANGE);
                     commendImv.setImageResource(R.drawable.ic_commend_enabled);
                 } else {
+                    commendView.setBackgroundResource(R.drawable.btn_subway_busstop);
                     commendTxv.setTextColor(TKConfig.COLOR_BLACK_LIGHT);
                     commendImv.setImageResource(R.drawable.ic_commend_disabled);
                 }
@@ -734,6 +741,7 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
                     }
                 }).start();
                 
+                v.setBackgroundResource(R.drawable.btn_subway_busstop_normal);
                 commendTxv.setTextColor(TKConfig.COLOR_ORANGE);
                 String txt = commendTxv.getText().toString();
                 if (txt.length() > 0) {
@@ -765,6 +773,7 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
             mTitleBtn.setBackgroundResource(R.drawable.btn_all_comment);
             mHotBtn.setBackgroundResource(R.drawable.btn_hot_comment_focused);
         }
+        mEmptyView.setVisibility(View.GONE);
         mCommentAdapter.notifyDataSetChanged();
         mCommentLsv.setFooterSpringback(false);
         DataQuery dataQuery;
