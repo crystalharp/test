@@ -1201,7 +1201,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                     bodyTxv.setTextColor(color);
                     viewGroup.addView(bodyTxv, layoutParamsBody);
                     splitImv = new ImageView(mContext);
-                    splitImv.setBackgroundResource(R.drawable.bg_broken_line);
+                    splitImv.setBackgroundResource(R.drawable.bg_line_split);
                     viewGroup.addView(splitImv, layoutParamsSplit);
                 }
                 String name = poi.getDescriptionName(mContext, key);
