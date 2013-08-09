@@ -11,6 +11,7 @@ import java.util.List;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -495,6 +496,12 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     	if (tkDrawable != null) {
     		Drawable drawable = tkDrawable.loadDrawable(mSphinx, mLoadedDrawableRun, MoreHomeFragment.this.toString());
     		if(drawable != null){
+    			if(defaultResId == R.drawable.bg_picture_hotel_none){
+    				Rect bounds = drawable.getBounds();
+    				if(bounds != null && (bounds.width() != imageView.getWidth() || bounds.height() != imageView.getHeight())){
+    					imageView.setBackgroundDrawable(null);
+    				}
+    			}
     			imageView.setBackgroundDrawable(drawable);
     		}else{
     			imageView.setBackgroundDrawable(mSphinx.getResources().getDrawable(defaultResId));
