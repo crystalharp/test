@@ -127,6 +127,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         @Override
         public void run() {
         	refreshCurrentNoticeDrawable();
+        	refreshAppRecommendDrawable();
         }
     };
     
@@ -433,17 +434,21 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
                 }
                 mRecommendAppList.clear();
                 mRecommendAppList.addAll(recommend.getRecommendAppList());
-                final int len = Math.min(mRecommendAppList.size(), NUM_APP_RECOMMEND);
-                for (int i=0; i<NUM_APP_RECOMMEND && i<len; i++){
-                	refreshDrawable(mRecommendAppList.get(i).getIcon(), mAppRecommendImv[i], R.drawable.bg_picture_hotel_none);
-                	mAppRecommendTxv[i].setText(mRecommendAppList.get(i).getName());
-                }
+                refreshAppRecommendDrawable();
             }
         }else{
             Bootstrap bootstrap = new Bootstrap(mSphinx);
             bootstrap.setup(null, Globals.getCurrentCityInfo().getId());
             mSphinx.queryStart(bootstrap);        	
         }
+    }
+    
+    private void refreshAppRecommendDrawable(){
+    	final int len = Math.min(mRecommendAppList.size(), NUM_APP_RECOMMEND);
+    	for (int i=0; i<NUM_APP_RECOMMEND && i<len; i++){
+    		refreshDrawable(mRecommendAppList.get(i).getIcon(), mAppRecommendImv[i], R.drawable.bg_picture_hotel_none);
+    		mAppRecommendTxv[i].setText(mRecommendAppList.get(i).getName());
+    	}
     }
 
     private void refreshSatisfyRate() {
