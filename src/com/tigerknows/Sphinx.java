@@ -1216,35 +1216,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         	DiscoverChildListFragment.viewQueueForChangciRows.clear();
         }
         mActionLog.onDestroy();
-        mMenuFragment = null;
-        mTitleFragment = null;
-        mPOIHomeFragment = null;
-        mMoreFragment = null;
-        mGoCommentFragment = null;
-        mResultMapFragment = null;
-        mFavoriteFragment = null;
-        mHistoryFragment = null;
-        mPOIDetailFragment = null;
-        mPOIResultFragment = null;
-        mPOIResultFragment2 = null;
-        mPOIQueryFragment = null;
-        mPOINearbyFragment = null;
-        mTrafficDetailFragment = null;
-        mTrafficResultFragment = null;
-        mBuslineResultLineFragment = null;
-        mBuslineResultStationFragment = null;
-        mBuslineDetailFragment = null;
-        mTrafficQueryFragment = null;
-        mMyCommentListFragment = null;
-        mUserHomeFragment = null;
-
-        mDiscoverListFragment = null;
-        mTuangouDetailFragment = null;
-        mYanchuDetailFragment = null;
-        mZhanlanDetailFragment = null;
-        mDianyingDetailFragment = null;
-        mDiscoverChildListFragment = null;
-        mDiscoverFragment = null;
         Intent service = new Intent(Sphinx.this, MapStatsService.class);
         stopService(service);
         service = new Intent(Sphinx.this, MapDownloadService.class);
