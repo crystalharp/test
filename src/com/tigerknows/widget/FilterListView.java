@@ -344,6 +344,19 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
 						}else{
 							childLsv.getAdapter().setSelectedPosition(isCurParentSelected?selectedChildPosition:-1);
 							childLsv.getAdapter().notifyDataSetChanged();
+							final int finalselectedChiledPosition = (isCurParentSelected?selectedChildPosition:-1);
+						    handler.post(new Runnable() {
+					            
+					            @Override
+					            public void run() {
+					                if (finalselectedChiledPosition > 0) {
+					                    int topPosition = finalselectedChiledPosition-1;
+					                    childLsv.getBaseListView().setSelectionFromTop(topPosition, 0);
+					                } else {
+					                    childLsv.getBaseListView().setSelectionFromTop(0, 0);
+					                }
+					            }
+					        });
 						}
                     }
                     
