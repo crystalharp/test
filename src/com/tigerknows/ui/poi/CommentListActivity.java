@@ -151,7 +151,8 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
         
         String json = Comment.draft2Json(mThis);
         if (json != null) {
-            makeCommendDataOperation(this, json);
+            DataOperation dataOperation = makeCommendDataOperation(this, json);
+            queryStart(dataOperation);
         }
     }
 

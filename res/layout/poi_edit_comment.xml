@@ -158,7 +158,7 @@
 				        android:layout_height="wrap_content"
 				        android:layout_marginTop="8dp"
 				        android:layout_marginBottom="2dp"
-				        android:background="@drawable/bg_broken_line"/>
+				        android:background="@drawable/bg_line_split"/>
 				</LinearLayout>
 				<include android:id="@+id/food_view"
 				    layout="@layout/poi_edit_comment_food"
