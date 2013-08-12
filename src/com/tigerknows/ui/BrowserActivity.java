@@ -4,6 +4,8 @@
 
 package com.tigerknows.ui;
 
+import java.net.URLDecoder;
+
 import android.graphics.Bitmap;
 import android.net.http.SslError;
 import android.os.Bundle;
@@ -17,6 +19,8 @@ import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.ProgressBar;
 
+import com.alipay.android.MobileSecurePayer;
+import com.alipay.android.MobileSecurePayHelper;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import android.widget.Toast;
@@ -115,7 +119,29 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
-                mProgressBar.setVisibility(View.VISIBLE);
+            	mProgressBar.setVisibility(View.VISIBLE);
+                String info = URLDecoder.decode(url);
+                LogWrapper.i("Trap", URLDecoder.decode(url));
+            	if(info.contains("wappaygw") && info.contains("authAndExecute") && info.contains("request_token")){
+            		int i = info.indexOf("<request_token>");
+            		int j = info.indexOf("</request_token>");
+            		StringBuilder sb = new StringBuilder();
+            		sb.append("ordertoken=\"");
+            		if(i > 0 && i < j){
+            			sb.append(info.substring(i+15, j));
+            		}else return;
+//            		sb.append("\"&timestamp=\"");
+//            		sb.append(System.currentTimeMillis());
+            		sb.append("\"");
+            		MobileSecurePayer msp = new MobileSecurePayer();
+            		LogWrapper.d("Trap", sb.toString());
+            		MobileSecurePayHelper mspHelper = new MobileSecurePayHelper(mThis.getBaseContext());
+            		boolean isMobile_spExist = mspHelper.detectMobile_sp();
+            		if (!isMobile_spExist) {
+            			return;
+            		}
+            		boolean bRet = msp.pay(sb.toString(), null, 0, mThis);
+            	}
             }
 
             @Override
