@@ -245,7 +245,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             >
-            <LinearLayout 
+            <LinearLayout android:id="@+id/more_home_app_recommend_lly"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
@@ -299,7 +299,7 @@
                     
                 </LinearLayout>
             </LinearLayout>
-            <ImageView
+            <ImageView android:id="@+id/more_home_app_recommend_imv"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_line_split"
