@@ -48,7 +48,6 @@ public class NetworkManager {
 	/**
 	 * 检查代理，是否cnwap接入
 	 */
-	@SuppressWarnings("deprecation")
 	private void detectProxy() {
 		ConnectivityManager cm = (ConnectivityManager) mContext
 				.getSystemService(Context.CONNECTIVITY_SERVICE);
