@@ -51,4 +51,5 @@
     <color name="infowindow_split_line">#e6e6e6</color>
     <color name="home_list_bg">#f8f6ff</color>
     
+    <color name="normal_background">#fff0f0f0</color>
 </resources>

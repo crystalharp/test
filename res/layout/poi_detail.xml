@@ -4,7 +4,7 @@
     xmlns:tkandroid ="http://schemas.android.com/apk/res/com.tigerknows"
     android:layout_width="fill_parent" 
     android:layout_height="fill_parent"
-    android:background="@drawable/bg_discover">
+    android:background="@color/normal_background">
                 
     <LinearLayout 
         android:id="@+id/control_view"
@@ -312,7 +312,7 @@
                         android:id="@+id/comment_sum_total_view" 
                         android:layout_width="fill_parent" 
                         android:layout_height="wrap_content"
-                        android:background="@drawable/list_header"
+                        android:background="@drawable/list_header_title"
                         android:clickable="true">
                         <TextView
                             android:id="@+id/comment_sum_total_txv" 
@@ -445,7 +445,7 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" 
         android:orientation="horizontal"
-        android:background="@drawable/bg_discover"
+        android:background="@color/normal_background"
         >
         </LinearLayout>
 </RelativeLayout>
