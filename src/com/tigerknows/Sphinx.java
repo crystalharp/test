@@ -2816,6 +2816,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 return result;
             }
             if (id == R.id.view_invalid || id != uiStackPeek()) {
+                uiStackClose(null);
+                showView(R.id.view_poi_home);
                 return result;
             }
             
@@ -2856,7 +2858,13 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 if (fragment != null) {
                     fragment.onResume();
                     result = true;
+                } else {
+                    uiStackClose(null);
+                    showView(R.id.view_poi_home);
                 }
+            } else {
+                uiStackClose(null);
+                showView(R.id.view_poi_home);
             }
             mUIProcessing = false;
             return result;
