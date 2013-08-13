@@ -468,7 +468,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         if (criteria.containsKey(DataQuery.SERVER_PARAMETER_FILTER) == false) {
             criteria.put(DataQuery.SERVER_PARAMETER_FILTER, DataQuery.makeFilterRequest(mFilterList));
         }
-        poiQuery.setup(criteria, cityId, getId(), getId(), null, true, true, requestPOI);
+        poiQuery.setup(criteria, cityId, getId(), getId(), null, true, false, requestPOI);
         mSphinx.queryStart(poiQuery);
         }
     }
@@ -910,7 +910,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 }
             } else {
                 if (dataQuery.isTurnPage()) {
-                    mResultLsv.setFooterSpringback(true);
+                    mResultLsv.setFooterLoadFailed(true);
                     return;
                 }
                 mRetryView.setText(R.string.touch_screen_and_retry, true);

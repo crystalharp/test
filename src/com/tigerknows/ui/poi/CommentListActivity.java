@@ -320,12 +320,12 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
                     criteria.put(DataQuery.SERVER_PARAMETER_TIME, comment.getTime());
                 }
                 criteria.put(DataQuery.SERVER_PARAMETER_DIRECTION, DataQuery.DIRECTION_AFTER);
-                dataQuery.setup(criteria, cityId, -1, -1, null, true, true, requestPOI);
+                dataQuery.setup(criteria, cityId, -1, -1, null, true, false, requestPOI);
                 queryStart(dataQuery);
             } else {
                 criteria.put(DataQuery.SERVER_PARAMETER_TIME, mCommentArrayList.get(mCommentArrayList.size()-1).getTime());
                 criteria.put(DataQuery.SERVER_PARAMETER_DIRECTION, DataQuery.DIRECTION_BEFORE);
-                dataQuery.setup(criteria, cityId, -1, -1, null, true, true, requestPOI);
+                dataQuery.setup(criteria, cityId, -1, -1, null, true, false, requestPOI);
                 queryStart(dataQuery);
             }
         } else {
@@ -356,7 +356,7 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
             finish();
         }
         if (dataQuery.isTurnPage()) {
-            boolean isHeader = true;
+            boolean isHeader = false;
             Hashtable<String, String> criteria = mCommentQuery.getCriteria();
             if (criteria.containsKey(DataQuery.SERVER_PARAMETER_DIRECTION)) {
                 String direction = criteria.get(DataQuery.SERVER_PARAMETER_DIRECTION);
@@ -628,15 +628,7 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
         }
         DataQuery dataQuery = (DataQuery)(tkAsyncTask.getBaseQuery());
         
-
-        if (BaseActivity.checkReLogin(dataQuery, mThis, mSourceUserHome, mId, mId, mId, mCancelLoginListener)) {
-            isReLogin = true;
-            return;
-        } else if (BaseActivity.checkResponseCode(dataQuery, mThis, null, true, mThis, dataQuery.isTurnPage() == false)) {
-            return;
-        }
-        
-        boolean isHeader = true;
+        boolean isHeader = false;
         Hashtable<String, String> criteria = dataQuery.getCriteria();
         boolean isNormal = (criteria.containsKey(DataQuery.SERVER_PARAMETER_BIAS) == false);
         if (criteria.containsKey(DataQuery.SERVER_PARAMETER_DIRECTION)) {
@@ -665,7 +657,26 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
             mCommentLsv = this.mHotCommentLsv;
         }
         mCommentLsv.onRefreshComplete(isHeader);
-        mCommentLsv.setFooterSpringback(false);
+        
+        if (isHeader) {
+            mCommentLsv.setHeaderSpringback(false);
+        } else {
+            mCommentLsv.setFooterSpringback(false);
+        }
+
+        if (BaseActivity.checkReLogin(dataQuery, mThis, mSourceUserHome, mId, mId, mId, mCancelLoginListener)) {
+            isReLogin = true;
+            return;
+        } else if (BaseActivity.checkResponseCode(dataQuery, mThis, null, false, mThis, false)) {
+            if (dataQuery.getResponse() == null) {
+                if (isHeader) {
+                    
+                } else {
+                    mCommentLsv.setFooterLoadFailed(true);
+                }
+                return;
+            }
+        }
         
         setData(isNormal, dataQuery);
     }
@@ -673,7 +684,7 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
     public void onCancelled(TKAsyncTask tkAsyncTask) {
         super.onCancelled(tkAsyncTask);
         DataQuery commentQuery = (DataQuery)(tkAsyncTask.getBaseQuery());
-        boolean isHeader = true;
+        boolean isHeader = false;
         Hashtable<String, String> criteria = commentQuery.getCriteria();
         boolean isNormal = (criteria.containsKey(DataQuery.SERVER_PARAMETER_BIAS) == false);
         if (criteria.containsKey(DataQuery.SERVER_PARAMETER_DIRECTION)) {

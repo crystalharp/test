@@ -275,7 +275,7 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
         int cityId = lastDataQuery.getCityId();
         Hashtable<String, String> criteria = lastDataQuery.getCriteria();
         criteria.put(DataQuery.SERVER_PARAMETER_INDEX, String.valueOf(getList().size()));
-        dataQuery.setup(criteria, cityId, getId(), getId(), null, true, true, dataQuery.getPOI());
+        dataQuery.setup(criteria, cityId, getId(), getId(), null, true, false, dataQuery.getPOI());
         mSphinx.queryStart(dataQuery);
         }
     }
@@ -896,6 +896,9 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
             isReLogin = true;
             return;
         } else if (BaseActivity.checkResponseCode(dataQuery, mSphinx, null, true, this, exit)) {
+            if (dataQuery.isTurnPage() && dataQuery.getResponse() == null) {
+                mResultLsv.setFooterLoadFailed(true);
+            }
             return;
         }
         mResultLsv.onRefreshComplete(false);
