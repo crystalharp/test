@@ -185,6 +185,7 @@ import com.tigerknows.ui.user.UserLoginActivity;
 import com.tigerknows.ui.user.UserUpdateNickNameActivity;
 import com.tigerknows.ui.user.UserUpdatePasswordActivity;
 import com.tigerknows.ui.user.UserUpdatePhoneActivity;
+import com.tigerknows.util.CalendarUtil;
 import com.tigerknows.util.Utility;
 import com.tigerknows.widget.ScaleView;
 import com.tigerknows.widget.ZoomControls;
@@ -902,6 +903,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         
         checkCitySupportDiscover(Globals.getCurrentCityInfo().getId());
         initWeibo(false, false);
+        
+        CalendarUtil.initExactTime(mContext);
 	}
 	
 	void resetShowInPreferZoom() {

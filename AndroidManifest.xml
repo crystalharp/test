@@ -225,17 +225,20 @@
 
         <receiver android:name="com.tigerknows.radar.AlarmInitReceiver">
             <intent-filter>
-                <action android:name="android.intent.action.MEDIA_SCANNER_FINISHED" />
-                <data android:scheme="file" />
-            </intent-filter>
-            <intent-filter>
                 <action android:name="action.com.tigerknows.first.startup" />
                 <action android:name="com.tigerknows.action.AlarmInit" />
                 <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
             </intent-filter>
         </receiver>
         
-        <receiver android:name="com.tigerknows.radar.AlarmAdjustReceiver">
+        <receiver android:name="com.tigerknows.radar.BootCompleteReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.MEDIA_SCANNER_FINISHED" />
+                <data android:scheme="file" />
+            </intent-filter>
+        </receiver>
+        
+        <receiver android:name="com.tigerknows.radar.TimeAdjustReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.TIME_SET" />
                 <action android:name="android.intent.action.TIMEZONE_CHANGED" />

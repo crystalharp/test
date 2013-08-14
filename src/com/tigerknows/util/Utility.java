@@ -1688,4 +1688,12 @@ public class Utility {
         }
     }
 
+    public void printStackTrace() {
+        try {
+            int a = 1 / 0;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

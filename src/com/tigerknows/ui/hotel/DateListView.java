@@ -108,10 +108,12 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
                 checkOut == null ||
                 CalendarUtil.dateInterval(checkIn, checkOut) < 1) {
             checkIn = Calendar.getInstance();
-            checkOut = Calendar.getInstance();
+            checkIn.setTimeInMillis(CalendarUtil.getExactTime(context));
+            checkOut = (Calendar) checkIn.clone();
             checkOut.add(Calendar.DAY_OF_YEAR, 1);
         }
         today = Calendar.getInstance();
+        today.setTimeInMillis(CalendarUtil.getExactTime(context));
         confirmCheckinPosition = CalendarUtil.dateInterval(today, checkIn);
         confirmCheckoutPosition = CalendarUtil.dateInterval(checkIn, checkOut)-1;
         checkinPosition = confirmCheckinPosition;
@@ -465,12 +467,14 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
     
     public Calendar getCheckin() {
         Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(CalendarUtil.getExactTime(context));
         calendar.add(Calendar.DAY_OF_YEAR, confirmCheckinPosition);
         return calendar;
     }
     
     public Calendar getCheckout() {
         Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(CalendarUtil.getExactTime(context));
         calendar.add(Calendar.DAY_OF_YEAR, confirmCheckinPosition+1+confirmCheckoutPosition);
         return calendar;
     }
