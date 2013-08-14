@@ -636,6 +636,22 @@ public class TKConfig {
      */
     public static final String PREFS_SATISFY_RATE_OPENED="prefs_satisfy_rate_opened";
     
+    // 以下三项用来获取一个比较准确的当前时间
+    /**
+     * ntp校时时记录的服务器时间
+     */
+    public static final String PREFS_RECORDED_NTP_TIME="prefs_recorded_ntp_time";
+    
+    /**
+     * ntp校时时记录的手机系统绝对时间
+     */
+    public static final String PREFS_RECORDED_SYS_ABS_TIME="prefs_recorded_sys_abs_time";
+    
+    /**
+     * ntp校时时记录的手机系统相对时间
+     */
+    public static final String PREFS_RECORDED_SYS_REL_TIME="prefs_recorded_sys_rel_time";
+    
     /**
      * 发现分类图片尺寸的Key
      */
