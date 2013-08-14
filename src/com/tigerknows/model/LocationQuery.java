@@ -150,6 +150,7 @@ public class LocationQuery extends BaseQuery {
                 } else {
                     checkLocationTable();
                     locationTable.write(locationParameter, location);
+                    offlineLocationCache.put(locationParameter, location);
                 }
                 
                 onlineLocationCache.put(locationParameter, location);
@@ -280,6 +281,14 @@ public class LocationQuery extends BaseQuery {
         }
         synchronized (this) {
             LocationParameter locationParameter = makeLocationParameter();
+            
+            if (Utility.mccMncLacCidValid(locationParameter.mcc,
+                    locationParameter.mnc,
+                    locationParameter.tkCellLocation.lac,
+                    locationParameter.tkCellLocation.cid) == false &&
+                    (locationParameter.wifiList == null || locationParameter.wifiList.size() == 0)) {
+                return null;
+            }
     
             Location location = null;
             location = queryCache(locationParameter, onlineLocationCache, true);
