@@ -155,17 +155,6 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         }
     };
     
-    private Runnable mReloadNotice = new Runnable() {
-
-		@Override
-		public void run() {
-         	NoticeQuery noticeQuery = new NoticeQuery(mSphinx);
-            Hashtable<String, String> criteria = new Hashtable<String, String>();
-            noticeQuery.setup(criteria, Globals.getCurrentCityInfo().getId());
-            mSphinx.queryStart(noticeQuery);			
-		}
-    };
-    
     private Handler mHandler;
 
 	private MyAdapter mMyAdapter;
@@ -441,9 +430,11 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         	        }
         		}
         	}else if(mPagecount < 0){
-        		mHandler.postDelayed(mReloadNotice, 4000);
-
-        	}
+             	NoticeQuery noticeQuery = new NoticeQuery(mSphinx);
+                Hashtable<String, String> criteria = new Hashtable<String, String>();
+                noticeQuery.setup(criteria, Globals.getCurrentCityInfo().getId());
+                mSphinx.queryStart(noticeQuery);
+            }
     	}
     	LogWrapper.d("Trap", "size:"+(mNoticeList == null ? -1 : mNoticeList.size()));
         
@@ -467,6 +458,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
                 refreshAppRecommendDrawable();
             }
         }else{
+        	mHandler.removeCallbacks(mReloadAppRecommend);
         	mHandler.postDelayed(mReloadAppRecommend, 4000);
         }
     }

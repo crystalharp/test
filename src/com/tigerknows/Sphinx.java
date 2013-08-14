@@ -1996,9 +1996,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 BootstrapModel bootstrapModel = ((Bootstrap) baseQuery).getBootstrapModel();
                 if (bootstrapModel != null) {
                     Globals.g_Bootstrap_Model = bootstrapModel;
-                    getMoreFragment().refreshAppRecommendData();
                 }
-                getMoreFragment().refreshMoreData();
+                // 这一行需放在if外面以便于始终重试
+                // 而下边的Notice是不重试的所以不放外边
+                getMoreFragment().refreshAppRecommendData();
             } else if (baseQuery instanceof NoticeQuery) {
             	Response response = baseQuery.getResponse();
             	if (response instanceof NoticeResultResponse) {
