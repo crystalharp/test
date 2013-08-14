@@ -2985,6 +2985,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     }
     
     public boolean showHint(String[] keyList, int[] layoutResIdList) {
+        if (mFromThirdParty > 0) {
+            return false;
+        }
         boolean showView = false;
         if (TKConfig.getPref(mContext, keyList[0]) != null) {
             showView = false;
