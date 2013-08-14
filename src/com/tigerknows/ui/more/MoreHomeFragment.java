@@ -594,7 +594,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 				
 				@Override
 				public void onClick(View v) {
-					// TODO mActionLog.addAction(mActionTag + ActionLog.?????);
+					mActionLog.addAction(mActionTag + ActionLog.MoreNotice);
 					Notice notice = mNoticeList.get(fPosition % mPagecount);
                     String uri = notice.getUrl();
                     if (!TextUtils.isEmpty(uri)) {

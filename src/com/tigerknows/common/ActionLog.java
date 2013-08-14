@@ -303,6 +303,7 @@ public class ActionLog extends LogUpload {
     public static final String MoreAddMerchant = "BQ";
     public static final String MoreSatisfyRate = "BR";
     public static final String MoreAppDownload = "BS";
+    public static final String MoreNotice = "BT";
 
     // 切换城市页
     public static final String ChangeCity = "CB";
