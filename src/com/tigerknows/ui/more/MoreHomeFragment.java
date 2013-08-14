@@ -535,11 +535,12 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     }
 
     public View getView(int position) {
-    	position = position % mPagecount;
+    	if(mPagecount == 2 || mPagecount == 3)position = position % (2*mPagecount);
+    	else position = position % mPagecount;
         if (viewMap.containsKey(position)) {
             return viewMap.get(position);
         }
-        Notice notice = mNoticeList.get(position);
+        Notice notice = mNoticeList.get(position % mPagecount);
         if((notice.getOperationType() & 1) == 0){
         	Button view = new Button(mSphinx);
         	view.setText(notice.getDescription());
