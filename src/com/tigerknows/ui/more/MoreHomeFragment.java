@@ -145,6 +145,27 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 		}
     };
     
+    private Runnable mReloadAppRecommend = new Runnable() {
+
+		@Override
+		public void run() {
+            Bootstrap bootstrap = new Bootstrap(mSphinx);
+            bootstrap.setup(null, Globals.getCurrentCityInfo().getId());
+            mSphinx.queryStart(bootstrap);
+        }
+    };
+    
+    private Runnable mReloadNotice = new Runnable() {
+
+		@Override
+		public void run() {
+         	NoticeQuery noticeQuery = new NoticeQuery(mSphinx);
+            Hashtable<String, String> criteria = new Hashtable<String, String>();
+            noticeQuery.setup(criteria, Globals.getCurrentCityInfo().getId());
+            mSphinx.queryStart(noticeQuery);			
+		}
+    };
+    
     private Handler mHandler;
 
 	private MyAdapter mMyAdapter;
@@ -420,10 +441,8 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         	        }
         		}
         	}else if(mPagecount < 0){
-             	NoticeQuery noticeQuery = new NoticeQuery(mSphinx);
-                Hashtable<String, String> criteria = new Hashtable<String, String>();
-                noticeQuery.setup(criteria, Globals.getCurrentCityInfo().getId());
-                mSphinx.queryStart(noticeQuery);        		
+        		mHandler.postDelayed(mReloadNotice, 4000);
+
         	}
     	}
     	LogWrapper.d("Trap", "size:"+(mNoticeList == null ? -1 : mNoticeList.size()));
@@ -448,9 +467,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
                 refreshAppRecommendDrawable();
             }
         }else{
-            Bootstrap bootstrap = new Bootstrap(mSphinx);
-            bootstrap.setup(null, Globals.getCurrentCityInfo().getId());
-            mSphinx.queryStart(bootstrap);        	
+        	mHandler.postDelayed(mReloadAppRecommend, 4000);
         }
     }
     
