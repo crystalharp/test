@@ -1197,6 +1197,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                     viewGroup.addView(titleTxv, layoutParamsTitle);
                     bodyTxv = new TextView(mContext);
                     bodyTxv.setGravity(Gravity.LEFT);
+                    bodyTxv.setLineSpacing(0f, 1.2f);
                     color = mSphinx.getResources().getColor(R.color.black_light);
                     bodyTxv.setTextColor(color);
                     viewGroup.addView(bodyTxv, layoutParamsBody);
