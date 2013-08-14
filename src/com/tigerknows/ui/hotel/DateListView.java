@@ -56,7 +56,7 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
     
     static final int CHECKOUT_MAX = 10;
     
-    static final int WHITE_LINE = 2;
+    static final int WHITE_LINE = 4;
     
     public interface CallBack {
         public void confirm();
@@ -108,25 +108,26 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
                 checkOut == null ||
                 CalendarUtil.dateInterval(checkIn, checkOut) < 1) {
             checkIn = Calendar.getInstance();
-            checkOut = Calendar.getInstance();
+            checkIn.setTimeInMillis(CalendarUtil.getExactTime(context));
+            checkOut = (Calendar) checkIn.clone();
             checkOut.add(Calendar.DAY_OF_YEAR, 1);
         }
         today = Calendar.getInstance();
-        confirmCheckinPosition = CalendarUtil.dateInterval(today, checkIn)+WHITE_LINE;
-        confirmCheckoutPosition = CalendarUtil.dateInterval(checkIn, checkOut)-1+WHITE_LINE;
+        today.setTimeInMillis(CalendarUtil.getExactTime(context));
+        confirmCheckinPosition = CalendarUtil.dateInterval(today, checkIn);
+        confirmCheckoutPosition = CalendarUtil.dateInterval(checkIn, checkOut)-1;
         checkinPosition = confirmCheckinPosition;
         checkoutPosition = confirmCheckoutPosition;
         checkinList.clear();
         checkoutList.clear();
-        makeWhiteLines(checkinList);
         for(int i = 0; i < CHECKIN_MAX; i++) {
             checkinList.add(makeCheckinDateString(today, i));
         }
         makeWhiteLines(checkinList);
         
         checkinAdapter.notifyDataSetChanged();
-        checkinLsv.setSelectionFromTop(checkinPosition-WHITE_LINE, 0);
-        checkoutLsv.setSelectionFromTop(checkoutPosition-WHITE_LINE, 0);
+        checkinLsv.setSelectionFromTop(checkinPosition, 0);
+        checkoutLsv.setSelectionFromTop(checkoutPosition, 0);
         refreshCheckout();
     }
     
@@ -142,45 +143,44 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
     
     void refreshCheckout() {
         checkoutList.clear();
-        today.add(Calendar.DAY_OF_YEAR, checkinPosition-WHITE_LINE);
-        makeWhiteLines(checkoutList);
+        today.add(Calendar.DAY_OF_YEAR, checkinPosition);
         for(int i = 1, count = CHECKOUT_MAX+1; i < count; i++) {
             checkoutList.add(makeCheckoutDateString(today, i));
         }
         makeWhiteLines(checkoutList);
-        today.add(Calendar.DAY_OF_YEAR, -(checkinPosition-WHITE_LINE));
+        today.add(Calendar.DAY_OF_YEAR, -(checkinPosition));
         checkoutAdapter.notifyDataSetChanged();
-        checkoutLsv.setSelectionFromTop(checkoutPosition-WHITE_LINE, 0);
+        checkoutLsv.setSelectionFromTop(checkoutPosition, 0);
         refreshTitle();
     }
     
     void refreshTitle() {
-        today.add(Calendar.DAY_OF_YEAR, checkinPosition-WHITE_LINE);
+        today.add(Calendar.DAY_OF_YEAR, checkinPosition);
         StringBuilder s = new StringBuilder();
         s.append(monthDayFormat.format(today.getTime())+context.getString(R.string.hotel_checkin_));
-        int indexDay = s.length()-WHITE_LINE;
-        s.append((checkoutPosition-WHITE_LINE)+1);
+        int indexDay = s.length();
+        s.append((checkoutPosition)+1);
         int indexN = s.length();
         s.append(context.getString(R.string.night));
         SpannableStringBuilder style = new SpannableStringBuilder(s.toString());
         int orange = getContext().getResources().getColor(R.color.orange);
         style.setSpan(new ForegroundColorSpan(orange),0,indexDay,Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
-        style.setSpan(new ForegroundColorSpan(orange),indexDay+WHITE_LINE,indexN,Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+        style.setSpan(new ForegroundColorSpan(orange),indexDay,indexN,Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
         titleTxv.setText(style);
-        today.add(Calendar.DAY_OF_YEAR, -(checkinPosition-WHITE_LINE));
+        today.add(Calendar.DAY_OF_YEAR, -(checkinPosition));
     }
 
     public void setData(CallBack callBack, String actionTag) {
         this.actionTag = actionTag;
         this.callBack = callBack;
-        if (checkinPosition-WHITE_LINE > -1) {
-            checkinLsv.setSelectionFromTop(checkinPosition-WHITE_LINE, 0);
+        if (checkinPosition > -1) {
+            checkinLsv.setSelectionFromTop(checkinPosition, 0);
         } else {
             checkinLsv.setSelectionFromTop(0, 0);
         }
         
-        if (checkoutPosition-WHITE_LINE > -1) {
-            checkoutLsv.setSelectionFromTop(checkoutPosition-WHITE_LINE, 0);
+        if (checkoutPosition > -1) {
+            checkoutLsv.setSelectionFromTop(checkoutPosition, 0);
         } else {
             checkoutLsv.setSelectionFromTop(0, 0);
         }
@@ -256,15 +256,13 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
 
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long arg3) {
-                if (position < WHITE_LINE) {
-                    position = WHITE_LINE;
-                } else if (position > checkinList.size()-WHITE_LINE-1) {
+                if (position > checkinList.size()-WHITE_LINE-1) {
                     position = checkinList.size()-WHITE_LINE-1;
                 }
                 checkinPosition = position;
-                checkoutPosition = WHITE_LINE;
+                checkoutPosition = 0;
                 checkinAdapter.notifyDataSetChanged();
-                checkinLsv.setSelectionFromTop(checkinPosition-WHITE_LINE, 0);
+                checkinLsv.setSelectionFromTop(checkinPosition, 0);
 
                 refreshCheckout();
                 
@@ -275,14 +273,12 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
 
             @Override
             public void onItemClick(AdapterView<?> arg0, View view, int position, long arg3) {
-                if (position < WHITE_LINE) {
-                    position = WHITE_LINE;
-                } else if (position > checkoutList.size()-WHITE_LINE-1) {
+                if (position > checkoutList.size()-WHITE_LINE-1) {
                     position = checkoutList.size()-WHITE_LINE-1;
                 }
                 checkoutPosition = position;
                 checkoutAdapter.notifyDataSetChanged();
-                checkoutLsv.setSelectionFromTop(checkoutPosition-WHITE_LINE, 0);
+                checkoutLsv.setSelectionFromTop(checkoutPosition, 0);
                 refreshTitle();
                 
                 actionLog.addAction(actionTag + ActionLog.HotelDateCheckout, ((TextView)view.findViewById(R.id.text_txv)).getText());
@@ -295,8 +291,8 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
             public void onScrollStateChanged(AbsListView view, int scrollState) {
                 if (OnScrollListener.SCROLL_STATE_IDLE == scrollState) {
                     int firstPosition = checkinLsv.getFirstVisiblePosition();
-                    checkinPosition = firstPosition+WHITE_LINE;
-                    checkoutPosition = WHITE_LINE;
+                    checkinPosition = firstPosition;
+                    checkoutPosition = 0;
                     checkinAdapter.notifyDataSetChanged();
                     checkinLsv.setSelectionFromTop(firstPosition, 0);
                     
@@ -318,7 +314,7 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
             public void onScrollStateChanged(AbsListView view, int scrollState) {
                 if (OnScrollListener.SCROLL_STATE_IDLE == scrollState) {
                     int firstPosition = checkoutLsv.getFirstVisiblePosition();
-                    checkoutPosition = firstPosition+WHITE_LINE;
+                    checkoutPosition = firstPosition;
                     checkoutAdapter.notifyDataSetChanged();
                     checkoutLsv.setSelectionFromTop(firstPosition, 0);
 
@@ -354,7 +350,7 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
         checkinPosition = confirmCheckinPosition;
         checkoutPosition = confirmCheckoutPosition;
         checkinAdapter.notifyDataSetChanged();
-        checkinLsv.setSelectionFromTop(checkinPosition-WHITE_LINE, 0);
+        checkinLsv.setSelectionFromTop(checkinPosition, 0);
         refreshCheckout();
         if (callBack != null) {
             callBack.cancel();
@@ -471,13 +467,15 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
     
     public Calendar getCheckin() {
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DAY_OF_YEAR, confirmCheckinPosition-WHITE_LINE);
+        calendar.setTimeInMillis(CalendarUtil.getExactTime(context));
+        calendar.add(Calendar.DAY_OF_YEAR, confirmCheckinPosition);
         return calendar;
     }
     
     public Calendar getCheckout() {
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DAY_OF_YEAR, confirmCheckinPosition-WHITE_LINE+1+confirmCheckoutPosition-WHITE_LINE);
+        calendar.setTimeInMillis(CalendarUtil.getExactTime(context));
+        calendar.add(Calendar.DAY_OF_YEAR, confirmCheckinPosition+1+confirmCheckoutPosition);
         return calendar;
     }
 }

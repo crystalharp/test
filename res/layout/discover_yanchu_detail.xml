@@ -4,7 +4,7 @@
     xmlns:tkandroid ="http://schemas.android.com/apk/res/com.tigerknows"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@drawable/bg_discover"
+    android:background="@color/normal_background"
     >
 
     <ScrollView

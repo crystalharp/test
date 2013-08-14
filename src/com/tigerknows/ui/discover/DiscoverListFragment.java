@@ -569,16 +569,18 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                     }else{
                     	mRightBtn.setVisibility(View.VISIBLE);
                     }
-                    if (BaseQuery.DATA_TYPE_TUANGOU.equals(mDataType)) {
-                        if (TKConfig.getPref(mSphinx, TKConfig.PREFS_HINT_POI_LIST) == null) {
-                            TKConfig.setPref(mSphinx, TKConfig.PREFS_HINT_POI_LIST, "1");
-                            TKConfig.setPref(mSphinx, TKConfig.PREFS_HINT_DISCOVER_TUANGOU_DINGDAN, "1");
-                            mSphinx.showHint(TKConfig.PREFS_HINT_DISCOVER_TUANGOU_LIST, R.layout.hint_discover_tuangou_list);
+                    if (mSphinx.getFromThirdParty() == 0) {
+                        if (BaseQuery.DATA_TYPE_TUANGOU.equals(mDataType)) {
+                            if (TKConfig.getPref(mSphinx, TKConfig.PREFS_HINT_POI_LIST) == null) {
+                                TKConfig.setPref(mSphinx, TKConfig.PREFS_HINT_POI_LIST, "1");
+                                TKConfig.setPref(mSphinx, TKConfig.PREFS_HINT_DISCOVER_TUANGOU_DINGDAN, "1");
+                                mSphinx.showHint(TKConfig.PREFS_HINT_DISCOVER_TUANGOU_LIST, R.layout.hint_discover_tuangou_list);
+                            } else {
+                                mSphinx.showHint(TKConfig.PREFS_HINT_DISCOVER_TUANGOU_DINGDAN, R.layout.hint_discover_tuangou_dingdan);
+                            }
                         } else {
-                            mSphinx.showHint(TKConfig.PREFS_HINT_DISCOVER_TUANGOU_DINGDAN, R.layout.hint_discover_tuangou_dingdan);
+                            mSphinx.showHint(TKConfig.PREFS_HINT_POI_LIST, R.layout.hint_poi_list);
                         }
-                    } else {
-                        mSphinx.showHint(TKConfig.PREFS_HINT_POI_LIST, R.layout.hint_poi_list);
                     }
                 } else {
                     mRightBtn.setVisibility(View.GONE);
@@ -604,7 +606,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         if (BaseQuery.DATA_TYPE_DIANYING.equals(mDataType) && dianyingSize > 0) {
             criteria.put(DataQuery.SERVER_PARAMETER_DIANYING_UUID, mDianyingList.get(dianyingSize-1).getUid());
         }
-        dataQuery.setup(criteria, lastDataQuery.getCityId(), getId(), getId(), tip, true, true, lastDataQuery.getPOI());
+        dataQuery.setup(criteria, lastDataQuery.getCityId(), getId(), getId(), tip, true, false, lastDataQuery.getPOI());
         mSphinx.queryStart(dataQuery);
         }
     }
@@ -1008,6 +1010,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 }
             } else {
                 if (dataQuery.isTurnPage()) {
+                    mResultLsv.setFooterLoadFailed(true);
                     invokeIPagerListCallBack();
                     return;
                 }

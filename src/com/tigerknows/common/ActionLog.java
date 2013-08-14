@@ -6,6 +6,7 @@ package com.tigerknows.common;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.TKConfig;
 import com.tigerknows.model.FeedbackUpload;
+import com.tigerknows.util.CalendarUtil;
 
 import android.content.Context;
 import android.text.TextUtils;
@@ -27,6 +28,7 @@ public class ActionLog extends LogUpload {
     
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
     
+    private Context context;
     private static ActionLog sActionLog;
     public static ActionLog getInstance(Context context) {
         if (sActionLog == null) {
@@ -184,6 +186,8 @@ public class ActionLog extends LogUpload {
     public static final String POIDetailCouponSingle = "CA";
     public static final String POIDetailCouponMulti = "CB";
     public static final String POIDetailBusstop = "CD";
+    public static final String POIDetailMoreSameCategory = "CE";
+    public static final String POIDetailSameCategory = "CF";
 
     // POI点评列表页
     public static final String POICommentList = "AE";
@@ -301,6 +305,7 @@ public class ActionLog extends LogUpload {
     public static final String MoreAddMerchant = "BQ";
     public static final String MoreSatisfyRate = "BR";
     public static final String MoreAppDownload = "BS";
+    public static final String MoreNotice = "BT";
 
     // 切换城市页
     public static final String ChangeCity = "CB";
@@ -677,6 +682,7 @@ public class ActionLog extends LogUpload {
     
     private ActionLog(Context context, String logFileName, String serverParameterKey) {
         super(context, logFileName, serverParameterKey);
+        this.context = context;
     }
     
     public void addAction(String actionLog, Object... args) {
@@ -740,7 +746,7 @@ public class ActionLog extends LogUpload {
     }
     
     protected String getLogOutToken() {
-        return SEPARATOR_STAET+(simpleDateFormat.format(Calendar.getInstance().getTime()))+SEPARATOR_MIDDLE+LogOut;
+        return SEPARATOR_STAET+(simpleDateFormat.format(CalendarUtil.getExactTime(context)))+SEPARATOR_MIDDLE+LogOut;
     }
     
     protected void onLogOut() {
@@ -770,7 +776,7 @@ public class ActionLog extends LogUpload {
         super.onCreate();
         synchronized (mLock) {
             mStartMillis = System.currentTimeMillis();
-            addAction(SEPARATOR_STAET+simpleDateFormat.format(Calendar.getInstance().getTime())+SEPARATOR_MIDDLE+LifecycleCreate+SEPARATOR_MIDDLE+TKConfig.getClientSoftVersion(), false);
+            addAction(SEPARATOR_STAET+simpleDateFormat.format(CalendarUtil.getExactTime(context))+SEPARATOR_MIDDLE+LifecycleCreate+SEPARATOR_MIDDLE+TKConfig.getClientSoftVersion(), false);
         }
     }
     
@@ -787,7 +793,7 @@ public class ActionLog extends LogUpload {
     }
     
     public void onDestroy() {
-        addAction(SEPARATOR_STAET+simpleDateFormat.format(Calendar.getInstance().getTime())+SEPARATOR_MIDDLE+LifecycleDestroy, false);
+        addAction(SEPARATOR_STAET+simpleDateFormat.format(CalendarUtil.getExactTime(context))+SEPARATOR_MIDDLE+LifecycleDestroy, false);
         super.onDestroy();
     }
 }

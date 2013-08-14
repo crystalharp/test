@@ -88,12 +88,6 @@ public class LocationUpload extends LogUpload {
             if (lastLocation == null || lastLocation.distanceTo(location) > MIN_DISTANCE) {
                 lastLocation = location;
                 
-                if (sdx == 0 || sdy == 0 || sdt == 0) {
-                    sdx = (long)(Utility.doubleKeep(lastLocation.getLongitude(), KEEP_ACCURACY)*KEEP_VALUE);
-                    sdy = (long)(Utility.doubleKeep(lastLocation.getLatitude(), KEEP_ACCURACY)*KEEP_VALUE);
-                    sdt = System.currentTimeMillis();
-                }
-                
                 mcc = TKConfig.getMCC();
                 mnc = TKConfig.getMNC();
                 

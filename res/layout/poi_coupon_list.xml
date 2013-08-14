@@ -33,7 +33,7 @@
                 >
             </com.tigerknows.widget.QueryingView>
                 
-            <com.tigerknows.widget.SpringbackListView
+            <ListView
                 android:id="@+id/result_lsv"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"

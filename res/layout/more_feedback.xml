@@ -3,7 +3,7 @@
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@drawable/bg_discover"
+    android:background="@color/normal_background"
     >
     <include android:id="@+id/title_view"
         layout="@layout/title"
@@ -106,7 +106,7 @@
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:background="@drawable/bg_discover"
+                android:background="@color/normal_background"
                 />
         </LinearLayout>
     </ScrollView>
