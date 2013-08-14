@@ -38,7 +38,6 @@ import com.tigerknows.TKConfig;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BaseQuery;
-import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.HotelOrder;
 import com.tigerknows.model.HotelOrderOperation;
 import com.tigerknows.model.HotelOrderOperation.HotelOrderSyncResponse;
@@ -87,15 +86,11 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
      */
     private TextView mServiceHotlineTxv;
 
-    private DataQuery mDataQuery;
-
-	private HotelOrderAdapter hotelOrderAdapter;
+    private HotelOrderAdapter hotelOrderAdapter;
     
 	private int orderTotal = 0;
 	
 	private List<HotelOrder> orders = new ArrayList<HotelOrder>();
-    
-    private int fragmentState;
     
     /**
      * 需要查询状态的订单的buffer
@@ -136,7 +131,6 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     public void dismiss() {
         super.dismiss();
         clearOrders();
-        mDataQuery = null;
     }
     
     /**
@@ -265,7 +259,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     	hotelOrderOperation.addParameter(HotelOrderOperation.SERVER_PARAMETER_ORDER_ID_FILTER, ids);
     	hotelOrderOperation.addParameter(BaseQuery.SERVER_PARAMETER_NEED_FIELD, HotelOrder.NEED_FIELDS);
         hotelOrderOperation.addLocalParameter(BaseQuery.RESPONSE_NULL_ERROR_MSG, ""+R.string.response_null_hotel_order_sync);
-    	hotelOrderOperation.setup(Globals.getCurrentCityInfo().getId(), getId(), getId(), mContext.getString(R.string.query_loading_tip));
+    	hotelOrderOperation.setup(Globals.getCurrentCityInfo().getId(), getId(), getId(), mContext.getString(R.string.hotel_order_sync_tip));
     	mTkAsyncTasking = mSphinx.queryStart(hotelOrderOperation);
     	mBaseQuerying = mTkAsyncTasking.getBaseQueryList();
 		
@@ -399,10 +393,12 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     public void onCancelled(TKAsyncTask tkAsyncTask) {
         super.onCancelled(tkAsyncTask);
         logi("onCancelled");
+        Toast.makeText(mContext, mSphinx.getString(R.string.response_null_hotel_order_sync), Toast.LENGTH_LONG).show();
     }
     
     Handler mLoadOrderHandler = new Handler(){
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
@@ -487,7 +483,8 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     /**
      * Launch make and launch state query from list {@code ordersQuerying}
      */
-    private void launchStateQuery(){
+    @SuppressWarnings("unused")
+	private void launchStateQuery(){
 
     	System.out.println("launchStateQuery");
     	

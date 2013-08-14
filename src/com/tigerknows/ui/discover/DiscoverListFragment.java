@@ -43,6 +43,7 @@ import com.tigerknows.widget.SpringbackListView.OnRefreshListener;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -567,16 +568,18 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                     }else{
                     	mRightBtn.setVisibility(View.VISIBLE);
                     }
-                    if (BaseQuery.DATA_TYPE_TUANGOU.equals(mDataType)) {
-                        if (TKConfig.getPref(mSphinx, TKConfig.PREFS_HINT_POI_LIST) == null) {
-                            TKConfig.setPref(mSphinx, TKConfig.PREFS_HINT_POI_LIST, "1");
-                            TKConfig.setPref(mSphinx, TKConfig.PREFS_HINT_DISCOVER_TUANGOU_DINGDAN, "1");
-                            mSphinx.showHint(TKConfig.PREFS_HINT_DISCOVER_TUANGOU_LIST, R.layout.hint_discover_tuangou_list);
+                    if (mSphinx.getFromThirdParty() == 0) {
+                        if (BaseQuery.DATA_TYPE_TUANGOU.equals(mDataType)) {
+                            if (TKConfig.getPref(mSphinx, TKConfig.PREFS_HINT_POI_LIST) == null) {
+                                TKConfig.setPref(mSphinx, TKConfig.PREFS_HINT_POI_LIST, "1");
+                                TKConfig.setPref(mSphinx, TKConfig.PREFS_HINT_DISCOVER_TUANGOU_DINGDAN, "1");
+                                mSphinx.showHint(TKConfig.PREFS_HINT_DISCOVER_TUANGOU_LIST, R.layout.hint_discover_tuangou_list);
+                            } else {
+                                mSphinx.showHint(TKConfig.PREFS_HINT_DISCOVER_TUANGOU_DINGDAN, R.layout.hint_discover_tuangou_dingdan);
+                            }
                         } else {
-                            mSphinx.showHint(TKConfig.PREFS_HINT_DISCOVER_TUANGOU_DINGDAN, R.layout.hint_discover_tuangou_dingdan);
+                            mSphinx.showHint(TKConfig.PREFS_HINT_POI_LIST, R.layout.hint_poi_list);
                         }
-                    } else {
-                        mSphinx.showHint(TKConfig.PREFS_HINT_POI_LIST, R.layout.hint_poi_list);
                     }
                 } else {
                     mRightBtn.setVisibility(View.GONE);
@@ -601,7 +604,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         if (BaseQuery.DATA_TYPE_DIANYING.equals(mDataType) && dianyingSize > 0) {
             dataQuery.setParameter(DataQuery.SERVER_PARAMETER_DIANYING_UUID, mDianyingList.get(dianyingSize-1).getUid());
         }
-        dataQuery.setup(lastDataQuery.getCityId(), getId(), getId(), tip, true, true, lastDataQuery.getPOI());
+        dataQuery.setup(lastDataQuery.getCityId(), getId(), getId(), tip, true, false, lastDataQuery.getPOI());
         mSphinx.queryStart(dataQuery);
         }
     }
@@ -774,7 +777,8 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             if(drawable != null) {
             	//To prevent the problem of size change of the same pic 
             	//After it is used at a different place with smaller size
-            	if( drawable.getBounds().width() != pictureImv.getWidth() || drawable.getBounds().height() != pictureImv.getHeight() ){
+                Rect bounds = drawable.getBounds();
+            	if(bounds != null && bounds.width() != pictureImv.getWidth() || bounds.height() != pictureImv.getHeight() ){
             		pictureImv.setBackgroundDrawable(null);
             	}
             	pictureImv.setBackgroundDrawable(drawable);
@@ -834,9 +838,6 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             if(drawable != null) {
             	//To prevent the problem of size change of the same pic 
             	//After it is used at a different place with smaller size
-            	if( drawable.getBounds().width() != pictureImv.getWidth() || drawable.getBounds().height() != pictureImv.getHeight() ){
-            		pictureImv.setBackgroundDrawable(null);
-            	}
             	pictureImv.setBackgroundDrawable(drawable);
             } else {
                 pictureImv.setBackgroundDrawable(null);
@@ -894,7 +895,8 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             if(drawable != null) {
             	//To prevent the problem of size change of the same pic 
             	//After it is used at a different place with smaller size
-            	if( drawable.getBounds().width() != pictureImv.getWidth() || drawable.getBounds().height() != pictureImv.getHeight() ){
+                Rect bounds = drawable.getBounds();
+            	if(bounds != null && bounds.width() != pictureImv.getWidth() || bounds.height() != pictureImv.getHeight() ){
             		pictureImv.setBackgroundDrawable(null);
             	}
             	pictureImv.setBackgroundDrawable(drawable);
@@ -941,7 +943,8 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             if(drawable != null) {
             	//To prevent the problem of size change of the same pic 
             	//After it is used at a different place with smaller size
-            	if( drawable.getBounds().width() != pictureImv.getWidth() || drawable.getBounds().height() != pictureImv.getHeight() ){
+                Rect bounds = drawable.getBounds();
+            	if(bounds != null && bounds.width() != pictureImv.getWidth() || bounds.height() != pictureImv.getHeight() ){
             		pictureImv.setBackgroundDrawable(null);
             	}
             	pictureImv.setBackgroundDrawable(drawable);
@@ -1004,6 +1007,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 }
             } else {
                 if (dataQuery.isTurnPage()) {
+                    mResultLsv.setFooterLoadFailed(true);
                     invokeIPagerListCallBack();
                     return;
                 }

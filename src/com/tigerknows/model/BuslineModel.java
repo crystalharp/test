@@ -16,7 +16,6 @@ import com.tigerknows.util.Utility;
 import com.tigerknows.util.ShareTextUtil;
 import com.tigerknows.util.SqliteWrapper;
 
-import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;

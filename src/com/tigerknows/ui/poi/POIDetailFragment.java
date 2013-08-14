@@ -454,9 +454,10 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         mExtraPOIInfoList.add(mExtraSubwayPOI);
     }
     
-    private void initExtraView() {
+    private void initExtraView(POI poi) {
         for (DynamicPOIView extraView : mExtraPOIInfoList) {
             mExtraViewList.addAll(extraView.getViewList());
+            extraView.initData(poi);
         }
         
         for (DynamicPOIViewBlock block : mExtraViewList) {
@@ -464,6 +465,15 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             block.addToParent();
         }
     }
+    
+    private final void refreshNavigation() {
+        if (mDynamicHotelPOI.isExist()) {
+            mNavigationWidget.setVisibility(View.VISIBLE);
+        } else {
+            mNavigationWidget.setVisibility(View.GONE);
+        }
+    }
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -541,6 +551,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         if (mPOI.getHotel().getUuid() != null) {
             mDynamicHotelPOI.refreshPicture();
         }
+        refreshNavigation();
         
         if (poi.getName() == null && poi.getUUID() != null) {
             mActionLog.addAction(mActionTag + ActionLog.POIDetailFromWeixin);
@@ -560,13 +571,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             poiQuery.setup(cityId, getId(), getId(), mSphinx.getString(R.string.doing_and_wait));
             baseQueryList.add(poiQuery);
             mSphinx.queryStart(baseQueryList);
-            mNavigationWidget.setVisibility(View.GONE);
-        } else {
-            if (poi.getHotel().getUuid() != null) {
-                mNavigationWidget.setVisibility(View.VISIBLE);
-            } else {
-                mNavigationWidget.setVisibility(View.GONE);
-            }
         }
         
         if (isReLogin()) {
@@ -1027,20 +1031,13 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         }
         //这两个函数放在前面初始化动态POI信息
         clearDynamicView(DPOIViewBlockList);
-        //初始化和动态POI信息无关的动态布局，执行addToParent的顺序决定出现的顺序
-        mExtraViewList.addAll(mExtraSubwayPOI.getViewList());
         //初始化和动态POI信息相关的动态布局
         initDynamicPOIView(mPOI);
-        initExtraView();
-        mExtraSubwayPOI.initData(poi);
+        initExtraView(mPOI);
         if (mExtraSubwayPOI.isExist()) {
             mExtraSubwayPOI.refresh();
         }
-        if (poi.getHotel().getUuid() != null) {
-            mNavigationWidget.setVisibility(View.VISIBLE);
-        } else {
-            mNavigationWidget.setVisibility(View.GONE);
-        }
+        refreshNavigation();
         mDoingView.setVisibility(View.VISIBLE);
         if (poi.getName() == null && poi.getUUID() != null) {
             return;
@@ -1119,6 +1116,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         feedbackUpload.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_POI);
         feedbackUpload.addParameter(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, mDynamicHotelPOI.isExist() ? BaseQuery.SUB_DATA_TYPE_HOTEL : BaseQuery.SUB_DATA_TYPE_POI);
         feedbackUpload.addParameter(DataQuery.SERVER_PARAMETER_REQUSET_SOURCE_TYPE, mActionTag);
+        feedbackUpload.setup(MapEngine.getInstance().getCityId(poi.getPosition()));
         
         if (baseQueryList.isEmpty() == false) {
             if (position >= 0) {
@@ -1195,11 +1193,12 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                     viewGroup.addView(titleTxv, layoutParamsTitle);
                     bodyTxv = new TextView(mContext);
                     bodyTxv.setGravity(Gravity.LEFT);
+                    bodyTxv.setLineSpacing(0f, 1.2f);
                     color = mSphinx.getResources().getColor(R.color.black_light);
                     bodyTxv.setTextColor(color);
                     viewGroup.addView(bodyTxv, layoutParamsBody);
                     splitImv = new ImageView(mContext);
-                    splitImv.setBackgroundResource(R.drawable.bg_broken_line);
+                    splitImv.setBackgroundResource(R.drawable.bg_line_split);
                     viewGroup.addView(splitImv, layoutParamsSplit);
                 }
                 String name = poi.getDescriptionName(mContext, key);
@@ -1275,6 +1274,13 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             TextView dateTxv = (TextView) view.findViewById(R.id.date_txv);
             TextView commentTxv = (TextView) view.findViewById(R.id.comment_txv);
             TextView srcTxv = (TextView) view.findViewById(R.id.src_txv);
+            View commendView = view.findViewById(R.id.commend_view);
+            ImageView commendImv = (ImageView)view.findViewById(R.id.commend_imv);
+            TextView avgTxv = (TextView) view.findViewById(R.id.avg_txv);
+            
+            commendView.setVisibility(View.GONE);
+            avgTxv.setVisibility(View.GONE);
+            commendImv.setVisibility(View.GONE);
             
             float grade = comment.getGrade()/2.0f;
             gradeRtb.setRating(grade);
@@ -1307,7 +1313,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
 //                });
 //            } else {
                 view.setBackgroundResource(R.drawable.list_middle_normal);
-                authorTxv.setTextColor(0xff000000);
+                authorTxv.setTextColor(TKConfig.COLOR_BLACK_LIGHT);
                 view.setOnClickListener(this);
 //            }
             
@@ -1363,6 +1369,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                 srcTxv.setMovementMethod(LinkMovementMethod.getInstance()); 
             }
         } catch (Exception e) {
+            e.printStackTrace();
         }
         
         return view;
@@ -1399,8 +1406,10 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                 }
                 
             } else if (baseQuery instanceof DataOperation) {
+                if (BaseQuery.DATA_TYPE_DIANPING.equals(dataType)) {
+                    return;
                 // 查询POI的结果
-                if (BaseQuery.DATA_TYPE_POI.equals(dataType)) {
+                } else if (BaseQuery.DATA_TYPE_POI.equals(dataType)) {
                     if (poi.getName() == null && poi.getUUID() != null) {
                         if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, BaseActivity.SHOW_ERROR_MSG_TOAST, POIDetailFragment.this, true)) {
                             mActionLog.addAction(mActionTag+ActionLog.POIDetailPullFailed);
@@ -1429,6 +1438,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                             initDynamicPOIView(mPOI);
                             refreshDetail();
                             refreshComment();
+                            refreshNavigation();
 
                             if (mDynamicHotelPOI.isExist()) {
                                 mDynamicHotelPOI.initDate();

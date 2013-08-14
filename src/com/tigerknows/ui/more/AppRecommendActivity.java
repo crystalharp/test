@@ -18,6 +18,7 @@ import com.tigerknows.model.BootstrapModel.Recommend.RecommendApp;
 import com.tigerknows.ui.BaseActivity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -157,6 +158,10 @@ public class AppRecommendActivity extends BaseActivity {
             if (drawable == null) {
                 drawable = getResources().getDrawable(R.drawable.ic_app_icon_loading);
             }
+			Rect bounds = drawable.getBounds();
+			if(bounds != null && (bounds.width() != iconImv.getWidth() || bounds.height() != iconImv.getHeight())){
+				iconImv.setBackgroundDrawable(null);
+			}
             iconImv.setImageDrawable(drawable);
             return view;
         }

@@ -33,6 +33,8 @@ public class SpringbackListView extends ListView {
     public final static int REFRESHING = 2;  
     // 刷新完成标志   
     public final static int DONE = 3;  
+    
+    private boolean footerLoadFailed = false;
   
     private View headerView;  
 
@@ -386,7 +388,11 @@ public class SpringbackListView extends ListView {
                     
                 case PULL_TO_REFRESH:  
                     if (footerLoadintTxv != null && footerProgressBar != null) {
-                        footerLoadintTxv.setText(R.string.pull_to_refresh);
+                        if (footerLoadFailed) {
+                            footerLoadintTxv.setText(R.string.network_failed);
+                        } else {
+                            footerLoadintTxv.setText(R.string.pull_to_refresh);
+                        }
                         footerProgressBar.setVisibility(View.INVISIBLE);
                     }
                     footerView.setPadding(0, 0, 0, 0);  
@@ -433,6 +439,7 @@ public class SpringbackListView extends ListView {
             stateHeader = DONE;  
         } else {
             stateFooter = DONE;
+            footerLoadFailed = false;
         }
         refreshViews();  
     }  
@@ -474,6 +481,7 @@ public class SpringbackListView extends ListView {
             refreshViews();  
         } else {
             this.stateFooter = DONE;
+            footerLoadFailed = false;
             refreshViews();  
         }
     }
@@ -495,5 +503,12 @@ public class SpringbackListView extends ListView {
             return headerView;
         else
             return footerView;
+    }
+    
+    public void setFooterLoadFailed(boolean footerLoadFailed) {
+        this.footerLoadFailed = footerLoadFailed;
+        if (this.footerLoadFailed) {
+            setFooterSpringback(true);
+        }
     }
 }  

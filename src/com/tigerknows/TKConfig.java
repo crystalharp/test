@@ -523,6 +523,11 @@ public class TKConfig {
     public static final String PREFS_HINT_POI_HOME_HOTEL = "prefs_hint_poi_home_hotel";
 
     /**
+     * 是否已显示POI主页界面的指定点搜索的引导
+     */
+    public static final String PREFS_HINT_POI_HOME_LOCATION = "prefs_hint_poi_home_location";
+
+    /**
      * 是否已显示酒店主页界面的用户引导
      */
     public static final String PREFS_HINT_HOTEL_HOME = "prefs_hint_hotel_home";
@@ -635,6 +640,22 @@ public class TKConfig {
      * 用户是否打开过满意度评分
      */
     public static final String PREFS_SATISFY_RATE_OPENED="prefs_satisfy_rate_opened";
+    
+    // 以下三项用来获取一个比较准确的当前时间
+    /**
+     * ntp校时时记录的服务器时间
+     */
+    public static final String PREFS_RECORDED_NTP_TIME="prefs_recorded_ntp_time";
+    
+    /**
+     * ntp校时时记录的手机系统绝对时间
+     */
+    public static final String PREFS_RECORDED_SYS_ABS_TIME="prefs_recorded_sys_abs_time";
+    
+    /**
+     * ntp校时时记录的手机系统相对时间
+     */
+    public static final String PREFS_RECORDED_SYS_REL_TIME="prefs_recorded_sys_rel_time";
     
     /**
      * 发现分类图片尺寸的Key
@@ -1272,6 +1293,7 @@ public class TKConfig {
      * @return
      */
     public static String getIMEI() {
+    	if(TextUtils.isEmpty(sIMEI))return "0";
         return sIMEI;
     }
     

@@ -47,7 +47,7 @@ public class AlarmInitReceiver extends BroadcastReceiver {
         Alarms.disableAlarm(context, pullIntent);
     }
     
-    void enableAlarm(Context context) {
+    static void enableAlarm(Context context) {
         Calendar next = Calendar.getInstance();
         next.setTimeInMillis(System.currentTimeMillis());
         next = Alarms.calculateRandomAlarmInNextDay(next, PullService.requestStartHour, PullService.requestEndHour);

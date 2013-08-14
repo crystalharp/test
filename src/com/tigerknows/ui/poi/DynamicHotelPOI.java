@@ -8,6 +8,7 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 
+import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.text.Html;
@@ -22,6 +23,7 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.PopupWindow.OnDismissListener;
+import android.widget.Toast;
 
 import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
@@ -43,6 +45,7 @@ import com.tigerknows.model.ProxyQuery;
 import com.tigerknows.model.Response;
 import com.tigerknows.model.Hotel.RoomType;
 import com.tigerknows.model.TKDrawable;
+import com.tigerknows.model.TKDrawable.LoadImageRunnable;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.hotel.DateListView;
 import com.tigerknows.ui.hotel.DateWidget;
@@ -164,6 +167,11 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     DateListView getDateListView() {
         if (mDateListView == null) {
             DateListView view = new DateListView(mSphinx);
+            View v = mInflater.inflate(R.layout.time_list_item, view, false);
+            v.setBackgroundResource(R.drawable.list_selector_background_gray_dark);
+            v.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+            int h = v.getMeasuredHeight();
+            view.findViewById(R.id.body_view).getLayoutParams().height = h*5-(int)(Globals.g_metrics.density*8);
             view.setData(this, mPOIDetailFragment.mActionTag);
             mDateListView = view;
         }
@@ -419,24 +427,11 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         if (picList != null && picList.size() > 0) {
             final TKDrawable tkDrawable = picList.get(0).getTKDrawable();
             if (tkDrawable != null) {
-                Drawable hotelImageDraw = tkDrawable.loadDrawable(mSphinx, new Runnable() {
-    
-                    @Override
-                    public void run() {
-                        Drawable drawable = tkDrawable.loadDrawable(null, null, null);
-                        if (drawable != null) {
-                            if(drawable.getBounds().width() != hotelImage.getWidth() || drawable.getBounds().height() != hotelImage.getHeight() ){
-                                hotelImage.setBackgroundDrawable(null);
-                            }
-                            hotelImage.setBackgroundDrawable(drawable);
-//                        } else {
-//                            hotelImage.setBackgroundResource(R.drawable.bg_picture_hotel);
-                        }
-                    }
-                    
-                }, mPOIDetailFragment.toString());
+                LoadImageRunnable loadImageRunnable = new LoadImageRunnable(mSphinx, tkDrawable, hotelImage, R.drawable.bg_picture_hotel, mPOIDetailFragment.toString());
+                Drawable hotelImageDraw = tkDrawable.loadDrawable(mSphinx, loadImageRunnable, mPOIDetailFragment.toString());
                 if (hotelImageDraw != null) {
-                    if(hotelImageDraw.getBounds().width() != hotelImage.getWidth() || hotelImageDraw.getBounds().height() != hotelImage.getHeight() ){
+                    Rect bounds = hotelImageDraw.getBounds();
+                    if(bounds != null && bounds.width() != hotelImage.getWidth() || bounds.height() != hotelImage.getHeight() ){
                         hotelImage.setBackgroundDrawable(null);
                     }
                     hotelImage.setBackgroundDrawable(hotelImageDraw);
@@ -597,6 +592,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
 
             if (baseQuery instanceof DataOperation) {
                 if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, false, this, false)) {
+                    Toast.makeText(mSphinx, mSphinx.getString(R.string.network_failed), Toast.LENGTH_SHORT).show();
                     loadSucceed(false);
                     refresh();
                     return;

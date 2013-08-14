@@ -566,7 +566,7 @@ public class MapView extends RelativeLayout implements
 	 * @throws APIException
 	 */
 	public void centerOnPosition(Position position) throws APIException {
-//		tilesView.centerOnPosition(position);
+		tilesView.centerOnPosition(position);
 	}
 
 	/**

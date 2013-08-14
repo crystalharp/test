@@ -16,9 +16,11 @@
 
 package com.tigerknows.util;
 
+import com.tigerknows.TKConfig;
+
 import android.content.Context;
 
-import java.io.FileNotFoundException;
+import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
@@ -33,45 +35,6 @@ import java.io.RandomAccessFile;
  * Time: 21:13
  */
 public abstract class PinyinUtil {
-    /**
-     * to convert chinese to pinyin
-     *
-     * @param context Android Context
-     * @param c       the chinese character
-     * @return pinyin
-     */
-    public static String toPinyin(Context context, char c) {
-        if (c >= 'A' && c <= 'Z') {
-            return String.valueOf((char) (c + 32));
-        }
-        if (c >= 'a' && c <= 'z') {
-            return String.valueOf(c);
-        }
-        if (c == 0x3007) return "ling";
-        if (c < 4E00 || c > 0x9FA5) {
-            return null;
-        }
-        RandomAccessFile is = null;
-        try {
-            is = new RandomAccessFile(PinyinSource.getFile(context), "r");
-            long sp = (c - 0x4E00) * 6;
-            is.seek(sp);
-            byte[] buf = new byte[6];
-            is.read(buf);
-            return new String(buf).trim();
-        } catch (FileNotFoundException e) {
-            //
-        } catch (IOException e) {
-            //
-        } finally {
-            try {
-                if (null != is) is.close();
-            } catch (IOException e) {
-                //
-            }
-        }
-        return null;
-    }
 
     /**
      * to convert chinese to pinyin
@@ -84,7 +47,7 @@ public abstract class PinyinUtil {
         StringBuffer sb = new StringBuffer("");
         RandomAccessFile is = null;
         try {
-            is = new RandomAccessFile(PinyinSource.getFile(context), "r");
+            is = new RandomAccessFile(new File(TKConfig.getDataPath(false)+"pinyin4android"), "r");
             for (int i = 0; i < hanzi.length(); i++) {
                 char ch = hanzi.charAt(i);
                 if (ch >= 'A' && ch <= 'Z') {
@@ -95,15 +58,23 @@ public abstract class PinyinUtil {
                     sb.append(ch);
                     continue;
                 }
+                if (ch >= '0' && ch <= '9') {
+                    sb.append(ch);
+                    continue;
+                }
                 if (ch == 0x3007) {
                     sb.append("ling").append(' ');
-                } else if (ch >= 0x4E00 || ch <= 0x9FA5) {
+                } else if (ch >= 0x4E00 && ch <= 0x9FA5) {
                     long sp = (ch - 0x4E00) * 6;
                     is.seek(sp);
                     byte[] buf = new byte[6];
                     is.read(buf);
                     sb.append(new String(buf).trim()).append(' ');
+                }else{
+                    sb.append(ch);
+                    continue;
                 }
+                
             }
         } catch (IOException e) {
             //

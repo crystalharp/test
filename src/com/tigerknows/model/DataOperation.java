@@ -10,10 +10,14 @@ package com.tigerknows.model;
 
 import com.decarta.android.exception.APIException;
 import com.tigerknows.TKConfig;
+import com.tigerknows.model.test.BaseQueryTest;
 import com.tigerknows.model.test.DataOperationTest;
 import com.tigerknows.model.xobject.XMap;
 
 import android.content.Context;
+
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 
 public class DataOperation extends BaseQuery {
 
@@ -82,6 +86,8 @@ public class DataOperation extends BaseQuery {
             debugCheckParameters(new String[] {SERVER_PARAMETER_DATA_UID, SERVER_PARAMETER_ENTITY});
         } else if (OPERATION_CODE_DELETE.equals(operationCode)) {
             debugCheckParameters(new String[] {SERVER_PARAMETER_DATA_UID});
+        } else if (operationCode.startsWith(URLEncoder.encode(Comment.JsonHeader))) {
+            
         } else {
             throw APIException.wrapToMissingRequestParameterException("operationCode invalid.");
         }
@@ -138,6 +144,16 @@ public class DataOperation extends BaseQuery {
         } else if (OPERATION_CODE_UPDATE.equals(operationCode)) {
             if (DATA_TYPE_DIANPING.equals(dataType)) {
                 response = new CommentUpdateResponse(responseXMap);
+            }
+        } else if (operationCode.startsWith(URLEncoder.encode(Comment.JsonHeader))) {
+            if (DATA_TYPE_DIANPING.equals(dataType)) {
+                response = new Response(responseXMap);
+                if (response.getResponseCode() == Response.RESPONSE_CODE_OK) {
+                    operationCode = URLDecoder.decode(operationCode);
+                    operationCode = operationCode.substring(Comment.JsonHeader.length()+1, operationCode.length()-3);
+                    String[] uuids = operationCode.split("\",\"");
+                    Comment.deleteCommend(context, uuids, false);
+                }
             }
         }
     }
@@ -451,6 +467,10 @@ public class DataOperation extends BaseQuery {
             } if (OPERATION_CODE_UPDATE.equals(operationCode)) {
                 if (DATA_TYPE_DIANPING.equals(dataType)) {
                     responseXMap = DataOperationTest.launchDianpingUpdateResponse();
+                }
+            } else if (operationCode.startsWith(URLEncoder.encode(Comment.JsonHeader))) {
+                if (DATA_TYPE_DIANPING.equals(dataType)) {
+                    responseXMap = BaseQueryTest.launchResponse(new XMap());
                 }
             }
         }

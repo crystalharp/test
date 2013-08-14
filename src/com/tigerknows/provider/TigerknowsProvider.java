@@ -8,6 +8,7 @@ import com.decarta.android.util.LogWrapper;
 import com.tigerknows.TKConfig;
 import com.tigerknows.provider.Tigerknows.Favorite;
 import com.tigerknows.provider.Tigerknows.History;
+import com.tigerknows.provider.Tigerknows.TransitPlan;
 
 import android.content.ContentProvider;
 import android.content.ContentResolver;
@@ -35,7 +36,7 @@ public class TigerknowsProvider extends ContentProvider {
 
     private static final String DATABASE_NAME = "tigerknows.db";
 
-    private static final int DATABASE_VERSION = 8;
+    private static final int DATABASE_VERSION = 9;
     
     private static HashMap<String, String> HISTORY_LIST_PROJECTION_MAP;
     
@@ -66,6 +67,12 @@ public class TigerknowsProvider extends ContentProvider {
     private static final int TRANSITPLAN = 17;
     
     private static final int TRANSITPLAN_ID = 18;
+    
+    private static final int POI_COUNT = 19;
+    
+    private static final int HISTORY_COUNT = 20;
+    
+    private static final int FAVORITE_COUNT = 21;
     
     
     private static final UriMatcher URL_MATCHER;
@@ -200,6 +207,22 @@ public class TigerknowsProvider extends ContentProvider {
                         db.endTransaction();
                     }
                     break;
+                case 8:
+                    if (newVersion <= 8) {
+                        return;
+                    }
+
+                    db.beginTransaction();
+                    try {
+                        upgradeDatabaseToVersion9(db);
+                        db.setTransactionSuccessful();
+                    } catch (Throwable ex) {
+                        Log.e(TAG, ex.getMessage(), ex);
+                        break;
+                    } finally {
+                        db.endTransaction();
+                    }
+                    break;
                 default:
                     break;
             }
@@ -271,6 +294,41 @@ public class TigerknowsProvider extends ContentProvider {
         
         private void upgradeDatabaseToVersion8(SQLiteDatabase db) {
             db.execSQL("ALTER TABLE poi ADD _comment_data BLOB;");
+            upgradeDatabaseToVersion9(db);
+        }
+        
+        private void upgradeDatabaseToVersion9(SQLiteDatabase db) {
+            SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
+            qb.setTables("poi");
+            Cursor c = qb.query(db, new String[]{com.tigerknows.provider.Tigerknows.POI._ID}, com.tigerknows.provider.Tigerknows.POI.STORE_TYPE+"="+Tigerknows.STORE_TYPE_OTHER, null,
+                    null, null, null, null);
+            if (c != null) {
+                int count = c.getCount();
+                if (count > 0) {
+                    c.moveToFirst();
+                    int id;
+                    boolean delete;
+                    SQLiteQueryBuilder qbt = new SQLiteQueryBuilder();
+                    qbt.setTables("transitplan");
+                    for(int i = 0; i < count; i++) {
+                        delete = true;
+                        id = c.getInt(c.getColumnIndex(com.tigerknows.provider.Tigerknows.POI._ID));
+                        Cursor t = qbt.query(db, new String[]{TransitPlan._ID}, "(" + TransitPlan.START+"="+id + ") OR (" + TransitPlan.END + "=" + id + ")", null,
+                                null, null, null, null);
+                        if (t != null) {
+                            if (t.getCount() > 0) {
+                                delete = false;
+                            }
+                            t.close();
+                        }
+                        if (delete) {
+                            db.delete("poi", com.tigerknows.provider.Tigerknows.POI._ID+"="+id, null);
+                        }
+                        c.moveToNext();
+                    }
+                }
+                c.close();
+            }
         }
         
         private void createTables(SQLiteDatabase db) {
@@ -327,11 +385,13 @@ public class TigerknowsProvider extends ContentProvider {
                 break;
                 
             case TRANSITPLAN:
+                deletePlanDetail(url, where, whereArgs);
                 count = db.delete("transitplan", where, whereArgs);
                 break;
                 
             case TRANSITPLAN_ID:
-                myWhere = "_id=" + url.getPathSegments().get(1) + (!TextUtils.isEmpty(where) ? " AND (" + where + ")" : "");  
+                myWhere = "_id=" + url.getPathSegments().get(1) + (!TextUtils.isEmpty(where) ? " AND (" + where + ")" : "");
+                deletePlanDetail(TransitPlan.CONTENT_URI, where, whereArgs);  
                 count = db.delete("transitplan", myWhere, whereArgs);
                 break;
                 
@@ -478,6 +538,41 @@ public class TigerknowsProvider extends ContentProvider {
             c.close();
         }
     }
+    
+    private void deletePlanDetail(Uri url, String where, String[] whereArgs) {
+        // Cursor c = query(url, null, where, whereArgs, null);
+        // 因为上一行的query()有Limit为20的限制，导致不能全部删除，所以用qb.query()查询表中所有行
+        SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
+        qb.setTables("transitplan");
+        qb.setProjectionMap(TRANSITPLAN_LIST_PROJECTION_MAP);
+        SQLiteDatabase db = mOpenHelper.getReadableDatabase();
+        Cursor c = qb.query(db, null, where, whereArgs,
+                null, null, null, null);
+        if (c != null) {
+            int count = c.getCount();
+            if (count > 0) {
+                c.moveToFirst();
+                int id;
+                StringBuilder s = new StringBuilder();
+                for(int i = 0; i < count; i++) {
+                    id = c.getInt(c.getColumnIndex(TransitPlan.START));
+                    s.append("(");
+                    s.append(Tigerknows.POI._ID);
+                    s.append("=");
+                    s.append(id);
+                    s.append(") OR (");
+                    id = c.getInt(c.getColumnIndex(TransitPlan.END));
+                    s.append(Tigerknows.POI._ID);
+                    s.append("=");
+                    s.append(id);
+                    s.append(")");
+                    delete(Tigerknows.POI.CONTENT_URI, s.toString(), null);
+                    c.moveToNext();
+                }
+            }
+            c.close();
+        }
+    }
 
     @Override
     public String getType(Uri uri) {
@@ -507,9 +602,9 @@ public class TigerknowsProvider extends ContentProvider {
                 
                 Cursor c = db.query(table, new String[] {Tigerknows.History._ID}, null, null, null, null, "_datetime ASC");
                 if (c != null) {
-                    if (c.getCount() > Tigerknows.HISTORY_MAX_SIZE) {
+                    if (c.getCount() >= Tigerknows.HISTORY_MAX_SIZE) {
                         c.moveToFirst();
-                        for(int i = c.getCount(); i > Tigerknows.HISTORY_MAX_SIZE; i--) {
+                        for(int i = c.getCount(); i >= Tigerknows.HISTORY_MAX_SIZE; i--) {
                         	deleteHistoryDetail(url, Tigerknows.History._ID + "=" + c.getLong(c.getColumnIndex(Tigerknows.History._ID)), null);
                             db.delete(table, Tigerknows.History._ID + "=" + c.getLong(c.getColumnIndex(Tigerknows.History._ID)), null);
                             c.moveToNext();
@@ -555,9 +650,9 @@ public class TigerknowsProvider extends ContentProvider {
                 if (values.containsKey(Tigerknows.POI.STORE_TYPE) && values.getAsInteger(Tigerknows.POI.STORE_TYPE) == Tigerknows.STORE_TYPE_HISTORY) {
                     Cursor poiCursor = db.query(table, new String[] {Tigerknows.POI._ID}, Tigerknows.POI.STORE_TYPE + "=" + Tigerknows.STORE_TYPE_HISTORY, null, null, null, "_datetime ASC");
                     if (poiCursor != null) {
-                        if (poiCursor.getCount() > Tigerknows.HISTORY_MAX_SIZE) {
+                        if (poiCursor.getCount() >= Tigerknows.HISTORY_MAX_SIZE) {
                             poiCursor.moveToFirst();
-                            for(int i = poiCursor.getCount(); i > Tigerknows.HISTORY_MAX_SIZE; i--) {
+                            for(int i = poiCursor.getCount(); i >= Tigerknows.HISTORY_MAX_SIZE; i--) {
                                 db.delete(table, Tigerknows.POI._ID + "=" + poiCursor.getLong(poiCursor.getColumnIndex(Tigerknows.POI._ID)), null);
                                 poiCursor.moveToNext();
                             }
@@ -597,6 +692,10 @@ public class TigerknowsProvider extends ContentProvider {
                 defalutLimit = String.valueOf(TKConfig.getPageSize());
                 break;
 
+            case HISTORY_COUNT:
+                qb.setTables("history");
+                break;
+
             case HISTORY_ID:
                 qb.setTables("history");
                 qb.setProjectionMap(HISTORY_LIST_PROJECTION_MAP);
@@ -614,6 +713,10 @@ public class TigerknowsProvider extends ContentProvider {
                 qb.setTables("poi");
                 qb.setProjectionMap(POI_LIST_PROJECTION_MAP);
                 qb.appendWhere("_id=" + url.getPathSegments().get(1));
+                break;
+
+            case POI_COUNT:
+                qb.setTables("poi");
                 break;
 
             case TRANSITPLAN:
@@ -645,6 +748,10 @@ public class TigerknowsProvider extends ContentProvider {
                 qb.setProjectionMap(FAVORITE_LIST_PROJECTION_MAP);
                 defaultSort = Tigerknows.Favorite.DEFAULT_SORT_ORDER;
                 defalutLimit = String.valueOf(TKConfig.getPageSize());
+                break;
+
+            case FAVORITE_COUNT:
+                qb.setTables("favorite");
                 break;
 
             case FAVORITE_ID:
@@ -709,11 +816,14 @@ public class TigerknowsProvider extends ContentProvider {
     static {
         URL_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
         URL_MATCHER.addURI(Tigerknows.AUTHORITY, "history", HISTORY);
+        URL_MATCHER.addURI(Tigerknows.AUTHORITY, "history_count", HISTORY_COUNT);
         URL_MATCHER.addURI(Tigerknows.AUTHORITY, "history/#", HISTORY_ID);
         URL_MATCHER.addURI(Tigerknows.AUTHORITY, "favorite", FAVORITE);
+        URL_MATCHER.addURI(Tigerknows.AUTHORITY, "favorite_count", FAVORITE_COUNT);
         URL_MATCHER.addURI(Tigerknows.AUTHORITY, "favorite/#", FAVORITE_ID);
         URL_MATCHER.addURI(Tigerknows.AUTHORITY, "poi", POI);
         URL_MATCHER.addURI(Tigerknows.AUTHORITY, "poi/#", POI_ID);
+        URL_MATCHER.addURI(Tigerknows.AUTHORITY, "poi_count", POI_COUNT);
         URL_MATCHER.addURI(Tigerknows.AUTHORITY, "transitplan", TRANSITPLAN);
         URL_MATCHER.addURI(Tigerknows.AUTHORITY, "transitplan/#", TRANSITPLAN_ID);
         URL_MATCHER.addURI(Tigerknows.AUTHORITY, "busline", BUSLINE);

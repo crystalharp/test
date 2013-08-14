@@ -496,7 +496,8 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
         if(mMainLly.getVisibility() == View.VISIBLE){
             mMainEdt.setText(mOrigin);
             if(mChecked == TEL_ERR){
-            	mMainEdt.setSelection(mMainEdt.length());
+            	Selection.setSelection(mMainEdt.getText(), mMainEdt.length());
+            	mDescriptionEdt.requestFocus();		//无法正常清除光标，故让隐藏的Edt获取光标的方式以实现清除光标
             }else{
             	mMainEdt.requestFocus();
                 Selection.setSelection(mMainEdt.getText(), mMainEdt.length());
@@ -518,12 +519,13 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
             mDescriptionEdt.clearFocus();
             hideSoftInput();
             mDescriptionLly.setVisibility(View.GONE);
+            mDescriptionEdt.requestFocus();		//无法正常清除光标，故让隐藏的Edt获取光标的方式以实现清除光标
         }
         refreshSubmitBtn();
         mSubmitBtn.setTextColor(mSubmitBtn.isEnabled() 
                 ? getResources().getColor(R.color.orange) 
                 : getResources().getColor(R.color.black_light));
-        refreshTypeBtn();
+        if((mChecked & TYPE_LLY)!=0) refreshTypeBtn();
     }
     
     public void refreshTypeBtn(){
@@ -619,7 +621,7 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
             refreshDataMain();
             break;
         case R.id.submit_btn:
-        	mActionLog.addAction(mActionTag + ((mPage == DETAIL_PAGE && ((mChecked & DIRECT_SUBMIT) == 0)) ? ActionLog.POIReportErrorSubmit : ActionLog.POIReportErrorNext) );
+        	mActionLog.addAction(mActionTag + ((mPage == DETAIL_PAGE || (mChecked & DIRECT_SUBMIT) == 0) ? ActionLog.POIReportErrorSubmit : ActionLog.POIReportErrorNext));
             if((mChecked & DIRECT_SUBMIT) == 0) submitDetail();
             else {
             	submitMain();

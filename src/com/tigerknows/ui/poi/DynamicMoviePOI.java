@@ -13,10 +13,12 @@ import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataOperation;
 import com.tigerknows.model.DataQuery;
+import com.tigerknows.model.TKDrawable;
 import com.tigerknows.model.DataQuery.DianyingResponse;
 import com.tigerknows.model.DataQuery.DianyingResponse.DianyingList;
 import com.tigerknows.model.Dianying;
 import com.tigerknows.model.POI;
+import com.tigerknows.model.TKDrawable.LoadImageRunnable;
 import com.tigerknows.model.Yingxun;
 import com.tigerknows.model.DataOperation.DianyingQueryResponse;
 import com.tigerknows.model.DataOperation.YingxunQueryResponse;
@@ -27,6 +29,7 @@ import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIViewBlock;
 import com.tigerknows.widget.LinearListView;
 import com.tigerknows.widget.LinearListView.ItemInitializer;
 
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -68,21 +71,14 @@ public class DynamicMoviePOI extends POIDetailFragment.DynamicPOIView{
             v.setTag(data);
             v.setOnClickListener(mDynamicMovieListener);
 
-            Drawable drawable = movie.getPicture().loadDrawable(mSphinx, new Runnable() {
-                
-                @Override
-                public void run() {
-                    Drawable drawableLoaded = movie.getPicture().loadDrawable(null, null, null);
-                    if(drawableLoaded.getBounds().width() != pictureImv.getWidth() || drawableLoaded.getBounds().height() != pictureImv.getHeight() ){
-                        pictureImv.setBackgroundDrawable(null);
-                    }
-                    pictureImv.setBackgroundDrawable(drawableLoaded);
-                }
-            }, mPOIDetailFragment.toString());
+            TKDrawable tkDrawable = movie.getPicture();
+            LoadImageRunnable loadImageRunnable = new LoadImageRunnable(mSphinx, tkDrawable, pictureImv, -1, mPOIDetailFragment.toString());
+            Drawable drawable = tkDrawable.loadDrawable(mSphinx, loadImageRunnable, mPOIDetailFragment.toString());
             if(drawable != null) {
                 //To prevent the problem of size change of the same pic 
                 //After it is used at a different place with smaller size
-                if( drawable.getBounds().width() != pictureImv.getWidth() || drawable.getBounds().height() != pictureImv.getHeight() ){
+                Rect bounds = drawable.getBounds();
+                if(bounds != null && bounds.width() != pictureImv.getWidth() || bounds.height() != pictureImv.getHeight() ){
                     pictureImv.setBackgroundDrawable(null);
                 }
                 pictureImv.setBackgroundDrawable(drawable);
@@ -200,7 +196,7 @@ public class DynamicMoviePOI extends POIDetailFragment.DynamicPOIView{
             if (object == null) {
                 return;
             }
-            mPOIDetailFragment.mActionLog.addAction(ActionLog.POIDetailDianying);
+            mPOIDetailFragment.mActionLog.addAction(mPOIDetailFragment.mActionTag+ActionLog.POIDetailDianying);
             DataOperation dataOperation = new DataOperation(mSphinx);
             if (object instanceof Dianying) {
                 Dianying dynamic = (Dianying) object;
@@ -254,7 +250,7 @@ public class DynamicMoviePOI extends POIDetailFragment.DynamicPOIView{
         
         @Override
         public void onClick(View v) {
-            mPOIDetailFragment.mActionLog.addAction(ActionLog.POIDetailDianyingMore);
+            mPOIDetailFragment.mActionLog.addAction(mPOIDetailFragment.mActionTag+ActionLog.POIDetailDianyingMore);
             lsv.refreshList(mAllList);
             mDynamicDianyingMoreView.setVisibility(View.GONE);
             refreshBackground(lsv, mAllList.size());

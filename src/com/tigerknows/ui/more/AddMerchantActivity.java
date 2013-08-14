@@ -1,7 +1,6 @@
 package com.tigerknows.ui.more;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -25,6 +24,7 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
@@ -114,9 +114,9 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
     private View mPickTimeView;
     private TimeListView mStartTimeListView;
     private TimeListView mEndTimeListView;
-    private int mStartHourPosition = 11;
+    private int mStartHourPosition = 12;
     private int mStartMinutePosition = 2;
-    private int mEndHourPosition = 23;
+    private int mEndHourPosition = 24;
     private int mEndMinutePosition = 2;
     private Button mTimeConfirmBtn;
     
@@ -173,6 +173,11 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
         mDeletePhotoBtn.setVisibility(View.GONE);
 
         mPickTimeView = mLayoutInflater.inflate(R.layout.more_add_merchant_pick_time, null, false);
+        View v = mLayoutInflater.inflate(R.layout.time_list_item, (ViewGroup)mPickTimeView, false);
+        v.setBackgroundResource(R.drawable.list_selector_background_gray_dark);
+        v.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        int h = v.getMeasuredHeight();
+        mPickTimeView.findViewById(R.id.body_view).getLayoutParams().height = h*5+(int)(Globals.g_metrics.density*8);
         mStartTimeListView = (TimeListView) mPickTimeView.findViewById(R.id.start_tlv);
         mEndTimeListView = (TimeListView) mPickTimeView.findViewById(R.id.end_tlv);
         mTimeConfirmBtn = (Button) mPickTimeView.findViewById(R.id.time_confirm_btn);
@@ -893,58 +898,58 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
                         final File cacheFile = new File(mCacheFilePath);
                         Uri cache = Uri.fromFile(cacheFile);
                         Bitmap bm = Utility.getBitmapByUri(mThis, cache, TKConfig.Photo_Max_Width_Height, TKConfig.Photo_Max_Width_Height);
-                            String path = Utility.imageUri2FilePath(mThis, cache);
-                            ExifInterface exifInterface = new ExifInterface(path);
-                            int tag = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, -1);
-                            float degrees = 0;
-                            if (tag == ExifInterface.ORIENTATION_ROTATE_90) {
-                                degrees = 90;
-                            } else if (tag == ExifInterface.ORIENTATION_ROTATE_180) {
-                                degrees = 180;
-                            } else if (tag == ExifInterface.ORIENTATION_ROTATE_270) {
-                                degrees = 270;  
-                            }
-                            if (degrees != 0) {
-                                Matrix matrix = new Matrix();
-                                int w = bm.getWidth();
-                                int h = bm.getHeight();
-                                matrix.preRotate(degrees, w/2, h/2);
-                                Bitmap newBitmap = Bitmap.createBitmap(bm, 0, 0, w, h, matrix, true);
-                                bm.recycle();
-                                bm = newBitmap;
-                            }
+                        String path = Utility.imageUri2FilePath(mThis, cache);
+                        ExifInterface exifInterface = new ExifInterface(path);
+                        int tag = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, -1);
+                        float degrees = 0;
+                        if (tag == ExifInterface.ORIENTATION_ROTATE_90) {
+                            degrees = 90;
+                        } else if (tag == ExifInterface.ORIENTATION_ROTATE_180) {
+                            degrees = 180;
+                        } else if (tag == ExifInterface.ORIENTATION_ROTATE_270) {
+                            degrees = 270;  
+                        }
+                        if (degrees != 0) {
+                            Matrix matrix = new Matrix();
+                            int w = bm.getWidth();
+                            int h = bm.getHeight();
+                            matrix.preRotate(degrees, w/2, h/2);
+                            Bitmap newBitmap = Bitmap.createBitmap(bm, 0, 0, w, h, matrix, true);
+                            bm.recycle();
+                            bm = newBitmap;
+                        }
+                        
+                        Utility.bitmapToFile(bm, cacheFile);
+                        
+                        final Bitmap resultBitmap = bm;
+
+                        if (resultBitmap != null && Utility.bitmapToFile(resultBitmap, cacheFile)) {
+                            mPhotoUri = Uri.fromFile(cacheFile);
+                        }
+                        
+                        mThis.runOnUiThread(new Runnable() {
                             
-                            Utility.bitmapToFile(bm, cacheFile);
-                            
-                            final Bitmap resultBitmap = bm;
-    
-                            if (resultBitmap != null && Utility.bitmapToFile(resultBitmap, cacheFile)) {
-                                mPhotoUri = Uri.fromFile(cacheFile);
-                            }
-                            
-                            mThis.runOnUiThread(new Runnable() {
-                                
-                                @Override
-                                public void run() {
-                                    if (resultBitmap != null) {
-                                        if (isPick == false) {
-                                            confrimUploadUri(new BitmapDrawable(resultBitmap));
-                                        } else {
-                                            mTitleBtn.setText(R.string.storefront_photo);
-                                            mRightBtn.setVisibility(View.GONE);
-                                            mImageView.setVisibility(View.VISIBLE);
-                                            mImageImv.setScaleType(ScaleType.MATRIX);
-                                            mTitleView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-                                            int h = mTitleView.getMeasuredHeight();
-                                            mImageImv.setImageMatrix(Utility.resizeMaxWidthMatrix(resultBitmap.getWidth(), resultBitmap.getHeight(), Globals.g_metrics.widthPixels, Globals.g_metrics.heightPixels-h));
-                                            mImageImv.setImageBitmap(resultBitmap);
-                                        }
-                                    }
-                                    if (tipProgressDialog != null && tipProgressDialog.isShowing()) {
-                                        tipProgressDialog.dismiss();
+                            @Override
+                            public void run() {
+                                if (mPhotoUri != null) {
+                                    if (isPick == false) {
+                                        confrimUploadUri(new BitmapDrawable(resultBitmap));
+                                    } else {
+                                        mTitleBtn.setText(R.string.storefront_photo);
+                                        mRightBtn.setVisibility(View.GONE);
+                                        mImageView.setVisibility(View.VISIBLE);
+                                        mImageImv.setScaleType(ScaleType.MATRIX);
+                                        mTitleView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+                                        int h = mTitleView.getMeasuredHeight();
+                                        mImageImv.setImageMatrix(Utility.resizeMaxWidthMatrix(resultBitmap.getWidth(), resultBitmap.getHeight(), Globals.g_metrics.widthPixels, Globals.g_metrics.heightPixels-h));
+                                        mImageImv.setImageBitmap(resultBitmap);
                                     }
                                 }
-                            });
+                                if (tipProgressDialog != null && tipProgressDialog.isShowing()) {
+                                    tipProgressDialog.dismiss();
+                                }
+                            }
+                        });
                     }
                 
                 } catch (Exception e) {

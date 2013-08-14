@@ -282,7 +282,7 @@ public class GoCommentFragment extends BaseFragment implements View.OnClickListe
                     int cityId = dataQuery.getCityId();
                     poiQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, String.valueOf(poiList.getList().size()));
                     poiQuery.copyLocationParameter(dataQuery);
-                    poiQuery.setup(cityId, getId(), getId(), null, true, true, requestPOI);
+                    poiQuery.setup(cityId, getId(), getId(), null, true, false, requestPOI);
                     mSphinx.queryStart(poiQuery); 
                 }
             }       
@@ -427,6 +427,9 @@ public class GoCommentFragment extends BaseFragment implements View.OnClickListe
             isReLogin = true;
             return;
         } else if (BaseActivity.checkResponseCode(dataQuery, mSphinx, null, true, this, exit)) {
+            if (dataQuery.isTurnPage() && dataQuery.getResponse() == null) {
+                mPOILsv.setFooterLoadFailed(true);
+            }
             return;
         }
         mPOILsv.onRefreshComplete(false);

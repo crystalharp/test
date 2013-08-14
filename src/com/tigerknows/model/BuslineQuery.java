@@ -63,7 +63,7 @@ public final class BuslineQuery extends BaseQuery {
     	this.cityId = cityId;
         this.startPos = startPos;
         this.isTurnPage = (this.startPos > 0);
-        this.needReconntection = this.isTurnPage;
+        this.needReconntection = false;
         this.isReturnTotal = isReturnTotal;        
         this.targetViewId = targetViewId;
         this.tipText = tipText;

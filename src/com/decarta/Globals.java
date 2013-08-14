@@ -32,19 +32,24 @@ public class Globals {
     public static final int LOCATION_STATE_NONE = 0;
     
     /**
-     * 打开软件来第一次定位成功
+     * 打开软件之后第一次定位成功
      */
     public static final int LOCATION_STATE_FIRST_SUCCESS = 1;
     
     /**
+     * 打开软件之后一直定位失败，没有成功过
+     */
+    public static final int LOCATION_STATE_AT_YET_FAILED = 2;
+    
+    /**
      * 定位失败
      */
-    public static final int LOCATION_STATE_FAILED = 2;
+    public static final int LOCATION_STATE_FAILED = 3;
     
     /**
      * 定位成功后，已经显示出切换城市对话框
      */
-    public static final int LOCATION_STATE_SHOW_CHANGE_CITY_DIALOG = 3;
+    public static final int LOCATION_STATE_SHOW_CHANGE_CITY_DIALOG = 4;
     
     /**
      * 屏幕相关参数

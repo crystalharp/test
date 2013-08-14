@@ -1,12 +1,12 @@
 package com.tigerknows.widget;
 
+import com.decarta.Globals;
 import com.tigerknows.common.ActionLog;
 
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Typeface;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -51,12 +51,13 @@ public class BladeView extends View {
 		int height = getHeight();
 		int width = getWidth();
 		int singleHeight = height / b.length;
+		float fontSize =  singleHeight/Globals.g_metrics.scaledDensity;
 		for (int i = 0; i < b.length; i++) {
 			paint.setColor(Color.rgb(0x32, 0x32, 0x32));
 //			paint.setTypeface(Typeface.DEFAULT_BOLD);
-			paint.setFakeBoldText(true);
+//			paint.setFakeBoldText(true);
 			paint.setAntiAlias(true);
-			paint.setTextSize(16);
+			paint.setTextSize(fontSize);
 			if (i == choose) {
 				paint.setColor(Color.parseColor("#3399ff"));
 			}
@@ -97,6 +98,7 @@ public class BladeView extends View {
 			}
 			break;
 		case MotionEvent.ACTION_UP:
+		case MotionEvent.ACTION_CANCEL:
 			showBkg = false;
 			choose = -1;
 			dismissPopup();

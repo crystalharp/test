@@ -18,7 +18,6 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AbsoluteLayout;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
@@ -29,8 +28,8 @@ import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.ui.BaseActivity;
-import com.tigerknows.util.Utility;
 
+@SuppressWarnings("deprecation")
 public class HelpActivity extends BaseActivity {
     
     public static final String APP_FIRST_START = "AppFirstStart";

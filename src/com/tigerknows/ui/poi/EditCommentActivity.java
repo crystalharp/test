@@ -1127,6 +1127,29 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
             }
         }
         mPOI.updateComment(mThis);
+        
+        dataQuery = mPOI.getHotCommentQuery();
+        if (dataQuery != null) {
+            CommentResponse commentResponse = (CommentResponse)dataQuery.getResponse();
+            if (commentResponse != null) {
+                CommentList commentList = commentResponse.getList();
+                if (commentList != null) {
+                    List<Comment> list = commentList.getList();
+                    commentArrayList = list;
+                    if (list != null) {
+                        for(int i = list.size()-1; i >= 0; i--) {
+                            // 如果列表中已经有我的点评则将其删除
+                            if (Comment.isAuthorMe(list.get(i)) > 0) {
+                                list.remove(i);
+                                break;
+                            }
+                        }
+                        // 将我的点评插入为第一条
+                        list.add(0, mComment);
+                    }
+                }
+            }
+        }
 
         mPOI.update(mThis, mPOI.getStoreType());
         Intent intent = new Intent(EditCommentActivity.this, Sphinx.class);

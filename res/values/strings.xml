@@ -96,8 +96,8 @@
     <string name="cancel_all_select">取消全选</string>
     <string name="feature">特点：</string>
 
-    <string name="doing_and_wait">处理中，请稍候</string>
-    <string name="network_failed">网络异常，请稍后重试。</string>
+    <string name="doing_and_wait">奋力请求中，请稍后</string>
+    <string name="network_failed">嘘，网络断了~请稍后重试</string>
     <string name="no_network">无网络可用，请检查网络后重试！</string>
     <string name="network_error">网络错误！</string>
     
@@ -358,7 +358,7 @@
     <string name="telephone_num">010-58874009</string>
     <string name="about_copyright">北京老虎宝典科技有限责任公司版权所有\n</string>
     
-    <string name="searching">正在搜索...</string>
+    <string name="searching">奋力加载中......</string>
     <string name="at_city_searching">正在%1$s市搜索...</string>
     <string name="at_location_searching">正在所选位置搜索...</string>
     
@@ -401,8 +401,8 @@
     
     <string name="place">地点</string>
     <string name="traffic">交通</string>
-    <string name="loading">正在加载</string>
-    <string name="pull_to_refresh">加载更多</string>
+    <string name="loading">奋力加载中</string>
+    <string name="pull_to_refresh">加油上拉，加载更多</string>
     <string name="bus_transfer_">公交换乘方案：%1$d</string>
     <string name="drive_">自驾方案：</string>    
     <string name="tiger_search">老虎搜索</string>
@@ -714,6 +714,7 @@
     <string name="no_select_tip">请选择要删除的项！</string>
     
     <string name="all_comment">全部点评</string>
+    <string name="hot_comment">热门点评</string>
     <string name="go_comment">我要点评</string>
     <string name="my_comment">我的点评</string>
     <string name="logon">登录</string>
@@ -773,6 +774,7 @@
     <string name="publish_comment_failed">发表点评失败！</string>
     <string name="modify_comment">修改点评</string>
     <string name="poi_comment_go_tip">快去写你的第一条点评吧！</string>
+    <string name="poi_no_hot_comment">暂无热门点评！</string>
     <string name="poi_comment_must">还需%1$s字</string>
     <string name="poi_comment_sum">共%1$s字</string>
     
@@ -876,7 +878,7 @@
     <string name="end_time">结束时间</string>
     <string name="add_merchant_image_upload_falied_tip">图片上传失败，是否重试？</string>
     <string name="add_merchant_text_upload_falied_tip">提交失败，请重试</string>
-   <string name="add_merchant_delete_photo_tip">确定要删除该图片吗？</string>
+   <string name="add_merchant_delete_photo_tip">确定要删除该照片吗？</string>
    <string name="poi_list_item_add_merchant">没有找到想要的商户</string>
    <string name="get_photo_failed">获取图片失败:</string>
     
@@ -942,6 +944,7 @@
     <string name="response_code_410_pulled">抱歉,原信息已过期\n欢迎发现更多身边的精彩!</string>
     
     <string name="response_null_hotel_order_sync">酒店订单更新失败！</string>
+    <string name="hotel_order_sync_tip">酒店订单更新中，请稍候</string>
     
     <string name="retry">重试</string>
     <string name="location_city">定位城市</string>
@@ -969,7 +972,7 @@
     <string name="shanghu_xingxi">商户信息</string>
     <string name="call_telephone">拨打电话</string>
 
-    <string name="touch_screen_and_retry">点击屏幕，重新加载</string>
+    <string name="touch_screen_and_retry">嘘，网络断了~戳屏幕，重新加载</string>
     <string name="are_you_exit_add_merchart">你确定要放弃添加商户？</string>
     <string name="searching_title">搜索中…</string>
     <string name="public_welfarre">传递正能量，手机照亮失踪宝贝回家之路</string>
@@ -1004,7 +1007,7 @@
     <string name="pictures">%1$s张</string>
     <string name="fold">收起</string>
     <string name="hotel_no_room_left">该房型已经订满，建议换个房型吧！</string>
-    <string name="hotel_click_to_reload">网络状况不好,点击此处&lt;font color="#ff6c00"&gt;&lt;U&gt;重新加载&lt;/U&gt;&lt;/font&gt;</string>
+    <string name="hotel_click_to_reload">戳这里，&lt;font color="#ff6c00"&gt;&lt;U&gt;重新加载&lt;/U&gt;&lt;/font&gt;</string>
     <string name="summary">简介</string>
     <string name="hotel_room_title">订单填写</string>
     <string name="hotel_room_howmany">房间数</string>
@@ -1230,4 +1233,12 @@
     
     <string name="appoint_location">指定地点：</string>
     <string name="appoint_area">指定商区：</string>
+
+<!-- IAlixpay Start -->
+    <string name="alipay_app_name">移动快捷支付DEMO</string>
+    <string name="alipay_remote_call_failed">Failure calling remote service</string>
+    <string name="alipay_confirm_install_hint">"安装提示"</string>
+    <string name="alipay_confirm_install">"为保证您的交易安全，需要您安装移动快捷支付，才能进行付款。\n\n点击确定，立即安装。"</string>
+    <string name="alipay_check_sign_failed">您的订单信息已被非法篡改。</string>
+<!-- IAlixpay End -->
 </resources>

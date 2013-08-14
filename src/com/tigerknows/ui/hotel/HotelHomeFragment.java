@@ -154,7 +154,6 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         }
         
         if (TKConfig.getPref(mSphinx, TKConfig.PREFS_HINT_POI_HOME_HOTEL_RESERVE) == null) {
-            TKConfig.setPref(mSphinx, TKConfig.PREFS_HINT_POI_HOME_HOTEL_RESERVE, "1");
             mSphinx.getPOIHomeFragment().getCategoryAdapter().notifyDataSetChanged();
         }
         if (isReLogin()) {
@@ -706,6 +705,11 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     DateListView getDateListView() {
         if (mDateListView == null) {
             DateListView view = new DateListView(mSphinx);
+            View v = mLayoutInflater.inflate(R.layout.time_list_item, this, false);
+            v.setBackgroundResource(R.drawable.list_selector_background_gray_dark);
+            v.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+            int h = v.getMeasuredHeight();
+            view.findViewById(R.id.body_view).getLayoutParams().height = h*5-(int)(Globals.g_metrics.density*8);
             view.setData(this, mActionTag);
             mDateListView = view;
         }

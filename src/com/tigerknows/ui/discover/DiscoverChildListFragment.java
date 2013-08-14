@@ -274,7 +274,7 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
         int cityId = lastDataQuery.getCityId();
         //FIXME:获取参数，修改，然后重新请求。加个函数
         dataQuery.setParameter(DataQuery.SERVER_PARAMETER_INDEX, String.valueOf(getList().size()));
-        dataQuery.setup(cityId, getId(), getId(), null, true, true, dataQuery.getPOI());
+        dataQuery.setup(cityId, getId(), getId(), null, true, false, dataQuery.getPOI());
         mSphinx.queryStart(dataQuery);
         }
     }
@@ -895,6 +895,9 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
             isReLogin = true;
             return;
         } else if (BaseActivity.checkResponseCode(dataQuery, mSphinx, null, true, this, exit)) {
+            if (dataQuery.isTurnPage() && dataQuery.getResponse() == null) {
+                mResultLsv.setFooterLoadFailed(true);
+            }
             return;
         }
         mResultLsv.onRefreshComplete(false);

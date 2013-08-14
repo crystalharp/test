@@ -31,6 +31,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -38,6 +39,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView.OnItemClickListener;
 
 import java.text.SimpleDateFormat;
@@ -53,6 +55,8 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
     static final int CHECKIN_MAX = 30;
     
     static final int CHECKOUT_MAX = 10;
+    
+    static final int WHITE_LINE = 4;
     
     public interface CallBack {
         public void confirm();
@@ -104,10 +108,12 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
                 checkOut == null ||
                 CalendarUtil.dateInterval(checkIn, checkOut) < 1) {
             checkIn = Calendar.getInstance();
-            checkOut = Calendar.getInstance();
+            checkIn.setTimeInMillis(CalendarUtil.getExactTime(context));
+            checkOut = (Calendar) checkIn.clone();
             checkOut.add(Calendar.DAY_OF_YEAR, 1);
         }
         today = Calendar.getInstance();
+        today.setTimeInMillis(CalendarUtil.getExactTime(context));
         confirmCheckinPosition = CalendarUtil.dateInterval(today, checkIn);
         confirmCheckoutPosition = CalendarUtil.dateInterval(checkIn, checkOut)-1;
         checkinPosition = confirmCheckinPosition;
@@ -117,11 +123,22 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
         for(int i = 0; i < CHECKIN_MAX; i++) {
             checkinList.add(makeCheckinDateString(today, i));
         }
+        makeWhiteLines(checkinList);
         
         checkinAdapter.notifyDataSetChanged();
         checkinLsv.setSelectionFromTop(checkinPosition, 0);
         checkoutLsv.setSelectionFromTop(checkoutPosition, 0);
         refreshCheckout();
+    }
+    
+    void makeWhiteLines(List<String> list) {
+        if (list == null) {
+            return;
+        }
+        
+        for(int i = 0; i < WHITE_LINE; i++) {
+            list.add("");
+        }
     }
     
     void refreshCheckout() {
@@ -130,7 +147,8 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
         for(int i = 1, count = CHECKOUT_MAX+1; i < count; i++) {
             checkoutList.add(makeCheckoutDateString(today, i));
         }
-        today.add(Calendar.DAY_OF_YEAR, -checkinPosition);
+        makeWhiteLines(checkoutList);
+        today.add(Calendar.DAY_OF_YEAR, -(checkinPosition));
         checkoutAdapter.notifyDataSetChanged();
         checkoutLsv.setSelectionFromTop(checkoutPosition, 0);
         refreshTitle();
@@ -140,16 +158,16 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
         today.add(Calendar.DAY_OF_YEAR, checkinPosition);
         StringBuilder s = new StringBuilder();
         s.append(monthDayFormat.format(today.getTime())+context.getString(R.string.hotel_checkin_));
-        int indexDay = s.length()-2;
-        s.append(checkoutPosition+1);
+        int indexDay = s.length();
+        s.append((checkoutPosition)+1);
         int indexN = s.length();
         s.append(context.getString(R.string.night));
         SpannableStringBuilder style = new SpannableStringBuilder(s.toString());
         int orange = getContext().getResources().getColor(R.color.orange);
         style.setSpan(new ForegroundColorSpan(orange),0,indexDay,Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
-        style.setSpan(new ForegroundColorSpan(orange),indexDay+2,indexN,Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+        style.setSpan(new ForegroundColorSpan(orange),indexDay,indexN,Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
         titleTxv.setText(style);
-        today.add(Calendar.DAY_OF_YEAR, -checkinPosition);
+        today.add(Calendar.DAY_OF_YEAR, -(checkinPosition));
     }
 
     public void setData(CallBack callBack, String actionTag) {
@@ -238,9 +256,13 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
 
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long arg3) {
+                if (position > checkinList.size()-WHITE_LINE-1) {
+                    position = checkinList.size()-WHITE_LINE-1;
+                }
                 checkinPosition = position;
                 checkoutPosition = 0;
                 checkinAdapter.notifyDataSetChanged();
+                checkinLsv.setSelectionFromTop(checkinPosition, 0);
 
                 refreshCheckout();
                 
@@ -251,11 +273,60 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
 
             @Override
             public void onItemClick(AdapterView<?> arg0, View view, int position, long arg3) {
+                if (position > checkoutList.size()-WHITE_LINE-1) {
+                    position = checkoutList.size()-WHITE_LINE-1;
+                }
                 checkoutPosition = position;
                 checkoutAdapter.notifyDataSetChanged();
+                checkoutLsv.setSelectionFromTop(checkoutPosition, 0);
                 refreshTitle();
                 
                 actionLog.addAction(actionTag + ActionLog.HotelDateCheckout, ((TextView)view.findViewById(R.id.text_txv)).getText());
+            }
+        });
+        
+        checkinLsv.setOnScrollListener(new OnScrollListener() {
+            
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                if (OnScrollListener.SCROLL_STATE_IDLE == scrollState) {
+                    int firstPosition = checkinLsv.getFirstVisiblePosition();
+                    checkinPosition = firstPosition;
+                    checkoutPosition = 0;
+                    checkinAdapter.notifyDataSetChanged();
+                    checkinLsv.setSelectionFromTop(firstPosition, 0);
+                    
+                    refreshCheckout();
+                }
+            }
+            
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount,
+                    int totalItemCount) {
+                // TODO Auto-generated method stub
+                
+            }
+        });
+        
+        checkoutLsv.setOnScrollListener(new OnScrollListener() {
+            
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                if (OnScrollListener.SCROLL_STATE_IDLE == scrollState) {
+                    int firstPosition = checkoutLsv.getFirstVisiblePosition();
+                    checkoutPosition = firstPosition;
+                    checkoutAdapter.notifyDataSetChanged();
+                    checkoutLsv.setSelectionFromTop(firstPosition, 0);
+
+                    refreshTitle();
+                }
+            }
+            
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount,
+                    int totalItemCount) {
+                // TODO Auto-generated method stub
+                
             }
         });
         confirmBtn.setOnClickListener(this);
@@ -305,7 +376,7 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
     
     class MyAdapter extends ArrayAdapter<String> {
         
-        private static final int TEXTVIEW_RESOURCE_ID = R.layout.filter_list_item;
+        private static final int TEXTVIEW_RESOURCE_ID = R.layout.time_list_item;
         
         private LayoutInflater mLayoutInflater;
         
@@ -334,20 +405,18 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
             
             if (isParent) {
                 if (position == checkinPosition) {
-                    view.setBackgroundResource(R.drawable.list_selector_background_gray_light);
                     textTxv.setTextColor(TKConfig.COLOR_ORANGE);
                 } else {
-                    view.setBackgroundResource(R.drawable.list_selector_background_gray_dark);
                     textTxv.setTextColor(TKConfig.COLOR_BLACK_DARK);
                 }
+                view.setBackgroundResource(R.drawable.list_selector_background_gray_dark);
             } else {
                 if (position == checkoutPosition) {
-                    view.setBackgroundResource(R.drawable.list_selector_background_gray_light);
                     textTxv.setTextColor(TKConfig.COLOR_ORANGE);
                 } else {
-                    view.setBackgroundResource(R.drawable.list_selector_background_gray_dark);
-                    textTxv.setTextColor(TKConfig.COLOR_BLACK_LIGHT);
+                    textTxv.setTextColor(TKConfig.COLOR_BLACK_DARK);
                 }
+                view.setBackgroundResource(R.drawable.list_selector_background_gray_dark);
             }
             
             textTxv.setText(name);
@@ -398,12 +467,14 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
     
     public Calendar getCheckin() {
         Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(CalendarUtil.getExactTime(context));
         calendar.add(Calendar.DAY_OF_YEAR, confirmCheckinPosition);
         return calendar;
     }
     
     public Calendar getCheckout() {
         Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(CalendarUtil.getExactTime(context));
         calendar.add(Calendar.DAY_OF_YEAR, confirmCheckinPosition+1+confirmCheckoutPosition);
         return calendar;
     }

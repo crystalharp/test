@@ -19,9 +19,9 @@ public class NoticeQueryTest {
 
 	public static XMap launchNoticeResult(Context context) {
 		XMap xmap = new XMap();
-		xmap.put(NoticeResult.FIELD_NUM, 4);
+		xmap.put(NoticeResult.FIELD_NUM, 2);
 		XArray<XMap> xarray = new XArray<XMap>();
-		for(int i = 0; i < 4; i++){
+		for(int i = 0; i < 2; i++){
 			xarray.add(launchNotice(i, context));
 		}
 		xmap.put(NoticeResult.FIELD_NOTICE, xarray);

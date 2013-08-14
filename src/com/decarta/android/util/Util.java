@@ -486,10 +486,10 @@ public class Util {
             double pixelsX = Util.lon2pix(boundingBox.getCenterPosition().getLon(), scale);
 
             double maxlat = Util.pix2lat((int) pixelsY + (screenY - padding), scale);
-            double maxlon = Util.pix2lon((int) pixelsX + (screenX - padding), scale);
+            double maxlon = Util.pix2lon((int) pixelsX + (screenX), scale);
 
-            double minlat = Util.pix2lat((int) pixelsY - (screenY - padding), scale);
-            double minlon = Util.pix2lon((int) pixelsX - (screenX - padding), scale);
+            double minlat = Util.pix2lat((int) pixelsY - (screenY), scale);
+            double minlon = Util.pix2lon((int) pixelsX - (screenX), scale);
 
             BoundingBox gxbbox = new BoundingBox(new Position(minlat, minlon),new Position(maxlat, maxlon));
 
@@ -760,7 +760,8 @@ public class Util {
      * @throws APIException 
      * @throws IllegalArgumentException
      */
-    private static void checkLon(double lon, int zoomLevel) throws APIException{
+    @SuppressWarnings("unused")
+	private static void checkLon(double lon, int zoomLevel) throws APIException{
         checkZ(zoomLevel);
         
         if (lon < CONFIG.TK_MIN_LON || lon > CONFIG.TK_MAX_LON) {
@@ -774,7 +775,8 @@ public class Util {
      * @throws APIException 
      * @throws IllegalArgumentException
      */
-    private static void checkLat(double lat, int zoomLevel) throws APIException{
+    @SuppressWarnings("unused")
+	private static void checkLat(double lat, int zoomLevel) throws APIException{
         checkZ(zoomLevel);
         
         if(lat < CONFIG.TK_MIN_LAT || lat > CONFIG.TK_MAX_LAT)

@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.decarta.Globals;
@@ -36,7 +37,6 @@ import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.widget.QueryingView;
 import com.tigerknows.widget.RetryView;
-import com.tigerknows.widget.SpringbackListView;
 
 /**
  * @author Peng Wenyue
@@ -57,7 +57,7 @@ public class CouponListFragment extends BaseFragment implements RetryView.CallBa
     
     private int mState = STATE_QUERYING;
     
-    private SpringbackListView mResultLsv = null;
+    private ListView mResultLsv = null;
 
     private QueryingView mQueryingView = null;
     
@@ -115,11 +115,7 @@ public class CouponListFragment extends BaseFragment implements RetryView.CallBa
     }
 
     protected void findViews() {
-        mResultLsv = (SpringbackListView)mRootView.findViewById(R.id.result_lsv);
-        View v = mLayoutInflater.inflate(R.layout.loading, null);
-//        mCommentLsv.addHeaderView(v);
-//        v = mLayoutInflater.inflate(R.layout.loading, null);
-        mResultLsv.addFooterView(v);
+        mResultLsv = (ListView)mRootView.findViewById(R.id.result_lsv);
         mQueryingView = (QueryingView)mRootView.findViewById(R.id.querying_view);
         mEmptyView = mRootView.findViewById(R.id.empty_view);
         mEmptyTxv = (TextView) mEmptyView.findViewById(R.id.empty_txv);
@@ -149,9 +145,6 @@ public class CouponListFragment extends BaseFragment implements RetryView.CallBa
         
         mTitleBtn.setText(R.string.coupon_list);
         mRightBtn.setVisibility(View.INVISIBLE);
-        
-        mResultLsv.setFooterSpringback(false);
-        mResultLsv.changeHeaderViewByState(false, SpringbackListView.DONE);
         
         if (isReLogin()) {
             return;
@@ -209,11 +202,6 @@ public class CouponListFragment extends BaseFragment implements RetryView.CallBa
             if (tkDrawable != null) {
                 Drawable drawable = tkDrawable.loadDrawable(mSphinx, mLoadedDrawableRun, CouponListFragment.this.toString());
                 if(drawable != null) {
-                    //To prevent the problem of size change of the same pic 
-                    //After it is used at a different place with smaller size
-                    if( drawable.getBounds().width() != pictureImv.getWidth() || drawable.getBounds().height() != pictureImv.getHeight() ){
-                        pictureImv.setBackgroundDrawable(null);
-                    }
                     pictureImv.setBackgroundDrawable(drawable);
                 } else {
                     pictureImv.setBackgroundDrawable(null);

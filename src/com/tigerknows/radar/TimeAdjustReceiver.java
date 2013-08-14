@@ -1,12 +1,13 @@
 package com.tigerknows.radar;
 
 import com.decarta.android.util.LogWrapper;
+import com.tigerknows.TKConfig;
 import com.tigerknows.service.PullService;
+import com.tigerknows.util.CalendarUtil;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.SystemClock;
 import android.text.TextUtils;
 
 import java.util.Date;
@@ -21,7 +22,7 @@ import java.util.Date;
  * 
  */
 
-public class AlarmAdjustReceiver extends BroadcastReceiver {
+public class TimeAdjustReceiver extends BroadcastReceiver {
     
     static final String TAG = "AlarmAdjustReceiver";
     
@@ -32,25 +33,36 @@ public class AlarmAdjustReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         String pullAlarmAbsolute = PullService.alarmAction.getAbsAlarm(context);
         String pullAlarmRelative = PullService.alarmAction.getRelAlarm(context);
+        Date date = new Date();
         if (!TextUtils.isEmpty(pullAlarmAbsolute)) {
             LogWrapper.d(TAG, "before Adjust, pullAlarm is:" + pullAlarmAbsolute);
-            pullAlarmAbsolute = adjustAbsTimebyRelTime(pullAlarmRelative);
+            long rel = Long.parseLong(pullAlarmRelative); 
+            long correctTime = CalendarUtil.getAbsTimeByRelTime(rel);
+            date.setTime(correctTime);
+            pullAlarmAbsolute = Alarms.SIMPLE_DATE_FORMAT.format(date);
             LogWrapper.d(TAG, "after Adjust, pullAlarm is:" + pullAlarmAbsolute);
             PullService.alarmAction.saveAlarm(context, pullAlarmAbsolute, null);
         }
+        
+        String relSysTime = TKConfig.getPref(context, TKConfig.PREFS_RECORDED_SYS_REL_TIME, null);
+        if (!TextUtils.isEmpty(relSysTime)) {
+            long rel = Long.parseLong(relSysTime); 
+            long absSysTime = CalendarUtil.getAbsTimeByRelTime(rel);
+            date.setTime(absSysTime);
+            LogWrapper.d(TAG, "after Adjust, absSysTime for ntpTime is:" + Alarms.SIMPLE_DATE_FORMAT.format(date));
+            TKConfig.setPref(context, TKConfig.PREFS_RECORDED_SYS_ABS_TIME, String.valueOf(absSysTime));
+        }
     }
     
-    String adjustAbsTimebyRelTime(String relAlarm){
-        Date absAlarmDate = new Date();
-        long relTime;
-        try {
-            relTime = Long.parseLong(relAlarm);
-        } catch (NumberFormatException e) {
-            e.printStackTrace();
-            return null;
-        }
-        long correctTime = relTime - SystemClock.elapsedRealtime() + System.currentTimeMillis();
-        absAlarmDate.setTime(correctTime);
-        return Alarms.SIMPLE_DATE_FORMAT.format(absAlarmDate);
-    }
+//    long adjustAbsTimebyRelTime(String relAlarm){
+//        long relTime;
+//        try {
+//            relTime = Long.parseLong(relAlarm);
+//        } catch (NumberFormatException e) {
+//            e.printStackTrace();
+//            return 0;
+//        }
+//        long correctTime = relTime - SystemClock.elapsedRealtime() + System.currentTimeMillis();
+//        return correctTime;
+//    }
 }

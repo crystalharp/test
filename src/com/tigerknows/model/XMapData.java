@@ -3,6 +3,7 @@ package com.tigerknows.model;
 
 import com.decarta.android.exception.APIException;
 import com.decarta.android.location.Position;
+import com.tigerknows.TKConfig;
 import com.tigerknows.model.xobject.XArray;
 import com.tigerknows.model.xobject.XMap;
 
@@ -181,7 +182,7 @@ public class XMapData {
     }
     
     public static double long2doubleForLatLon(long value) {
-        boolean negative = value < 0;
+/*        boolean negative = value < 0;
         value = Math.abs(value);
         String s = String.valueOf(value);
         int length = s.length();
@@ -194,7 +195,8 @@ public class XMapData {
             } while (add > 0);
             s =  zero + s;
         }
-        return Double.valueOf((negative ? "-" : "") + s.substring(0, s.length()-5)+"."+s.substring(s.length()-5));
+        return Double.valueOf(s.substring(0, s.length()-5)+"."+s.substring(s.length()-5))*(negative ? -1 : 1);*/
+        return ((double)value)/TKConfig.LON_LAT_DIVISOR;
     }
     
     /**

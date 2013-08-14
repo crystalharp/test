@@ -35,8 +35,6 @@ public class Favorite extends BaseData{
     
     private boolean isSelected;
     
-    private String alise;
-
     private BuslineQuery buslineQuery = null;
     
     private TrafficQuery trafficQuery = null;

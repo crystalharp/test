@@ -41,21 +41,21 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
+import android.view.animation.RotateAnimation;
 import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.GridView;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ImageView.ScaleType;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -103,7 +103,6 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
     private View mTransPaddingView;
     private ImageView mCategoryTagImv;
     private int mScreenWidth;
-    private int mScreenHeight;
     private int mDragViewWidth;
     private int mDragViewHeight;
     private int mDragViewParentX;
@@ -119,12 +118,8 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
     private CategoryAdapter mCategoryAdapter;
     private int mCategoryTop;
     private int mMyLocationViewHeight;
-    private int mCategoryBtnPadding;
     private int mCategoryPadding = 0;
 
-    private View mHeaderView;
-    private View mFooterView;
-    
     private String[] mCategoryNameList;
     List<Category> mCategorylist = new ArrayList<Category>();
     private final int[] mCategoryResIdList = {
@@ -397,25 +392,11 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
         setListener();
         
         mScreenWidth = Globals.g_metrics.widthPixels;
-        mScreenHeight = Globals.g_metrics.heightPixels;
 
         mSubCategoryAdapter = new ArrayAdapter<String>(mContext, R.layout.poi_home_drag_view_item, new ArrayList<String>());
         mSubCategoryGrid.setAdapter(mSubCategoryAdapter);
         
         mCategoryNameList = getResources().getStringArray(R.array.home_category);
-
-        int screenWidth = Math.min(Globals.g_metrics.widthPixels, Globals.g_metrics.heightPixels);
-        mCategoryBtnPadding = Util.dip2px(Globals.g_metrics.density, 2);
-        
-        View view = getImageButton();
-        view.setBackgroundResource(mCategoryResIdList[0]);
-        view.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-        int viewWidth = view.getMeasuredWidth()+2*mCategoryBtnPadding;
-
-        int columnWidth = screenWidth / viewWidth;
-        if (columnWidth > 2) {
-            columnWidth = 2;
-        }
 
         for(int i = 0, length = mCategoryResIdList.length; i < length; i++) {
                 Category category = new Category();
@@ -423,9 +404,6 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
                 category.name = mCategoryNameList[i];
                 mCategorylist.add(category);
         }
-        
-        mHeaderView = new LinearLayout(mContext);
-        mFooterView = new LinearLayout(mContext);
         
         mCategoryAdapter = new CategoryAdapter(mContext, mCategorylist);
         mCategoryLsv.setAdapter(mCategoryAdapter);
@@ -660,13 +638,6 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
         }
             
     }
-
-    public ImageButton getImageButton() {
-        ImageButton imageButton = new ImageButton(mContext);
-        imageButton.setScaleType(ScaleType.CENTER);
-        imageButton.setImageResource(R.drawable.btn_category);
-        return imageButton;
-    }
     
     private static class Category {
         int resId;
@@ -715,16 +686,31 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
         	ImageView icon = (ImageView) convertView.findViewById(R.id.hotel_tip_reserve_imv);
         	if (position == HOTEL_INDEX && TKConfig.getPref(mSphinx, TKConfig.PREFS_HINT_POI_HOME_HOTEL_RESERVE) == null) {
         	    icon.setVisibility(View.VISIBLE);
+        	    setHotelOrderAnimation(icon);
         	} else {
+        		icon.setAnimation(null);
         	    icon.setVisibility(View.GONE);
         	}
+        	
         	//Id will be used in setupDragView.
         	convertView.setId(position);
         	return convertView;
         }
     }
-    
 
+    private RotateAnimation anim;
+    
+    private void setHotelOrderAnimation(ImageView icon){
+    	if(anim == null){
+    		anim = new RotateAnimation(-20, 30, 12, 9);
+    		anim.setDuration(1000);
+    		anim.setRepeatCount(Integer.MAX_VALUE);
+    		anim.setRepeatMode(Animation.REVERSE);
+    		anim.setInterpolator(new AccelerateDecelerateInterpolator());
+    	}
+    	icon.startAnimation(anim);
+    }
+    
     private boolean mIsSubCategoryExpanded = false;
     
     public boolean isSubCategoryExpanded(){
@@ -1096,6 +1082,7 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
 	           position = mPOI.getPosition();
 	           poiQuery.addParameter(DataQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
 	           poiQuery.addParameter(DataQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
+                   poiQuery.addParameter(DataQuery.SERVER_PARAMETER_POI_ID, mPOI.getUUID());
 	       } else if (mSelectedLocation) {
 	           Filter[] filters = FilterListView.getSelectedFilter(HotelHomeFragment.getFilter(mFilterList, FilterArea.FIELD_LIST));
 	           if (filters != null) {

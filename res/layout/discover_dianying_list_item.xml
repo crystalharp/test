@@ -2,7 +2,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent" 
     android:layout_height="wrap_content"
-    android:padding="8dp"
+    android:paddingLeft="8dp"
+    android:paddingTop="14dp"
+    android:paddingRight="8dp"
+    android:paddingBottom="14dp"
     android:background="@drawable/list_selector_background_gray_light">
      
     <ImageView 
