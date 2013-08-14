@@ -206,7 +206,7 @@
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:background="@color/transparent"
-                        android:drawableRight="@drawable/ic_view_all_comment"
+                        android:drawableRight="@drawable/icon_arrow_right"
                         android:gravity="left|center_vertical"
                         android:layout_gravity="left|center_vertical"
                         android:padding="8dp"
