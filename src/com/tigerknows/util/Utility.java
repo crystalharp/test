@@ -1695,14 +1695,14 @@ public class Utility {
      * @return
      */
     @SuppressWarnings("unchecked")
-    public static <T> T[] mergeArray(T[] ...arrays) {
-        List<T> tmp = new LinkedList<T>();
-        for (T[] a : arrays) {
+    public static String[] mergeArray(String[] ...arrays) {
+        List<String> tmp = new LinkedList<String>();
+        for (String[] a : arrays) {
             if (a != null) {
                 tmp.addAll(Arrays.asList(a));
             }
         }
-        return (T[]) tmp.toArray();
+        return (tmp.toArray(new String[]{}));
     }
 
     public void printStackTrace() {
