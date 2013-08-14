@@ -552,7 +552,7 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
                     });
                 } else {
                     view.setBackgroundResource(R.drawable.list_middle_normal);
-                    authorTxv.setTextColor(0xff000000);
+                    authorTxv.setTextColor(TKConfig.COLOR_BLACK_LIGHT);
                     view.setOnClickListener(null);
                 }
                 

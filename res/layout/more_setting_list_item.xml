@@ -36,7 +36,7 @@
 	        android:layout_gravity="center"
             android:layout_centerVertical="true"
             android:layout_centerHorizontal="true"
-	        android:background="@drawable/ic_view_all_comment"
+	        android:background="@drawable/icon_arrow_right"
 	    ></ImageView>
     </RelativeLayout>
 

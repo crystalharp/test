@@ -1316,7 +1316,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
 //                });
 //            } else {
                 view.setBackgroundResource(R.drawable.list_middle_normal);
-                authorTxv.setTextColor(0xff000000);
+                authorTxv.setTextColor(TKConfig.COLOR_BLACK_LIGHT);
                 view.setOnClickListener(this);
 //            }
             
