@@ -500,6 +500,7 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
                 commendView.setTag(R.id.commend_view, comment);
                 commendView.setTag(R.id.commend_imv, commendImv);
                 commendView.setTag(R.id.commend_txv, commendTxv);
+                commendView.setTag(R.id.index, position);
                 commendView.setOnClickListener(CommentListActivity.this);
                 String likes = String.valueOf(comment.getLikes());
                 commendTxv.setText(likes);
@@ -718,11 +719,15 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.title_btn) {
+            mActionLog.addAction(mActionTag + ActionLog.POICommentListAllComment);
             changeMode(true);
         } else if (id == R.id.hot_btn) {
+            mActionLog.addAction(mActionTag + ActionLog.POICommentListHotComment);
             changeMode(false);
         } else if (id == R.id.commend_view) {
             Comment comment = (Comment) v.getTag(R.id.commend_view);
+            int position = (Integer) v.getTag(R.id.index);
+            mActionLog.addAction(mActionTag+ActionLog.POICommentListCommend, position, comment.getLikes());
             ImageView commendImv = (ImageView) v.getTag(R.id.commend_imv);
             TextView commendTxv = (TextView) v.getTag(R.id.commend_txv);
             if (comment.isCommend() == false) {
