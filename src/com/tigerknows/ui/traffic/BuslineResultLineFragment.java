@@ -222,6 +222,10 @@ public class BuslineResultLineFragment extends BaseFragment {
         mBuslineModel = mBuslineQuery.getBuslineModel();
         
         if (mBuslineQuery.isTurnPage()) {
+            if (mBuslineQuery.getResponse() == null) {
+                mResultLsv.setFooterLoadFailed(true);
+                return;
+            }
         	List<Line> list = mBuslineModel.getLineList();
             if (list != null) {
             	mLineList.addAll(list);

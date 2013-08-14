@@ -429,8 +429,6 @@ public class POI extends BaseData {
     private Position position = null;
 
     private String name;
-    
-    private String alise;
 
     private XMap description;
 
@@ -1306,6 +1304,9 @@ public class POI extends BaseData {
         int count = 0;
         BaseData baseData = checkStore(context, Tigerknows.STORE_TYPE_FAVORITE, -1, -1);
         if (baseData != null) {
+            if (storeType == Tigerknows.STORE_TYPE_FAVORITE) {
+                alise = null;
+            }
             count = SqliteWrapper.delete(context, context.getContentResolver(), ContentUris.withAppendedId(Tigerknows.POI.CONTENT_URI, baseData.id), null, null);
         }
         return count;

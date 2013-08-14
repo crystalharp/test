@@ -7,7 +7,7 @@
     android:paddingRight="0dp"
     android:gravity="center"
     android:orientation="vertical"
-    android:background="@drawable/bg_discover"
+    android:background="@color/normal_background"
     >
 
     <com.tigerknows.widget.ExtScrollView android:id="@+id/more_body_scv"

@@ -184,6 +184,8 @@ public class ActionLog extends LogUpload {
     public static final String POIDetailCouponSingle = "CA";
     public static final String POIDetailCouponMulti = "CB";
     public static final String POIDetailBusstop = "CD";
+    public static final String POIDetailMoreSameCategory = "CE";
+    public static final String POIDetailSameCategory = "CF";
 
     // POI点评列表页
     public static final String POICommentList = "AE";
