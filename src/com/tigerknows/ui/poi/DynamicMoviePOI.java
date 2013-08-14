@@ -197,7 +197,7 @@ public class DynamicMoviePOI extends POIDetailFragment.DynamicPOIView{
             if (object == null) {
                 return;
             }
-            mPOIDetailFragment.mActionLog.addAction(ActionLog.POIDetailDianying);
+            mPOIDetailFragment.mActionLog.addAction(mPOIDetailFragment.mActionTag+ActionLog.POIDetailDianying);
             DataOperation dataOperation = new DataOperation(mSphinx);
             Hashtable<String, String> criteria = new Hashtable<String, String>();
             if (object instanceof Dianying) {
@@ -253,7 +253,7 @@ public class DynamicMoviePOI extends POIDetailFragment.DynamicPOIView{
         
         @Override
         public void onClick(View v) {
-            mPOIDetailFragment.mActionLog.addAction(ActionLog.POIDetailDianyingMore);
+            mPOIDetailFragment.mActionLog.addAction(mPOIDetailFragment.mActionTag+ActionLog.POIDetailDianyingMore);
             lsv.refreshList(mAllList);
             mDynamicDianyingMoreView.setVisibility(View.GONE);
             refreshBackground(lsv, mAllList.size());

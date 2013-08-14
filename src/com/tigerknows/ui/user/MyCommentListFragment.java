@@ -193,7 +193,7 @@ public class MyCommentListFragment extends BaseFragment {
             criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_DIANPING);
             criteria.put(DataQuery.SERVER_PARAMETER_REFER, DataQuery.REFER_USER);
         }
-        dataQuery.setup(criteria, cityId, getId(), getId(), null, true, true, null);
+        dataQuery.setup(criteria, cityId, getId(), getId(), null, true, false, null);
         mSphinx.queryStart(dataQuery);
         }
     }
@@ -331,6 +331,7 @@ public class MyCommentListFragment extends BaseFragment {
             
         } else if (baseQuery instanceof DataQuery) { 
 
+            DataQuery dataQuery = (DataQuery)baseQuery;
             boolean exit = true;
             if (baseQuery.getCriteria().containsKey(DataQuery.SERVER_PARAMETER_TIME)) {
                 mCommentLsv.onRefreshComplete(false);
@@ -338,9 +339,11 @@ public class MyCommentListFragment extends BaseFragment {
                 exit = false;
             }    
             if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, true, this, exit)) {
+                if (dataQuery.isTurnPage() && dataQuery.getResponse() == null) {
+                    mCommentLsv.setFooterLoadFailed(true);
+                }
                 return;
             }
-            DataQuery dataQuery = (DataQuery)baseQuery;
             boolean isHeader = false;
             if (dataQuery.isTurnPage() == false) {
                 mCommentLsv.onRefreshComplete(false);

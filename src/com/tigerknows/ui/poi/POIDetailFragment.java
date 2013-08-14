@@ -1121,7 +1121,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         criteria.put(DataQuery.SERVER_PARAMETER_REQUSET_SOURCE_TYPE, mActionTag);
         
         FeedbackUpload feedbackUpload = new FeedbackUpload(mSphinx);
-        feedbackUpload.setup(criteria);
+        feedbackUpload.setup(criteria, MapEngine.getInstance().getCityId(poi.getPosition()));
         if (baseQueryList.isEmpty() == false) {
             if (position >= 0) {
                 baseQueryList.add(feedbackUpload);
@@ -1197,6 +1197,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                     viewGroup.addView(titleTxv, layoutParamsTitle);
                     bodyTxv = new TextView(mContext);
                     bodyTxv.setGravity(Gravity.LEFT);
+                    bodyTxv.setLineSpacing(0f, 1.2f);
                     color = mSphinx.getResources().getColor(R.color.black_light);
                     bodyTxv.setTextColor(color);
                     viewGroup.addView(bodyTxv, layoutParamsBody);
@@ -1316,7 +1317,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
 //                });
 //            } else {
                 view.setBackgroundResource(R.drawable.list_middle_normal);
-                authorTxv.setTextColor(0xff000000);
+                authorTxv.setTextColor(TKConfig.COLOR_BLACK_LIGHT);
                 view.setOnClickListener(this);
 //            }
             

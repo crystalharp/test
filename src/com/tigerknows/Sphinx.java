@@ -185,6 +185,7 @@ import com.tigerknows.ui.user.UserLoginActivity;
 import com.tigerknows.ui.user.UserUpdateNickNameActivity;
 import com.tigerknows.ui.user.UserUpdatePasswordActivity;
 import com.tigerknows.ui.user.UserUpdatePhoneActivity;
+import com.tigerknows.util.CalendarUtil;
 import com.tigerknows.util.Utility;
 import com.tigerknows.widget.ScaleView;
 import com.tigerknows.widget.ZoomControls;
@@ -902,6 +903,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         
         checkCitySupportDiscover(Globals.getCurrentCityInfo().getId());
         initWeibo(false, false);
+        
+        CalendarUtil.initExactTime(mContext);
 	}
 	
 	void resetShowInPreferZoom() {
@@ -1996,9 +1999,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 BootstrapModel bootstrapModel = ((Bootstrap) baseQuery).getBootstrapModel();
                 if (bootstrapModel != null) {
                     Globals.g_Bootstrap_Model = bootstrapModel;
-                    getMoreFragment().refreshAppRecommendData();
                 }
-                getMoreFragment().refreshMoreData();
+                // 这一行需放在if外面以便于始终重试
+                // 而下边的Notice是不重试的所以不放外边
+                getMoreFragment().refreshAppRecommendData();
             } else if (baseQuery instanceof NoticeQuery) {
             	Response response = baseQuery.getResponse();
             	if (response instanceof NoticeResultResponse) {
@@ -2816,6 +2820,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 return result;
             }
             if (id == R.id.view_invalid || id != uiStackPeek()) {
+                uiStackClose(null);
+                showView(R.id.view_poi_home);
                 return result;
             }
             
@@ -2856,7 +2862,13 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 if (fragment != null) {
                     fragment.onResume();
                     result = true;
+                } else {
+                    uiStackClose(null);
+                    showView(R.id.view_poi_home);
                 }
+            } else {
+                uiStackClose(null);
+                showView(R.id.view_poi_home);
             }
             mUIProcessing = false;
             return result;
@@ -2976,6 +2988,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     }
     
     public boolean showHint(String[] keyList, int[] layoutResIdList) {
+        if (mFromThirdParty > 0) {
+            return false;
+        }
         boolean showView = false;
         if (TKConfig.getPref(mContext, keyList[0]) != null) {
             showView = false;

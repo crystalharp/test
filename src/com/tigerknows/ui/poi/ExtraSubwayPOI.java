@@ -36,8 +36,9 @@ public class ExtraSubwayPOI extends DynamicPOIView {
     DynamicPOIViewBlock mSubwayBlock;
     
     LinearLayout mSubwayView;
-    LinearLayout mSubwayTimeView;
-    LinearLayout mSubwayExitView;
+    LinearLayout mSubwayTimeInfoView;
+    LinearLayout mSubwayExitInfoView;
+    View mSubwayExitView;
     
     LinearListView mSubwayTimeLsv;
     LinearListView mSubwayExitLsv;
@@ -46,7 +47,11 @@ public class ExtraSubwayPOI extends DynamicPOIView {
 
         @Override
         public void refresh() {
-            mSubwayExitLsv.refreshList(mExitList);
+            if (mExitList == null || mExitList.size() == 0) {
+                mSubwayExitView.setVisibility(View.GONE);
+            } else {
+                mSubwayExitLsv.refreshList(mExitList);
+            }
             mSubwayTimeLsv.refreshList(mPresetTimeList);
         }
         
@@ -126,12 +131,13 @@ public class ExtraSubwayPOI extends DynamicPOIView {
         mInflater = inflater;
         mSubwayBlock = new DynamicPOIViewBlock(poiFragment.mBelowAddressLayout, mSubwayRefresher);
         mSubwayView = (LinearLayout) mInflater.inflate(R.layout.poi_dynamic_subway, null);
-        mSubwayTimeView = (LinearLayout) mSubwayView.findViewById(R.id.subway_time_lst);
-        mSubwayExitView = (LinearLayout) mSubwayView.findViewById(R.id.subway_exit_lst);
+        mSubwayTimeInfoView = (LinearLayout) mSubwayView.findViewById(R.id.subway_time_lst);
+        mSubwayExitInfoView = (LinearLayout) mSubwayView.findViewById(R.id.subway_exit_lst);
+        mSubwayExitView = mSubwayView.findViewById(R.id.subway_exit);
         mSubwayBlock.mOwnLayout = mSubwayView;
         
-        mSubwayTimeLsv = new LinearListView(mSphinx, mSubwayTimeView, timeInit, R.layout.poi_dynamic_subway_time_item);
-        mSubwayExitLsv = new LinearListView(mSphinx, mSubwayExitView, exitInit, R.layout.poi_dynamic_subway_exit_item);
+        mSubwayTimeLsv = new LinearListView(mSphinx, mSubwayTimeInfoView, timeInit, R.layout.poi_dynamic_subway_time_item);
+        mSubwayExitLsv = new LinearListView(mSphinx, mSubwayExitInfoView, exitInit, R.layout.poi_dynamic_subway_exit_item);
         
     }
     
@@ -161,7 +167,9 @@ public class ExtraSubwayPOI extends DynamicPOIView {
     
     @Override
     public boolean isExist() {
-        if (mPOI.getXDescription() != null && mPOI.getXDescription().containsKey(Description.FIELD_SUBWAY_EXITS)) {
+        if (mPOI.getXDescription() != null && 
+                (mPOI.getXDescription().containsKey(Description.FIELD_SUBWAY_EXITS) ||
+                 mPOI.getXDescription().containsKey(Description.FIELD_SUBWAY_PRESET_TIMES))) {
             return true;
         }
         return false;

@@ -21,12 +21,14 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -86,6 +88,8 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     private View[] mAppRecommendView;
     private ImageView[] mAppRecommendImv;
     private TextView[] mAppRecommendTxv;
+    private LinearLayout mAppRecommendLly;
+    private ImageView mTencentAppRecommendImv;
     private static final int[] APP_RECOMMEND_ID = {R.id.app_item_1,
     	R.id.app_item_2,
     	R.id.app_item_3,
@@ -141,6 +145,16 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 		}
     };
     
+    private Runnable mReloadAppRecommend = new Runnable() {
+
+		@Override
+		public void run() {
+            Bootstrap bootstrap = new Bootstrap(mSphinx);
+            bootstrap.setup(null, Globals.getCurrentCityInfo().getId());
+            mSphinx.queryStart(bootstrap);
+        }
+    };
+    
     private Handler mHandler;
 
 	private MyAdapter mMyAdapter;
@@ -165,6 +179,11 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         
         if (TKConfig.sSPREADER.startsWith(TKConfig.SPREADER_TENCENT)) {
             mAppRecommendBtn.setText(R.string.recommend_tencent);
+            mTencentAppRecommendImv.setVisibility(View.GONE);
+            mAppRecommendLly.setVisibility(View.GONE);
+            mAppRecommendBtn.setBackgroundDrawable(mSphinx.getResources().getDrawable(R.drawable.list_single));
+            mAppRecommendBtn.setGravity(Gravity.LEFT|Gravity.CENTER_VERTICAL);
+            mAppRecommendBtn.setPadding(Utility.dip2px(mSphinx, 16), Utility.dip2px(mSphinx, 8), Utility.dip2px(mSphinx, 8), Utility.dip2px(mSphinx, 8));
         } else {
             mAppRecommendBtn.setText(R.string.app_recommend_more);
         }
@@ -200,6 +219,8 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         mAppRecommendView = new View[NUM_APP_RECOMMEND];
         mAppRecommendImv = new ImageView[NUM_APP_RECOMMEND];
         mAppRecommendTxv = new TextView[NUM_APP_RECOMMEND];
+        mTencentAppRecommendImv = (ImageView)mRootView.findViewById(R.id.more_home_app_recommend_imv);
+        mAppRecommendLly = (LinearLayout)mRootView.findViewById(R.id.more_home_app_recommend_lly);
         for (int i=0; i < NUM_APP_RECOMMEND; i++){
         	mAppRecommendView[i] = (View)mRootView.findViewById(APP_RECOMMEND_ID[i]);
         	mAppRecommendImv[i] = (ImageView)mAppRecommendView[i].findViewById(R.id.app_icon_imv);
@@ -412,8 +433,8 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
              	NoticeQuery noticeQuery = new NoticeQuery(mSphinx);
                 Hashtable<String, String> criteria = new Hashtable<String, String>();
                 noticeQuery.setup(criteria, Globals.getCurrentCityInfo().getId());
-                mSphinx.queryStart(noticeQuery);        		
-        	}
+                mSphinx.queryStart(noticeQuery);
+            }
     	}
     	LogWrapper.d("Trap", "size:"+(mNoticeList == null ? -1 : mNoticeList.size()));
         
@@ -437,9 +458,8 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
                 refreshAppRecommendDrawable();
             }
         }else{
-            Bootstrap bootstrap = new Bootstrap(mSphinx);
-            bootstrap.setup(null, Globals.getCurrentCityInfo().getId());
-            mSphinx.queryStart(bootstrap);        	
+        	mHandler.removeCallbacks(mReloadAppRecommend);
+        	mHandler.postDelayed(mReloadAppRecommend, 4000);
         }
     }
     
@@ -515,11 +535,12 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     }
 
     public View getView(int position) {
-    	position = position % mPagecount;
+    	if(mPagecount == 2 || mPagecount == 3)position = position % (2*mPagecount);
+    	else position = position % mPagecount;
         if (viewMap.containsKey(position)) {
             return viewMap.get(position);
         }
-        Notice notice = mNoticeList.get(position);
+        Notice notice = mNoticeList.get(position % mPagecount);
         if((notice.getOperationType() & 1) == 0){
         	Button view = new Button(mSphinx);
         	view.setText(notice.getDescription());

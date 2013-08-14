@@ -3,7 +3,10 @@
    android:layout_width="fill_parent"
    android:layout_height="wrap_content"
    android:background="@drawable/list_selector_background_gray_light"
-   android:padding="8dp" >
+   android:paddingLeft="8dp"
+   android:paddingTop="14dp"
+   android:paddingRight="8dp"
+   android:paddingBottom="14dp" >
 
    <ImageView
        android:layout_width="80.5dp"
