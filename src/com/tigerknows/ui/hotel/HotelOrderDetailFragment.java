@@ -308,7 +308,6 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
 	private void updateCancelBtn(){
 		// show or hide cancel order button according to order state
 		int state = mOrder.getState();
-		LogWrapper.d("Trap", "State: "+state);
         if(CalendarUtil.getExactTime(mContext) > mOrder.getCancelDeadline()){
         	mBtnCancel.setVisibility(View.GONE);
         	return;
@@ -335,6 +334,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
         // set title fragment content
         mRightBtn.setVisibility(View.GONE);
         mTitleBtn.setText(mContext.getString(R.string.hotel_order_detail));
+    	Toast.makeText(mContext, CalendarUtil.ymd8c_hm4.format(new Date(mOrder.getCancelDeadline())), Toast.LENGTH_LONG).show();
         
         updateCancelBtn();
         
