@@ -1121,7 +1121,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         criteria.put(DataQuery.SERVER_PARAMETER_REQUSET_SOURCE_TYPE, mActionTag);
         
         FeedbackUpload feedbackUpload = new FeedbackUpload(mSphinx);
-        feedbackUpload.setup(criteria);
+        feedbackUpload.setup(criteria, MapEngine.getInstance().getCityId(poi.getPosition()));
         if (baseQueryList.isEmpty() == false) {
             if (position >= 0) {
                 baseQueryList.add(feedbackUpload);
