@@ -540,12 +540,11 @@ public class Comment extends BaseData {
     
     public static DataQuery createPOICommentQuery(Context context, POI poi, int sourceViewId, int targerViewId) {
 
-        Hashtable<String, String> criteria = new Hashtable<String, String>();
-        criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_DIANPING);
-        criteria.put(DataQuery.SERVER_PARAMETER_POI_ID, poi.getUUID());
-        criteria.put(DataQuery.SERVER_PARAMETER_REFER, DataQuery.REFER_POI);
         DataQuery commentQuery = new DataQuery(context);
-        commentQuery.setup(criteria, Globals.getCurrentCityInfo().getId(), sourceViewId, targerViewId, null, false, false, poi);
+        commentQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_DIANPING);
+        commentQuery.addParameter(DataQuery.SERVER_PARAMETER_POI_ID, poi.getUUID());
+        commentQuery.addParameter(DataQuery.SERVER_PARAMETER_REFER, DataQuery.REFER_POI);
+        commentQuery.setup(Globals.getCurrentCityInfo().getId(), sourceViewId, targerViewId, null, false, false, poi);
         return commentQuery;
     }
     

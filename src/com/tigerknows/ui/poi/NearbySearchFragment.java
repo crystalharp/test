@@ -289,23 +289,22 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
             DataQuery poiQuery = new DataQuery(mContext);
             POI requestPOI = mPOI;
             int cityId = mSphinx.getMapEngine().getCityId(requestPOI.getPosition());
-            Hashtable<String, String> criteria = new Hashtable<String, String>();
-            criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_POI);
-            criteria.put(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_POI);
-            criteria.put(DataQuery.SERVER_PARAMETER_INDEX, "0");
-            criteria.put(DataQuery.SERVER_PARAMETER_KEYWORD, keyword);
-            criteria.put(DataQuery.SERVER_PARAMETER_POI_ID, requestPOI.getUUID());
+            poiQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_POI);
+            poiQuery.addParameter(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_POI);
+            poiQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
+            poiQuery.addParameter(DataQuery.SERVER_PARAMETER_KEYWORD, keyword);
+            poiQuery.addParameter(DataQuery.SERVER_PARAMETER_POI_ID, requestPOI.getUUID());
             Position position = requestPOI.getPosition();
             if (position != null) {
-                criteria.put(DataQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
-                criteria.put(DataQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
+                poiQuery.addParameter(DataQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
+                poiQuery.addParameter(DataQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
             }
             if (isInput) {
                 HistoryWordTable.addHistoryWord(mContext, new TKWord(TKWord.ATTRIBUTE_HISTORY, keyword), cityId, HistoryWordTable.TYPE_POI);
             } else {
-                criteria.put(DataQuery.SERVER_PARAMETER_INFO, DataQuery.INFO_TYPE_TAG);
+                poiQuery.addParameter(DataQuery.SERVER_PARAMETER_INFO, DataQuery.INFO_TYPE_TAG);
             }
-            poiQuery.setup(criteria, cityId, getId(), mSphinx.getPOIResultFragmentID(), null, false, false, requestPOI);
+            poiQuery.setup(cityId, getId(), mSphinx.getPOIResultFragmentID(), null, false, false, requestPOI);
             mSphinx.queryStart(poiQuery);
             ((POIResultFragment)mSphinx.getFragment(poiQuery.getTargetViewId())).setup(isInput ? keyword : null);
             mSphinx.showView(poiQuery.getTargetViewId());

@@ -186,10 +186,9 @@ public class SatisfyRateActivity extends BaseActivity implements View.OnClickLis
     		s.append('_');
     		s.append(Math.round(mSatisfyRbt[i].getRating())+"");
     	}
-        Hashtable<String, String> criteria = new Hashtable<String, String>();
-        criteria.put(FeedbackUpload.SERVER_PARAMETER_SATISFY_RATE, s.toString());
         FeedbackUpload feedbackUpload = new FeedbackUpload(mThis);
-        feedbackUpload.setup(criteria, Globals.getCurrentCityInfo().getId(), -1, -1, mThis.getString(R.string.doing_and_wait));
+        feedbackUpload.addParameter(FeedbackUpload.SERVER_PARAMETER_SATISFY_RATE, s.toString());
+        feedbackUpload.setup(Globals.getCurrentCityInfo().getId(), -1, -1, mThis.getString(R.string.doing_and_wait));
         queryStart(feedbackUpload);
     }
     @Override

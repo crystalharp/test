@@ -227,10 +227,8 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
     
     public static DataOperation makeCommendDataOperation(Context context, String json) {
         DataOperation dataOperation = new DataOperation(context);
-        Hashtable<String, String> criteria = new Hashtable<String, String>();
-        criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_DIANPING);
-        criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, URLEncoder.encode(json));
-        dataOperation.setup(criteria);
+        dataOperation.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_DIANPING);
+        dataOperation.addParameter(DataOperation.SERVER_PARAMETER_OPERATION_CODE, URLEncoder.encode(json));
         return dataOperation;
     }
     
@@ -302,30 +300,29 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
 
         mActionLog.addAction(mActionTag+ActionLog.ListViewItemMore);
 
-        DataQuery dataQuery = new DataQuery(mThis);
+        DataQuery dataQuery = new DataQuery(mCommentQuery);
         POI requestPOI = mCommentQuery.getPOI();
         int cityId = mCommentQuery.getCityId();
-        Hashtable<String, String> criteria = mCommentQuery.getCriteria();
         if (mCommentArrayList.size() > 0) {
             mCommentLsv.changeHeaderViewByState(false, SpringbackListView.REFRESHING);
             if (isHeader) {
                 Comment comment = mCommentArrayList.get(0);
                 if (Comment.isAuthorMe(comment) > 0) {
                     if (mCommentArrayList.size() > 1) {
-                        criteria.put(DataQuery.SERVER_PARAMETER_TIME, mCommentArrayList.get(1).getTime());
+                        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_TIME, mCommentArrayList.get(1).getTime());
                     } else {
-                        criteria.put(DataQuery.SERVER_PARAMETER_TIME, comment.getTime());
+                        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_TIME, comment.getTime());
                     }
                 } else {
-                    criteria.put(DataQuery.SERVER_PARAMETER_TIME, comment.getTime());
+                    dataQuery.addParameter(DataQuery.SERVER_PARAMETER_TIME, comment.getTime());
                 }
-                criteria.put(DataQuery.SERVER_PARAMETER_DIRECTION, DataQuery.DIRECTION_AFTER);
-                dataQuery.setup(criteria, cityId, -1, -1, null, true, false, requestPOI);
+                dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DIRECTION, DataQuery.DIRECTION_AFTER);
+                dataQuery.setup(cityId, -1, -1, null, true, false, requestPOI);
                 queryStart(dataQuery);
             } else {
-                criteria.put(DataQuery.SERVER_PARAMETER_TIME, mCommentArrayList.get(mCommentArrayList.size()-1).getTime());
-                criteria.put(DataQuery.SERVER_PARAMETER_DIRECTION, DataQuery.DIRECTION_BEFORE);
-                dataQuery.setup(criteria, cityId, -1, -1, null, true, false, requestPOI);
+                dataQuery.addParameter(DataQuery.SERVER_PARAMETER_TIME, mCommentArrayList.get(mCommentArrayList.size()-1).getTime());
+                dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DIRECTION, DataQuery.DIRECTION_BEFORE);
+                dataQuery.setup(cityId, -1, -1, null, true, false, requestPOI);
                 queryStart(dataQuery);
             }
         } else {
@@ -357,9 +354,8 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
         }
         if (dataQuery.isTurnPage()) {
             boolean isHeader = false;
-            Hashtable<String, String> criteria = mCommentQuery.getCriteria();
-            if (criteria.containsKey(DataQuery.SERVER_PARAMETER_DIRECTION)) {
-                String direction = criteria.get(DataQuery.SERVER_PARAMETER_DIRECTION);
+            if (mCommentQuery.hasParameter(DataQuery.SERVER_PARAMETER_DIRECTION)) {
+                String direction = mCommentQuery.getParameter(DataQuery.SERVER_PARAMETER_DIRECTION);
                 if (DataQuery.DIRECTION_AFTER.equals(direction)) {
                     if (isNormal) {
                     mTurnPageHeader = false;
@@ -629,10 +625,9 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
         DataQuery dataQuery = (DataQuery)(tkAsyncTask.getBaseQuery());
         
         boolean isHeader = false;
-        Hashtable<String, String> criteria = dataQuery.getCriteria();
-        boolean isNormal = (criteria.containsKey(DataQuery.SERVER_PARAMETER_BIAS) == false);
-        if (criteria.containsKey(DataQuery.SERVER_PARAMETER_DIRECTION)) {
-            String direction = criteria.get(DataQuery.SERVER_PARAMETER_DIRECTION);
+        boolean isNormal = (dataQuery.hasParameter(DataQuery.SERVER_PARAMETER_BIAS) == false);
+        if (dataQuery.hasParameter(DataQuery.SERVER_PARAMETER_DIRECTION)) {
+            String direction = dataQuery.getParameter(DataQuery.SERVER_PARAMETER_DIRECTION);
             if (DataQuery.DIRECTION_AFTER.equals(direction)) {
                 if (isNormal) {
                 mTurnPageHeader = false;
@@ -685,10 +680,9 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
         super.onCancelled(tkAsyncTask);
         DataQuery commentQuery = (DataQuery)(tkAsyncTask.getBaseQuery());
         boolean isHeader = false;
-        Hashtable<String, String> criteria = commentQuery.getCriteria();
-        boolean isNormal = (criteria.containsKey(DataQuery.SERVER_PARAMETER_BIAS) == false);
-        if (criteria.containsKey(DataQuery.SERVER_PARAMETER_DIRECTION)) {
-            String direction = criteria.get(DataQuery.SERVER_PARAMETER_DIRECTION);
+        boolean isNormal = (commentQuery.hasParameter(DataQuery.SERVER_PARAMETER_BIAS) == false);
+        if (commentQuery.hasParameter(DataQuery.SERVER_PARAMETER_DIRECTION)) {
+            String direction = commentQuery.getParameter(DataQuery.SERVER_PARAMETER_DIRECTION);
             if (DataQuery.DIRECTION_AFTER.equals(direction)) {
                 if (isNormal) {
                 mTurnPageHeader = false;
@@ -795,15 +789,14 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
             dataQuery = mPOI.getHotCommentQuery();
         }
         if (dataQuery == null) {
-            Hashtable<String, String> criteria = new Hashtable<String, String>();
-            criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_DIANPING);
-            criteria.put(DataQuery.SERVER_PARAMETER_POI_ID, mPOI.getUUID());
-            criteria.put(DataQuery.SERVER_PARAMETER_REFER, DataQuery.REFER_POI);
-            if (isNormal == false) {
-                criteria.put(DataQuery.SERVER_PARAMETER_BIAS, DataQuery.BIAS_HOT);
-            }
             dataQuery = new DataQuery(mThis);
-            dataQuery.setup(criteria, Globals.getCurrentCityInfo().getId(), mId, mId, null, false, false, mPOI);
+            dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_DIANPING);
+            dataQuery.addParameter(DataQuery.SERVER_PARAMETER_POI_ID, mPOI.getUUID());
+            dataQuery.addParameter(DataQuery.SERVER_PARAMETER_REFER, DataQuery.REFER_POI);
+            if (isNormal == false) {
+                dataQuery.addParameter(DataQuery.SERVER_PARAMETER_BIAS, DataQuery.BIAS_HOT);
+            }
+            dataQuery.setup(Globals.getCurrentCityInfo().getId(), mId, mId, null, false, false, mPOI);
             mCommentLsv.changeHeaderViewByState(false, SpringbackListView.REFRESHING);
             queryStart(dataQuery);
         } else {

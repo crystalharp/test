@@ -150,7 +150,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 		@Override
 		public void run() {
             Bootstrap bootstrap = new Bootstrap(mSphinx);
-            bootstrap.setup(null, Globals.getCurrentCityInfo().getId());
+            bootstrap.setup(Globals.getCurrentCityInfo().getId());
             mSphinx.queryStart(bootstrap);
         }
     };
@@ -431,8 +431,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         		}
         	}else if(mPagecount < 0){
              	NoticeQuery noticeQuery = new NoticeQuery(mSphinx);
-                Hashtable<String, String> criteria = new Hashtable<String, String>();
-                noticeQuery.setup(criteria, Globals.getCurrentCityInfo().getId());
+                noticeQuery.setup(Globals.getCurrentCityInfo().getId());
                 mSphinx.queryStart(noticeQuery);
             }
     	}

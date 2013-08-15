@@ -41,26 +41,23 @@ public class FeedbackUpload extends BaseQuery {
     }
 
     @Override
-    protected void makeRequestParameters() throws APIException {
-        super.makeRequestParameters();
-        addCommonParameters(requestParameters, cityId);
-        
-        if (criteria == null) {
-            throw new APIException(APIException.CRITERIA_IS_NULL);
+    protected void checkRequestParameters() throws APIException {
+        debugCheckParameters(new String[] {SERVER_PARAMETER_FEEDBACK}, 
+                new String[]{SERVER_PARAMETER_ACTION_LOG,
+                SERVER_PARAMETER_LOCATION, SERVER_PARAMETER_LOCATION_IN_ANDROID,
+                SERVER_PARAMETER_ERROR_RECOVERY, SERVER_PARAMETER_ADD_MERCHANT,
+                SERVER_PARAMETER_SATISFY_RATE, SERVER_PARAMETER_POI_RANK, 
+                SERVER_PARAMETER_DATA_TYPE, SERVER_PARAMETER_SUB_DATA_TYPE, 
+                SERVER_PARAMETER_REQUSET_SOURCE_TYPE});
+    }
+    
+    @Override
+    protected void addCommonParameters() {
+        super.addCommonParameters(cityId);
+        if (!hasParameter(SERVER_PARAMETER_FEEDBACK)) {
+            addParameter(SERVER_PARAMETER_FEEDBACK, "");
         }
-        if (criteria.containsKey(SERVER_PARAMETER_FEEDBACK)) {
-            requestParameters.add(SERVER_PARAMETER_FEEDBACK, criteria.get(SERVER_PARAMETER_FEEDBACK));
-        } else {
-            // TODO 这个参数必须要，那怕是空？！
-            requestParameters.add(SERVER_PARAMETER_FEEDBACK, "");
-        }
-        addParameter(new String[]{SERVER_PARAMETER_ACTION_LOG,
-                SERVER_PARAMETER_LOCATION,
-                SERVER_PARAMETER_LOCATION_IN_ANDROID,
-                SERVER_PARAMETER_ERROR_RECOVERY,
-                SERVER_PARAMETER_ADD_MERCHANT,
-                SERVER_PARAMETER_SATISFY_RATE,
-                SERVER_PARAMETER_POI_RANK, SERVER_PARAMETER_DATA_TYPE, SERVER_PARAMETER_SUB_DATA_TYPE, SERVER_PARAMETER_REQUSET_SOURCE_TYPE, DataQuery.SERVER_PARAMETER_POI_ID}, false);
+        addSessionId();
     }
 
     @Override

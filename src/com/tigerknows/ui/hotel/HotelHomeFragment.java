@@ -167,14 +167,13 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     private void queryFilter() {
         stopQuery();
         DataQuery dataQuery = new DataQuery(mSphinx);
-        Hashtable<String, String> criteria = new Hashtable<String, String>();
-        criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_POI);
-        criteria.put(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, DataQuery.SUB_DATA_TYPE_HOTEL);
-        criteria.put(DataQuery.SERVER_PARAMETER_APPENDACTION, DataQuery.APPENDACTION_NOSEARCH);
-        criteria.put(DataQuery.SERVER_PARAMETER_CHECKIN, SIMPLE_DATE_FORMAT.format(mCheckInDat.getCalendar().getTime()));
-        criteria.put(DataQuery.SERVER_PARAMETER_CHECKOUT, SIMPLE_DATE_FORMAT.format(mCheckOutDat.getCalendar().getTime()));
-        criteria.put(DataQuery.SERVER_PARAMETER_INDEX, "0");
-        dataQuery.setup(criteria, Globals.getCurrentCityInfo().getId(), getId(), getId(), null, true);
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_POI);
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, DataQuery.SUB_DATA_TYPE_HOTEL);
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_APPENDACTION, DataQuery.APPENDACTION_NOSEARCH);
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_CHECKIN, SIMPLE_DATE_FORMAT.format(mCheckInDat.getCalendar().getTime()));
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_CHECKOUT, SIMPLE_DATE_FORMAT.format(mCheckOutDat.getCalendar().getTime()));
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
+        dataQuery.setup(Globals.getCurrentCityInfo().getId(), getId(), getId(), null, true);
         mSphinx.queryStart(dataQuery);
     }
     
@@ -730,19 +729,19 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     }
     
     void submit() {
-        Hashtable<String, String> criteria = new Hashtable<String, String>();
-        criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_POI);
-        criteria.put(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_HOTEL);
-        criteria.put(DataQuery.SERVER_PARAMETER_INDEX, "0");
-        criteria.put(DataQuery.SERVER_PARAMETER_CHECKIN, SIMPLE_DATE_FORMAT.format(getDateListView().getCheckin().getTime()));
-        criteria.put(DataQuery.SERVER_PARAMETER_CHECKOUT, SIMPLE_DATE_FORMAT.format(getDateListView().getCheckout().getTime()));
+        DataQuery dataQuery = new DataQuery(mSphinx);
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_POI);
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_HOTEL);
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_CHECKIN, SIMPLE_DATE_FORMAT.format(getDateListView().getCheckin().getTime()));
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_CHECKOUT, SIMPLE_DATE_FORMAT.format(getDateListView().getCheckout().getTime()));
         
         POI poi = mPOI;
         if (poi != null) {
             Position position = poi.getPosition();
             if (position != null) {
-                criteria.put(DataQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
-                criteria.put(DataQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
+                dataQuery.addParameter(DataQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
+                dataQuery.addParameter(DataQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
             }
         } else {
             poi = new POI();
@@ -750,7 +749,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         
         byte key = Byte.MIN_VALUE;
         List<Filter> filterList = getFilterList();
-        if (criteria.containsKey(DataQuery.SERVER_PARAMETER_LONGITUDE)) {
+        if (dataQuery.hasParameter(DataQuery.SERVER_PARAMETER_LONGITUDE)) {
             key = FilterResponse.FIELD_FILTER_AREA_INDEX;
         } else {
             key = Byte.MIN_VALUE;
@@ -760,17 +759,16 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                     locationCityInfo.getId() == Globals.getCurrentCityInfo().getId() &&
                     id >= 6 &&
                     id <= 10) {
-                criteria.put(DataQuery.SERVER_PARAMETER_LOCATION_CITY, String.valueOf(locationCityInfo.getId()));
-                criteria.put(DataQuery.SERVER_PARAMETER_LOCATION_LONGITUDE, String.valueOf(locationCityInfo.getPosition().getLon()));
-                criteria.put(DataQuery.SERVER_PARAMETER_LOCATION_LATITUDE, String.valueOf(locationCityInfo.getPosition().getLat()));
+                dataQuery.addParameter(DataQuery.SERVER_PARAMETER_LOCATION_CITY, String.valueOf(locationCityInfo.getId()));
+                dataQuery.addParameter(DataQuery.SERVER_PARAMETER_LOCATION_LONGITUDE, String.valueOf(locationCityInfo.getPosition().getLon()));
+                dataQuery.addParameter(DataQuery.SERVER_PARAMETER_LOCATION_LATITUDE, String.valueOf(locationCityInfo.getPosition().getLat()));
             }
         }
         
-        criteria.put(DataQuery.SERVER_PARAMETER_FILTER, DataQuery.makeFilterRequest(filterList, key));
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_FILTER, DataQuery.makeFilterRequest(filterList, key));
                 
         int targetViewId = mSphinx.getPOIResultFragmentID();
-        DataQuery dataQuery = new DataQuery(mSphinx);
-        dataQuery.setup(criteria, Globals.getCurrentCityInfo().getId(), getId(), targetViewId, null, false, false, poi);
+        dataQuery.setup(Globals.getCurrentCityInfo().getId(), getId(), targetViewId, null, false, false, poi);
         BaseFragment baseFragment = mSphinx.getFragment(targetViewId);
         if (baseFragment != null && baseFragment instanceof POIResultFragment) {
             mSphinx.queryStart(dataQuery);

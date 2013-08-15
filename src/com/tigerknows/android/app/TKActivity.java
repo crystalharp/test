@@ -200,8 +200,6 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
         void firstLocationSuccess(Activity activity) {
             ActionLog.getInstance(activity).addAction(ActionLog.LifecycleFirstLocationSuccess, Globals.g_My_Location_City_Info.getCName());
             final FeedbackUpload feedbackUpload = new FeedbackUpload(activity);
-            Hashtable<String, String> criteria = new Hashtable<String, String>();
-            feedbackUpload.setup(criteria);
             new Thread(new Runnable() {
                 
                 @Override
@@ -766,7 +764,7 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
             }
             resId = getResponseResId(baseQuery);
         }else {
-            String responseStringRes = baseQuery.getCriteria().get(BaseQuery.RESPONSE_NULL_ERROR_MSG);
+            String responseStringRes = baseQuery.getLocalParameter(BaseQuery.RESPONSE_NULL_ERROR_MSG);
             if(responseStringRes!=null){
             	resId = Integer.parseInt(responseStringRes);
             }
@@ -789,7 +787,7 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
         Response response = baseQuery.getResponse();
         if (response != null) {
             int responseCode = response.getResponseCode();
-            String responseStringRes = baseQuery.getCriteria().get(BaseQuery.RESPONSE_CODE_ERROR_MSG_PREFIX + (responseCode));
+            String responseStringRes = baseQuery.getParameter(BaseQuery.RESPONSE_CODE_ERROR_MSG_PREFIX + (responseCode));
             if(responseStringRes!=null){
             	return Integer.parseInt(responseStringRes);
             }
@@ -821,7 +819,7 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
                     resId = R.string.response_code_402;
                     break;
                 case 403:
-                    if (baseQuery.getCriteria().get(BaseQuery.SERVER_PARAMETER_OPERATION_CODE).equals(DataOperation.OPERATION_CODE_CREATE)) {
+                    if (baseQuery.getParameter(BaseQuery.SERVER_PARAMETER_OPERATION_CODE).equals(DataOperation.OPERATION_CODE_CREATE)) {
                         resId = R.string.response_code_403_login;
                     } else {
                         resId = R.string.response_code_403_resetpassword;
@@ -872,7 +870,7 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
                     break;
             }
         } else {
-            String responseStringRes = baseQuery.getCriteria().get(BaseQuery.RESPONSE_NULL_ERROR_MSG);
+            String responseStringRes = baseQuery.getLocalParameter(BaseQuery.RESPONSE_NULL_ERROR_MSG);
             if(responseStringRes!=null){
             	resId = Integer.parseInt(responseStringRes);
             }else{

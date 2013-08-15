@@ -37,6 +37,16 @@ public class ProxyQuery extends BaseQuery {
     // checkoutdate string true 离开日期，格式如2013-04-22
     public static final String SERVER_PARAMETER_CHECKOUT_DATE = "checkoutdate";
 
+    //动态房型信息查询必选参数key
+    private static final String[] ROOM_TYPE_DYNAMIC_EKEYS = new String[] {
+        SERVER_PARAMETER_HOTELID, SERVER_PARAMETER_ROOMID,
+        SERVER_PARAMETER_ROOM_TYPE_TAOCANID,
+        SERVER_PARAMETER_CHECKIN_DATE,
+        SERVER_PARAMETER_CHECKOUT_DATE, SERVER_PARAMETER_TASK};
+    
+    //动态房型信息查询可选参数key
+    private static final String[] ROOM_TYPE_DYNAMIC_OKEYS = null;
+    
     static final String TAG = "TaskQuery";
 
     public ProxyQuery(Context context) {
@@ -44,24 +54,19 @@ public class ProxyQuery extends BaseQuery {
     }
 
     @Override
-    protected void makeRequestParameters() throws APIException {
-        super.makeRequestParameters();
-        addCommonParameters(requestParameters, cityId);
-        if (criteria == null) {
-            throw new APIException(APIException.CRITERIA_IS_NULL);
-        }
-        String task = addParameter(SERVER_PARAMETER_TASK);
+    protected void checkRequestParameters() throws APIException {
+        String task = getParameter(SERVER_PARAMETER_TASK);
         if (task.equals(TASK_ROOM_TYPE_DYNAMIC)) {
-            addParameter(new String[] {
-                    SERVER_PARAMETER_HOTELID, SERVER_PARAMETER_ROOMID,
-                    SERVER_PARAMETER_ROOM_TYPE_TAOCANID,
-                    SERVER_PARAMETER_CHECKIN_DATE,
-                    SERVER_PARAMETER_CHECKOUT_DATE
-            });
+            debugCheckParameters(ROOM_TYPE_DYNAMIC_EKEYS, ROOM_TYPE_DYNAMIC_OKEYS);
         } else {
             throw APIException.wrapToMissingRequestParameterException("task type invalid.");
         }
-        addSessionId(false);
+    }
+    
+    @Override
+    protected void addCommonParameters() {
+        super.addCommonParameters(cityId);
+        addSessionId();
     }
 
     @Override
@@ -75,7 +80,7 @@ public class ProxyQuery extends BaseQuery {
     protected void translateResponse(byte[] data) throws APIException {
         super.translateResponse(data);
 
-        String taskType = this.criteria.get(SERVER_PARAMETER_TASK);
+        String taskType = getParameter(SERVER_PARAMETER_TASK);
         if (taskType.equals(TASK_ROOM_TYPE_DYNAMIC)) {
             response = new RoomTypeDynamic(responseXMap);
         } else {
@@ -85,7 +90,7 @@ public class ProxyQuery extends BaseQuery {
 
     protected void launchTest() {
         super.launchTest();
-        String task = this.criteria.get(SERVER_PARAMETER_TASK);
+        String task = getParameter(SERVER_PARAMETER_TASK);
         if (task.equals(TASK_ROOM_TYPE_DYNAMIC)) {
             responseXMap = ProxyQueryTest.launchRoomTypeDynamicRespnose(context);
         }

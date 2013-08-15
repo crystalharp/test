@@ -475,30 +475,28 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         mHotelCityId = MapEngine.getInstance().getCityId(mPOI.getPosition());
         String checkinTime = HotelHomeFragment.SIMPLE_DATE_FORMAT.format(checkin.getTime());
         String checkoutTime = HotelHomeFragment.SIMPLE_DATE_FORMAT.format(checkout.getTime());
-        Hashtable<String, String> criteria = new Hashtable<String, String>();
-        criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_POI);
-        criteria.put(DataOperation.SERVER_PARAMETER_SUB_DATA_TYPE, DataQuery.SUB_DATA_TYPE_HOTEL);
-        criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
-        criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, poi.getUUID());
-        criteria.put(DataOperation.SERVER_PARAMETER_NEED_FIELD, "01" + needFiled);   // 01表示poi的uuid
-        criteria.put(DataOperation.SERVER_PARAMETER_CHECKIN, checkinTime);
-        criteria.put(DataOperation.SERVER_PARAMETER_CHECKOUT, checkoutTime);
-        DataOperation dataOpration = new DataOperation(mSphinx);
-        dataOpration.setup(criteria, mHotelCityId, mPOIDetailFragment.getId(), mPOIDetailFragment.getId());
-        return dataOpration;
+        DataOperation dataOperation = new DataOperation(mSphinx);
+        dataOperation.addParameter(DataOperation.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_POI);
+        dataOperation.addParameter(DataOperation.SERVER_PARAMETER_SUB_DATA_TYPE, DataQuery.SUB_DATA_TYPE_HOTEL);
+        dataOperation.addParameter(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
+        dataOperation.addParameter(DataOperation.SERVER_PARAMETER_DATA_UID, poi.getUUID());
+        dataOperation.addParameter(DataOperation.SERVER_PARAMETER_NEED_FIELD, "01" + needFiled);   // 01表示poi的uuid
+        dataOperation.addParameter(DataOperation.SERVER_PARAMETER_CHECKIN, checkinTime);
+        dataOperation.addParameter(DataOperation.SERVER_PARAMETER_CHECKOUT, checkoutTime);
+        dataOperation.setup(mHotelCityId, mPOIDetailFragment.getId(), mPOIDetailFragment.getId());
+        return dataOperation;
     }
     
     private BaseQuery buildRoomTypeDynamicQuery(String hotelId, String roomId, String pkgId, Calendar checkin, Calendar checkout){
         mHotelCityId = MapEngine.getInstance().getCityId(mPOI.getPosition());
-        Hashtable<String, String> criteria = new Hashtable<String, String>();
-        criteria.put(ProxyQuery.SERVER_PARAMETER_CHECKIN_DATE, HotelHomeFragment.SIMPLE_DATE_FORMAT.format(checkin.getTime()));
-        criteria.put(ProxyQuery.SERVER_PARAMETER_CHECKOUT_DATE, HotelHomeFragment.SIMPLE_DATE_FORMAT.format(checkout.getTime()));
-        criteria.put(ProxyQuery.SERVER_PARAMETER_HOTELID, hotelId);
-        criteria.put(ProxyQuery.SERVER_PARAMETER_ROOMID, roomId);
-        criteria.put(ProxyQuery.SERVER_PARAMETER_ROOM_TYPE_TAOCANID, pkgId);
-        criteria.put(ProxyQuery.SERVER_PARAMETER_TASK, "1");
         ProxyQuery query = new ProxyQuery(mSphinx);
-        query.setup(criteria, mHotelCityId, mPOIDetailFragment.getId(), mPOIDetailFragment.getId(), mSphinx.getString(R.string.doing_and_wait));
+        query.addParameter(ProxyQuery.SERVER_PARAMETER_CHECKIN_DATE, HotelHomeFragment.SIMPLE_DATE_FORMAT.format(checkin.getTime()));
+        query.addParameter(ProxyQuery.SERVER_PARAMETER_CHECKOUT_DATE, HotelHomeFragment.SIMPLE_DATE_FORMAT.format(checkout.getTime()));
+        query.addParameter(ProxyQuery.SERVER_PARAMETER_HOTELID, hotelId);
+        query.addParameter(ProxyQuery.SERVER_PARAMETER_ROOMID, roomId);
+        query.addParameter(ProxyQuery.SERVER_PARAMETER_ROOM_TYPE_TAOCANID, pkgId);
+        query.addParameter(ProxyQuery.SERVER_PARAMETER_TASK, "1");
+        query.setup(mHotelCityId, mPOIDetailFragment.getId(), mPOIDetailFragment.getId(), mSphinx.getString(R.string.doing_and_wait));
         return query;
     }
     

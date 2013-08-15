@@ -254,13 +254,12 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
 		table.close();
     	logi("send order sync query for: " + ids + "$");
     	
-    	Hashtable<String, String> criteria = new Hashtable<String, String>();
-    	criteria.put(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, HotelOrderOperation.OPERATION_CODE_SYNC);
-    	criteria.put(HotelOrderOperation.SERVER_PARAMETER_ORDER_ID_FILTER, ids);
-    	criteria.put(BaseQuery.SERVER_PARAMETER_NEED_FIELD, HotelOrder.NEED_FIELDS);
-        criteria.put(BaseQuery.RESPONSE_NULL_ERROR_MSG, ""+R.string.response_null_hotel_order_sync);
     	HotelOrderOperation hotelOrderOperation = new HotelOrderOperation(mSphinx);
-    	hotelOrderOperation.setup(criteria, Globals.getCurrentCityInfo().getId(), getId(), getId(), mContext.getString(R.string.hotel_order_sync_tip));
+    	hotelOrderOperation.addParameter(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, HotelOrderOperation.OPERATION_CODE_SYNC);
+    	hotelOrderOperation.addParameter(HotelOrderOperation.SERVER_PARAMETER_ORDER_ID_FILTER, ids);
+    	hotelOrderOperation.addParameter(BaseQuery.SERVER_PARAMETER_NEED_FIELD, HotelOrder.NEED_FIELDS);
+        hotelOrderOperation.addLocalParameter(BaseQuery.RESPONSE_NULL_ERROR_MSG, ""+R.string.response_null_hotel_order_sync);
+    	hotelOrderOperation.setup(Globals.getCurrentCityInfo().getId(), getId(), getId(), mContext.getString(R.string.hotel_order_sync_tip));
     	mTkAsyncTasking = mSphinx.queryStart(hotelOrderOperation);
     	mBaseQuerying = mTkAsyncTasking.getBaseQueryList();
 		
@@ -504,11 +503,10 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     		return;
     	}
     	logi("send state query for: " + ids);
-    	Hashtable<String, String> criteria = new Hashtable<String, String>();
-    	criteria.put(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, HotelOrderOperation.OPERATION_CODE_QUERY);
-    	criteria.put(HotelOrderOperation.SERVER_PARAMETER_ORDER_IDS, ids);
     	HotelOrderOperation hotelOrderOperation = new HotelOrderOperation(mSphinx);
-    	hotelOrderOperation.setup(criteria, Globals.getCurrentCityInfo().getId(), getId(), getId(), null);
+    	hotelOrderOperation.addParameter(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, HotelOrderOperation.OPERATION_CODE_QUERY);
+    	hotelOrderOperation.addParameter(HotelOrderOperation.SERVER_PARAMETER_ORDER_IDS, ids);
+    	hotelOrderOperation.setup(Globals.getCurrentCityInfo().getId(), getId(), getId(), null);
     	mTkAsyncTasking = mSphinx.queryStart(hotelOrderOperation);
     	mBaseQuerying = mTkAsyncTasking.getBaseQueryList();
     }
@@ -616,7 +614,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
         }
         
         final HotelOrderOperation hotelOrderOperation = (HotelOrderOperation)(tkAsyncTask.getBaseQuery());
-        String opCode = hotelOrderOperation.getCriteria().get(HotelOrderOperation.SERVER_PARAMETER_OPERATION_CODE);
+        String opCode = hotelOrderOperation.getParameter(HotelOrderOperation.SERVER_PARAMETER_OPERATION_CODE);
         if(opCode.equals(HotelOrderOperation.OPERATION_CODE_SYNC)){
         	// Get the orders loaded from server
         	HotelOrderSyncResponse response = (HotelOrderSyncResponse) hotelOrderOperation.getResponse();
@@ -663,7 +661,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
         }else if(opCode.equals(HotelOrderOperation.OPERATION_CODE_QUERY)){
         	HotelOrderStatesResponse response = (HotelOrderStatesResponse) hotelOrderOperation.getResponse();
         	List<Long> states = response.getStates();
-        	String ids = baseQuery.getCriteria().get(HotelOrderOperation.SERVER_PARAMETER_ORDER_IDS);
+        	String ids = baseQuery.getParameter(HotelOrderOperation.SERVER_PARAMETER_ORDER_IDS);
         	updateOrderState(states, ids, ordersQuerying);
         }
         

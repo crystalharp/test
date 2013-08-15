@@ -74,10 +74,9 @@ public class MapMetaFileDownload extends BaseQuery {
     }
 
     @Override
-    protected void makeRequestParameters() throws APIException {
-        super.makeRequestParameters();
-        requestParameters.add("rid", String.valueOf(mRegionId));
-        requestParameters.add("vs", TKConfig.getClientSoftVersion());
+    protected void addCommonParameters() {
+        addParameter("rid", String.valueOf(mRegionId));
+        addParameter("vs", TKConfig.getClientSoftVersion());
         String mapPath = TKConfig.getDataPath(true);
         if (TextUtils.isEmpty(mapPath)) {
             return;
@@ -86,13 +85,13 @@ public class MapMetaFileDownload extends BaseQuery {
         if (metaFile.exists()) {
             long off = metaFile.length();
             if (off > 30) {
-                requestParameters.add("off", String.valueOf(off));
+                addParameter("off", String.valueOf(off));
                 String dataVersion = "";
                 RegionMetaVersion version = mapEngine.getRegionMetaVersion(mRegionId);
                 if (null != version) {
                     dataVersion = version.toString();
                 }
-                requestParameters.add("vd", dataVersion);
+                addParameter("vd", dataVersion);
             } else {
                 metaFile.delete();
             }
@@ -101,14 +100,10 @@ public class MapMetaFileDownload extends BaseQuery {
 
     @Override
     protected void createHttpClient() {
-        if (httpClient == null) {
-            httpClient = new TKHttpClient();
-            httpClient.setKeepAlive(true);
-            httpClient.setApiType(apiType);
-        }
+        super.createHttpClient(false);
+        httpClient.setKeepAlive(true);
         String url = String.format(TKConfig.getDownloadMapUrl(), TKConfig.getDownloadHost());
         httpClient.setURL(url);
-        httpClient.setParameters(requestParameters);
         httpClient.setProgressUpdate(progressUpdate);
     }
 
@@ -152,5 +147,11 @@ public class MapMetaFileDownload extends BaseQuery {
 
     public int getRegionId() {
         return mRegionId;
+    }
+
+    @Override
+    protected void checkRequestParameters() throws APIException {
+        // TODO Auto-generated method stub
+        
     }
 }

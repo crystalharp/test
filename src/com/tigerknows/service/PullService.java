@@ -150,26 +150,25 @@ public class PullService extends Service {
                 if (locationCityInfo.isAvailably()
                         && currentCityInfo.getId() == locationCityInfo.getId()) {    
                     DataQuery dataQuery = new DataQuery(context);
-                    Hashtable<String, String> criteria = new Hashtable<String, String>();
                     String messageIdList = TKConfig.getPref(context, TKConfig.PREFS_RADAR_RECORD_MESSAGE_ID_LIST, "");
                     String lastSucceedTime = TKConfig.getPref(context, TKConfig.PREFS_RADAR_RECORD_LAST_SUCCEED_TIME, "");
-                    criteria.put(BaseQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_PULL_MESSAGE);
-                    criteria.put(DataQuery.SERVER_PARAMETER_LOCATION_CITY, String.valueOf(locationCityInfo.getId()));
-                    criteria.put(DataQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
-                    criteria.put(DataQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
-                    criteria.put(DataQuery.SERVER_PARAMETER_LOCATION_LONGITUDE, String.valueOf(position.getLon()));
-                    criteria.put(DataQuery.SERVER_PARAMETER_LOCATION_LATITUDE, String.valueOf(position.getLat()));
+                    dataQuery.addParameter(BaseQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_PULL_MESSAGE);
+                    dataQuery.addParameter(DataQuery.SERVER_PARAMETER_LOCATION_CITY, String.valueOf(locationCityInfo.getId()));
+                    dataQuery.addParameter(DataQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
+                    dataQuery.addParameter(DataQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
+                    dataQuery.addParameter(DataQuery.SERVER_PARAMETER_LOCATION_LONGITUDE, String.valueOf(position.getLon()));
+                    dataQuery.addParameter(DataQuery.SERVER_PARAMETER_LOCATION_LATITUDE, String.valueOf(position.getLat()));
                     if (getTriggerMode(context).equals(TRIGGER_MODE_NET)) {
-                        criteria.put(DataQuery.SERVER_PARAMETER_INFO, DataQuery.INFO_TYPE_NETWORK_PUSH);
+                        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_INFO, DataQuery.INFO_TYPE_NETWORK_PUSH);
                     }
                     if (!TextUtils.isEmpty(messageIdList)) {
-                        criteria.put(DataQuery.SERVER_PARAMETER_MESSAGE_ID_LIST, messageIdList);
+                        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_MESSAGE_ID_LIST, messageIdList);
                     }
                     if (!TextUtils.isEmpty(lastSucceedTime)) {
-                        criteria.put(DataQuery.SERVER_PARAMETER_LAST_PULL_DATE, lastSucceedTime);
+                        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_LAST_PULL_DATE, lastSucceedTime);
                     }
-                    LogWrapper.d(TAG, criteria.toString());
-                    dataQuery.setup(criteria, currentCityInfo.getId());
+//                    LogWrapper.d(TAG, criteria.toString());
+                    dataQuery.setup(currentCityInfo.getId());
                     dataQuery.query();
                     Response response = dataQuery.getResponse();
                     if (response != null && response.getResponseCode() == 200 && response instanceof PullMessage) {

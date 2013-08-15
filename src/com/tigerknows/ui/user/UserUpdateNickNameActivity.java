@@ -273,12 +273,11 @@ public class UserUpdateNickNameActivity extends UserBaseActivity {
 //		String nickName = nickNameEdt.getText().toString().trim();
 		String nickName = URLEncoder.encode(nickNameEdt.getText().toString().trim());
 		if (TextUtils.isEmpty(Globals.g_Session_Id) == false) {
-			Hashtable<String, String> criteria = new Hashtable<String, String>();
-			criteria.put(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, AccountManage.OPERATION_CODE_UPDATE_NICKNAME);
-			criteria.put(AccountManage.SERVER_PARAMETER_NICKNAME, nickName);
-			criteria.put(BaseQuery.SERVER_PARAMETER_SESSION_ID, Globals.g_Session_Id);
+			accountManage.addParameter(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, AccountManage.OPERATION_CODE_UPDATE_NICKNAME);
+			accountManage.addParameter(AccountManage.SERVER_PARAMETER_NICKNAME, nickName);
+			accountManage.addParameter(BaseQuery.SERVER_PARAMETER_SESSION_ID, Globals.g_Session_Id);
 			
-			sendRequest(accountManage, criteria);
+			sendRequest(accountManage);
 		} 
 	}
 	
@@ -305,7 +304,7 @@ public class UserUpdateNickNameActivity extends UserBaseActivity {
 	
 	@Override
 	protected void responseCodeAction(AccountManage accountManage) {
-		String operationCode = accountManage.getCriteria().get(BaseQuery.SERVER_PARAMETER_OPERATION_CODE);
+		String operationCode = accountManage.getParameter(BaseQuery.SERVER_PARAMETER_OPERATION_CODE);
 		if (AccountManage.OPERATION_CODE_UPDATE_NICKNAME.equals(operationCode)) {
 			//  200, (300, 301, )401(, 500)
 			switch(accountManage.getResponse().getResponseCode()){

@@ -17,9 +17,8 @@ public class NoticeQuery extends BaseQuery {
 	}
 	
 	@Override
-	protected void makeRequestParameters() throws APIException {
-		super.makeRequestParameters();
-		addCommonParameters(requestParameters, cityId);
+	protected void addCommonParameters() {
+		super.addCommonParameters(cityId);
 	}
 	
 	@Override
@@ -181,5 +180,11 @@ public class NoticeQuery extends BaseQuery {
 			};
 		}
     	
+    }
+
+    @Override
+    protected void checkRequestParameters() throws APIException {
+        // TODO Auto-generated method stub
+        
     }
 }

@@ -14,6 +14,7 @@ import com.tigerknows.map.MapEngine;
 import com.tigerknows.model.test.AccountManageTest;
 import com.tigerknows.model.test.BaseQueryTest;
 import com.tigerknows.model.xobject.XMap;
+import com.tigerknows.util.Utility;
 
 import android.content.Context;
 
@@ -66,53 +67,47 @@ public class AccountManage extends BaseQuery {
     }
 
     @Override
-    protected void makeRequestParameters() throws APIException {
-        super.makeRequestParameters();
+    protected void checkRequestParameters() throws APIException {
         if (cityId < MapEngine.CITY_ID_BEIJING) {
             throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_CITY);
         }
-        addCommonParameters(requestParameters, cityId);
-        if (criteria == null) {
-            throw new APIException(APIException.CRITERIA_IS_NULL);
-        }
-        boolean needSessionId = false;
-        String operationCode = addParameter(SERVER_PARAMETER_OPERATION_CODE);
+        String operationCode = getParameter(SERVER_PARAMETER_OPERATION_CODE);
+        String [] ekeys = new String[] {SERVER_PARAMETER_OPERATION_CODE};
         if (OPERATION_CODE_BIND_TELEPHONE.equals(operationCode)) {
-            addParameter(SERVER_PARAMETER_TELEPHONE);
+            debugCheckParameters(Utility.mergeArray(ekeys, new String[]{SERVER_PARAMETER_TELEPHONE}));
         } else if (OPERATION_CODE_CREATE.equals(operationCode)) {
-            addParameter(new String[] {SERVER_PARAMETER_TELEPHONE,
-                    SERVER_PARAMETER_PASSWORD,
-                    SERVER_PARAMETER_VALIDATE_CODE});
-            addParameter(SERVER_PARAMETER_NICKNAME, false);
+            debugCheckParameters(Utility.mergeArray(ekeys,new String[] {SERVER_PARAMETER_TELEPHONE,
+                    SERVER_PARAMETER_PASSWORD, SERVER_PARAMETER_VALIDATE_CODE},
+                    new String[]{SERVER_PARAMETER_NICKNAME}));
         } else if (OPERATION_CODE_UPDATE_NICKNAME.equals(operationCode)) {
-            needSessionId = true;
-            addParameter(new String[] {SERVER_PARAMETER_NICKNAME});
+            debugCheckParameters(Utility.mergeArray(ekeys,new String[] {SERVER_PARAMETER_NICKNAME, SERVER_PARAMETER_SESSION_ID}));
         } else if (OPERATION_CODE_UPDATE_PASSWORD.equals(operationCode)) {
-            needSessionId = true;
-            addParameter(new String[] {SERVER_PARAMETER_OLD_PASSWORD,
-                    SERVER_PARAMETER_PASSWORD});
+            debugCheckParameters(Utility.mergeArray(ekeys,new String[] {SERVER_PARAMETER_OLD_PASSWORD,
+                    SERVER_PARAMETER_PASSWORD, SERVER_PARAMETER_SESSION_ID}));
         } else if (OPERATION_CODE_UPDATE_TELEPHONE.equals(operationCode)) {
-            needSessionId = true;
-            addParameter(new String[] {SERVER_PARAMETER_TELEPHONE,
-                    SERVER_PARAMETER_VALIDATE_CODE,
-                    SERVER_PARAMETER_PASSWORD});
+            debugCheckParameters(Utility.mergeArray(ekeys,new String[] {SERVER_PARAMETER_TELEPHONE,
+                    SERVER_PARAMETER_VALIDATE_CODE, SERVER_PARAMETER_PASSWORD, SERVER_PARAMETER_SESSION_ID}));
         } else if (OPERATION_CODE_GET_VALIDATE_CODE.equals(operationCode)) {
-            addParameter(SERVER_PARAMETER_TELEPHONE);
+            debugCheckParameters(Utility.mergeArray(ekeys,new String[] {SERVER_PARAMETER_TELEPHONE}));
         } else if (OPERATION_CODE_RESET_PASSWORD.equals(operationCode)) {
-            addParameter(new String[] {SERVER_PARAMETER_TELEPHONE,
-                    SERVER_PARAMETER_VALIDATE_CODE,
-                    SERVER_PARAMETER_PASSWORD});
+            debugCheckParameters(Utility.mergeArray(ekeys,new String[] {SERVER_PARAMETER_TELEPHONE,
+                    SERVER_PARAMETER_VALIDATE_CODE, SERVER_PARAMETER_PASSWORD}));
         } else if (OPERATION_CODE_LOGIN.equals(operationCode)) {
-            addParameter(new String[] {SERVER_PARAMETER_TELEPHONE,
-                    SERVER_PARAMETER_PASSWORD});
+            debugCheckParameters(Utility.mergeArray(ekeys,new String[] {SERVER_PARAMETER_TELEPHONE,
+                    SERVER_PARAMETER_PASSWORD}));
         } else if (OPERATION_CODE_LOGOUT.equals(operationCode)) {
-            needSessionId = true;
+            debugCheckParameters(Utility.mergeArray(ekeys,new String[] {SERVER_PARAMETER_SESSION_ID}));
         } else if ("du".equals(operationCode)) {
-            addParameter(new String[] {SERVER_PARAMETER_TELEPHONE});
+            debugCheckParameters(Utility.mergeArray(ekeys,new String[] {SERVER_PARAMETER_TELEPHONE}));
         } else {
             throw APIException.wrapToMissingRequestParameterException("operationCode invalid.");
         }
-        addSessionId(needSessionId);
+    }
+    
+    @Override
+    protected void addCommonParameters() {
+        super.addCommonParameters(cityId);
+        addSessionId();
     }
     
     @Override
@@ -126,7 +121,7 @@ public class AccountManage extends BaseQuery {
     protected void translateResponse(byte[] data) throws APIException {
         super.translateResponse(data);
 
-        String operationCode = criteria.get(SERVER_PARAMETER_OPERATION_CODE);
+        String operationCode = getParameter(SERVER_PARAMETER_OPERATION_CODE);
         if (OPERATION_CODE_CREATE.equals(operationCode)) {
             UserRespnose userResponse = new UserRespnose(responseXMap);
             this.response = userResponse;
@@ -211,12 +206,12 @@ public class AccountManage extends BaseQuery {
     }
     
     public String getOperationCode() {
-    	return criteria.get(BaseQuery.SERVER_PARAMETER_OPERATION_CODE);
+    	return getParameter(BaseQuery.SERVER_PARAMETER_OPERATION_CODE);
     }
     
     protected void launchTest() {
         super.launchTest();
-        String operationCode = this.criteria.get(SERVER_PARAMETER_OPERATION_CODE);
+        String operationCode = getParameter(SERVER_PARAMETER_OPERATION_CODE);
         if (OPERATION_CODE_CREATE.equals(operationCode)) {
             responseXMap = AccountManageTest.launchUserRespnose(context);
         } else if (OPERATION_CODE_LOGIN.equals(operationCode)) {

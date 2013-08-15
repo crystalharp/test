@@ -400,7 +400,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         } else {
             DataQuery dataQuery = mDataQuery;
             if (dataQuery != null &&
-                    BaseQuery.SUB_DATA_TYPE_HOTEL.equals(dataQuery.getCriteria().get(BaseQuery.SERVER_PARAMETER_SUB_DATA_TYPE)) &&
+                    BaseQuery.SUB_DATA_TYPE_HOTEL.equals(dataQuery.getParameter(BaseQuery.SERVER_PARAMETER_SUB_DATA_TYPE)) &&
                     mPOIList.size() > 0) {
                 int bottom = Util.dip2px(Globals.g_metrics.density, 32);
                 mResultLsv.setPadding(0, 0, 0, bottom);
@@ -460,15 +460,14 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         mResultLsv.changeHeaderViewByState(false, SpringbackListView.REFRESHING);
         mActionLog.addAction(mActionTag+ActionLog.ListViewItemMore);
 
-        DataQuery poiQuery = new DataQuery(mContext);
+        DataQuery poiQuery = new DataQuery(lastDataQuery);
         POI requestPOI = lastDataQuery.getPOI();
         int cityId = lastDataQuery.getCityId();
-        Hashtable<String, String> criteria = lastDataQuery.getCriteria();
-        criteria.put(DataQuery.SERVER_PARAMETER_INDEX, String.valueOf(mPOIList.size() - (mShowAPOI ? 1 : 0)));
-        if (criteria.containsKey(DataQuery.SERVER_PARAMETER_FILTER) == false) {
-            criteria.put(DataQuery.SERVER_PARAMETER_FILTER, DataQuery.makeFilterRequest(mFilterList));
+        poiQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, String.valueOf(mPOIList.size() - (mShowAPOI ? 1 : 0)));
+        if (poiQuery.hasParameter(DataQuery.SERVER_PARAMETER_FILTER) == false) {
+            poiQuery.addParameter(DataQuery.SERVER_PARAMETER_FILTER, DataQuery.makeFilterRequest(mFilterList));
         }
-        poiQuery.setup(criteria, cityId, getId(), getId(), null, true, false, requestPOI);
+        poiQuery.setup(cityId, getId(), getId(), null, true, false, requestPOI);
         mSphinx.queryStart(poiQuery);
         }
     }
@@ -512,14 +511,13 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             return;
         }
 
-        DataQuery poiQuery = new DataQuery(mContext);
+        DataQuery poiQuery = new DataQuery(lastDataQuery);
 
         POI requestPOI = lastDataQuery.getPOI();
         int cityId = lastDataQuery.getCityId();
-        Hashtable<String, String> criteria = lastDataQuery.getCriteria();
-        criteria.put(DataQuery.SERVER_PARAMETER_INDEX, "0");
-        criteria.put(DataQuery.SERVER_PARAMETER_FILTER, DataQuery.makeFilterRequest(mFilterList));
-        poiQuery.setup(criteria, cityId, getId(), getId(), null, false, false, requestPOI);
+        poiQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
+        poiQuery.addParameter(DataQuery.SERVER_PARAMETER_FILTER, DataQuery.makeFilterRequest(mFilterList));
+        poiQuery.setup(cityId, getId(), getId(), null, false, false, requestPOI);
         mSphinx.queryStart(poiQuery);
         setup(mInputText);
         dismissPopupWindow();
@@ -859,8 +857,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     public void onPostExecute(TKAsyncTask tkAsyncTask) {
         super.onPostExecute(tkAsyncTask);
         DataQuery dataQuery = (DataQuery) tkAsyncTask.getBaseQuery();
-        Hashtable<String, String> criteria = dataQuery.getCriteria();
-        String subDataType = criteria.get(BaseQuery.SERVER_PARAMETER_SUB_DATA_TYPE);
+        String subDataType = dataQuery.getParameter(BaseQuery.SERVER_PARAMETER_SUB_DATA_TYPE);
         mResultAdapter.setSubDataType(subDataType);
         if (BaseQuery.SUB_DATA_TYPE_HOTEL.equals(subDataType)) {
             mRetryView.setText(R.string.can_not_found_result_and_retry, false);
@@ -904,8 +901,8 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                     updateView();
                     return;
                 } else {
-                    if (criteria.containsKey(DataQuery.SERVER_PARAMETER_FILTER_STRING)) {
-                        dataQuery.getCriteria().remove(DataQuery.SERVER_PARAMETER_FILTER_STRING);
+                    if (dataQuery.hasParameter(DataQuery.SERVER_PARAMETER_FILTER_STRING)) {
+                        dataQuery.delParameter(DataQuery.SERVER_PARAMETER_FILTER_STRING);
                     }
                 }
             } else {

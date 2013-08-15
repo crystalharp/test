@@ -885,18 +885,16 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         list.add(locationQuery);
         
         Bootstrap bootstrap = new Bootstrap(mContext);
-        Hashtable<String, String> criteria = new Hashtable<String, String>();
         if (mFromThirdParty == THIRD_PARTY_WENXIN_REQUET) {
-            criteria.put(BaseQuery.SERVER_PARAMETER_REQUSET_SOURCE_TYPE, BaseQuery.REQUSET_SOURCE_TYPE_WEIXIN);
+            bootstrap.addParameter(BaseQuery.SERVER_PARAMETER_REQUSET_SOURCE_TYPE, BaseQuery.REQUSET_SOURCE_TYPE_WEIXIN);
         }
         String versionName = TKConfig.getPref(mThis, TKConfig.PREFS_VERSION_NAME, null);
         if (TextUtils.isEmpty(versionName)) {
-            criteria.put(Bootstrap.SERVER_PARAMETER_FIRST_LOGIN, Bootstrap.FIRST_LOGIN_NEW);
+            bootstrap.addParameter(Bootstrap.SERVER_PARAMETER_FIRST_LOGIN, Bootstrap.FIRST_LOGIN_NEW);
         } else if (!TKConfig.getClientSoftVersion().equals(versionName)) {
-            criteria.put(Bootstrap.SERVER_PARAMETER_FIRST_LOGIN, Bootstrap.FIRST_LOGIN_UPGRADE);
+            bootstrap.addParameter(Bootstrap.SERVER_PARAMETER_FIRST_LOGIN, Bootstrap.FIRST_LOGIN_UPGRADE);
         }
         TKConfig.setPref(mContext, TKConfig.PREFS_VERSION_NAME, TKConfig.getClientSoftVersion());
-        bootstrap.setup(criteria);
         list.add(bootstrap);
         
         queryStart(list);
@@ -1684,18 +1682,18 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         POI requestPOI = getPOI();
         int cityId = Globals.getCurrentCityInfo().getId();
         Hashtable<String, String> criteria = new Hashtable<String, String>();
-        criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_POI);
-        criteria.put(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_POI);
-        criteria.put(DataQuery.SERVER_PARAMETER_INDEX, "0");
-        criteria.put(DataQuery.SERVER_PARAMETER_SIZE, String.valueOf(TKConfig.getPageSize()));
-        criteria.put(DataQuery.SERVER_PARAMETER_KEYWORD, keyword);
-        criteria.put(DataQuery.SERVER_PARAMETER_CITY, String.valueOf(cityId));
+        poiQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_POI);
+        poiQuery.addParameter(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_POI);
+        poiQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
+        poiQuery.addParameter(DataQuery.SERVER_PARAMETER_SIZE, String.valueOf(TKConfig.getPageSize()));
+        poiQuery.addParameter(DataQuery.SERVER_PARAMETER_KEYWORD, keyword);
+        poiQuery.addParameter(DataQuery.SERVER_PARAMETER_CITY, String.valueOf(cityId));
         Position position = requestPOI.getPosition();
         if (position != null) {
-            criteria.put(DataQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
-            criteria.put(DataQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
+            poiQuery.addParameter(DataQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
+            poiQuery.addParameter(DataQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
         }
-        poiQuery.setup(criteria, cityId, uiStackPeek(), getPOIResultFragmentID(), null, false, false, requestPOI);
+        poiQuery.setup(cityId, uiStackPeek(), getPOIResultFragmentID(), null, false, false, requestPOI);
         return poiQuery;
     }
     

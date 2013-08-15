@@ -13,6 +13,7 @@ import com.tigerknows.TKConfig;
 import com.tigerknows.model.test.BaseQueryTest;
 import com.tigerknows.model.test.DataOperationTest;
 import com.tigerknows.model.xobject.XMap;
+import com.tigerknows.util.Utility;
 
 import android.content.Context;
 
@@ -60,45 +61,47 @@ public class DataOperation extends BaseQuery {
         super(context, API_TYPE_DATA_OPERATION);
     }
 
+    public DataOperation(BaseQuery query) {
+        super(query);
+    }
+
     @Override
-    protected void makeRequestParameters() throws APIException {
-        super.makeRequestParameters();
-        addCommonParameters(requestParameters, cityId);
-        
-        if (criteria == null) {
-            throw new APIException(APIException.CRITERIA_IS_NULL);
-        }
-        
-        String dataType = addParameter(SERVER_PARAMETER_DATA_TYPE);
-        String operationCode = addParameter(SERVER_PARAMETER_OPERATION_CODE);
+    protected void checkRequestParameters() throws APIException {
+        String dataType = getParameter(SERVER_PARAMETER_DATA_TYPE);
+        String operationCode = getParameter(SERVER_PARAMETER_OPERATION_CODE);
+        String[] ekeys = new String[] {SERVER_PARAMETER_DATA_TYPE, SERVER_PARAMETER_OPERATION_CODE};
         if (OPERATION_CODE_QUERY.equals(operationCode)) {
             if(DATA_TYPE_POI.equals(dataType)){
-                String subDataType = addParameter(SERVER_PARAMETER_SUB_DATA_TYPE);
+                String[] poiEkeys = new String[]{SERVER_PARAMETER_NEED_FIELD, SERVER_PARAMETER_DATA_UID, 
+                        SERVER_PARAMETER_SUB_DATA_TYPE};
+                String subDataType = getParameter(SERVER_PARAMETER_SUB_DATA_TYPE);
                 if (SUB_DATA_TYPE_HOTEL.equals(subDataType)) {
-                    addParameter(new String[] {SERVER_PARAMETER_CHECKIN, SERVER_PARAMETER_CHECKOUT});
+                    debugCheckParameters(Utility.mergeArray(ekeys, poiEkeys, 
+                            new String[] {SERVER_PARAMETER_CHECKIN, SERVER_PARAMETER_CHECKOUT}));
+                } else {
+                    debugCheckParameters(Utility.mergeArray(ekeys, poiEkeys),
+                            new String[] {SERVER_PARAMETER_PICTURE});
                 }
             }
             
-        	if(dataType.equals(DATA_TYPE_DIAOYAN) == false){
-        		addParameter(new String[] {SERVER_PARAMETER_NEED_FIELD, SERVER_PARAMETER_DATA_UID});
-            }
         	
-        	// 部分查询需要提交pic信息和dsrc信息，据说上一个写这行代码的人懒得用一堆if判断于是就直接用这行代码了
-        	// fengtianxiao 2013.05.10
-        	addParameter(new String[] {SERVER_PARAMETER_PICTURE}, false);
         } else if (OPERATION_CODE_CREATE.equals(operationCode)) {
-            addParameter(SERVER_PARAMETER_ENTITY);
+            debugCheckParameters(Utility.mergeArray(ekeys,new String[] {SERVER_PARAMETER_ENTITY}));
         } else if (OPERATION_CODE_UPDATE.equals(operationCode)) {
-            addParameter(new String[] {SERVER_PARAMETER_DATA_UID, SERVER_PARAMETER_ENTITY});
+            debugCheckParameters(Utility.mergeArray(ekeys,new String[] {SERVER_PARAMETER_DATA_UID, SERVER_PARAMETER_ENTITY}));
         } else if (OPERATION_CODE_DELETE.equals(operationCode)) {
-            addParameter(SERVER_PARAMETER_DATA_UID);
+            debugCheckParameters(Utility.mergeArray(ekeys,new String[] {SERVER_PARAMETER_DATA_UID}));
         } else if (operationCode.startsWith(URLEncoder.encode(Comment.JsonHeader))) {
             
         } else {
             throw APIException.wrapToMissingRequestParameterException("operationCode invalid.");
         }
-
-        addSessionId(false);
+    }
+    
+    @Override
+    protected void addCommonParameters() {
+        super.addCommonParameters(cityId);
+        addSessionId();
     }
 
     @Override
@@ -112,8 +115,8 @@ public class DataOperation extends BaseQuery {
     protected void translateResponse(byte[] data) throws APIException {
         super.translateResponse(data);
 
-        String dataType = criteria.get(SERVER_PARAMETER_DATA_TYPE);
-        String operationCode = criteria.get(SERVER_PARAMETER_OPERATION_CODE);
+        String dataType = getParameter(SERVER_PARAMETER_DATA_TYPE);
+        String operationCode = getParameter(SERVER_PARAMETER_OPERATION_CODE);
         
         if (OPERATION_CODE_QUERY.equals(operationCode)) {
             if (DATA_TYPE_POI.equals(dataType)) {
@@ -429,9 +432,9 @@ public class DataOperation extends BaseQuery {
     
     protected void launchTest() {
         super.launchTest();
-        String dataType = this.criteria.get(SERVER_PARAMETER_DATA_TYPE);
-        if (criteria.containsKey(SERVER_PARAMETER_OPERATION_CODE)) {
-            String operationCode = criteria.get(SERVER_PARAMETER_OPERATION_CODE);
+        String dataType = getParameter(SERVER_PARAMETER_DATA_TYPE);
+        if (hasParameter(SERVER_PARAMETER_OPERATION_CODE)) {
+            String operationCode = getParameter(SERVER_PARAMETER_OPERATION_CODE);
             
             if (OPERATION_CODE_CREATE.equals(operationCode)) {
                 if (DATA_TYPE_DINGDAN.equals(dataType)) {
@@ -441,7 +444,7 @@ public class DataOperation extends BaseQuery {
                 }
             } if (OPERATION_CODE_QUERY.equals(operationCode)) {
                 if (DATA_TYPE_POI.equals(dataType)) {
-                    String subDataType = criteria.get(SERVER_PARAMETER_SUB_DATA_TYPE);
+                    String subDataType = getParameter(SERVER_PARAMETER_SUB_DATA_TYPE);
                     if (SUB_DATA_TYPE_POI.equals(subDataType)) {
                         responseXMap = DataOperationTest.launchPOIQueryResponse();
                     }else if(SUB_DATA_TYPE_HOTEL.equals(subDataType)){

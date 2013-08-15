@@ -233,11 +233,10 @@ public class UserHomeFragment extends UserBaseFragment {
 		AccountManage accountManage = new AccountManage(mContext);
 		
 		if (TextUtils.isEmpty(Globals.g_Session_Id) == false) {
-			Hashtable<String, String> criteria = new Hashtable<String, String>();
-			criteria.put(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, AccountManage.OPERATION_CODE_LOGOUT);
-			criteria.put(BaseQuery.SERVER_PARAMETER_SESSION_ID, Globals.g_Session_Id);
+			accountManage.addParameter(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, AccountManage.OPERATION_CODE_LOGOUT);
+			accountManage.addParameter(BaseQuery.SERVER_PARAMETER_SESSION_ID, Globals.g_Session_Id);
 			
-			sendRequest(accountManage, criteria);
+			sendRequest(accountManage);
 		} 
 	}
 
@@ -249,7 +248,7 @@ public class UserHomeFragment extends UserBaseFragment {
         // 这里做一个特殊判断，注销操作时返回300也视为注销成功
         if (response != null) {
             int responseCode = response.getResponseCode();
-            String operationCode = baseQuery.getCriteria().get(BaseQuery.SERVER_PARAMETER_OPERATION_CODE);
+            String operationCode = baseQuery.getParameter(BaseQuery.SERVER_PARAMETER_OPERATION_CODE);
             if (AccountManage.OPERATION_CODE_LOGOUT.equals(operationCode)) {
                 if (responseCode == 300) {
                     
@@ -269,7 +268,7 @@ public class UserHomeFragment extends UserBaseFragment {
     @Override
 	protected void responseCodeAction(AccountManage accountManage) {
 		// TODO Auto-generated method stub
-		String operationCode = accountManage.getCriteria().get(BaseQuery.SERVER_PARAMETER_OPERATION_CODE);
+		String operationCode = accountManage.getParameter(BaseQuery.SERVER_PARAMETER_OPERATION_CODE);
 		if (AccountManage.OPERATION_CODE_LOGOUT.equals(operationCode)){
 			// 200, 400, 503
 			switch(accountManage.getResponse().getResponseCode()){

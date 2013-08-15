@@ -163,16 +163,15 @@ public class DynamicMoviePOI extends POIDetailFragment.DynamicPOIView{
 //    }
     
     public DataQuery buildQuery(POI poi) {
-        Hashtable<String, String> criteria = new Hashtable<String, String>();
-        criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_DIANYING);
-        criteria.put(DataQuery.SERVER_PARAMETER_POI_ID, poi.getUUID());
-        criteria.put(DataQuery.SERVER_PARAMETER_INDEX, "0");
-        criteria.put(DataOperation.SERVER_PARAMETER_NEED_FIELD,
-                Dianying.NEED_FIELD_POI_DETAIL);
-        criteria.put(DataOperation.SERVER_PARAMETER_PICTURE,
-               Util.byteToHexString(Dianying.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[0]");
         DataQuery dataQuery = new DataQuery(mSphinx);
-        dataQuery.setup(criteria, Globals.getCurrentCityInfo().getId(), mPOIDetailFragment.getId(), mPOIDetailFragment.getId(), null, false, false, poi);
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_DIANYING);
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_POI_ID, poi.getUUID());
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
+        dataQuery.addParameter(DataOperation.SERVER_PARAMETER_NEED_FIELD,
+                Dianying.NEED_FIELD_POI_DETAIL);
+        dataQuery.addParameter(DataOperation.SERVER_PARAMETER_PICTURE,
+               Util.byteToHexString(Dianying.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[0]");
+        dataQuery.setup(Globals.getCurrentCityInfo().getId(), mPOIDetailFragment.getId(), mPOIDetailFragment.getId(), null, false, false, poi);
         
         return dataQuery;
     }
@@ -199,33 +198,31 @@ public class DynamicMoviePOI extends POIDetailFragment.DynamicPOIView{
             }
             mPOIDetailFragment.mActionLog.addAction(mPOIDetailFragment.mActionTag+ActionLog.POIDetailDianying);
             DataOperation dataOperation = new DataOperation(mSphinx);
-            Hashtable<String, String> criteria = new Hashtable<String, String>();
             if (object instanceof Dianying) {
                 Dianying dynamic = (Dianying) object;
                 List<BaseQuery> list = new ArrayList<BaseQuery>();
 
-                criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_DIANYING);
-                criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
-                criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, dynamic.getUid());
+                dataOperation.addParameter(DataOperation.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_DIANYING);
+                dataOperation.addParameter(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
+                dataOperation.addParameter(DataOperation.SERVER_PARAMETER_DATA_UID, dynamic.getUid());
                 
                 dataOperation = new DataOperation(mSphinx);
-                criteria.put(DataOperation.SERVER_PARAMETER_NEED_FIELD,
+                dataOperation.addParameter(DataOperation.SERVER_PARAMETER_NEED_FIELD,
                         Dianying.NEED_FIELD_ONLY_DIANYING
                         + Util.byteToHexString(Dianying.FIELD_DESCRIPTION));
-                criteria.put(DataOperation.SERVER_PARAMETER_PICTURE,
+                dataOperation.addParameter(DataOperation.SERVER_PARAMETER_PICTURE,
                         Util.byteToHexString(Dianying.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[0]" + ";" +
                         Util.byteToHexString(Dianying.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[0]");
-                dataOperation.setup(criteria, Globals.getCurrentCityInfo().getId(), mPOIDetailFragment.getId(), mPOIDetailFragment.getId(), mSphinx.getString(R.string.doing_and_wait));
+                dataOperation.setup(Globals.getCurrentCityInfo().getId(), mPOIDetailFragment.getId(), mPOIDetailFragment.getId(), mSphinx.getString(R.string.doing_and_wait));
                 list.add(dataOperation);
                 
                 dataOperation = new DataOperation(mSphinx);
-                criteria = new Hashtable<String, String>();
-                criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_YINGXUN);
-                criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
-                criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, dynamic.getYingxun().getUid());
+                dataOperation.addParameter(DataOperation.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_YINGXUN);
+                dataOperation.addParameter(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
+                dataOperation.addParameter(DataOperation.SERVER_PARAMETER_DATA_UID, dynamic.getYingxun().getUid());
                 
-                criteria.put(DataOperation.SERVER_PARAMETER_NEED_FIELD, Yingxun.NEED_FIELD);
-                dataOperation.setup(criteria, Globals.getCurrentCityInfo().getId(), mPOIDetailFragment.getId(), mPOIDetailFragment.getId(), mSphinx.getString(R.string.doing_and_wait));
+                dataOperation.addParameter(DataOperation.SERVER_PARAMETER_NEED_FIELD, Yingxun.NEED_FIELD);
+                dataOperation.setup(Globals.getCurrentCityInfo().getId(), mPOIDetailFragment.getId(), mPOIDetailFragment.getId(), mSphinx.getString(R.string.doing_and_wait));
                 list.add(dataOperation);
                 
 //                mTkAsyncTasking = mSphinx.queryStart(list);
@@ -276,8 +273,7 @@ public class DynamicMoviePOI extends POIDetailFragment.DynamicPOIView{
                 mPOIDetailFragment.isReLogin = true;
                 return;
             }
-            Hashtable<String, String> criteria = baseQuery.getCriteria();
-            String dataType = criteria.get(DataOperation.SERVER_PARAMETER_DATA_TYPE);
+            String dataType = baseQuery.getParameter(DataOperation.SERVER_PARAMETER_DATA_TYPE);
             Response response = baseQuery.getResponse();
             if (baseQuery instanceof DataQuery) {
                 if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, false, this, false)) {

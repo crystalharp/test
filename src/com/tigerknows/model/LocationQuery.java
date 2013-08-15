@@ -159,16 +159,20 @@ public class LocationQuery extends BaseQuery {
     }
 
     @Override
-    protected void makeRequestParameters() throws APIException {
-        super.makeRequestParameters();
-        addCommonParameters(requestParameters, Globals.getCurrentCityInfo(false).getId(), true);
+    protected void checkRequestParameters() throws APIException {
+        
+    }
+    
+    @Override
+    protected void addCommonParameters() {
+        addCommonParameters(Globals.getCurrentCityInfo(false).getId(), true);
         
         if (wifiManager != null) {
             List<ScanResult> scanResults = wifiManager.getScanResults();
             if (scanResults != null) {
                 for (ScanResult sr : scanResults) {
-                    requestParameters.add("wifi_mac[]", sr.BSSID);
-                    requestParameters.add("wifi_ss[]", String.valueOf(sr.level));
+                    addParameter("wifi_mac[]", sr.BSSID);
+                    addParameter("wifi_ss[]", String.valueOf(sr.level));
                 }
             }
         }
@@ -180,27 +184,13 @@ public class LocationQuery extends BaseQuery {
                 lac = cellInfo.getLac();
                 cid = cellInfo.getCid();
                 if (Utility.lacCidValid(lac, cid)) {
-                    requestParameters.add("n8b_lac[]", String.valueOf(lac));
-                    requestParameters.add("n8b_ci[]", String.valueOf(cid));
-                    requestParameters.add("n8b_ss[]", String.valueOf(Utility.asu2dbm(cellInfo.getRssi())));
+                    addParameter("n8b_lac[]", String.valueOf(lac));
+                    addParameter("n8b_ci[]", String.valueOf(cid));
+                    addParameter("n8b_ss[]", String.valueOf(Utility.asu2dbm(cellInfo.getRssi())));
                 }
             }
         }
-//        List<NeighboringCellInfo> list = TigerknowsConfig.getNeighboringCellList();
-//        if (list != null
-//                && (Build.VERSION.SDK.equals("3") || Build.VERSION.SDK.equals("4"))
-//                && (TigerknowsConfig.getNetworkType() == TelephonyManager.NETWORK_TYPE_GPRS
-//                        || TigerknowsConfig.getNetworkType() == TelephonyManager.NETWORK_TYPE_EDGE || TigerknowsConfig
-//                        .getNetworkType() == TelephonyManager.NETWORK_TYPE_CDMA)) {
-//            int cid;
-//            for (NeighboringCellInfo neighboringCellInfo : list) {
-//                cid = neighboringCellInfo.getCid();
-//                parameters.add("n8b_lac[]", String.valueOf(String.valueOf(cid >>> 16))));
-//                parameters.add("n8b_ci[]", String.valueOf(cid & 0xffff)));
-//                parameters.add("n8b_ss[]", String.valueOf(neighboringCellInfo.getRssi())));
-//            }
-//        }
-        requestParameters.add("radio_type", TKConfig.getRadioType());
+        addParameter("radio_type", TKConfig.getRadioType());
     }
 
     @Override

@@ -9,10 +9,15 @@
 package com.tigerknows.model;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import android.app.Activity;
@@ -52,10 +57,15 @@ import com.tigerknows.util.HttpUtils;
 import com.tigerknows.util.ParserUtil;
 import com.tigerknows.util.ZLibUtils;
 import com.tigerknows.util.HttpUtils.TKHttpClient.ProgressUpdate;
-import com.weibo.sdk.android.WeiboParameters;
 
 /**
  *本类是所有联网搜索类的公共父类.
+ *
+ * 使用方法：
+ * 业务代码只需要给这个Query进行addParameter操作，setup后进行查询。
+ * 
+ * 继承自此类的查询类若需要添加该类的公共参数，只需要override掉addCommonPatameter，然后在继承的函数中
+ * 调用以下父类的addCommonParameter。注意addCommonParameter的参数。
  * 
  * @author pengwenyue
  * @version
@@ -213,8 +223,8 @@ public abstract class BaseQuery {
      */
     public boolean isPulledDynamicPOIRequest() {
         boolean result = false;
-        if (criteria != null && criteria.containsKey(SERVER_PARAMETER_REQUSET_SOURCE_TYPE)) {
-            String sourceType = criteria.get(SERVER_PARAMETER_REQUSET_SOURCE_TYPE);
+        if (requestParameters.containsKey(SERVER_PARAMETER_REQUSET_SOURCE_TYPE)) {
+            String sourceType = requestParameters.getValue(SERVER_PARAMETER_REQUSET_SOURCE_TYPE);
             if (REQUSET_SOURCE_TYPE_PULLED_DYNAMIC_POI.equals(sourceType)) {
                 result = true;
             }
@@ -317,14 +327,14 @@ public abstract class BaseQuery {
 
     public static final int KEEP_ALIVE_TIME = 30 * 1000;
     
-    private static WeiboParameters sCommonParameters;
+    private static RequestParameters sCommonParameters;
     
     /**
      * 设置网络请求中的公共参数
      */
     public static void initCommonParameters() {
         
-        sCommonParameters = new WeiboParameters();
+        sCommonParameters = new RequestParameters();
         
         // 下列参数都是固定值，兼容旧版本服务的公共请求参数约定
         sCommonParameters.add("dv", "1");
@@ -341,16 +351,27 @@ public abstract class BaseQuery {
         sCommonParameters.add("vp", TKConfig.getVersionOfPlatform());
     }
     
-    protected static void addCommonParameters(WeiboParameters parameters, int cityId, boolean isLocateMe) {
-        parameters.addAll(sCommonParameters);
+    /**
+     * 添加Query的公共参数，继承自此类的Query可以override这个函数
+     */
+    protected void addCommonParameters() {
+        addCommonParameters(MapEngine.CITY_ID_BEIJING, false);
+    }
+    
+    protected void addCommonParameters(int cityId) {
+        addCommonParameters(cityId, false);
+    }
+    
+    protected void addCommonParameters(int cityId, boolean isLocateMe) {
+        requestParameters.addAll(sCommonParameters);
 
         if (cityId < MapEngine.CITY_ID_BEIJING && isLocateMe == false) {
             cityId = MapEngine.CITY_ID_BEIJING;
         }
-        parameters.add("c", String.valueOf(cityId));
+        requestParameters.add("c", String.valueOf(cityId));
 
-        parameters.add("e", TKConfig.getIMEI());
-        parameters.add("d", TKConfig.getIMSI());
+        requestParameters.add("e", TKConfig.getIMEI());
+        requestParameters.add("d", TKConfig.getIMSI());
         boolean simAvailably = true;
         TKCellLocation tkCellLocation = TKConfig.getCellLocation();
         int mcc = TKConfig.getMCC();
@@ -362,20 +383,25 @@ public abstract class BaseQuery {
         }
         
         if (simAvailably) {
-            parameters.add("mcc", String.valueOf(mcc));
-            parameters.add("mnc", String.valueOf(mnc));
-            parameters.add("lac", String.valueOf(lac));
-            parameters.add("ci", String.valueOf(cid));
-            parameters.add("ss", String.valueOf(TKConfig.getSignalStrength()));
+            requestParameters.add("mcc", String.valueOf(mcc));
+            requestParameters.add("mnc", String.valueOf(mnc));
+            requestParameters.add("lac", String.valueOf(lac));
+            requestParameters.add("ci", String.valueOf(cid));
+            requestParameters.add("ss", String.valueOf(TKConfig.getSignalStrength()));
         }
-    }
-    
-    protected static void addCommonParameters(WeiboParameters parameters) {
-        addCommonParameters(parameters, MapEngine.CITY_ID_BEIJING, false);
-    }
-    
-    protected static void addCommonParameters(WeiboParameters parameters, int cityId) {
-        addCommonParameters(parameters, cityId, false);
+        
+        //服务器的约定，这些类别的请求不能含有at
+        if (API_TYPE_PROXY.equals(apiType) == false 
+                && API_TYPE_HOTEL_ORDER.equals(apiType) == false 
+                && API_TYPE_FILE_UPLOAD.equals(apiType) == false 
+                && API_TYPE_NOTICE.equals(apiType) == false) {
+            requestParameters.add(SERVER_PARAMETER_API_TYPE, apiType);
+            requestParameters.add(SERVER_PARAMETER_VERSION, version);
+        }
+
+        addMyLocationParameters();
+        addUUIDParameter();
+        requestParameters.add(SERVER_PARAMETER_CLIENT_STATUS, sClentStatus);
     }
     
     /**
@@ -400,12 +426,15 @@ public abstract class BaseQuery {
     
     protected int targetViewId = -1;
     
-    protected Hashtable<String, String> criteria = null;
+    private RequestParameters checkParameter = null;
     
     protected String tipText = null;
     
-    protected WeiboParameters requestParameters = new WeiboParameters();
-
+    private RequestParameters requestParameters = new RequestParameters();
+    
+    //用于该Query的本地控制参数
+    private RequestParameters localParameters = new RequestParameters();
+    
     protected HttpUtils.TKHttpClient httpClient;
 
     protected boolean isTranslatePart = false;
@@ -434,6 +463,17 @@ public abstract class BaseQuery {
         this.version = version;
     }
     
+    public BaseQuery(BaseQuery query) {
+        this.context = query.context;
+        this.apiType = query.apiType;
+        this.version = query.version;
+        this.targetViewId = query.targetViewId;
+        this.sourceViewId = query.sourceViewId;
+        this.tipText = query.tipText;
+        this.needReconntection = query.needReconntection;
+        this.requestParameters = query.requestParameters.clone();
+    }
+    
     public int getTargetViewId() {
         return targetViewId;
     }
@@ -454,10 +494,6 @@ public abstract class BaseQuery {
         return this.apiType;
     }
     
-    public Hashtable<String, String> getCriteria() {
-        return criteria;
-    }
-
     public void setTipText(String tipText) {
 		this.tipText = tipText;
 	}
@@ -501,24 +537,19 @@ public abstract class BaseQuery {
         public void onReportStateCode(int stateCode);
     }
 
-    public void setup(Hashtable<String, String> criteria) {
-        setup(criteria, -1, -1, -1);
-    }
-
-    public void setup(Hashtable<String, String> criteria, int cityId) {
-        setup(criteria, cityId, -1, -1);
+    public void setup(int cityId) {
+        setup(cityId, -1, -1);
     }
     
-    public void setup(Hashtable<String, String> criteria, int cityId, int sourceViewId, int targetViewId) {
-        setup(criteria, cityId, sourceViewId, targetViewId, null);
+    public void setup(int cityId, int sourceViewId, int targetViewId) {
+        setup(cityId, sourceViewId, targetViewId, null);
     }
     
-    public void setup(Hashtable<String, String> criteria, int cityId, int sourceViewId, int targetViewId, String tipText) {
-        setup(criteria, cityId, sourceViewId, targetViewId, tipText, false);
+    public void setup(int cityId, int sourceViewId, int targetViewId, String tipText) {
+        setup(cityId, sourceViewId, targetViewId, tipText, false);
     }
     
-    public void setup(Hashtable<String, String> criteria, int cityId, int sourceViewId, int targetViewId, String tipText, boolean needReconntection) {
-        this.criteria = criteria;
+    public void setup(int cityId, int sourceViewId, int targetViewId, String tipText, boolean needReconntection) {
         this.cityId = cityId;
         this.sourceViewId = sourceViewId;
         this.targetViewId = targetViewId;
@@ -529,28 +560,32 @@ public abstract class BaseQuery {
     public void query() {
         statusCode = STATUS_CODE_NONE;
         appendice.clear();
-        try {
-            makeRequestParameters();
-        } catch (APIException e) {
-            e.printStackTrace();
-            statusCode = STATUS_CODE_MISSING_REQUEST_PARAMETER;
-            return;
+        
+        addCommonParameters();
+        
+        if (TKConfig.CheckParameters) {
+            try {
+                checkRequestParameters();
+            } catch (APIException e) {
+                e.printStackTrace();
+                statusCode = STATUS_CODE_MISSING_REQUEST_PARAMETER;
+                return;
+            }
         }
         
         createHttpClient();
         execute();
     }
     
+    /**
+     * 这个是添加位置参数的函数，但是有些特殊情况，比如说翻页所需要提交的位置
+     * 和当前定位并不一样，那些查询可以Override掉这个函数。
+     */
     protected void addMyLocationParameters() {
         final CityInfo myLocationCityInfo = Globals.g_My_Location_City_Info;
         if (myLocationCityInfo != null) {
             final Position myLocationPosition = myLocationCityInfo.getPosition();
             if (myLocationPosition != null) {
-                if (criteria != null) {
-                    criteria.put(DataQuery.SERVER_PARAMETER_LOCATION_CITY, String.valueOf(myLocationCityInfo.getId()));
-                    criteria.put(DataQuery.SERVER_PARAMETER_LOCATION_LONGITUDE, String.valueOf(myLocationPosition.getLon()));
-                    criteria.put(DataQuery.SERVER_PARAMETER_LOCATION_LATITUDE, String.valueOf(myLocationPosition.getLat()));
-                }
                 requestParameters.add(SERVER_PARAMETER_LOCATION_CITY, String.valueOf(myLocationCityInfo.getId()));
                 requestParameters.add(SERVER_PARAMETER_LOCATION_LONGITUDE, String.valueOf(myLocationPosition.getLon()));
                 requestParameters.add(SERVER_PARAMETER_LOCATION_LATITUDE, String.valueOf(myLocationPosition.getLat()));
@@ -561,30 +596,32 @@ public abstract class BaseQuery {
     
     protected void addUUIDParameter() {
         String uuid = UUID.randomUUID().toString();
-        if (criteria != null) {
-            criteria.put(SERVER_PARAMETER_UUID, uuid);
-        }
         requestParameters.add(SERVER_PARAMETER_UUID, uuid);
     }
     
-    protected void makeRequestParameters() throws APIException {
-        requestParameters.clear();
-        if (API_TYPE_PROXY.equals(apiType) == false && API_TYPE_HOTEL_ORDER.equals(apiType) == false && API_TYPE_FILE_UPLOAD.equals(apiType) == false && API_TYPE_NOTICE.equals(apiType) == false) {
-            requestParameters.add(SERVER_PARAMETER_API_TYPE, apiType);
-            requestParameters.add(SERVER_PARAMETER_VERSION, version);
-        }
-
-        addParameter(SERVER_PARAMETER_REQUSET_SOURCE_TYPE, false);
-        addMyLocationParameters();
-        addUUIDParameter();
-        
-        requestParameters.add(SERVER_PARAMETER_CLIENT_STATUS, sClentStatus);
-    }
+    String[] CommonEssentialKeys = new String[]{"c", "e", "d", "m", "vs", "pk", "clientuid", "uuid"};
+    /**
+     * 放在OptionalKeys里面的key也可以在某些query中放在EssentialKey中作为必要的key来检查，不影响可选key
+     * 这样原来的addSession(false)可以不用再理会，而addSession(true)在自己的必选key中加入即可。
+     */
+    String[] CommonOptionalKeys = new String[]{"lc", "lx", "ly", "lt", "mcc", "mnc", "lac", 
+            "ci", "ss", "at", "v", "info", "dsrc", "ddst", "dv", "sc", "sg", "si", "sv", "vd", 
+            "ec", "vp", SERVER_PARAMETER_CLIENT_STATUS, SERVER_PARAMETER_SESSION_ID};
+     
+    /**
+     * 这个函数用来检测参数,顺便可以兼容以前添加公共参数的行为.
+     * @throws APIException
+     */
+    abstract protected void checkRequestParameters() throws APIException;
     
     protected void createHttpClient() {
+        createHttpClient(true);
+    }
+    
+    protected void createHttpClient(boolean needEncrypt) {
         httpClient = new HttpUtils.TKHttpClient();
         httpClient.setApiType(apiType);
-        httpClient.setIsEncrypt(true);
+        httpClient.setIsEncrypt(needEncrypt);
         httpClient.setParameters(requestParameters);
     }
     
@@ -852,7 +889,6 @@ public abstract class BaseQuery {
                 try {
                     Thread.sleep(3000);
                 } catch (InterruptedException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
                 if (responseXMap.containsKey((byte)250)) {
@@ -862,88 +898,92 @@ public abstract class BaseQuery {
         }
     }
     
-    public static void passLocationToCriteria(Hashtable<String, String> source, Hashtable<String, String> target) {
-        if (source == null || target == null) {
+    public void copyLocationParameter(BaseQuery query) {
+        if (query == null) {
             return;
         }
-        if (source.containsKey(DataQuery.SERVER_PARAMETER_LOCATION_CITY)
-                && source.containsKey(DataQuery.SERVER_PARAMETER_LOCATION_LONGITUDE)
-                && source.containsKey(DataQuery.SERVER_PARAMETER_LOCATION_LATITUDE)) {
-            target.put(DataQuery.SERVER_PARAMETER_LOCATION_CITY, source.get(SERVER_PARAMETER_LOCATION_CITY));
-            target.put(DataQuery.SERVER_PARAMETER_LOCATION_LONGITUDE, source.get(SERVER_PARAMETER_LOCATION_LONGITUDE));
-            target.put(DataQuery.SERVER_PARAMETER_LOCATION_LATITUDE, source.get(SERVER_PARAMETER_LOCATION_LATITUDE));
+        if (query.hasParameter(DataQuery.SERVER_PARAMETER_LOCATION_CITY)
+                && query.hasParameter(DataQuery.SERVER_PARAMETER_LOCATION_LONGITUDE)
+                && query.hasParameter(DataQuery.SERVER_PARAMETER_LOCATION_LATITUDE)) {
+            addParameter(DataQuery.SERVER_PARAMETER_LOCATION_CITY, query.getParameter(SERVER_PARAMETER_LOCATION_CITY));
+            addParameter(DataQuery.SERVER_PARAMETER_LOCATION_LONGITUDE, query.getParameter(SERVER_PARAMETER_LOCATION_LONGITUDE));
+            addParameter(DataQuery.SERVER_PARAMETER_LOCATION_LATITUDE, query.getParameter(SERVER_PARAMETER_LOCATION_LATITUDE));
         }
-        if (source.containsKey(DataQuery.SERVER_PARAMETER_CITY)) {
-            target.put(DataQuery.SERVER_PARAMETER_CITY, source.get(SERVER_PARAMETER_CITY));
+        if (query.hasParameter(DataQuery.SERVER_PARAMETER_CITY)) {
+            addParameter(DataQuery.SERVER_PARAMETER_CITY, query.getParameter(SERVER_PARAMETER_CITY));
         }
-        if (source.containsKey(DataQuery.SERVER_PARAMETER_LONGITUDE)
-                && source.containsKey(DataQuery.SERVER_PARAMETER_LATITUDE)) {
-            target.put(DataQuery.SERVER_PARAMETER_LONGITUDE, source.get(DataQuery.SERVER_PARAMETER_LONGITUDE));
-            target.put(DataQuery.SERVER_PARAMETER_LATITUDE, source.get(DataQuery.SERVER_PARAMETER_LATITUDE));
+        if (query.hasParameter(DataQuery.SERVER_PARAMETER_LONGITUDE)
+                && query.hasParameter(DataQuery.SERVER_PARAMETER_LATITUDE)) {
+            addParameter(DataQuery.SERVER_PARAMETER_LONGITUDE, query.getParameter(DataQuery.SERVER_PARAMETER_LONGITUDE));
+            addParameter(DataQuery.SERVER_PARAMETER_LATITUDE, query.getParameter(DataQuery.SERVER_PARAMETER_LATITUDE));
         }
-        if (source.containsKey(DataQuery.SERVER_PARAMETER_FILTER)) {
-            target.put(DataQuery.SERVER_PARAMETER_FILTER, source.get(DataQuery.SERVER_PARAMETER_FILTER));
-        }
-    }
-    
-    /**
-     * 根据keys从criteria中获取参数值，将其值添加到requestParameters
-     * @param keys
-     * @throws APIException
-     */
-    void addParameter(String[] keys) throws APIException {
-        addParameter(keys, true);
-    }
-    
-    /**
-     * 根据keys从criteria中获取参数值，将其值添加到requestParameters
-     * @param keys
-     * @param need
-     * @throws APIException
-     */
-    void addParameter(String[] keys, boolean need) throws APIException {
-        if (keys == null) {
-            return;
-        }
-        for(int i = 0, length = keys.length; i < length; i++) {
-            addParameter(keys[i], need);
+        if (query.hasParameter(DataQuery.SERVER_PARAMETER_FILTER)) {
+            addParameter(DataQuery.SERVER_PARAMETER_FILTER, query.getParameter(DataQuery.SERVER_PARAMETER_FILTER));
         }
     }
     
+    public final void addLocalParameter(String key, String value) {
+        if (key != null && !key.equals("")) {
+            localParameters.add(key, value);
+        }
+    }
+    
+    public final String getLocalParameter(String key) {
+        if (key != null && !key.equals("")) {
+            return localParameters.getValue(key);
+        }
+        return null;
+    }
+    
+    public final boolean hasLocalParameter(String key) {
+        if (key != null && !key.equals("")) {
+            return localParameters.containsKey(key);
+        }
+        return false;
+    }
     /**
-     * 根据key从criteria中获取参数值，将其值添加到requestParameters
+     * 以下是此次查询的相关参数操作接口，使用这些函数来添加参数，不与实际参数类产生交集。
      * @param key
-     * @return
-     * @throws APIException
+     * @param value
      */
-    String addParameter(String key) throws APIException {
-        return addParameter(key, true);
+    public final void addParameter(String key, String value) {
+        if (key != null && !key.equals("")) {
+            requestParameters.add(key, value);
+        }
+    }
+    
+    public final void setParameter(String key, String value) {
+        if (key != null && !key.equals("")) {
+            requestParameters.add(key, value);
+        }
+    }
+    
+    public final String getParameter(String key) {
+        if (key != null) {
+            return requestParameters.getValue(key);
+        }
+        return null;
+    }
+    
+    public final void delParameter(String key) {
+        if (key != null) {
+            requestParameters.remove(key);
+        }
+    }
+    
+    public final boolean hasParameter(String key) {
+        if (key != null) {
+            return requestParameters.containsKey(key);
+        }
+        return false;
     }
     
     /**
-     * 根据key从criteria中获取参数值，将其值添加到requestParameters
-     * @param key
-     * @param need
+     * 返回该query的参数对象
      * @return
-     * @throws APIException
      */
-    String addParameter(String key, boolean need) throws APIException {
-        String result = null;
-        if (key == null) {
-            return result;
-        }
-        if (criteria != null && criteria.containsKey(key)) {
-            result = criteria.get(key);
-            if (result != null) {
-                requestParameters.add(key, result);
-            } else {
-                throw APIException.wrapToMissingRequestParameterException(key);
-            }
-        } else if (need){
-            throw APIException.wrapToMissingRequestParameterException(key);
-        }
-        
-        return result;
+    public final RequestParameters getParameters() {
+        return requestParameters;
     }
     
     /**
@@ -951,19 +991,166 @@ public abstract class BaseQuery {
      * @param need
      * @throws APIException
      */
-    void addSessionId(boolean need) throws APIException {
+    //FIXME:去掉这个参数，在别的地方添加上检测的key. 注：还没写关于clientid的检查
+    void addSessionId() {
         String sessionId = Globals.g_Session_Id;
         if (!TextUtils.isEmpty(sessionId)) {
             requestParameters.add(SERVER_PARAMETER_SESSION_ID, sessionId);
-        } else if (need) {
-            throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_SESSION_ID);
         }
         
         String clientId = Globals.g_ClientUID;
         if (!TextUtils.isEmpty(clientId)) {
             requestParameters.add(SERVER_PARAMETER_CLIENT_ID, clientId);
+        }
+    }
+        
+    /**
+     * 检查一个参数是否存在，不存在则抛出异常
+     * @param key
+     * @throws APIException
+     */
+    private final void debugCheckParameter(String key) throws APIException {
+        if (checkParameter != null && checkParameter.containsKey(key)) {
+            String result = checkParameter.getValue(key);
+            if (result == null) {
+                throw APIException.wrapToMissingRequestParameterException(key);
+            }
         } else {
-            throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_CLIENT_ID);
+            throw APIException.wrapToMissingRequestParameterException(key);
+        }
+    }
+    
+    /**
+     * 检查一个请求的参数，不许比必选参数少，不许比必选+可选参数多
+     * 调用方法：
+     * checkParameters(new String[]{"key1", "key2"}, new String[]{"key5", "key6"})
+     * @param essentialKeys 必选参数列表
+     * @param optionalKeys 可选参数列表
+     * @throws APIException
+     */
+    @SuppressWarnings("unchecked")
+    protected void debugCheckParameters(String[] essentialKeys, String[] optionalKeys, boolean checkCommonParameters) throws APIException{
+        checkParameter = requestParameters.clone();
+        for (int i = 0; essentialKeys != null && i < essentialKeys.length; i++) {
+            debugCheckParameter(essentialKeys[i]);
+            checkParameter.remove(essentialKeys[i]);
+        }
+        if (checkCommonParameters) {
+            for (int i = 0; i < CommonEssentialKeys.length; i++) {
+                debugCheckParameter(CommonEssentialKeys[i]);
+                checkParameter.remove(CommonEssentialKeys[i]);
+            }
+        }
+        
+        for (int i = 0; optionalKeys != null && i < optionalKeys.length; i++) {
+            checkParameter.remove(optionalKeys[i]);
+        }
+        if (checkCommonParameters) {
+            for (int i = 0; i < CommonOptionalKeys.length; i++) {
+                checkParameter.remove(CommonOptionalKeys[i]);
+            }
+        }
+        
+        if (!checkParameter.isEmpty()) {
+            String unwantedParameters = "";
+            Iterator<Map.Entry<String, String>> unwantedKeys = checkParameter.getEntryIterator();
+            while (unwantedKeys.hasNext()) {
+                unwantedParameters += unwantedKeys.next().getKey() + ",";
+            }
+            unwantedParameters = unwantedParameters.substring(0, unwantedParameters.length() - 1);
+            throw APIException.wrapToUnwantedRequestParameterException(unwantedParameters);
+        }
+    }
+    
+    /**
+     * 检查一个请求的参数，只检查必选参数，无可选参数。
+     * @param essentialKeys
+     * @throws APIException
+     */
+    protected void debugCheckParameters(String[] essentialKeys) throws APIException {
+        debugCheckParameters(essentialKeys, null);
+    }
+    
+    protected void debugCheckParameters(String[] essentialKeys, String[] optionalKeys) throws APIException {
+        debugCheckParameters(essentialKeys, optionalKeys, true);
+    }
+    
+    public static class RequestParameters implements Cloneable{
+        LinkedHashMap<String, String> parameters;
+        public static final String PARAMETER_SEPARATOR = "&";
+        public static final String NAME_VALUE_SEPARATOR = "=";
+        
+        public RequestParameters() {
+            parameters = new LinkedHashMap<String, String>();
+        }
+        
+        public RequestParameters(LinkedHashMap<String, String> parameters) {
+            this.parameters = parameters; 
+        }
+        
+        private Map<String, String> getParameters() {
+            return parameters;
+        }
+        
+        public String getValue(String key) {
+            return parameters.get(key);
+        }
+        
+        public void add(String key, String value) {
+            parameters.put(key, value);
+        }
+        
+        public boolean containsKey(String key) {
+            return parameters.containsKey(key);
+        }
+        
+        public void remove(String key) {
+            parameters.remove(key);
+        }
+        
+        public boolean isEmpty() {
+            return parameters.isEmpty();
+        }
+        
+        public Iterator<Map.Entry<String, String>> getEntryIterator() {
+            return parameters.entrySet().iterator();
+        }
+        
+        @SuppressWarnings("unchecked")
+        public RequestParameters clone() {
+            return new RequestParameters((LinkedHashMap<String, String>) parameters.clone());
+        }
+        
+        public void addAll(RequestParameters param) {
+            parameters.putAll(param.getParameters());
+        }
+        
+        public String getPostParam() {
+            Set<String> keys;
+            StringBuilder buf = new StringBuilder();
+            keys = parameters.keySet();
+            for (String key : keys) {
+                buf.append(key).append(NAME_VALUE_SEPARATOR).append(parameters.get(key));
+                buf.append(PARAMETER_SEPARATOR);
+            }
+            
+            return buf.substring(0, buf.length() - 1);
+        }
+        
+        public String getEncodedPostParam(String enc) {
+            Set<String> keys;
+            StringBuilder buf = new StringBuilder();
+            keys = parameters.keySet();
+            for (String key : keys) {
+                try {
+                    buf.append(URLEncoder.encode(key, enc)).append(NAME_VALUE_SEPARATOR).append(URLEncoder.encode(parameters.get(key)));
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                buf.append(PARAMETER_SEPARATOR);
+            }
+            
+            return buf.substring(0, buf.length() - 1);
         }
     }
 }

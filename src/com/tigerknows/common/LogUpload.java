@@ -126,14 +126,13 @@ public class LogUpload {
                         @Override
                         public void run() {
                             FeedbackUpload feedbackUpload = new FeedbackUpload(mContext);
-                            Hashtable<String, String> criteria = new Hashtable<String, String>();
-                            criteria.put(mServerParameterKey, log);
+                            feedbackUpload.addParameter(mServerParameterKey, log);
                             CityInfo cityInfo = Globals.getCurrentCityInfo();
                             int cityId = MapEngine.CITY_ID_BEIJING;
                             if (cityInfo != null) {
                                 cityId = cityInfo.getId();
                             }
-                            feedbackUpload.setup(criteria, cityId);
+                            feedbackUpload.setup(cityId);
                             feedbackUpload.query();
                             com.tigerknows.model.Response response = feedbackUpload.getResponse();
                             if ((response != null && response.getResponseCode() == com.tigerknows.model.Response.RESPONSE_CODE_OK) ||

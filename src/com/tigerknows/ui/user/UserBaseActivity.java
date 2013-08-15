@@ -160,9 +160,9 @@ public abstract class UserBaseActivity extends BaseActivity {
 	/**
 	 * 提供公共参数支持
 	 */
-	protected void sendRequest(AccountManage accountManage, Hashtable<String, String> criteria) {
+	protected void sendRequest(AccountManage accountManage) {
 		hideSoftInput();
-		accountManage.setup(criteria, getCityParameter());
+		accountManage.setup(getCityParameter());
 		accountManage.setTipText(getString(R.string.query_loading_tip));
 		queryStart(accountManage, false);
 	}

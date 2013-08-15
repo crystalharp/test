@@ -221,12 +221,11 @@ public class UserLoginActivity extends UserBaseActivity {
 		String phone = phoneEdt.getText().toString().trim();
 		String password = passwordEdt.getText().toString().trim();
 		
-		Hashtable<String, String> criteria = new Hashtable<String, String>();
-		criteria.put(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, AccountManage.OPERATION_CODE_LOGIN);
-		criteria.put(BaseQuery.SERVER_PARAMETER_TELEPHONE, phone);
-		criteria.put(AccountManage.SERVER_PARAMETER_PASSWORD, Utility.encryptWithSHA1(password));
+		accountManage.addParameter(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, AccountManage.OPERATION_CODE_LOGIN);
+		accountManage.addParameter(BaseQuery.SERVER_PARAMETER_TELEPHONE, phone);
+		accountManage.addParameter(AccountManage.SERVER_PARAMETER_PASSWORD, Utility.encryptWithSHA1(password));
 		
-		sendRequest(accountManage, criteria);
+		sendRequest(accountManage);
 	}
 
 	private void doAction(final ExtValidationEditText source) {
@@ -258,7 +257,7 @@ public class UserLoginActivity extends UserBaseActivity {
 	@Override
 	protected void responseCodeAction(AccountManage accountManage) {
 		// TODO Auto-generated method stub
-		String operationCode = accountManage.getCriteria().get(BaseQuery.SERVER_PARAMETER_OPERATION_CODE);
+		String operationCode = accountManage.getParameter(BaseQuery.SERVER_PARAMETER_OPERATION_CODE);
 		if (AccountManage.OPERATION_CODE_LOGIN.equals(operationCode)){
 			// 200, 403, 404(, 500)
 			switch(accountManage.getResponse().getResponseCode()){
