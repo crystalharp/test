@@ -2820,8 +2820,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 return result;
             }
             if (id == R.id.view_invalid || id != uiStackPeek()) {
-                uiStackClose(null);
-                showView(R.id.view_poi_home);
                 return result;
             }
             
