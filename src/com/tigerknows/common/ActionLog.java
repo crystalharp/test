@@ -194,6 +194,9 @@ public class ActionLog extends LogUpload {
     public static final String POICommentListUrl = "BA";
     public static final String POICommentListMyComment = "BB";
     public static final String POICommentListInput = "BC";
+    public static final String POICommentListAllComment = "BD";
+    public static final String POICommentListHotComment = "BE";
+    public static final String POICommentListCommend = "BF";
 
     // 点评输入页
     public static final String POIComment = "AF";
