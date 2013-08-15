@@ -461,5 +461,26 @@ public class HotelOrder extends XMapData{
             return new HotelOrder(data, true);
         }
     };
-	
+
+    public int hashCode() {
+        int hash = 3;
+        hash = 29 * hash + (this.id != null ? this.id.hashCode() : 0);
+        hash = 29 * hash + (this.hotelPoiUUID != null ? this.hotelPoiUUID.hashCode() : 0);
+        return hash;
+    }
+    
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        }
+        if (object instanceof HotelOrder) {
+            HotelOrder other = (HotelOrder) object;
+            if(null != id && null != other.id && id.equals(other.id)) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
 }

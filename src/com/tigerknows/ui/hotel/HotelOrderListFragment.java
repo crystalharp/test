@@ -409,7 +409,14 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
 			int ordersSize = 0;
 			
 			synchronized (orders) {
-				orders.addAll(ordersLoaded);
+			    if (ordersLoaded != null) {
+    			    for(int i = 0, size = ordersLoaded.size(); i < size; i++) {
+    			        HotelOrder order = ordersLoaded.get(i);
+    			        if (orders.contains(order) == false) {
+    			            orders.add(order);
+    			        }
+			        }
+			    }
 				ordersSize = orders.size();
 			}
 			logi("OrderTotal: " + orderTotal);
