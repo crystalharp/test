@@ -120,9 +120,10 @@ public class HotelOrderOperation extends BaseQuery {
     protected void checkRequestParameters() throws APIException {
         String operationCode = getParameter(SERVER_PARAMETER_OPERATION_CODE);
         if (OPERATION_CODE_QUERY.equals(operationCode)) {
-            debugCheckParameters(new String[] {SERVER_PARAMETER_ORDER_IDS});
+            debugCheckParameters(new String[] {SERVER_PARAMETER_ORDER_IDS, SERVER_PARAMETER_OPERATION_CODE});
         } else if (OPERATION_CODE_CREATE.equals(operationCode)) {
-            String[] ekeys = new String[]{SERVER_PARAMETER_ROOMTYPE, SERVER_PARAMETER_PKGID,
+            String[] ekeys = new String[]{SERVER_PARAMETER_OPERATION_CODE, 
+                SERVER_PARAMETER_ROOMTYPE, SERVER_PARAMETER_PKGID,
                 SERVER_PARAMETER_CHECKIN_DATE, SERVER_PARAMETER_CHECKOUT_DATE,
                 SERVER_PARAMETER_RESERVE_TIME, SERVER_PARAMETER_NUMROOMS,
                 SERVER_PARAMETER_TOTAL_PRICE, SERVER_PARAMETER_USERNAME,
@@ -139,9 +140,11 @@ public class HotelOrderOperation extends BaseQuery {
                 debugCheckParameters(ekeys);
             }
         } else if (OPERATION_CODE_UPDATE.equals(operationCode)) {
-            debugCheckParameters(new String[] {SERVER_PARAMETER_UPDATE_ACTION, SERVER_PARAMETER_ORDER_ID});
+            debugCheckParameters(new String[] {SERVER_PARAMETER_OPERATION_CODE, 
+                    SERVER_PARAMETER_UPDATE_ACTION, SERVER_PARAMETER_ORDER_ID});
         } else if (OPERATION_CODE_SYNC.equals(operationCode)) {
-            debugCheckParameters(new String[] {SERVER_PARAMETER_NEED_FIELD, SERVER_PARAMETER_ORDER_ID_FILTER});
+            debugCheckParameters(new String[] {SERVER_PARAMETER_OPERATION_CODE, 
+                    SERVER_PARAMETER_NEED_FIELD, SERVER_PARAMETER_ORDER_ID_FILTER});
         } else {
             throw APIException.wrapToMissingRequestParameterException("operationCode invalid.");
         }
@@ -150,7 +153,7 @@ public class HotelOrderOperation extends BaseQuery {
     @Override
     protected void addCommonParameters() {
         super.addCommonParameters(cityId);
-        addSessionId(false);
+        addSessionId();
     }
 
     @Override

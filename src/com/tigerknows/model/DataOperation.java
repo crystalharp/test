@@ -13,6 +13,7 @@ import com.tigerknows.TKConfig;
 import com.tigerknows.model.test.BaseQueryTest;
 import com.tigerknows.model.test.DataOperationTest;
 import com.tigerknows.model.xobject.XMap;
+import com.tigerknows.util.Utility;
 
 import android.content.Context;
 
@@ -68,24 +69,28 @@ public class DataOperation extends BaseQuery {
     protected void checkRequestParameters() throws APIException {
         String dataType = getParameter(SERVER_PARAMETER_DATA_TYPE);
         String operationCode = getParameter(SERVER_PARAMETER_OPERATION_CODE);
+        String[] ekeys = new String[] {SERVER_PARAMETER_DATA_TYPE, SERVER_PARAMETER_OPERATION_CODE};
         if (OPERATION_CODE_QUERY.equals(operationCode)) {
             if(DATA_TYPE_POI.equals(dataType)){
+                String[] poiEkeys = new String[]{SERVER_PARAMETER_NEED_FIELD, SERVER_PARAMETER_DATA_UID, 
+                        SERVER_PARAMETER_SUB_DATA_TYPE};
                 String subDataType = getParameter(SERVER_PARAMETER_SUB_DATA_TYPE);
                 if (SUB_DATA_TYPE_HOTEL.equals(subDataType)) {
-                    debugCheckParameters(new String[] {SERVER_PARAMETER_CHECKIN, SERVER_PARAMETER_CHECKOUT, 
-                            SERVER_PARAMETER_NEED_FIELD, SERVER_PARAMETER_DATA_UID});
+                    debugCheckParameters(Utility.mergeArray(ekeys, poiEkeys, 
+                            new String[] {SERVER_PARAMETER_CHECKIN, SERVER_PARAMETER_CHECKOUT}));
+                } else {
+                    debugCheckParameters(Utility.mergeArray(ekeys, poiEkeys),
+                            new String[] {SERVER_PARAMETER_PICTURE});
                 }
             }
             
-            debugCheckParameters(new String[] {SERVER_PARAMETER_NEED_FIELD, SERVER_PARAMETER_DATA_UID},
-                    new String[] {SERVER_PARAMETER_PICTURE});
         	
         } else if (OPERATION_CODE_CREATE.equals(operationCode)) {
-            debugCheckParameters(new String[] {SERVER_PARAMETER_ENTITY});
+            debugCheckParameters(Utility.mergeArray(ekeys,new String[] {SERVER_PARAMETER_ENTITY}));
         } else if (OPERATION_CODE_UPDATE.equals(operationCode)) {
-            debugCheckParameters(new String[] {SERVER_PARAMETER_DATA_UID, SERVER_PARAMETER_ENTITY});
+            debugCheckParameters(Utility.mergeArray(ekeys,new String[] {SERVER_PARAMETER_DATA_UID, SERVER_PARAMETER_ENTITY}));
         } else if (OPERATION_CODE_DELETE.equals(operationCode)) {
-            debugCheckParameters(new String[] {SERVER_PARAMETER_DATA_UID});
+            debugCheckParameters(Utility.mergeArray(ekeys,new String[] {SERVER_PARAMETER_DATA_UID}));
         } else if (operationCode.startsWith(URLEncoder.encode(Comment.JsonHeader))) {
             
         } else {
@@ -96,7 +101,7 @@ public class DataOperation extends BaseQuery {
     @Override
     protected void addCommonParameters() {
         super.addCommonParameters(cityId);
-        addSessionId(false);
+        addSessionId();
     }
 
     @Override

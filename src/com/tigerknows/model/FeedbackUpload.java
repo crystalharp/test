@@ -57,6 +57,7 @@ public class FeedbackUpload extends BaseQuery {
         if (!hasParameter(SERVER_PARAMETER_FEEDBACK)) {
             addParameter(SERVER_PARAMETER_FEEDBACK, "");
         }
+        addSessionId();
     }
 
     @Override

@@ -96,10 +96,7 @@ public final class TrafficQuery extends BaseQuery {
     }
 
     @Override
-    protected void checkRequestParameters() throws APIException {
-        if (cityId < MapEngine.CITY_ID_BEIJING) {
-            throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_CITY);
-        }
+    protected void addCommonParameters() {
         addCommonParameters(cityId);
 
         if (Util.inChina(startPOI.getPosition())) {
@@ -277,6 +274,13 @@ public final class TrafficQuery extends BaseQuery {
     	}
     	
     	return result;
+    }
+
+    @Override
+    protected void checkRequestParameters() throws APIException {
+        if (cityId < MapEngine.CITY_ID_BEIJING) {
+            throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_CITY);
+        }
     }
 
 }

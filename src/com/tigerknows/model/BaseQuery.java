@@ -599,14 +599,14 @@ public abstract class BaseQuery {
         requestParameters.add(SERVER_PARAMETER_UUID, uuid);
     }
     
-    //FIXME:确定一下这些参数哪些必须哪些可选
     String[] CommonEssentialKeys = new String[]{"c", "e", "d", "m", "vs", "pk", "clientuid", "uuid"};
     /**
      * 放在OptionalKeys里面的key也可以在某些query中放在EssentialKey中作为必要的key来检查，不影响可选key
      * 这样原来的addSession(false)可以不用再理会，而addSession(true)在自己的必选key中加入即可。
      */
-    String[] CommonOptionalKeys = new String[]{"lc", "lx", "ly", "lt", "mcc", "mnc", "lac", "ci", "ss", "at", "v", "info", "dsrc", "ddst",
-            SERVER_PARAMETER_SESSION_ID, SERVER_PARAMETER_CLIENT_ID};
+    String[] CommonOptionalKeys = new String[]{"lc", "lx", "ly", "lt", "mcc", "mnc", "lac", 
+            "ci", "ss", "at", "v", "info", "dsrc", "ddst", "dv", "sc", "sg", "si", "sv", "vd", 
+            "ec", "vp", SERVER_PARAMETER_CLIENT_STATUS, SERVER_PARAMETER_SESSION_ID};
      
     /**
      * 这个函数用来检测参数,顺便可以兼容以前添加公共参数的行为.
@@ -992,19 +992,15 @@ public abstract class BaseQuery {
      * @throws APIException
      */
     //FIXME:去掉这个参数，在别的地方添加上检测的key. 注：还没写关于clientid的检查
-    void addSessionId(boolean need) {
+    void addSessionId() {
         String sessionId = Globals.g_Session_Id;
         if (!TextUtils.isEmpty(sessionId)) {
             requestParameters.add(SERVER_PARAMETER_SESSION_ID, sessionId);
-        } else if (need) {
-//            throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_SESSION_ID);
         }
         
         String clientId = Globals.g_ClientUID;
         if (!TextUtils.isEmpty(clientId)) {
             requestParameters.add(SERVER_PARAMETER_CLIENT_ID, clientId);
-        } else {
-//            throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_CLIENT_ID);
         }
     }
         
@@ -1033,22 +1029,26 @@ public abstract class BaseQuery {
      * @throws APIException
      */
     @SuppressWarnings("unchecked")
-    protected void debugCheckParameters(String[] essentialKeys, String[] optionalKeys) throws APIException{
+    protected void debugCheckParameters(String[] essentialKeys, String[] optionalKeys, boolean checkCommonParameters) throws APIException{
         checkParameter = requestParameters.clone();
         for (int i = 0; essentialKeys != null && i < essentialKeys.length; i++) {
             debugCheckParameter(essentialKeys[i]);
             checkParameter.remove(essentialKeys[i]);
         }
-        for (int i = 0; i < CommonEssentialKeys.length; i++) {
-            debugCheckParameter(CommonEssentialKeys[i]);
-            checkParameter.remove(CommonEssentialKeys[i]);
+        if (checkCommonParameters) {
+            for (int i = 0; i < CommonEssentialKeys.length; i++) {
+                debugCheckParameter(CommonEssentialKeys[i]);
+                checkParameter.remove(CommonEssentialKeys[i]);
+            }
         }
         
         for (int i = 0; optionalKeys != null && i < optionalKeys.length; i++) {
             checkParameter.remove(optionalKeys[i]);
         }
-        for (int i = 0; i < CommonOptionalKeys.length; i++) {
-            checkParameter.remove(CommonOptionalKeys[i]);
+        if (checkCommonParameters) {
+            for (int i = 0; i < CommonOptionalKeys.length; i++) {
+                checkParameter.remove(CommonOptionalKeys[i]);
+            }
         }
         
         if (!checkParameter.isEmpty()) {
@@ -1069,6 +1069,10 @@ public abstract class BaseQuery {
      */
     protected void debugCheckParameters(String[] essentialKeys) throws APIException {
         debugCheckParameters(essentialKeys, null);
+    }
+    
+    protected void debugCheckParameters(String[] essentialKeys, String[] optionalKeys) throws APIException {
+        debugCheckParameters(essentialKeys, optionalKeys, true);
     }
     
     public static class RequestParameters implements Cloneable{

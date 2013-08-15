@@ -74,7 +74,7 @@ public class MapMetaFileDownload extends BaseQuery {
     }
 
     @Override
-    protected void checkRequestParameters() throws APIException {
+    protected void addCommonParameters() {
         addParameter("rid", String.valueOf(mRegionId));
         addParameter("vs", TKConfig.getClientSoftVersion());
         String mapPath = TKConfig.getDataPath(true);
@@ -147,5 +147,11 @@ public class MapMetaFileDownload extends BaseQuery {
 
     public int getRegionId() {
         return mRegionId;
+    }
+
+    @Override
+    protected void checkRequestParameters() throws APIException {
+        // TODO Auto-generated method stub
+        
     }
 }

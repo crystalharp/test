@@ -102,6 +102,11 @@ public class MapTileDataDownload extends BaseQuery {
 
     @Override
     protected void checkRequestParameters() throws APIException {
+        debugCheckParameters(new String[]{"off", "len", "vd", "rid", "vs"}, null, false);
+    }
+    
+    @Override
+    protected void addCommonParameters() {
         addParameter("rid", String.valueOf(rid));
         addParameter("vs", TKConfig.getClientSoftVersion());
         String version = null;
@@ -120,13 +125,8 @@ public class MapTileDataDownload extends BaseQuery {
                 }
             }
         }
-        if (count <= 0) {
-            throw APIException.wrapToMissingRequestParameterException("off,len");
-        }
         if (version != null) {
             addParameter("vd", version);
-        } else {
-            throw APIException.wrapToMissingRequestParameterException("vd");
         }
     }
 

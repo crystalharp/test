@@ -163,7 +163,7 @@ public class SuggestLexiconDownload extends BaseQuery {
     }
     
     @Override
-    protected void checkRequestParameters() throws APIException {
+    protected void addCommonParameters() {
         addCommonParameters(currentCityId);
         addParameter("lr", String.valueOf(oldversion));
         addParameter("rs", String.valueOf(hasDataLength > 0 ? hasDataLength - VALIDATE_LENGTH : 0));
@@ -280,5 +280,11 @@ public class SuggestLexiconDownload extends BaseQuery {
                 file.delete();
             }
         }
+    }
+
+    @Override
+    protected void checkRequestParameters() throws APIException {
+        // TODO Auto-generated method stub
+        
     }
 }

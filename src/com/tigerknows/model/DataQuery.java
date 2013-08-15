@@ -509,14 +509,6 @@ public final class DataQuery extends BaseQuery {
                 delParameter(SERVER_PARAMETER_LOCATION_LATITUDE);
                 super.addMyLocationParameters();
             }
-        } else {
-//            if (criteria.containsKey(SERVER_PARAMETER_LOCATION_CITY)
-//                    && criteria.containsKey(SERVER_PARAMETER_LOCATION_LONGITUDE)
-//                    && criteria.containsKey(SERVER_PARAMETER_LOCATION_LATITUDE)) {
-//                requestParameters.add(SERVER_PARAMETER_LOCATION_CITY, criteria.get(SERVER_PARAMETER_LOCATION_CITY));
-//                requestParameters.add(SERVER_PARAMETER_LOCATION_LONGITUDE, criteria.get(SERVER_PARAMETER_LOCATION_LONGITUDE));
-//                requestParameters.add(SERVER_PARAMETER_LOCATION_LATITUDE, criteria.get(SERVER_PARAMETER_LOCATION_LATITUDE));
-//            }
         }
     }
     
@@ -537,10 +529,11 @@ public final class DataQuery extends BaseQuery {
     @Override
     protected void checkRequestParameters() throws APIException {
         
-        String[] ekeys = new String[]{SERVER_PARAMETER_DATA_TYPE};
-        String[] okeys = null;
+        String[] ekeys = new String[]{SERVER_PARAMETER_DATA_TYPE, SERVER_PARAMETER_SIZE};
+        String[] okeys = new String[]{SERVER_PARAMETER_TIME_STAMP};
         String[] discoverOptinalKeys = new String[]{SERVER_PARAMETER_DISCOVER_POI_VERSION, SERVER_PARAMETER_DISCOVER_BASEINDEX_VERSION};
-        String[] filterOptionalKeys = new String[]{SERVER_PARAMETER_CITY_FILTER_VERSION, SERVER_PARAMETER_NATION_FILTER_VERSION};
+        String[] filterOptionalKeys = new String[]{SERVER_PARAMETER_CITY_FILTER_VERSION, SERVER_PARAMETER_NATION_FILTER_VERSION, 
+                SERVER_PARAMETER_FILTER, SERVER_PARAMETER_FILTER_STRING};
         String[] indexKeys = new String[]{SERVER_PARAMETER_INDEX};
         String[] positionKeys = new String[]{SERVER_PARAMETER_LONGITUDE, SERVER_PARAMETER_LATITUDE};
         String dataType = getParameter(SERVER_PARAMETER_DATA_TYPE);
@@ -550,6 +543,7 @@ public final class DataQuery extends BaseQuery {
             if (SUB_DATA_TYPE_POI.equals(subDataType)) {
                 if (!hasParameter(SERVER_PARAMETER_ID_LIST)) {
                     ekeys = Utility.mergeArray(ekeys, new String[]{SERVER_PARAMETER_NEED_FIELD, SERVER_PARAMETER_COMMENT_VERSION});
+                    okeys = Utility.mergeArray(okeys, new String[]{SERVER_PARAMETER_BIAS});
                     if (!hasParameter(SERVER_PARAMETER_BIAS)) {
                         ekeys = Utility.mergeArray(ekeys, new String[]{SERVER_PARAMETER_KEYWORD});
                         okeys = Utility.mergeArray(okeys, new String[]{SERVER_PARAMETER_INFO});
@@ -571,62 +565,64 @@ public final class DataQuery extends BaseQuery {
             debugCheckParameters(ekeys, okeys);
         } else if (DATA_TYPE_DISCOVER.equals(dataType)) { 
             ekeys = Utility.mergeArray(ekeys, new String[]{SERVER_PARAMETER_NEED_FIELD, 
-                    SERVER_PARAMETER_DISCOVER_SUPPORT_DATATYPE});
-            okeys = Utility.mergeArray(new String[]{SERVER_PARAMETER_DISCOVER_POI_VERSION, 
+                    SERVER_PARAMETER_DISCOVER_SUPPORT_DATATYPE}, indexKeys);
+            okeys = Utility.mergeArray(okeys, new String[]{SERVER_PARAMETER_DISCOVER_POI_VERSION, 
                     SERVER_PARAMETER_PICTURE}, positionKeys);
             debugCheckParameters(ekeys, okeys);
         } else if (DATA_TYPE_TUANGOU.equals(dataType)) { 
             ekeys = Utility.mergeArray(ekeys, new String[]{SERVER_PARAMETER_NEED_FIELD, 
                     SERVER_PARAMETER_PICTURE}, indexKeys);
-            okeys = Utility.mergeArray(new String[]{SERVER_PARAMETER_INFO}, filterOptionalKeys, 
+            okeys = Utility.mergeArray(okeys, new String[]{SERVER_PARAMETER_INFO}, filterOptionalKeys, 
                     discoverOptinalKeys, positionKeys);
             debugCheckParameters(ekeys, okeys);
         } else if (DATA_TYPE_FENDIAN.equals(dataType)) { 
             ekeys = Utility.mergeArray(ekeys, new String[]{SERVER_PARAMETER_NEED_FIELD, 
                     SERVER_PARAMETER_TUANGOU_UUID}, indexKeys);
-            okeys = Utility.mergeArray(discoverOptinalKeys, filterOptionalKeys, positionKeys);
+            okeys = Utility.mergeArray(okeys, discoverOptinalKeys, filterOptionalKeys, positionKeys);
             debugCheckParameters(ekeys, okeys);
         } else if (DATA_TYPE_DIANYING.equals(dataType)) { 
             ekeys = Utility.mergeArray(ekeys, new String[] {SERVER_PARAMETER_NEED_FIELD, 
                     SERVER_PARAMETER_PICTURE}, indexKeys);
-            okeys = Utility.mergeArray(ekeys, new String[]{SERVER_PARAMETER_DIANYING_UUID, 
+            okeys = Utility.mergeArray(okeys, new String[]{SERVER_PARAMETER_DIANYING_UUID, 
                     SERVER_PARAMETER_POI_ID}, discoverOptinalKeys, filterOptionalKeys, positionKeys);
             debugCheckParameters(ekeys, okeys);
         } else if (DATA_TYPE_YINGXUN.equals(dataType)) { 
             ekeys = Utility.mergeArray(ekeys, new String[]{SERVER_PARAMETER_NEED_FIELD, 
                     SERVER_PARAMETER_DIANYING_UUID}, indexKeys);
-            okeys = Utility.mergeArray(discoverOptinalKeys, positionKeys);
+            okeys = Utility.mergeArray(okeys, discoverOptinalKeys, positionKeys);
             debugCheckParameters(ekeys, okeys);
         } else if (DATA_TYPE_YANCHU.equals(dataType)) { 
             ekeys = Utility.mergeArray(ekeys, new String[]{SERVER_PARAMETER_NEED_FIELD, 
                     SERVER_PARAMETER_PICTURE}, indexKeys);
-            okeys = Utility.mergeArray(filterOptionalKeys, discoverOptinalKeys);
+            okeys = Utility.mergeArray(okeys, filterOptionalKeys, discoverOptinalKeys);
             debugCheckParameters(ekeys, okeys);
         } else if (DATA_TYPE_SHANGJIA.equals(dataType)) { 
             ekeys = Utility.mergeArray(ekeys, new String[] {SERVER_PARAMETER_NEED_FIELD});
-            okeys = positionKeys;
+            okeys = Utility.mergeArray(okeys, positionKeys);
             debugCheckParameters(ekeys, okeys);
         } else if (DATA_TYPE_ZHANLAN.equals(dataType)) { 
             ekeys = Utility.mergeArray(ekeys, new String[]{SERVER_PARAMETER_NEED_FIELD, 
                     SERVER_PARAMETER_PICTURE}, indexKeys);
-            okeys = Utility.mergeArray(filterOptionalKeys, discoverOptinalKeys, positionKeys);
+            okeys = Utility.mergeArray(okeys, filterOptionalKeys, discoverOptinalKeys, positionKeys);
             debugCheckParameters(ekeys, okeys);
         } else if (DATA_TYPE_DIANPING.equals(dataType)) {
             ekeys = Utility.mergeArray(ekeys, new String[]{SERVER_PARAMETER_REFER, 
                     SERVER_PARAMETER_NEED_FIELD, SERVER_PARAMETER_COMMENT_VERSION});
-            okeys = new String[]{SERVER_PARAMETER_TIME, SERVER_PARAMETER_DIRECTION, SERVER_PARAMETER_POI_ID, SERVER_PARAMETER_BIAS};
+            okeys = Utility.mergeArray(okeys, new String[]{SERVER_PARAMETER_TIME, 
+                    SERVER_PARAMETER_DIRECTION, SERVER_PARAMETER_POI_ID, SERVER_PARAMETER_BIAS});
             debugCheckParameters(ekeys, okeys);
         } else if (DATA_TYPE_PULL_MESSAGE.equals(dataType)) {
             ekeys = Utility.mergeArray(ekeys, new String[]{SERVER_PARAMETER_LOCATION_CITY, 
                     SERVER_PARAMETER_LONGITUDE, SERVER_PARAMETER_LATITUDE, 
                     SERVER_PARAMETER_LOCATION_LONGITUDE, SERVER_PARAMETER_LOCATION_LATITUDE});
-            okeys = new String[]{SERVER_PARAMETER_MESSAGE_ID_LIST, SERVER_PARAMETER_LAST_PULL_DATE};
+            okeys = Utility.mergeArray(okeys, new String[]{SERVER_PARAMETER_MESSAGE_ID_LIST, 
+                    SERVER_PARAMETER_LAST_PULL_DATE});
             debugCheckParameters(ekeys, okeys);
         } else if (DATA_TYPE_ALTERNATIVE.equals(dataType)) {
             ekeys = Utility.mergeArray(ekeys, new String[]{SERVER_PARAMETER_KEYWORD});
             debugCheckParameters(ekeys, okeys);
         } else if (DATA_TYPE_FILTER.equals(dataType)) {
-            okeys = Utility.mergeArray(filterOptionalKeys, indexKeys);
+            okeys = Utility.mergeArray(okeys, filterOptionalKeys, indexKeys);
             debugCheckParameters(ekeys, okeys);
         } else if (DATA_TYPE_COUPON.equals(dataType)) {
             ekeys = Utility.mergeArray(ekeys, new String[] {SERVER_PARAMETER_POI_ID, SERVER_PARAMETER_NEED_FIELD});
@@ -674,7 +670,6 @@ public final class DataQuery extends BaseQuery {
             if (Filter_Category_Order_POI != null) {
                 nfv = Filter_Category_Order_POI.version;
             }
-            //gao mao a?
             addFilterParameters(cfv, nfv);
 
         } else if (DATA_TYPE_DISCOVER.equals(dataType)) { 
@@ -816,15 +811,12 @@ public final class DataQuery extends BaseQuery {
             if (Filter_Category_Order_POI != null) {
                 nfv = Filter_Category_Order_POI.version;
             }
-            //FIXME:add some check for addFilterParameter
             addFilterParameters(cfv, nfv);
 
-//        } else {
-//            throw APIException.wrapToMissingRequestParameterException("invalid data type.");
         }
         
         addParameter(SERVER_PARAMETER_TIME_STAMP, TIME_STAMP_FORMAT.format(Calendar.getInstance().getTime()));
-        addSessionId(false);
+        addSessionId();
     }
     
     private void addDiscoverCategoryParameters() {
