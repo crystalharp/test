@@ -182,7 +182,10 @@ public class HotelOrder extends XMapData{
 		dayCount = (int) data.getInt(FIELD_DAY_COUNT);
 		guestName = data.getString(FIELD_GUEST_NAME);
 		mobileNum = data.getString(FIELD_MOBILE_NUM);
-		cancelDeadline = data.getInt(FIELD_CANCEL_DEADLINE);
+		if(data.containsKey(FIELD_CANCEL_DEADLINE)){
+			cancelDeadline = data.getInt(FIELD_CANCEL_DEADLINE);
+		}
+		else cancelDeadline = data.getInt(FIELD_CHECKOUT_TIME);
 	}
 	
 	public HotelOrder() {

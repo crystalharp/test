@@ -27,7 +27,7 @@ public class HotelOrderOperationTest {
         XMap data = new XMap();
         BaseQueryTest.launchResponse(data);
         data.put(HotelOrderCreateResponse.FIELD_ORDER_ID, "123456789");
-        data.put(HotelOrderCreateResponse.FIELD_DESCRIPTION, Calendar.getInstance().getTimeInMillis() + 120000);
+        data.put(HotelOrderCreateResponse.FIELD_CANCEL_DEADLINE, Calendar.getInstance().getTimeInMillis() + 120000);
 		return data;
 	}
 }
