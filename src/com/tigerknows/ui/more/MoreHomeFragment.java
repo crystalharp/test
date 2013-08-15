@@ -55,7 +55,8 @@ import com.tigerknows.ui.user.UserLoginActivity;
 import com.tigerknows.util.Utility;
 
 /**
- * @author Peng Wenyue, Feng Tianxiao
+ * @author Peng Wenyue
+ * Reconstructed by Feng Tianxiao 
  */
 public class MoreHomeFragment extends BaseFragment implements View.OnClickListener {
     
