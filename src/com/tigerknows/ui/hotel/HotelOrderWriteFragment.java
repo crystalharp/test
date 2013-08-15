@@ -641,7 +641,8 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
                     mCheckOut.getTimeInMillis(),
                     mNights,
                     mUsername,
-                    mMobile
+                    mMobile,
+                    hotelOrderCreateResponse.getCancelDeadline()
                     );
             TKConfig.setPref(mContext, TKConfig.PREFS_HOTEL_LAST_BOOKNAME, mBookUsername);
             TKConfig.setPref(mContext, TKConfig.PREFS_HOTEL_LAST_MOBILE, mMobile);

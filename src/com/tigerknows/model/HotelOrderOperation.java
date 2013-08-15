@@ -190,20 +190,32 @@ public class HotelOrderOperation extends BaseQuery {
 
     public static class HotelOrderCreateResponse extends Response {
         
-        // 0x02 x_map   单个POI数据   
+        // 0x02 x_string   单个POI数据   
         public static final byte FIELD_ORDER_ID = 0x02;
         
+        // 0x03 x_int      该订单的最晚取消时间距1970-01-01 00:00:00的毫秒数
+        public static final byte FIELD_CANCEL_DEADLINE = 0x03;
+        
         private String orderId;
+        
+        private long cancelDeadline;
         
         public HotelOrderCreateResponse(XMap data) throws APIException {
             super(data);
             
             if (this.data.containsKey(FIELD_ORDER_ID)) {
             	orderId = this.data.getString(FIELD_ORDER_ID);
-            }            
+            }
+            if (this.data.containsKey(FIELD_CANCEL_DEADLINE)) {
+            	cancelDeadline = this.data.getInt(FIELD_CANCEL_DEADLINE);
+            }
         }
 
-        public String getOrderId() {
+        public long getCancelDeadline() {
+			return cancelDeadline;
+		}
+
+		public String getOrderId() {
             return orderId;
         }
 
