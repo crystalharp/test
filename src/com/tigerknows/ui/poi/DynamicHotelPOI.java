@@ -117,7 +117,6 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             mAllRoomList.clear();
             mShowingRoomList.clear();
             mAllRoomList.addAll(mHotel.getRoomTypeList());
-            Collections.sort(mAllRoomList, new RoomTypeCMP());
             int size = (mAllRoomList != null? mAllRoomList.size() : 0);
             if (size == 0) {
                 LogWrapper.i(TAG, "size of roomTypeList is 0.");
@@ -566,14 +565,6 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         mLowerBlock.mLoadSucceed = s;
     }
     
-    private class RoomTypeCMP implements Comparator<RoomType> {
-
-        @Override
-        public int compare(RoomType lhs, RoomType rhs) {
-            return (int) (rhs.getCanReserve() - lhs.getCanReserve());
-        }
-    }
-
 	@Override
 	public void onPostExecute(TKAsyncTask tkAsyncTask) {
 	    mPOIDetailFragment.minusLoadingView();
