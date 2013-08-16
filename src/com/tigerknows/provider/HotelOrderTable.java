@@ -242,5 +242,5 @@ public class HotelOrderTable {
 		
 		return sb.toString();
 	}
-	
+
 }
