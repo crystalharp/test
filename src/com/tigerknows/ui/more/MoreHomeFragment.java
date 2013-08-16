@@ -33,6 +33,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.decarta.Globals;
+import com.decarta.android.exception.APIException;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
@@ -42,12 +43,14 @@ import com.tigerknows.map.MapEngine;
 import com.tigerknows.model.Bootstrap;
 import com.tigerknows.model.BootstrapModel;
 import com.tigerknows.model.BootstrapModel.Recommend;
+import com.tigerknows.model.BootstrapModel.SoftwareUpdate;
 import com.tigerknows.model.BootstrapModel.Recommend.RecommendApp;
 import com.tigerknows.model.NoticeQuery;
 import com.tigerknows.model.NoticeQuery.NoticeResultResponse;
 import com.tigerknows.model.NoticeQuery.NoticeResultResponse.NoticeResult;
 import com.tigerknows.model.NoticeQuery.NoticeResultResponse.NoticeResult.Notice;
 import com.tigerknows.model.TKDrawable;
+import com.tigerknows.model.xobject.XMap;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.ui.BrowserActivity;
 import com.tigerknows.ui.more.MapDownloadActivity.DownloadCity;
@@ -72,6 +75,8 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     
     public static final int SHOW_COMMENT_TIP_TIMES = 3;
     private static final int NUM_APP_RECOMMEND = 5;
+    
+    private static final int NOTICE_VERSION = 1;
     
     private TextView mUserNameTxv;
     private TextView mCurrentCityTxv;
@@ -113,13 +118,12 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     private RelativeLayout mNoticeRly;
     private NoticeResultResponse mNoticeResultResponse;
     private NoticeResult mNoticeResult;
-    private List<Notice> mNoticeList;
+    private List<Notice> mNoticeList = new ArrayList<Notice>();
     private int mPagecount = -1;
     private ViewPager mViewPager;
     private HashMap<Integer, View> viewMap = new HashMap<Integer, View>();
     private ViewGroup mPageIndicatorView;
     private boolean mUpgradeMap;
-    private int mNeedToRemove = -1;
 
     private Runnable mLoadedDrawableRun = new Runnable() {
         
@@ -293,18 +297,13 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         refreshMoreData();
         refreshCity(Globals.getCurrentCityInfo().getCName());
         refreshCurrentNoticeDrawable();
-        if(mNeedToRemove >= 0){
-        	mNoticeList.remove(mNeedToRemove);
-        	onNoticeListChanged();
-        	mNeedToRemove = -1;
-        }
+
         if(mPagecount > 1){
         	// 这两行代码用来解决onResume之后，首次定时器触发后，动画不正确的问题……
         	// 并且这样就不需要在onResume里调用mHandler.postDelayed(mNoticeNextRun, 4000);了
         	// 原理未知，反正试出来的。--fengtianxiao 2013.08.07
-        	for(int i=0; i<mPagecount; i++){
-        		mViewPager.setCurrentItem(mViewPager.getCurrentItem()+1);
-        	}
+        	mViewPager.setCurrentItem(mViewPager.getCurrentItem()+1);
+        	mViewPager.setCurrentItem(mViewPager.getCurrentItem()-1);
         }
     }
 
@@ -425,7 +424,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     // 该函数在系统启动时，和每次进入更多页面时均调用
     public void refreshMoreData() {
     	refreshMoreNotice(null);
-    	refreshAppRecommendData();
+    	refreshBootStrapData();
     	refreshMenuFragment();
     }
 
@@ -434,12 +433,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     	if(mNoticeResultResponse == null){
         	mNoticeResultResponse = noticeResultResponse;
         	if(mNoticeResultResponse != null){
-        		mNoticeResult = mNoticeResultResponse.getNoticeResult();
-        		if(mNoticeResult != null){
-        			mNoticeList = mNoticeResult.getNoticeList();
-        			mPosition = 0;
-        			onNoticeListChanged();
-        		}
+        		setNoticeList();
         	}else if(mPagecount < 0){
              	NoticeQuery noticeQuery = new NoticeQuery(mSphinx);
                 Hashtable<String, String> criteria = new Hashtable<String, String>();
@@ -448,14 +442,45 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
             }
     	}
     }
-    private void onNoticeListChanged(){
-    	mPagecount = mNoticeList.size();
+    private void setNoticeList(){
+    	BootstrapModel bootstrapModel = Globals.g_Bootstrap_Model;
+    	if(mNoticeResultResponse == null || bootstrapModel == null){
+    		return;
+    	}
+		mNoticeResult = mNoticeResultResponse.getNoticeResult();
+		mNoticeList = new ArrayList<Notice>();
+		SoftwareUpdate softwareUpdate = bootstrapModel.getSoftwareUpdate();
+		if(softwareUpdate != null){
+			XMap data = new XMap();
+			data.put(Notice.FIELD_NOTICE_ID, softwareUpdate.getId());
+			data.put(Notice.FIELD_OPERATION_TYPE, 1);
+			data.put(Notice.FIELD_NOTICE_TITLE, mSphinx.getString(R.string.message_tip_software_update));
+			data.put(Notice.FIELD_NOTICE_DESCRIPTION, "");
+			data.put(Notice.FIELD_URL, softwareUpdate.getURL());
+			try {
+				Notice notice = new Notice(data);
+				mNoticeList.add(notice);
+			} catch (APIException e){
+				e.printStackTrace();
+			}
+		}
+		if(mNoticeResult != null){
+			List<Notice> noticeList = mNoticeResult.getNoticeList();
+			if(noticeList != null){
+				for(int i=0; i<noticeList.size(); i++){
+					Notice notice = noticeList.get(i);
+					if(notice.getOperationType() <= NOTICE_VERSION){
+						mNoticeList.add(notice);
+					}
+				}
+			}
+		}
+		mPagecount = (int)mNoticeList.size();
         if(mPagecount > 1){
-        	viewMap.clear();
-        	mPageIndicatorView.removeAllViews();
         	Utility.pageIndicatorInit(mSphinx, mPageIndicatorView, mPagecount, 0, R.drawable.ic_learn_dot_normal, R.drawable.ic_learn_dot_selected);
         	mNoticeRly.setVisibility(View.VISIBLE);
-        	mViewPager.setCurrentItem(mPagecount * VIEW_PAGE_LEFT + mPosition);
+        	mViewPager.setCurrentItem(mPagecount * VIEW_PAGE_LEFT);
+        	mPosition = 0;
         	mViewPager.setOnPageChangeListener(new OnPageChangeListener() {
         		
         		@Override
@@ -478,18 +503,16 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         		}
         	});
         }else if(mPagecount == 1){
-        	viewMap.clear();
-        	getView(0);
         	mNoticeRly.setVisibility(View.VISIBLE);
-        	mPageIndicatorView.removeAllViews();
         	mViewPager.setCurrentItem(0);
         	mPosition = 0;
         }
     }
     
-    public void refreshAppRecommendData(){
+    public void refreshBootStrapData(){
     	BootstrapModel bootstrapModel = Globals.g_Bootstrap_Model;
         if (bootstrapModel != null) {
+            setNoticeList();
             Recommend recommend = bootstrapModel.getRecommend();
             if (recommend != null) {
                 if (recommend.getRecommendAppList() == null) {
@@ -599,7 +622,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         	viewMap.put(position, view);
         	return view;
         }
-    }    
+    }
 
 	public class MyAdapter extends PagerAdapter {
 	    
@@ -647,7 +670,6 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
                         intent.putExtra(BrowserActivity.URL, uri);
                         mSphinx.showView(R.id.activity_browser, intent);
                     }
-                    mNeedToRemove = fPosition % mPagecount;
 				}
 			});
 	        contain.addView(view, new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
