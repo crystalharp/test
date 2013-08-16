@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable.Orientation;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -28,6 +29,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -118,7 +120,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     private RelativeLayout mNoticeRly;
     private NoticeResultResponse mNoticeResultResponse;
     private NoticeResult mNoticeResult;
-    private List<Notice> mNoticeList = new ArrayList<Notice>();
+    private List<Notice> mNoticeList = null;
     private int mPagecount = -1;
     private ViewPager mViewPager;
     private HashMap<Integer, View> viewMap = new HashMap<Integer, View>();
@@ -444,7 +446,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     }
     private void setNoticeList(){
     	BootstrapModel bootstrapModel = Globals.g_Bootstrap_Model;
-    	if(mNoticeResultResponse == null || bootstrapModel == null){
+    	if(mNoticeResultResponse == null || bootstrapModel == null || mPagecount >= 0){
     		return;
     	}
 		mNoticeResult = mNoticeResultResponse.getNoticeResult();
@@ -606,22 +608,119 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
             return viewMap.get(position);
         }
         Notice notice = mNoticeList.get(position % mPagecount);
-        if((notice.getOperationType() & 1) == 0){
-        	Button view = new Button(mSphinx);
-        	view.setText(notice.getDescription());
-        	view.setBackgroundResource(R.drawable.btn_update);
-        	int padding = Utility.dip2px(mContext, 8);
-        	view.setPadding(padding, padding, padding, padding);
-        	viewMap.put(position, view);
-        	return view;
-        	
-        }else{
-        	ImageView view = new ImageView(mSphinx);
-        	refreshDrawable(notice.getpicTkDrawable(), view, R.drawable.txt_app_name);
-        	view.setScaleType(ScaleType.FIT_XY);
-        	viewMap.put(position, view);
-        	return view;
+        int noticeLayoutType = 0;
+        String title = notice.getNoticeTitle();
+        String description = notice.getDescription();
+        String picUrl = notice.getPicUrl();
+        int pd8 = Utility.dip2px(mContext, 8);
+        if(title != null && !TextUtils.isEmpty(title)){
+        	noticeLayoutType += 1;
         }
+        if(picUrl != null && !TextUtils.isEmpty(picUrl)){
+        	noticeLayoutType += 2;
+        }
+        if(description != null && !TextUtils.isEmpty(description)){
+        	noticeLayoutType += 4;
+        }
+        switch(noticeLayoutType){
+        case 1:
+        	Button button1 = new Button(mSphinx);
+        	button1.setText(title);
+        	button1.setBackgroundResource(R.drawable.btn_update);
+        	button1.setPadding(pd8, pd8, pd8, pd8);
+        	button1.setTextSize(16);
+        	viewMap.put(position, button1);
+        	return button1;
+        case 2:
+        	ImageView imageView2 = new ImageView(mSphinx);
+        	refreshDrawable(notice.getpicTkDrawable(), imageView2, R.drawable.txt_app_name);
+        	imageView2.setScaleType(ScaleType.FIT_XY);
+        	viewMap.put(position, imageView2);
+        	return imageView2;
+        case 5:
+        	LinearLayout linearLayout5 = new LinearLayout(mSphinx);
+        	linearLayout5.setOrientation(VERTICAL);
+        	linearLayout5.setBackgroundResource(R.drawable.btn_update);
+        	linearLayout5.setGravity(Gravity.CENTER_HORIZONTAL);
+        	TextView titleTxv5 = new TextView(mSphinx);
+        	titleTxv5.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+        	titleTxv5.setPadding(pd8, 0, pd8, 0);
+        	titleTxv5.setTextSize(16);
+        	titleTxv5.setTextColor(getResources().getColor(R.color.black_dark));
+        	titleTxv5.setSingleLine(true);
+        	titleTxv5.setText(title);
+        	TextView descriptionTxv5 = new TextView(mSphinx);
+        	descriptionTxv5.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+        	descriptionTxv5.setPadding(pd8, 0, pd8, 0);
+        	descriptionTxv5.setTextSize(14);
+        	descriptionTxv5.setTextColor(getResources().getColor(R.color.black_dark));
+        	descriptionTxv5.setSingleLine(true);
+        	descriptionTxv5.setText(description);
+        	linearLayout5.addView(titleTxv5);
+        	linearLayout5.addView(descriptionTxv5);
+        	viewMap.put(position, linearLayout5);
+        	return linearLayout5;
+        case 3:
+        	LinearLayout linearLayout3 = new LinearLayout(mSphinx);
+        	ImageView imageView3 = new ImageView(mSphinx);
+        	linearLayout3.setOrientation(HORIZONTAL);
+        	linearLayout3.setBackgroundResource(R.drawable.btn_update);
+        	linearLayout3.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
+        	refreshDrawable(notice.getpicTkDrawable(), imageView3, R.drawable.txt_app_name);
+        	imageView3.setLayoutParams(new LayoutParams(Utility.dip2px(mContext, 48), Utility.dip2px(mContext, 48)));
+        	imageView3.setScaleType(ScaleType.FIT_XY);
+        	TextView titleTxv3 = new TextView(mSphinx);
+        	titleTxv3.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+        	titleTxv3.setTextSize(16);
+        	titleTxv3.setTextColor(getResources().getColor(R.color.black_dark));
+        	titleTxv3.setSingleLine(true);
+        	titleTxv3.setText(title);
+        	titleTxv3.setGravity(Gravity.LEFT | Gravity.CENTER_HORIZONTAL);
+        	titleTxv3.setPadding(Utility.dip2px(mContext, 26), pd8, pd8, pd8);
+        	linearLayout3.addView(imageView3);
+        	linearLayout3.addView(titleTxv3);
+        	viewMap.put(position, linearLayout3);
+        	return linearLayout3;
+        case 7:
+        	LinearLayout linearLayout7 = new LinearLayout(mSphinx);
+        	linearLayout7.setOrientation(HORIZONTAL);
+        	linearLayout7.setBackgroundResource(R.drawable.btn_update);
+        	ImageView imageView7 = new ImageView(mSphinx);
+        	refreshDrawable(notice.getpicTkDrawable(), imageView7, R.drawable.txt_app_name);
+        	imageView7.setLayoutParams(new LayoutParams(Utility.dip2px(mContext, 48), Utility.dip2px(mContext, 48)));
+        	imageView7.setScaleType(ScaleType.FIT_XY);
+        	LinearLayout textLly7 = new LinearLayout(mSphinx);
+        	textLly7.setOrientation(VERTICAL);
+        	textLly7.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
+        	textLly7.setGravity(Gravity.LEFT);
+        	TextView titleTxv7 = new TextView(mSphinx);
+        	titleTxv7.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+        	titleTxv7.setTextSize(16);
+        	titleTxv7.setTextColor(getResources().getColor(R.color.black_dark));
+        	titleTxv7.setSingleLine(true);
+        	titleTxv7.setText(title);
+        	titleTxv7.setPadding(Utility.dip2px(mContext, 26), 0, pd8, 0);
+        	TextView descriptionTxv7 = new TextView(mSphinx);
+        	descriptionTxv7.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+        	descriptionTxv7.setTextSize(14);
+        	descriptionTxv7.setTextColor(getResources().getColor(R.color.black_dark));
+        	descriptionTxv7.setSingleLine(true);
+        	descriptionTxv7.setText(description);
+        	descriptionTxv7.setPadding(Utility.dip2px(mContext, 26), 0, pd8, 0);
+        	textLly7.addView(titleTxv7);
+        	textLly7.addView(descriptionTxv7);
+        	linearLayout7.addView(imageView7);
+        	linearLayout7.addView(textLly7);
+        	viewMap.put(position, linearLayout7);
+        	return linearLayout7;
+        default:
+        	Button button = new Button(mSphinx);
+        	button.setText("该活动不存在或已失效");
+        	button.setBackgroundResource(R.drawable.btn_update);
+        	button.setPadding(pd8, pd8, pd8, pd8);
+        	viewMap.put(position, button);
+        	return button;
+        	}
     }
 
 	public class MyAdapter extends PagerAdapter {
