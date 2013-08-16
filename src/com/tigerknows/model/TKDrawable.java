@@ -145,7 +145,7 @@ public class TKDrawable extends XMapData implements Parcelable {
             Drawable drawable = tkDrawable.loadDrawable(activity, LoadImageRunnable.this, token);
             if(drawable != null) {
                 Rect bounds = drawable.getBounds();
-                if (bounds != null && bounds.width() != pictureImv.getWidth() || bounds.height() != pictureImv.getHeight()) {
+                if (bounds != null && (bounds.width() != pictureImv.getWidth() || bounds.height() != pictureImv.getHeight())) {
                     pictureImv.setBackgroundDrawable(null);
                 }
                 pictureImv.setBackgroundDrawable(drawable);

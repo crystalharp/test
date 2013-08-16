@@ -128,7 +128,7 @@
                         android:layout_height="316dp"
                         android:layout_gravity="center_horizontal"
                         android:contentDescription="@string/app_name"
-                        android:background="@drawable/bg_picture_coupon_detail" 
+                        android:background="@drawable/bg_picture_detail" 
                         android:visibility="gone"
                         />
                     <TextView android:id="@+id/detail_txv"

@@ -2290,7 +2290,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     }
                     
                     if (hotel.getImageInfoWindow() == null) {
-                        pictureImv.setBackgroundResource(R.drawable.bg_picture_hotel);
+                        pictureImv.setBackgroundResource(R.drawable.bg_picture_detail);
                     }
                     
                 } else {
@@ -2386,15 +2386,15 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 	//To prevent the problem of size change of the same pic 
                 	//After it is used at a different place with smaller size
                     Rect bounds = drawable.getBounds();
-                    if(bounds != null && bounds.width() != pictureImv.getWidth() || bounds.height() != pictureImv.getHeight() ){
+                    if(bounds != null && (bounds.width() != pictureImv.getWidth() || bounds.height() != pictureImv.getHeight())){
                         pictureImv.setBackgroundDrawable(null);
                     }
                 	pictureImv.setBackgroundDrawable(drawable);
                 } else {
-                    pictureImv.setBackgroundResource(R.drawable.bg_picture_dianying);
+                    pictureImv.setBackgroundResource(R.drawable.bg_picture);
                 }
             } else {
-                pictureImv.setBackgroundResource(R.drawable.bg_picture_dianying);
+                pictureImv.setBackgroundResource(R.drawable.bg_picture);
             }
             
             ViewGroup bodyView=(ViewGroup)mInfoWindowYanchuList.findViewById(R.id.body_view);
@@ -2434,15 +2434,15 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 	//To prevent the problem of size change of the same pic 
                 	//After it is used at a different place with smaller size
                     Rect bounds = drawable.getBounds();
-                    if(bounds != null && bounds.width() != pictureImv.getWidth() || bounds.height() != pictureImv.getHeight() ){
+                    if(bounds != null && (bounds.width() != pictureImv.getWidth() || bounds.height() != pictureImv.getHeight())){
                         pictureImv.setBackgroundDrawable(null);
                     }
                     pictureImv.setBackgroundDrawable(drawable);
                 } else {
-                    pictureImv.setBackgroundResource(R.drawable.bg_picture_tuangou);
+                    pictureImv.setBackgroundResource(R.drawable.bg_picture);
                 }
             } else {
-                pictureImv.setBackgroundResource(R.drawable.bg_picture_tuangou);
+                pictureImv.setBackgroundResource(R.drawable.bg_picture);
             }
             
             ViewGroup bodyView=(ViewGroup)mInfoWindowTuangouList.findViewById(R.id.body_view);
