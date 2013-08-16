@@ -21,7 +21,7 @@
             android:layout_height="64dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
-            android:background="@drawable/bg_picture_hotel"
+            android:background="@drawable/bg_picture"
             />
         <ImageView
             android:id="@+id/picture_imv"

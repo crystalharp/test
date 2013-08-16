@@ -22,7 +22,7 @@
 		        android:layout_height="80dp"
 		        android:layout_alignParentLeft="true"
 		        android:layout_alignParentTop="true"
-		        android:background="@drawable/bg_picture_hotel" />
+		        android:background="@drawable/bg_picture_detail" />
 		    
 		    <TextView 
 		        android:id="@+id/image_num_txv"

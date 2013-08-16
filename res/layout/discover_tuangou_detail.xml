@@ -33,7 +33,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
                     android:scaleType="fitXY"
-                    android:background="@drawable/bg_picture_tuangou_detail"
+                    android:background="@drawable/bg_picture_detail"
                     />
                 <ImageView 
                     android:id="@+id/shangjia_marker_imv"

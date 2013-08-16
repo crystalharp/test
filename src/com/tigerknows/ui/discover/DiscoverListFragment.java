@@ -781,7 +781,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             	//To prevent the problem of size change of the same pic 
             	//After it is used at a different place with smaller size
                 Rect bounds = drawable.getBounds();
-            	if(bounds != null && bounds.width() != pictureImv.getWidth() || bounds.height() != pictureImv.getHeight() ){
+            	if(bounds != null && (bounds.width() != pictureImv.getWidth() || bounds.height() != pictureImv.getHeight())){
             		pictureImv.setBackgroundDrawable(null);
             	}
             	pictureImv.setBackgroundDrawable(drawable);
@@ -841,9 +841,9 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             if(drawable != null) {
             	//To prevent the problem of size change of the same pic 
             	//After it is used at a different place with smaller size
-            	pictureImv.setBackgroundDrawable(drawable);
+            	pictureImv.setImageDrawable(drawable);
             } else {
-                pictureImv.setBackgroundDrawable(null);
+                pictureImv.setImageDrawable(null);
             }
             
             nameTxv.setText(dianying.getName());
@@ -899,12 +899,12 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             	//To prevent the problem of size change of the same pic 
             	//After it is used at a different place with smaller size
                 Rect bounds = drawable.getBounds();
-            	if(bounds != null && bounds.width() != pictureImv.getWidth() || bounds.height() != pictureImv.getHeight() ){
-            		pictureImv.setBackgroundDrawable(null);
+            	if(bounds != null && (bounds.width() != pictureImv.getWidth() || bounds.height() != pictureImv.getHeight())){
+            		pictureImv.setImageDrawable(null);
             	}
-            	pictureImv.setBackgroundDrawable(drawable);
+            	pictureImv.setImageDrawable(drawable);
             } else {
-                pictureImv.setBackgroundDrawable(null);
+                pictureImv.setImageDrawable(null);
             }
             
             nameTxv.setText(yanchu.getName());
@@ -947,12 +947,12 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             	//To prevent the problem of size change of the same pic 
             	//After it is used at a different place with smaller size
                 Rect bounds = drawable.getBounds();
-            	if(bounds != null && bounds.width() != pictureImv.getWidth() || bounds.height() != pictureImv.getHeight() ){
-            		pictureImv.setBackgroundDrawable(null);
+            	if(bounds != null && (bounds.width() != pictureImv.getWidth() || bounds.height() != pictureImv.getHeight())){
+            		pictureImv.setImageDrawable(null);
             	}
-            	pictureImv.setBackgroundDrawable(drawable);
+            	pictureImv.setImageDrawable(drawable);
             } else {
-                pictureImv.setBackgroundDrawable(null);
+                pictureImv.setImageDrawable(null);
             }
             
             nameTxv.setText(yanchu.getName());
