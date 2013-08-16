@@ -35,8 +35,7 @@
 			  android:layout_height="12dip"
 			  android:progress="0"
 			  android:max="100"
-			  style="?android:attr/progressBarStyleHorizontal" 
-			  mce_style="?android:attr/progressBarStyleHorizontal"   />
+			  style="?android:attr/progressBarStyleHorizontal" />
 		  <TextView 
 			  android:id="@+id/process_txv"
 			  android:layout_width="wrap_content"

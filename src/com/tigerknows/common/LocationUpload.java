@@ -181,18 +181,33 @@ public class LocationUpload extends LogUpload {
     public void onCreate() {
         synchronized (mLock) {
             super.onCreate();
-            sdx = 0;
-            sdy = 0;
-            sdt = 0;
+            reset();
         }
     }
     
     protected void onLogOut() {
         synchronized (mLock) {
             super.onLogOut();
-            sdx = 0;
-            sdy = 0;
-            sdt = 0;
+            if (mStringBuilder == null) {
+                return;
+            }
+            reset();
+            StringBuilder s = mStringBuilder;
+            mStringBuilder = new StringBuilder();
+            mStringBuilder.append(s);
         }
+    }
+    
+    protected void write() {
+        synchronized (mLock) {
+            super.write();
+            reset();
+        }
+    }
+    
+    void reset() {
+        sdt = 0;
+        sdx = 0;
+        sdy = 0;
     }
 }

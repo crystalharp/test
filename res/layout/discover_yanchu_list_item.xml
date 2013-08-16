@@ -7,29 +7,18 @@
    android:paddingTop="14dp"
    android:paddingRight="8dp"
    android:paddingBottom="14dp" >
-
-   <ImageView
-       android:layout_width="80.5dp"
-       android:layout_height="100.5dp" 
-       android:layout_alignParentLeft="true"
-       android:layout_alignParentTop="true"
-       android:layout_marginRight="8dp"
-       android:padding="4dp"
-       android:scaleType="fitXY"
-       android:background="@drawable/bg_picture_dianying" />
    
    <ImageView
        android:id="@+id/picture_imv"
-       android:layout_width="70dp"
-       android:layout_height="90dp"
+       android:layout_width="80dp"
+       android:layout_height="100dp"
        android:layout_alignParentLeft="true"
        android:layout_alignParentTop="true"
        android:layout_marginRight="8dp"
        android:layout_marginLeft="5dp"
-       android:layout_marginTop="5dp"
-       android:padding="4dp"
+       android:padding="6dp"
        android:scaleType="fitXY"
-       android:background="@drawable/bg_picture_dianying" />
+       android:background="@drawable/bg_picture" />
 
    <TextView
        android:id="@+id/name_txv"

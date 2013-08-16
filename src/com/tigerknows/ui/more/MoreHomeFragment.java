@@ -38,6 +38,7 @@ import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
 import com.tigerknows.common.ActionLog;
+import com.tigerknows.map.MapEngine;
 import com.tigerknows.model.Bootstrap;
 import com.tigerknows.model.BootstrapModel;
 import com.tigerknows.model.BootstrapModel.Recommend;
@@ -55,7 +56,8 @@ import com.tigerknows.ui.user.UserLoginActivity;
 import com.tigerknows.util.Utility;
 
 /**
- * @author Peng Wenyue, Feng Tianxiao
+ * @author Peng Wenyue
+ * Reconstructed by Feng Tianxiao 
  */
 public class MoreHomeFragment extends BaseFragment implements View.OnClickListener {
     
@@ -116,6 +118,8 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     private ViewPager mViewPager;
     private HashMap<Integer, View> viewMap = new HashMap<Integer, View>();
     private ViewGroup mPageIndicatorView;
+    private boolean mUpgradeMap;
+    private int mNeedToRemove = -1;
 
     private Runnable mLoadedDrawableRun = new Runnable() {
         
@@ -264,7 +268,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 			});
         }
         mMyAdapter = new MyAdapter();
-        mViewPager.setAdapter(mMyAdapter);
+    	mViewPager.setAdapter(mMyAdapter);
     }
 
     @Override
@@ -289,12 +293,18 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         refreshMoreData();
         refreshCity(Globals.getCurrentCityInfo().getCName());
         refreshCurrentNoticeDrawable();
+        if(mNeedToRemove >= 0){
+        	mNoticeList.remove(mNeedToRemove);
+        	onNoticeListChanged();
+        	mNeedToRemove = -1;
+        }
         if(mPagecount > 1){
         	// 这两行代码用来解决onResume之后，首次定时器触发后，动画不正确的问题……
         	// 并且这样就不需要在onResume里调用mHandler.postDelayed(mNoticeNextRun, 4000);了
         	// 原理未知，反正试出来的。--fengtianxiao 2013.08.07
-        	mViewPager.setCurrentItem(mViewPager.getCurrentItem()+1);
-        	mViewPager.setCurrentItem(mViewPager.getCurrentItem()-1);
+        	for(int i=0; i<mPagecount; i++){
+        		mViewPager.setCurrentItem(mViewPager.getCurrentItem()+1);
+        	}
         }
     }
 
@@ -382,10 +392,41 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         localIntent.setData(Uri.parse(str));  
         return localIntent;
     }
+    
+    public void refreshMapDownloadData() {
+        mUpgradeMap = false;
+        DownloadCity currentDownloadCity = CurrentDownloadCity;
+        if (currentDownloadCity != null
+                && currentDownloadCity.state == DownloadCity.STATE_CAN_BE_UPGRADE
+                && currentDownloadCity.cityInfo.getId() != MapEngine.CITY_ID_QUANGUO) {
+        	mUpgradeMap = true;
+        }
+        if (mUpgradeMap) {
+    		Drawable[] drawables = mDownloadMapBtn.getCompoundDrawables();
+    		drawables[2] = mContext.getResources().getDrawable(R.drawable.ic_satisfy_new);
+    		drawables[2].setBounds(0, 0, drawables[2].getIntrinsicWidth(), drawables[2].getIntrinsicHeight());
+    		mDownloadMapBtn.setCompoundDrawables(drawables[0], drawables[1], drawables[2], drawables[3]);
+    		mDownloadMapBtn.setCompoundDrawablePadding(Utility.dip2px(mContext, 20));
+    	}else{
+    		Drawable[] drawables = mDownloadMapBtn.getCompoundDrawables();
+    		mDownloadMapBtn.setCompoundDrawables(drawables[0], drawables[1], null, drawables[3]);
+    	}
+    }
+    
+    public void refreshMenuFragment() {
+        if(mUpgradeMap || TextUtils.isEmpty(TKConfig.getPref(mContext, TKConfig.PREFS_SATISFY_RATE_OPENED, ""))){
+        	mSphinx.getMenuFragment().setFragmentMessage(View.VISIBLE);
+        	return;
+        }else{
+        	mSphinx.getMenuFragment().setFragmentMessage(View.GONE);
+        }
+    }
 
+    // 该函数在系统启动时，和每次进入更多页面时均调用
     public void refreshMoreData() {
     	refreshMoreNotice(null);
     	refreshAppRecommendData();
+    	refreshMenuFragment();
     }
 
     public void refreshMoreNotice(NoticeResultResponse noticeResultResponse) {
@@ -395,39 +436,9 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         	if(mNoticeResultResponse != null){
         		mNoticeResult = mNoticeResultResponse.getNoticeResult();
         		if(mNoticeResult != null){
-        			mPagecount = (int)mNoticeResult.getNum();
         			mNoticeList = mNoticeResult.getNoticeList();
-        	        if(mPagecount > 1){
-        	        	Utility.pageIndicatorInit(mSphinx, mPageIndicatorView, mPagecount, 0, R.drawable.ic_learn_dot_normal, R.drawable.ic_learn_dot_selected);
-        	        	mNoticeRly.setVisibility(View.VISIBLE);
-        	        	mViewPager.setCurrentItem(mPagecount * VIEW_PAGE_LEFT);
-        	        	mPosition = 0;
-        	        	mViewPager.setOnPageChangeListener(new OnPageChangeListener() {
-        	        		
-        	        		@Override
-        	        		public void onPageSelected(int index) {
-        	        			LogWrapper.d("Trap", "Select:"+index);
-        	        			mHandler.removeCallbacks(mNoticeNextRun);
-        	        			mHandler.postDelayed(mNoticeNextRun, 4000);
-        	        			mPosition = index % mPagecount;
-        	        			Utility.pageIndicatorChanged(mSphinx, mPageIndicatorView, mPosition, R.drawable.ic_learn_dot_normal, R.drawable.ic_learn_dot_selected);
-        	        			mActionLog.addAction(mActionTag+ActionLog.ViewPageSelected, mPosition);
-        	        		}
-        	        		
-        	        		@Override
-        	        		public void onPageScrolled(int arg0, float arg1, int arg2) {
-        	        		}
-        	        		
-        	        		@Override
-        	        		public void onPageScrollStateChanged(int index) {
-        	        			index = index % mPagecount;
-        	        		}
-        	        	});
-        	        }else if(mPagecount == 1){
-        	        	mNoticeRly.setVisibility(View.VISIBLE);
-        	        	mViewPager.setCurrentItem(0);
-        	        	mPosition = 0;
-        	        }
+        			mPosition = 0;
+        			onNoticeListChanged();
         		}
         	}else if(mPagecount < 0){
              	NoticeQuery noticeQuery = new NoticeQuery(mSphinx);
@@ -436,12 +447,43 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
                 mSphinx.queryStart(noticeQuery);
             }
     	}
-    	LogWrapper.d("Trap", "size:"+(mNoticeList == null ? -1 : mNoticeList.size()));
-        
-        // 满意度评分(不是button)
-        if(TextUtils.isEmpty(TKConfig.getPref(mContext, TKConfig.PREFS_SATISFY_RATE_OPENED, ""))){
-        	mSphinx.getMenuFragment().setFragmentMessage(View.VISIBLE);
-        	return;
+    }
+    private void onNoticeListChanged(){
+    	mPagecount = mNoticeList.size();
+        if(mPagecount > 1){
+        	viewMap.clear();
+        	mPageIndicatorView.removeAllViews();
+        	Utility.pageIndicatorInit(mSphinx, mPageIndicatorView, mPagecount, 0, R.drawable.ic_learn_dot_normal, R.drawable.ic_learn_dot_selected);
+        	mNoticeRly.setVisibility(View.VISIBLE);
+        	mViewPager.setCurrentItem(mPagecount * VIEW_PAGE_LEFT + mPosition);
+        	mViewPager.setOnPageChangeListener(new OnPageChangeListener() {
+        		
+        		@Override
+        		public void onPageSelected(int index) {
+        			LogWrapper.d("Trap", "Select:"+index);
+        			mHandler.removeCallbacks(mNoticeNextRun);
+        			mHandler.postDelayed(mNoticeNextRun, 4000);
+        			mPosition = index % mPagecount;
+        			Utility.pageIndicatorChanged(mSphinx, mPageIndicatorView, mPosition, R.drawable.ic_learn_dot_normal, R.drawable.ic_learn_dot_selected);
+        			mActionLog.addAction(mActionTag+ActionLog.ViewPageSelected, mPosition);
+        		}
+        		
+        		@Override
+        		public void onPageScrolled(int arg0, float arg1, int arg2) {
+        		}
+        		
+        		@Override
+        		public void onPageScrollStateChanged(int index) {
+        			index = index % mPagecount;
+        		}
+        	});
+        }else if(mPagecount == 1){
+        	viewMap.clear();
+        	getView(0);
+        	mNoticeRly.setVisibility(View.VISIBLE);
+        	mPageIndicatorView.removeAllViews();
+        	mViewPager.setCurrentItem(0);
+        	mPosition = 0;
         }
     }
     
@@ -466,7 +508,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     private void refreshAppRecommendDrawable(){
     	final int len = Math.min(mRecommendAppList.size(), NUM_APP_RECOMMEND);
     	for (int i=0; i<NUM_APP_RECOMMEND && i<len; i++){
-    		refreshDrawable(mRecommendAppList.get(i).getIcon(), mAppRecommendImv[i], R.drawable.bg_picture_hotel_none);
+    		refreshDrawable(mRecommendAppList.get(i).getIcon(), mAppRecommendImv[i], R.drawable.bg_picture_none);
     		mAppRecommendTxv[i].setText(mRecommendAppList.get(i).getName());
     	}
     }
@@ -521,7 +563,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     	if (tkDrawable != null) {
     		Drawable drawable = tkDrawable.loadDrawable(mSphinx, mLoadedDrawableRun, MoreHomeFragment.this.toString());
     		if(drawable != null){
-    			if(defaultResId == R.drawable.bg_picture_hotel_none){
+    			if(defaultResId == R.drawable.bg_picture_none){
     				Rect bounds = drawable.getBounds();
     				if(bounds != null && (bounds.width() != imageView.getWidth() || bounds.height() != imageView.getHeight())){
     					imageView.setBackgroundDrawable(null);
@@ -583,6 +625,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 	
 	    @Override
 	    public void destroyItem(View contain, int position, Object arg2) {
+	    	LogWrapper.d("Trap", "Remove:"+position);
 	         ((ViewPager) contain).removeView(getView(position));
 	    }
 	
@@ -590,6 +633,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 	    public Object instantiateItem(ViewGroup contain, int position) {
 	        View view = getView(position);
 	        final int fPosition = position;
+	    	LogWrapper.d("Trap", "Init:"+fPosition);
 	        view.setOnClickListener(new OnClickListener() {
 				
 				@Override
@@ -603,6 +647,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
                         intent.putExtra(BrowserActivity.URL, uri);
                         mSphinx.showView(R.id.activity_browser, intent);
                     }
+                    mNeedToRemove = fPosition % mPagecount;
 				}
 			});
 	        contain.addView(view, new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));

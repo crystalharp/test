@@ -16,7 +16,7 @@
         android:id="@+id/icon_imv"
         android:layout_width="46dp"
         android:layout_height="60dp"
-        android:background="@drawable/bg_picture_dianying"
+        android:background="@drawable/bg_picture"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="6dp"
         android:layout_marginRight="8dp"

@@ -653,7 +653,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                         //To prevent the problem of size change of the same pic 
                         //After it is used at a different place with smaller size
                         Rect bounds = drawable.getBounds();
-                        if(bounds != null && bounds.width() != pictureImv.getWidth() || bounds.height() != pictureImv.getHeight() ){
+                        if(bounds != null && (bounds.width() != pictureImv.getWidth() || bounds.height() != pictureImv.getHeight())){
                             pictureImv.setBackgroundDrawable(null);
                         }
                         pictureImv.setBackgroundDrawable(drawable);
@@ -662,7 +662,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                     }
                     
                 } else {
-                    pictureImv.setBackgroundResource(R.drawable.bg_picture_hotel_none);
+                    pictureImv.setBackgroundResource(R.drawable.bg_picture_none);
                 }
                 
                 if (hotel.getCanReserve() > 0) {
