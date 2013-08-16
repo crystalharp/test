@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable.Orientation;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -28,11 +29,13 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.decarta.Globals;
+import com.decarta.android.exception.APIException;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
@@ -42,12 +45,14 @@ import com.tigerknows.map.MapEngine;
 import com.tigerknows.model.Bootstrap;
 import com.tigerknows.model.BootstrapModel;
 import com.tigerknows.model.BootstrapModel.Recommend;
+import com.tigerknows.model.BootstrapModel.SoftwareUpdate;
 import com.tigerknows.model.BootstrapModel.Recommend.RecommendApp;
 import com.tigerknows.model.NoticeQuery;
 import com.tigerknows.model.NoticeQuery.NoticeResultResponse;
 import com.tigerknows.model.NoticeQuery.NoticeResultResponse.NoticeResult;
 import com.tigerknows.model.NoticeQuery.NoticeResultResponse.NoticeResult.Notice;
 import com.tigerknows.model.TKDrawable;
+import com.tigerknows.model.xobject.XMap;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.ui.BrowserActivity;
 import com.tigerknows.ui.more.MapDownloadActivity.DownloadCity;
@@ -72,6 +77,8 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     
     public static final int SHOW_COMMENT_TIP_TIMES = 3;
     private static final int NUM_APP_RECOMMEND = 5;
+    
+    private static final int NOTICE_VERSION = 1;
     
     private TextView mUserNameTxv;
     private TextView mCurrentCityTxv;
@@ -113,13 +120,12 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     private RelativeLayout mNoticeRly;
     private NoticeResultResponse mNoticeResultResponse;
     private NoticeResult mNoticeResult;
-    private List<Notice> mNoticeList;
+    private List<Notice> mNoticeList = null;
     private int mPagecount = -1;
     private ViewPager mViewPager;
     private HashMap<Integer, View> viewMap = new HashMap<Integer, View>();
     private ViewGroup mPageIndicatorView;
     private boolean mUpgradeMap;
-    private int mNeedToRemove = -1;
 
     private Runnable mLoadedDrawableRun = new Runnable() {
         
@@ -293,18 +299,13 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         refreshMoreData();
         refreshCity(Globals.getCurrentCityInfo().getCName());
         refreshCurrentNoticeDrawable();
-        if(mNeedToRemove >= 0){
-        	mNoticeList.remove(mNeedToRemove);
-        	onNoticeListChanged();
-        	mNeedToRemove = -1;
-        }
+
         if(mPagecount > 1){
         	// 这两行代码用来解决onResume之后，首次定时器触发后，动画不正确的问题……
         	// 并且这样就不需要在onResume里调用mHandler.postDelayed(mNoticeNextRun, 4000);了
         	// 原理未知，反正试出来的。--fengtianxiao 2013.08.07
-        	for(int i=0; i<mPagecount; i++){
-        		mViewPager.setCurrentItem(mViewPager.getCurrentItem()+1);
-        	}
+        	mViewPager.setCurrentItem(mViewPager.getCurrentItem()+1);
+        	mViewPager.setCurrentItem(mViewPager.getCurrentItem()-1);
         }
     }
 
@@ -425,7 +426,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     // 该函数在系统启动时，和每次进入更多页面时均调用
     public void refreshMoreData() {
     	refreshMoreNotice(null);
-    	refreshAppRecommendData();
+    	refreshBootStrapData();
     	refreshMenuFragment();
     }
 
@@ -434,12 +435,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     	if(mNoticeResultResponse == null){
         	mNoticeResultResponse = noticeResultResponse;
         	if(mNoticeResultResponse != null){
-        		mNoticeResult = mNoticeResultResponse.getNoticeResult();
-        		if(mNoticeResult != null){
-        			mNoticeList = mNoticeResult.getNoticeList();
-        			mPosition = 0;
-        			onNoticeListChanged();
-        		}
+        		setNoticeList();
         	}else if(mPagecount < 0){
              	NoticeQuery noticeQuery = new NoticeQuery(mSphinx);
                 Hashtable<String, String> criteria = new Hashtable<String, String>();
@@ -448,14 +444,45 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
             }
     	}
     }
-    private void onNoticeListChanged(){
-    	mPagecount = mNoticeList.size();
+    private void setNoticeList(){
+    	BootstrapModel bootstrapModel = Globals.g_Bootstrap_Model;
+    	if(mNoticeResultResponse == null || bootstrapModel == null || mPagecount >= 0){
+    		return;
+    	}
+		mNoticeResult = mNoticeResultResponse.getNoticeResult();
+		mNoticeList = new ArrayList<Notice>();
+		SoftwareUpdate softwareUpdate = bootstrapModel.getSoftwareUpdate();
+		if(softwareUpdate != null){
+			XMap data = new XMap();
+			data.put(Notice.FIELD_NOTICE_ID, softwareUpdate.getId());
+			data.put(Notice.FIELD_OPERATION_TYPE, 1);
+			data.put(Notice.FIELD_NOTICE_TITLE, mSphinx.getString(R.string.message_tip_software_update));
+			data.put(Notice.FIELD_NOTICE_DESCRIPTION, "");
+			data.put(Notice.FIELD_URL, softwareUpdate.getURL());
+			try {
+				Notice notice = new Notice(data);
+				mNoticeList.add(notice);
+			} catch (APIException e){
+				e.printStackTrace();
+			}
+		}
+		if(mNoticeResult != null){
+			List<Notice> noticeList = mNoticeResult.getNoticeList();
+			if(noticeList != null){
+				for(int i=0; i<noticeList.size(); i++){
+					Notice notice = noticeList.get(i);
+					if(notice.getOperationType() <= NOTICE_VERSION){
+						mNoticeList.add(notice);
+					}
+				}
+			}
+		}
+		mPagecount = (int)mNoticeList.size();
         if(mPagecount > 1){
-        	viewMap.clear();
-        	mPageIndicatorView.removeAllViews();
         	Utility.pageIndicatorInit(mSphinx, mPageIndicatorView, mPagecount, 0, R.drawable.ic_learn_dot_normal, R.drawable.ic_learn_dot_selected);
         	mNoticeRly.setVisibility(View.VISIBLE);
-        	mViewPager.setCurrentItem(mPagecount * VIEW_PAGE_LEFT + mPosition);
+        	mViewPager.setCurrentItem(mPagecount * VIEW_PAGE_LEFT);
+        	mPosition = 0;
         	mViewPager.setOnPageChangeListener(new OnPageChangeListener() {
         		
         		@Override
@@ -478,18 +505,16 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         		}
         	});
         }else if(mPagecount == 1){
-        	viewMap.clear();
-        	getView(0);
         	mNoticeRly.setVisibility(View.VISIBLE);
-        	mPageIndicatorView.removeAllViews();
         	mViewPager.setCurrentItem(0);
         	mPosition = 0;
         }
     }
     
-    public void refreshAppRecommendData(){
+    public void refreshBootStrapData(){
     	BootstrapModel bootstrapModel = Globals.g_Bootstrap_Model;
         if (bootstrapModel != null) {
+            setNoticeList();
             Recommend recommend = bootstrapModel.getRecommend();
             if (recommend != null) {
                 if (recommend.getRecommendAppList() == null) {
@@ -583,23 +608,120 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
             return viewMap.get(position);
         }
         Notice notice = mNoticeList.get(position % mPagecount);
-        if((notice.getOperationType() & 1) == 0){
-        	Button view = new Button(mSphinx);
-        	view.setText(notice.getDescription());
-        	view.setBackgroundResource(R.drawable.btn_update);
-        	int padding = Utility.dip2px(mContext, 8);
-        	view.setPadding(padding, padding, padding, padding);
-        	viewMap.put(position, view);
-        	return view;
-        	
-        }else{
-        	ImageView view = new ImageView(mSphinx);
-        	refreshDrawable(notice.getpicTkDrawable(), view, R.drawable.txt_app_name);
-        	view.setScaleType(ScaleType.FIT_XY);
-        	viewMap.put(position, view);
-        	return view;
+        int noticeLayoutType = 0;
+        String title = notice.getNoticeTitle();
+        String description = notice.getDescription();
+        String picUrl = notice.getPicUrl();
+        int pd8 = Utility.dip2px(mContext, 8);
+        if(title != null && !TextUtils.isEmpty(title)){
+        	noticeLayoutType += 1;
         }
-    }    
+        if(picUrl != null && !TextUtils.isEmpty(picUrl)){
+        	noticeLayoutType += 2;
+        }
+        if(description != null && !TextUtils.isEmpty(description)){
+        	noticeLayoutType += 4;
+        }
+        switch(noticeLayoutType){
+        case 1:
+        	Button button1 = new Button(mSphinx);
+        	button1.setText(title);
+        	button1.setBackgroundResource(R.drawable.btn_update);
+        	button1.setPadding(pd8, pd8, pd8, pd8);
+        	button1.setTextSize(16);
+        	viewMap.put(position, button1);
+        	return button1;
+        case 2:
+        	ImageView imageView2 = new ImageView(mSphinx);
+        	refreshDrawable(notice.getpicTkDrawable(), imageView2, R.drawable.txt_app_name);
+        	imageView2.setScaleType(ScaleType.FIT_XY);
+        	viewMap.put(position, imageView2);
+        	return imageView2;
+        case 5:
+        	LinearLayout linearLayout5 = new LinearLayout(mSphinx);
+        	linearLayout5.setOrientation(VERTICAL);
+        	linearLayout5.setBackgroundResource(R.drawable.btn_update);
+        	linearLayout5.setGravity(Gravity.CENTER_HORIZONTAL);
+        	TextView titleTxv5 = new TextView(mSphinx);
+        	titleTxv5.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+        	titleTxv5.setPadding(pd8, 0, pd8, 0);
+        	titleTxv5.setTextSize(16);
+        	titleTxv5.setTextColor(getResources().getColor(R.color.black_dark));
+        	titleTxv5.setSingleLine(true);
+        	titleTxv5.setText(title);
+        	TextView descriptionTxv5 = new TextView(mSphinx);
+        	descriptionTxv5.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+        	descriptionTxv5.setPadding(pd8, 0, pd8, 0);
+        	descriptionTxv5.setTextSize(14);
+        	descriptionTxv5.setTextColor(getResources().getColor(R.color.black_dark));
+        	descriptionTxv5.setSingleLine(true);
+        	descriptionTxv5.setText(description);
+        	linearLayout5.addView(titleTxv5);
+        	linearLayout5.addView(descriptionTxv5);
+        	viewMap.put(position, linearLayout5);
+        	return linearLayout5;
+        case 3:
+        	LinearLayout linearLayout3 = new LinearLayout(mSphinx);
+        	ImageView imageView3 = new ImageView(mSphinx);
+        	linearLayout3.setOrientation(HORIZONTAL);
+        	linearLayout3.setBackgroundResource(R.drawable.btn_update);
+        	linearLayout3.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
+        	refreshDrawable(notice.getpicTkDrawable(), imageView3, R.drawable.txt_app_name);
+        	imageView3.setLayoutParams(new LayoutParams(Utility.dip2px(mContext, 48), Utility.dip2px(mContext, 48)));
+        	imageView3.setScaleType(ScaleType.FIT_XY);
+        	TextView titleTxv3 = new TextView(mSphinx);
+        	titleTxv3.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+        	titleTxv3.setTextSize(16);
+        	titleTxv3.setTextColor(getResources().getColor(R.color.black_dark));
+        	titleTxv3.setSingleLine(true);
+        	titleTxv3.setText(title);
+        	titleTxv3.setGravity(Gravity.LEFT | Gravity.CENTER_HORIZONTAL);
+        	titleTxv3.setPadding(Utility.dip2px(mContext, 26), pd8, pd8, pd8);
+        	linearLayout3.addView(imageView3);
+        	linearLayout3.addView(titleTxv3);
+        	viewMap.put(position, linearLayout3);
+        	return linearLayout3;
+        case 7:
+        	LinearLayout linearLayout7 = new LinearLayout(mSphinx);
+        	linearLayout7.setOrientation(HORIZONTAL);
+        	linearLayout7.setBackgroundResource(R.drawable.btn_update);
+        	ImageView imageView7 = new ImageView(mSphinx);
+        	refreshDrawable(notice.getpicTkDrawable(), imageView7, R.drawable.txt_app_name);
+        	imageView7.setLayoutParams(new LayoutParams(Utility.dip2px(mContext, 48), Utility.dip2px(mContext, 48)));
+        	imageView7.setScaleType(ScaleType.FIT_XY);
+        	LinearLayout textLly7 = new LinearLayout(mSphinx);
+        	textLly7.setOrientation(VERTICAL);
+        	textLly7.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
+        	textLly7.setGravity(Gravity.LEFT);
+        	TextView titleTxv7 = new TextView(mSphinx);
+        	titleTxv7.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+        	titleTxv7.setTextSize(16);
+        	titleTxv7.setTextColor(getResources().getColor(R.color.black_dark));
+        	titleTxv7.setSingleLine(true);
+        	titleTxv7.setText(title);
+        	titleTxv7.setPadding(Utility.dip2px(mContext, 26), 0, pd8, 0);
+        	TextView descriptionTxv7 = new TextView(mSphinx);
+        	descriptionTxv7.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+        	descriptionTxv7.setTextSize(14);
+        	descriptionTxv7.setTextColor(getResources().getColor(R.color.black_dark));
+        	descriptionTxv7.setSingleLine(true);
+        	descriptionTxv7.setText(description);
+        	descriptionTxv7.setPadding(Utility.dip2px(mContext, 26), 0, pd8, 0);
+        	textLly7.addView(titleTxv7);
+        	textLly7.addView(descriptionTxv7);
+        	linearLayout7.addView(imageView7);
+        	linearLayout7.addView(textLly7);
+        	viewMap.put(position, linearLayout7);
+        	return linearLayout7;
+        default:
+        	Button button = new Button(mSphinx);
+        	button.setText("该活动不存在或已失效");
+        	button.setBackgroundResource(R.drawable.btn_update);
+        	button.setPadding(pd8, pd8, pd8, pd8);
+        	viewMap.put(position, button);
+        	return button;
+        	}
+    }
 
 	public class MyAdapter extends PagerAdapter {
 	    
@@ -647,7 +769,6 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
                         intent.putExtra(BrowserActivity.URL, uri);
                         mSphinx.showView(R.id.activity_browser, intent);
                     }
-                    mNeedToRemove = fPosition % mPagecount;
 				}
 			});
 	        contain.addView(view, new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));

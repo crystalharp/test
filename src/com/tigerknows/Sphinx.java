@@ -2002,7 +2002,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 }
                 // 这一行需放在if外面以便于始终重试
                 // 而下边的Notice是不重试的所以不放外边
-                getMoreFragment().refreshAppRecommendData();
+                getMoreFragment().refreshBootStrapData();
             } else if (baseQuery instanceof NoticeQuery) {
             	Response response = baseQuery.getResponse();
             	if (response instanceof NoticeResultResponse) {
