@@ -44,6 +44,7 @@
 		        android:id="@+id/book_btn"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
+		        android:textColor="@color/white"
 		        android:background="@drawable/btn_hotel_book"
 		        android:layout_below="@id/price_txv"
 		        android:layout_alignParentRight="true"

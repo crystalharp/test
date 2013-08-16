@@ -242,10 +242,12 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             roomDetailTxv.setText(roomType.getBedType() + " " + roomType.getBreakfast() + " " + roomType.getNetService()
                     + " " + roomType.getFloor() + " " + roomType.getArea());
             if (roomType.getCanReserve() == 0) {
-                bookBtn.setEnabled(false);
+//                bookBtn.setEnabled(false);
+                refreshBookBtn(bookBtn, roomType.getCanReserve());
                 v.setClickable(false);
             } else {
-                bookBtn.setEnabled(true);
+//                bookBtn.setEnabled(true);
+                refreshBookBtn(bookBtn, roomType.getCanReserve());
                 try {
                     bookBtn.setTag(R.id.tag_hotel_room_type_data, roomType);
                     bookBtn.setTag(R.id.tag_hotel_room_child_view, v);
@@ -445,6 +447,19 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             hotelImage.setBackgroundResource(R.drawable.bg_picture_hotel);
         }
     }
+    
+    void refreshBookBtn(Button btn, long restRoom) {
+        if (restRoom > 3) {
+            btn.setText(mSphinx.getString(R.string.hotel_btn_book));
+            btn.setEnabled(true);
+        } else if (restRoom > 0) {
+            btn.setText(mSphinx.getString(R.string.hotel_btn_x_room_left, restRoom));
+            btn.setEnabled(true);
+        } else {
+            btn.setText(mSphinx.getString(R.string.hotel_btn_sold_out));
+            btn.setEnabled(false);
+        }
+    }
 
     class roomTypeClickListener implements View.OnClickListener{
         
@@ -602,7 +617,15 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             }
 
             if (baseQuery instanceof ProxyQuery) {
-                if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, true, this, false)) {
+                if (BaseActivity.checkResponseCode(baseQuery, mSphinx, new int[]{824}, true, this, false)) {
+                    if (response != null) {
+                        if (response.getResponseCode() == 824) {
+                            mClickedRoomType.setCanReserve(0);
+                            refreshBookBtn(mClickedBookBtn, 0);
+                            mClickedChild.setClickable(false);
+                            Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.hotel_no_room_left));
+                        }
+                    }
                     return;
                 }
                 RoomTypeDynamic roomInfo = ((RoomTypeDynamic)response);
@@ -613,7 +636,8 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
                 } else {
                     //更新按钮状态
                     mClickedRoomType.setCanReserve(0);
-                    mClickedBookBtn.setEnabled(false);
+                    refreshBookBtn(mClickedBookBtn, 0);
+//                    mClickedBookBtn.setEnabled(false);
                     mClickedChild.setClickable(false);
                     Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.hotel_no_room_left));
                 }
