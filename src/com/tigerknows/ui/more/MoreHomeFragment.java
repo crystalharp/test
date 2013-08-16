@@ -508,7 +508,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     private void refreshAppRecommendDrawable(){
     	final int len = Math.min(mRecommendAppList.size(), NUM_APP_RECOMMEND);
     	for (int i=0; i<NUM_APP_RECOMMEND && i<len; i++){
-    		refreshDrawable(mRecommendAppList.get(i).getIcon(), mAppRecommendImv[i], R.drawable.bg_picture_hotel_none);
+    		refreshDrawable(mRecommendAppList.get(i).getIcon(), mAppRecommendImv[i], R.drawable.bg_picture_none);
     		mAppRecommendTxv[i].setText(mRecommendAppList.get(i).getName());
     	}
     }
@@ -563,7 +563,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     	if (tkDrawable != null) {
     		Drawable drawable = tkDrawable.loadDrawable(mSphinx, mLoadedDrawableRun, MoreHomeFragment.this.toString());
     		if(drawable != null){
-    			if(defaultResId == R.drawable.bg_picture_hotel_none){
+    			if(defaultResId == R.drawable.bg_picture_none){
     				Rect bounds = drawable.getBounds();
     				if(bounds != null && (bounds.width() != imageView.getWidth() || bounds.height() != imageView.getHeight())){
     					imageView.setBackgroundDrawable(null);

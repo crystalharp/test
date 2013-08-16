@@ -662,7 +662,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                     }
                     
                 } else {
-                    pictureImv.setBackgroundResource(R.drawable.bg_picture_hotel_none);
+                    pictureImv.setBackgroundResource(R.drawable.bg_picture_none);
                 }
                 
                 if (hotel.getCanReserve() > 0) {

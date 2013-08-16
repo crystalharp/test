@@ -439,7 +439,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
                 }
             }
         } else {
-            hotelImage.setBackgroundResource(R.drawable.bg_picture_hotel_none);
+            hotelImage.setBackgroundResource(R.drawable.bg_picture_none);
             setDefault = false;
         }
         if (setDefault)  {
