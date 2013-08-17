@@ -114,6 +114,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     private double mTotalPrice;
     
     // 信用卡担保相关数据
+    private long mNeedCreditAssure;
     private long mTypeCreditAssure;
     private String mCreditCardNo;
     private String mVerifyCode;
@@ -307,8 +308,9 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         mRTime = rtList.get(mRTimeWhich).getTime();
         mRTimeDetail = rtList.get(mRTimeWhich).getTimeDetail();
         rtList.get(mRTimeWhich).getNeed();
+        mNeedCreditAssure = rtList.get(mRTimeWhich).getNeed();
         mTypeCreditAssure = rtList.get(mRTimeWhich).getType();
-        mRoomReserveBtn.setText(mRTime);
+        mRoomReserveBtn.setText(mRTime + ((mNeedCreditAssure == 1) ? mSphinx.getString(R.string.hotel_room_need_credit_assure) : "") );
     }
     
     public void setData(POI poi, RoomType roomtype, RoomTypeDynamic roomTypeDynamic, Calendar checkIn, Calendar checkOut ) {
