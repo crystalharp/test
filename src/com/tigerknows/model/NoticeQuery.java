@@ -114,6 +114,9 @@ public class NoticeQuery extends BaseQuery {
 				// 0x07 x_string web页标题
 				public static final byte FIELD_WEB_TITLE = 0x07;
 				
+				// 0x08 x_string 操作为2时的提示语
+				public static final byte FIELD_OP_2_HINT = 0x08;
+				
 				private long noticeId;
 				
 				private long operationType;
@@ -127,6 +130,8 @@ public class NoticeQuery extends BaseQuery {
 				private String picUrl;
 				
 				private String webTitle;
+				
+				private String opTwoHint;
 				
 				private TKDrawable picTKDrawable;
 				
@@ -158,6 +163,10 @@ public class NoticeQuery extends BaseQuery {
 					return webTitle;
 				}
 				
+				public String getOpTwoHint() {
+					return opTwoHint;
+				}
+				
 				public TKDrawable getpicTkDrawable() {
 					return picTKDrawable;
 				}
@@ -175,6 +184,7 @@ public class NoticeQuery extends BaseQuery {
 					this.url = getStringFromData(FIELD_URL);
 					this.picUrl = getStringFromData(FIELD_PIC_URL);
 					this.webTitle = getStringFromData(FIELD_WEB_TITLE);
+					this.opTwoHint = getStringFromData(FIELD_OP_2_HINT);
 					if(this.picUrl != null){
 						TKDrawable tkDrawable = new TKDrawable();
 						tkDrawable.setUrl(this.picUrl);
@@ -189,7 +199,6 @@ public class NoticeQuery extends BaseQuery {
 						return new Notice(data);
 					}
 				};
-
 			}
 			
 			public static XMapInitializer<NoticeResult> Initializer = new XMapInitializer<NoticeResult>(){

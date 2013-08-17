@@ -7,6 +7,8 @@ package com.tigerknows.ui;
 import android.graphics.Bitmap;
 import android.net.http.SslError;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
@@ -52,11 +54,20 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
     private Button mRefreshBtn;
     private Button mStopBtn;
     private String mURL;
+    private Handler mHandler;
+    private Runnable mCloseWeb = new Runnable(){
+
+		@Override
+		public void run() {
+			finish();
+		}
+    };
     
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mActionTag = ActionLog.Browser;
         mId = R.id.activity_browser;
+        mHandler = new Handler();
 
         if (mIntent == null) {
             finish();
@@ -119,6 +130,7 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
                 mProgressBar.setVisibility(View.VISIBLE);
                 if(url.contains("20130809-2374")){
                 	MoreHomeFragment.mUpdateUserSurveyHandle.sendEmptyMessage(1);
+                	mHandler.postDelayed(mCloseWeb, 10000);
                 }
             }
 

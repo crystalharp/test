@@ -966,6 +966,7 @@
     <string name="click_here_download_map">点击这里下载地图</string>
     <string name="wifi_enabled">wifi已开启</string>
     <string name="wifi_disabled">wifi已关闭</string>
+    <string name="user_survey_have_done">你已经做过用户调研啦！</string>
     
     <string name="user_survey">用户调研</string>
     

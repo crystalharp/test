@@ -121,25 +121,20 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     private RelativeLayout mNoticeRly;
     private NoticeResultResponse mNoticeResultResponse;
     private NoticeResult mNoticeResult;
-    private static List<Notice> mNoticeList = null;
-    private static int mPagecount = -1;
+    private List<Notice> mNoticeList = null;
+    private int mPagecount = -1;
     private ViewPager mViewPager;
     private HashMap<Integer, View> viewMap = new HashMap<Integer, View>();
     private ViewGroup mPageIndicatorView;
     private boolean mUpgradeMap;
+    public static int mCurrentUserSurveyPosition;
     
     public static Handler mUpdateUserSurveyHandle = new Handler(){
     	public void handleMessage(Message msg){
     		switch(msg.what) {
     		case 1:
-    			try{
-    				Notice notice = mNoticeList.get(mPosition % mPagecount);
-    				if(notice.getOperationType() == 2){
-    					mHaveDone[mPosition % mPagecount]=true;
-    				}
-    			} catch (Exception e) {
-    				e.printStackTrace();
-    			}
+    			mHaveDone[mCurrentUserSurveyPosition]=true;
+    			break;
     		}
     	}
     };
@@ -185,7 +180,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     private Handler mHandler;
 
 	private MyAdapter mMyAdapter;
-	private static int mPosition;
+	private int mPosition;
 
 	@Override
     public void onCreate(Bundle savedInstanceState) {
@@ -788,9 +783,22 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 					switch((int)notice.getOperationType()){
 					case 2:
 						if(mHaveDone[fPosition % mPagecount] == true){
-							Toast.makeText(mSphinx, "你已经做过用户调研啦！", Toast.LENGTH_LONG).show();
-							break;
+							String hint = notice.getOpTwoHint();
+							if(hint == null || TextUtils.isEmpty(hint)){
+								hint = mSphinx.getString(R.string.user_survey_have_done);
+							}
+							Toast.makeText(mSphinx, hint, Toast.LENGTH_LONG).show();
+						}else{
+							String uri = notice.getUrl();
+							if (!TextUtils.isEmpty(uri)) {
+								mCurrentUserSurveyPosition = fPosition % mPagecount;
+								Intent intent = new Intent();
+								intent.putExtra(BrowserActivity.TITLE, notice.getWebTitle());
+								intent.putExtra(BrowserActivity.URL, uri);
+								mSphinx.showView(R.id.activity_browser, intent);
+							}
 						}
+						break;
 					case 0:
 						String uri = notice.getUrl();
 						if (!TextUtils.isEmpty(uri)) {
