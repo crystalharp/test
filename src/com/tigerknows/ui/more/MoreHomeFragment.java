@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Rect;
@@ -133,7 +134,9 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     	public void handleMessage(Message msg){
     		switch(msg.what) {
     		case 1:
-    			mHaveDone[mCurrentUserSurveyPosition]=true;
+    			if(mCurrentUserSurveyPosition >= 0){
+    				mHaveDone[mCurrentUserSurveyPosition]=true;
+    			}
     			break;
     		}
     	}
@@ -194,7 +197,8 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
             Bundle savedInstanceState) {
         
         mRootView = mLayoutInflater.inflate(R.layout.more_home, container, false);
-    	mRightBtn = mSphinx.getTitleFragment().getRightTxv();        
+    	mRightBtn = mSphinx.getTitleFragment().getRightTxv();
+    	mCurrentUserSurveyPosition = -1;
         findViews();        
 
         setListener();
@@ -471,6 +475,8 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 			data.put(Notice.FIELD_NOTICE_TITLE, mSphinx.getString(R.string.message_tip_software_update));
 			data.put(Notice.FIELD_NOTICE_DESCRIPTION, "");
 			data.put(Notice.FIELD_URL, softwareUpdate.getURL());
+			data.put(Notice.FIELD_WEB_TITLE, mSphinx.getString(R.string.download_software_title));
+			data.put(Notice.FIELD_HINT, softwareUpdate.getText());
 			try {
 				Notice notice = new Notice(data);
 				mNoticeList.add(notice);
@@ -734,6 +740,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         default:
         	Button button = new Button(mSphinx);
         	button.setText("该活动不存在或已失效");
+        	button.setTextSize(16);
         	button.setBackgroundResource(R.drawable.btn_notice);
         	button.setPadding(pd8, pd8, pd8, pd8);
         	viewMap.put(position, button);
@@ -783,7 +790,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 					switch((int)notice.getOperationType()){
 					case 2:
 						if(mHaveDone[fPosition % mPagecount] == true){
-							String hint = notice.getOpTwoHint();
+							String hint = notice.getHint();
 							if(hint == null || TextUtils.isEmpty(hint)){
 								hint = mSphinx.getString(R.string.user_survey_have_done);
 							}
@@ -809,6 +816,28 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 						}
 						break;
 					case 1:
+						final Notice finalNotice = notice;
+						Utility.showNormalDialog(mSphinx,
+								finalNotice.getWebTitle(),
+								finalNotice.getHint(),
+								new DialogInterface.OnClickListener() {
+									
+									@Override
+				                    public void onClick(DialogInterface dialog, int id) {
+				                        switch (id) {
+				                            case DialogInterface.BUTTON_POSITIVE:
+				                                String url = finalNotice.getUrl();
+				                                if (url != null) {
+				                                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+				                                    mSphinx.startActivity(intent);
+				                                }
+				                                break;
+				                            default:
+				                                break;
+				                        }
+				                    }
+								});
+						break;
                     }
 				}
 			});
@@ -834,5 +863,37 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 	    }
 	
 	}
+    private void showDownloadSoftwareDialog() {
+
+        SoftwareUpdate softwareUpdate = null;
+        BootstrapModel bootstrapModel = Globals.g_Bootstrap_Model;
+        if (bootstrapModel != null) {
+            softwareUpdate = bootstrapModel.getSoftwareUpdate();
+        }
+        final SoftwareUpdate finalSoftwareUpdate = softwareUpdate;
+        if (finalSoftwareUpdate == null) {
+            return;
+        }
+        Utility.showNormalDialog(mSphinx,
+                mContext.getString(R.string.download_software_title), 
+                softwareUpdate.getText(),
+                new DialogInterface.OnClickListener() {
+                    
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        switch (id) {
+                            case DialogInterface.BUTTON_POSITIVE:
+                                String url = finalSoftwareUpdate.getURL();
+                                if (url != null) {
+                                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                                    mSphinx.startActivity(intent);
+                                }
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                });
+    }
 
 }

@@ -12,7 +12,6 @@ import android.content.Context;
 import android.text.TextUtils;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 
 /**
  * 用户行为日志类
