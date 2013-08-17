@@ -127,9 +127,9 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
                 mProgressBar.setVisibility(View.VISIBLE);
-                if(url.contains("20130809-2374")){
+                if(url.contains("status=TKS_FINISH")){
                 	MoreHomeFragment.mUpdateUserSurveyHandle.sendEmptyMessage(1);
-                	mHandler.postDelayed(mCloseWeb, 10000);
+                	mHandler.postDelayed(mCloseWeb, 6000);
                 }
             }
 

@@ -31,7 +31,7 @@
 	        <android.support.v4.view.ViewPager  
 	            android:id="@+id/view_pager"
 	            android:layout_width="fill_parent"
-	            android:layout_height="48dp"
+	            android:layout_height="56dp"
 	            android:focusable="true"
 	            />
 	        <LinearLayout
@@ -41,6 +41,7 @@
 	            android:orientation="horizontal"
 	            android:gravity="center_horizontal"
 	            android:layout_alignParentBottom="true"
+	            android:paddingBottom="4dp"
 	            />
 	    </RelativeLayout>
 	    <LinearLayout
@@ -185,7 +186,7 @@
                 android:background="@drawable/list_middle"
 	            android:paddingTop="8dp"
 	            android:paddingBottom="8dp"
-	            android:paddingRight="8dp"
+	            android:paddingRight="26dp"
 	            android:paddingLeft="16dp"
                 android:textColor="@color/black_dark"
                 android:textSize="16sp"
