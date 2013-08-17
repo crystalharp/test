@@ -21,6 +21,7 @@ import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import android.widget.Toast;
 import com.tigerknows.common.ActionLog;
+import com.tigerknows.ui.more.MoreHomeFragment;
 import com.tigerknows.util.Utility;
 
 /**
@@ -116,6 +117,9 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
                 mProgressBar.setVisibility(View.VISIBLE);
+                if(url.contains("20130809-2374")){
+                	MoreHomeFragment.mUpdateUserSurveyHandle.sendEmptyMessage(1);
+                }
             }
 
             @Override

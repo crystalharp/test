@@ -13,10 +13,10 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable.Orientation;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -29,10 +29,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
-import android.widget.LinearLayout.LayoutParams;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
@@ -78,7 +78,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     public static final int SHOW_COMMENT_TIP_TIMES = 3;
     private static final int NUM_APP_RECOMMEND = 5;
     
-    private static final int NOTICE_VERSION = 1;
+    private static final int NOTICE_VERSION = 2;
     
     private TextView mUserNameTxv;
     private TextView mCurrentCityTxv;
@@ -117,15 +117,32 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     
     public static DownloadCity CurrentDownloadCity;
     
+    public static boolean[] mHaveDone;
     private RelativeLayout mNoticeRly;
     private NoticeResultResponse mNoticeResultResponse;
     private NoticeResult mNoticeResult;
-    private List<Notice> mNoticeList = null;
-    private int mPagecount = -1;
+    private static List<Notice> mNoticeList = null;
+    private static int mPagecount = -1;
     private ViewPager mViewPager;
     private HashMap<Integer, View> viewMap = new HashMap<Integer, View>();
     private ViewGroup mPageIndicatorView;
     private boolean mUpgradeMap;
+    
+    public static Handler mUpdateUserSurveyHandle = new Handler(){
+    	public void handleMessage(Message msg){
+    		switch(msg.what) {
+    		case 1:
+    			try{
+    				Notice notice = mNoticeList.get(mPosition % mPagecount);
+    				if(notice.getOperationType() == 2){
+    					mHaveDone[mPosition % mPagecount]=true;
+    				}
+    			} catch (Exception e) {
+    				e.printStackTrace();
+    			}
+    		}
+    	}
+    };
 
     private Runnable mLoadedDrawableRun = new Runnable() {
         
@@ -168,7 +185,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     private Handler mHandler;
 
 	private MyAdapter mMyAdapter;
-	private int mPosition;
+	private static int mPosition;
 
 	@Override
     public void onCreate(Bundle savedInstanceState) {
@@ -478,8 +495,14 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 			}
 		}
 		mPagecount = (int)mNoticeList.size();
+		if(mPagecount > 0){
+			mHaveDone = new boolean[mPagecount];
+			for(int i=0; i<mPagecount; i++){
+				mHaveDone[i] = false;
+			}
+		}
         if(mPagecount > 1){
-        	Utility.pageIndicatorInit(mSphinx, mPageIndicatorView, mPagecount, 0, R.drawable.ic_learn_dot_normal, R.drawable.ic_learn_dot_selected);
+        	Utility.pageIndicatorInit(mSphinx, mPageIndicatorView, mPagecount, 0, R.drawable.ic_notice_dot_normal, R.drawable.ic_notice_dot_selected);
         	mNoticeRly.setVisibility(View.VISIBLE);
         	mViewPager.setCurrentItem(mPagecount * VIEW_PAGE_LEFT);
         	mPosition = 0;
@@ -491,7 +514,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         			mHandler.removeCallbacks(mNoticeNextRun);
         			mHandler.postDelayed(mNoticeNextRun, 4000);
         			mPosition = index % mPagecount;
-        			Utility.pageIndicatorChanged(mSphinx, mPageIndicatorView, mPosition, R.drawable.ic_learn_dot_normal, R.drawable.ic_learn_dot_selected);
+        			Utility.pageIndicatorChanged(mSphinx, mPageIndicatorView, mPosition, R.drawable.ic_notice_dot_normal, R.drawable.ic_notice_dot_selected);
         			mActionLog.addAction(mActionTag+ActionLog.ViewPageSelected, mPosition);
         		}
         		
@@ -626,7 +649,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         case 1:
         	Button button1 = new Button(mSphinx);
         	button1.setText(title);
-        	button1.setBackgroundResource(R.drawable.btn_update);
+        	button1.setBackgroundResource(R.drawable.btn_notice);
         	button1.setPadding(pd8, pd8, pd8, pd8);
         	button1.setTextSize(16);
         	viewMap.put(position, button1);
@@ -640,7 +663,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         case 5:
         	LinearLayout linearLayout5 = new LinearLayout(mSphinx);
         	linearLayout5.setOrientation(VERTICAL);
-        	linearLayout5.setBackgroundResource(R.drawable.btn_update);
+        	linearLayout5.setBackgroundResource(R.drawable.btn_notice);
         	linearLayout5.setGravity(Gravity.CENTER_HORIZONTAL);
         	TextView titleTxv5 = new TextView(mSphinx);
         	titleTxv5.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
@@ -664,7 +687,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         	LinearLayout linearLayout3 = new LinearLayout(mSphinx);
         	ImageView imageView3 = new ImageView(mSphinx);
         	linearLayout3.setOrientation(HORIZONTAL);
-        	linearLayout3.setBackgroundResource(R.drawable.btn_update);
+        	linearLayout3.setBackgroundResource(R.drawable.btn_notice);
         	linearLayout3.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
         	refreshDrawable(notice.getpicTkDrawable(), imageView3, R.drawable.txt_app_name);
         	imageView3.setLayoutParams(new LayoutParams(Utility.dip2px(mContext, 48), Utility.dip2px(mContext, 48)));
@@ -684,7 +707,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         case 7:
         	LinearLayout linearLayout7 = new LinearLayout(mSphinx);
         	linearLayout7.setOrientation(HORIZONTAL);
-        	linearLayout7.setBackgroundResource(R.drawable.btn_update);
+        	linearLayout7.setBackgroundResource(R.drawable.btn_notice);
         	ImageView imageView7 = new ImageView(mSphinx);
         	refreshDrawable(notice.getpicTkDrawable(), imageView7, R.drawable.txt_app_name);
         	imageView7.setLayoutParams(new LayoutParams(Utility.dip2px(mContext, 48), Utility.dip2px(mContext, 48)));
@@ -716,7 +739,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         default:
         	Button button = new Button(mSphinx);
         	button.setText("该活动不存在或已失效");
-        	button.setBackgroundResource(R.drawable.btn_update);
+        	button.setBackgroundResource(R.drawable.btn_notice);
         	button.setPadding(pd8, pd8, pd8, pd8);
         	viewMap.put(position, button);
         	return button;
@@ -762,12 +785,22 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 				public void onClick(View v) {
 					mActionLog.addAction(mActionTag + ActionLog.MoreNotice);
 					Notice notice = mNoticeList.get(fPosition % mPagecount);
-                    String uri = notice.getUrl();
-                    if (!TextUtils.isEmpty(uri)) {
-                        Intent intent = new Intent();
-                        intent.putExtra(BrowserActivity.TITLE, notice.getWebTitle());
-                        intent.putExtra(BrowserActivity.URL, uri);
-                        mSphinx.showView(R.id.activity_browser, intent);
+					switch((int)notice.getOperationType()){
+					case 2:
+						if(mHaveDone[fPosition % mPagecount] == true){
+							Toast.makeText(mSphinx, "你已经做过用户调研啦！", Toast.LENGTH_LONG).show();
+							break;
+						}
+					case 0:
+						String uri = notice.getUrl();
+						if (!TextUtils.isEmpty(uri)) {
+							Intent intent = new Intent();
+							intent.putExtra(BrowserActivity.TITLE, notice.getWebTitle());
+							intent.putExtra(BrowserActivity.URL, uri);
+							mSphinx.showView(R.id.activity_browser, intent);
+						}
+						break;
+					case 1:
                     }
 				}
 			});
