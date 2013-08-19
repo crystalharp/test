@@ -471,7 +471,6 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 		mNoticeResult = mNoticeResultResponse.getNoticeResult();
 		mNoticeList = new ArrayList<Notice>();
 		mSoftwareUpdate = bootstrapModel.getSoftwareUpdate();
-		LogWrapper.d("Trap", "Page:"+mPagecount);
 		if(mSoftwareUpdate != null){
 			XMap data = new XMap();
 			data.put(Notice.FIELD_NOTICE_ID, mSoftwareUpdate.getId());
@@ -486,7 +485,6 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 				e.printStackTrace();
 			}
 		}
-		LogWrapper.d("Trap", "Page:"+mPagecount);
 		if(mNoticeResult != null){
 			List<Notice> noticeList = mNoticeResult.getNoticeList();
 			if(noticeList != null){
@@ -499,7 +497,6 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 			}
 		}
 		mPagecount = (int)mNoticeList.size();
-		LogWrapper.d("Trap", "Page:"+mPagecount);
         if(mPagecount > 1){
         	Utility.pageIndicatorInit(mSphinx, mPageIndicatorView, mPagecount, 0, R.drawable.ic_notice_dot_normal, R.drawable.ic_notice_dot_selected);
         	mNoticeRly.setVisibility(View.VISIBLE);
@@ -510,6 +507,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         		@Override
         		public void onPageSelected(int index) {
         			LogWrapper.d("Trap", "Select:"+index);
+        			refreshAllNoticeDrawable();
         			mHandler.removeCallbacks(mNoticeNextRun);
         			mHandler.postDelayed(mNoticeNextRun, 4000);
         			mPosition = index % mPagecount;
@@ -529,6 +527,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         }else if(mPagecount == 1){
         	mNoticeRly.setVisibility(View.VISIBLE);
         	mViewPager.setCurrentItem(0);
+        	refreshAllNoticeDrawable();
         	mPosition = 0;
         }
     }
@@ -606,9 +605,9 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     		for(int i=0; i<mapPagecount; i++){
     			if(imageViewMap.containsKey(i)){
     				if(getView(i).getClass() == ImageView.class){
-    					refreshDrawable(mNoticeList.get(mPosition).getpicTkDrawable(), imageViewMap.get(i), R.drawable.bg_picture_detail, false);
+    					refreshDrawable(mNoticeList.get(i % mPagecount).getpicTkDrawable(), imageViewMap.get(i), R.drawable.bg_picture_detail, false);
     				}else{
-    					refreshDrawable(mNoticeList.get(mPosition).getpicTkDrawable(), imageViewMap.get(i), R.drawable.bg_picture_none, false);
+    					refreshDrawable(mNoticeList.get(i % mPagecount).getpicTkDrawable(), imageViewMap.get(i), R.drawable.bg_picture_none, false);
     				}
     			}
     		}
