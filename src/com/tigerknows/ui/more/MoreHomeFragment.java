@@ -18,7 +18,6 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -34,8 +33,6 @@ import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
 import com.decarta.android.util.LogWrapper;
@@ -145,7 +142,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         
         @Override
         public void run() {
-        	refreshCurrentNoticeDrawable();
+        	refreshAllNoticeDrawable();
         	refreshAppRecommendDrawable();
         }
     };
@@ -174,7 +171,6 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 
 	private MyAdapter mMyAdapter;
 	private int mPosition;
-
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -305,7 +301,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         refreshMoreData();
         refreshCity(Globals.getCurrentCityInfo().getCName());
         refreshGoCommentData();
-        refreshCurrentNoticeDrawable();
+        refreshAllNoticeDrawable();
     	refreshMapDownloadData();
 
         if(mPagecount > 1){
@@ -604,17 +600,26 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         }
     }
     
-    private void refreshCurrentNoticeDrawable(){
-    	if(mPagecount > 0 && getView(mPosition).getClass() == ImageView.class){
-    		refreshDrawable(mNoticeList.get(mPosition).getpicTkDrawable(), (ImageView)getView(mPosition), R.drawable.bg_picture_detail, false);
+    private void refreshAllNoticeDrawable(){
+    	if(mPagecount > 0){
+    		int mapPagecount = (mPagecount == 2 || mPagecount ==3) ? 2*mPagecount : mPagecount;
+    		for(int i=0; i<mapPagecount; i++){
+    			if(imageViewMap.containsKey(i)){
+    				if(getView(i).getClass() == ImageView.class){
+    					refreshDrawable(mNoticeList.get(mPosition).getpicTkDrawable(), imageViewMap.get(i), R.drawable.bg_picture_detail, false);
+    				}else{
+    					refreshDrawable(mNoticeList.get(mPosition).getpicTkDrawable(), imageViewMap.get(i), R.drawable.bg_picture_none, false);
+    				}
+    			}
+    		}
     	}
     }
     
-    private void refreshDrawable(TKDrawable tkDrawable, ImageView imageView, int defaultResId, boolean isAppRecommend){
+    private void refreshDrawable(TKDrawable tkDrawable, ImageView imageView, int defaultResId, boolean needRefresh){
     	if (tkDrawable != null) {
     		Drawable drawable = tkDrawable.loadDrawable(mSphinx, mLoadedDrawableRun, MoreHomeFragment.this.toString());
     		if(drawable != null){
-    			if(isAppRecommend == true){
+    			if(needRefresh == true){
     				Rect bounds = drawable.getBounds();
     				if(bounds != null && (bounds.width() != imageView.getWidth() || bounds.height() != imageView.getHeight())){
     					imageView.setBackgroundDrawable(null);
@@ -631,9 +636,6 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     	if(mPagecount == 2 || mPagecount == 3)position = position % (2*mPagecount);
     	else position = position % mPagecount;
     	Notice notice = mNoticeList.get(position % mPagecount);
-    	if (imageViewMap.containsKey(position)){
-    		refreshDrawable(notice.getpicTkDrawable(), imageViewMap.get(position), R.drawable.bg_picture_none, false);
-    	}
         if (viewMap.containsKey(position)) {
             return viewMap.get(position);
         }
@@ -665,6 +667,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         	ImageView imageView2 = new ImageView(mSphinx);
         	refreshDrawable(notice.getpicTkDrawable(), imageView2, R.drawable.bg_picture_detail, false);
         	imageView2.setScaleType(ScaleType.FIT_XY);
+        	imageViewMap.put(position, imageView2);
         	viewMap.put(position, imageView2);
         	return imageView2;
         case 5:
@@ -786,7 +789,6 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 	
 	    @Override
 	    public void destroyItem(View contain, int position, Object arg2) {
-	    	LogWrapper.d("Trap", "Remove:"+position);
 	         ((ViewPager) contain).removeView(getView(position));
 	    }
 	
@@ -794,7 +796,6 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 	    public Object instantiateItem(ViewGroup contain, int position) {
 	        View view = getView(position);
 	        final int fPosition = position;
-	    	LogWrapper.d("Trap", "Init:"+fPosition);
 	        view.setOnClickListener(new OnClickListener() {
 				
 				@Override
