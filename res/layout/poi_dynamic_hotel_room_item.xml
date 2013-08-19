@@ -39,6 +39,17 @@
 		        android:textSize="18sp"
 		        android:textColor="@color/orange"
 		        android:text="199" />
+		    
+		    <TextView 
+		        android:id="@+id/guarantee_txv"
+		        android:layout_below="@id/price_txv"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+	            android:textSize="14sp"
+	            android:textColor="@color/text_gray"
+		        android:layout_alignParentRight="true"
+		        android:text="@string/hotel_room_need_guarantee"
+		        />
 		
 		    <Button
 		        android:id="@+id/book_btn"
@@ -46,7 +57,7 @@
 		        android:layout_height="wrap_content"
 		        android:textColor="@color/white"
 		        android:background="@drawable/btn_hotel_book"
-		        android:layout_below="@id/price_txv"
+		        android:layout_below="@id/guarantee_txv"
 		        android:layout_alignParentRight="true"
 		        />
 
@@ -72,6 +83,17 @@
 	            android:textColor="@color/black"
 	            android:textSize="14sp"
 	            android:text="@string/app_name" />
+	        
+	        <TextView 
+	            android:id="@+id/room_subtitle"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_toRightOf="@id/room_type_txv"
+	            android:textSize="14sp"
+	            android:textColor="@color/text_gray"
+	            android:layout_marginLeft="4dp"
+	            android:text="入住4天起"
+	            />
 	
 	        <TextView
 	            android:id="@+id/room_detail_txv"

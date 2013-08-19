@@ -236,11 +236,15 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             TextView priceTxv = (TextView) v.findViewById(R.id.price_txv);
             TextView roomTypeTxv = (TextView) v.findViewById(R.id.room_type_txv);
             TextView roomDetailTxv = (TextView) v.findViewById(R.id.room_detail_txv);
+            TextView roomGuaranteeTxv = (TextView) v.findViewById(R.id.guarantee_txv);
+            TextView roomSubtitle = (TextView) v.findViewById(R.id.room_subtitle);
             Button bookBtn = (Button) v.findViewById(R.id.book_btn);
             priceTxv.setText(roomType.getPrice());
             roomTypeTxv.setText(roomType.getRoomType());
             roomDetailTxv.setText(roomType.getBedType() + " " + roomType.getBreakfast() + " " + roomType.getNetService()
                     + " " + roomType.getFloor() + " " + roomType.getArea());
+            roomGuaranteeTxv.setVisibility(roomType.getNeedGuarantee() == 0 ? View.GONE : View.VISIBLE);
+            roomSubtitle.setText(roomType.getSubtitle());
             if (roomType.getCanReserve() == 0) {
 //                bookBtn.setEnabled(false);
                 refreshBookBtn(bookBtn, roomType.getCanReserve());
