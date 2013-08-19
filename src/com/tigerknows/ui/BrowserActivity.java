@@ -53,20 +53,11 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
     private Button mRefreshBtn;
     private Button mStopBtn;
     private String mURL;
-    private Handler mHandler;
-    private Runnable mCloseWeb = new Runnable(){
-
-		@Override
-		public void run() {
-			finish();
-		}
-    };
-    
+   
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mActionTag = ActionLog.Browser;
         mId = R.id.activity_browser;
-        mHandler = new Handler();
 
         if (mIntent == null) {
             finish();
@@ -127,10 +118,6 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
                 mProgressBar.setVisibility(View.VISIBLE);
-                if(url.contains("status=TKS_FINISH")){
-                	MoreHomeFragment.mUpdateUserSurveyHandle.sendEmptyMessage(1);
-                	mHandler.postDelayed(mCloseWeb, 6000);
-                }
             }
 
             @Override
