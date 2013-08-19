@@ -3006,16 +3006,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             return false;
         }
         CityInfo cityInfo = Globals.g_My_Location_City_Info;
-        if (TKConfig.getPref(this, TKConfig.PREFS_HINT_HOME_DRAG) == null) {
-        	mDragHintView.setVisibility(View.VISIBLE);
-        	TKConfig.setPref(mThis, TKConfig.PREFS_HINT_HOME_DRAG, "1");
-        } else if (TKConfig.getPref(this, TKConfig.PREFS_HINT_POI_HOME_HOTEL) == null &&
-                mDragHintView.getVisibility() != View.VISIBLE) {
-            TKConfig.setPref(mThis, TKConfig.PREFS_HINT_POI_HOME_HOTEL, "1");
-            mDragHintView.removeAllViews();
-            mDragHintView.setVisibility(View.VISIBLE);
-            mLayoutInflater.inflate(R.layout.hint_poi_home_hotel, mDragHintView, true);
-        } else if (cityInfo != null && cityInfo.getId() == Globals.getCurrentCityInfo(false).getId() &&
+        if (cityInfo != null && cityInfo.getId() == Globals.getCurrentCityInfo(false).getId() &&
                 TKConfig.getPref(this, TKConfig.PREFS_HINT_POI_HOME_LOCATION) == null &&
                 mDragHintView.getVisibility() != View.VISIBLE) {
             TKConfig.setPref(mThis, TKConfig.PREFS_HINT_POI_HOME_LOCATION, "1");
@@ -3027,22 +3018,11 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     }
     
     void hideHomeDragHint() {
-        CityInfo cityInfo = Globals.g_My_Location_City_Info;
-        if (TKConfig.getPref(mThis, TKConfig.PREFS_HINT_POI_HOME_HOTEL) == null) {
-            TKConfig.setPref(mThis, TKConfig.PREFS_HINT_POI_HOME_HOTEL, "1");
-            mDragHintView.removeAllViews();
-            mLayoutInflater.inflate(R.layout.hint_poi_home_hotel, mDragHintView, true);
-        } else if (cityInfo != null && cityInfo.getId() == Globals.getCurrentCityInfo(false).getId() &&
-                TKConfig.getPref(mThis, TKConfig.PREFS_HINT_POI_HOME_LOCATION) == null) {
-            TKConfig.setPref(mThis, TKConfig.PREFS_HINT_POI_HOME_LOCATION, "1");
-            mDragHintView.removeAllViews();
-            mLayoutInflater.inflate(R.layout.hint_poi_home_location, mDragHintView, true);
-        } else {
-        	mDragHintView.setVisibility(View.GONE);
-    		if (dialogId != -1) {
-    			showLocationDialog(dialogId);
-    			dialogId = -1;
-    		}
+        mDragHintView.removeAllViews();
+        mDragHintView.setVisibility(View.GONE);
+        if (dialogId != -1) {
+            showLocationDialog(dialogId);
+            dialogId = -1;
         }
     }
     
