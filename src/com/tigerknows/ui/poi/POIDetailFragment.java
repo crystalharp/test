@@ -941,7 +941,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         List<POI> pois = new ArrayList<POI>();
         pois.add(poi);
         mSphinx.showPOI(pois, 0);
-        mSphinx.getResultMapFragment().setData(mContext.getString(R.string.result_map), ActionLog.POIDetailMap);
+        mSphinx.getResultMapFragment().setData(mContext.getString(R.string.result_map), poi.getSourceType() == POI.SOURCE_TYPE_HOTEL ? ActionLog.POIHotelDetailMap : ActionLog.POIDetailMap);
         mSphinx.showView(R.id.view_result_map);
     }
     

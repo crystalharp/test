@@ -497,7 +497,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             }
         }
         mSphinx.showPOI(poiList, firstIndex);
-        mSphinx.getResultMapFragment().setData(mContext.getString(R.string.result_map), ActionLog.POIListMap);
+        mSphinx.getResultMapFragment().setData(mContext.getString(R.string.result_map), BaseQuery.SUB_DATA_TYPE_HOTEL.equals(mResultAdapter.getSubDataType()) ? ActionLog.POIHotelListMap : ActionLog.POIListMap);
         mSphinx.showView(R.id.view_result_map);   
     }
     
