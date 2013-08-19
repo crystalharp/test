@@ -5,12 +5,6 @@
     android:layout_height="wrap_content"
     android:layout_width="wrap_content"
     >
-    <LinearLayout
-    android:orientation="horizontal"
-    android:layout_height="wrap_content"
-    android:layout_width="wrap_content"
-    android:padding="4dp"
-    >
     <ImageButton 
         android:id="@+id/start_btn"
         android:layout_width="wrap_content"
@@ -18,26 +12,21 @@
         android:src="@drawable/btn_prompt_traffic_start_normal"
         android:background="@color/transparent"
         android:contentDescription="@string/app_name"
-        android:paddingLeft="8dp"
         android:paddingRight="8dp"
-        android:paddingBottom="8dp"
+        android:layout_gravity="center_vertical"
         />
         
     <View android:layout_width="1dip"
         android:background="@color/infowindow_split_line"
         android:layout_height="fill_parent"
         android:id="@+id/sep1"
-        android:layout_marginTop="6dp"
         android:layout_marginRight="8dp"
-        android:layout_marginBottom="12dp"
         >
     </View>
     <RelativeLayout
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:orientation="vertical"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="8dp"
         android:layout_gravity="center_vertical"
         >
         
@@ -58,8 +47,6 @@
         android:layout_height="fill_parent"
         android:layout_width="1dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="6dp"
-        android:layout_marginBottom="12dp"
         >
     </View>
     <ImageButton 
@@ -69,9 +56,6 @@
         android:src="@drawable/btn_prompt_traffic_end_normal"
         android:background="@color/transparent"
         android:contentDescription="@string/app_name"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp"
-        android:paddingBottom="8dp"
+        android:layout_gravity="center_vertical"
         />
-    </LinearLayout>
 </LinearLayout>

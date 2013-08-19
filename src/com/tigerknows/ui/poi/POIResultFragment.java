@@ -416,8 +416,6 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             if (mRightBtn != null)
                 mRightBtn.setVisibility(mPOIList.size() > 0 ? View.VISIBLE : View.GONE);
             
-            mSphinx.showHint(TKConfig.PREFS_HINT_POI_LIST, R.layout.hint_poi_list);
-            
             boolean footerSpringback = mResultLsv.isFooterSpringback();
             View v = mCurrentFootView;
             boolean addMerchant = false;

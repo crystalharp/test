@@ -139,8 +139,6 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         mTitleBtn.setText(R.string.hotel_reserve);
         refreshDate();
         
-        mSphinx.showHint(TKConfig.PREFS_HINT_HOTEL_HOME, R.layout.hint_hotel_home);
-        
         if (mPOI != null) {
             FilterListView.selectedFilter(getFilter(getFilterList(), FilterArea.FIELD_LIST), -1);
         }
