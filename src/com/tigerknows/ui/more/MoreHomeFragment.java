@@ -80,10 +80,11 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     public static final int SHOW_COMMENT_TIP_TIMES = 3;
     private static final int NUM_APP_RECOMMEND = 5;
     
-    private static final int NOTICE_VERSION = 2;
+    private static final int NOTICE_VERSION = 0;
     
     private TextView mUserNameTxv;
     private TextView mCurrentCityTxv;
+    private TextView mUpgradeMapTxv;
     private Button mUserBtn;
     private Button mChangeCityBtn;
     private Button mDownloadMapBtn;
@@ -119,7 +120,6 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     
     public static DownloadCity CurrentDownloadCity;
     
-    public static boolean[] mHaveDone;
     private RelativeLayout mNoticeRly;
     private NoticeResultResponse mNoticeResultResponse;
     private NoticeResult mNoticeResult;
@@ -127,21 +127,10 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     private int mPagecount = -1;
     private ViewPager mViewPager;
     private HashMap<Integer, View> viewMap = new HashMap<Integer, View>();
+    private HashMap<Integer, ImageView> imageViewMap = new HashMap<Integer, ImageView>();
     private ViewGroup mPageIndicatorView;
     private boolean mUpgradeMap;
-    public static int mCurrentUserSurveyPosition;
-    
-    public static Handler mUpdateUserSurveyHandle = new Handler(){
-    	public void handleMessage(Message msg){
-    		switch(msg.what) {
-    		case 1:
-    			if(mCurrentUserSurveyPosition >= 0){
-    				mHaveDone[mCurrentUserSurveyPosition]=true;
-    			}
-    			break;
-    		}
-    	}
-    };
+    private SoftwareUpdate mSoftwareUpdate;
 
     private Runnable mLoadedDrawableRun = new Runnable() {
         
@@ -199,7 +188,6 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         
         mRootView = mLayoutInflater.inflate(R.layout.more_home, container, false);
     	mRightBtn = mSphinx.getTitleFragment().getRightTxv();
-    	mCurrentUserSurveyPosition = -1;
         findViews();        
 
         setListener();
@@ -231,6 +219,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     	mNoticeRly = (RelativeLayout) mRootView.findViewById(R.id.notice_rly);
         mCurrentCityTxv = (TextView) mRootView.findViewById(R.id.current_city_txv);
         mUserNameTxv = (TextView) mRootView.findViewById(R.id.user_name_txv);
+        mUpgradeMapTxv = (TextView) mRootView.findViewById(R.id.upgrade_map_txv);
         mUserBtn = (Button)mRootView.findViewById(R.id.user_btn);
         mChangeCityBtn = (Button)mRootView.findViewById(R.id.change_city_btn);
         mDownloadMapBtn = (Button)mRootView.findViewById(R.id.download_map_btn);
@@ -422,14 +411,9 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         	mUpgradeMap = true;
         }
         if (mUpgradeMap) {
-    		Drawable[] drawables = mDownloadMapBtn.getCompoundDrawables();
-    		drawables[2] = mContext.getResources().getDrawable(R.drawable.ic_satisfy_new);
-    		drawables[2].setBounds(0, 0, drawables[2].getIntrinsicWidth(), drawables[2].getIntrinsicHeight());
-    		mDownloadMapBtn.setCompoundDrawables(drawables[0], drawables[1], drawables[2], drawables[3]);
-    		mDownloadMapBtn.setCompoundDrawablePadding(Utility.dip2px(mContext, 20));
+        	mUpgradeMapTxv.setVisibility(View.VISIBLE);
     	}else{
-    		Drawable[] drawables = mDownloadMapBtn.getCompoundDrawables();
-    		mDownloadMapBtn.setCompoundDrawables(drawables[0], drawables[1], null, drawables[3]);
+    		mUpgradeMapTxv.setVisibility(View.GONE);
     	}
     }
     
@@ -490,23 +474,23 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     	}
 		mNoticeResult = mNoticeResultResponse.getNoticeResult();
 		mNoticeList = new ArrayList<Notice>();
-		SoftwareUpdate softwareUpdate = bootstrapModel.getSoftwareUpdate();
-		if(softwareUpdate != null){
+		mSoftwareUpdate = bootstrapModel.getSoftwareUpdate();
+		LogWrapper.d("Trap", "Page:"+mPagecount);
+		if(mSoftwareUpdate != null){
 			XMap data = new XMap();
-			data.put(Notice.FIELD_NOTICE_ID, softwareUpdate.getId());
-			data.put(Notice.FIELD_OPERATION_TYPE, 1);
+			data.put(Notice.FIELD_NOTICE_ID, mSoftwareUpdate.getId());
+			data.put(Notice.FIELD_OPERATION_TYPE, 0);
 			data.put(Notice.FIELD_NOTICE_TITLE, mSphinx.getString(R.string.message_tip_software_update));
 			data.put(Notice.FIELD_NOTICE_DESCRIPTION, "");
-			data.put(Notice.FIELD_URL, softwareUpdate.getURL());
-			data.put(Notice.FIELD_WEB_TITLE, mSphinx.getString(R.string.download_software_title));
-			data.put(Notice.FIELD_HINT, softwareUpdate.getText());
+			data.put(Notice.FIELD_URL, mSoftwareUpdate.getURL());
 			try {
-				Notice notice = new Notice(data);
+				Notice notice = new Notice(data, 1);
 				mNoticeList.add(notice);
 			} catch (APIException e){
 				e.printStackTrace();
 			}
 		}
+		LogWrapper.d("Trap", "Page:"+mPagecount);
 		if(mNoticeResult != null){
 			List<Notice> noticeList = mNoticeResult.getNoticeList();
 			if(noticeList != null){
@@ -519,12 +503,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 			}
 		}
 		mPagecount = (int)mNoticeList.size();
-		if(mPagecount > 0){
-			mHaveDone = new boolean[mPagecount];
-			for(int i=0; i<mPagecount; i++){
-				mHaveDone[i] = false;
-			}
-		}
+		LogWrapper.d("Trap", "Page:"+mPagecount);
         if(mPagecount > 1){
         	Utility.pageIndicatorInit(mSphinx, mPageIndicatorView, mPagecount, 0, R.drawable.ic_notice_dot_normal, R.drawable.ic_notice_dot_selected);
         	mNoticeRly.setVisibility(View.VISIBLE);
@@ -580,7 +559,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     private void refreshAppRecommendDrawable(){
     	final int len = Math.min(mRecommendAppList.size(), NUM_APP_RECOMMEND);
     	for (int i=0; i<NUM_APP_RECOMMEND && i<len; i++){
-    		refreshDrawable(mRecommendAppList.get(i).getIcon(), mAppRecommendImv[i], R.drawable.bg_picture_none);
+    		refreshDrawable(mRecommendAppList.get(i).getIcon(), mAppRecommendImv[i], R.drawable.bg_picture_none, true);
     		mAppRecommendTxv[i].setText(mRecommendAppList.get(i).getName());
     	}
     }
@@ -627,15 +606,15 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     
     private void refreshCurrentNoticeDrawable(){
     	if(mPagecount > 0 && getView(mPosition).getClass() == ImageView.class){
-    		refreshDrawable(mNoticeList.get(mPosition).getpicTkDrawable(), (ImageView)getView(mPosition), R.drawable.txt_app_name);
+    		refreshDrawable(mNoticeList.get(mPosition).getpicTkDrawable(), (ImageView)getView(mPosition), R.drawable.bg_picture_detail, false);
     	}
     }
     
-    private void refreshDrawable(TKDrawable tkDrawable, ImageView imageView, int defaultResId){
+    private void refreshDrawable(TKDrawable tkDrawable, ImageView imageView, int defaultResId, boolean isAppRecommend){
     	if (tkDrawable != null) {
     		Drawable drawable = tkDrawable.loadDrawable(mSphinx, mLoadedDrawableRun, MoreHomeFragment.this.toString());
     		if(drawable != null){
-    			if(defaultResId == R.drawable.bg_picture_none){
+    			if(isAppRecommend == true){
     				Rect bounds = drawable.getBounds();
     				if(bounds != null && (bounds.width() != imageView.getWidth() || bounds.height() != imageView.getHeight())){
     					imageView.setBackgroundDrawable(null);
@@ -651,10 +630,13 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     public View getView(int position) {
     	if(mPagecount == 2 || mPagecount == 3)position = position % (2*mPagecount);
     	else position = position % mPagecount;
+    	Notice notice = mNoticeList.get(position % mPagecount);
+    	if (imageViewMap.containsKey(position)){
+    		refreshDrawable(notice.getpicTkDrawable(), imageViewMap.get(position), R.drawable.bg_picture_none, false);
+    	}
         if (viewMap.containsKey(position)) {
             return viewMap.get(position);
         }
-        Notice notice = mNoticeList.get(position % mPagecount);
         int noticeLayoutType = 0;
         String title = notice.getNoticeTitle();
         String description = notice.getDescription();
@@ -681,7 +663,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         	return button1;
         case 2:
         	ImageView imageView2 = new ImageView(mSphinx);
-        	refreshDrawable(notice.getpicTkDrawable(), imageView2, R.drawable.txt_app_name);
+        	refreshDrawable(notice.getpicTkDrawable(), imageView2, R.drawable.bg_picture_detail, false);
         	imageView2.setScaleType(ScaleType.FIT_XY);
         	viewMap.put(position, imageView2);
         	return imageView2;
@@ -714,7 +696,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         	linearLayout3.setOrientation(HORIZONTAL);
         	linearLayout3.setBackgroundResource(R.drawable.btn_notice);
         	linearLayout3.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
-        	refreshDrawable(notice.getpicTkDrawable(), imageView3, R.drawable.txt_app_name);
+        	refreshDrawable(notice.getpicTkDrawable(), imageView3, R.drawable.bg_picture_none, false);
         	LinearLayout.LayoutParams layoutParams3 = new LayoutParams(Utility.dip2px(mContext, 48), Utility.dip2px(mContext, 48));
         	layoutParams3.setMargins(Utility.dip2px(mContext, 16), 0, 0, 0);
         	layoutParams3.gravity = Gravity.CENTER_VERTICAL;
@@ -730,6 +712,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         	titleTxv3.setPadding(Utility.dip2px(mContext, 26), pd8, pd8, pd8);
         	linearLayout3.addView(imageView3);
         	linearLayout3.addView(titleTxv3);
+        	imageViewMap.put(position, imageView3);
         	viewMap.put(position, linearLayout3);
         	return linearLayout3;
         case 7:
@@ -737,7 +720,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         	linearLayout7.setOrientation(HORIZONTAL);
         	linearLayout7.setBackgroundResource(R.drawable.btn_notice);
         	ImageView imageView7 = new ImageView(mSphinx);
-        	refreshDrawable(notice.getpicTkDrawable(), imageView7, R.drawable.txt_app_name);
+        	refreshDrawable(notice.getpicTkDrawable(), imageView7, R.drawable.bg_picture_none, false);
         	LinearLayout.LayoutParams layoutParams7 = new LayoutParams(Utility.dip2px(mContext, 48), Utility.dip2px(mContext, 48));
         	layoutParams7.setMargins(Utility.dip2px(mContext, 16), 0, 0, 0);
         	layoutParams7.gravity = Gravity.CENTER_VERTICAL;
@@ -765,6 +748,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         	textLly7.addView(descriptionTxv7);
         	linearLayout7.addView(imageView7);
         	linearLayout7.addView(textLly7);
+        	imageViewMap.put(position, imageView7);
         	viewMap.put(position, linearLayout7);
         	return linearLayout7;
         default:
@@ -817,25 +801,17 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 				public void onClick(View v) {
 					mActionLog.addAction(mActionTag + ActionLog.MoreNotice);
 					Notice notice = mNoticeList.get(fPosition % mPagecount);
-					switch((int)notice.getOperationType()){
-					case 2:
-						if(mHaveDone[fPosition % mPagecount] == true){
-							String hint = notice.getHint();
-							if(hint == null || TextUtils.isEmpty(hint)){
-								hint = mSphinx.getString(R.string.user_survey_have_done);
-							}
-							Toast.makeText(mSphinx, hint, Toast.LENGTH_LONG).show();
-						}else{
-							String uri = notice.getUrl();
-							if (!TextUtils.isEmpty(uri)) {
-								mCurrentUserSurveyPosition = fPosition % mPagecount;
-								Intent intent = new Intent();
-								intent.putExtra(BrowserActivity.TITLE, notice.getWebTitle());
-								intent.putExtra(BrowserActivity.URL, uri);
-								mSphinx.showView(R.id.activity_browser, intent);
-							}
-						}
+					switch((int)notice.getLocalType()){
+					case 0:
 						break;
+					case 1:
+						showDownloadSoftwareDialog();
+						return;
+					default:
+						return;
+					}
+
+					switch((int)notice.getOperationType()){
 					case 0:
 						String uri = notice.getUrl();
 						if (!TextUtils.isEmpty(uri)) {
@@ -845,28 +821,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 							mSphinx.showView(R.id.activity_browser, intent);
 						}
 						break;
-					case 1:
-						final Notice finalNotice = notice;
-						Utility.showNormalDialog(mSphinx,
-								finalNotice.getWebTitle(),
-								finalNotice.getHint(),
-								new DialogInterface.OnClickListener() {
-									
-									@Override
-				                    public void onClick(DialogInterface dialog, int id) {
-				                        switch (id) {
-				                            case DialogInterface.BUTTON_POSITIVE:
-				                                String url = finalNotice.getUrl();
-				                                if (url != null) {
-				                                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-				                                    mSphinx.startActivity(intent);
-				                                }
-				                                break;
-				                            default:
-				                                break;
-				                        }
-				                    }
-								});
+					default:
 						break;
                     }
 				}
@@ -894,26 +849,19 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 	
 	}
     private void showDownloadSoftwareDialog() {
-
-        SoftwareUpdate softwareUpdate = null;
-        BootstrapModel bootstrapModel = Globals.g_Bootstrap_Model;
-        if (bootstrapModel != null) {
-            softwareUpdate = bootstrapModel.getSoftwareUpdate();
-        }
-        final SoftwareUpdate finalSoftwareUpdate = softwareUpdate;
-        if (finalSoftwareUpdate == null) {
+        if (mSoftwareUpdate == null) {
             return;
         }
         Utility.showNormalDialog(mSphinx,
                 mContext.getString(R.string.download_software_title), 
-                softwareUpdate.getText(),
+                mSoftwareUpdate.getText(),
                 new DialogInterface.OnClickListener() {
                     
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         switch (id) {
                             case DialogInterface.BUTTON_POSITIVE:
-                                String url = finalSoftwareUpdate.getURL();
+                                String url = mSoftwareUpdate.getURL();
                                 if (url != null) {
                                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                                     mSphinx.startActivity(intent);

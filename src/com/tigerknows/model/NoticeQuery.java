@@ -114,9 +114,6 @@ public class NoticeQuery extends BaseQuery {
 				// 0x07 x_string web页标题
 				public static final byte FIELD_WEB_TITLE = 0x07;
 				
-				// 0x08 x_string 操作为2时的提示语
-				public static final byte FIELD_HINT = 0x08;
-				
 				private long noticeId;
 				
 				private long operationType;
@@ -131,7 +128,7 @@ public class NoticeQuery extends BaseQuery {
 				
 				private String webTitle;
 				
-				private String hint;
+				private long localType;
 				
 				private TKDrawable picTKDrawable;
 				
@@ -163,19 +160,25 @@ public class NoticeQuery extends BaseQuery {
 					return webTitle;
 				}
 				
-				public String getHint() {
-					return hint;
+				public long getLocalType() {
+					return localType;
 				}
 				
 				public TKDrawable getpicTkDrawable() {
 					return picTKDrawable;
 				}
+				
 				public Notice(XMap data) throws APIException{
 					super(data);
-					init(data, false);
+					init(data, false, 0);
 				}
 				
-				public void init(XMap data, boolean reset) throws APIException{
+				public Notice(XMap data, long localType) throws APIException{
+					super(data);
+					init(data, false, localType);
+				}
+				
+				public void init(XMap data, boolean reset, long localType) throws APIException{
 					super.init(data, reset);
 					this.noticeId = getLongFromData(FIELD_NOTICE_ID);
 					this.operationType = getLongFromData(FIELD_OPERATION_TYPE);
@@ -184,7 +187,7 @@ public class NoticeQuery extends BaseQuery {
 					this.url = getStringFromData(FIELD_URL);
 					this.picUrl = getStringFromData(FIELD_PIC_URL);
 					this.webTitle = getStringFromData(FIELD_WEB_TITLE);
-					this.hint = getStringFromData(FIELD_HINT);
+					this.localType = localType;
 					if(this.picUrl != null){
 						TKDrawable tkDrawable = new TKDrawable();
 						tkDrawable.setUrl(this.picUrl);
