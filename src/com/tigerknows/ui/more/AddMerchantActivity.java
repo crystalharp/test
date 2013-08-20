@@ -25,6 +25,7 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
@@ -114,9 +115,9 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
     private View mPickTimeView;
     private TimeListView mStartTimeListView;
     private TimeListView mEndTimeListView;
-    private int mStartHourPosition = 11;
+    private int mStartHourPosition = 12;
     private int mStartMinutePosition = 2;
-    private int mEndHourPosition = 23;
+    private int mEndHourPosition = 24;
     private int mEndMinutePosition = 2;
     private Button mTimeConfirmBtn;
     
@@ -173,6 +174,11 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
         mDeletePhotoBtn.setVisibility(View.GONE);
 
         mPickTimeView = mLayoutInflater.inflate(R.layout.more_add_merchant_pick_time, null, false);
+        View v = mLayoutInflater.inflate(R.layout.time_list_item, (ViewGroup)mPickTimeView, false);
+        v.setBackgroundResource(R.drawable.list_selector_background_gray_dark);
+        v.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        int h = v.getMeasuredHeight();
+        mPickTimeView.findViewById(R.id.body_view).getLayoutParams().height = h*5+(int)(Globals.g_metrics.density*8);
         mStartTimeListView = (TimeListView) mPickTimeView.findViewById(R.id.start_tlv);
         mEndTimeListView = (TimeListView) mPickTimeView.findViewById(R.id.end_tlv);
         mTimeConfirmBtn = (Button) mPickTimeView.findViewById(R.id.time_confirm_btn);
@@ -639,7 +645,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
             char splitChar = '~';
             String nullStr = "null";
             
-            String name = mNameEdt.getText().toString();
+            String name = mNameEdt.getText().toString().trim();
             
             if (!TextUtils.isEmpty(name)) {
                 s.append(URLEncoder.encode(name, TKConfig.getEncoding()));
@@ -651,7 +657,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
                 return;
             }
             
-            String type = mType.getText().toString();
+            String type = mType.getText().toString().trim();
             if (!TextUtils.isEmpty(type)) {
                 s.append(splitChar);
                 s.append(URLEncoder.encode(type.toString(), TKConfig.getEncoding()));
@@ -661,7 +667,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
                 return;
             }
 
-            String address = mAddressEdt.getText().toString();
+            String address = mAddressEdt.getText().toString().trim();
             if (!TextUtils.isEmpty(address)) {
                 s.append(splitChar);
                 s.append(URLEncoder.encode(mCityBtn.getText()+address, TKConfig.getEncoding()));
@@ -673,7 +679,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
             }
             
             s.append(splitChar);
-            String str = mTelephoneEdt.getText().toString();
+            String str = mTelephoneEdt.getText().toString().trim();
             if (!TextUtils.isEmpty(str)) {
                 s.append(URLEncoder.encode(str, TKConfig.getEncoding()));
             } else {
@@ -681,7 +687,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
             }
             
             s.append(splitChar);
-            str = mAddressDescriptionEdt.getText().toString();
+            str = mAddressDescriptionEdt.getText().toString().trim();
             if (!TextUtils.isEmpty(str)) {
                 s.append(URLEncoder.encode(str, TKConfig.getEncoding()));
             } else {
@@ -689,7 +695,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
             }
             
             s.append(splitChar);
-            str = mDateBtn.getText().toString();
+            str = mDateBtn.getText().toString().trim();
             if (!TextUtils.isEmpty(str)) {
                 s.append(URLEncoder.encode(str, TKConfig.getEncoding()));
             } else {
@@ -697,7 +703,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
             }
             
             s.append(splitChar);
-            str = mTimeBtn.getText().toString();
+            str = mTimeBtn.getText().toString().trim();
             if (!TextUtils.isEmpty(str)) {
                 s.append(URLEncoder.encode(str, TKConfig.getEncoding()));
             } else {
@@ -712,7 +718,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
             }
             
             s.append(splitChar);
-            str = mYourTelephoneEdt.getEditableText().toString();
+            str = mYourTelephoneEdt.getEditableText().toString().trim();
             if (!TextUtils.isEmpty(str)) {
                 s.append(URLEncoder.encode(str, TKConfig.getEncoding()));
             } else {
@@ -889,12 +895,12 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
             
             @Override
             public void run() {
-                final String imagePath = URLDecoder.decode(Utility.imageUri2FilePath(mThis, uri));
-                if (Utility.copyFile(imagePath, mCacheFilePath)) {
-                    final File cacheFile = new File(mCacheFilePath);
-                    Uri cache = Uri.fromFile(cacheFile);
-                    Bitmap bm = Utility.getBitmapByUri(mThis, cache, TKConfig.Photo_Max_Width_Height, TKConfig.Photo_Max_Width_Height);
-                    try {
+                try {
+                    final String imagePath = URLDecoder.decode(Utility.imageUri2FilePath(mThis, uri));
+                    if (Utility.copyFile(imagePath, mCacheFilePath)) {
+                        final File cacheFile = new File(mCacheFilePath);
+                        Uri cache = Uri.fromFile(cacheFile);
+                        Bitmap bm = Utility.getBitmapByUri(mThis, cache, TKConfig.Photo_Max_Width_Height, TKConfig.Photo_Max_Width_Height);
                         String path = Utility.imageUri2FilePath(mThis, cache);
                         ExifInterface exifInterface = new ExifInterface(path);
                         int tag = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, -1);
@@ -928,7 +934,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
                             
                             @Override
                             public void run() {
-                                if (resultBitmap != null) {
+                                if (mPhotoUri != null) {
                                     if (isPick == false) {
                                         confrimUploadUri(new BitmapDrawable(resultBitmap));
                                     } else {
@@ -947,23 +953,23 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
                                 }
                             }
                         });
-                    } catch (IOException e) {
-                        e.printStackTrace();
                     }
-                }
                 
-                if (mPhotoUri == null) {
-                    mThis.runOnUiThread(new Runnable() {
-                        
-                        @Override
-                        public void run() {
-                            Toast.makeText(mThis, getString(R.string.get_photo_failed)+imagePath, Toast.LENGTH_LONG).show();
-                            if (tipProgressDialog != null && tipProgressDialog.isShowing()) {
-                                tipProgressDialog.dismiss();
-                            }
-                        }
-                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+                mThis.runOnUiThread(new Runnable() {
+                    
+                    @Override
+                    public void run() {
+                        if (mPhotoUri == null) {
+                            Toast.makeText(mThis, getString(R.string.get_photo_failed)+uri, Toast.LENGTH_LONG).show();
+                        }
+                        if (tipProgressDialog != null && tipProgressDialog.isShowing()) {
+                            tipProgressDialog.dismiss();
+                        }
+                    }
+                });
             }
         }).start();
         

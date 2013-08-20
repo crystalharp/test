@@ -8,6 +8,7 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 
+import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.text.Html;
@@ -22,13 +23,13 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.PopupWindow.OnDismissListener;
+import android.widget.Toast;
 
 import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
 import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.tigerknows.R;
-import com.tigerknows.Sphinx;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.MapEngine;
@@ -39,12 +40,12 @@ import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.Hotel;
 import com.tigerknows.model.Hotel.HotelTKDrawable;
 import com.tigerknows.model.POI;
-import com.tigerknows.model.POI.DynamicPOI;
 import com.tigerknows.model.ProxyQuery.RoomTypeDynamic;
 import com.tigerknows.model.ProxyQuery;
 import com.tigerknows.model.Response;
 import com.tigerknows.model.Hotel.RoomType;
 import com.tigerknows.model.TKDrawable;
+import com.tigerknows.model.TKDrawable.LoadImageRunnable;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.hotel.DateListView;
 import com.tigerknows.ui.hotel.DateWidget;
@@ -166,6 +167,11 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     DateListView getDateListView() {
         if (mDateListView == null) {
             DateListView view = new DateListView(mSphinx);
+            View v = mInflater.inflate(R.layout.time_list_item, view, false);
+            v.setBackgroundResource(R.drawable.list_selector_background_gray_dark);
+            v.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+            int h = v.getMeasuredHeight();
+            view.findViewById(R.id.body_view).getLayoutParams().height = h*5-(int)(Globals.g_metrics.density*8);
             view.setData(this, mPOIDetailFragment.mActionTag);
             mDateListView = view;
         }
@@ -284,13 +290,10 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             @Override
             public void onClick(View v) {
                 mPOIDetailFragment.mActionLog.addAction(ActionLog.POIDetail + ActionLog.POIDetailHotelFailRetry);
-                if (mBaseQuerying != null) {
-                    for(int i = 0, size = mBaseQuerying.size(); i < size; i++) {
-                        mBaseQuerying.get(i).setResponse(null);
-                        mBaseQuerying.get(0).setTipText(mSphinx.getString(R.string.doing_and_wait));
-                    }
-                    queryStart(mBaseQuerying);
-                }
+                //不能直接重发上一个请求，否则无网络的时候进详情页，再改个日期，所发的请求nf字段就只有房态信息了。
+                BaseQuery baseQuery = buildHotelQuery(checkin, checkout, mPOI, Hotel.NEED_FILED_DETAIL + Hotel.NEED_FILED_LIST);
+                baseQuery.setTipText(mSphinx.getString(R.string.doing_and_wait));
+                queryStart(baseQuery);
             }
         };
         mRetryView.setOnClickListener(retryListener);
@@ -424,24 +427,11 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         if (picList != null && picList.size() > 0) {
             final TKDrawable tkDrawable = picList.get(0).getTKDrawable();
             if (tkDrawable != null) {
-                Drawable hotelImageDraw = tkDrawable.loadDrawable(mSphinx, new Runnable() {
-    
-                    @Override
-                    public void run() {
-                        Drawable drawable = tkDrawable.loadDrawable(null, null, null);
-                        if (drawable != null) {
-                            if(drawable.getBounds().width() != hotelImage.getWidth() || drawable.getBounds().height() != hotelImage.getHeight() ){
-                                hotelImage.setBackgroundDrawable(null);
-                            }
-                            hotelImage.setBackgroundDrawable(drawable);
-//                        } else {
-//                            hotelImage.setBackgroundResource(R.drawable.bg_picture_hotel);
-                        }
-                    }
-                    
-                }, mPOIDetailFragment.toString());
+                LoadImageRunnable loadImageRunnable = new LoadImageRunnable(mSphinx, tkDrawable, hotelImage, R.drawable.bg_picture_hotel, mPOIDetailFragment.toString());
+                Drawable hotelImageDraw = tkDrawable.loadDrawable(mSphinx, loadImageRunnable, mPOIDetailFragment.toString());
                 if (hotelImageDraw != null) {
-                    if(hotelImageDraw.getBounds().width() != hotelImage.getWidth() || hotelImageDraw.getBounds().height() != hotelImage.getHeight() ){
+                    Rect bounds = hotelImageDraw.getBounds();
+                    if(bounds != null && bounds.width() != hotelImage.getWidth() || bounds.height() != hotelImage.getHeight() ){
                         hotelImage.setBackgroundDrawable(null);
                     }
                     hotelImage.setBackgroundDrawable(hotelImageDraw);

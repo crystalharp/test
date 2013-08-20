@@ -57,6 +57,8 @@ import com.tigerknows.widget.SpringbackListView.OnRefreshListener;
 public class HotelOrderListFragment extends BaseFragment implements View.OnClickListener {
     
     static final String TAG = "HotelOrderListFragment";
+    
+    public static boolean Test_Pull_Order_List = false;
 
     public HotelOrderListFragment(Sphinx sphinx) {
         super(sphinx);
@@ -130,7 +132,6 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
         return mRootView;
     }
     
-    @SuppressWarnings("unchecked")
     @Override
     public void dismiss() {
         super.dismiss();
@@ -145,7 +146,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
         if (orders != null) {
         	orders.clear();
             if (hotelOrderAdapter != null) {
-                hotelOrderAdapter.notifyDataSetChanged();
+                hotelOrderAdapter.notifyDataSetChanged(); 
             }
         }
     }
@@ -221,7 +222,9 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
         mRightBtn.setVisibility(View.GONE);
         mTitleBtn.setText(mContext.getString(R.string.hotel_ordered));
 
-//        fillOrderDb();
+        if (Test_Pull_Order_List) {
+            fillOrderDb();
+        }
 
         /**
          * if fragment is previously closed, size of orders will be 0
@@ -263,7 +266,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     	criteria.put(BaseQuery.SERVER_PARAMETER_NEED_FIELD, HotelOrder.NEED_FIELDS);
         criteria.put(BaseQuery.RESPONSE_NULL_ERROR_MSG, ""+R.string.response_null_hotel_order_sync);
     	HotelOrderOperation hotelOrderOperation = new HotelOrderOperation(mSphinx);
-    	hotelOrderOperation.setup(criteria, Globals.getCurrentCityInfo().getId(), getId(), getId(), mContext.getString(R.string.query_loading_tip));
+    	hotelOrderOperation.setup(criteria, Globals.getCurrentCityInfo().getId(), getId(), getId(), mContext.getString(R.string.hotel_order_sync_tip));
     	mTkAsyncTasking = mSphinx.queryStart(hotelOrderOperation);
     	mBaseQuerying = mTkAsyncTasking.getBaseQueryList();
 		
@@ -397,6 +400,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     public void onCancelled(TKAsyncTask tkAsyncTask) {
         super.onCancelled(tkAsyncTask);
         logi("onCancelled");
+        Toast.makeText(mContext, mSphinx.getString(R.string.response_null_hotel_order_sync), Toast.LENGTH_LONG).show();
     }
     
     Handler mLoadOrderHandler = new Handler(){

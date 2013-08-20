@@ -14,7 +14,6 @@ import java.util.HashSet;
 import java.util.List;
 
 import com.decarta.CONFIG;
-import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
 import com.decarta.android.location.BoundingBox;
 import com.decarta.android.location.Position;
@@ -30,10 +29,8 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Bitmap.CompressFormat;
-import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
-import android.telephony.TelephonyManager;
 import android.util.TypedValue;
 
 public class Util {
@@ -489,10 +486,10 @@ public class Util {
             double pixelsX = Util.lon2pix(boundingBox.getCenterPosition().getLon(), scale);
 
             double maxlat = Util.pix2lat((int) pixelsY + (screenY - padding), scale);
-            double maxlon = Util.pix2lon((int) pixelsX + (screenX - padding), scale);
+            double maxlon = Util.pix2lon((int) pixelsX + (screenX), scale);
 
-            double minlat = Util.pix2lat((int) pixelsY - (screenY - padding), scale);
-            double minlon = Util.pix2lon((int) pixelsX - (screenX - padding), scale);
+            double minlat = Util.pix2lat((int) pixelsY - (screenY), scale);
+            double minlon = Util.pix2lon((int) pixelsX - (screenX), scale);
 
             BoundingBox gxbbox = new BoundingBox(new Position(minlat, minlon),new Position(maxlat, maxlon));
 
@@ -549,7 +546,6 @@ public class Util {
         int fixedSeedColumnIdx = (int) Math.floor((double) pixX / CONFIG.TILE_SIZE);
         int fixedSeedRowIdx = (int) Math.floor((double) (pixY) / CONFIG.TILE_SIZE);
         XYZ xyz = new XYZ(fixedSeedColumnIdx, fixedSeedRowIdx, zoomLevel);
-        LogWrapper.d("TilesView", "mercPixToTKXYZ(), mercPix="+mercPix+","+xyz);
         return xyz;
     }
 

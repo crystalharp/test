@@ -85,7 +85,7 @@ public class TimeListView extends LinearLayout {
         
         hourList = new ArrayList<String>();
         makeWhiteLines(hourList);
-        for(int i = 1, size = 25; i < size; i++) {
+        for(int i = 0, size = 24; i < size; i++) {
             hourList.add(toTwoChar(i));
         }
         makeWhiteLines(hourList);
@@ -214,7 +214,7 @@ public class TimeListView extends LinearLayout {
     
     class MyAdapter extends ArrayAdapter<String> {
         
-        private static final int TEXTVIEW_RESOURCE_ID = R.layout.filter_list_item;
+        private static final int TEXTVIEW_RESOURCE_ID = R.layout.time_list_item;
         
         private LayoutInflater mLayoutInflater;
         
@@ -244,9 +244,9 @@ public class TimeListView extends LinearLayout {
             view.setBackgroundResource(R.drawable.list_selector_background_gray_dark);
             
             if ((isParent && hourPosition == position) || (isParent == false && minutePosition == position)) {
-                textTxv.setTextColor(TKConfig.COLOR_BLACK_DARK);
+                textTxv.setTextColor(TKConfig.COLOR_ORANGE);
             } else {
-                textTxv.setTextColor(TKConfig.COLOR_BLACK_LIGHT);
+                textTxv.setTextColor(TKConfig.COLOR_BLACK_DARK);
             }
             
             textTxv.setText(name);

@@ -13,21 +13,13 @@ import com.tigerknows.map.MapEngine;
 import com.tigerknows.map.MapEngine.CityInfo;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataQuery;
-import com.tigerknows.model.FeedbackUpload;
 import com.tigerknows.model.LocationQuery;
 import com.tigerknows.model.PullMessage;
 import com.tigerknows.model.Response;
-import com.tigerknows.model.LocationQuery.LocationParameter;
-import com.tigerknows.model.LocationQuery.TKCellLocation;
-import com.tigerknows.model.LocationQuery.TKNeighboringCellInfo;
-import com.tigerknows.model.LocationQuery.TKScanResult;
 import com.tigerknows.model.PullMessage.Message;
-import com.tigerknows.provider.LocationTable;
 import com.tigerknows.radar.Alarms;
 import com.tigerknows.radar.RadarReceiver;
 import com.tigerknows.radar.TKNotificationManager;
-import com.tigerknows.util.Utility;
-
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -36,11 +28,8 @@ import android.os.IBinder;
 import android.text.TextUtils;
 
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 

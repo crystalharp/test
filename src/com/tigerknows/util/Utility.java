@@ -862,8 +862,8 @@ public class Utility {
    }
    
     
-    @SuppressWarnings("unchecked")
-    public static void keepListSize(List list, int max) {
+    @SuppressWarnings("rawtypes")
+	public static void keepListSize(List list, int max) {
         if (list == null || max <= 0) {
             return;
         }
@@ -1217,7 +1217,6 @@ public class Utility {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						// TODO Auto-generated method stub
 						source.requestFocus();
 						activity.showSoftInput(source);
 					}
@@ -1625,4 +1624,5 @@ public class Utility {
             return null;
         }
     }
+
 }

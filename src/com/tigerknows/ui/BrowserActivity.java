@@ -17,6 +17,7 @@ import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.ProgressBar;
 
+import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import android.widget.Toast;
 import com.tigerknows.common.ActionLog;
@@ -64,6 +65,7 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
         if (TextUtils.isEmpty(mURL)) {
             finish();
         }
+        LogWrapper.d(TAG, "mURL="+mURL);
 
         setContentView(R.layout.browser);
         

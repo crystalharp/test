@@ -22,6 +22,7 @@
     <string name="location_failed_and_change_city">定位失败，无法找到所在城市，是否直接选择城市？</string>
     <string name="location_doing">正在定位…</string>
 
+    <string name="poi_change_location">切换位置</string>
     <string name="yuan">%1$d元</string>
     <string name="rmb_text">元</string>
     <string name="brackets">（%1$s）</string>
@@ -154,7 +155,6 @@
     <string name="start_equal_to_end">起点与终点相同, 请重新输入!</string>
     <string name="start_equal_to_end_select">起点与终点相同, 请重新选择!</string>
     <string name="busline_name_">请输入线路名或站点名</string>
-    <string name="input_busline_name_tip">请输入线路名称！</string>
     <string name="transfer_operation_time">运营时间:\u0020\u0020%1$s</string>
     <string name="bus_index_station">%1$d. %2$s</string>
     <string name="favorite_poi_empty">你还没有任何收藏</string>
@@ -205,6 +205,7 @@
     <string name="upgrade_manual">手动更新</string>
     <string name="download_map">下载地图</string>
     <string name="app_recommend">你可能喜欢的应用</string>
+    <string name="app_recommend_more">更多应用</string>
     <string name="feedback">意见反馈</string>
     <string name="help">帮助</string>
     <string name="about_us">关于我们</string>
@@ -212,7 +213,7 @@
     <string name="recommend_tencent">腾讯应用宝</string>
     <string name="login_or_regist">登录/注册</string>
     <string name="user_home">个人中心</string>
-    <string name="give_favourable_comment">给个好评鼓励我们</string>
+    <string name="give_favourable_comment">给个好评吧！</string>
     
     <string name="settings_open_gps">开启GPS（卫星定位）</string>
     <string name="settings_close_gps">关闭GPS（卫星定位）</string>
@@ -224,6 +225,10 @@
     <string name="settings_radar_push_description">开启后可接收老虎推荐信息，嗷呜！</string>
     <string name="settings_map_home">设置地图为首页</string>
     <string name="settings_map_home_description">在本软件打开时直接显示地图</string>
+    <string name="settings_clear_cache">一键清理缓存</string>
+    <string name="settings_clear_cache_description">可以清除图片缓存</string>
+    <string name="settings_clear_cache_confirm">确定清空缓存数据吗？</string>
+    <string name="settings_clear_cache_success">缓存清理成功！</string>
     
     <string name="delete_city_map_tip">确认删除该城市地图包？</string>
     <string name="cancel_favorite_tip">是否取消收藏？</string>
@@ -348,7 +353,7 @@
     <string name="about_bbs">论坛 \u0020 http://bbs.tigerknows.com</string>
     <string name="about_email">邮件 \u0020 support@tigerknows.com</string>
     <string name="about_msn">MSN \u0020 tigerknows@live.com</string>
-    <string name="about_qq">Q 群 \u0020 63930376 \u0020 88839837 \n\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u002035416996 \u0020 88722138 \n\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u002086492534 \u0020 44190592</string>
+    <string name="about_qq">qq群 \u0020 63930376 \u0020 88839837 \n\u2003\u2003 \u0020 \u200a35416996 \u0020 88722138 \n\u2003\u2003 \u0020 \u200a86492534 \u0020 44190592</string>
     <string name="about_telephone">电话 \u0020 010-58874009</string>
     <string name="telephone_num">010-58874009</string>
     <string name="about_copyright">北京老虎宝典科技有限责任公司版权所有\n</string>
@@ -771,6 +776,10 @@
     <string name="poi_comment_must">还需%1$s字</string>
     <string name="poi_comment_sum">共%1$s字</string>
     
+    <string name="subway_preset_time">本站点首末车时间</string>
+    <string name="subway_exits">出口附近信息</string>
+    <string name="subway_station_nearby">最近车站</string>
+    
     <string name="nearby_">附近%1$s个</string>
     <string name="entire_city_">全市%1$s个</string>
     
@@ -867,7 +876,7 @@
     <string name="end_time">结束时间</string>
     <string name="add_merchant_image_upload_falied_tip">图片上传失败，是否重试？</string>
     <string name="add_merchant_text_upload_falied_tip">提交失败，请重试</string>
-   <string name="add_merchant_delete_photo_tip">确定要删除该图片吗？</string>
+   <string name="add_merchant_delete_photo_tip">确定要删除该照片吗？</string>
    <string name="poi_list_item_add_merchant">没有找到想要的商户</string>
    <string name="get_photo_failed">获取图片失败:</string>
     
@@ -933,6 +942,7 @@
     <string name="response_code_410_pulled">抱歉,原信息已过期\n欢迎发现更多身边的精彩!</string>
     
     <string name="response_null_hotel_order_sync">酒店订单更新失败！</string>
+    <string name="hotel_order_sync_tip">酒店订单更新中，请稍候</string>
     
     <string name="retry">重试</string>
     <string name="location_city">定位城市</string>
@@ -1202,6 +1212,7 @@
 <!-- POI Error Recovery End -->
 
 <!-- Satisfy Rate Start -->
+    <string name="satisfy_rate_more">对我们满意吗？</string>
     <string name="satisfy_rate">满意度评分</string>
     <string name="satisfy_note">你对老虎宝典的满意度评分是：</string>
     <string name="satisfy_a">搜索结果</string>
@@ -1216,4 +1227,8 @@
     <string name="satisfy_success">谢谢您对我们的评价</string>
     
 <!-- Satisfy Rate End -->
+    <string name="loading_zhong">加载中..</string>
+    
+    <string name="appoint_location">指定地点：</string>
+    <string name="appoint_area">指定商区：</string>
 </resources>

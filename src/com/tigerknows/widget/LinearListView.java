@@ -5,16 +5,10 @@ import java.util.List;
 
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 
-import com.decarta.android.util.LogWrapper;
-import com.tigerknows.R;
 import com.tigerknows.Sphinx;
-import com.tigerknows.model.Dianying;
-import com.tigerknows.model.Hotel.RoomType;
-import com.tigerknows.model.POI.DynamicPOI;
 
 /**
  * 由LinearLayout改的ListView
@@ -70,7 +64,8 @@ public class LinearListView {
      * 缺点是失去了类型安全,需要使用者注意,所传的List数据类型要能够被initItem处理
      * @param list
      */
-    public void refreshList(List list) {
+    @SuppressWarnings("rawtypes")
+	public void refreshList(List list) {
         int dataSize = (list != null ? list.size() : 0);
         parentLayout.removeAllViews();
 //        List<View> tmp = new LinkedList<View>();

@@ -170,17 +170,17 @@ public class TKConfig {
     /**
      * 网络请求参数中的客户端软件版本
      */
-    private static String sCLIENT_SOFT_VERSION = "5.10.20130528A";
+    private static String sCLIENT_SOFT_VERSION = "5.30.20130723A";
     
     /**
      * 关于我们界面中的客户端软件发布版本
      */
     
-    public static final String CLIENT_SOFT_VERSION = "5.10.alpha1";
+    public static final String CLIENT_SOFT_VERSION = "5.30";
     /**
      * 关于我们界面中的客户端软件发布日期
      */
-    public static final String CLIENT_SOFT_RELEASE_DATE = "2013-05-28";
+    public static final String CLIENT_SOFT_RELEASE_DATE = "2013-07-23";
     
     /**
      * 手机产品信息，包括品牌、型号、软件版本等信息
@@ -506,6 +506,11 @@ public class TKConfig {
      * 是否已显示POI主页界面的酒店预订用户引导
      */
     public static final String PREFS_HINT_POI_HOME_HOTEL = "prefs_hint_poi_home_hotel";
+
+    /**
+     * 是否已显示POI主页界面的指定点搜索的引导
+     */
+    public static final String PREFS_HINT_POI_HOME_LOCATION = "prefs_hint_poi_home_location";
 
     /**
      * 是否已显示酒店主页界面的用户引导
@@ -1236,6 +1241,7 @@ public class TKConfig {
      * @return
      */
     public static String getIMEI() {
+    	if(TextUtils.isEmpty(sIMEI))return "0";
         return sIMEI;
     }
     

@@ -108,11 +108,6 @@ public class LocationQuery extends BaseQuery {
     private WifiManager wifiManager;
     
     /**
-     * WIFI接入点列表的匹配率，如果当前WIFI接入点列表为空是此值为1.0
-     */
-    private float wifiMatchRate = 0f;
-    
-    /**
      * 内存的定位信息缓存列表
      */
     private HashMap<LocationParameter, Location> onlineLocationCache = new HashMap<LocationParameter, Location>();
@@ -146,13 +141,14 @@ public class LocationQuery extends BaseQuery {
             if (locationResponseCode == LOCATION_RESPONSE_CODE_FAILED || locationResponseCode == LOCATION_RESPONSE_CODE_SUCCEED) {
                 LogWrapper.i("LocationQuery", "query():location="+location);
                 
+                if (locationParameter == null) {
+                    locationParameter = makeLocationParameter();
+                }
+                
                 if (location == null) {
                     location = new Location(PROVIDER_ERROR);
                 } else {
                     checkLocationTable();
-                    if (locationParameter == null) {
-                        locationParameter = makeLocationParameter();
-                    }
                     locationTable.write(locationParameter, location);
                 }
                 
@@ -286,7 +282,6 @@ public class LocationQuery extends BaseQuery {
             LocationParameter locationParameter = makeLocationParameter();
     
             Location location = null;
-            wifiMatchRate = 0f;
             location = queryCache(locationParameter, onlineLocationCache, true);
             
             time++;
@@ -327,38 +322,69 @@ public class LocationQuery extends BaseQuery {
      * 遍历缓存定位列表，找出匹配率最高的定位信息
      * @param locationParameter
      * @param cache
-     * @param mustMatchWifi
+     * @param needWholeMatch
      * @return
      */
-    private Location queryCache(LocationParameter locationParameter, HashMap<LocationParameter, Location> cache, boolean mustMatchWifi) {
+    private Location queryCache(LocationParameter locationParameter, HashMap<LocationParameter, Location> cache, boolean needWholeMatch) {
         Location location = null;
         if (cache == null || cache.isEmpty()) {
             return location;
         }
+        boolean mccMncLacCidValid = Utility.mccMncLacCidValid(locationParameter.mcc, locationParameter.mnc, locationParameter.tkCellLocation.lac, locationParameter.tkCellLocation.cid);
+        float cellInfoRate = 0f;
+        float wifiMatchRate = 0f;
+        float totalRate = 0f;
         Iterator<Map.Entry<LocationParameter, Location>> iter = cache.entrySet().iterator();
         while (iter.hasNext()) {
             Map.Entry<LocationParameter, Location> entry = (Map.Entry<LocationParameter, Location>)iter.next();
             LocationParameter key = entry.getKey();
             Location value = entry.getValue();
             if (value != null && PROVIDER_ERROR.equals(value.getProvider()) == false) {
-                if (locationParameter.equalsCellInfo(key)) {
-                    if (location == null && mustMatchWifi == false) {
-                        location = value; 
+                cellInfoRate = 0f;
+                wifiMatchRate = 0f;
+                if (mccMncLacCidValid) {
+                    if (locationParameter.equalsCellInfo(key)) {
+                        cellInfoRate = 1f;
+                    } else {
+                        cellInfoRate = -1f;
                     }
-                    float rate = locationParameter.calculateWifiMatchRate(key);
-                    if (rate >= WIFI_MATCH_RATE_MIN && rate >= wifiMatchRate) {
-                        if (value != null) {
-                            wifiMatchRate = rate;
-                            location = value;
-                        }
-                    }
-                    if (rate >= 1f) {
-                        break;
-                    }
+                }
+                wifiMatchRate = locationParameter.calculateWifiMatchRate(key);
+                if (wifiMatchRate < WIFI_MATCH_RATE_MIN) {
+                    wifiMatchRate = 0;
+                }
+                
+                float rate = (cellInfoRate+wifiMatchRate);
+                if (rate > 0 && rate > totalRate) {
+                    totalRate = rate;
+                    location = value;
                 }
             }
         }
-        return location;
+        
+        LogWrapper.d(TAG, "totalRate="+totalRate);
+        if (needWholeMatch) {
+            if (mccMncLacCidValid) {
+                if ((locationParameter.wifiList == null || locationParameter.wifiList.size() == 0)) {
+                    if (totalRate >= 1.0) {
+                        return location;
+                    }
+                } else if (totalRate >= 2.0) {
+                    return location;
+                }
+            } else {
+                if ((locationParameter.wifiList == null || locationParameter.wifiList.size() == 0)) {
+                    return null;
+                } else if (totalRate >= 1.0) {
+                    return location;
+                }
+            }
+        } else {
+            if (totalRate > 0) {
+                return location;
+            }
+        }
+        return null;
     }
     
     /**
@@ -458,35 +484,16 @@ public class LocationQuery extends BaseQuery {
                 return 0;
             }
             if (wifiList != null && other.wifiList != null) {
-                if (wifiList.size() == 0 && other.wifiList.size() == 0) {
-                    return 1;
+                int size = wifiList.size();
+                if (size == 0 || other.wifiList.size() == 0) {
+                    return 0;
                 }
                 float rate = 0;
-                int size = wifiList.size();
-                // 如果当前WIFI接入点列表的size为0则比率为1，表示全匹配
-                if (size == 0) {
-                    rate = 1;
-                } else {
-                    int match = matchWifi(wifiList, other.wifiList);
-                    rate = ((float)match)/size;
-//                    LogWrapper.d("LocationQuery", "match="+match);
-//                    LogWrapper.d("LocationQuery", "size="+size);
-//                    LogWrapper.d("LocationQuery", "scanResult    ="+wifiList);
-//                    LogWrapper.d("LocationQuery", "other.wifiList="+other.wifiList);
-                }
-//                LogWrapper.d("LocationQuery", "rate="+rate);
+                int match = matchWifi(wifiList, other.wifiList);
+                rate = ((float)match)/size;
                 return rate;
-            } else if (wifiList == null && other.wifiList == null) {
-                return 1;
-            } else if (wifiList != null) {
-                if (wifiList.size() > 0) {
-                    return 0;
-                } else {
-                    return 1;
-                }
-            } else {
-                return 1;
             }
+            return 0;
         }
         
         /**

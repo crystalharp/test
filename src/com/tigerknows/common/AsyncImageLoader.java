@@ -24,18 +24,21 @@ import android.os.Handler;
 
 public class AsyncImageLoader {
     
+    static final String TAG = "AsyncImageLoader";
+    
+    static final int THREAD_COUNT = 1;
     
     // 为了加快速度，在内存中开启缓存（主要应用于重复图片较多时，或者同一个图片要多次被访问，比如在ListView时来回滚动）
     public LinkedHashMap<String, SoftReference<BitmapDrawable>> imageCache = new LinkedHashMap<String, SoftReference<BitmapDrawable>>(TKConfig.IMAGE_CACHE_SIZE_MEMORY,0.75f,true);
 
-    private ExecutorService executorService = null; // 固定五个线程来执行任务
+    private ExecutorService executorService = null; // 固定n个线程来执行任务
 
     private final Handler handler = new Handler();
     
     /*
      * 网络异常时，建立HttpClient的时间间隔
      */
-    static final int NEW_HTTP_CLIENT_TIME_INTERVAL = 6000;
+    static final int NEW_HTTP_CLIENT_TIME_INTERVAL = 500;
     
     private HttpClient mHttpClient;
     
@@ -107,8 +110,8 @@ public class AsyncImageLoader {
         executorService.submit(new Runnable() {
             public void run() {
             	
+                BitmapDrawable bitmapDrawable = null;
                 try {
-                	  BitmapDrawable bitmapDrawable;
                 	  bitmapDrawable = checkMemoryAndDisk(context, imageUrl);
                 	  if(bitmapDrawable == null){
                 		  String signal = testAndPutUrlInList(imageUrl.url);
@@ -137,11 +140,12 @@ public class AsyncImageLoader {
                 			  
                 		  }
                 	  }
-              	      handler.post(new CallbackBitmapRunnable(callback, bitmapDrawable));
               	  
                    
                 } catch (Exception e) {
                     throw new RuntimeException(e);
+                } finally {
+                    handler.post(new CallbackBitmapRunnable(callback, bitmapDrawable));
                 }
             }
         });
@@ -189,16 +193,19 @@ public class AsyncImageLoader {
             }
             
             try {
-                byte[] data = HttpManager.openUrl(context, mHttpClient, imageUrl.url, "GET", new WeiboParameters());
-                ImageCache imageCache1 = Globals.getImageCache();
-                final String name = imageUrl.url.substring(imageUrl.url.lastIndexOf("/")+1);
-                imageCache1.putImage(name, data);
-                LogWrapper.d("AsyncImageLoader", "imageUrl.url="+imageUrl.url);
-                BitmapDrawable bm = (BitmapDrawable) BitmapDrawable.createFromStream(new ByteArrayInputStream(data), "image.png");
+				byte[] data = HttpManager.openUrl(context, mHttpClient, imageUrl.url, "GET", new WeiboParameters());
+				ImageCache imageCache1 = Globals.getImageCache();
+				final String name = imageUrl.url.substring(imageUrl.url.lastIndexOf("/")+1);
+				imageCache1.putImage(name, data);
+				BitmapDrawable bm = (BitmapDrawable) BitmapDrawable.createFromStream(new ByteArrayInputStream(data), "image.png");
+            	
+//				URL url = new URL(imageUrl.url);
+//				BitmapDrawable bm = (BitmapDrawable) BitmapDrawable.createFromStream(url.openConnection().getInputStream(), "image.png");
+
                 bm.setTargetDensity(Globals.g_metrics);
                 return bm;
             } catch (Exception e) {
-                LogWrapper.d("AsyncImageLoader", "Failed="+imageUrl.url);
+                LogWrapper.d(TAG, "loadImageFromUrl() Failed="+imageUrl.url);
                 mHttpClient = null;
                 e.printStackTrace();
             }
@@ -224,7 +231,7 @@ public class AsyncImageLoader {
     
     public void onResume() {
         if (executorService == null || executorService.isShutdown()) {
-            executorService = Executors.newFixedThreadPool(1); // 固定五个线程来执行任务
+            executorService = Executors.newFixedThreadPool(THREAD_COUNT);
         }
     }
     

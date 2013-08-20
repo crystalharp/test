@@ -128,7 +128,17 @@ public class MapDownloadService extends Service implements MapTileDataDownload.I
                         int statusCode = BaseQuery.STATUS_CODE_NETWORK_OK;
                         
                         // 查询所有城市的所有Region的数据信息
-                        HashMap<Integer, ServerRegionDataInfo> serverRegionDataInfoMap = MapStatsService.queryServerRegionDataInfoMapInternally(context);
+                        HashMap<Integer, ServerRegionDataInfo> allServerRegionDataInfoMap = MapStatsService.queryServerRegionDataInfoMapInternally(context);
+                        
+                        HashMap<Integer, ServerRegionDataInfo> serverRegionDataInfoMap = MapStatsService.queryServerRegionDataInfoMapInternally(context, currentCityInfo);
+                        
+                        if (serverRegionDataInfoMap == null) {
+                            serverRegionDataInfoMap = allServerRegionDataInfoMap;
+                        } else {
+                            if (allServerRegionDataInfoMap != null) {
+                                allServerRegionDataInfoMap.putAll(serverRegionDataInfoMap);
+                            }
+                        }
                         
                         List<Integer> regionIdList = mapEngine.getRegionIdList(currentCityInfo.getCName());
                         for (int i = 0, size = regionIdList.size(); i < size; i++) {
@@ -231,7 +241,7 @@ public class MapDownloadService extends Service implements MapTileDataDownload.I
                         if (intent.hasExtra(EXTRA_CITY_INFO)) {
                             CityInfo cityInfo = intent.getParcelableExtra(EXTRA_CITY_INFO);
                             CityInfoList.remove(cityInfo);
-                            CityInfoList.add(0, cityInfo);
+                            CityInfoList.add(cityInfo);
                             CityInfoList.notifyAll();
                         }
                     } else if (OPERATION_CODE_REMOVE.equals(operationCode)) {

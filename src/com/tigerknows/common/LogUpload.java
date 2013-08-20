@@ -113,6 +113,9 @@ public class LogUpload {
                     return;
                 }
                 final File file = new File(mLogFilePath);
+                if(!file.exists()){
+                	file.createNewFile();
+                }
                 FileInputStream fis = new FileInputStream(file);
                 final String log = Utility.readFile(fis)+getLogOutToken();
                 fis.close();

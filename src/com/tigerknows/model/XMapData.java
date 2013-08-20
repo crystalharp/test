@@ -3,6 +3,7 @@ package com.tigerknows.model;
 
 import com.decarta.android.exception.APIException;
 import com.decarta.android.location.Position;
+import com.tigerknows.TKConfig;
 import com.tigerknows.model.xobject.XArray;
 import com.tigerknows.model.xobject.XMap;
 
@@ -59,6 +60,9 @@ public class XMapData {
         
     }
     
+    <T> List<T> getListFromData(byte filedKey, XMapInitializer<T> initer, List<T> defaultValue) throws APIException{
+        return getListFromData(data, filedKey, initer, defaultValue);
+    }
     /**
      * 根据key从data中获取List<T>类型的值
      * @param filedKey
@@ -66,7 +70,7 @@ public class XMapData {
      * @return
      * @throws APIException
      */
-    <T> List<T> getListFromData(byte filedKey, XMapInitializer<T> initer, List<T> defaultValue) throws APIException{
+    <T> List<T> getListFromData(XMap data, byte filedKey, XMapInitializer<T> initer, List<T> defaultValue) throws APIException{
 
         List<T> result = null;
         if (data.containsKey(filedKey)) {
@@ -178,7 +182,7 @@ public class XMapData {
     }
     
     public static double long2doubleForLatLon(long value) {
-        boolean negative = value < 0;
+/*        boolean negative = value < 0;
         value = Math.abs(value);
         String s = String.valueOf(value);
         int length = s.length();
@@ -191,7 +195,8 @@ public class XMapData {
             } while (add > 0);
             s =  zero + s;
         }
-        return Double.valueOf((negative ? "-" : "") + s.substring(0, s.length()-5)+"."+s.substring(s.length()-5));
+        return Double.valueOf(s.substring(0, s.length()-5)+"."+s.substring(s.length()-5))*(negative ? -1 : 1);*/
+        return ((double)value)/TKConfig.LON_LAT_DIVISOR;
     }
     
     /**

@@ -238,7 +238,6 @@ public class HotelOrderOperation extends BaseQuery {
         
         private List<HotelOrder> orders;
         
-        @SuppressWarnings("unchecked")
         public HotelOrderSyncResponse(XMap data) throws APIException {
             super(data);
             

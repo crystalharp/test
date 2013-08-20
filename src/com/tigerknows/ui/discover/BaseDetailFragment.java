@@ -101,13 +101,15 @@ public class BaseDetailFragment extends DiscoverBaseFragment implements View.OnC
             return;
         }
         
-        mPrevImageView.setVisibility(View.GONE);
+        mNextImageView.setVisibility(View.GONE);
         mPrevImageView.setVisibility(View.GONE);
     }
 
     @Override
     public void dismiss() {
         super.dismiss();
+        mNextImageView.setVisibility(View.GONE);
+        mPrevImageView.setVisibility(View.GONE);
         for(int i = mCyclePagerAdapter.viewList.size()-1; i >= 0; i--) {
             BaseDetailView view = (BaseDetailView) mCyclePagerAdapter.viewList.get(i);
             view.dismiss();
@@ -189,10 +191,9 @@ public class BaseDetailFragment extends DiscoverBaseFragment implements View.OnC
      * 刷新当前位置以及左右两边的详情页
      */
     public void refreshViews(int position) {
-        if (this.position == position) {
-            return;
-        }
         this.position = position;
+        updateNextPrevControls();
+        scheduleDismissOnScreenControls();
     }
 
     /**

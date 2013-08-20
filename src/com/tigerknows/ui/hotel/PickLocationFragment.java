@@ -4,9 +4,7 @@
 
 package com.tigerknows.ui.hotel;
 
-import android.app.Dialog;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnDismissListener;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
@@ -25,6 +23,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -56,7 +55,6 @@ import com.tigerknows.provider.HistoryWordTable;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.util.Utility;
 import com.tigerknows.widget.FilterListView;
-import com.tigerknows.widget.StringArrayAdapter;
 import com.tigerknows.widget.SuggestWordListManager;
 import com.tigerknows.widget.SuggestArrayAdapter.BtnEventHandler;
 
@@ -67,12 +65,21 @@ import com.tigerknows.widget.SuggestArrayAdapter.BtnEventHandler;
  */
 public class PickLocationFragment extends BaseFragment implements View.OnClickListener, FilterListView.CallBack {
     
+    public interface Invoker {
+        public List<Filter> getFilterList();
+        public void setSelectedLocation(boolean selectedLocation);
+        public void setPOI(POI poi);
+        public void refreshFilterAreaView();
+    }
+    
     public PickLocationFragment(Sphinx sphinx) {
         super(sphinx);
         // TODO Auto-generated constructor stub
     }
 
     private ViewPager mViewPager;
+    
+    private String mTitle;
     
     private List<View> mViewList = new ArrayList<View>();
     
@@ -84,11 +91,15 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
 
     private ListView mSuggestLsv = null;
     
+    private ListView mAlternativeLsv = null;
+    
+    private AlternativeAdapter mAlternativeAdapter;
+    
+    private List<Alternative> mAlternativeList = new ArrayList<DataQuery.AlternativeResponse.Alternative>();
+    
     private SuggestWordListManager mSuggestWordListManager;
     
     private ViewGroup mPageIndicatorView;
-    
-    private POI mPOI;
     
     private AlternativeResponse mAlternativeResponse;
     
@@ -102,6 +113,8 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
             mSuggestWordListManager.refresh();
             mTKWord.word = s.toString();
             mTKWord.position = null;
+            mSuggestLsv.setVisibility(View.VISIBLE);
+            mAlternativeLsv.setVisibility(View.GONE);
         }
 
         public void afterTextChanged(Editable s) {
@@ -113,8 +126,10 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
         }
     };
     
-    public void resetPOI() {
-        mPOI = null;
+    private Invoker mInvoker;
+    
+    public void setInvoker(Invoker invoker) {
+        mInvoker = invoker;
     }
 
     @Override
@@ -151,7 +166,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
     @Override
     public void onResume() {
         super.onResume();
-        mTitleBtn.setText(R.string.hotel_select_location);
+        mTitleBtn.setText(mTitle);
         mRightBtn.setVisibility(View.INVISIBLE);
     }
 
@@ -170,7 +185,13 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
         mFilterListView.findViewById(R.id.body_view).setPadding(0, 0, 0, 0);
         mViewList.add(mFilterListView);
         mSuggestLsv = Utility.makeListView(mSphinx, R.drawable.bg_line_split);
-        mViewList.add(mSuggestLsv);
+        mAlternativeLsv = Utility.makeListView(mSphinx, R.drawable.bg_line_split);
+        mAlternativeAdapter = new AlternativeAdapter(mSphinx, mAlternativeList);
+        mAlternativeLsv.setAdapter(mAlternativeAdapter);
+        FrameLayout frameLayout = new FrameLayout(mSphinx);
+        frameLayout.addView(mSuggestLsv);
+        frameLayout.addView(mAlternativeLsv);
+        mViewList.add(frameLayout);
         mViewPager.setAdapter(new MyAdapter());
         
         mPageIndicatorView = (ViewGroup) mRootView.findViewById(R.id.page_indicator_view);
@@ -255,6 +276,25 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
                 return false;
             }
         });
+        
+        mAlternativeLsv.setOnItemClickListener(new OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
+                if (position >= 0 && position < mAlternativeList.size()) {
+                    mInvoker.setSelectedLocation(true);
+                    Filter filter = HotelHomeFragment.getFilter(mInvoker.getFilterList(), FilterArea.FIELD_LIST);
+                    if (filter != null) {
+                        FilterListView.selectedFilter(filter, -1);
+                    }
+                    POI poi = mAlternativeList.get(position).toPOI();
+                    mInvoker.setPOI(poi);
+                    mActionLog.addAction(mActionTag+ActionLog.HotelPickLocationAlternativeSelect, position, poi.getName());
+                    HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, poi.getName(), poi.getPosition()), Globals.getCurrentCityInfo().getId(), HistoryWordTable.TYPE_TRAFFIC);
+                    dismiss();
+                }
+            }
+        });
     }
 
     @Override
@@ -280,7 +320,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
      */
     private void submit() {
         TKWord tkWord = mTKWord;
-        String word = tkWord.word;
+        String word = tkWord.word.trim();
         if (TextUtils.isEmpty(word)) {
             mSphinx.showTip(R.string.search_input_keyword, Toast.LENGTH_SHORT);
             return;
@@ -309,7 +349,9 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
         mViewPager.setCurrentItem(0);
 //        mQueryBtn.setEnabled(false);
         mViewPager.requestFocus();
-        mFilterListView.setData(mSphinx.getHotelHomeFragment().getFilterList(), FilterResponse.FIELD_FILTER_AREA_INDEX, this, false, false, mActionTag);
+        mSuggestLsv.setVisibility(View.VISIBLE);
+        mAlternativeLsv.setVisibility(View.GONE);
+        mFilterListView.setData(mInvoker.getFilterList(), FilterResponse.FIELD_FILTER_AREA_INDEX, this, false, false, mActionTag);
     }
     
     class MyAdapter extends PagerAdapter {
@@ -366,11 +408,14 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
     public void setData(List<Filter> filterList) {
         mFilterListView.setData(filterList, FilterResponse.FIELD_FILTER_AREA_INDEX, this, false, false, mActionTag);
     }
+    
+    public void setTitle(String title) {
+        mTitle = title;
+    }
 
     @Override
     public void doFilter(String name) {
-        mSphinx.getHotelHomeFragment().setSelectedLocation(true);
-        mPOI = null;
+        mInvoker.setSelectedLocation(true);
         dismiss();
     }
 
@@ -388,19 +433,14 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
         if (response != null && response.getResponseCode() == Response.RESPONSE_CODE_OK && response instanceof AlternativeResponse) {
             mAlternativeResponse = (AlternativeResponse) response;
             AlternativeList alternativeList = mAlternativeResponse.getList();
-            List<String> nameList = new ArrayList<String>();
+            List<Alternative> list = null;
             if (alternativeList != null) {
-                List<Alternative> list = alternativeList.getList();
-                if (list != null && list.size() > 0) {
-                    for(int i = 0, size = list.size(); i < size; i++) {
-                        nameList.add(list.get(i).getName());
-                    }
-                }
+                list = alternativeList.getList();
             }
-            if (nameList.isEmpty()) {
+            if (list == null || list.isEmpty()) {
                 long id = mAlternativeResponse.getPosition();
                 
-                List<Filter> filterListInHotelHome = mSphinx.getHotelHomeFragment().getFilterList();
+                List<Filter> filterListInHotelHome = mInvoker.getFilterList();
                 Filter selected = null;
                 if (filterListInHotelHome != null) {
                     for(int i = 0, size = filterListInHotelHome.size(); i < size; i++) {
@@ -435,74 +475,67 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
                 
                 if (selected != null) {
                     result = true;
-                    mPOI = null;
                     HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, selected.getFilterOption().getName(), null), Globals.getCurrentCityInfo().getId(), HistoryWordTable.TYPE_TRAFFIC);
-                    mSphinx.getHotelHomeFragment().setSelectedLocation(true);
+                    mInvoker.setSelectedLocation(true);
                     dismiss();
                 }
             }
             
-            if (nameList.size() > 0) {
-                showAlternativeDialog(nameList);
+            if (list != null && list.size() > 0) {
+                mAlternativeList.clear();
+                mAlternativeList.addAll(list);
+                mSuggestLsv.setVisibility(View.GONE);
+                mAlternativeLsv.setVisibility(View.VISIBLE);
+                mAlternativeAdapter.notifyDataSetChanged();
+                mAlternativeLsv.setSelectionFromTop(0, 0);
                 result = true;
             }
         }
         
         if (result == false) {
-            Toast.makeText(mSphinx, R.string.can_not_found_target_location, Toast.LENGTH_LONG).show();
+            if (response != null) {
+                Toast.makeText(mSphinx, R.string.can_not_found_target_location, Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(mSphinx, R.string.network_failed, Toast.LENGTH_LONG).show();
+            }
         }
-    }
-    
-    private void showAlternativeDialog(final List<String> alternativeList) {
-        final ArrayAdapter<String> adapter = new StringArrayAdapter(mSphinx, alternativeList);
-        ListView listView = Utility.makeListView(mSphinx);
-        listView.setAdapter(adapter);
-
-        mActionLog.addAction(mActionTag+ActionLog.HotelPickLocationAlternative);
-        final Dialog dialog = Utility.showNormalDialog(mSphinx,
-                mSphinx.getString(R.string.hotel_please_select_location),
-                listView);
-        
-        listView.setOnItemClickListener(new OnItemClickListener() {
-
-            @Override
-            public void onItemClick(AdapterView<?> arg0, View arg1, int which, long arg3) {
-                mPOI = null;
-                AlternativeList alternativeList = mAlternativeResponse.getList();
-                if (alternativeList != null) {
-                    List<Alternative> list = alternativeList.getList();
-                    if (list != null && list.size() > 0 && which < list.size()) {
-                        mSphinx.getHotelHomeFragment().setSelectedLocation(true);
-                        Filter filter = HotelHomeFragment.getFilter(mSphinx.getHotelHomeFragment().getFilterList(), FilterArea.FIELD_LIST);
-                        if (filter != null) {
-                            FilterListView.selectedFilter(filter, -1);
-                        }
-                        mPOI = list.get(which).toPOI();
-                        mActionLog.addAction(mActionTag+ActionLog.HotelPickLocationAlternativeSelect, which, mPOI.getName());
-                        HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, mPOI.getName(), mPOI.getPosition()), Globals.getCurrentCityInfo().getId(), HistoryWordTable.TYPE_TRAFFIC);
-                    }
-                }
-                dialog.dismiss();
-                dismiss();
-            }
-            
-        });
-        dialog.setOnDismissListener(new OnDismissListener() {
-            
-            @Override
-            public void onDismiss(DialogInterface dialog) {
-                mActionLog.addAction(mActionTag+ActionLog.HotelPickLocationAlternative);
-            }
-        });
     }
     
     @Override
     public void dismiss() {
         super.dismiss();
-        mSphinx.getHotelHomeFragment().refreshFilterAreaView();
+        mInvoker.refreshFilterAreaView();
+        mKeywordEdt.setText(null);
     }
     
-    public POI getPOI() {
-        return mPOI;
+    class AlternativeAdapter extends ArrayAdapter<Alternative> {
+        
+        private static final int TEXTVIEW_RESOURCE_ID = R.layout.poi_alternative_list_item;
+        
+        private LayoutInflater mLayoutInflater;
+
+        public AlternativeAdapter(Context context, List<Alternative> list) {
+            super(context, TEXTVIEW_RESOURCE_ID, list);
+            mLayoutInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View view;
+            if (convertView == null) {
+                view = mLayoutInflater.inflate(TEXTVIEW_RESOURCE_ID, parent, false);
+            } else {
+                view = convertView;
+            }
+            
+            Alternative alternative = getItem(position);
+            
+            TextView nameTxv = (TextView)view.findViewById(R.id.name_txv);
+            nameTxv.setText(alternative.getName());
+            TextView addressTxv = (TextView)view.findViewById(R.id.address_txv);
+            addressTxv.setText(alternative.getAddress());
+
+            return view;
+        }
     }
 }

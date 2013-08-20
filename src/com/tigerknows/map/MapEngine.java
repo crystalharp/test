@@ -16,7 +16,6 @@ import android.content.Intent;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
-import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.os.Parcel;
 import android.os.Parcelable;

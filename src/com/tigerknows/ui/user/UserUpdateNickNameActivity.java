@@ -20,7 +20,6 @@ import com.decarta.Globals;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 
-import android.widget.Toast;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.AccountManage;
 import com.tigerknows.model.BaseQuery;

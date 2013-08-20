@@ -1,9 +1,7 @@
 package com.tigerknows.model;
 
 import com.decarta.android.exception.APIException;
-import com.decarta.android.util.LogWrapper;
 import com.tigerknows.TKConfig;
-import com.tigerknows.model.test.BaseQueryTest;
 import com.tigerknows.model.test.ProxyQueryTest;
 import com.tigerknows.model.xobject.XMap;
 
@@ -196,10 +194,6 @@ public class ProxyQuery extends BaseQuery {
                 
                 public static final byte FIELD_TIME_DETAIL = 0x04;
                 
-                private static final String defaultTime = "24点之前";
-                private static final long defaultNeed = 0;
-                private static final long defaultType = 0;
-
                 private String time;
 
                 private long need;

@@ -53,7 +53,7 @@ import java.util.List;
  * 酒店搜索主页
  * @author Peng Wenyue
  */
-public class HotelHomeFragment extends BaseFragment implements View.OnClickListener, FilterListView.CallBack, DateListView.CallBack {
+public class HotelHomeFragment extends BaseFragment implements View.OnClickListener, FilterListView.CallBack, DateListView.CallBack, PickLocationFragment.Invoker {
 
     public HotelHomeFragment(Sphinx sphinx) {
         super(sphinx);
@@ -81,6 +81,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     private TextView mPriceTxv;
     private Button mQueryBtn;
     private Button mDingdanBtn;
+    private POI mPOI;
     
     private FilterListView mFilterCategoryListView = null;
     
@@ -110,6 +111,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     
     public void setSelectedLocation(boolean selectedLocation) {
         mSelectedLocation = selectedLocation;
+        mPOI = null;
     }
 
     @Override
@@ -139,7 +141,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         
         mSphinx.showHint(TKConfig.PREFS_HINT_HOTEL_HOME, R.layout.hint_hotel_home);
         
-        if (mSphinx.getPickLocationFragment().getPOI() != null) {
+        if (mPOI != null) {
             FilterListView.selectedFilter(getFilter(getFilterList(), FilterArea.FIELD_LIST), -1);
         }
         if (mRefreshFilterArea) {
@@ -152,7 +154,6 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         }
         
         if (TKConfig.getPref(mSphinx, TKConfig.PREFS_HINT_POI_HOME_HOTEL_RESERVE) == null) {
-            TKConfig.setPref(mSphinx, TKConfig.PREFS_HINT_POI_HOME_HOTEL_RESERVE, "1");
             mSphinx.getPOIHomeFragment().getCategoryAdapter().notifyDataSetChanged();
         }
         if (isReLogin()) {
@@ -230,12 +231,14 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                 
             case R.id.location_btn:
                 mActionLog.addAction(mActionTag + ActionLog.HotelQueryLocation);
+                mSphinx.getPickLocationFragment().setInvoker(this);
                 mSphinx.getPickLocationFragment().reset();
                 Filter filter = getFilter(mFilterList, FilterArea.FIELD_LIST);
                 if (filter == null || filter.getVersion().equals("0.0.0")) {
                     queryFilter();
                     showProgressDialog();
                 } else {
+                    mSphinx.getPickLocationFragment().setTitle(mSphinx.getString(R.string.hotel_select_location));
                     mSphinx.showView(R.id.view_hotel_pick_location);
                 }
                 break;
@@ -274,7 +277,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         getDateListView().refresh(null, null);
     }
     
-    static Filter getFilter(List<Filter> list, byte key) {
+    public static Filter getFilter(List<Filter> list, byte key) {
         synchronized (list) {
             Filter result = null;
             if (list != null)  {
@@ -289,7 +292,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         }
     }
     
-    boolean checkFilter(List<Filter> list, byte key) {
+    public static boolean checkFilter(List<Filter> list, byte key) {
         synchronized (list) {
             boolean result = false;
             if (list != null)  {
@@ -304,7 +307,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         }
     }
     
-    boolean deleteFilter(List<Filter> list, byte key) {
+    public static boolean deleteFilter(List<Filter> list, byte key) {
         synchronized (list) {
             boolean result = false;
             if (list != null)  {
@@ -331,7 +334,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         mSelectedLocation = false;
         mRefreshFilterArea = true;
         refreshFilterArea(true);
-        mSphinx.getPickLocationFragment().resetPOI();
+        mPOI = null;
 
         int cityId = Globals.getCurrentCityInfo().getId();
         MapEngine.getInstance().suggestwordCheck(mSphinx, cityId);
@@ -455,7 +458,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
             }
         }
         
-        if (mSphinx.getPickLocationFragment().getPOI() != null) {
+        if (mPOI != null) {
             Filter filter = getFilter(mFilterList, FilterArea.FIELD_LIST);
             if (filter != null) {
                 FilterListView.selectedFilter(filter, -1);
@@ -505,7 +508,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
             Response response = baseQuery.getResponse();
             mResponse = response;
             if (response == null) {
-                queryFilter();
+//                queryFilter();
                 return;
             } else if (isSupportHotelQuery() == false) {
                 return;
@@ -559,11 +562,12 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                 if (refresh) {
                     refreshFilterArea(false);
                 }
-                if (mSphinx.getPickLocationFragment().getPOI() != null) {
+                if (mPOI != null) {
                     FilterListView.selectedFilter(getFilter(getFilterList(), FilterArea.FIELD_LIST), -1);
                 }
                 
                 if (mProgressDialog != null && mProgressDialog.isShowing()) {
+                    mSphinx.getPickLocationFragment().setTitle(mSphinx.getString(R.string.hotel_select_location));
                     mSphinx.showView(R.id.view_hotel_pick_location);
                     dismissProgressDialog();
                 }
@@ -606,7 +610,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
 
         boolean result = false;
         List<Filter> filterList = getFilterList();
-        POI poi = mSphinx.getPickLocationFragment().getPOI();
+        POI poi = mPOI;
         if (poi != null) {
             mLocationBtn.setText(poi.getName());
             result = true;
@@ -702,6 +706,11 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     DateListView getDateListView() {
         if (mDateListView == null) {
             DateListView view = new DateListView(mSphinx);
+            View v = mLayoutInflater.inflate(R.layout.time_list_item, this, false);
+            v.setBackgroundResource(R.drawable.list_selector_background_gray_dark);
+            v.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+            int h = v.getMeasuredHeight();
+            view.findViewById(R.id.body_view).getLayoutParams().height = h*5-(int)(Globals.g_metrics.density*8);
             view.setData(this, mActionTag);
             mDateListView = view;
         }
@@ -728,7 +737,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         criteria.put(DataQuery.SERVER_PARAMETER_CHECKIN, SIMPLE_DATE_FORMAT.format(getDateListView().getCheckin().getTime()));
         criteria.put(DataQuery.SERVER_PARAMETER_CHECKOUT, SIMPLE_DATE_FORMAT.format(getDateListView().getCheckout().getTime()));
         
-        POI poi = mSphinx.getPickLocationFragment().getPOI();
+        POI poi = mPOI;
         if (poi != null) {
             Position position = poi.getPosition();
             if (position != null) {
@@ -797,5 +806,10 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     
     public Calendar getCheckout(){
         return mCheckOutDat.getCalendar();
+    }
+
+    @Override
+    public void setPOI(POI poi) {
+        mPOI = poi;
     }
 }

@@ -198,6 +198,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     
     DynamicMoviePOI mDynamicMoviePOI;
     
+    ExtraSubwayPOI mExtraSubwayPOI;
+    
     private Button mCommentTipEdt;
     
     private View mLoadingView;
@@ -281,7 +283,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     /*
      * 进入这个页面时清除掉所有的动态POI的ViewBlock
      */
-    private void clearDynamicPOI(List<DynamicPOIViewBlock> POIList) {
+    private void clearDynamicView(List<DynamicPOIViewBlock> POIList) {
         mBelowCommentLayout.removeAllViews();
         mBelowAddressLayout.removeAllViews();
         POIList.clear();
@@ -385,8 +387,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         //这个函数是一个动态POI的刷新主函数,刷新策略在其中实现.但是具体的刷新行为在BlockRefresher中实现
         public abstract void refresh();
 
-        //初始化的时候会在checkAndAddDynamicPOIView中把这个变量初始化完毕,不用关心
-        final public boolean isExist() {
+        //普通动态POI初始化的时候会在checkAndAddDynamicPOIView中把这个变量初始化完毕,不用关心
+        public boolean isExist() {
             return mExist;
         }
 
@@ -439,11 +441,45 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     }
     
 	//*************DynamicPOI code end*******************
+    
+    //TODO:好好整理下这块代码和命名
+    //以下是处理本页动态添加进来的，有些POI有，有些POI没有的extraView
+    
+    //存储当前页面所有的extraView
+    private List<DynamicPOIViewBlock> mExtraViewList = new LinkedList<DynamicPOIViewBlock>();
+    
+    private List<DynamicPOIView> mExtraPOIInfoList = new LinkedList<DynamicPOIView>();
+    
+    private void initExtraViewEnv() {
+        mExtraPOIInfoList.add(mExtraSubwayPOI);
+    }
+    
+    private void initExtraView(POI poi) {
+        for (DynamicPOIView extraView : mExtraPOIInfoList) {
+            mExtraViewList.addAll(extraView.getViewList());
+            extraView.initData(poi);
+        }
+        
+        for (DynamicPOIViewBlock block : mExtraViewList) {
+            block.clear();
+            block.addToParent();
+        }
+    }
+    
+    private final void refreshNavigation() {
+        if (mDynamicHotelPOI.isExist()) {
+            mNavigationWidget.setVisibility(View.VISIBLE);
+        } else {
+            mNavigationWidget.setVisibility(View.GONE);
+        }
+    }
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mActionTag = ActionLog.POIDetail;
         initDynamicPOIEnv();
+        initExtraViewEnv();
     }
 
     @Override
@@ -484,6 +520,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         
         mDynamicMoviePOI = new DynamicMoviePOI(this, mLayoutInflater);
         
+        mExtraSubwayPOI = new ExtraSubwayPOI(this, mLayoutInflater);
+        
         return mRootView;
     }
 
@@ -513,6 +551,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         if (mPOI.getHotel().getUuid() != null) {
             mDynamicHotelPOI.refreshPicture();
         }
+        refreshNavigation();
         
         if (poi.getName() == null && poi.getUUID() != null) {
             mActionLog.addAction(mActionTag + ActionLog.POIDetailFromWeixin);
@@ -533,13 +572,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             poiQuery.setup(criteria, cityId, getId(), getId(), mSphinx.getString(R.string.doing_and_wait));
             baseQueryList.add(poiQuery);
             mSphinx.queryStart(baseQueryList);
-            mNavigationWidget.setVisibility(View.GONE);
-        } else {
-            if (poi.getHotel().getUuid() != null) {
-                mNavigationWidget.setVisibility(View.VISIBLE);
-            } else {
-                mNavigationWidget.setVisibility(View.GONE);
-            }
         }
         
         if (isReLogin()) {
@@ -666,6 +698,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         if (poi == null) {
             return;
         }
+        mBodyScv.smoothScrollTo(0, 0);
         int resId = Integer.MIN_VALUE;
         if (poi.isGoldStamp()) {
             resId = R.drawable.ic_stamp_gold_big;
@@ -998,13 +1031,14 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             return;
         }
         //这两个函数放在前面初始化动态POI信息
-        clearDynamicPOI(DPOIViewBlockList);
+        clearDynamicView(DPOIViewBlockList);
+        //初始化和动态POI信息相关的动态布局
         initDynamicPOIView(mPOI);
-        if (poi.getHotel().getUuid() != null) {
-            mNavigationWidget.setVisibility(View.VISIBLE);
-        } else {
-            mNavigationWidget.setVisibility(View.GONE);
+        initExtraView(mPOI);
+        if (mExtraSubwayPOI.isExist()) {
+            mExtraSubwayPOI.refresh();
         }
+        refreshNavigation();
         mDoingView.setVisibility(View.VISIBLE);
         if (poi.getName() == null && poi.getUUID() != null) {
             return;
@@ -1087,7 +1121,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         criteria.put(DataQuery.SERVER_PARAMETER_REQUSET_SOURCE_TYPE, mActionTag);
         
         FeedbackUpload feedbackUpload = new FeedbackUpload(mSphinx);
-        feedbackUpload.setup(criteria);
+        feedbackUpload.setup(criteria, MapEngine.getInstance().getCityId(poi.getPosition()));
         if (baseQueryList.isEmpty() == false) {
             if (position >= 0) {
                 baseQueryList.add(feedbackUpload);
@@ -1398,6 +1432,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                             initDynamicPOIView(mPOI);
                             refreshDetail();
                             refreshComment();
+                            refreshNavigation();
 
                             if (mDynamicHotelPOI.isExist()) {
                                 mDynamicHotelPOI.initDate();

@@ -131,7 +131,7 @@
         android:id="@+id/disable_touch_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/blue_light"
+        android:background="@color/transparent"
         android:visibility="gone" />
     <RelativeLayout 
 	    android:layout_width="fill_parent" 
@@ -140,13 +140,10 @@
 	    android:visibility="gone"
 	    android:background="@color/black_transparent_half">
         
-	    <ImageView android:id="@+id/imv_home_hint"
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content"
-		    android:layout_marginTop="120dp"
-		    android:layout_alignParentRight="true"
-		    android:layout_alignParentTop="true"
-		    android:background="@drawable/ic_hint_home_drag"
+	    <include android:id="@+id/imv_home_hint"
+		    android:layout_width="fill_parent"
+		    android:layout_height="fill_parent"
+		    layout="@layout/hint_poi_home_drag"
         />
 	</RelativeLayout>
 

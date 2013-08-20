@@ -5,9 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class CalendarUtil {
-	private static final String TAG = "DateUtil";
-
-    /**  
+	/**  
      * @param date1 需要比较的时间 不能为空(null),需要正确的日期格式  
      * @param date2 被比较的时间  为空(null)则为当前时间  
      * @param stype 返回值类型   0为多少天，1为多少个月，2为多少年  

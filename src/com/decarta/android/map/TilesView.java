@@ -141,6 +141,11 @@ public class TilesView extends GLSurfaceView {
     private Timer drawMyLocationTimer;
     boolean isMyLocation = false;
     public boolean stopRefreshMyLocation = false;
+    public void setRefreshMapText(boolean refresh) {
+        synchronized (drawingLock) {
+            this.mapText.refresh = refresh;
+        }
+    }
     
     private MapText mapText = new MapText();
 
@@ -770,6 +775,11 @@ public class TilesView extends GLSurfaceView {
 		XYFloat xy0Conv=screenXYToScreenXYConv(event.getX(0), event.getY(0));
 		
 		if (action == MotionEvent.ACTION_DOWN) {
+            
+            synchronized(touchingLock){
+                touching=true;
+            }
+            
 			touchRecord1.reset();
 			touchRecord2.reset();
 			
@@ -830,10 +840,6 @@ public class TilesView extends GLSurfaceView {
         		}
     		}else if(pCount>1){
     			multiTouch=true;
-    		}
-    		
-    		synchronized(touchingLock){
-    			touching=true;
     		}
 			
     	} else if (action == MotionEvent.ACTION_MOVE) {
@@ -1241,6 +1247,10 @@ public class TilesView extends GLSurfaceView {
      * centers the map on a given position and renders tiles
      * @param position
      */
+    public void centerOnPosition(Position position) throws APIException{
+        centerOnPosition(position, zoomLevel, false);
+    }
+    
     public void centerOnPosition(Position position, float zoomLevel) throws APIException{
         centerOnPosition(position, zoomLevel, false);
     }
@@ -2625,6 +2635,10 @@ public class TilesView extends GLSurfaceView {
 				rotatingX=status[6];
 				rotatingXJustDoneL=status[7];
 
+				boolean refreshText = ((easingRecord.startMoveTime == 0) &&
+				        (zoomingRecord.digitalZoomEndTime == 0) &&
+				        touching == false);
+
 				//Log.i("Thread","TilesView onDraw after synchronize to drawingLock");
 				long drawStart=System.nanoTime();
 				
@@ -2974,15 +2988,15 @@ public class TilesView extends GLSurfaceView {
 	                    long time = System.nanoTime();
 	                    if (Math.abs(mapTextMercXY.x - centerXY.x) > 8
 	                            || Math.abs(mapTextMercXY.y - centerXY.y) > 8
-	                            || mapTextZoomLevel != (int)zoomLevel
-	                            || (mapText.drawNum != drawNum)) {
+	                            || mapTextZoomLevel != centerXYZ.z
+	                            || mapText.refresh) {
 	                        same = false;
 	                    }
-	                    if (!same) {
+	                    if (!same && refreshText) {
 	                        mapText.mercXYGetting.x = centerXY.x;
 	                        mapText.mercXYGetting.y = centerXY.y;
 	                        mapText.zoomLevelGetting = centerXYZ.z;
-	                        mapText.drawNum = drawNum;
+                            mapText.refresh = false;
 	                        mapText.screenTextGetting = true;
 	                        mapText.lastTime = time;
 	                    }
@@ -3370,15 +3384,15 @@ public class TilesView extends GLSurfaceView {
     			        	tilesWaitForLoading.notifyAll();
     		        	}
     		        }
-                    if (mapText.screenTextGetting) {
-                        if (Math.abs(System.currentTimeMillis()-MapTextThread.time) > 256) {
-                            synchronized (mapText) {
-                                mapText.notifyAll();
-                            }
+                    if (mapText.screenTextGetting &&
+                            Math.abs(System.currentTimeMillis()-MapTextThread.time) > 512 &&
+                            refreshText) {
+                        synchronized (mapText) {
+                            mapText.notifyAll();
                         }
                     }
  
-    		        if(zoomingL || fading || movingL || rotatingX || rotatingZ) {
+    		        if(zoomingL || fading || movingL || rotatingX || rotatingZ || mapText.screenTextGetting) {
     		            requestRender();
     		        }
                     else if (isCancelSnap == false && snapCenterPos != null && mapText.texImageChanged == false && mapText.screenTextGetting == false && drawFullTile){
@@ -3496,7 +3510,7 @@ public class TilesView extends GLSurfaceView {
             
             mapText.screenTextGetting=true;
             mapText.lastTime = 0;
-            mapText.drawNum = 0;
+            mapText.refresh = false;
             
             Iterator<Bitmap> iterator6=textBitmapPool.values().iterator();
             while(iterator6.hasNext()){

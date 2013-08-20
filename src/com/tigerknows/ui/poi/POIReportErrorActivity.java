@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -23,7 +22,6 @@ import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.Button;
 import android.widget.EditText;
@@ -33,7 +31,6 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.decarta.Globals;
-import com.decarta.android.util.LogWrapper;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.util.Utility;
 import com.tigerknows.widget.FilterListView;
@@ -96,8 +93,6 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
     private View vErreportMain = null;
     private View vErreportDetail = null;
     
-    private Context mContext;
-    
     private LinearLayout mBodyLly;
     private LinearLayout mTelLly;
     private RadioGroup mTelRgp;
@@ -146,8 +141,6 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
     
     private static List<Object> sTargetList = new ArrayList<Object>();
 
-    private static final String TAG = "ErrorRecovery";
-    
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
@@ -162,7 +155,7 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
         mChecked = HOME_PAGE;
         mPage = HOME_PAGE;
         
-        mContext = getBaseContext();
+        getBaseContext();
         
         synchronized (sTargetList) {
             int size = sTargetList.size();
@@ -377,7 +370,7 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
         return super.onKeyDown(keyCode, event);
     }
     private boolean showDiscardDialog(){
-        boolean show = mSubmitBtn.isEnabled();
+        boolean show = mSubmitBtn.isEnabled() || (mPage == DETAIL_PAGE && (mChecked & MAIN_LLY)!=0 && TextUtils.isEmpty(mMainEdt.getText().toString().trim()) && !TextUtils.isEmpty(mOrigin.trim()));
         if (mPage == HOME_PAGE || show == false)return false;
         Utility.showNormalDialog(mThis, getString(R.string.erreport_abandon), new DialogInterface.OnClickListener(){
 
@@ -503,7 +496,8 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
         if(mMainLly.getVisibility() == View.VISIBLE){
             mMainEdt.setText(mOrigin);
             if(mChecked == TEL_ERR){
-            	mMainEdt.setSelection(mMainEdt.length());
+            	Selection.setSelection(mMainEdt.getText(), mMainEdt.length());
+            	mDescriptionEdt.requestFocus();		//无法正常清除光标，故让隐藏的Edt获取光标的方式以实现清除光标
             }else{
             	mMainEdt.requestFocus();
                 Selection.setSelection(mMainEdt.getText(), mMainEdt.length());
@@ -525,12 +519,13 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
             mDescriptionEdt.clearFocus();
             hideSoftInput();
             mDescriptionLly.setVisibility(View.GONE);
+            mDescriptionEdt.requestFocus();		//无法正常清除光标，故让隐藏的Edt获取光标的方式以实现清除光标
         }
         refreshSubmitBtn();
         mSubmitBtn.setTextColor(mSubmitBtn.isEnabled() 
                 ? getResources().getColor(R.color.orange) 
                 : getResources().getColor(R.color.black_light));
-        refreshTypeBtn();
+        if((mChecked & TYPE_LLY)!=0) refreshTypeBtn();
     }
     
     public void refreshTypeBtn(){
@@ -626,7 +621,7 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
             refreshDataMain();
             break;
         case R.id.submit_btn:
-        	mActionLog.addAction(mActionTag + ((mPage == DETAIL_PAGE && ((mChecked & DIRECT_SUBMIT) == 0)) ? ActionLog.POIReportErrorSubmit : ActionLog.POIReportErrorNext) );
+        	mActionLog.addAction(mActionTag + ((mPage == DETAIL_PAGE || (mChecked & DIRECT_SUBMIT) == 0) ? ActionLog.POIReportErrorSubmit : ActionLog.POIReportErrorNext));
             if((mChecked & DIRECT_SUBMIT) == 0) submitDetail();
             else {
             	submitMain();

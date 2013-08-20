@@ -27,7 +27,7 @@ public abstract class XObject implements Writable{
         return readByCode(reader, code);
     }
     
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     public XArray toXArray(){
         throw new UnsupportedOperationException("can not toXArray");
     }
@@ -62,7 +62,7 @@ public abstract class XObject implements Writable{
         throw new IllegalArgumentException("unknown code:"+code);
     }
     
-    @SuppressWarnings( "unchecked" )
+    @SuppressWarnings( "rawtypes" )
     public static XObject valueOf(Object o){
         if(o instanceof Integer ){
             return new XInt((Integer)o);

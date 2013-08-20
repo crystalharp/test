@@ -11,7 +11,6 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -130,8 +129,6 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
     	
         return mRootView;
     }
-    
-    @SuppressWarnings("unchecked")
     @Override
     public void dismiss() {
         super.dismiss();

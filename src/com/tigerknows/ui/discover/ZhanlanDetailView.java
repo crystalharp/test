@@ -7,7 +7,6 @@ package com.tigerknows.ui.discover;
 
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RatingBar;

@@ -11,14 +11,25 @@ import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
+import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.MapEngine.CityInfo;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.POI;
+import com.tigerknows.model.Response;
+import com.tigerknows.model.DataQuery.Filter;
+import com.tigerknows.model.DataQuery.FilterArea;
+import com.tigerknows.model.DataQuery.FilterOption;
+import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
+import com.tigerknows.ui.hotel.HotelHomeFragment;
+import com.tigerknows.ui.hotel.PickLocationFragment;
+import com.tigerknows.util.Utility;
+import com.tigerknows.widget.FilterListView;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
@@ -30,9 +41,11 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
+import android.view.animation.RotateAnimation;
 import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -63,7 +76,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * @author Peng Wenyue
  */
 @SuppressLint("ValidFragment")
-public class POIHomeFragment extends BaseFragment implements View.OnClickListener {
+public class POIHomeFragment extends BaseFragment implements View.OnClickListener, PickLocationFragment.Invoker {
 
     public POIHomeFragment(Sphinx sphinx) {
         super(sphinx);
@@ -143,6 +156,166 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
 
 	ArrayList< ArrayList<String> > subCategories = new ArrayList< ArrayList<String> >();
 	String[] mHighLightedSubs;
+    
+    private Dialog mProgressDialog = null;
+    
+    private POI mPOI = null;
+    
+    private boolean mSelectedLocation = false;
+    
+    @Override
+    public void setSelectedLocation(boolean selectedLocation) {
+        mSelectedLocation = selectedLocation;
+        mPOI = null;
+        mMyLoactionTxv.setText(mSphinx.getString(R.string.appoint_area) + FilterListView.getFilterTitle(mSphinx, HotelHomeFragment.getFilter(mFilterList, FilterArea.FIELD_LIST)));
+        mMyLoactionTxv.setVisibility(View.VISIBLE);
+        mCategoryTop = mMyLocationViewHeight+mCategoryPadding;
+        if (mSelectedLocation == false) {
+            mMyLoactionTxv.setBackgroundResource(R.drawable.btn_my_location);
+            Filter filter = HotelHomeFragment.getFilter(mFilterList, FilterArea.FIELD_LIST);
+            if (filter != null) {
+                FilterListView.selectedFilter(filter, Integer.MIN_VALUE);
+            }
+        } else {
+            mMyLoactionTxv.setBackgroundResource(R.drawable.btn_appointed_area);
+        }
+    }
+    
+    public void setPOI(POI poi) {
+        mPOI = poi;
+        mMyLoactionTxv.setBackgroundResource(R.drawable.btn_appointed_area);
+        mMyLoactionTxv.setText(mSphinx.getString(R.string.appoint_location) + mPOI.getName());
+        mMyLoactionTxv.setVisibility(View.VISIBLE);
+        mCategoryTop = mMyLocationViewHeight+mCategoryPadding;
+    }
+    
+    public POI getPOI() {
+        return mPOI;
+    }
+    
+    Response mResponse = null;
+	
+    List<Filter> mFilterList = new ArrayList<DataQuery.Filter>();
+    
+    @Override
+    public List<Filter> getFilterList() {
+        return mFilterList;
+    }
+
+    @Override
+    public void refreshFilterAreaView() {
+        // TODO Auto-generated method stub
+        
+    }
+    
+    /**
+     * 显示进度对话框
+     * @param id
+     */
+    void showProgressDialog() {
+        if (mProgressDialog == null) {
+            View custom = mSphinx.getLayoutInflater().inflate(R.layout.loading, null);
+            TextView loadingTxv = (TextView)custom.findViewById(R.id.loading_txv);
+            loadingTxv.setText(mSphinx.getString(R.string.doing_and_wait));
+            mProgressDialog = Utility.showNormalDialog(mSphinx, custom);
+            mProgressDialog.setCancelable(true);
+            mProgressDialog.setCanceledOnTouchOutside(false);
+        }
+        if (mProgressDialog.isShowing() == false) {
+            mProgressDialog.show();
+        }
+        
+    }
+    
+    /**
+     * 关闭进度对话框
+     */
+    void dismissProgressDialog() {
+        if (mProgressDialog != null && mProgressDialog.isShowing()) {
+            mProgressDialog.dismiss();
+        }
+    }
+    
+    /**
+     * 查询筛选数据，在查询之前需要将之前的查询停止
+     */
+    private void queryFilter() {
+        stopQuery();
+        DataQuery dataQuery = new DataQuery(mSphinx);
+        Hashtable<String, String> criteria = new Hashtable<String, String>();
+        criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_FILTER);
+        criteria.put(DataQuery.SERVER_PARAMETER_CONFIGINFO, "{\"0\":\"0.0.0\"}");
+        dataQuery.setup(criteria, Globals.getCurrentCityInfo(false).getId(), getId(), getId(), null, true);
+        mSphinx.queryStart(dataQuery);
+    }
+    
+    void stopQuery() {
+        List<BaseQuery> list = mBaseQuerying;
+        if (list != null && list.size() > 0) {
+            for(int i = 0, size = list.size(); i < size; i++) {
+                list.get(i).stop();
+            }
+        }
+        TKAsyncTask tkAsyncTask = mTkAsyncTasking;
+        if (tkAsyncTask != null) {
+            tkAsyncTask.stop();
+        }
+    }
+
+    @Override
+    public void onPostExecute(TKAsyncTask tkAsyncTask) {
+        super.onPostExecute(tkAsyncTask);
+        
+        BaseQuery baseQuery = tkAsyncTask.getBaseQuery();
+        if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), getId(), getId(), getId(), mCancelLoginListener)) {
+            isReLogin = true;
+            return;
+        } else {
+            boolean result = true;
+            FilterArea filterArea = DataQuery.getFilterArea();
+            if (filterArea == null || filterArea.getVersion().equals("0.0.0")) {
+//                queryFilter();
+//                return;
+                result = false;
+            }
+                
+            if (result) {
+                setDataToPickLocationFragment();
+            }
+            
+            if (mProgressDialog != null && mProgressDialog.isShowing()) {
+                if (result) {
+                    mSphinx.getPickLocationFragment().setTitle(mSphinx.getString(R.string.poi_change_location));
+                    mSphinx.showView(R.id.view_hotel_pick_location);
+                }
+                dismissProgressDialog();
+            }
+        }
+    }
+    
+    void setDataToPickLocationFragment() {
+        FilterArea filterArea = DataQuery.getFilterArea();
+        if (filterArea != null && filterArea.getAreaFilterOption().size() > 0) {
+            List<FilterOption> filterOptionList = filterArea.getAreaFilterOption();
+            List<Long> indexList = new ArrayList<Long>();
+            for(int i = 0, size = filterOptionList.size(); i < size; i++) {
+                long id = filterOptionList.get(i).getId();
+                if (id > 0 && id <= 10) {
+                    continue;
+                }
+                indexList.add(id);
+            }
+
+            if (indexList.size() > 0) {
+                indexList.add(0, Long.MIN_VALUE);
+                HotelHomeFragment.deleteFilter(mFilterList, FilterArea.FIELD_LIST);
+                Filter filter = DataQuery.makeFilterResponse(mSphinx, indexList, filterArea.getVersion(), filterOptionList, FilterArea.FIELD_LIST);
+                mFilterList.add(filter);
+
+                mSphinx.getPickLocationFragment().setData(mFilterList);
+            }
+        }
+    }
 	
 	public CategoryAdapter getCategoryAdapter() {
 	    return mCategoryAdapter;
@@ -314,6 +487,19 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
         refreshSubCategoryListView();
 		mDragView.setVisibility(View.INVISIBLE);
 		mIsSubCategoryExpanded = false;
+		
+		refreshFilterArea();
+    }
+    
+    void refreshFilterArea() {
+        DataQuery.initStaticField(BaseQuery.DATA_TYPE_POI, BaseQuery.SUB_DATA_TYPE_POI, Globals.getCurrentCityInfo(false).getId());
+        FilterArea filterArea = DataQuery.getFilterArea();
+        Filter filter = HotelHomeFragment.getFilter(mFilterList, FilterArea.FIELD_LIST);
+        if (filterArea == null || filterArea.getVersion().equals("0.0.0")) {
+            queryFilter();
+        } else if (filter == null) {
+            setDataToPickLocationFragment();
+        }
     }
     
     @Override
@@ -344,6 +530,8 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
        mSubCategoryGrid.setOnItemClickListener( mSubCategoryOnClickListener);
        mSubCategoryGrid.setOnTouchListener(mDragViewExpanedOnTouchListener);
        
+       mMyLoactionTxv.setOnClickListener(this);
+       
     }
     
     @Override
@@ -356,6 +544,34 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
             mActionLog.addAction(mActionTag + ActionLog.POIHomeInputEdt);
             mSphinx.getPOIQueryFragment().reset();
             mSphinx.showView(R.id.view_poi_input_search);
+        } else if (id == R.id.my_location_txv) {
+            CityInfo myLoaction = Globals.g_My_Location_City_Info;
+            if (myLoaction == null ||
+                    Globals.getCurrentCityInfo(false).getId() != myLoaction.getId() ||
+                    mPOI != null ||
+                    mSelectedLocation) {
+                mActionLog.addAction(mActionTag + ActionLog.POIHomeAppointedArea);
+                setSelectedLocation(false);
+                refreshLocationView(true);
+                return;
+            }
+            mActionLog.addAction(mActionTag + ActionLog.POIHomeMyLocation);
+            
+            mSphinx.getPickLocationFragment().setInvoker(this);
+            mSphinx.getPickLocationFragment().reset();
+            DataQuery.initStaticField(BaseQuery.DATA_TYPE_POI, BaseQuery.SUB_DATA_TYPE_POI, Globals.getCurrentCityInfo(false).getId());
+            FilterArea filterArea = DataQuery.getFilterArea();
+            Filter filter = HotelHomeFragment.getFilter(mFilterList, FilterArea.FIELD_LIST);
+            if (filterArea == null || filterArea.getVersion().equals("0.0.0")) {
+                queryFilter();
+                showProgressDialog();
+            } else {
+                if (filter == null) {
+                    setDataToPickLocationFragment();
+                }
+                mSphinx.getPickLocationFragment().setTitle(mSphinx.getString(R.string.poi_change_location));
+                mSphinx.showView(R.id.view_hotel_pick_location);
+            }
         }
     }
     
@@ -364,26 +580,46 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
             return;
         }
         mCityBtn.setText(cityName);
+
+        mSelectedLocation = false;
+        mPOI = null;
+        mMyLoactionTxv.setBackgroundResource(R.drawable.btn_my_location);
+        refreshLocationView(true);
+        HotelHomeFragment.deleteFilter(mFilterList, FilterArea.FIELD_LIST);
+        refreshFilterArea();
+        Filter filter = HotelHomeFragment.getFilter(mFilterList, FilterArea.FIELD_LIST);
+        if (filter != null) {
+            FilterListView.selectedFilter(filter, Integer.MIN_VALUE);
+        }
     }
     
     public void refreshLocationView() {
+        refreshLocationView(false);
+    }
+    
+    public void refreshLocationView(boolean isUpdate) {
         CityInfo currentCityInfo = Globals.getCurrentCityInfo();
         CityInfo myLocationCityInfo = Globals.g_My_Location_City_Info;
         int categoryTop = mCategoryTop;
         if (myLocationCityInfo != null) {
             if (myLocationCityInfo.getId() == currentCityInfo.getId()) {
-                refreshLoactionTxv();
+                refreshLoactionTxv(isUpdate);
                 mMyLoactionTxv.setVisibility(View.VISIBLE);
                 mCategoryTop = mMyLocationViewHeight+mCategoryPadding;
             } else {
-                mMyLoactionTxv.setVisibility(View.GONE);
-                mCategoryTop = mCategoryPadding;
+                if (mSelectedLocation == false) {
+                    mMyLoactionTxv.setVisibility(View.GONE);
+                    mCategoryTop = mCategoryPadding;
+                }
             }
         } else {
             mLastTime = 0;
-            mMyLoactionTxv.setText(mContext.getString(R.string.location_doing));
-            mMyLoactionTxv.setVisibility(View.VISIBLE);
-            mCategoryTop = mMyLocationViewHeight+mCategoryPadding;
+            if (mSelectedLocation == false) {
+                mMyLoactionTxv.setBackgroundResource(R.drawable.bg_location);
+                mMyLoactionTxv.setText(mContext.getString(R.string.location_doing));
+                mMyLoactionTxv.setVisibility(View.VISIBLE);
+                mCategoryTop = mMyLocationViewHeight+mCategoryPadding;
+            }
         }
         if (categoryTop != mCategoryTop) {
             mCategoryAdapter.notifyDataSetChanged();
@@ -391,7 +627,7 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
         mSphinx.getDiscoverFragment().refreshLocationView(mLocationName, myLocationCityInfo);
     }
     
-    private void refreshLoactionTxv() {
+    private void refreshLoactionTxv(boolean isUpdate) {
         Location myLocation = null;
         Position myLocationPosition = null;
         CityInfo myLocationCityInfo = Globals.g_My_Location_City_Info;
@@ -404,7 +640,6 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
 
         String name = mSphinx.getMapEngine().getPositionName(myLocationPosition);
         
-        boolean isUpdate = false;
         if (!TextUtils.isEmpty(name) && name.length() > 1) {
             if ((myLocation != null && myLocation.getProvider().equals(LocationManager.GPS_PROVIDER) && distance > 100)) {
                 isUpdate = true;
@@ -419,7 +654,10 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
         
         if (isUpdate) {
             mLocationName = name;
-            mMyLoactionTxv.setText(mContext.getString(R.string.current_location, mLocationName.substring(1)));
+            if (mSelectedLocation == false) {
+                mMyLoactionTxv.setBackgroundResource(R.drawable.btn_my_location);
+                mMyLoactionTxv.setText(mContext.getString(R.string.current_location, mLocationName.substring(1)));
+            }
             mLastPosition = myLocationPosition;
             mLastTime = currentTime;
         }
@@ -480,16 +718,31 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
         	ImageView icon = (ImageView) convertView.findViewById(R.id.hotel_tip_reserve_imv);
         	if (position == HOTEL_INDEX && TKConfig.getPref(mSphinx, TKConfig.PREFS_HINT_POI_HOME_HOTEL_RESERVE) == null) {
         	    icon.setVisibility(View.VISIBLE);
+        	    setHotelOrderAnimation(icon);
         	} else {
+        		icon.setAnimation(null);
         	    icon.setVisibility(View.GONE);
         	}
+        	
         	//Id will be used in setupDragView.
         	convertView.setId(position);
         	return convertView;
         }
     }
-    
 
+    private RotateAnimation anim;
+    
+    private void setHotelOrderAnimation(ImageView icon){
+    	if(anim == null){
+    		anim = new RotateAnimation(-20, 30, 12, 9);
+    		anim.setDuration(1000);
+    		anim.setRepeatCount(Integer.MAX_VALUE);
+    		anim.setRepeatMode(Animation.REVERSE);
+    		anim.setInterpolator(new AccelerateDecelerateInterpolator());
+    	}
+    	icon.startAnimation(anim);
+    }
+    
     private boolean mIsSubCategoryExpanded = false;
     
     public boolean isSubCategoryExpanded(){
@@ -829,17 +1082,12 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
 	private void jumpToPOIResult(String keyWord){
        DataQuery poiQuery = new DataQuery(mContext);
        POI requestPOI = mSphinx.getPOI();
+       if (mPOI != null) {
+           requestPOI = mPOI;
+       }
        int cityId = Globals.getCurrentCityInfo().getId();
-       Hashtable<String, String> criteria = new Hashtable<String, String>();
-       criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_POI);
-       criteria.put(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_POI);
-       criteria.put(DataQuery.SERVER_PARAMETER_INDEX, "0");
+       Hashtable<String, String> criteria = getCriteria();
        criteria.put(DataQuery.SERVER_PARAMETER_KEYWORD, keyWord);
-       Position position = requestPOI.getPosition();
-       if (position != null) {
-    	   criteria.put(DataQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
-    	   criteria.put(DataQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
-        }
        criteria.put(DataQuery.SERVER_PARAMETER_INFO, DataQuery.INFO_TYPE_TAG);
        poiQuery.setup(criteria, cityId, getId(), mSphinx.getPOIResultFragmentID(), null, false, false, requestPOI);
        BaseFragment baseFragment = mSphinx.getFragment(poiQuery.getTargetViewId());
@@ -849,6 +1097,42 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
     	   ((POIResultFragment)mSphinx.getFragment(poiQuery.getTargetViewId())).setup();
     	   mSphinx.showView(poiQuery.getTargetViewId());
        	}
+	}
+	
+	public Hashtable<String, String> getCriteria() {
+	       POI requestPOI = mSphinx.getPOI();
+	       Hashtable<String, String> criteria = new Hashtable<String, String>();
+	       criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_POI);
+	       criteria.put(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_POI);
+	       criteria.put(DataQuery.SERVER_PARAMETER_INDEX, "0");
+	       Position position = requestPOI.getPosition();
+	       if (position != null) {
+	           criteria.put(DataQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
+	           criteria.put(DataQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
+	        }
+	       if (mPOI != null) {
+	           requestPOI = mPOI;
+	           position = mPOI.getPosition();
+	           criteria.put(DataQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
+	           criteria.put(DataQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
+               criteria.put(DataQuery.SERVER_PARAMETER_POI_ID, mPOI.getUUID());
+	       } else if (mSelectedLocation) {
+	           Filter[] filters = FilterListView.getSelectedFilter(HotelHomeFragment.getFilter(mFilterList, FilterArea.FIELD_LIST));
+	           if (filters != null) {
+	               StringBuilder s = new StringBuilder();
+	               s.append(Util.byteToHexString(FilterArea.FIELD_LIST));
+	               s.append(':');
+	               for(int i = 0, length = filters.length; i < length; i++) {
+	                   if (i > 0) {
+	                       s.append('_');
+	                   }
+	                   s.append(filters[i].getFilterOption().getName());
+	               }
+	               criteria.put(DataQuery.SERVER_PARAMETER_FILTER_STRING, s.toString());
+	           }
+	       }
+	       
+	       return criteria;
 	}
 	
 	boolean animation = false;

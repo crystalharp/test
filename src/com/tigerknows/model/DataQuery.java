@@ -9,6 +9,8 @@ import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -24,6 +26,7 @@ import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
 import com.tigerknows.map.MapEngine;
+import com.tigerknows.model.DataQuery.AlternativeResponse.Alternative;
 import com.tigerknows.model.DataQuery.DiscoverResponse.DiscoverConfigList;
 import com.tigerknows.model.DataQuery.DiscoverResponse.DiscoverCategoryList.DiscoverCategory;
 import com.tigerknows.model.DataQuery.DiscoverResponse.DiscoverConfigList.DiscoverConfig;
@@ -33,6 +36,7 @@ import com.tigerknows.model.xobject.XArray;
 import com.tigerknows.model.xobject.XInt;
 import com.tigerknows.model.xobject.XMap;
 import com.tigerknows.util.ByteUtil;
+import com.tigerknows.util.PinyinUtil;
 import com.tigerknows.util.Utility;
 import com.weibo.sdk.android.WeiboParameters;
 
@@ -64,6 +68,9 @@ public final class DataQuery extends BaseQuery {
 
     // flt String  false   筛选选项，格式为key:id;key:id;key:id(key是对应筛选项在xmap中的key，目前有11,12,13)
     public static final String SERVER_PARAMETER_FILTER = "flt";
+
+    // flt_s    String  false   筛选选项字符串，格式为key:str;key:str;key:str(key同上，str指的是筛选选项对应的字符串，且如有父级也需提交，如"我的当前位置_附近xx米") 
+    public static final String SERVER_PARAMETER_FILTER_STRING = "flt_s";
     
     // cfv string  false   城市地片筛选版本号，每个城市不同
     public static final String SERVER_PARAMETER_CITY_FILTER_VERSION = "cfv";
@@ -127,6 +134,9 @@ public final class DataQuery extends BaseQuery {
     
     // appendaction    string  false   目前支持nosearch（表示不做搜索，只返回筛选项） 
     public static final String SERVER_PARAMETER_APPENDACTION = "appendaction";
+    
+    // configinfo   String  true    JSON字符串，key标识config的类型，value标识版本号,具体定义见默认筛选项参数定义
+    public static final String SERVER_PARAMETER_CONFIGINFO = "configinfo";
     
     // 评论版本 
     public static final String COMMENT_VERSION = "1";
@@ -546,7 +556,7 @@ public final class DataQuery extends BaseQuery {
                     requestParameters.add(SERVER_PARAMETER_NEED_FIELD, POI.NEED_FIELD+Hotel.NEED_FILED_LIST);
                     requestParameters.add(SERVER_PARAMETER_COMMENT_VERSION, COMMENT_VERSION);
                     requestParameters.add(SERVER_PARAMETER_PICTURE, 
-                            Util.byteToHexString(Hotel.FIELD_IMAGE_THUMB)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_HOTEL_LIST)+"_[10000000000000000000]" + ";" +
+                            Util.byteToHexString(Hotel.FIELD_IMAGE_THUMB)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_HOTEL_LIST)+"_[11000000000000000000]" + ";" +
                             Util.byteToHexString(Hotel.FIELD_IMAGE_LIST)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_HOTEL_DETAIL)+"_[00000000000000000000]");
                 }
                 addParameter(new String[]{SERVER_PARAMETER_CHECKIN, SERVER_PARAMETER_CHECKOUT});
@@ -604,7 +614,7 @@ public final class DataQuery extends BaseQuery {
             addParameter(new String[]{SERVER_PARAMETER_INFO}, false);
             requestParameters.add(SERVER_PARAMETER_NEED_FIELD, Tuangou.NEED_FIELD);
             requestParameters.add(SERVER_PARAMETER_PICTURE, 
-                    Util.byteToHexString(Tuangou.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_TUANGOU_LIST)+"_[10000000000000000000]" + ";" +
+                    Util.byteToHexString(Tuangou.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_TUANGOU_LIST)+"_[11000000000000000000]" + ";" +
                     Util.byteToHexString(Tuangou.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_TUANGOU_DETAIL)+"_[00000000000000000000]");
             addDiscoverCategoryParameters(requestParameters);
             String cfv = null;
@@ -633,7 +643,7 @@ public final class DataQuery extends BaseQuery {
             addParameter(new String[]{SERVER_PARAMETER_DIANYING_UUID, SERVER_PARAMETER_POI_ID}, false);
             requestParameters.add(SERVER_PARAMETER_NEED_FIELD, Dianying.NEED_FIELD);
             requestParameters.add(SERVER_PARAMETER_PICTURE, 
-                    Util.byteToHexString(Dianying.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[10000000000000000000]" + ";" +
+                    Util.byteToHexString(Dianying.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[11000000000000000000]" + ";" +
                     Util.byteToHexString(Dianying.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[00000000000000000000]");
             addDiscoverCategoryParameters(requestParameters);
             String cfv = null;
@@ -661,7 +671,7 @@ public final class DataQuery extends BaseQuery {
         } else if (DATA_TYPE_YANCHU.equals(dataType)) { 
             requestParameters.add(SERVER_PARAMETER_NEED_FIELD, Yanchu.NEED_FIELD);
             requestParameters.add(SERVER_PARAMETER_PICTURE, 
-                    Util.byteToHexString(Yanchu.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[10000000000000000000]" + ";" +
+                    Util.byteToHexString(Yanchu.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[11000000000000000000]" + ";" +
                     Util.byteToHexString(Yanchu.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[00000000000000000000]");
             addDiscoverCategoryParameters(requestParameters);
             String cfv = null;
@@ -678,7 +688,7 @@ public final class DataQuery extends BaseQuery {
         } else if (DATA_TYPE_ZHANLAN.equals(dataType)) { 
             requestParameters.add(SERVER_PARAMETER_NEED_FIELD, Zhanlan.NEED_FIELD);
             requestParameters.add(SERVER_PARAMETER_PICTURE, 
-                    Util.byteToHexString(Zhanlan.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[10000000000000000000]" + ";" +
+                    Util.byteToHexString(Zhanlan.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[11000000000000000000]" + ";" +
                     Util.byteToHexString(Zhanlan.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[00000000000000000000]");
             addDiscoverCategoryParameters(requestParameters);
             String cfv = null;
@@ -699,10 +709,24 @@ public final class DataQuery extends BaseQuery {
             addParameter(new String[]{SERVER_PARAMETER_LOCATION_CITY, SERVER_PARAMETER_LONGITUDE, SERVER_PARAMETER_LATITUDE, SERVER_PARAMETER_LOCATION_LONGITUDE, SERVER_PARAMETER_LOCATION_LATITUDE});
             addParameter(new String[]{SERVER_PARAMETER_MESSAGE_ID_LIST, SERVER_PARAMETER_LAST_PULL_DATE}, false);
         } else if (DATA_TYPE_ALTERNATIVE.equals(dataType)) {
+            requestParameters.add(SERVER_PARAMETER_NEED_FIELD, Alternative.NEED_FIELD);
             addParameter(new String[]{SERVER_PARAMETER_KEYWORD});
         } else if (DATA_TYPE_COUPON.equals(dataType)) {
         	addParameter(SERVER_PARAMETER_POI_ID);
         	addParameter(SERVER_PARAMETER_NEED_FIELD);
+        } else if (DATA_TYPE_FILTER.equals(dataType)) {
+            addParameter(SERVER_PARAMETER_CONFIGINFO);
+            
+            String cfv = null;
+            if (Filter_Area != null && Filter_Area.cityId == cityId) {
+                cfv = Filter_Area.version;
+            }
+            String nfv = null;
+            if (Filter_Category_Order_POI != null) {
+                nfv = Filter_Category_Order_POI.version;
+            }
+            addFilterParameters(criteria, requestParameters, cfv, nfv, false);
+
         } else {
             throw APIException.wrapToMissingRequestParameterException("invalid data type.");
         }
@@ -723,8 +747,15 @@ public final class DataQuery extends BaseQuery {
     }
     
     private void addFilterParameters(Hashtable<String, String> criteria, WeiboParameters requestParameters, String cfv, String nfv) throws APIException {
+        addFilterParameters(criteria, requestParameters, cfv, nfv, true);
+    }
+    
+    private void addFilterParameters(Hashtable<String, String> criteria, WeiboParameters requestParameters, String cfv, String nfv, boolean needIndex) throws APIException {
         if (criteria.containsKey(SERVER_PARAMETER_FILTER)) {
             requestParameters.add(SERVER_PARAMETER_FILTER, criteria.get(SERVER_PARAMETER_FILTER));
+        }
+        if (criteria.containsKey(SERVER_PARAMETER_FILTER_STRING)) {
+            requestParameters.add(SERVER_PARAMETER_FILTER_STRING, criteria.get(SERVER_PARAMETER_FILTER_STRING));
         }
         if (TextUtils.isEmpty(cfv) == false) {
             requestParameters.add(SERVER_PARAMETER_CITY_FILTER_VERSION, cfv);
@@ -734,7 +765,7 @@ public final class DataQuery extends BaseQuery {
         }
         if (criteria.containsKey(SERVER_PARAMETER_INDEX)) {
             requestParameters.add(SERVER_PARAMETER_INDEX, criteria.get(SERVER_PARAMETER_INDEX));
-        } else {
+        } else if (needIndex) {
             throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_INDEX);
         }
     }
@@ -799,6 +830,10 @@ public final class DataQuery extends BaseQuery {
             this.response = new AlternativeResponse(responseXMap);
         } else if (DATA_TYPE_COUPON.equals(dataType)) {
             this.response = new CouponResponse(responseXMap);
+        } else if (DATA_TYPE_FILTER.equals(dataType)) {
+            FilterConfigResponse response = new FilterConfigResponse(responseXMap);
+            translateFilter(response.getFilterResponse(), dataType, subDataType, filterList);
+            this.response = response;
         }
     }
     
@@ -829,6 +864,8 @@ public final class DataQuery extends BaseQuery {
                 } else if (DATA_TYPE_ZHANLAN.equals(dataType)) {
                     staticFilterDataArea = Filter_Area;
                     staticFilterDataCategoryOrder = Filter_Category_Order_Zhanlan;
+                } else if (DATA_TYPE_FILTER.equals(dataType)) {
+                    staticFilterDataArea = Filter_Area;
                 }
                 // 将城市区域筛选数据写入相应文件夹
                 FilterArea filterDataArea = baseResponse.getFilterDataArea();
@@ -897,6 +934,8 @@ public final class DataQuery extends BaseQuery {
                 } else if (DATA_TYPE_ZHANLAN.equals(dataType)) {
                     Filter_Area = staticFilterDataArea;
                     Filter_Category_Order_Zhanlan = staticFilterDataCategoryOrder;
+                } else if (DATA_TYPE_FILTER.equals(dataType)) {
+                    Filter_Area = staticFilterDataArea;
                 }
             } catch (Exception e) {
                 throw new APIException(e);
@@ -962,12 +1001,15 @@ public final class DataQuery extends BaseQuery {
         Filter filter = new Filter();
         filter.version = version;
         filter.key = key;
+        boolean isAreaFilter = (key == POIResponse.FIELD_FILTER_AREA_INDEX);
         if (indexList != null && filterOptionList != null) {
             Filter parentFilter = null;            
             FilterOption filterOption;
             
             long selectedId = indexList.get(0);
             
+            Filter allArea = null;
+            // 从1开始，是因为第0个值，是选中项的ID，特殊用途。
             for(int i = 1, size = indexList.size(); i < size; i++) {
                 long index = indexList.get(i);
                 if (index < filterOptionList.size()) {
@@ -986,14 +1028,48 @@ public final class DataQuery extends BaseQuery {
                     } else if (parentFilter != null){
                         parentFilter.chidrenFilterList.add(tempFilter);
                     }
+                    
+                    if (isAreaFilter && tempFilter.getFilterOption().getId() == 0) {
+                    	allArea = tempFilter;
+                    }
                 }
+            }
+            
+            // 将子筛选项，加入到全部区域下边。
+            if (allArea != null) {
+            	List<Filter> list = allArea.getChidrenFilterList();
+            	List<Filter> chidrenFilterList = filter.getChidrenFilterList();
+                for(Filter chidrenFilter : chidrenFilterList) {
+                    if (chidrenFilter.getChidrenFilterList().size() > 0 && chidrenFilter.getFilterOption().id > 10) {
+                    	list.addAll(chidrenFilter.getChidrenFilterList());
+                    }
+                }
+                for (int i = 0; i < list.size(); i++) {
+					list.get(i).getFilterOption().pinyin = PinyinUtil.toPinyin(context, list.get(i).getFilterOption().getName());
+				}
+                sortFilterList(context, list);
+                
+                FilterOption dupAllAreaFilterOpt = new FilterOption();
+                dupAllAreaFilterOpt.setName(allArea.getFilterOption().getName());
+                
+                int id = allArea.getFilterOption().getId();
+                dupAllAreaFilterOpt.setId(id);
+                
+                Filter filter1 = new Filter();
+                filter1.filterOption = dupAllAreaFilterOpt;
+                filter1.filterOption.pinyin = PinyinUtil.toPinyin(context, filter1.filterOption.getName());
+                filter1.selected = allArea.selected;
+                allArea.selected = false;
+                list.add(0, filter1);
+                
             }
             
             if (addAllAnyone) {
                 // 增加全部
                 List<Filter> chidrenFilterList = filter.getChidrenFilterList();
                 for(Filter chidrenFilter : chidrenFilterList) {
-                    if (chidrenFilter.getChidrenFilterList().size() > 0 &&
+                    if (chidrenFilter.getFilterOption().getId() != 0 &&
+                    		chidrenFilter.getChidrenFilterList().size() > 0 &&
                             chidrenFilter.getFilterOption().getParent() == -1) {
                         FilterOption filterOption1 = new FilterOption();
                         filterOption1.setName(context.getString(R.string.all_anyone, ""));
@@ -1014,6 +1090,25 @@ public final class DataQuery extends BaseQuery {
         return filter;
     }
 
+    /**
+     * 按照拼音对Filter列表进行排序
+     * @param filters
+     */
+    private static void sortFilterList(final Context context, List<Filter> filters){
+    	Collections.sort(filters, new Comparator<Filter>() {
+
+			@Override
+			public int compare(Filter lhs, Filter rhs) {
+				if(lhs.getFilterOption().pinyin==null){
+					lhs.getFilterOption().pinyin = PinyinUtil.toPinyin(context, lhs.getFilterOption().getName());
+				}
+				if(rhs.getFilterOption().pinyin==null){
+					rhs.getFilterOption().pinyin = PinyinUtil.toPinyin(context, rhs.getFilterOption().getName());
+				}
+				return lhs.getFilterOption().pinyin.compareTo( rhs.getFilterOption().pinyin );
+			}
+		});
+    }
     public static class Filter {        
         byte key;
         boolean selected = false;
@@ -1102,6 +1197,8 @@ public final class DataQuery extends BaseQuery {
         private String name;
 
         private int parent;
+        
+        public String pinyin = null;
 
         public FilterOption() {
         }
@@ -1142,6 +1239,7 @@ public final class DataQuery extends BaseQuery {
             filterOption.id = id;
             filterOption.name = name;
             filterOption.parent = parent;
+            filterOption.pinyin = pinyin;
             return filterOption;
         }
         
@@ -1905,6 +2003,35 @@ public final class DataQuery extends BaseQuery {
             
         }
     }
+    
+    public static class FilterConfigResponse extends Response {
+        // 0x02     x_map<x_map>    配置文件的返回结果
+        public static final byte FIELD_RESULT = 0x02;
+        
+        // 0x00    x_map   根据城市id获取的地片筛选项 
+        public static final byte FIELD_AREA_FILTER = 0x0;
+        
+        private FilterResponse filterResponse;
+
+        public FilterConfigResponse(XMap data) throws APIException {
+            super(data);
+            
+            if (this.data.containsKey(FIELD_RESULT)) {
+                XMap xmap = this.data.getXMap(FIELD_RESULT);
+                if (xmap.containsKey(FIELD_AREA_FILTER)) {
+                    XMap filterArea = xmap.getXMap(FIELD_AREA_FILTER);
+                    xmap.remove(FIELD_AREA_FILTER);
+                    xmap.put(FilterResponse.FIELD_FILTER_AREA, filterArea);
+                    filterResponse = new FilterResponse(xmap);
+                }
+            }
+        }
+
+        public FilterResponse getFilterResponse() {
+            return filterResponse;
+        }
+    }
+    
     public static class ShangjiaResponse extends Response {
         // 0x02 x_map   商家结果
         public static final byte FIELD_LIST = 0x02;
@@ -2386,6 +2513,8 @@ public final class DataQuery extends BaseQuery {
             // 0x09    x_string    地址 
             public static final byte FIELD_ADDRESS = 0x09;
             
+            public static final String NEED_FIELD = "0103040509";
+            
             protected String uuid;
             protected Position position;
             protected String name;
@@ -2470,6 +2599,8 @@ public final class DataQuery extends BaseQuery {
             responseXMap = DataQueryTest.launchAlternativeResponse(168, "launchAlternativeResponse");
         } else if (DATA_TYPE_COUPON.equals(dataType)){
         	responseXMap = DataQueryTest.launchCouponResponse(168, "launchCouponResponse");
+        } else if (DATA_TYPE_FILTER.equals(dataType)){
+            responseXMap = DataQueryTest.launchFilterConfigResponse();
         }
     }
 }

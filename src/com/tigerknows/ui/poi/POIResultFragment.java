@@ -24,7 +24,6 @@ import com.tigerknows.model.DataQuery.POIResponse.POIList;
 import com.tigerknows.model.POI.DynamicPOI;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
-import com.tigerknows.ui.hotel.HotelHomeFragment;
 import com.tigerknows.ui.hotel.NavigationWidget;
 import com.tigerknows.ui.more.AddMerchantActivity;
 import com.tigerknows.util.Utility;
@@ -38,6 +37,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -465,6 +465,9 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         int cityId = lastDataQuery.getCityId();
         Hashtable<String, String> criteria = lastDataQuery.getCriteria();
         criteria.put(DataQuery.SERVER_PARAMETER_INDEX, String.valueOf(mPOIList.size() - (mShowAPOI ? 1 : 0)));
+        if (criteria.containsKey(DataQuery.SERVER_PARAMETER_FILTER) == false) {
+            criteria.put(DataQuery.SERVER_PARAMETER_FILTER, DataQuery.makeFilterRequest(mFilterList));
+        }
         poiQuery.setup(criteria, cityId, getId(), getId(), null, true, true, requestPOI);
         mSphinx.queryStart(poiQuery);
         }
@@ -643,13 +646,14 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             int hotelPicWidth = 0;
             Hotel hotel = poi.getHotel();
             if (BaseQuery.SUB_DATA_TYPE_HOTEL.equals(subDataType) && hotel.getUuid() != null) {
-                if (hotel.getImageThumb() != null) {
-                    TKDrawable tkDrawable = hotel.getImageThumb();
+                TKDrawable tkDrawable = hotel.getImageThumb();
+                if (tkDrawable != null) {
                     Drawable drawable = tkDrawable.loadDrawable(activity, loadedDrawableRun, viewToken);
                     if(drawable != null) {
                         //To prevent the problem of size change of the same pic 
                         //After it is used at a different place with smaller size
-                        if( drawable.getBounds().width() != pictureImv.getWidth() || drawable.getBounds().height() != pictureImv.getHeight() ){
+                        Rect bounds = drawable.getBounds();
+                        if(bounds != null && bounds.width() != pictureImv.getWidth() || bounds.height() != pictureImv.getHeight() ){
                             pictureImv.setBackgroundDrawable(null);
                         }
                         pictureImv.setBackgroundDrawable(drawable);
@@ -855,7 +859,8 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     public void onPostExecute(TKAsyncTask tkAsyncTask) {
         super.onPostExecute(tkAsyncTask);
         DataQuery dataQuery = (DataQuery) tkAsyncTask.getBaseQuery();
-        String subDataType = dataQuery.getCriteria().get(BaseQuery.SERVER_PARAMETER_SUB_DATA_TYPE);
+        Hashtable<String, String> criteria = dataQuery.getCriteria();
+        String subDataType = criteria.get(BaseQuery.SERVER_PARAMETER_SUB_DATA_TYPE);
         mResultAdapter.setSubDataType(subDataType);
         if (BaseQuery.SUB_DATA_TYPE_HOTEL.equals(subDataType)) {
             mRetryView.setText(R.string.can_not_found_result_and_retry, false);
@@ -898,6 +903,10 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                     mState = STATE_ERROR;
                     updateView();
                     return;
+                } else {
+                    if (criteria.containsKey(DataQuery.SERVER_PARAMETER_FILTER_STRING)) {
+                        dataQuery.getCriteria().remove(DataQuery.SERVER_PARAMETER_FILTER_STRING);
+                    }
                 }
             } else {
                 if (dataQuery.isTurnPage()) {

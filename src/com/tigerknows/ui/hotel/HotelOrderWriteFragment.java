@@ -12,11 +12,12 @@ import java.util.List;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.InputFilter;
 import android.text.Selection;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -36,7 +37,6 @@ import android.widget.Toast;
 
 import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
-import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
@@ -57,7 +57,7 @@ import com.tigerknows.model.xobject.XMap;
 import com.tigerknows.provider.HotelOrderTable;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
-import com.tigerknows.ui.user.UserLoginActivity;
+import com.tigerknows.util.ByteUtil;
 import com.tigerknows.util.CalendarUtil;
 import com.tigerknows.util.Utility;
 import com.tigerknows.util.ValidateUtil;
@@ -67,7 +67,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
 
     public HotelOrderWriteFragment(Sphinx sphinx) {
         super(sphinx);
-        // TODO Auto-generated constructor stub
+        // Auto-generated constructor stub
     }
     
     static final String TAG = "HotelOrderWriteFragment";
@@ -99,6 +99,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     private Calendar mCheckOut;
 
     private static final long MAX_ROOM_HOWMANY = 5;
+    private static final long MAX_NAME_LENGTH = 50;
     
     // 酒店订单相关数据
     private int mRTimeWhich;
@@ -205,6 +206,38 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
             }
         };
         mBookUsernameEdt.setOnTouchListener(edtTouchListener);
+        mBookUsernameEdt.addTextChangedListener(new TextWatcher() {
+			
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+		        Editable editable = mBookUsernameEdt.getText();  
+		        int len = ByteUtil.getCharArrayLength(editable.toString());
+		        if(len > MAX_NAME_LENGTH){
+		        	int selEndIndex = Selection.getSelectionEnd(editable); 
+		        	String str = editable.toString();
+		        	while(len > MAX_NAME_LENGTH){  
+		        		//截取新字符串
+		        		str = str.substring(0,selEndIndex-1) + str.substring(selEndIndex,str.length());
+		        		//新字符串的长度
+		        		len = ByteUtil.getCharArrayLength(str);
+		        		selEndIndex--;
+		        	}  
+		        	mBookUsernameEdt.setText(str);  
+		        	editable = mBookUsernameEdt.getText();  
+		    		//设置新光标所在的位置
+		        	Selection.setSelection(editable, selEndIndex);  
+		        }				
+			}
+			
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count,
+					int after) {
+			}
+			
+			@Override
+			public void afterTextChanged(Editable s) {
+			}
+		});
         mRoomMobileNumberEdt.setOnTouchListener(edtTouchListener);
     }
 
@@ -335,7 +368,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     }
 
     private void exit() {
-        // TODO Auto-generated method stub
+        // Auto-generated method stub
         
     }
     
@@ -354,7 +387,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         txv.setText(mSphinx.getString(R.string.hotel_room_person_name));
         txv.setGravity(Gravity.LEFT|Gravity.CENTER_VERTICAL);
         
-        EditText edt = new EditText(mContext);
+        final EditText edt = new EditText(mContext);
         edt.setId(id);
         edt.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
         edt.setFilters(new InputFilter[]{new InputFilter.LengthFilter(50)});
@@ -367,6 +400,38 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         edt.setSingleLine(true);
         edt.setEllipsize(TextUtils.TruncateAt.valueOf("END"));
         edt.setBackgroundColor(getResources().getColor(R.color.transparent));
+        edt.addTextChangedListener(new TextWatcher() {
+			
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+		        Editable editable = edt.getText();  
+		        int len = ByteUtil.getCharArrayLength(editable.toString());
+		        if(len > MAX_NAME_LENGTH){
+		        	int selEndIndex = Selection.getSelectionEnd(editable); 
+		        	String str = editable.toString();
+		        	while(len > MAX_NAME_LENGTH){  
+		        		//截取新字符串
+		        		str = str.substring(0,selEndIndex-1) + str.substring(selEndIndex,str.length());
+		        		//新字符串的长度
+		        		len = ByteUtil.getCharArrayLength(str);
+		        		selEndIndex--;
+		        	}  
+		        	edt.setText(str);  
+		        	editable = edt.getText();  
+		    		//设置新光标所在的位置
+		        	Selection.setSelection(editable, selEndIndex);  
+		        }				
+			}
+			
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count,
+					int after) {
+			}
+			
+			@Override
+			public void afterTextChanged(Editable s) {
+			}
+		});
         
         
         person2.addView(txv);
@@ -395,7 +460,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
 
         public HotelRoomHowmanyAdapter(Context context, List<String> list) {
             super(context, list);
-            // TODO Auto-generated constructor stub
+            // Auto-generated constructor stub
         }
         @Override
         public View getView(final int position, View convertView, ViewGroup parent){
@@ -430,8 +495,6 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
 
             ImageView roomHowmanyIconImv = (ImageView) view.findViewById(R.id.room_reserve_icon_imv);
             TextView roomReserveTxv = (TextView) view.findViewById(R.id.room_reserve_txv);
-            TextView needCreditTxv = (TextView) view.findViewById(R.id.need_credit_txv);
-            
             RetentionTime rt = getItem(position);
             //roomReserveTxv.setText(rt.getTime());
             if(rt.getNeed() == 1){
@@ -592,10 +655,10 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
             try {
                 hotelOrderTable.write(mHotelOrder);
             } catch (IOException e) {
-                // TODO Auto-generated catch block
+                // Auto-generated catch block
                 e.printStackTrace();
             } catch (APIException e) {
-                // TODO Auto-generated catch block
+                // Auto-generated catch block
                 e.printStackTrace();
             } finally {
                 hotelOrderTable.close();
@@ -666,7 +729,6 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
                 RetentionTime rt = new RetentionTime(data);
                 list.add(rt);
             } catch (APIException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }

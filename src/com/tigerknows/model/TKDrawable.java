@@ -8,11 +8,13 @@ import com.tigerknows.common.AsyncImageLoader.TKURL;
 import com.tigerknows.model.xobject.XMap;
 
 import android.app.Activity;
+import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
+import android.widget.ImageView;
 
 import java.io.ByteArrayInputStream;
 
@@ -78,11 +80,9 @@ public class TKDrawable extends XMapData implements Parcelable {
                 new ImageCallback() {
                     // 请参见实现：如果第一次加载url时下面方法会执行
                     public void imageLoaded(BitmapDrawable imageDrawable) {
-                        if (imageDrawable == null) {
-                            return;
-                        }
-                        if (activity != null && action != null)
+                        if (activity != null && action != null) {
                             activity.runOnUiThread(action);
+                        }
                     }
                 });
         drawable = cacheImage;
@@ -123,4 +123,41 @@ public class TKDrawable extends XMapData implements Parcelable {
             return new TKDrawable(data);
         }
     };
+    
+    public static class LoadImageRunnable implements Runnable {
+
+        public Activity activity;
+        public TKDrawable tkDrawable;
+        public ImageView pictureImv;
+        public int backgroundResId = -1;
+        public String token;
+        
+        public LoadImageRunnable(Activity activity, TKDrawable tkDrawable, ImageView pictureImv, int backgroundResId, String token) {
+            this.activity = activity;
+            this.tkDrawable = tkDrawable;
+            this.pictureImv = pictureImv;
+            this.backgroundResId = backgroundResId;
+            this.token = token;
+        }
+        
+        @Override
+        public void run() {
+            Drawable drawable = tkDrawable.loadDrawable(activity, LoadImageRunnable.this, token);
+            if(drawable != null) {
+                Rect bounds = drawable.getBounds();
+                if (bounds != null && bounds.width() != pictureImv.getWidth() || bounds.height() != pictureImv.getHeight()) {
+                    pictureImv.setBackgroundDrawable(null);
+                }
+                pictureImv.setBackgroundDrawable(drawable);
+            } else {
+                if (backgroundResId != -1) {
+                    pictureImv.setBackgroundResource(backgroundResId);
+                } else {
+                    pictureImv.setBackgroundDrawable(null);
+                }
+            }
+            
+        }
+        
+    }
 }

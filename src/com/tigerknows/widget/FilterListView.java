@@ -16,14 +16,8 @@
 
 package com.tigerknows.widget;
 
-import com.decarta.Globals;
-import com.decarta.android.util.Util;
-import com.tigerknows.R;
-import com.tigerknows.TKConfig;
-import com.tigerknows.common.ActionLog;
-import com.tigerknows.model.DataQuery;
-import com.tigerknows.model.DataQuery.Filter;
-import com.tigerknows.model.DataQuery.POIResponse;
+import java.util.ArrayList;
+import java.util.List;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -38,16 +32,23 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.AdapterView.OnItemClickListener;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.decarta.Globals;
+import com.decarta.android.util.Util;
+import com.tigerknows.R;
+import com.tigerknows.TKConfig;
+import com.tigerknows.common.ActionLog;
+import com.tigerknows.model.DataQuery;
+import com.tigerknows.model.DataQuery.Filter;
+import com.tigerknows.model.DataQuery.FilterArea;
+import com.tigerknows.model.DataQuery.POIResponse;
 
 
 /**
@@ -62,10 +63,12 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
     private ViewGroup controlView;
     
     private ListView parentLsv;
-    private ListView childLsv;
+    private PinnedHeaderBladeListView childLsv;
+    private BladeView bladeView;
     
     private CallBack callBack;
     private int selectedParentPosition = -1;
+    private int selectedChildPosition = -1;
     
     private List<Filter> filterList;
     private Filter filter = null;
@@ -73,12 +76,16 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
     private List<Filter> childFilterList = new ArrayList<Filter>();
     
     private MyAdapter parentAdapter;
-    private MyAdapter childAdapter;
     
     private boolean isTurnPaging = false;
     
+    private byte key = -1;
+    
     String actionTag;
     Handler handler;
+
+    boolean isAreaFilter = false;
+    boolean isLastAreaFilter = true;
     
     public boolean isTurnPaging() {
         return isTurnPaging;
@@ -93,8 +100,12 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
             return;
         }
         this.actionTag = actionTag;
+        bladeView.setActionTag(this.actionTag);
+        isLastAreaFilter = isAreaFilter;
+        isAreaFilter = false;
         if (key == POIResponse.FIELD_FILTER_AREA_INDEX) {
             ActionLog.getInstance(getContext()).addAction(this.actionTag+ActionLog.FilterArea);
+            isAreaFilter = true;
         } else if (key == POIResponse.FIELD_FILTER_CATEGORY_INDEX) {
             ActionLog.getInstance(getContext()).addAction(this.actionTag+ActionLog.FilterCategory);
         } else if (key == POIResponse.FIELD_FILTER_ORDER_INDEX) {
@@ -128,66 +139,99 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
                 }
             }
         }
-        
-        int selectedChiledPosition = -1;
+
+        selectedChildPosition = -1;
         if (this.filter != null) {
-            List<Filter> filterList1 = this.filter.getChidrenFilterList();
-            this.parentFilterList.addAll(filterList1);
-            
-            for(int i = filterList1.size()-1; i >= 0; i--) {
-                Filter filter1 = filterList1.get(i);
-                List<Filter> filterList2 = filter1.getChidrenFilterList();
-                if (filter1.isSelected()) {
+            List<Filter> parentFilterList2 = this.filter.getChidrenFilterList();
+            this.parentFilterList.addAll(parentFilterList2);
+            for(int i = parentFilterList2.size()-1; i >= 0; i--) {
+                Filter tempParentFilter = parentFilterList2.get(i);
+                List<Filter> childFilterList2 = tempParentFilter.getChidrenFilterList();
+                if (tempParentFilter.isSelected()) {
                     selectedParentPosition = i;
-                    this.childFilterList.addAll(filterList2);
+                    selectedChildPosition = -1;
+                    this.childFilterList.addAll(childFilterList2);
                 } else {
-                    for(int j = filterList2.size()-1; j >= 0; j--) {
-                        Filter filter2 = filterList2.get(j);
+                	
+                    for(int j = childFilterList2.size()-1; j >= 0; j--) {
+                        Filter filter2 = childFilterList2.get(j);
+                        // 此处忽略全部区域下边的子筛选项的选中情况。
                         if (filter2.isSelected()) {
-                            selectedParentPosition = i;
-                            selectedChiledPosition = j;
-                            this.childFilterList.addAll(filterList2);
+                        	
+                        	if(tempParentFilter.getFilterOption().getId()!=0){
+	                            selectedParentPosition = i;
+	                            selectedChildPosition = j;
+	                            this.childFilterList.addAll(childFilterList2);
+                        	}else if(j==0){ //说明当前选中的是“全部区域”下的“全部区域”
+	                            selectedParentPosition = i;
+	                            selectedChildPosition = j;
+	                            this.childFilterList.addAll(childFilterList2);
+                        	}
+                        	
                         }
                     }
                 }
             }
+
+
+            parentAdapter.notifyDataSetChanged();
+            
+            final int finalselectedChildPosition = selectedChildPosition;
+            updateSelection(finalselectedChildPosition);
+            
+            // 如果没有被选中的filter，则默认高亮显示 “全部区域”
+            if (selectedParentPosition == -1) {
+                selectedParentPosition = 0;
+                parentAdapter.notifyDataSetChanged();
+                
+                childFilterList.clear();
+                if (this.filter != null &&
+                        this.filter.getChidrenFilterList() != null &&
+                        this.filter.getChidrenFilterList().size() > 0 &&
+                        this.filter.getChidrenFilterList().get(0) != null) {
+                    childFilterList.addAll(this.filter.getChidrenFilterList().get(0).getChidrenFilterList());
+                }
+            }
+            
+            // 如果父筛选项选中的是全部区域(id=0)，并且当权筛选项是位置筛选项的时候，设置pinnedModed为true
+            boolean pinnedMode = false;
+            int size = parentFilterList.size();
+            if (size > 0 &&
+                    size > selectedParentPosition &&
+                    selectedParentPosition >= 0 &&
+                    parentFilterList.get(selectedParentPosition).getFilterOption().getId() == 0  && isAreaFilter){
+                pinnedMode = true;
+            }
+            
+            // 如果是区域筛选，并且当前选择的父筛选项位置是全部区域，即第0个， 则列表设置为pinnedMode。
+            childLsv.setData(childFilterList, pinnedMode, pinnedMode, selectedChildPosition);
         }
-        parentAdapter.notifyDataSetChanged();
-        childAdapter.notifyDataSetChanged();
-        final int finalselectedChiledPosition = selectedChiledPosition;
+    }
+    
+    private void updateSelection(final int finalselectedChiledPosition){
+
         handler.post(new Runnable() {
             
             @Override
             public void run() {
-                if (selectedParentPosition > -1) {
-                    parentLsv.setSelectionFromTop(selectedParentPosition, 0);
+                if (selectedParentPosition > 0 ) {
+                	int topPosition = selectedParentPosition-1;
+                    parentLsv.setSelectionFromTop(topPosition, 0);
                 } else {
                     parentLsv.setSelectionFromTop(0, 0);
                 }
                 
-                if (finalselectedChiledPosition > -1) {
-                    childLsv.setSelectionFromTop(finalselectedChiledPosition, 0);
+                if (finalselectedChiledPosition > 0) {
+                	int topPosition = finalselectedChiledPosition-1;
+                    childLsv.getBaseListView().setSelectionFromTop(topPosition, 0);
                 } else {
-                    childLsv.setSelectionFromTop(0, 0);
+                    childLsv.getBaseListView().setSelectionFromTop(0, 0);
                 }
             }
         });
-        
-        if (selectedParentPosition == -1) {
-            selectedParentPosition = 0;
-            parentAdapter.notifyDataSetChanged();
-            
-            childFilterList.clear();
-            if (this.filter != null &&
-                    this.filter.getChidrenFilterList() != null &&
-                    this.filter.getChidrenFilterList().size() > 0 &&
-                    this.filter.getChidrenFilterList().get(0) != null) {
-                childFilterList.addAll(this.filter.getChidrenFilterList().get(0).getChidrenFilterList());
-            }
-            childAdapter.notifyDataSetChanged();
-        }
     }
-        
+    
+    
     public FilterListView(Context context) {
         this(context, null);
     }
@@ -207,17 +251,17 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
         handler = new Handler();
         parentAdapter = new MyAdapter(context, parentFilterList);
         parentAdapter.isParent = true;
-        childAdapter = new MyAdapter(context, childFilterList);
-        childAdapter.isParent = false;
         
         parentLsv.setAdapter(parentAdapter);
-        childLsv.setAdapter(childAdapter);
+        childLsv.setData(childFilterList, false, false, -1);
     }
 
     protected void findViews() {
         controlView = (ViewGroup) findViewById(R.id.control_view);
         parentLsv = (ListView) findViewById(R.id.parent_lsv);
-        childLsv = (ListView) findViewById(R.id.child_lsv);
+        childLsv = (PinnedHeaderBladeListView) findViewById(R.id.child_lsv);
+        bladeView = (BladeView) findViewById(R.id.blade_view);
+        
     }
     
     protected void setListener() {
@@ -250,36 +294,64 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
                 if (position >= parentFilterList.size()) {
                     return;
                 }
-                Filter filter = parentFilterList.get(position);
-                ActionLog.getInstance(getContext()).addAction(actionTag + ActionLog.PopupWindowFilterGroup, position, filter.getFilterOption().getName());
-                List<Filter> filterList = filter.getChidrenFilterList();
+                Filter parentFilterCliced = parentFilterList.get(position);
+                ActionLog.getInstance(getContext()).addAction(actionTag + ActionLog.PopupWindowFilterGroup, position, parentFilterCliced.getFilterOption().getName());
+                List<Filter> filterList = parentFilterCliced.getChidrenFilterList();
+                
                 if (filterList.size() == 0) {
                     childFilterList.clear();
-                    childAdapter.notifyDataSetChanged();
-                    doFilter(filter);
+                    childLsv.getAdapter().notifyDataSetChanged();
+                    doFilter(parentFilterCliced);
                 } else {
+                	int lastSelectedParentPosition = selectedParentPosition;
                     selectedParentPosition = position;
                     parentAdapter.notifyDataSetChanged();
                     childFilterList.clear();
                     childFilterList.addAll(filterList);
-                    childAdapter.notifyDataSetChanged();
-                    int selectedChiledPosition = -1;
+                    
+                    int selectedChildPosition = -1;
                     for(int j = childFilterList.size()-1; j >= 0; j--) {
-                        Filter filter2 = childFilterList.get(j);
-                        if (filter2.isSelected()) {
-                            selectedChiledPosition = j;
-                            break;
-                        }
+                    	Filter filter2 = childFilterList.get(j);
+                    	if (filter2.isSelected()) {
+                    		selectedChildPosition = j;
+                    		break;
+                    	}
                     }
                     
-                    if (selectedChiledPosition > -1) {
-                        childLsv.setSelectionFromTop(selectedChiledPosition, 0);
-                    } else {
-                        childLsv.setSelectionFromTop(0, 0);
+                    boolean isCurParentSelected;
+                    if(selectedChildPosition == -1 ){
+                    	isCurParentSelected = false;
+                    }else{
+                    	isCurParentSelected = childFilterList.get(selectedChildPosition).getFilterOption().getParent() == parentFilterList.get(selectedParentPosition).getFilterOption().getId();
                     }
+                    
+                    
+                    if(isAreaFilter){
+                    	//此处多做判断目的是减少setData里边的重复计算
+                    	int lastId = parentFilterList.get(lastSelectedParentPosition).getFilterOption().getId();
+                    	int curId = parentFilterList.get(position).getFilterOption().getId();
+                    	if(curId == 0){
+                    		if(lastId != 0){
+                    			childLsv.setData(childFilterList, true, true, selectedChildPosition != 0 ? -1 : selectedChildPosition);
+                    		}
+                    	}else if(curId !=0){
+                			childLsv.setData(childFilterList, false, false, isCurParentSelected?selectedChildPosition:-1);
+                    	}
+                    	
+                    }else{
+                    	if (isLastAreaFilter) {
+							childLsv.setData(childFilterList, false, false, isCurParentSelected?selectedChildPosition:-1);
+						}else{
+							childLsv.getAdapter().setSelectedPosition(isCurParentSelected?selectedChildPosition:-1);
+							childLsv.getAdapter().notifyDataSetChanged();
+						}
+                    }
+                    
+                    
                 }
             }
         });
+        
         childLsv.setOnItemClickListener(new OnItemClickListener() {
 
             @Override
@@ -290,6 +362,7 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
                 Filter filter = childFilterList.get(position);
                 ActionLog.getInstance(getContext()).addAction(actionTag + ActionLog.PopupWindowFilterChild, position, filter.getFilterOption().getName());
                 doFilter(filter);
+
             }
         });
     }
@@ -363,8 +436,8 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
             } else {
                 view.setBackgroundResource(R.drawable.list_selector_background_gray_light);
             }
-            
-            if (filter.isSelected()) {
+
+            if (filter.isSelected() && (filter.getChidrenFilterList()==null || filter.getChidrenFilterList().size()==0)) {
                 textTxv.setTextColor(TKConfig.COLOR_ORANGE);
             } else {
                 if (isParent) {
@@ -543,6 +616,38 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
 		        }
 	        }
     	}
+        return result;
+    }
+    
+    public static Filter[] getSelectedFilter(Filter filter) {
+        Filter[] result = null;
+        if (filter != null) {
+            List<Filter> chidrenFilterList = filter.getChidrenFilterList();
+            if (chidrenFilterList != null) {
+                for(int i = 0, size = chidrenFilterList.size(); i < size; i++) {
+                    Filter chidrenFilter = chidrenFilterList.get(i);
+                    if (chidrenFilter.isSelected()) {
+                        result = new Filter[1];
+                        result[0] = chidrenFilter;
+                        return result;
+                    }
+                    if (filter.getKey() == FilterArea.FIELD_LIST &&
+                            chidrenFilter.getFilterOption().getId() == 0) {
+                        continue;
+                    }
+                    List<Filter> chidrenFilterList1 = chidrenFilter.getChidrenFilterList();
+                    for(int j = 0, count = chidrenFilterList1.size(); j < count; j++) {
+                        Filter chidrenFilter1 = chidrenFilterList1.get(j);
+                        if (chidrenFilter1.isSelected()) {
+                            result = new Filter[2];
+                            result[0] = chidrenFilter;
+                            result[1] = chidrenFilter1;
+                            return result;
+                        }
+                    }
+                }
+            }
+        }
         return result;
     }
 }

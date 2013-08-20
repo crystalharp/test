@@ -351,6 +351,9 @@ public class TrafficQueryFragment extends BaseFragment {
             initStartContent();
         }
         
+        if (currentState == TrafficViewSTT.State.Normal) {
+            mBackBtn.setVisibility(View.GONE);
+        }
 	}
     
     /**
@@ -591,7 +594,7 @@ public class TrafficQueryFragment extends BaseFragment {
 		
 		String searchword = mBusline.getEdt().getText().toString().trim();
 		if (TextUtils.isEmpty(searchword)){
-			mSphinx.showTip(R.string.input_busline_name_tip, Toast.LENGTH_SHORT);
+			mSphinx.showTip(R.string.busline_name_, Toast.LENGTH_SHORT);
 			return;
 		}
 
@@ -678,6 +681,27 @@ public class TrafficQueryFragment extends BaseFragment {
         trafficQuery.setup(Globals.getCurrentCityInfo().getId(), start, end, queryType, R.id.view_traffic_home, sphinx.getString(R.string.doing_and_wait));
         
         sphinx.queryStart(trafficQuery);
+    }
+    
+    public static void submitBuslineQuery(Sphinx sphinx, String key) {
+        submitBuslineQuery(sphinx, key, Globals.getCurrentCityInfo().getId());
+    }
+    
+    public static void submitBuslineQuery(Sphinx sphinx, String key, int cityId) {
+        
+        if (key == null) {
+            return;
+        }
+        
+        POI poi = new POI();
+        poi.setName(key);
+        sphinx.getTrafficQueryFragment().addHistoryWord(poi, HistoryWordTable.TYPE_BUSLINE);
+        BuslineQuery buslineQuery = new BuslineQuery(sphinx);
+        buslineQuery.setup(cityId, key, 0, false, R.id.view_traffic_home, sphinx.getString(R.string.doing_and_wait));
+        
+//        mActionLog.addAction(mActionTag +  ActionLog.TrafficBuslineBtn, key);
+        sphinx.queryStart(buslineQuery);
+
     }
 	
 	public static String getMyLocationName(Sphinx mSphinx, Position position) {
