@@ -272,6 +272,16 @@ public class HttpUtils {
                     LogWrapper.i("HttpUtils", "TKHttpClient->sendAndRecive():apiType="+apiType+", url="+url);
                     LogWrapper.i("HttpUtils", "TKHttpClient->sendAndRecive():apiType="+apiType+", parameters="+postParam+", TKConfig.getEncoding()="+TKConfig.getEncoding());
                 }
+                
+                if (BaseQueryTest.UnallowedAccessNetwork) {
+                    try {
+                        Thread.sleep(5000);
+                    } catch (InterruptedException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                    throw new IOException("Unallowed access network");
+                }
 
                 if (client == null) {
                     client = createHttpClient(context);

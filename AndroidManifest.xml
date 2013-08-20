@@ -48,7 +48,7 @@
             android:screenOrientation="portrait" />
         
         <activity android:name="com.tigerknows.ui.more.HelpActivity"
-            android:theme="@style/Theme.NoTitleBar" 
+            android:theme="@style/Help" 
             android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
             android:windowSoftInputMode="adjustResize|stateHidden"
             android:screenOrientation="portrait" />
