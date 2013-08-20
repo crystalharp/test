@@ -158,7 +158,7 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
         checkoutList.clear();
         today.add(Calendar.DAY_OF_YEAR, checkinPosition-2);
         checkoutList.add("");
-        for(int i = 1, count = CHECKOUT_MAX; i < count; i++) {
+        for(int i = 1, count = CHECKOUT_MAX; i <= count; i++) {
             checkoutList.add(makeCheckoutDateString(today, i));
         }
         makeWhiteLines(checkoutList);
