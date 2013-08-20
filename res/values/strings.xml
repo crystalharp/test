@@ -1015,9 +1015,9 @@
     <string name="hotel_room_title">订单填写</string>
     <string name="hotel_room_howmany">房间数</string>
     <string name="hotel_room_reserve">房间保留到</string>
-    <string name="hotel_room_person_name">入&#8194;住&#8194;人：</string>
+    <string name="hotel_room_person_name">入住人：</string>
     <string name="hotel_room_person_name_hint">输入真实姓名，以便顺利入住</string>
-    <string name="hotel_room_mobile_nubmer">手&#8194;机&#8194;号：</string>
+    <string name="hotel_room_mobile_nubmer">手机号：</string>
     <string name="hotel_room_mobile_nubmer_hint">用于订单确认</string>
     <string name="hotel_room_idcard">身份证号：</string>
     <string name="hotel_room_idcard_hint">输入身份证号</string>
