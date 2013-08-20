@@ -925,6 +925,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 	    if (show == false) {
 	        return;
 	    }
+	    TKConfig.setPref(this, TKConfig.PREFS_HINT_DISCOVER_HOME, "1");
         if (DataQuery.checkDiscoveryCity(cityId)) {
             getMenuFragment().setDiscover(View.VISIBLE);
         } else {
