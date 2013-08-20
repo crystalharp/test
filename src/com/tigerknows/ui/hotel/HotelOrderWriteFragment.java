@@ -84,6 +84,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     private TextView mRoomtypeDetailTxv;
     private TextView mRoomDateTxv;
     private TextView mRoomNightsTxv;
+    private TextView mDanbaoHintTxv;
     private Button mRoomHowmanyBtn;
     private Button mRoomReserveBtn;
     private EditText mRoomMobileNumberEdt;
@@ -162,6 +163,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         mRoomtypeDetailTxv = (TextView) mRootView.findViewById(R.id.roomtype_detail_txv);
         mRoomDateTxv = (TextView) mRootView.findViewById(R.id.room_date_txv);
         mRoomNightsTxv = (TextView) mRootView.findViewById(R.id.room_nights_txv);
+        mDanbaoHintTxv = (TextView) mRootView.findViewById(R.id.danbao_hint_txv);
         mRoomHowmanyBtn = (Button) mRootView.findViewById(R.id.room_howmany_btn);
         mRoomReserveBtn = (Button) mRootView.findViewById(R.id.room_reserve_btn);
         mRoomMobileNumberEdt = (EditText) mRootView.findViewById(R.id.room_mobile_number_edt);
@@ -312,6 +314,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         mTypeCreditAssure = rtList.get(mRTimeWhich).getType();
         mRoomReserveBtn.setText(mRTime + ((mNeedCreditAssure == 1) ? mSphinx.getString(R.string.hotel_room_need_credit_assure) : "") );
         mSubmitOrderBtn.setText((mNeedCreditAssure == 1) ? mSphinx.getString(R.string.submit_order) : mSphinx.getString(R.string.go_credit_assure));
+        mDanbaoHintTxv.setVisibility((mNeedCreditAssure == 1) ? View.VISIBLE : View.GONE);
     }
     
     public void setData(POI poi, RoomType roomtype, RoomTypeDynamic roomTypeDynamic, Calendar checkIn, Calendar checkOut ) {
