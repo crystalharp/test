@@ -311,6 +311,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         mNeedCreditAssure = rtList.get(mRTimeWhich).getNeed();
         mTypeCreditAssure = rtList.get(mRTimeWhich).getType();
         mRoomReserveBtn.setText(mRTime + ((mNeedCreditAssure == 1) ? mSphinx.getString(R.string.hotel_room_need_credit_assure) : "") );
+        mSubmitOrderBtn.setText((mNeedCreditAssure == 1) ? mSphinx.getString(R.string.submit_order) : mSphinx.getString(R.string.go_credit_assure));
     }
     
     public void setData(POI poi, RoomType roomtype, RoomTypeDynamic roomTypeDynamic, Calendar checkIn, Calendar checkOut ) {
