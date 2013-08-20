@@ -89,9 +89,9 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
     
     Calendar today = null;
     
-    int confirmCheckinPosition;
+    int confirmCheckinPosition = 2;
     
-    int confirmCheckoutPosition;
+    int confirmCheckoutPosition = 1;
     
     int checkinPosition;
     
@@ -108,14 +108,6 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
     boolean less5 = false;
     
     public void refresh(Calendar checkIn, Calendar checkOut) {
-        if (checkIn == null ||
-                checkOut == null ||
-                CalendarUtil.dateInterval(checkIn, checkOut) < 1) {
-            checkIn = Calendar.getInstance();
-            checkIn.setTimeInMillis(CalendarUtil.getExactTime(context));
-            checkOut = (Calendar) checkIn.clone();
-            checkOut.add(Calendar.DAY_OF_YEAR, 1);
-        }
         today = Calendar.getInstance();
         today.setTimeInMillis(CalendarUtil.getExactTime(context));
         less5 = false;
@@ -123,7 +115,18 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
         if (hour >= 0 && hour <= 4) {
             less5 = true;
         }
-        confirmCheckinPosition = CalendarUtil.dateInterval(today, checkIn)+1+(less5?0:1);
+        if (checkIn == null ||
+                checkOut == null ||
+                CalendarUtil.dateInterval(checkIn, checkOut) < 1) {
+            checkIn = Calendar.getInstance();
+            checkIn.setTimeInMillis(CalendarUtil.getExactTime(context));
+            if (less5) {
+                checkIn.add(Calendar.DAY_OF_YEAR, -1);
+            }
+            checkOut = (Calendar) checkIn.clone();
+            checkOut.add(Calendar.DAY_OF_YEAR, 1);
+        }
+        confirmCheckinPosition = CalendarUtil.dateInterval(today, checkIn)+2;
         confirmCheckoutPosition = CalendarUtil.dateInterval(checkIn, checkOut);
         checkinPosition = confirmCheckinPosition;
         checkoutPosition = confirmCheckoutPosition;
@@ -153,20 +156,20 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
     
     void refreshCheckout() {
         checkoutList.clear();
-        today.add(Calendar.DAY_OF_YEAR, checkinPosition-1-(less5?0:1));
+        today.add(Calendar.DAY_OF_YEAR, checkinPosition-2);
         checkoutList.add("");
-        for(int i = (less5 ? 0 : 1), count = CHECKOUT_MAX+(less5 ? 0 : 1); i < count; i++) {
+        for(int i = 1, count = CHECKOUT_MAX; i < count; i++) {
             checkoutList.add(makeCheckoutDateString(today, i));
         }
         makeWhiteLines(checkoutList);
-        today.add(Calendar.DAY_OF_YEAR, -(checkinPosition-1-(less5?0:1)));
+        today.add(Calendar.DAY_OF_YEAR, -(checkinPosition-2));
         checkoutAdapter.notifyDataSetChanged();
         checkoutLsv.setSelectionFromTop(checkoutPosition-1, 0);
         refreshTitle();
     }
     
     void refreshTitle() {
-        today.add(Calendar.DAY_OF_YEAR, checkinPosition-1-(less5?0:1));
+        today.add(Calendar.DAY_OF_YEAR, checkinPosition-2);
         StringBuilder s = new StringBuilder();
         s.append(monthDayFormat.format(today.getTime())+context.getString(R.string.hotel_checkin_));
         int indexDay = s.length();
@@ -178,7 +181,7 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
         style.setSpan(new ForegroundColorSpan(orange),0,indexDay,Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
         style.setSpan(new ForegroundColorSpan(orange),indexDay,indexN,Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
         titleTxv.setText(style);
-        today.add(Calendar.DAY_OF_YEAR, -(checkinPosition-1-(less5?0:1)));
+        today.add(Calendar.DAY_OF_YEAR, -(checkinPosition-2));
     }
 
     public void setData(CallBack callBack, String actionTag) {
@@ -517,14 +520,14 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
     public Calendar getCheckin() {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(CalendarUtil.getExactTime(context));
-        calendar.add(Calendar.DAY_OF_YEAR, confirmCheckinPosition-1-(less5?0:1));
+        calendar.add(Calendar.DAY_OF_YEAR, confirmCheckinPosition-2);
         return calendar;
     }
     
     public Calendar getCheckout() {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(CalendarUtil.getExactTime(context));
-        calendar.add(Calendar.DAY_OF_YEAR, confirmCheckinPosition-1-(less5?0:1)+1+confirmCheckoutPosition-1);
+        calendar.add(Calendar.DAY_OF_YEAR, confirmCheckinPosition-2+1+confirmCheckoutPosition-1);
         return calendar;
     }
 }
