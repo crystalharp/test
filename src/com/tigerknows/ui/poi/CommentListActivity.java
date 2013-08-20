@@ -277,7 +277,17 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
                 mTurnPageFooter = this.mHotTurnPageFooter;
             }
         if (mCommentQuery == null) {
-            mCommentLsv.changeHeaderViewByState(isHeader, SpringbackListView.DONE);
+            Hashtable<String, String> criteria = new Hashtable<String, String>();
+            criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_DIANPING);
+            criteria.put(DataQuery.SERVER_PARAMETER_POI_ID, mPOI.getUUID());
+            criteria.put(DataQuery.SERVER_PARAMETER_REFER, DataQuery.REFER_POI);
+            if (isNormal == false) {
+                criteria.put(DataQuery.SERVER_PARAMETER_BIAS, DataQuery.BIAS_HOT);
+            }
+            DataQuery dataQuery = new DataQuery(mThis);
+            dataQuery.setup(criteria, Globals.getCurrentCityInfo().getId(), mId, mId, null, false, false, mPOI);
+            mCommentLsv.changeHeaderViewByState(false, SpringbackListView.REFRESHING);
+            queryStart(dataQuery);
             return;
         }
         if (isHeader) {
