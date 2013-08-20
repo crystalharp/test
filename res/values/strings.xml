@@ -835,6 +835,7 @@
     <string name="after_tomorrow">后天</string>
     <string name="tomorrow_char">明</string>
     <string name="after_tomorrow_char">后</string>
+    <string name="late_at_night">深夜</string>
     
     
     <string name="yanchu_list">演出列表</string>
