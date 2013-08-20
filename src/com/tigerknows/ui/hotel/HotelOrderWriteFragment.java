@@ -387,7 +387,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         
         TextView txv = new TextView(mSphinx);
         txv.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-        txv.setPadding(Utility.dip2px(mContext, 8), Utility.dip2px(mContext, 8), Utility.dip2px(mContext, 8), Utility.dip2px(mContext, 8));
+        txv.setPadding(Utility.dip2px(mContext, 8), 0, 0, 0);
         txv.setTextColor(getResources().getColor(R.color.black_dark));
         txv.setTextSize(16);
         txv.setText(mSphinx.getString(R.string.hotel_room_person_name));
