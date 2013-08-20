@@ -390,7 +390,7 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
         checkinPosition = confirmCheckinPosition;
         checkoutPosition = confirmCheckoutPosition;
         checkinAdapter.notifyDataSetChanged();
-        checkinLsv.setSelectionFromTop(checkinPosition-1-(less5?0:1), 0);
+        checkinLsv.setSelectionFromTop(checkinPosition-1, 0);
         refreshCheckout();
         if (callBack != null) {
             callBack.cancel();
