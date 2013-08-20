@@ -941,7 +941,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         List<POI> pois = new ArrayList<POI>();
         pois.add(poi);
         mSphinx.showPOI(pois, 0);
-        mSphinx.getResultMapFragment().setData(mContext.getString(R.string.result_map), ActionLog.POIDetailMap);
+        mSphinx.getResultMapFragment().setData(mContext.getString(R.string.result_map), poi.getSourceType() == POI.SOURCE_TYPE_HOTEL ? ActionLog.POIHotelDetailMap : ActionLog.POIDetailMap);
         mSphinx.showView(R.id.view_result_map);
     }
     
@@ -1271,13 +1271,9 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             TextView dateTxv = (TextView) view.findViewById(R.id.date_txv);
             TextView commentTxv = (TextView) view.findViewById(R.id.comment_txv);
             TextView srcTxv = (TextView) view.findViewById(R.id.src_txv);
-            View commendView = view.findViewById(R.id.commend_view);
-            ImageView commendImv = (ImageView)view.findViewById(R.id.commend_imv);
             TextView avgTxv = (TextView) view.findViewById(R.id.avg_txv);
             
-            commendView.setVisibility(View.GONE);
             avgTxv.setVisibility(View.GONE);
-            commendImv.setVisibility(View.GONE);
             
             float grade = comment.getGrade()/2.0f;
             gradeRtb.setRating(grade);
