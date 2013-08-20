@@ -362,7 +362,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
                 mSphinx.showView(R.id.view_more_history);
                 break;
             case R.id.go_comment_btn:
-            	mActionLog.addAction(mActionTag +  ActionLog.MoreMessageComment);
+            	mActionLog.addAction(mActionTag +  ActionLog.MoreGoComment);
                 mSphinx.showView(R.id.view_more_go_comment);
                 break;
             case R.id.right_btn:
@@ -805,6 +805,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 					case 0:
 						break;
 					case 1:
+						mActionLog.addAction(mActionTag + ActionLog.MoreSoftwareUpdate);
 						showDownloadSoftwareDialog();
 						return;
 					default:
@@ -813,6 +814,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 
 					switch((int)notice.getOperationType()){
 					case 0:
+						mActionLog.addAction(mActionTag + ActionLog.MoreNotice, notice.getNoticeId());
 						String uri = notice.getUrl();
 						if (!TextUtils.isEmpty(uri)) {
 							Intent intent = new Intent();

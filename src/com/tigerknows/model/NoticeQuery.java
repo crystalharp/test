@@ -20,6 +20,7 @@ public class NoticeQuery extends BaseQuery {
 	protected void makeRequestParameters() throws APIException {
 		super.makeRequestParameters();
 		addCommonParameters(requestParameters, cityId);
+		addSessionId(false);
 	}
 	
 	@Override
