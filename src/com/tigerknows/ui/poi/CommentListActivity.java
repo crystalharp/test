@@ -496,6 +496,7 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
                 ImageView commendImv = (ImageView)view.findViewById(R.id.commend_imv);
                 TextView avgTxv = (TextView) view.findViewById(R.id.avg_txv);
 
+                avgTxv.setVisibility(View.VISIBLE);
                 commendView.setVisibility(View.VISIBLE);
                 commendImv.setVisibility(View.VISIBLE);
                 Comment comment = getItem(position);

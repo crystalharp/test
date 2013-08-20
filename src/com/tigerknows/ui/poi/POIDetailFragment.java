@@ -1271,9 +1271,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             TextView dateTxv = (TextView) view.findViewById(R.id.date_txv);
             TextView commentTxv = (TextView) view.findViewById(R.id.comment_txv);
             TextView srcTxv = (TextView) view.findViewById(R.id.src_txv);
-            TextView avgTxv = (TextView) view.findViewById(R.id.avg_txv);
-            
-            avgTxv.setVisibility(View.GONE);
             
             float grade = comment.getGrade()/2.0f;
             gradeRtb.setRating(grade);
