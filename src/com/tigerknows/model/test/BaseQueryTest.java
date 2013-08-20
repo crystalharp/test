@@ -86,6 +86,8 @@ public class BaseQueryTest {
     
     public static final String PIC_URL = "http://wap.tigerknows.com/images/logo_back.png";
     
+    public static boolean UnallowedAccessNetwork = false;
+    
     private static Activity sActivity;
     
     public static void setActivity(Activity activity) {
@@ -493,6 +495,8 @@ public class BaseQueryTest {
         layout.addView(fullOrderChb);
         final CheckBox useSystemTimeChb = new CheckBox(activity);
         layout.addView(useSystemTimeChb);
+        final CheckBox unallowedAccessNetworkChb = new CheckBox(activity);
+        layout.addView(unallowedAccessNetworkChb);
         
         editConfigBtn.setText("View or Modify config.txt");
         editConfigBtn.setOnClickListener(new View.OnClickListener() {
@@ -828,6 +832,16 @@ public class BaseQueryTest {
             @Override
             public void onClick(View arg0) {
                 CalendarUtil.UseSystemTime = useSystemTimeChb.isChecked();
+            }
+        });
+        
+        unallowedAccessNetworkChb.setChecked(UnallowedAccessNetwork);
+        unallowedAccessNetworkChb.setText("unallowed access network");
+        unallowedAccessNetworkChb.setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View arg0) {
+                UnallowedAccessNetwork = unallowedAccessNetworkChb.isChecked();
             }
         });
         

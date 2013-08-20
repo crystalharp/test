@@ -47,6 +47,7 @@ import org.apache.http.protocol.HTTP;
 
 import android.text.TextUtils;
 
+import com.tigerknows.model.test.BaseQueryTest;
 import com.weibo.sdk.android.WeiboException;
 import com.weibo.sdk.android.WeiboParameters;
 import com.weibo.sdk.android.util.Utility;
@@ -120,6 +121,15 @@ public class HttpManager {
 			} else if (method.equals("DELETE")) {
 				request = new HttpDelete(url);
 			}
+            if (BaseQueryTest.UnallowedAccessNetwork) {
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                throw new IOException("Unallowed access network");
+            }
 			HttpResponse response = client.execute(request);
 			StatusLine status = response.getStatusLine();
 			int statusCode = status.getStatusCode();
