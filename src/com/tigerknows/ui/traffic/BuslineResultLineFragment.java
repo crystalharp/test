@@ -222,7 +222,7 @@ public class BuslineResultLineFragment extends BaseFragment {
         mBuslineModel = mBuslineQuery.getBuslineModel();
         
         if (mBuslineQuery.isTurnPage()) {
-            if (mBuslineQuery.getResponse() == null) {
+            if (mBuslineQuery.getBuslineModel() == null) {
                 mResultLsv.setFooterLoadFailed(true);
                 return;
             }
