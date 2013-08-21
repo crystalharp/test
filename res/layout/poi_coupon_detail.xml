@@ -25,12 +25,13 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginLeft="8dp"
+                android:background="@color/transparent"
                 >
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
-                    android:background="@drawable/list_middle"
+                    android:background="@color/white"
                     android:layout_gravity="center_horizontal"
                     >
                     <ImageView 
@@ -89,7 +90,7 @@
                 <RelativeLayout 
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/list_bg_white"
+                    android:background="@color/white"
                     >
                     <ImageView android:id="@+id/left_circle"
                         android:layout_width="wrap_content"
@@ -119,7 +120,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:gravity="top|center_horizontal"
-                    android:background="@drawable/list_middle"
+                    android:background="@color/white"
                     android:orientation="vertical"
                     >
                     <ImageView
