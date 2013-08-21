@@ -310,4 +310,10 @@ public class DynamicMoviePOI extends POIDetailFragment.DynamicPOIView{
 		// TODO Auto-generated method stub
 		
 	}
+
+    @Override
+    public void loadData(int fromType) {
+        queryStart(buildQuery(mPOI));
+        mPOIDetailFragment.addLoadingView();
+    }
 }
