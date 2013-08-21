@@ -606,7 +606,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             aColor = resources.getColor(R.color.blue);
             bColor = resources.getColor(R.color.black_dark);
             distanceA = activity.getString(R.string.distanceA);
-            hotelPicWidth = Util.dip2px(Globals.g_metrics.density, 98);
+            hotelPicWidth = Util.dip2px(Globals.g_metrics.density, 88);
         }
         
         @Override
@@ -786,7 +786,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             if (dynamicPOIWidth > 0) {
                 nameTxv.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
                 int nameTxvWidth = nameTxv.getMeasuredWidth();
-                int width = Globals.g_metrics.widthPixels-(4*Util.dip2px(Globals.g_metrics.density, 8));
+                int width = Globals.g_metrics.widthPixels-(6*Util.dip2px(Globals.g_metrics.density, 8));
                 if (nameTxvWidth > width-dynamicPOIWidth-hotelPicWidth) {
                     nameTxv.getLayoutParams().width = (width-dynamicPOIWidth-hotelPicWidth);
                 } else {
