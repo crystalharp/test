@@ -105,22 +105,24 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
     
     String lateAtNight;
     
-    boolean less5 = false;
+    String yestoday;
+    
+    boolean beforeDawn = false;
     
     public void refresh(Calendar checkIn, Calendar checkOut) {
         today = Calendar.getInstance();
         today.setTimeInMillis(CalendarUtil.getExactTime(context));
-        less5 = false;
+        beforeDawn = false;
         int hour = today.get(Calendar.HOUR_OF_DAY);
         if (hour >= 0 && hour <= 4) {
-            less5 = true;
+            beforeDawn = true;
         }
         if (checkIn == null ||
                 checkOut == null ||
                 CalendarUtil.dateInterval(checkIn, checkOut) < 1) {
             checkIn = Calendar.getInstance();
             checkIn.setTimeInMillis(CalendarUtil.getExactTime(context));
-            if (less5) {
+            if (beforeDawn) {
                 checkIn.add(Calendar.DAY_OF_YEAR, -1);
             }
             checkOut = (Calendar) checkIn.clone();
@@ -128,6 +130,18 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
         }
         confirmCheckinPosition = CalendarUtil.dateInterval(today, checkIn)+2;
         confirmCheckoutPosition = CalendarUtil.dateInterval(checkIn, checkOut);
+        if (beforeDawn && confirmCheckinPosition <= 1) {
+            confirmCheckinPosition = 1;
+        } else if (confirmCheckinPosition <= 2) {
+            confirmCheckinPosition = 2;
+        } else if (confirmCheckinPosition > CHECKIN_MAX+1) {
+            confirmCheckinPosition = CHECKIN_MAX;
+        }
+        if (confirmCheckoutPosition <= 1) {
+            confirmCheckoutPosition = 1;
+        } else if (confirmCheckoutPosition > CHECKOUT_MAX) {
+            confirmCheckoutPosition = CHECKOUT_MAX - 1;
+        }
         checkinPosition = confirmCheckinPosition;
         checkoutPosition = confirmCheckoutPosition;
         checkinList.clear();
@@ -219,6 +233,7 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
         days = resources.getStringArray(R.array.days);
         weedDays = resources.getStringArray(R.array.week_days);
         lateAtNight = resources.getString(R.string.late_at_night);
+        yestoday = resources.getString(R.string.yestoday);
         
         monthDayFormat =new SimpleDateFormat(context.getString(R.string.simple_month_day_format));
         dayFormat =new SimpleDateFormat(context.getString(R.string.simple_day_format));
@@ -274,7 +289,7 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
                 if (position > checkinList.size()-WHITE_LINE-1) {
                     position = checkinList.size()-WHITE_LINE-1;
                 } else {
-                    if (less5 == false) {
+                    if (beforeDawn == false) {
                         if (position <= 1) {
                             position = 2;
                         }
@@ -320,7 +335,7 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
             public void onScrollStateChanged(AbsListView view, int scrollState) {
                 if (OnScrollListener.SCROLL_STATE_IDLE == scrollState) {
                     int firstPosition = checkinLsv.getFirstVisiblePosition();
-                    if (less5 == false) {
+                    if (beforeDawn == false) {
                         if (firstPosition <= 1) {
                             firstPosition = 2;
                         } else {
@@ -447,7 +462,7 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
             String name = getItem(position);
             
             if (isParent) {
-                if (position == 0 || (less5 == false && position == 1) || (position > CHECKIN_MAX+1)) {
+                if (position == 0 || (beforeDawn == false && position == 1) || (position > CHECKIN_MAX+1)) {
                     view.setBackgroundResource(R.color.gray_dark);
                     textTxv.setTextColor(TKConfig.COLOR_BLACK_LIGHT);
                 } else if (position == checkinPosition) {
@@ -495,7 +510,11 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
         result = monthDayFormat.format(calendar.getTime());
         result += " ";
         if (add < 0) {
-            result += lateAtNight;
+            if (beforeDawn) {
+                result += lateAtNight;
+            } else {
+                result += yestoday;
+            }
         } else if (add < 3) {
             result += days[add];
         } else {
