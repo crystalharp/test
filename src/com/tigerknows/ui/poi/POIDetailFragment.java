@@ -741,19 +741,21 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             
             if (poi.getCommentQuery() != null) {
 
-                Comment lastComment = null;
-                CommentResponse commentResponse = (CommentResponse) poi.getCommentQuery().getResponse();
-                CommentList commentList = commentResponse.getList();
-                if (commentList != null) {
-                    List<Comment> list = commentList.getList();
-                    if (list != null) {
-                        for(int i = 0, size = list.size(); i < size; i++) {
-                            Comment comment = list.get(i);
-                            if (Comment.isAuthorMe(comment) > 0) {
-                                poi.setMyComment(comment);
-                            } else if (lastComment == null){
-                                lastComment = comment;
-                                break;
+                Comment lastComment = poi.getLastComment();
+                if (lastComment == null) {
+                    CommentResponse commentResponse = (CommentResponse) poi.getCommentQuery().getResponse();
+                    CommentList commentList = commentResponse.getList();
+                    if (commentList != null) {
+                        List<Comment> list = commentList.getList();
+                        if (list != null) {
+                            for(int i = 0, size = list.size(); i < size; i++) {
+                                Comment comment = list.get(i);
+                                if (Comment.isAuthorMe(comment) > 0) {
+                                    poi.setMyComment(comment);
+                                } else if (lastComment == null){
+                                    lastComment = comment;
+                                    break;
+                                }
                             }
                         }
                     }
