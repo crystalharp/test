@@ -85,7 +85,8 @@
 			    android:inputType="phone"
 			    android:maxLength="11"
 			    android:hint="@string/errorrecovery_user_phone"
-                android:background="@drawable/textfield" />
+                android:background="@drawable/textfield"
+                android:digits="0123456789" />
 		</LinearLayout>
 	</ScrollView>
 	
