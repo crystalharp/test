@@ -464,7 +464,7 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
             if (mCommentArrayList.isEmpty()) {
                 if (isNormal) {
                 finish();
-                } else {
+                } else if (this.mCommentLsv.getVisibility() != View.VISIBLE){
                     mEmptyView.setVisibility(View.VISIBLE);
                 }
             }
