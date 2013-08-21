@@ -524,6 +524,8 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         			index = index % mPagecount;
         		}
         	});
+        	mHandler.removeCallbacks(mNoticeNextRun);
+        	mHandler.postDelayed(mNoticeNextRun, 4000);
         }else if(mPagecount == 1){
         	mNoticeRly.setVisibility(View.VISIBLE);
         	mViewPager.setCurrentItem(0);
