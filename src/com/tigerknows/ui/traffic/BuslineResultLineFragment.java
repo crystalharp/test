@@ -357,9 +357,14 @@ public class BuslineResultLineFragment extends BaseFragment {
 		
     }
     
-    public void queryBuslineEnd(BuslineQuery buslineQuery) {
+    void queryBuslineEnd(BuslineQuery buslineQuery) {
     	
         BuslineModel buslineModel = buslineQuery.getBuslineModel();
+        
+        if (buslineQuery.isTurnPage() && buslineModel == null) {
+            mResultLsv.setFooterLoadFailed(true);
+            return;
+        }
         
         if (buslineModel.getType() == BuslineModel.TYPE_BUSLINE){
         	if (buslineModel.getLineList() == null || buslineModel.getLineList().size() <= 0) {

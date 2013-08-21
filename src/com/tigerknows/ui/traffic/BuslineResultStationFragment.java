@@ -392,9 +392,15 @@ public class BuslineResultStationFragment extends BaseFragment {
 		
     }
     
-    public void queryBuslineEnd(BuslineQuery buslineQuery) {
+    void queryBuslineEnd(BuslineQuery buslineQuery) {
     	
         BuslineModel buslineModel = buslineQuery.getBuslineModel();
+
+        
+        if (buslineQuery.isTurnPage() && buslineModel == null) {
+            mResultLsv.setFooterLoadFailed(true);
+            return;
+        }
         
         if (buslineModel == null) {
         	mSphinx.showTip(R.string.busline_non_tip, Toast.LENGTH_SHORT);
