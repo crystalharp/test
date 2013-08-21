@@ -242,7 +242,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             mFilterList.clear();
         }
         
-        String str = mContext.getString(R.string.loading);
+        String str = mContext.getString(R.string.searching);
         mQueryingTxv.setText(str);
         
         mDataType = lastDataQuery.getCriteria().get(BaseQuery.SERVER_PARAMETER_DATA_TYPE);
