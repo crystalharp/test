@@ -18,7 +18,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.res.Resources;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.graphics.RectF;
@@ -34,7 +33,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.provider.ContactsContract;
 import android.support.v4.view.ViewPager.LayoutParams;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
@@ -372,7 +370,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         return mFromThirdParty;
     }
 
-//    public static final int THIRD_PARTY_CONTACT = 1;
     public static final int THIRD_PARTY_HTTP = 2;
     public static final int THIRD_PARTY_GEO = 3;
     public static final int THIRD_PARTY_SONY_MY_LOCATION = 4;
@@ -1231,9 +1228,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        ActivityManager am = (ActivityManager)getSystemService(
-                Context.ACTIVITY_SERVICE);
-        am.restartPackage("com.tigerknows");
+//        ActivityManager am = (ActivityManager)getSystemService(
+//                Context.ACTIVITY_SERVICE);
+//        am.restartPackage("com.tigerknows");
 //        Process.killProcess(Process.myPid());
 //        Debug.stopMethodTracing();
 	}
@@ -1563,48 +1560,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             uiStackClose(new int[]{R.id.view_poi_home});
             getPOIQueryFragment().reset();
             showView(R.id.view_poi_input_search);
-//        } else if ("vnd.android.cursor.item/postal-address_v2".equals(mimetype)) {
-//            mFromThirdParty = THIRD_PARTY_CONTACT;
-//            fromThirdParty = THIRD_PARTY_CONTACT;
-//            if (onlyCheck) {
-//                return true;
-//            }
-//            uiStackClose(new int[]{R.id.view_poi_home});
-//            showView(R.id.view_poi_home);
-//            if (uri != null) {
-//                Cursor cursor = getContentResolver().query(uri, null, null, null, null);
-//                if (cursor!=null && cursor.getCount() > 0) {
-//                    if (uiStackPeek() != R.id.view_poi_home) {
-//                        uiStackClose(new int[]{R.id.view_poi_home});
-//                        showView(R.id.view_poi_home);
-//                    }
-//                    cursor.moveToFirst();
-//                    
-//                    int city1 = mMapEngine.getCityid(cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.REGION)));
-//                    int city2 = mMapEngine.getCityid(cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.CITY)));
-//                    if (city1 > 0) {
-//                        changeCity(city1);
-//                    } else if (city2 > 0) {
-//                        changeCity(city2);
-//                    }
-//                    String keyword = null; 
-//                    String street = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.STREET));
-//                    String neighborhood = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.NEIGHBORHOOD));
-//                    if (street == null) {
-//                    	keyword = neighborhood;
-//                    } else if (neighborhood == null) {
-//                    	keyword = street;
-//                    } else {
-//                    	keyword += street + " " + neighborhood;
-//                    }
-//                    if (!TextUtils.isEmpty(keyword)) {
-//                        DataQuery dataQuery = getPOIQuery(keyword);
-//                        queryStart(dataQuery);
-//                        ((POIResultFragment)getFragment(dataQuery.getTargetViewId())).setup();
-//                        showView(dataQuery.getTargetViewId());
-//                    }
-//                }
-//            }
         } else if (intent.getBooleanExtra(EXTRA_WEIXIN, false)) { //   来自微信的调用，为其提供POI数据作为返回
         	mFromThirdParty = THIRD_PARTY_WENXIN_REQUET;
             fromThirdParty = THIRD_PARTY_WENXIN_REQUET;
