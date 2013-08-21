@@ -100,7 +100,7 @@ public class LocationUpload extends LogUpload {
                 // 记录当前基站
                 if (Utility.mccMncLacCidValid(mcc, mnc, lac, cid)) {
                     info.append(String.format("%d.%d.%d.%d", mcc, mnc, lac, cid));
-                    info.append("@");
+                    info.append('@');
                     info.append(Utility.asu2dbm(TKConfig.getSignalStrength()));
                 }
                 
@@ -110,11 +110,11 @@ public class LocationUpload extends LogUpload {
                     if (scanResultList != null) {
                         for (ScanResult scanResult : scanResultList) {
                             if (info.length() > 0) {
-                                info.append(";");
+                                info.append(';');
                             }
                             String bssid = scanResult.BSSID;
                             info.append(bssid);
-                            info.append("@");
+                            info.append('@');
                             info.append(scanResult.level);
                         }
                     }
@@ -128,10 +128,10 @@ public class LocationUpload extends LogUpload {
                         cid = neighboringCellInfo.getCid();
                         if (Utility.lacCidValid(lac, cid)) {
                             if (info.length() > 0) {
-                                info.append(";");
+                                info.append(';');
                             }
                             info.append(String.format("%d.%d.%d.%d", mcc, mnc, lac, cid));
-                            info.append("@");
+                            info.append('@');
                             info.append(Utility.asu2dbm(neighboringCellInfo.getRssi()));
                         }
                     }
@@ -139,35 +139,48 @@ public class LocationUpload extends LogUpload {
                 
                 if (info.length() > 0) {
                     if (mLogFileLength > 0 || mStringBuilder.length() > 0) {
-                        mStringBuilder.append("|");
+                        mStringBuilder.append('|');
                     }
-                    long current = System.currentTimeMillis();
-                    long sdx = (long)(Utility.doubleKeep(lastLocation.getLongitude(), KEEP_ACCURACY)*KEEP_VALUE);
-                    long sdy = (long)(Utility.doubleKeep(lastLocation.getLatitude(), KEEP_ACCURACY)*KEEP_VALUE);
-                    if (Math.abs(current - sdt) > LOGOUT_TIME ||
-                            Math.abs(this.sdx-sdx) > LOGOUT_DISTANCE ||
-                            Math.abs(this.sdy-sdy) > LOGOUT_DISTANCE) {
-                        this.sdx = sdx;
-                        this.sdy = sdy;
-                        this.sdt = current;
+                    long t = System.currentTimeMillis();
+                    long x = (long)(Utility.doubleKeep(lastLocation.getLongitude(), KEEP_ACCURACY)*KEEP_VALUE);
+                    long y = (long)(Utility.doubleKeep(lastLocation.getLatitude(), KEEP_ACCURACY)*KEEP_VALUE);
+                    int changedsd = 0;
+                    if (Math.abs(t - sdt) > LOGOUT_TIME) {
+                        this.sdt = t;
                         mStringBuilder.append("sdt:");
                         mStringBuilder.append(this.sdt);
-                        mStringBuilder.append(",sdx:");
-                        mStringBuilder.append(this.sdx);
-                        mStringBuilder.append(",sdy:");
-                        mStringBuilder.append(this.sdy);
-                        mStringBuilder.append("|");
-                        mStringBuilder.append("0,0,0,");
-                    } else {
-                        mStringBuilder.append(current-sdt);
-                        mStringBuilder.append(",");
-                        mStringBuilder.append(sdx-this.sdx);
-                        mStringBuilder.append(",");
-                        mStringBuilder.append(sdy-this.sdy);
-                        mStringBuilder.append(",");
+                        changedsd++;
                     }
+                    if (Math.abs(this.sdx-x) > LOGOUT_DISTANCE) {
+                        this.sdx = x;
+                        if (changedsd > 0) {
+                            mStringBuilder.append(',');
+                        }
+                        mStringBuilder.append("sdx:");
+                        mStringBuilder.append(this.sdx);
+                        changedsd++;
+                    }
+                    if (Math.abs(this.sdy-y) > LOGOUT_DISTANCE) {
+                        this.sdy = y;
+                        if (changedsd > 0) {
+                            mStringBuilder.append(',');
+                        }
+                        mStringBuilder.append("sdy:");
+                        mStringBuilder.append(this.sdy);
+                        changedsd++;
+                    }
+                    if (changedsd > 0) {
+                        mStringBuilder.append('|');
+                    }
+                    
+                    mStringBuilder.append(t-this.sdt);
+                    mStringBuilder.append(',');
+                    mStringBuilder.append(x-this.sdx);
+                    mStringBuilder.append(',');
+                    mStringBuilder.append(y-this.sdy);
+                    mStringBuilder.append(',');
                     mStringBuilder.append(((int) lastLocation.getAccuracy()));
-                    mStringBuilder.append(","); 
+                    mStringBuilder.append(','); 
                     mStringBuilder.append(info);
                     
                     tryUpload();
@@ -181,18 +194,36 @@ public class LocationUpload extends LogUpload {
     public void onCreate() {
         synchronized (mLock) {
             super.onCreate();
-            sdx = 0;
-            sdy = 0;
-            sdt = 0;
+            reset();
         }
     }
     
     protected void onLogOut() {
         synchronized (mLock) {
             super.onLogOut();
-            sdx = 0;
-            sdy = 0;
-            sdt = 0;
+            if (mStringBuilder == null) {
+                return;
+            }
+            reset();
+            StringBuilder s = mStringBuilder;
+            if (s.length() > 0 && s.charAt(0) == '|') {
+                s.deleteCharAt(0);
+            }
+            mStringBuilder = new StringBuilder();
+            mStringBuilder.append(s);
         }
+    }
+    
+    protected void write() {
+        synchronized (mLock) {
+            super.write();
+            reset();
+        }
+    }
+    
+    void reset() {
+        sdt = 0;
+        sdx = 0;
+        sdy = 0;
     }
 }

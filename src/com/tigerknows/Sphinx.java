@@ -18,7 +18,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.res.Resources;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.graphics.RectF;
@@ -34,7 +33,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.provider.ContactsContract;
 import android.support.v4.view.ViewPager.LayoutParams;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
@@ -372,7 +370,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         return mFromThirdParty;
     }
 
-    public static final int THIRD_PARTY_CONTACT = 1;
     public static final int THIRD_PARTY_HTTP = 2;
     public static final int THIRD_PARTY_GEO = 3;
     public static final int THIRD_PARTY_SONY_MY_LOCATION = 4;
@@ -923,6 +920,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 	    if (show == false) {
 	        return;
 	    }
+	    TKConfig.setPref(this, TKConfig.PREFS_HINT_DISCOVER_HOME, "1");
         if (DataQuery.checkDiscoveryCity(cityId)) {
             getMenuFragment().setDiscover(View.VISIBLE);
         } else {
@@ -1228,9 +1226,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        ActivityManager am = (ActivityManager)getSystemService(
-                Context.ACTIVITY_SERVICE);
-        am.restartPackage("com.tigerknows");
+//        ActivityManager am = (ActivityManager)getSystemService(
+//                Context.ACTIVITY_SERVICE);
+//        am.restartPackage("com.tigerknows");
 //        Process.killProcess(Process.myPid());
 //        Debug.stopMethodTracing();
 	}
@@ -1262,7 +1260,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         public void onReceive(Context context, Intent intent) { 
             if (intent != null
                     && intent.hasExtra(MapStatsService.EXTRA_DOWNLOAD_CITY)) {
-                //getMoreFragment().refreshMoreData();
+                getMoreFragment().refreshMapDownloadData();
             }
         }
     };
@@ -1560,48 +1558,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             uiStackClose(new int[]{R.id.view_poi_home});
             getPOIQueryFragment().reset();
             showView(R.id.view_poi_input_search);
-        } else if ("vnd.android.cursor.item/postal-address_v2".equals(mimetype)) {
-            mFromThirdParty = THIRD_PARTY_CONTACT;
-            fromThirdParty = THIRD_PARTY_CONTACT;
-            if (onlyCheck) {
-                return true;
-            }
-            uiStackClose(new int[]{R.id.view_poi_home});
-            showView(R.id.view_poi_home);
-            if (uri != null) {
-                Cursor cursor = getContentResolver().query(uri, null, null, null, null);
-                if (cursor!=null && cursor.getCount() > 0) {
-                    if (uiStackPeek() != R.id.view_poi_home) {
-                        uiStackClose(new int[]{R.id.view_poi_home});
-                        showView(R.id.view_poi_home);
-                    }
-                    cursor.moveToFirst();
-                    
-                    int city1 = mMapEngine.getCityid(cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.REGION)));
-                    int city2 = mMapEngine.getCityid(cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.CITY)));
-                    if (city1 > 0) {
-                        changeCity(city1);
-                    } else if (city2 > 0) {
-                        changeCity(city2);
-                    }
-                    String keyword = null; 
-                    String street = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.STREET));
-                    String neighborhood = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.NEIGHBORHOOD));
-                    if (street == null) {
-                    	keyword = neighborhood;
-                    } else if (neighborhood == null) {
-                    	keyword = street;
-                    } else {
-                    	keyword += street + " " + neighborhood;
-                    }
-                    if (!TextUtils.isEmpty(keyword)) {
-                        DataQuery dataQuery = getPOIQuery(keyword);
-                        queryStart(dataQuery);
-                        ((POIResultFragment)getFragment(dataQuery.getTargetViewId())).setup();
-                        showView(dataQuery.getTargetViewId());
-                    }
-                }
-            }
         } else if (intent.getBooleanExtra(EXTRA_WEIXIN, false)) { //   来自微信的调用，为其提供POI数据作为返回
         	mFromThirdParty = THIRD_PARTY_WENXIN_REQUET;
             fromThirdParty = THIRD_PARTY_WENXIN_REQUET;
@@ -2000,7 +1956,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 }
                 // 这一行需放在if外面以便于始终重试
                 // 而下边的Notice是不重试的所以不放外边
-                getMoreFragment().refreshAppRecommendData();
+                getMoreFragment().refreshBootStrapData();
             } else if (baseQuery instanceof NoticeQuery) {
             	Response response = baseQuery.getResponse();
             	if (response instanceof NoticeResultResponse) {
@@ -2288,11 +2244,11 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     }
                     
                     if (hotel.getImageInfoWindow() == null) {
-                        pictureImv.setBackgroundResource(R.drawable.bg_picture_hotel);
+                        pictureImv.setBackgroundResource(R.drawable.bg_picture_detail);
                     }
                     
                 } else {
-                    pictureImv.setBackgroundResource(R.drawable.bg_picture_hotel_none);
+                    pictureImv.setBackgroundResource(R.drawable.bg_picture_none);
                 }
                 
                 if (hotel.getCanReserve() > 0) {
@@ -2384,15 +2340,15 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 	//To prevent the problem of size change of the same pic 
                 	//After it is used at a different place with smaller size
                     Rect bounds = drawable.getBounds();
-                    if(bounds != null && bounds.width() != pictureImv.getWidth() || bounds.height() != pictureImv.getHeight() ){
+                    if(bounds != null && (bounds.width() != pictureImv.getWidth() || bounds.height() != pictureImv.getHeight())){
                         pictureImv.setBackgroundDrawable(null);
                     }
                 	pictureImv.setBackgroundDrawable(drawable);
                 } else {
-                    pictureImv.setBackgroundResource(R.drawable.bg_picture_dianying);
+                    pictureImv.setBackgroundResource(R.drawable.bg_picture);
                 }
             } else {
-                pictureImv.setBackgroundResource(R.drawable.bg_picture_dianying);
+                pictureImv.setBackgroundResource(R.drawable.bg_picture);
             }
             
             ViewGroup bodyView=(ViewGroup)mInfoWindowYanchuList.findViewById(R.id.body_view);
@@ -2432,15 +2388,15 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 	//To prevent the problem of size change of the same pic 
                 	//After it is used at a different place with smaller size
                     Rect bounds = drawable.getBounds();
-                    if(bounds != null && bounds.width() != pictureImv.getWidth() || bounds.height() != pictureImv.getHeight() ){
+                    if(bounds != null && (bounds.width() != pictureImv.getWidth() || bounds.height() != pictureImv.getHeight())){
                         pictureImv.setBackgroundDrawable(null);
                     }
                     pictureImv.setBackgroundDrawable(drawable);
                 } else {
-                    pictureImv.setBackgroundResource(R.drawable.bg_picture_tuangou);
+                    pictureImv.setBackgroundResource(R.drawable.bg_picture);
                 }
             } else {
-                pictureImv.setBackgroundResource(R.drawable.bg_picture_tuangou);
+                pictureImv.setBackgroundResource(R.drawable.bg_picture);
             }
             
             ViewGroup bodyView=(ViewGroup)mInfoWindowTuangouList.findViewById(R.id.body_view);
@@ -2818,8 +2774,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 return result;
             }
             if (id == R.id.view_invalid || id != uiStackPeek()) {
-                uiStackClose(null);
-                showView(R.id.view_poi_home);
                 return result;
             }
             
@@ -3006,16 +2960,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             return false;
         }
         CityInfo cityInfo = Globals.g_My_Location_City_Info;
-        if (TKConfig.getPref(this, TKConfig.PREFS_HINT_HOME_DRAG) == null) {
-        	mDragHintView.setVisibility(View.VISIBLE);
-        	TKConfig.setPref(mThis, TKConfig.PREFS_HINT_HOME_DRAG, "1");
-        } else if (TKConfig.getPref(this, TKConfig.PREFS_HINT_POI_HOME_HOTEL) == null &&
-                mDragHintView.getVisibility() != View.VISIBLE) {
-            TKConfig.setPref(mThis, TKConfig.PREFS_HINT_POI_HOME_HOTEL, "1");
-            mDragHintView.removeAllViews();
-            mDragHintView.setVisibility(View.VISIBLE);
-            mLayoutInflater.inflate(R.layout.hint_poi_home_hotel, mDragHintView, true);
-        } else if (cityInfo != null && cityInfo.getId() == Globals.getCurrentCityInfo(false).getId() &&
+        if (cityInfo != null && cityInfo.getId() == Globals.getCurrentCityInfo(false).getId() &&
                 TKConfig.getPref(this, TKConfig.PREFS_HINT_POI_HOME_LOCATION) == null &&
                 mDragHintView.getVisibility() != View.VISIBLE) {
             TKConfig.setPref(mThis, TKConfig.PREFS_HINT_POI_HOME_LOCATION, "1");
@@ -3027,22 +2972,11 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     }
     
     void hideHomeDragHint() {
-        CityInfo cityInfo = Globals.g_My_Location_City_Info;
-        if (TKConfig.getPref(mThis, TKConfig.PREFS_HINT_POI_HOME_HOTEL) == null) {
-            TKConfig.setPref(mThis, TKConfig.PREFS_HINT_POI_HOME_HOTEL, "1");
-            mDragHintView.removeAllViews();
-            mLayoutInflater.inflate(R.layout.hint_poi_home_hotel, mDragHintView, true);
-        } else if (cityInfo != null && cityInfo.getId() == Globals.getCurrentCityInfo(false).getId() &&
-                TKConfig.getPref(mThis, TKConfig.PREFS_HINT_POI_HOME_LOCATION) == null) {
-            TKConfig.setPref(mThis, TKConfig.PREFS_HINT_POI_HOME_LOCATION, "1");
-            mDragHintView.removeAllViews();
-            mLayoutInflater.inflate(R.layout.hint_poi_home_location, mDragHintView, true);
-        } else {
-        	mDragHintView.setVisibility(View.GONE);
-    		if (dialogId != -1) {
-    			showLocationDialog(dialogId);
-    			dialogId = -1;
-    		}
+        mDragHintView.removeAllViews();
+        mDragHintView.setVisibility(View.GONE);
+        if (dialogId != -1) {
+            showLocationDialog(dialogId);
+            dialogId = -1;
         }
     }
     

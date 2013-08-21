@@ -47,6 +47,7 @@ import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.ui.discover.DiscoverChildListFragment;
 import com.tigerknows.ui.poi.EditCommentActivity;
+import com.tigerknows.util.CalendarUtil;
 import com.tigerknows.util.Utility;
 
 /**
@@ -304,10 +305,17 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
     
 	private void updateCancelBtn(){
 		// show or hide cancel order button according to order state
-        int state = mOrder.getState();
+		int state = mOrder.getState();
+        if(CalendarUtil.getExactTime(mContext) > mOrder.getCancelDeadline()){
+        	mBtnCancel.setVisibility(View.GONE);
+        	return;
+        }
         switch (state) {
-		case 1:
-		case 2:
+        case 0:
+        	// do nothing
+        	break;
+		case HotelOrder.STATE_PROCESSING:
+		case HotelOrder.STATE_SUCCESS:
 			mBtnCancel.setVisibility(View.VISIBLE);
 			break;
 
@@ -324,6 +332,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
         // set title fragment content
         mRightBtn.setVisibility(View.GONE);
         mTitleBtn.setText(mContext.getString(R.string.hotel_order_detail));
+    	Toast.makeText(mContext, CalendarUtil.ymd8c_hm4.format(new Date(mOrder.getCancelDeadline())), Toast.LENGTH_LONG).show();
         
         updateCancelBtn();
         

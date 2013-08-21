@@ -19,6 +19,7 @@ public class NoticeQuery extends BaseQuery {
 	@Override
 	protected void addCommonParameters() {
 		super.addCommonParameters(cityId);
+                addSessionId();
 	}
 	
 	@Override
@@ -92,22 +93,32 @@ public class NoticeQuery extends BaseQuery {
 			
 			public static class Notice extends XMapData {
 				
-				// 0x01 x_int 操作类型
-				public static final byte FIELD_OPERATION_TYPE = 0x01;
+				// 0x01 x_int 消息ID，用于客户端记录行为日志
+				public static final byte FIELD_NOTICE_ID = 0x01;
 				
-				// 0x02 x_string 文字描述
-				public static final byte FIELD_NOTICE_DESCRIPTION = 0x02;
+				// 0x02 x_int 操作类型
+				public static final byte FIELD_OPERATION_TYPE = 0x02;
 				
-				// 0x03 x_string 图片url
-				public static final byte FIELD_PIC_URL = 0x03;
+				// 0x03 x_string 消息标题
+				public static final byte FIELD_NOTICE_TITLE = 0x03;
 				
-				// 0x04 x_string url
-				public static final byte FIELD_URL = 0x04;
+				// 0x04 x_string 文字描述
+				public static final byte FIELD_NOTICE_DESCRIPTION = 0x04;
 				
-				// 0x05 x_string web页标题
-				public static final byte FIELD_WEB_TITLE = 0x05;
+				// 0x05 x_string 图片url
+				public static final byte FIELD_PIC_URL = 0x05;
+				
+				// 0x06 x_string url
+				public static final byte FIELD_URL = 0x06;
+				
+				// 0x07 x_string web页标题
+				public static final byte FIELD_WEB_TITLE = 0x07;
+				
+				private long noticeId;
 				
 				private long operationType;
+				
+				private String noticeTitle;
 				
 				private String noticeDescription;
 				
@@ -117,10 +128,20 @@ public class NoticeQuery extends BaseQuery {
 				
 				private String webTitle;
 				
+				private long localType;
+				
 				private TKDrawable picTKDrawable;
+				
+				public long getNoticeId() {
+					return noticeId;
+				}
 
 				public long getOperationType() {
 					return operationType;
+				}
+				
+				public String getNoticeTitle(){
+					return noticeTitle;
 				}
 
 				public String getDescription() {
@@ -139,21 +160,34 @@ public class NoticeQuery extends BaseQuery {
 					return webTitle;
 				}
 				
+				public long getLocalType() {
+					return localType;
+				}
+				
 				public TKDrawable getpicTkDrawable() {
 					return picTKDrawable;
 				}
+				
 				public Notice(XMap data) throws APIException{
 					super(data);
-					init(data, false);
+					init(data, false, 0);
 				}
 				
-				public void init(XMap data, boolean reset) throws APIException{
+				public Notice(XMap data, long localType) throws APIException{
+					super(data);
+					init(data, false, localType);
+				}
+				
+				public void init(XMap data, boolean reset, long localType) throws APIException{
 					super.init(data, reset);
+					this.noticeId = getLongFromData(FIELD_NOTICE_ID);
 					this.operationType = getLongFromData(FIELD_OPERATION_TYPE);
+					this.noticeTitle = getStringFromData(FIELD_NOTICE_TITLE);
 					this.noticeDescription = getStringFromData(FIELD_NOTICE_DESCRIPTION);
 					this.url = getStringFromData(FIELD_URL);
 					this.picUrl = getStringFromData(FIELD_PIC_URL);
 					this.webTitle = getStringFromData(FIELD_WEB_TITLE);
+					this.localType = localType;
 					if(this.picUrl != null){
 						TKDrawable tkDrawable = new TKDrawable();
 						tkDrawable.setUrl(this.picUrl);
@@ -168,7 +202,6 @@ public class NoticeQuery extends BaseQuery {
 						return new Notice(data);
 					}
 				};
-
 			}
 			
 			public static XMapInitializer<NoticeResult> Initializer = new XMapInitializer<NoticeResult>(){

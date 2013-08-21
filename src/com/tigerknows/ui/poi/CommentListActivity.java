@@ -275,7 +275,16 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
                 mTurnPageFooter = this.mHotTurnPageFooter;
             }
         if (mCommentQuery == null) {
-            mCommentLsv.changeHeaderViewByState(isHeader, SpringbackListView.DONE);
+            DataQuery dataQuery = new DataQuery(mThis);
+            dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_DIANPING);
+            dataQuery.addParameter(DataQuery.SERVER_PARAMETER_POI_ID, mPOI.getUUID());
+            dataQuery.addParameter(DataQuery.SERVER_PARAMETER_REFER, DataQuery.REFER_POI);
+            if (isNormal == false) {
+                dataQuery.addParameter(DataQuery.SERVER_PARAMETER_BIAS, DataQuery.BIAS_HOT);
+            }
+            dataQuery.setup(Globals.getCurrentCityInfo().getId(), mId, mId, null, false, false, mPOI);
+            mCommentLsv.changeHeaderViewByState(false, SpringbackListView.REFRESHING);
+            queryStart(dataQuery);
             return;
         }
         if (isHeader) {
@@ -491,11 +500,15 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
                 TextView commendTxv = (TextView)view.findViewById(R.id.commend_txv);
                 ImageView commendImv = (ImageView)view.findViewById(R.id.commend_imv);
                 TextView avgTxv = (TextView) view.findViewById(R.id.avg_txv);
-                
+
+                avgTxv.setVisibility(View.VISIBLE);
+                commendView.setVisibility(View.VISIBLE);
+                commendImv.setVisibility(View.VISIBLE);
                 Comment comment = getItem(position);
                 commendView.setTag(R.id.commend_view, comment);
                 commendView.setTag(R.id.commend_imv, commendImv);
                 commendView.setTag(R.id.commend_txv, commendTxv);
+                commendView.setTag(R.id.index, position);
                 commendView.setOnClickListener(CommentListActivity.this);
                 String likes = String.valueOf(comment.getLikes());
                 commendTxv.setText(likes);
@@ -712,11 +725,15 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.title_btn) {
+            mActionLog.addAction(mActionTag + ActionLog.POICommentListAllComment);
             changeMode(true);
         } else if (id == R.id.hot_btn) {
+            mActionLog.addAction(mActionTag + ActionLog.POICommentListHotComment);
             changeMode(false);
         } else if (id == R.id.commend_view) {
             Comment comment = (Comment) v.getTag(R.id.commend_view);
+            int position = (Integer) v.getTag(R.id.index);
+            mActionLog.addAction(mActionTag+ActionLog.POICommentListCommend, position, comment.getLikes());
             ImageView commendImv = (ImageView) v.getTag(R.id.commend_imv);
             TextView commendTxv = (TextView) v.getTag(R.id.commend_txv);
             if (comment.isCommend() == false) {

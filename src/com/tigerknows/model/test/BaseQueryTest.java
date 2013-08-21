@@ -41,6 +41,7 @@ import com.tigerknows.ui.more.MoreHomeFragment;
 import com.tigerknows.ui.poi.POIResultFragment;
 import com.tigerknows.ui.traffic.BuslineResultLineFragment;
 import com.tigerknows.ui.traffic.TrafficResultFragment;
+import com.tigerknows.util.CalendarUtil;
 import com.tigerknows.util.Utility;
 import com.tigerknows.widget.StringArrayAdapter;
 import com.weibo.sdk.android.WeiboParameters;
@@ -87,6 +88,8 @@ public class BaseQueryTest {
     public static final String URL = "http://www.tigerknows.com";
     
     public static final String PIC_URL = "http://wap.tigerknows.com/images/logo_back.png";
+    
+    public static boolean UnallowedAccessNetwork = false;
     
     private static Activity sActivity;
     
@@ -495,6 +498,10 @@ public class BaseQueryTest {
         layout.addView(deleteAnOrderBtn, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
         final CheckBox fullOrderChb = new CheckBox(activity);
         layout.addView(fullOrderChb);
+        final CheckBox useSystemTimeChb = new CheckBox(activity);
+        layout.addView(useSystemTimeChb);
+        final CheckBox unallowedAccessNetworkChb = new CheckBox(activity);
+        layout.addView(unallowedAccessNetworkChb);
         
         editConfigBtn.setText("View or Modify config.txt");
         editConfigBtn.setOnClickListener(new View.OnClickListener() {
@@ -819,6 +826,26 @@ public class BaseQueryTest {
             @Override
             public void onClick(View arg0) {
                 HotelOrderListFragment.Test_Pull_Order_List = fullOrderChb.isChecked();
+            }
+        });
+        
+        useSystemTimeChb.setText("Use system time");
+        useSystemTimeChb.setChecked(CalendarUtil.UseSystemTime);
+        useSystemTimeChb.setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View arg0) {
+                CalendarUtil.UseSystemTime = useSystemTimeChb.isChecked();
+            }
+        });
+        
+        unallowedAccessNetworkChb.setChecked(UnallowedAccessNetwork);
+        unallowedAccessNetworkChb.setText("unallowed access network");
+        unallowedAccessNetworkChb.setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View arg0) {
+                UnallowedAccessNetwork = unallowedAccessNetworkChb.isChecked();
             }
         });
         

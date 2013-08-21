@@ -740,19 +740,21 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             
             if (poi.getCommentQuery() != null) {
 
-                Comment lastComment = null;
-                CommentResponse commentResponse = (CommentResponse) poi.getCommentQuery().getResponse();
-                CommentList commentList = commentResponse.getList();
-                if (commentList != null) {
-                    List<Comment> list = commentList.getList();
-                    if (list != null) {
-                        for(int i = 0, size = list.size(); i < size; i++) {
-                            Comment comment = list.get(i);
-                            if (Comment.isAuthorMe(comment) > 0) {
-                                poi.setMyComment(comment);
-                            } else if (lastComment == null){
-                                lastComment = comment;
-                                break;
+                Comment lastComment = poi.getLastComment();
+                if (lastComment == null) {
+                    CommentResponse commentResponse = (CommentResponse) poi.getCommentQuery().getResponse();
+                    CommentList commentList = commentResponse.getList();
+                    if (commentList != null) {
+                        List<Comment> list = commentList.getList();
+                        if (list != null) {
+                            for(int i = 0, size = list.size(); i < size; i++) {
+                                Comment comment = list.get(i);
+                                if (Comment.isAuthorMe(comment) > 0) {
+                                    poi.setMyComment(comment);
+                                } else if (lastComment == null){
+                                    lastComment = comment;
+                                    break;
+                                }
                             }
                         }
                     }
@@ -940,7 +942,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         List<POI> pois = new ArrayList<POI>();
         pois.add(poi);
         mSphinx.showPOI(pois, 0);
-        mSphinx.getResultMapFragment().setData(mContext.getString(R.string.result_map), ActionLog.POIDetailMap);
+        mSphinx.getResultMapFragment().setData(mContext.getString(R.string.result_map), poi.getSourceType() == POI.SOURCE_TYPE_HOTEL ? ActionLog.POIHotelDetailMap : ActionLog.POIDetailMap);
         mSphinx.showView(R.id.view_result_map);
     }
     
@@ -1041,13 +1043,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         mDoingView.setVisibility(View.VISIBLE);
         if (poi.getName() == null && poi.getUUID() != null) {
             return;
-        }
-        if (mSphinx.isOnPause() == false) {
-            if (TKConfig.getPref(mSphinx, TKConfig.PREFS_HINT_POI_DETAIL) == null) {
-                mSphinx.showHint(new String[]{TKConfig.PREFS_HINT_POI_DETAIL, TKConfig.PREFS_HINT_POI_DETAIL_WEIXIN}, new int[] {R.layout.hint_poi_detail, R.layout.hint_poi_detail_weixin});
-            } else {
-                mSphinx.showHint(TKConfig.PREFS_HINT_POI_DETAIL_WEIXIN, R.layout.hint_poi_detail_weixin);
-            }
         }
         mRootView.setVisibility(View.VISIBLE);
         if (mStampAnimation != null) {
@@ -1274,13 +1269,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             TextView dateTxv = (TextView) view.findViewById(R.id.date_txv);
             TextView commentTxv = (TextView) view.findViewById(R.id.comment_txv);
             TextView srcTxv = (TextView) view.findViewById(R.id.src_txv);
-            View commendView = view.findViewById(R.id.commend_view);
-            ImageView commendImv = (ImageView)view.findViewById(R.id.commend_imv);
-            TextView avgTxv = (TextView) view.findViewById(R.id.avg_txv);
-            
-            commendView.setVisibility(View.GONE);
-            avgTxv.setVisibility(View.GONE);
-            commendImv.setVisibility(View.GONE);
             
             float grade = comment.getGrade()/2.0f;
             gradeRtb.setRating(grade);

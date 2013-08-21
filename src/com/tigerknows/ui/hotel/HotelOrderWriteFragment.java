@@ -84,6 +84,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     private TextView mRoomtypeDetailTxv;
     private TextView mRoomDateTxv;
     private TextView mRoomNightsTxv;
+    private TextView mDanbaoHintTxv;
     private Button mRoomHowmanyBtn;
     private Button mRoomReserveBtn;
     private EditText mRoomMobileNumberEdt;
@@ -114,6 +115,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     private double mTotalPrice;
     
     // 信用卡担保相关数据
+    private long mNeedCreditAssure;
     private long mTypeCreditAssure;
     private String mCreditCardNo;
     private String mVerifyCode;
@@ -161,6 +163,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         mRoomtypeDetailTxv = (TextView) mRootView.findViewById(R.id.roomtype_detail_txv);
         mRoomDateTxv = (TextView) mRootView.findViewById(R.id.room_date_txv);
         mRoomNightsTxv = (TextView) mRootView.findViewById(R.id.room_nights_txv);
+        mDanbaoHintTxv = (TextView) mRootView.findViewById(R.id.danbao_hint_txv);
         mRoomHowmanyBtn = (Button) mRootView.findViewById(R.id.room_howmany_btn);
         mRoomReserveBtn = (Button) mRootView.findViewById(R.id.room_reserve_btn);
         mRoomMobileNumberEdt = (EditText) mRootView.findViewById(R.id.room_mobile_number_edt);
@@ -307,8 +310,11 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         mRTime = rtList.get(mRTimeWhich).getTime();
         mRTimeDetail = rtList.get(mRTimeWhich).getTimeDetail();
         rtList.get(mRTimeWhich).getNeed();
+        mNeedCreditAssure = rtList.get(mRTimeWhich).getNeed();
         mTypeCreditAssure = rtList.get(mRTimeWhich).getType();
-        mRoomReserveBtn.setText(mRTime);
+        mRoomReserveBtn.setText(mRTime + ((mNeedCreditAssure == 1) ? mSphinx.getString(R.string.hotel_room_need_credit_assure) : "") );
+        mSubmitOrderBtn.setText((mNeedCreditAssure == 1) ? mSphinx.getString(R.string.go_credit_assure) : mSphinx.getString(R.string.submit_order));
+        mDanbaoHintTxv.setVisibility((mNeedCreditAssure == 1) ? View.VISIBLE : View.GONE);
     }
     
     public void setData(POI poi, RoomType roomtype, RoomTypeDynamic roomTypeDynamic, Calendar checkIn, Calendar checkOut ) {
@@ -381,7 +387,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         
         TextView txv = new TextView(mSphinx);
         txv.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-        txv.setPadding(Utility.dip2px(mContext, 8), Utility.dip2px(mContext, 8), Utility.dip2px(mContext, 8), Utility.dip2px(mContext, 8));
+        txv.setPadding(Utility.dip2px(mContext, 8), 0, 0, 0);
         txv.setTextColor(getResources().getColor(R.color.black_dark));
         txv.setTextSize(16);
         txv.setText(mSphinx.getString(R.string.hotel_room_person_name));
@@ -640,7 +646,8 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
                     mCheckOut.getTimeInMillis(),
                     mNights,
                     mUsername,
-                    mMobile
+                    mMobile,
+                    hotelOrderCreateResponse.getCancelDeadline()
                     );
             TKConfig.setPref(mContext, TKConfig.PREFS_HOTEL_LAST_BOOKNAME, mBookUsername);
             TKConfig.setPref(mContext, TKConfig.PREFS_HOTEL_LAST_MOBILE, mMobile);

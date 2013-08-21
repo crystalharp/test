@@ -23,7 +23,7 @@ public class HotelOrder extends XMapData{
 	public static final int STATE_POST_DUE = 4;
 	public static final int STATE_CHECKED_IN = 5;
 	
-	public static final String NEED_FIELDS = "0102030405060708090A0B0C0E0F1011121320";
+	public static final String NEED_FIELDS = "0102030405060708090A0B0C0E0F101112131420";
 	
 	// identification info
 	/**
@@ -113,6 +113,10 @@ public class HotelOrder extends XMapData{
 	 * 手机号码
 	 */
 	private String mobileNum;
+	/**
+	 * 最晚取消时间
+	 */
+	private long cancelDeadline;
 
 	public static final byte FIELD_ID = 0x01;
 	public static final byte FIELD_CREATE_TIME = 0x02;
@@ -132,6 +136,7 @@ public class HotelOrder extends XMapData{
 	public static final byte FIELD_DAY_COUNT= 0x11;
 	public static final byte FIELD_GUEST_NAME = 0x12;
 	public static final byte FIELD_MOBILE_NUM= 0x13;
+	public static final byte FIELD_CANCEL_DEADLINE= 0x14;
 	public static final byte FIELD_STATE_UPDATE_TIME = 0x20;
 	
 	/**
@@ -177,6 +182,10 @@ public class HotelOrder extends XMapData{
 		dayCount = (int) data.getInt(FIELD_DAY_COUNT);
 		guestName = data.getString(FIELD_GUEST_NAME);
 		mobileNum = data.getString(FIELD_MOBILE_NUM);
+		if(data.containsKey(FIELD_CANCEL_DEADLINE)){
+			cancelDeadline = data.getInt(FIELD_CANCEL_DEADLINE);
+		}
+		else cancelDeadline = data.getInt(FIELD_CHECKOUT_TIME);
 	}
 	
 	public HotelOrder() {
@@ -188,7 +197,7 @@ public class HotelOrder extends XMapData{
 			Position position, String hotelTel, String roomType,
 			long roomNum, double totalFee,
 			long retentionTime, long checkinTime, long checkoutTime, int dayCount,
-			String guestName, String mobileNum) {
+			String guestName, String mobileNum, long cancelDeadline) {
 		super();
 		this.id = id;
 		this.createTime = createTime;
@@ -207,6 +216,7 @@ public class HotelOrder extends XMapData{
 		this.dayCount = dayCount;
 		this.guestName = guestName;
 		this.mobileNum = mobileNum;
+		this.cancelDeadline = cancelDeadline;
 	}
 
 	/**
@@ -325,6 +335,11 @@ public class HotelOrder extends XMapData{
 		}else{
 			throw new APIException("FIELD_MOBILE_NUM");
 		}
+		if (cancelDeadline>0) {
+			map.put(FIELD_CANCEL_DEADLINE, cancelDeadline);
+		}else{
+			throw new APIException("FIELD_CANCEL_DEADLINE");
+		}
 
 		return map;
 		
@@ -432,6 +447,12 @@ public class HotelOrder extends XMapData{
 	public void setMobileNum(String mobileNum) {
 		this.mobileNum = mobileNum;
 	}
+	public long getCancelDeadline() {
+		return cancelDeadline;
+	}
+	public void setCancelDeadline(long cancelDeadline) {
+		this.cancelDeadline = cancelDeadline;
+	}
 	public long getStateUpdateTime() {
 		return stateUpdateTime;
 	}
@@ -461,5 +482,26 @@ public class HotelOrder extends XMapData{
             return new HotelOrder(data, true);
         }
     };
-	
+
+    public int hashCode() {
+        int hash = 3;
+        hash = 29 * hash + (this.id != null ? this.id.hashCode() : 0);
+        hash = 29 * hash + (this.hotelPoiUUID != null ? this.hotelPoiUUID.hashCode() : 0);
+        return hash;
+    }
+    
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        }
+        if (object instanceof HotelOrder) {
+            HotelOrder other = (HotelOrder) object;
+            if(null != id && null != other.id && id.equals(other.id)) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
 }

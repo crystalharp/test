@@ -349,6 +349,8 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
             String avg = mFoodAvgEdt.getEditableText().toString().trim();
             if (!TextUtils.isEmpty(avg)) {
                 mComment.setAvg(Long.parseLong(avg));
+            } else {
+                mComment.setAvg(-1);
             }
             mComment.setTaste((int) mTasteRtb.getRating());
             mComment.setEnvironment((int)mFoodEnvironmentRtb.getRating());
@@ -357,16 +359,22 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
             String restair = mRestairBtn.getText().toString();
             if (!TextUtils.isEmpty(restair)) {
                 mComment.setRestair(restair);
+            } else {
+                mComment.setRestair(null);
             }
             
             String recommend = mRecommendEdt.getEditableText().toString().trim();
             if (!TextUtils.isEmpty(recommend)) {
                 mComment.setRecommend(recommend);
+            } else {
+                mComment.setRecommend(null);
             }
         } else if (POI.COMMENT_PATTERN_HOTEL == commentPattern) {
             String avg = mHotelAvgEdt.getEditableText().toString().trim();
             if (!TextUtils.isEmpty(avg)) {
                 mComment.setAvg(Long.parseLong(avg));
+            } else {
+                mComment.setAvg(-1);
             }
             mComment.setQos((int)mHotelQosRtb.getRating());
             mComment.setEnvironment((int)mHotelEnvironmentRtb.getRating());
@@ -381,6 +389,8 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
             String avg = mHospitalAvgEdt.getEditableText().toString().trim();
             if (!TextUtils.isEmpty(avg)) {
                 mComment.setAvg(Long.parseLong(avg));
+            } else {
+                mComment.setAvg(-1);
             }
             mComment.setQos((int)mHospitalQosRtb.getRating());
             mComment.setLevel((int)mLevelRtb.getRating());
@@ -388,6 +398,8 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
             String avg = mBuyAvgEdt.getEditableText().toString().trim();
             if (!TextUtils.isEmpty(avg)) {
                 mComment.setAvg(Long.parseLong(avg));
+            } else {
+                mComment.setAvg(-1);
             }
         }
         
@@ -1137,15 +1149,19 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
                     List<Comment> list = commentList.getList();
                     commentArrayList = list;
                     if (list != null) {
+                        boolean isAuthorMe = false;
                         for(int i = list.size()-1; i >= 0; i--) {
                             // 如果列表中已经有我的点评则将其删除
                             if (Comment.isAuthorMe(list.get(i)) > 0) {
                                 list.remove(i);
+                                isAuthorMe = true;
                                 break;
                             }
                         }
-                        // 将我的点评插入为第一条
-                        list.add(0, mComment);
+                        if (isAuthorMe) {
+                            // 将我的点评插入为第一条
+                            list.add(0, mComment);
+                        }
                     }
                 }
             }

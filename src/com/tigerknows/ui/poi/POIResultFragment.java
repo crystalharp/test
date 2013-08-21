@@ -416,8 +416,6 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             if (mRightBtn != null)
                 mRightBtn.setVisibility(mPOIList.size() > 0 ? View.VISIBLE : View.GONE);
             
-            mSphinx.showHint(TKConfig.PREFS_HINT_POI_LIST, R.layout.hint_poi_list);
-            
             boolean footerSpringback = mResultLsv.isFooterSpringback();
             View v = mCurrentFootView;
             boolean addMerchant = false;
@@ -498,7 +496,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             }
         }
         mSphinx.showPOI(poiList, firstIndex);
-        mSphinx.getResultMapFragment().setData(mContext.getString(R.string.result_map), ActionLog.POIListMap);
+        mSphinx.getResultMapFragment().setData(mContext.getString(R.string.result_map), BaseQuery.SUB_DATA_TYPE_HOTEL.equals(mResultAdapter.getSubDataType()) ? ActionLog.POIHotelListMap : ActionLog.POIListMap);
         mSphinx.showView(R.id.view_result_map);   
     }
     
@@ -606,7 +604,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             aColor = resources.getColor(R.color.blue);
             bColor = resources.getColor(R.color.black_dark);
             distanceA = activity.getString(R.string.distanceA);
-            hotelPicWidth = Util.dip2px(Globals.g_metrics.density, 98);
+            hotelPicWidth = Util.dip2px(Globals.g_metrics.density, 88);
         }
         
         @Override
@@ -651,7 +649,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                         //To prevent the problem of size change of the same pic 
                         //After it is used at a different place with smaller size
                         Rect bounds = drawable.getBounds();
-                        if(bounds != null && bounds.width() != pictureImv.getWidth() || bounds.height() != pictureImv.getHeight() ){
+                        if(bounds != null && (bounds.width() != pictureImv.getWidth() || bounds.height() != pictureImv.getHeight())){
                             pictureImv.setBackgroundDrawable(null);
                         }
                         pictureImv.setBackgroundDrawable(drawable);
@@ -660,7 +658,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                     }
                     
                 } else {
-                    pictureImv.setBackgroundResource(R.drawable.bg_picture_hotel_none);
+                    pictureImv.setBackgroundResource(R.drawable.bg_picture_none);
                 }
                 
                 if (hotel.getCanReserve() > 0) {
@@ -786,7 +784,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             if (dynamicPOIWidth > 0) {
                 nameTxv.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
                 int nameTxvWidth = nameTxv.getMeasuredWidth();
-                int width = Globals.g_metrics.widthPixels-(4*Util.dip2px(Globals.g_metrics.density, 8));
+                int width = Globals.g_metrics.widthPixels-(6*Util.dip2px(Globals.g_metrics.density, 8));
                 if (nameTxvWidth > width-dynamicPOIWidth-hotelPicWidth) {
                     nameTxv.getLayoutParams().width = (width-dynamicPOIWidth-hotelPicWidth);
                 } else {

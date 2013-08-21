@@ -53,6 +53,7 @@ import android.text.TextUtils;
 import com.tigerknows.TKConfig;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.FileUpload;
+import com.tigerknows.model.test.BaseQueryTest;
 import com.tigerknows.util.HttpUtils;
 import com.weibo.sdk.android.WeiboException;
 import com.weibo.sdk.android.WeiboParameters;
@@ -168,6 +169,15 @@ public class HttpManager {
 			} else if (method.equals("DELETE")) {
 				request = new HttpDelete(url);
 			}
+            if (BaseQueryTest.UnallowedAccessNetwork) {
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                throw new IOException("Unallowed access network");
+            }
 			reqTime = System.currentTimeMillis();
 			HttpResponse response = client.execute(request);
 			StatusLine status = response.getStatusLine();

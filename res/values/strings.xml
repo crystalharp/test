@@ -65,6 +65,7 @@
     <string name="delete_map">删除地图</string>
     <string name="pause_download">暂停下载</string>
     <string name="upgrade_map">升级地图</string>
+    <string name="upgrade_map_new">地图更新啦！</string>
     <string name="deleteing_map">正在删除旧版地图数据，请稍候</string>
     
     <string name="at_where_search">在“%1$s”周边</string>    
@@ -346,7 +347,7 @@
     <string name="about_current_city_sw_version">当前城市联想词版本：%1$s</string>
     <string name="about_me">老虎宝典是老虎地图的全面升级版，致力于让大众的生活更加丰富多彩。</string>
     <string name="about_name">Beijing TigerKnows Technology Co.Ltd</string>
-    <string name="about_right">© 2013 TigerKnows. All Rights reserved</string>
+    <string name="about_right">© 2013 TigerKnows. All Rights Reserved</string>
     <string name="about_web">官网 \u0020 http://www.tigerknows.com</string>
     <string name="about_weibo">微博 \u0020 http://weibo.com/tigermap</string>
     <string name="about_wap">Wap网址 \u0020 http://wap.tigerknows.com</string>
@@ -834,6 +835,8 @@
     <string name="after_tomorrow">后天</string>
     <string name="tomorrow_char">明</string>
     <string name="after_tomorrow_char">后</string>
+    <string name="late_at_night">深夜</string>
+    <string name="yestoday">昨天</string>
     
     
     <string name="yanchu_list">演出列表</string>
@@ -966,6 +969,7 @@
     <string name="click_here_download_map">点击这里下载地图</string>
     <string name="wifi_enabled">wifi已开启</string>
     <string name="wifi_disabled">wifi已关闭</string>
+    <string name="user_survey_have_done">你已经做过用户调研啦！</string>
     
     <string name="user_survey">用户调研</string>
     
@@ -1006,15 +1010,15 @@
     <string name="hotel_no_roomtype">暂无房型信息</string>
     <string name="pictures">%1$s张</string>
     <string name="fold">收起</string>
-    <string name="hotel_no_room_left">该房型已经订满，建议换个房型吧！</string>
+    <string name="hotel_no_room_left">该房型已被订完，请更换房型试试吧</string>
     <string name="hotel_click_to_reload">戳这里，&lt;font color="#ff6c00"&gt;&lt;U&gt;重新加载&lt;/U&gt;&lt;/font&gt;</string>
     <string name="summary">简介</string>
     <string name="hotel_room_title">订单填写</string>
     <string name="hotel_room_howmany">房间数</string>
     <string name="hotel_room_reserve">房间保留到</string>
-    <string name="hotel_room_person_name">入&#8194;住&#8194;人：</string>
-    <string name="hotel_room_person_name_hint">入住人的姓名</string>
-    <string name="hotel_room_mobile_nubmer">手&#8194;机&#8194;号：</string>
+    <string name="hotel_room_person_name">入住人：</string>
+    <string name="hotel_room_person_name_hint">输入真实姓名，以便顺利入住</string>
+    <string name="hotel_room_mobile_nubmer">手机号：</string>
     <string name="hotel_room_mobile_nubmer_hint">用于订单确认</string>
     <string name="hotel_room_idcard">身份证号：</string>
     <string name="hotel_room_idcard_hint">输入身份证号</string>
@@ -1022,6 +1026,7 @@
     <string name="submit_order">提交订单</string>
     <string name="hotel_room_date">入住：%1$d月%2$d日&#8195;离店：%3$d月%4$d日</string>
     <string name="hotel_room_credit_note">（因酒店房间紧张，需信用卡担保，以便保留房间）</string>
+    <string name="hotel_room_credit_note_noquote">说明：因酒店房间紧张，需信用卡担保，以便保留房间</string>
     <string name="hotel_room_person_empty_tip">请填写入住人</string>
     <string name="hotel_room_mobile_empty_tip">请填写手机号</string>
     <string name="hotel_room_idcard_empty_tip">请填写身份证号</string>
@@ -1029,6 +1034,8 @@
     <string name="room_howmany_item">%1$d间/%2$s元</string>
     <string name="choose_room_reserve">房间保留到</string>
     <string name="before_23_59">23:59之前</string>
+    <string name="hotel_room_need_credit_assure">(需担保)</string>
+    <string name="go_credit_assure">使用信用卡担保</string>
     
     <string name="hotel_service_title">酒店服务</string>
     <string name="hotel_room_description_title">房间设施</string>

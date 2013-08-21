@@ -31,7 +31,7 @@
 	        <android.support.v4.view.ViewPager  
 	            android:id="@+id/view_pager"
 	            android:layout_width="fill_parent"
-	            android:layout_height="48dp"
+	            android:layout_height="56dp"
 	            android:focusable="true"
 	            />
 	        <LinearLayout
@@ -41,6 +41,7 @@
 	            android:orientation="horizontal"
 	            android:gravity="center_horizontal"
 	            android:layout_alignParentBottom="true"
+	            android:paddingBottom="4dp"
 	            />
 	    </RelativeLayout>
 	    <LinearLayout
@@ -121,20 +122,38 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_line_split"
                 />
-            <Button
-	            android:id="@+id/download_map_btn"
-	            android:layout_width="fill_parent"
-	            android:layout_height="wrap_content"
-	            android:background="@drawable/list_middle"
-	            android:paddingTop="8dp"
-	            android:paddingBottom="8dp"
-	            android:paddingRight="8dp"
-	            android:paddingLeft="16dp"
-	            android:textColor="@color/black_dark"
-	            android:textSize="16sp"
-	            android:text="@string/download_map"
-	            android:gravity="left|center_vertical"
-	            />
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                >
+                <Button
+                    android:id="@+id/download_map_btn"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/list_middle"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
+                    android:paddingRight="8dp"
+                    android:paddingLeft="16dp"
+                    android:textColor="@color/black_dark"
+                    android:textSize="16sp"
+                    android:text="@string/download_map"
+                    android:gravity="left|center_vertical"
+                    />
+                
+                <TextView android:id="@+id/upgrade_map_txv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:paddingRight="26dp"
+                    android:singleLine="true"
+                    android:ellipsize="end"
+                    android:textColor="@color/orange"
+                    android:gravity="center"
+                    android:text="@string/upgrade_map_new"
+                    />
+            </RelativeLayout>
             <ImageView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -185,7 +204,7 @@
                 android:background="@drawable/list_middle"
 	            android:paddingTop="8dp"
 	            android:paddingBottom="8dp"
-	            android:paddingRight="8dp"
+	            android:paddingRight="26dp"
 	            android:paddingLeft="16dp"
                 android:textColor="@color/black_dark"
                 android:textSize="16sp"

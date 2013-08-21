@@ -12,6 +12,8 @@ import com.decarta.android.util.LogWrapper;
 import com.tigerknows.TKConfig;
 
 public class CalendarUtil {
+    public static boolean UseSystemTime = false;
+    
 	/**  
      * @param date1 需要比较的时间 不能为空(null),需要正确的日期格式  
      * @param date2 被比较的时间  为空(null)则为当前时间  
@@ -68,7 +70,16 @@ public class CalendarUtil {
 	
 	public static int dateInterval(Calendar start, Calendar end){
 		if(start.after(end)){
-			return 0;
+		    int days = start.get(Calendar.DAY_OF_YEAR) - end.get(Calendar.DAY_OF_YEAR);
+	        int y2 = start.get(Calendar.YEAR);
+	        if(end.get(Calendar.YEAR) != y2){
+	            end = (Calendar) end.clone();
+	            do{
+	                days += end.getActualMaximum(Calendar.DAY_OF_YEAR);
+	                end.add(Calendar.YEAR, 1);
+	            }while(end.get(Calendar.YEAR) != y2);
+	        }
+	        return -days;
 		}
 		int days = end.get(Calendar.DAY_OF_YEAR) - start.get(Calendar.DAY_OF_YEAR);
 		int y2 = end.get(Calendar.YEAR);
@@ -101,6 +112,9 @@ public class CalendarUtil {
 	 * @return current time
 	 */
 	public static long getExactTime(Context context) {
+	    if (UseSystemTime) {
+	        return Calendar.getInstance().getTimeInMillis();
+	    }
 	    long recordedSysTime = 0;
 	    long recordedNtpTime = 0;
         String sSysTime = TKConfig.getPref(context, TKConfig.PREFS_RECORDED_SYS_ABS_TIME, null);

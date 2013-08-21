@@ -36,7 +36,7 @@ public class HelpActivity extends BaseActivity {
     
     public static final String APP_UPGRADE = "AppUpgrade";
     
-    private int mPagecount = 1;
+    private int mPagecount = 4;
 
     private boolean mAppFirstStart = false;
     
@@ -57,12 +57,6 @@ public class HelpActivity extends BaseActivity {
         if (mIntent != null) {
             mAppFirstStart = mIntent.getBooleanExtra(APP_FIRST_START, false); 
             mAppUpgrade = mIntent.getBooleanExtra(APP_UPGRADE, false); 
-        }
-        
-        if (mAppUpgrade) {
-            mPagecount = 2;
-        } else {
-            mPagecount = 4;
         }
 
         setContentView(R.layout.more_help);
@@ -135,18 +129,16 @@ public class HelpActivity extends BaseActivity {
 
     		new HelpAnimateItem("traffic_go", 		3.7f, 0.75f, 	3.3f, 0.75f, 	2.5f, 3.5f, R.drawable.help_traffic_go),
 
-    		new HelpAnimateItem("progress_line1",	0.35f, 0.91f, 	3.35f, 0.91f, 	0.0f, 3.0f, R.drawable.help_progress_line),
-    		new HelpAnimateItem("progress_line2",	0.45f, 0.91f, 	3.45f, 0.91f, 	0.0f, 3.0f, R.drawable.help_progress_line),
-    		new HelpAnimateItem("progress_line3",	0.55f, 0.91f, 	3.55f, 0.91f, 	0.0f, 3.0f, R.drawable.help_progress_line),
-    		new HelpAnimateItem("progress_line4",	0.65f, 0.91f, 	3.65f, 0.91f, 	0.0f, 3.0f, R.drawable.help_progress_line),
+    		new HelpAnimateItem("progress_line1",	0.35f, 0.96f, 	3.35f, 0.96f, 	0.0f, 3.0f, R.drawable.help_progress_line),
+    		new HelpAnimateItem("progress_line2",	0.45f, 0.96f, 	3.45f, 0.96f, 	0.0f, 3.0f, R.drawable.help_progress_line),
+    		new HelpAnimateItem("progress_line3",	0.55f, 0.96f, 	3.55f, 0.96f, 	0.0f, 3.0f, R.drawable.help_progress_line),
+    		new HelpAnimateItem("progress_line4",	0.65f, 0.96f, 	3.65f, 0.96f, 	0.0f, 3.0f, R.drawable.help_progress_line),
 
-    		new HelpAnimateItem("progress_car",		0.35f, 0.90f, 	3.65f, 0.90f, 	0.0f, 3.0f, R.drawable.help_car),
+    		new HelpAnimateItem("progress_car",		0.35f, 0.95f, 	3.65f, 0.95f, 	0.0f, 3.0f, R.drawable.help_car),
 
-    		new HelpAnimateItem("progress_car",		2.3f, 0.90f, 	3.88f, 0.90f, 	2.5f, 3.0f, R.drawable.btn_start_now)
+    		new HelpAnimateItem("progress_car",		2.3f, 0.95f, 	3.88f, 0.95f, 	2.5f, 3.0f, R.drawable.btn_start_now)
     		
     };
-    
-    private View[] animViews = new View[3];
     
     private List<HelpAnimateItem> visibleItems = new ArrayList<HelpAnimateItem>();
     
@@ -268,80 +260,29 @@ public class HelpActivity extends BaseActivity {
         }
         
         if (position == 0) {
-            if (mAppUpgrade) {
-                ImageView view = new ImageView(mThis);
-                view.setImageResource(R.drawable.ic_learn4);
-                view.setScaleType(ScaleType.FIT_XY);
-                viewMap.put(position, view);
-                return view;
-            
-            } else {
-                ImageView view = new ImageView(mThis);
-                view.setImageResource(R.drawable.ic_learn1);
-                view.setScaleType(ScaleType.FIT_XY);
-                viewMap.put(position, view);
-                return view;
-            }
+            ImageView view = new ImageView(mThis);
+            view.setImageResource(R.drawable.ic_learn1);
+            view.setScaleType(ScaleType.FIT_XY);
+            viewMap.put(position, view);
+            return view;
         } else if (position == 1) {
-            if (mAppUpgrade) {
-                LayoutInflater layoutInflater = (LayoutInflater)mThis.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                View view = layoutInflater.inflate(R.layout.more_help_end, null, false);
-                ImageView imageView = (ImageView) view.findViewById(R.id.image_imv);
-                imageView.setImageResource(R.drawable.ic_learn5);
-                imageView.setScaleType(ScaleType.FIT_XY);
-                Button button = (Button) view.findViewById(R.id.enter_btn);
-                button.setOnClickListener(new View.OnClickListener() {
-                    
-                    @Override
-                    public void onClick(View arg0) {
-                        finish();
-                    }
-                });
-                viewMap.put(position, view);
-                return view;
-            } else {
-                ImageView view = new ImageView(mThis);
-                view.setImageResource(R.drawable.ic_learn2);
-                view.setScaleType(ScaleType.FIT_XY);
-                viewMap.put(position, view);
-                return view;
-            }
+            ImageView view = new ImageView(mThis);
+            view.setImageResource(R.drawable.ic_learn2);
+            view.setScaleType(ScaleType.FIT_XY);
+            viewMap.put(position, view);
+            return view;
         } else if (position == 2) {
             ImageView view = new ImageView(mThis);
             view.setImageResource(R.drawable.ic_learn3);
             view.setScaleType(ScaleType.FIT_XY);
             viewMap.put(position, view);
             return view;
-        } else if (position == 3) {
+        } else {
             ImageView view = new ImageView(mThis);
             view.setImageResource(R.drawable.ic_learn4);
             view.setScaleType(ScaleType.FIT_XY);
             viewMap.put(position, view);
             return view;
-        } else {
-            if (mAppFirstStart) {
-                LayoutInflater layoutInflater = (LayoutInflater)mThis.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                View view = layoutInflater.inflate(R.layout.more_help_end, null, false);
-                ImageView imageView = (ImageView) view.findViewById(R.id.image_imv);
-                imageView.setImageResource(R.drawable.ic_learn5);
-                imageView.setScaleType(ScaleType.FIT_XY);
-                Button button = (Button) view.findViewById(R.id.enter_btn);
-                button.setOnClickListener(new View.OnClickListener() {
-                    
-                    @Override
-                    public void onClick(View arg0) {
-                        finish();
-                    }
-                });
-                viewMap.put(position, view);
-                return view;
-            } else {
-                ImageView view = new ImageView(mThis);
-                view.setImageResource(R.drawable.ic_learn5);
-                view.setScaleType(ScaleType.FIT_XY);
-                viewMap.put(position, view);
-                return view; 
-            }
         }
     }
     

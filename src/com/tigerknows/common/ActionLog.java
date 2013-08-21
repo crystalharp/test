@@ -12,7 +12,6 @@ import android.content.Context;
 import android.text.TextUtils;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 
 /**
  * 用户行为日志类
@@ -194,6 +193,9 @@ public class ActionLog extends LogUpload {
     public static final String POICommentListUrl = "BA";
     public static final String POICommentListMyComment = "BB";
     public static final String POICommentListInput = "BC";
+    public static final String POICommentListAllComment = "BD";
+    public static final String POICommentListHotComment = "BE";
+    public static final String POICommentListCommend = "BF";
 
     // 点评输入页
     public static final String POIComment = "AF";
@@ -240,6 +242,8 @@ public class ActionLog extends LogUpload {
     
     // POI详情地图页
     public static final String POIDetailMap = "AL";
+    public static final String POIHotelListMap = "AO";
+    public static final String POIHotelDetailMap = "AP";
     
     // 优惠券列表页
     public static final String CouponList = "AM";
@@ -286,7 +290,7 @@ public class ActionLog extends LogUpload {
 
     // 更多频道
     public static final String More = "CA";
-    public static final String MoreMessageComment = "BA";
+    public static final String MoreGoComment = "BA";
     public static final String MoreLoginRegist = "BB";
     public static final String MoreChangeCity = "BC";
     public static final String MoreMapDownload = "BD";
@@ -297,11 +301,11 @@ public class ActionLog extends LogUpload {
     public static final String MoreFeedback = "BI";
     public static final String MoreHelp = "BJ";
     public static final String MoreAboutUs = "BK";
-    public static final String MoreMessageMap = "BL";
+    //public static final String MoreMessageMap = "BL";
     public static final String MoreUserHome = "BM";
-    public static final String MoreMessageSoft = "BN";
+    public static final String MoreSoftwareUpdate = "BN";
     public static final String MoreGiveFavourableComment = "BO";
-    public static final String MoreMessageUserSurvey = "BP";
+    //public static final String MoreMessageUserSurvey = "BP";
     public static final String MoreAddMerchant = "BQ";
     public static final String MoreSatisfyRate = "BR";
     public static final String MoreAppDownload = "BS";

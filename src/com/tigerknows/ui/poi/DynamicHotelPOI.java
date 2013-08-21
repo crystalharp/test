@@ -15,6 +15,7 @@ import android.text.Html;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -170,7 +171,8 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             v.setBackgroundResource(R.drawable.list_selector_background_gray_dark);
             v.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
             int h = v.getMeasuredHeight();
-            view.findViewById(R.id.body_view).getLayoutParams().height = h*5-(int)(Globals.g_metrics.density*8);
+            view.findViewById(R.id.body_view).getLayoutParams().height = h*6-(int)(Globals.g_metrics.density*8);
+            ((ViewGroup) view.findViewById(R.id.selected_view)).setPadding(0, h, 0, 0);
             view.setData(this, mPOIDetailFragment.mActionTag);
             mDateListView = view;
         }
@@ -345,8 +347,8 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         public void onClick(View v) {
             mPOIDetailFragment.mActionLog.addAction(ActionLog.POIDetail + ActionLog.POIDetailHotelMoreRoom);
             roomTypeList.refreshList(mAllRoomList);
-            refreshBackground(roomTypeList, mAllRoomList);
             mDynamicRoomTypeMoreView.setVisibility(View.GONE);
+            refreshBackground(roomTypeList, mAllRoomList);
         }
         
     }
@@ -426,11 +428,11 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         if (picList != null && picList.size() > 0) {
             final TKDrawable tkDrawable = picList.get(0).getTKDrawable();
             if (tkDrawable != null) {
-                LoadImageRunnable loadImageRunnable = new LoadImageRunnable(mSphinx, tkDrawable, hotelImage, R.drawable.bg_picture_hotel, mPOIDetailFragment.toString());
+                LoadImageRunnable loadImageRunnable = new LoadImageRunnable(mSphinx, tkDrawable, hotelImage, R.drawable.bg_picture_detail, mPOIDetailFragment.toString());
                 Drawable hotelImageDraw = tkDrawable.loadDrawable(mSphinx, loadImageRunnable, mPOIDetailFragment.toString());
                 if (hotelImageDraw != null) {
                     Rect bounds = hotelImageDraw.getBounds();
-                    if(bounds != null && bounds.width() != hotelImage.getWidth() || bounds.height() != hotelImage.getHeight() ){
+                    if(bounds != null && (bounds.width() != hotelImage.getWidth() || bounds.height() != hotelImage.getHeight())){
                         hotelImage.setBackgroundDrawable(null);
                     }
                     hotelImage.setBackgroundDrawable(hotelImageDraw);
@@ -438,11 +440,11 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
                 }
             }
         } else {
-            hotelImage.setBackgroundResource(R.drawable.bg_picture_hotel_none);
+            hotelImage.setBackgroundResource(R.drawable.bg_picture_none);
             setDefault = false;
         }
         if (setDefault)  {
-            hotelImage.setBackgroundResource(R.drawable.bg_picture_hotel);
+            hotelImage.setBackgroundResource(R.drawable.bg_picture_detail);
         }
     }
 
@@ -548,7 +550,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         int size = list.size();
         for(int i = 0; i < size; i++) {
             View child = lsv.getChildView(i);
-            if (i == (size-1) && size <= SHOW_DYNAMIC_HOTEL_MAX) {
+            if (i == (size-1) && mDynamicRoomTypeMoreView.getVisibility() == View.GONE) {
                 child.setBackgroundResource(R.drawable.list_footer);
                 child.findViewById(R.id.list_separator_imv).setVisibility(View.GONE);
             } else {

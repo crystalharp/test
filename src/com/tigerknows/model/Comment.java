@@ -353,7 +353,11 @@ public class Comment extends BaseData {
 
     public void setRecommend(String recommend) {
         this.recommend = recommend;
-        getData().put(FIELD_RECOMMEND, this.recommend);
+        if (TextUtils.isEmpty(recommend)) {
+            getData().remove(FIELD_RECOMMEND);
+        } else {
+            getData().put(FIELD_RECOMMEND, this.recommend);
+        }
     }
 
     public long getLevel() {
@@ -384,7 +388,11 @@ public class Comment extends BaseData {
 
     public void setRestair(String restair) {
         this.restair = restair;
-        getData().put(FIELD_RESTAIR, this.restair);
+        if (TextUtils.isEmpty(restair)) {
+            getData().remove(FIELD_RESTAIR);
+        } else {
+            getData().put(FIELD_RESTAIR, this.restair);
+        }
     }
 
     public long getPOIStatus() {

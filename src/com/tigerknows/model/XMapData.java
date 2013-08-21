@@ -151,8 +151,8 @@ public class XMapData {
      * @param key
      * @return
      */
-    String getStringFromData(byte key, String defalut) {
-        return getStringFromData(this.data, key, defalut);
+    String getStringFromData(byte key, String defaultValue) {
+        return getStringFromData(this.data, key, defaultValue);
     }
     
     /**

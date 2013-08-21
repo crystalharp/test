@@ -27,6 +27,7 @@ import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import android.widget.Toast;
 import com.tigerknows.common.ActionLog;
+import com.tigerknows.ui.more.MoreHomeFragment;
 import com.tigerknows.util.Utility;
 
 /**
@@ -94,7 +95,7 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
     private Button mRefreshBtn;
     private Button mStopBtn;
     private String mURL;
-    
+   
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mActionTag = ActionLog.Browser;
