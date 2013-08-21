@@ -9,6 +9,9 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -39,6 +42,8 @@ public class SpringbackListView extends ListView {
     private View headerView;  
 
     private View footerView; 
+    
+    private ImageView iconImv;
 
     private TextView footerLoadintTxv; 
 
@@ -104,6 +109,7 @@ public class SpringbackListView extends ListView {
             footerContentHeight = footerView.getMeasuredHeight();  
             footerView.setPadding(0, -1 * footerContentHeight, 0, 0);  
             footerView.invalidate();  
+            iconImv = (ImageView)footerView.findViewById(R.id.icon_imv);
             footerLoadintTxv = (TextView)footerView.findViewById(R.id.loading_txv);
             footerProgressBar = (ProgressBar)footerView.findViewById(R.id.progress_prb);
             footerView.setOnClickListener(new OnClickListener() {
@@ -378,6 +384,9 @@ public class SpringbackListView extends ListView {
             switch (stateFooter) {  
                 case RELEASE_TO_REFRESH:  
                     if (footerLoadintTxv != null && footerProgressBar != null) {
+                        iconImv.setVisibility(View.VISIBLE);
+                        Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.releasetorefresh);
+                        iconImv.startAnimation(animation);
                         footerLoadintTxv.setText(R.string.pull_to_refresh);
                         footerProgressBar.setVisibility(View.INVISIBLE);
                     }
@@ -388,6 +397,8 @@ public class SpringbackListView extends ListView {
                     
                 case PULL_TO_REFRESH:  
                     if (footerLoadintTxv != null && footerProgressBar != null) {
+                        iconImv.setAnimation(null);
+                        iconImv.setVisibility(View.VISIBLE);
                         if (footerLoadFailed) {
                             footerLoadintTxv.setText(R.string.network_failed);
                         } else {
@@ -402,6 +413,8 @@ public class SpringbackListView extends ListView {
                     
                 case REFRESHING:  
                     if (footerLoadintTxv != null && footerProgressBar != null) {
+                        iconImv.setAnimation(null);
+                        iconImv.setVisibility(View.GONE);
                         footerLoadintTxv.setText(R.string.loading);
                         footerProgressBar.setVisibility(View.VISIBLE);
                     }
