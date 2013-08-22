@@ -21,37 +21,6 @@
             android:padding="8dp"
             >
 
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="left|center_vertical"
-                android:background="@drawable/list_header"
-                >
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="left|center_vertical"
-                    android:padding="8dp"
-                    android:text="@string/credit_bank"
-                    android:textColor="@color/black_dark"
-                    android:textSize="16sp" />
-
-                <Button
-                    android:id="@+id/credit_bank_btn"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/transparent"
-                    android:drawableRight="@drawable/icon_arrow_right"
-                    android:gravity="left|center_vertical"
-                    android:padding="8dp"
-                    android:text="@string/credit_bank_hint"
-                    android:textColor="@color/black_light"
-                    android:textSize="16sp" />
-
-            </LinearLayout>
-
             <ImageView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -63,7 +32,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="left|center_vertical"
-                android:background="@drawable/list_middle"
+                android:background="@drawable/list_header"
                 >
 
                 <TextView
