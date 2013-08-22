@@ -298,5 +298,10 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
 	public void onCancelled(TKAsyncTask tkAsyncTask) {
 		
 	}
+
+    @Override
+    public void loadData(int fromType) {
+        refresh();
+    }
     
 }

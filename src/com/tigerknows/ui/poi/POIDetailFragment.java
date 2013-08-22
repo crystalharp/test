@@ -288,6 +288,18 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         mBelowAddressLayout.removeAllViews();
         POIList.clear();
     }
+    
+    /**
+     * 加载动态POI
+     * @param fromType 加载时进入的标记
+     */
+    private void loadDynamicView(int fromType) {
+        for (DynamicPOIView dpView : DPOIViewTable.values()) {
+            if (dpView.isExist()) {
+                dpView.loadData(fromType);
+            }
+        }
+    }
 
     /**
      * 有些动态POI并不止一个显示区块，但是刷新的时候却有着不同的刷新规则
@@ -347,6 +359,9 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
      */
     public abstract static class DynamicPOIView implements TKAsyncTask.EventListener{
 
+        public final static int FROM_ONRESUME = 0;
+        public final static int FROM_FAV_HISTORY = 1;
+        
         POIDetailFragment mPOIDetailFragment;
         Sphinx mSphinx;
         POI mPOI;
@@ -391,18 +406,17 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         public boolean isExist() {
             return mExist;
         }
+        
+        //动态POI的数据加载。会在初始化后检测存在该动态POI的时候被调用，如果需要就做进一步查询，不需要则直接刷新显示
+        public abstract void loadData(int fromType);
 
     }
 
     /**
-     * 进入页面时刷新所有动态POI的显示,以后再有就在onPostExecute中单刷
+     * 进入页面时初始化所有动态POI的状态
      */
     final void initDynamicPOIView(POI poi) {
         checkAndAddDynamicPOIView(poi);
-        //normal的团展演惠等都是随着POI一块获取的,可以直接刷新出来
-        if (mDynamicNormalPOI.isExist()) {
-            mDynamicNormalPOI.refresh();
-        }
     }
     
     /**
@@ -442,29 +456,59 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     
 	//*************DynamicPOI code end*******************
     
-    //TODO:好好整理下这块代码和命名
-    //以下是处理本页动态添加进来的，有些POI有，有些POI没有的extraView
+    /**
+     * 以下是处理本页动态添加进来的，和POI内容相关的extraView
+     * extraView是那些不在POI的DynamicPOIList中，但是和某些POI内容相关的动态出现的View。
+     * 由于这类信息处理过程和DynamicPOI不同，但是显示方式一样，于是另写一些代码来处理
+     * 这个类别的动态信息。
+     * 例如：
+     * 地铁信息需要特殊显示，但是它的信息载体不是DynamicPOI，而是POI的Description里面的
+     * 两个key，那么使用ExtraView的实现是：
+     * 1.创建此额外信息的类，继承DynamicPOIView
+     * 2.在该页创建该View的对象，并在initExtraViewEnv里面添加这个类型的POI
+     * 3.重载isExist函数，实现该类型判断存在的方法
+     * 4.实现所有的界面生成
+     */
     
     //存储当前页面所有的extraView
-    private List<DynamicPOIViewBlock> mExtraViewList = new LinkedList<DynamicPOIViewBlock>();
+    private List<DynamicPOIViewBlock> mExtraViewBlockList = new LinkedList<DynamicPOIViewBlock>();
     
-    private List<DynamicPOIView> mExtraPOIInfoList = new LinkedList<DynamicPOIView>();
+    private List<DynamicPOIView> mExtraViewList = new LinkedList<DynamicPOIView>();
     
     private void initExtraViewEnv() {
-        mExtraPOIInfoList.add(mExtraSubwayPOI);
+        mExtraViewList.add(mExtraSubwayPOI);
     }
     
+    /**
+     * 加载ExtraView，需要实现isExist
+     * ExtraView的loadData函数一般不涉及从服务器上取数据，刷新即可
+     * @param fromType 此参数预留，以备从不同地方加载会有区别显示
+     */
+    private void loadExtraView(int fromType) {
+        for (DynamicPOIView dpView : mExtraViewList) {
+            if (dpView.isExist()) {
+                dpView.loadData(fromType);
+            }
+        }
+    }
+    
+    /**
+     * 初始化ExtraView，把所有ExtraView的ViewBlock添加进来，但是不显示
+     * 显示需要在它们的loadData中执行refresh进行刷新。
+     * @param poi
+     */
     private void initExtraView(POI poi) {
-        for (DynamicPOIView extraView : mExtraPOIInfoList) {
-            mExtraViewList.addAll(extraView.getViewList());
+        for (DynamicPOIView extraView : mExtraViewList) {
+            mExtraViewBlockList.addAll(extraView.getViewList());
             extraView.initData(poi);
         }
         
-        for (DynamicPOIViewBlock block : mExtraViewList) {
+        for (DynamicPOIViewBlock block : mExtraViewBlockList) {
             block.clear();
             block.addToParent();
         }
     }
+    /*************************ExtraPOI end **************************/
     
     private final void refreshNavigation() {
         if (mDynamicHotelPOI.isExist()) {
@@ -1034,11 +1078,13 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         //这两个函数放在前面初始化动态POI信息
         clearDynamicView(DPOIViewBlockList);
         //初始化和动态POI信息相关的动态布局
+        //初始化动态POI在初始化ExtraView之前，就会导致动态POI在ExtraView的上面显示
         initDynamicPOIView(mPOI);
         initExtraView(mPOI);
-        if (mExtraSubwayPOI.isExist()) {
-            mExtraSubwayPOI.refresh();
-        }
+        loadExtraView(DynamicPOIView.FROM_ONRESUME);
+        // 重置查询计数
+        queryCount = 0;
+        loadDynamicView(DynamicPOIView.FROM_ONRESUME);
         refreshNavigation();
         mDoingView.setVisibility(View.VISIBLE);
         if (poi.getName() == null && poi.getUUID() != null) {
@@ -1083,27 +1129,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         
         refreshDetail();
         refreshComment();
-        // DynamicPOI检测区域
-        // 重置查询计数
-        queryCount = 0;
-        // 检查是否包含电影的动态信息
-        if (mDynamicMoviePOI.isExist()) {
-            mDynamicMoviePOI.queryStart(mDynamicMoviePOI.buildQuery(poi));
-            addLoadingView();
-        }
-        //判断是否存在hotel信息
-        if (mDynamicHotelPOI.isExist()) {
-            if (!poi.getUUID().equals(mDynamicHotelPOI.mInitDatePOIid)) {
-                if (mSphinx.uiStackContains(R.id.view_hotel_home)) {
-                    HotelHomeFragment hotelFragment = mSphinx.getHotelHomeFragment();
-                    mDynamicHotelPOI.initDate(hotelFragment.getCheckin(), hotelFragment.getCheckout());
-                } else {
-                    mDynamicHotelPOI.initDate();
-                }
-            }
-            mDynamicHotelPOI.queryStart(mDynamicHotelPOI.generateQuery(mPOI));
-            addLoadingView();
-        }
 
         FeedbackUpload feedbackUpload = new FeedbackUpload(mSphinx);
         feedbackUpload.addParameter(FeedbackUpload.SERVER_PARAMETER_POI_RANK, String.valueOf(position));
@@ -1428,15 +1453,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                             refreshComment();
                             refreshNavigation();
 
-                            if (mDynamicHotelPOI.isExist()) {
-                                mDynamicHotelPOI.initDate();
-                                mDynamicHotelPOI.queryStart(mDynamicHotelPOI.generateQuery(mPOI));
-                                addLoadingView();
-                            }
-                            if (mDynamicMoviePOI.isExist()) {
-                                mDynamicMoviePOI.queryStart(mDynamicMoviePOI.buildQuery(poi));
-                                addLoadingView();
-                            }
+                            loadDynamicView(DynamicPOIView.FROM_FAV_HISTORY);
                         }
                     }
                     

@@ -627,6 +627,25 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
 	public void onCancelled(TKAsyncTask tkAsyncTask) {
 		
 	}
+
+    @Override
+    public void loadData(int fromType) {
+        if (fromType == FROM_FAV_HISTORY) {
+            initDate();
+        } else if (fromType == FROM_ONRESUME) {
+            if (!mPOI.getUUID().equals(mInitDatePOIid)) {
+                if (mSphinx.uiStackContains(R.id.view_hotel_home)) {
+                    HotelHomeFragment hotelFragment = mSphinx.getHotelHomeFragment();
+                    initDate(hotelFragment.getCheckin(), hotelFragment.getCheckout());
+                } else {
+                    initDate();
+                }
+            }
+        }
+        queryStart(generateQuery(mPOI));
+        mPOIDetailFragment.addLoadingView();
+        
+    }
        
 }
 
