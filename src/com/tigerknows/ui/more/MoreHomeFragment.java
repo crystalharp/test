@@ -151,7 +151,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 
 		@Override
 		public void run() {
-			if(mPagecount > 1){
+			if(mSphinx.uiStackPeek()==R.id.view_more_home && mPagecount > 1){
 				mViewPager.setCurrentItem(mViewPager.getCurrentItem()+1);
 			}
 		}
