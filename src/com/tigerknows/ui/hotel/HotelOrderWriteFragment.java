@@ -150,10 +150,11 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
 
     }
     
+    @Override
     public void onPause(){
         super.onPause();
-        TKConfig.setPref(mContext, TKConfig.PREFS_HOTEL_LAST_BOOKNAME, mBookUsername);
-        TKConfig.setPref(mContext, TKConfig.PREFS_HOTEL_LAST_MOBILE, mMobile);
+        TKConfig.setPref(mContext, TKConfig.PREFS_HOTEL_LAST_BOOKNAME, mBookUsernameEdt.getText().toString());
+        TKConfig.setPref(mContext, TKConfig.PREFS_HOTEL_LAST_MOBILE, mRoomMobileNumberEdt.getText().toString());
     }
 
     protected void findViews() {

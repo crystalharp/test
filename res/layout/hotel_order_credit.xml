@@ -149,8 +149,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="left|center_vertical"
-                android:background="@drawable/list_footer"
-                android:layout_marginBottom="12dp"
+                android:background="@drawable/list_middle"
                 >
 
                 <TextView
@@ -176,36 +175,6 @@
 
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="left|center_vertical"
-                android:background="@drawable/list_header"
-                >
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="left|center_vertical"
-                    android:padding="8dp"
-                    android:text="@string/credit_cert_type"
-                    android:textColor="@color/black_dark"
-                    android:textSize="16sp" />
-
-                <Button android:id="@+id/credit_cert_type_btn"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/transparent"
-                    android:padding="8dp"
-                    android:drawableRight="@drawable/icon_arrow_right"
-                    android:textColor="@color/black_dark"
-                    android:textSize="16sp"
-                    android:text="@string/app_name"
-                    android:gravity="left|center_vertical"
-                    />
-            </LinearLayout>
-
             <ImageView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -217,17 +186,19 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="left|center_vertical"
-                android:background="@drawable/list_middle"
+                android:background="@drawable/list_footer"
                 >
-
-                <TextView
+                <Button android:id="@+id/credit_cert_type_btn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="left|center_vertical"
+                    android:background="@color/transparent"
                     android:padding="8dp"
-                    android:text="@string/credit_cert_code"
+                    android:drawableRight="@drawable/icon_arrow_right"
                     android:textColor="@color/black_dark"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    android:text="@string/credit_cert_code"
+                    android:gravity="left|center_vertical"
+                    />
 
                 <EditText android:id="@+id/credit_cert_code_edt"
                     android:layout_width="fill_parent"
@@ -256,62 +227,45 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="left|center_vertical"
-                android:background="@drawable/list_middle"
+                android:background="@color/transparent"
+                android:paddingTop="8dp"
                 >
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="left|center_vertical"
-                    android:padding="8dp"
                     android:text="@string/credit_assure_pricetitle"
-                    android:textColor="@color/black_dark"
+                    android:textColor="@color/black_light"
+                    android:paddingRight="12dp"
                     android:textSize="16sp" />
 
                 <TextView android:id="@+id/credit_assure_price_txv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="left|center_vertical"
-                    android:padding="8dp"
                     android:text="@string/credit_assure_price"
                     android:textColor="@color/orange"
-                    android:textSize="16sp" />
+                    android:textSize="18sp" />
                 </LinearLayout>
 
-            <ImageView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_line_split"
-                android:contentDescription="@string/app_name"
-                />
             <LinearLayout 
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:gravity="left|center_vertical"
-                android:background="@drawable/list_footer"
-                android:paddingLeft="8dp"
-                android:paddingRight="8dp"
-                android:paddingTop="12dp"
-                android:paddingBottom="12dp"
+                android:background="@color/transparent"
+                android:paddingTop="8dp"
                 >
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="left|center_vertical"
-                    android:text="@string/credit_note"
-                    android:textColor="@color/black_dark"
-                    android:paddingBottom="8dp"
-                    android:textSize="16sp" />
                 
                 <TextView android:id="@+id/credit_note_txv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="left|center_vertical"
                     android:text="@string/credit_note_detail"
-                    android:textColor="@color/black_dark"
+                    android:textColor="@color/black_light"
                     android:textSize="14sp" />
-                </LinearLayout>
+            </LinearLayout>
 
             <Button
                 android:id="@+id/credit_confirm_btn"
@@ -331,8 +285,6 @@
                 android:shadowColor="#a77a00"
                 android:shadowRadius="1"
                 />
-
         </LinearLayout>
-        
     </ScrollView>
 </RelativeLayout>

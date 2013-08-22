@@ -224,8 +224,8 @@
     
     <string-array name="cert_type">
         <item>身份证</item>
-        <item>护照</item>
-        <item>其他</item>
+        <item>护照\u2003</item>
+        <item>其他\u2003</item>
     </string-array>
     
     <string-array name="preset_filter_area">

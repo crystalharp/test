@@ -332,7 +332,6 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
         // set title fragment content
         mRightBtn.setVisibility(View.GONE);
         mTitleBtn.setText(mContext.getString(R.string.hotel_order_detail));
-    	Toast.makeText(mContext, CalendarUtil.ymd8c_hm4.format(new Date(mOrder.getCancelDeadline())), Toast.LENGTH_LONG).show();
         
         updateCancelBtn();
         

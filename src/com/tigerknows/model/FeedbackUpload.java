@@ -43,7 +43,7 @@ public class FeedbackUpload extends BaseQuery {
     @Override
     protected void checkRequestParameters() throws APIException {
         debugCheckParameters(new String[] {SERVER_PARAMETER_FEEDBACK}, 
-                new String[]{SERVER_PARAMETER_ACTION_LOG,
+                new String[]{SERVER_PARAMETER_ACTION_LOG, DataQuery.SERVER_PARAMETER_POI_ID, 
                 SERVER_PARAMETER_LOCATION, SERVER_PARAMETER_LOCATION_IN_ANDROID,
                 SERVER_PARAMETER_ERROR_RECOVERY, SERVER_PARAMETER_ADD_MERCHANT,
                 SERVER_PARAMETER_SATISFY_RATE, SERVER_PARAMETER_POI_RANK, 

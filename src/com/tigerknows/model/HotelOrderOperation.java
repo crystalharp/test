@@ -9,6 +9,7 @@
 package com.tigerknows.model;
 
 import com.decarta.android.exception.APIException;
+import com.decarta.android.util.LogWrapper;
 import com.tigerknows.TKConfig;
 import com.tigerknows.model.test.BaseQueryTest;
 import com.tigerknows.model.test.HotelOrderOperationTest;
@@ -16,6 +17,7 @@ import com.tigerknows.model.xobject.XMap;
 import com.tigerknows.util.Utility;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -122,22 +124,24 @@ public class HotelOrderOperation extends BaseQuery {
         if (OPERATION_CODE_QUERY.equals(operationCode)) {
             debugCheckParameters(new String[] {SERVER_PARAMETER_ORDER_IDS, SERVER_PARAMETER_OPERATION_CODE});
         } else if (OPERATION_CODE_CREATE.equals(operationCode)) {
-            String[] ekeys = new String[]{SERVER_PARAMETER_OPERATION_CODE, 
+            String[] ekeys = new String[]{SERVER_PARAMETER_OPERATION_CODE,
                 SERVER_PARAMETER_ROOMTYPE, SERVER_PARAMETER_PKGID,
                 SERVER_PARAMETER_CHECKIN_DATE, SERVER_PARAMETER_CHECKOUT_DATE,
                 SERVER_PARAMETER_RESERVE_TIME, SERVER_PARAMETER_NUMROOMS,
                 SERVER_PARAMETER_TOTAL_PRICE, SERVER_PARAMETER_USERNAME,
                 SERVER_PARAMETER_MOBILE, SERVER_PARAMETER_GUESTS,
                 SERVER_PARAMETER_GUESTTYPE, SERVER_PARAMETER_HOTEL_ID};
+            String[] okeys = new String[] {SERVER_PARAMETER_BRAND};
             String[] ekeys_with_ccard = new String[]{
                     SERVER_PARAMETER_VERIFY_CODE, SERVER_PARAMETER_VALID_YEAR,
                     SERVER_PARAMETER_VALID_MONTH, SERVER_PARAMETER_CARD_HOLDER_NAME,
                     SERVER_PARAMETER_IDCARD_TYPE, SERVER_PARAMETER_IDCARD_NO};
-            String creditCardNo = getParameter(SERVER_PARAMETER_BRAND);
-            if (creditCardNo != null) {
-                debugCheckParameters(Utility.mergeArray(ekeys, ekeys_with_ccard));
+            String creditCardNo = getParameter(SERVER_PARAMETER_VERIFY_CODE);
+            LogWrapper.d("Trap", "s"+creditCardNo);
+            if (creditCardNo != null && !TextUtils.isEmpty(creditCardNo)) {
+                debugCheckParameters(Utility.mergeArray(ekeys, ekeys_with_ccard), okeys);
             } else {
-                debugCheckParameters(ekeys);
+                debugCheckParameters(ekeys, okeys);
             }
         } else if (OPERATION_CODE_UPDATE.equals(operationCode)) {
             debugCheckParameters(new String[] {SERVER_PARAMETER_OPERATION_CODE, 
