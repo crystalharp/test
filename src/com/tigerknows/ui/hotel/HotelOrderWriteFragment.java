@@ -304,7 +304,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     }
     private void refreshData(){
         mTotalPrice = mRoomtypeDynamic.getPrice() * mRoomHowmany;
-        mOneNightPrice = mTotalPrice / mNights;
+        mOneNightPrice = mRoomtypeDynamic.getFirstNightPrice() * mRoomHowmany;
         mRoomHowmanyBtn.setText(mSphinx.getString(R.string.room_howmany_item, mRoomHowmany, Utility.formatHotelPrice(mTotalPrice)));
         RefreshPersonView();
         clearFocus();
