@@ -19,15 +19,15 @@
         >
         <ImageView
             android:id="@+id/picture_imv"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:layout_centerInParent="true"
             android:background="@drawable/icon"
             />
 
          <TextView 
              android:id="@+id/can_reserve_txv"
-             android:layout_width="80dp"
+             android:layout_width="60dp"
              android:layout_height="wrap_content"
              android:layout_centerHorizontal="true"
              android:layout_alignBottom="@id/picture_imv"
@@ -118,8 +118,7 @@
         android:layout_toLeftOf="@id/distance_from_txv"
         android:layout_toRightOf="@id/stars_rtb"
         android:focusable="false"
-        android:gravity="left|top"
-        android:includeFontPadding="false"
+        android:gravity="left"
         android:paddingLeft="5dp"
         android:singleLine="true"
         android:text="@string/app_name"
@@ -133,7 +132,7 @@
         android:layout_alignParentRight="true" 
         android:layout_below="@id/distance_txv" 
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="3dp"
+        android:layout_marginTop="5dp"
         android:textColor="@color/orange"
         android:textSize="16sp"
         android:text="@string/app_name"
@@ -149,7 +148,7 @@
         android:layout_toRightOf="@id/picture_view"
         android:layout_toLeftOf="@id/money_txv"
         android:layout_below="@id/stars_rtb" 
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="10dp"
         android:textColor="@color/black_light"
         android:textSize="14sp"
         android:text="@string/app_name"

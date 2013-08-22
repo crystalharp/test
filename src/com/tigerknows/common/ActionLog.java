@@ -242,8 +242,8 @@ public class ActionLog extends LogUpload {
     
     // POI详情地图页
     public static final String POIDetailMap = "AL";
-    public static final String POIHotelListMap = "AO";
-    public static final String POIHotelDetailMap = "AP";
+    public static final String POIHotelListMap = "AU";
+    public static final String POIHotelDetailMap = "AV";
     
     // 优惠券列表页
     public static final String CouponList = "AM";
