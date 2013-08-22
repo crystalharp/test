@@ -606,7 +606,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             aColor = resources.getColor(R.color.blue);
             bColor = resources.getColor(R.color.black_dark);
             distanceA = activity.getString(R.string.distanceA);
-            hotelPicWidth = Util.dip2px(Globals.g_metrics.density, 88);
+            hotelPicWidth = Util.dip2px(Globals.g_metrics.density, 68);
         }
         
         @Override

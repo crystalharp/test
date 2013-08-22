@@ -259,6 +259,10 @@ public class AsyncImageLoader {
         this.viewToken = viewToken;
     }
     
+    public String getViewToken() {
+        return this.viewToken;
+    }
+    
     public static class TKURL {
         public String url;
         public String viewToken;
