@@ -175,4 +175,9 @@ public class ExtraSubwayPOI extends DynamicPOIView {
         return false;
     }
 
+    @Override
+    public void loadData(int fromType) {
+        refresh();
+    }
+
 }
