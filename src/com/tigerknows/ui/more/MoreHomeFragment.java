@@ -298,6 +298,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         
         refreshUserEntrance();
         refreshSatisfyRate();
+        refreshBootStrapData();
         refreshMoreData();
         refreshCity(Globals.getCurrentCityInfo().getCName());
         refreshGoCommentData();
@@ -317,6 +318,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     public void onPause() {
         super.onPause();
         mHandler.removeCallbacks(mNoticeNextRun);
+        mHandler.removeCallbacks(mReloadAppRecommend);
     }
 
     @Override
@@ -445,7 +447,6 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     // 该函数在系统启动时，和每次进入更多页面时均调用
     public void refreshMoreData() {
     	refreshMoreNotice(null);
-    	refreshBootStrapData();
     	refreshMenuFragment();
     }
 
@@ -549,7 +550,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
             }
         }else{
         	mHandler.removeCallbacks(mReloadAppRecommend);
-        	mHandler.postDelayed(mReloadAppRecommend, 4000);
+        	mHandler.postDelayed(mReloadAppRecommend, 12000);
         }
     }
     
