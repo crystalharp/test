@@ -152,6 +152,8 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     
     public void onPause(){
         super.onPause();
+        TKConfig.setPref(mContext, TKConfig.PREFS_HOTEL_LAST_BOOKNAME, mBookUsername);
+        TKConfig.setPref(mContext, TKConfig.PREFS_HOTEL_LAST_MOBILE, mMobile);
     }
 
     protected void findViews() {
@@ -318,20 +320,10 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     }
     
     public void setData(POI poi, RoomType roomtype, RoomTypeDynamic roomTypeDynamic, Calendar checkIn, Calendar checkOut ) {
-        String tempStr;
-
         mBookUsernameEdt.setText(TKConfig.getPref(mContext, TKConfig.PREFS_HOTEL_LAST_BOOKNAME, ""));
         mBookUsernameEdt.requestFocus();
         Selection.setSelection(mBookUsernameEdt.getText(), mBookUsernameEdt.length());
-        tempStr = TKConfig.getPref(mContext, TKConfig.PREFS_HOTEL_LAST_MOBILE, "");
-        if(TextUtils.isEmpty(tempStr)){
-            if(Globals.g_User != null){
-                mRoomMobileNumberEdt.setText(TKConfig.getPref(mContext, TKConfig.PREFS_PHONENUM, ""));
-            }
-            else mRoomMobileNumberEdt.setText("");
-        }else{
-            mRoomMobileNumberEdt.setText(tempStr);
-        }
+        mRoomMobileNumberEdt.setText(TKConfig.getPref(mContext, TKConfig.PREFS_HOTEL_LAST_MOBILE, ""));
         mRoomMobileNumberEdt.requestFocus();
         Selection.setSelection(mRoomMobileNumberEdt.getText(), mRoomMobileNumberEdt.length());
         mPOI = poi;
