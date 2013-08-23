@@ -133,6 +133,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         mActionTag = ActionLog.HotelOrderWrite;
     }
     
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         mRootView = mLayoutInflater.inflate(R.layout.hotel_order_write, container, false);
         
@@ -143,6 +144,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         return mRootView;
     }
     
+    @Override
     public void onResume(){
         super.onResume();
         mTitleBtn.setText(mSphinx.getString(R.string.hotel_room_title));
