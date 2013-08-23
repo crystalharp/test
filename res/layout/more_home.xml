@@ -20,18 +20,17 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="8dp"
+
         >
 	    <RelativeLayout android:id="@+id/notice_rly"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
-	        android:layout_marginBottom="8dp"
 	        android:visibility="gone"
 	        >
 	        <android.support.v4.view.ViewPager  
 	            android:id="@+id/view_pager"
 	            android:layout_width="fill_parent"
-	            android:layout_height="56dp"
+	            android:layout_height="64dp"
 	            android:focusable="true"
 	            />
 	        <LinearLayout
@@ -48,7 +47,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginBottom="8dp"
+            android:layout_margin="8dp"
             >
             <RelativeLayout
                 android:layout_width="wrap_content"
@@ -239,6 +238,8 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_marginBottom="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
             >
             <Button
                 android:id="@+id/satisfy_btn"
@@ -304,6 +305,8 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:background="@drawable/list_header"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
                 >
                 <TextView 
                     android:layout_width="wrap_content"
@@ -357,9 +360,14 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_line_split"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
                 />
             <Button
                 android:id="@+id/app_recommend_btn"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginBottom="8dp"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/list_footer"
