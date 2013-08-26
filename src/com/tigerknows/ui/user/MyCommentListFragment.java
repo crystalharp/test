@@ -338,7 +338,7 @@ public class MyCommentListFragment extends BaseFragment {
                 mCommentLsv.setFooterSpringback(true);
                 exit = false;
             }    
-            if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, true, this, exit)) {
+            if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, exit, this, exit)) {
                 if (dataQuery.isTurnPage() && dataQuery.getResponse() == null) {
                     mCommentLsv.setFooterLoadFailed(true);
                 }

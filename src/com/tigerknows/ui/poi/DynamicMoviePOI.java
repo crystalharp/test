@@ -83,7 +83,7 @@ public class DynamicMoviePOI extends POIDetailFragment.DynamicPOIView{
                 }
                 pictureImv.setBackgroundDrawable(drawable);
             } else {
-                pictureImv.setBackgroundDrawable(null);
+                pictureImv.setBackgroundResource(R.drawable.bg_picture);
             }
             
             nameTxv.setText(movie.getName());

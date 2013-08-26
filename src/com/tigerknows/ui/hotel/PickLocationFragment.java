@@ -488,6 +488,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
                 mAlternativeLsv.setVisibility(View.VISIBLE);
                 mAlternativeAdapter.notifyDataSetChanged();
                 mAlternativeLsv.setSelectionFromTop(0, 0);
+                mViewPager.setCurrentItem(1);
                 result = true;
             }
         }

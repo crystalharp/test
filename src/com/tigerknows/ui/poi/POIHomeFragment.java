@@ -685,7 +685,7 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
         	}
         	
         	ImageView icon = (ImageView) convertView.findViewById(R.id.hotel_tip_reserve_imv);
-        	if (position == HOTEL_INDEX && TKConfig.getPref(mSphinx, TKConfig.PREFS_HINT_POI_HOME_HOTEL_RESERVE) == null) {
+        	if (position == HOTEL_INDEX) {
         	    icon.setVisibility(View.VISIBLE);
         	    setHotelOrderAnimation(icon);
         	} else {
