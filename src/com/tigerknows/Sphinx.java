@@ -1407,8 +1407,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         String scheme = intent.getScheme();
         // 来自索爱的调用，为其提供地图快照作为返回
         int type = intent.getIntExtra(EXTRA_SNAP_TYPE, -1);
-        // 来自联系人应用程序，查询联系人地址的相关POI
-        final String mimetype = intent.resolveType(this);
         
         // 拦截通过URL查看指定经纬度的位置信息的Intent，在地图显示位置信息
         int fromThirdParty = 0;
