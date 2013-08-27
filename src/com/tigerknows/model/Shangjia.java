@@ -12,7 +12,6 @@ import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
-import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
 import com.tigerknows.model.xobject.XArray;
 import com.tigerknows.model.xobject.XMap;
@@ -20,6 +19,7 @@ import com.tigerknows.util.ByteUtil;
 import com.tigerknows.util.Utility;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -36,9 +36,9 @@ import java.util.List;
 
 public class Shangjia extends BaseData implements Parcelable {
     
-    public static final String NEED_FIELD = "1f707172737475";
+    public static final String NEED_FIELD = "1f7071727374757677";
     
-    public static final String NEED_FIELD_NO_LOGON = "1f707175";
+    public static final String NEED_FIELD_NO_LOGON = "1f7071757677";
     
     // 测试 999
     public static final int SOURCE_TEST = 999;
@@ -48,6 +48,8 @@ public class Shangjia extends BaseData implements Parcelable {
     
     // 糯米 1001
     public static final int SOURCE_NUOMI = 1001;
+    
+    public static final int SOURCE_MEITUAN = 1002;
     
     public static final List<Shangjia> shangjiaList = new ArrayList<Shangjia>();
     
@@ -71,6 +73,12 @@ public class Shangjia extends BaseData implements Parcelable {
     
     // 0x75 x_string    合作商名字   糯米、窝窝等 
     public static final byte FIELD_NAME = 0x75;
+    
+    // 0x76     x_string    退款说明    refund_service 
+    public static final byte FIELD_REFUND_SERVICE = 0x76;
+    
+    // 0x77  x_int   是否支持快捷购买，1为支持   商家id转换成的fast_purchase
+    public static final byte FIELD_FAST_PURCHASE = 0x77;
 
     private long source;
     private String serviceTel;
@@ -79,6 +87,8 @@ public class Shangjia extends BaseData implements Parcelable {
     private String message;
     private Drawable logo;
     private String name;
+    private String refundService;
+    private long fastPurchase;
     
     private Shangjia() {
         
@@ -120,6 +130,8 @@ public class Shangjia extends BaseData implements Parcelable {
             this.logo = null;
         }
         this.name = getStringFromData(FIELD_NAME, reset ? null : this.name);
+        this.refundService = getStringFromData(FIELD_REFUND_SERVICE, reset ? null : this.refundService);
+        this.fastPurchase = getLongFromData(FIELD_FAST_PURCHASE, reset ? 0 : this.fastPurchase);
     }
 
     public static final Parcelable.Creator<Shangjia> CREATOR
@@ -152,6 +164,8 @@ public class Shangjia extends BaseData implements Parcelable {
             logo = bd;
         }
         name = in.readString();
+        refundService = in.readString();
+        fastPurchase = in.readLong();
     }
     
     @Override
@@ -175,10 +189,12 @@ public class Shangjia extends BaseData implements Parcelable {
         else
             out.writeParcelable(null, flags);
         out.writeString(name);
+        out.writeString(refundService);
+        out.writeLong(fastPurchase);
     }
     
     @SuppressWarnings("unchecked")
-    public static void readShangjiaList(Sphinx sphinx) {
+    public static void readShangjiaList(Context context) {
         synchronized (shangjiaList) {
             if (shangjiaList.size() > 0) {
                 return;
@@ -224,8 +240,8 @@ public class Shangjia extends BaseData implements Parcelable {
                     XMap xmap = new XMap();
                     xmap.put(FIELD_SOURCE, SOURCE_WOWOTUAN);
                     xmap.put(FIELD_SERVICE_TEL, "4001055555");
-                    xmap.put(FIELD_MARKER, Utility.getDrawableResource(sphinx, R.drawable.ic_wowotuan_marker));
-                    xmap.put(FIELD_NAME, sphinx.getString(R.string.wowotuan_name));
+                    xmap.put(FIELD_MARKER, Utility.getDrawableResource(context, R.drawable.ic_wowotuan_marker));
+                    xmap.put(FIELD_NAME, context.getString(R.string.wowotuan_name));
                     
                     Shangjia shangjia = new Shangjia();
                     shangjia.init(xmap, true);
@@ -243,13 +259,40 @@ public class Shangjia extends BaseData implements Parcelable {
                     XMap xmap = new XMap();
                     xmap.put(FIELD_SOURCE, SOURCE_NUOMI);
                     xmap.put(FIELD_SERVICE_TEL, "4006888887");
-                    xmap.put(FIELD_MARKER, Utility.getDrawableResource(sphinx, R.drawable.ic_nuomi_marker));
-                    xmap.put(FIELD_NAME, sphinx.getString(R.string.nuomi_name));
+                    xmap.put(FIELD_MARKER, Utility.getDrawableResource(context, R.drawable.ic_nuomi_marker));
+                    xmap.put(FIELD_NAME, context.getString(R.string.nuomi_name));
+                    xmap.put(FIELD_REFUND_SERVICE, context.getString(R.string.nuomi_refund_service));
                     
                     Shangjia shangjia = new Shangjia();
                     shangjia.init(xmap, true);
                     shangjiaList.add(shangjia);
                 }
+
+                exist = false;
+                for(Shangjia shangjia : shangjiaList) {
+                    if (shangjia.source == SOURCE_MEITUAN) {
+                        exist = true;
+                        break;
+                    }
+                }
+                if (exist == false) {
+                    XMap xmap = new XMap();
+                    xmap.put(FIELD_SOURCE, SOURCE_MEITUAN);
+                    xmap.put(FIELD_SERVICE_TEL, "400");
+                    xmap.put(FIELD_MARKER, Utility.getDrawableResource(context, R.drawable.icon));
+                    xmap.put(FIELD_NAME, context.getString(R.string.meituan_name));
+                    xmap.put(FIELD_REFUND_SERVICE, context.getString(R.string.meituan_refund_service));
+                    xmap.put(FIELD_URL, "http://r.union.meituan.com/url/visit/?a=1&key=Sl2zGAgo4NiBcy67K83MtEDx5XIsrLjP&url=http://i.meituan.com/orders");
+                    xmap.put(FIELD_FAST_PURCHASE, 1);
+                    
+                    Shangjia shangjia = new Shangjia();
+                    shangjia.init(xmap, true);
+                    shangjiaList.add(shangjia);
+                }
+                
+                DataQuery dataQuery = new DataQuery(context);
+                dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_SHANGJIA);
+                dataQuery.setup(Globals.getCurrentCityInfo().getId(), -1, -1, null);
             } catch (APIException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -262,7 +305,6 @@ public class Shangjia extends BaseData implements Parcelable {
             try {
                 XArray<XMap> xarray = new XArray<XMap>();
                 for(Shangjia shangjia : shangjiaList) {
-                    shangjia.data.remove(FIELD_URL);
                     shangjia.data.remove(FIELD_MESSAGE);
                     shangjia.data.remove(FIELD_LOGO);
                     xarray.add(shangjia.data);
@@ -287,7 +329,7 @@ public class Shangjia extends BaseData implements Parcelable {
                 final DataQuery dataQuery = new DataQuery(activity);
                 dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_SHANGJIA);
                 dataQuery.addParameter(DataQuery.SERVER_PARAMETER_SHANGJIA_IDS, String.valueOf(source));
-                dataQuery.setup(Globals.getCurrentCityInfo().getId(), -1, -1, null, false, true, null);
+                dataQuery.setup(Globals.getCurrentCityInfo().getId(), -1, -1, null, false, false, null);
                 new Thread(new Runnable() {
                     
                     @Override
@@ -310,6 +352,10 @@ public class Shangjia extends BaseData implements Parcelable {
         }
         loadShangjia(activity, source, runnable);
         return null;
+    }
+    
+    public static List<Shangjia> getShangjiaList() {
+        return shangjiaList;
     }
 
     public long getSource() {
@@ -340,6 +386,14 @@ public class Shangjia extends BaseData implements Parcelable {
         return name;
     }
     
+    public String getRefundService() {
+        return refundService;
+    }
+
+    public long getFastPurchase() {
+        return fastPurchase;
+    }
+
     public static XMapInitializer<Shangjia> Initializer = new XMapInitializer<Shangjia>() {
 
         @Override
