@@ -577,6 +577,7 @@
     <string name="change_password">修改密码</string>
     <string name="logout_account">退出帐户</string>
     <string name="logout_account_tip">你确定要退出帐户吗?</string>
+    <string name="nickname_colon">昵称：</string>
 	<!-- User Account end -->
 	
 	<!-- User ChangePassword Start -->

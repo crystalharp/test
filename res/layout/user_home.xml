@@ -1,143 +1,97 @@
 <?xml version="1.0" encoding="UTF-8"?>    
-  	
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" 
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:layout_above="@id/tip_view"
-    android:scrollbars="vertical"
-    android:gravity="top"
-    android:fillViewport="true"
-    android:fadingEdge="none"
-    android:background="@color/white" > 
-	<LinearLayout 
-    	android:id="@+id/root_view"
-	    android:layout_width="fill_parent" 
-	    android:layout_height="wrap_content"
-	    android:orientation="vertical">
-        <Button android:id="@+id/nikename_txv" 
-            android:layout_marginTop="12dp"
-            android:layout_width="wrap_content" 
-            android:layout_height="wrap_content"
-            android:background="@color/transparent"
-            android:layout_gravity="center|center_vertical"
-            android:drawableRight="@drawable/user_center_pen"
-            android:text="@string/app_name"
-            android:textColor="#009CFF"
-		    android:textSize="18sp" />
-        <LinearLayout 
-            android:layout_width="fill_parent" 
-            android:layout_height="wrap_content"
-            android:padding="8dp" >
-           	<ImageView
-	           	android:layout_marginTop="4dp"
-		        android:layout_width="fill_parent"
-		        android:layout_height="wrap_content"
-		        android:background="@drawable/bg_line_split" />
-        </LinearLayout>
-        <LinearLayout 
-            android:padding="8dp"
-            android:layout_width="fill_parent" 
-            android:layout_height="wrap_content"
-            android:background="@color/transparent"
-	        android:gravity="center_vertical"
-            android:orientation="horizontal">
-            <LinearLayout 
-	            android:layout_width="0dp" 
-	            android:layout_weight="1"
-	            android:layout_height="wrap_content"
-	            android:background="@color/transparent"
-	            android:gravity="center"
-	            android:orientation="horizontal">
-	            <Button
-		            android:id="@+id/my_comment_btn" 
-		            android:layout_width="wrap_content"
-		            android:layout_height="fill_parent" 
-		            android:background="@drawable/user_center_my_comm_btn"
-		            android:gravity="center"/>
-            </LinearLayout>
-	        <ImageView
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:background="@drawable/user_center_divider_v" />
-	        <LinearLayout 
-	            android:layout_width="0dp" 
-	            android:layout_weight="1"
-	            android:layout_height="wrap_content"
-	            android:background="@color/transparent"
-	            android:gravity="center|center_vertical"
-	            android:orientation="horizontal">
-		        <Button
-		            android:id="@+id/dingdan_btn" 
-		            android:layout_width="wrap_content"
-		            android:layout_height="fill_parent" 
-		            android:background="@drawable/user_center_my_order_btn"
-		            android:gravity="center"/>
-	        </LinearLayout>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:orientation="vertical"
-	        android:background="@color/normal_background">
-	        <ImageView
+    android:background="@color/gray_dark"
+    android:padding="8dp"
+    >
+    <Button
+        android:id="@+id/logout_btn" 
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" 
+        android:textColor="@color/black_dark"
+        android:textSize="18sp"
+        android:text="@string/logout_account"
+        android:background="@drawable/bg_bottom_control"
+        android:gravity="center"
+        android:layout_alignParentBottom="true"
+        />
+
+	<ScrollView
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent"
+	    android:fadingEdge="none"
+	    android:fillViewport="true"
+	    android:gravity="top"
+	    android:scrollbars="vertical"
+	    android:layout_above="@id/logout_btn">
+
+	    <LinearLayout
+	        android:id="@+id/root_view"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:orientation="vertical" >
+
+	        <Button
+	            android:id="@+id/nikename_btn"
 	            android:layout_width="fill_parent"
 	            android:layout_height="wrap_content"
-	            android:background="@drawable/bg_sawtooth" />
-	        <LinearLayout 
-	            android:padding="8dp"
-	            android:layout_width="fill_parent" 
-	            android:layout_height="wrap_content"
-	            android:orientation="vertical"
-	            android:layout_marginTop="12dp">
-	            <Button
-		            android:id="@+id/update_mobile_phone_btn"
-		            android:layout_width="fill_parent"
-		            android:layout_height="wrap_content"
-		            android:padding="8dp"
-		            android:background="@drawable/list_header"
-		            android:drawablePadding="8dp"
-		            android:textColor="@color/black"
-		            android:textSize="16sp"
-		            android:text="@string/change_phone"
-		            android:gravity="left|center_vertical"/>
-		        <ImageView
-		            android:layout_width="fill_parent"
-		            android:layout_height="wrap_content"
-		            android:background="@drawable/bg_line_split" />
-		        <Button
-		            android:id="@+id/update_password_btn" 
-		            android:layout_width="fill_parent"
-		            android:layout_height="wrap_content" 
-		            android:padding="8dp"
-		            android:background="@drawable/list_footer"
-		            android:drawablePadding="8dp"
-		            android:textColor="@color/black"
-		            android:textSize="16sp"
-		            android:text="@string/change_password"
-		            android:gravity="left|center_vertical"/>
-	        </LinearLayout>
-	        <RelativeLayout 
-	            android:padding="8dp"
-	            android:layout_width="match_parent" 
-	            android:layout_height="wrap_content"
-	            android:layout_marginTop="-2dp">
-		        <Button
-		            android:id="@+id/logout_btn" 
-		            android:layout_width="fill_parent"
-		            android:layout_height="wrap_content" 
-		            android:background="@drawable/list_single"/>
-	            <TextView
-	            	android:layout_centerHorizontal="true"
-	            	android:layout_centerVertical="true"  
-		            android:layout_width="wrap_content"
-		            android:layout_height="wrap_content" 
-		            android:drawableLeft="@drawable/user_center_logout"
-		            android:textColor="@color/black"
-		            android:textSize="18sp"
-		            android:text="@string/logout_account"
-		            android:background="@color/transparent"
-		            android:gravity="center|center_vertical"/>
-            </RelativeLayout>
-        </LinearLayout>
-     </LinearLayout>
-</ScrollView>
+	            android:gravity="left|center_vertical"
+	            android:paddingLeft="16dp"
+	            android:paddingRight="8dp"
+	            android:background="@drawable/list_single"
+	            android:drawableRight="@drawable/user_center_pen"
+	            android:text="@string/app_name"
+	            android:layout_marginBottom="8dp"
+	            android:textColor="@color/black_dark"
+	            android:textSize="16sp" 
+	            android:singleLine="true"
+	            android:ellipsize="end"/>
+
+            <Button
+                android:id="@+id/update_password_btn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/list_header"
+                android:paddingRight="16dp"
+                android:gravity="left|center_vertical"
+                android:paddingLeft="16dp"
+                android:drawableRight="@drawable/icon_arrow_right"
+                android:text="@string/change_password"
+                android:textColor="@color/black_dark"
+                android:textSize="16sp" />
+            <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_line_split" />
+            <Button
+                android:id="@+id/update_mobile_phone_btn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/list_footer"
+                android:paddingRight="16dp"
+                android:gravity="left|center_vertical"
+                android:drawableRight="@drawable/icon_arrow_right"
+                android:paddingLeft="16dp"
+                android:layout_marginBottom="8dp"
+                android:text="@string/change_phone"
+                android:textColor="@color/black_dark"
+                android:textSize="16sp" />
+            <Button
+                android:id="@+id/my_comment_btn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+	            android:gravity="left|center_vertical"
+	            android:paddingLeft="16dp"
+	            android:paddingRight="16dp"
+	            android:background="@drawable/list_single"
+	            android:drawableRight="@drawable/icon_arrow_right"
+	            android:text="@string/my_comment"
+	            android:layout_marginBottom="8dp"
+	            android:textColor="@color/black_dark"
+	            android:textSize="16sp" />                
+                
+	    </LinearLayout>
+	</ScrollView>
+
+</RelativeLayout>
