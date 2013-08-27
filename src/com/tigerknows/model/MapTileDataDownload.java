@@ -137,7 +137,6 @@ public class MapTileDataDownload extends BaseQuery {
             httpClient = new TKHttpClient();
             httpClient.setKeepAlive(true);
         }
-        httpClient.setApiType(apiType);
         String url = String.format(TKConfig.getDownloadMapUrl(), TKConfig.getDownloadHost());
         httpClient.setURL(url);
         httpClient.setParameters(requestParameters);

@@ -50,9 +50,6 @@ public class FeedbackUpload extends BaseQuery {
         }
         if (criteria.containsKey(SERVER_PARAMETER_FEEDBACK)) {
             requestParameters.add(SERVER_PARAMETER_FEEDBACK, criteria.get(SERVER_PARAMETER_FEEDBACK));
-        } else {
-            // TODO 这个参数必须要，那怕是空？！
-            requestParameters.add(SERVER_PARAMETER_FEEDBACK, "");
         }
         addParameter(new String[]{SERVER_PARAMETER_ACTION_LOG,
                 SERVER_PARAMETER_LOCATION,

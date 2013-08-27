@@ -394,6 +394,8 @@ public abstract class BaseQuery {
     
     protected String version;
     
+    protected String actionTag;
+    
     protected int cityId = MapEngine.CITY_ID_BEIJING;
 
     protected int sourceViewId = -1;
@@ -583,7 +585,6 @@ public abstract class BaseQuery {
     
     protected void createHttpClient() {
         httpClient = new HttpUtils.TKHttpClient();
-        httpClient.setApiType(apiType);
         httpClient.setIsEncrypt(true);
         httpClient.setParameters(requestParameters);
     }
@@ -596,6 +597,7 @@ public abstract class BaseQuery {
 
         while ((isFirstConnection || needReconntection) && !isStop) {
             try {
+                httpClient.setApiType(getActionTag());
                 boolean isLaunchTest = false;
                 if (TKConfig.LaunchTest) {
                     if (apiType.equals(API_TYPE_DATA_QUERY)
@@ -970,5 +972,40 @@ public abstract class BaseQuery {
         } else {
             throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_CLIENT_ID);
         }
+    }
+    
+    String getActionTag() {
+        StringBuilder s = new StringBuilder();
+        s.append(apiType);
+        s.append('@');
+        if (criteria != null) {
+            if (criteria.containsKey(SERVER_PARAMETER_DATA_TYPE)) {
+                s.append(criteria.get(SERVER_PARAMETER_DATA_TYPE));
+            }
+            s.append('@');
+            if (criteria.containsKey(SERVER_PARAMETER_SUB_DATA_TYPE)) {
+                s.append(criteria.get(SERVER_PARAMETER_SUB_DATA_TYPE));
+            }
+            s.append('@');
+            if (criteria.containsKey(FeedbackUpload.SERVER_PARAMETER_FEEDBACK)) {
+                s.append(FeedbackUpload.SERVER_PARAMETER_FEEDBACK);
+            } else if (criteria.containsKey(FeedbackUpload.SERVER_PARAMETER_ACTION_LOG)) {
+                s.append(FeedbackUpload.SERVER_PARAMETER_ACTION_LOG);
+            } else if (criteria.containsKey(FeedbackUpload.SERVER_PARAMETER_LOCATION)) {
+                s.append(FeedbackUpload.SERVER_PARAMETER_LOCATION);
+            } else if (criteria.containsKey(FeedbackUpload.SERVER_PARAMETER_LOCATION_IN_ANDROID)) {
+                s.append(FeedbackUpload.SERVER_PARAMETER_LOCATION_IN_ANDROID);
+            } else if (criteria.containsKey(FeedbackUpload.SERVER_PARAMETER_ERROR_RECOVERY)) {
+                s.append(FeedbackUpload.SERVER_PARAMETER_ERROR_RECOVERY);
+            }
+            s.append('@');
+            if (criteria.containsKey(SERVER_PARAMETER_REQUSET_SOURCE_TYPE)) {
+                s.append(criteria.get(SERVER_PARAMETER_REQUSET_SOURCE_TYPE));
+            }
+            s.append('@');
+        } else {
+            s.append("@@@@");
+        }
+        return s.toString();
     }
 }

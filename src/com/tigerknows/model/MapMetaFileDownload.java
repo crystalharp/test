@@ -104,7 +104,6 @@ public class MapMetaFileDownload extends BaseQuery {
         if (httpClient == null) {
             httpClient = new TKHttpClient();
             httpClient.setKeepAlive(true);
-            httpClient.setApiType(apiType);
         }
         String url = String.format(TKConfig.getDownloadMapUrl(), TKConfig.getDownloadHost());
         httpClient.setURL(url);

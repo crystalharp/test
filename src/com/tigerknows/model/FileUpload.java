@@ -98,11 +98,11 @@ public final class FileUpload extends BaseQuery {
                 String url = String.format(TKConfig.getImageUploadUrl(),
                         TKConfig.getImageUploadHost());
                 
-                LogWrapper.i("HttpUtils", "TKHttpClient->sendAndRecive():apiType="+apiType+", url="+url);
-                LogWrapper.i("HttpUtils", "TKHttpClient->sendAndRecive():apiType="+apiType+", parameters="+postParam+", TKConfig.getEncoding()="+TKConfig.getEncoding());
+                LogWrapper.i("HttpUtils", "TKHttpClient->sendAndRecive():apiType="+getActionTag()+", url="+url);
+                LogWrapper.i("HttpUtils", "TKHttpClient->sendAndRecive():apiType="+getActionTag()+", parameters="+postParam+", TKConfig.getEncoding()="+TKConfig.getEncoding());
                 
                 byte result[] = HttpManager.openUrl(context, client, url,
-                        HttpManager.HTTPMETHOD_POST, parameters, apiType, requestParameters.getValue(SERVER_PARAMETER_UUID));
+                        HttpManager.HTTPMETHOD_POST, parameters, getActionTag(), requestParameters.getValue(SERVER_PARAMETER_UUID));
                 statusCode = STATUS_CODE_NETWORK_OK;
                 
                 translate(result);
