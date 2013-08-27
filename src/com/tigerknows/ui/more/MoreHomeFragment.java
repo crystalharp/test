@@ -688,7 +688,11 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         	linearLayout3.setOrientation(HORIZONTAL);
         	linearLayout3.setBackgroundResource(R.drawable.btn_notice);
         	linearLayout3.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
-        	refreshDrawable(notice.getpicTkDrawable(), imageView3, R.drawable.bg_picture_none, false);
+        	if(notice.getLocalType() == 1){
+        		imageView3.setBackgroundResource(R.drawable.ic_soft_update);
+        	}else{
+        		refreshDrawable(notice.getpicTkDrawable(), imageView3, R.drawable.bg_picture_none, false);
+        	}
         	LinearLayout.LayoutParams layoutParams3 = new LayoutParams(Utility.dip2px(mContext, 48), Utility.dip2px(mContext, 48));
         	layoutParams3.setMargins(Utility.dip2px(mContext, 16), 0, 0, 0);
         	layoutParams3.gravity = Gravity.CENTER_VERTICAL;

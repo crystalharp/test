@@ -202,9 +202,7 @@ public class NoticeQuery extends BaseQuery {
 						picTKDrawable = tkDrawable;
 					}
 					if(localType == 1){
-						// 软件升级专属布局
-						// TODO: 改成3
-						this.localLayoutType = 1;
+						this.localLayoutType = 3;
 					}
 					else{
 						this.localLayoutType = 0;
