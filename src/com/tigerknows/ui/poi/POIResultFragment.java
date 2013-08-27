@@ -8,7 +8,6 @@ import com.decarta.Globals;
 import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
-import com.tigerknows.TKConfig;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BaseQuery;
@@ -56,7 +55,6 @@ import android.widget.TextView;
 import android.widget.PopupWindow.OnDismissListener;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
 
 /**
@@ -99,6 +97,8 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     
     private NavigationWidget mNavigationWidget;
     
+    private TextView mLocationTxv;
+    
     private POIAdapter mResultAdapter = null;
     
     private DataQuery mDataQuery;
@@ -111,7 +111,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     
     private long mBTotal;
     
-    private boolean mShowAPOI = false;
+    private POI mAPOI = null;
     
     private List<Filter> mFilterList = new ArrayList<Filter>();
     
@@ -171,6 +171,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         if (lastDataQuerying.getSourceViewId() != getId()) {
             mDataQuery = null;
             mFilterControlView.setVisibility(View.GONE);
+            mLocationTxv.setVisibility(View.GONE);
             mFilterList.clear();
         }
 
@@ -224,6 +225,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     
     protected void findViews() {
         mFilterControlView = (ViewGroup)mRootView.findViewById(R.id.filter_control_view);
+        mLocationTxv = (TextView) mRootView.findViewById(R.id.location_txv);
         mResultLsv = (SpringbackListView)mRootView.findViewById(R.id.result_lsv);
         mLoadingView = mLayoutInflater.inflate(R.layout.loading, null);
         mResultLsv.addFooterView(mLoadingView);
@@ -271,6 +273,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         });
         
         mAddMerchantItemView.setOnClickListener(this);
+        mLocationTxv.setOnClickListener(this);
     }
     
     void showAddMerchant() {
@@ -461,7 +464,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         DataQuery poiQuery = new DataQuery(lastDataQuery);
         POI requestPOI = lastDataQuery.getPOI();
         int cityId = lastDataQuery.getCityId();
-        poiQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, String.valueOf(mPOIList.size() - (mShowAPOI ? 1 : 0)));
+        poiQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, String.valueOf(mPOIList.size()));
         if (poiQuery.hasParameter(DataQuery.SERVER_PARAMETER_FILTER) == false) {
             poiQuery.addParameter(DataQuery.SERVER_PARAMETER_FILTER, DataQuery.makeFilterRequest(mFilterList));
         }
@@ -476,24 +479,21 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         }
         int size = mPOIList.size();
         List<POI> poiList = new ArrayList<POI>();
-        int[] page = Utility.makePagedIndex(mResultLsv, mShowAPOI ? size - 1 : size, (mShowAPOI && firstVisiblePosition > 0) ? firstVisiblePosition-1 : firstVisiblePosition);
+        int[] page = Utility.makePagedIndex(mResultLsv, size, firstVisiblePosition);
         POI poi;
-        if (mShowAPOI) {
-            poi = mPOIList.get(0);
-            poiList.add(poi);
+        if (mAPOI != null) {
+            poiList.add(mAPOI);
         }
         
-        int minIndex = page[0]+(mShowAPOI ? 1 : 0);
-        int maxIndex = page[1]+(mShowAPOI ? 1 : 0);
+        int minIndex = page[0];
+        int maxIndex = page[1];
         for(;minIndex <= maxIndex && minIndex < size; minIndex++) {
             poi = mPOIList.get(minIndex);
             poiList.add(poi);
         }
-        int firstIndex = page[2]+(mShowAPOI ? 1 : 0);
-        if (mShowAPOI) {
-            if (firstVisiblePosition == 0) {
-                firstIndex = 0;
-            }
+        int firstIndex = page[2];
+        if (mAPOI != null) {
+            firstIndex++;
         }
         mSphinx.showPOI(poiList, firstIndex);
         mSphinx.getResultMapFragment().setData(mContext.getString(R.string.result_map), BaseQuery.SUB_DATA_TYPE_HOTEL.equals(mResultAdapter.getSubDataType()) ? ActionLog.POIHotelListMap : ActionLog.POIListMap);
@@ -541,6 +541,14 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 
             case R.id.add_merchant_item_view:
                 showAddMerchant();
+                break;
+                
+            case R.id.location_txv:
+                if (mAPOI != null) {
+                    mActionLog.addAction(mActionTag + ActionLog.ListViewItem, 0, mAPOI.getUUID(), mAPOI.getName());
+                    mSphinx.showView(R.id.view_poi_detail);
+                    mSphinx.getPOIDetailFragment().setData(mAPOI, 0);
+                }
                 break;
                 
             default:
@@ -939,7 +947,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             List<POI> aPOIList = null;
             if (!dataQuery.isTurnPage()) {
                 this.mATotal = 0;
-                this.mShowAPOI = false;
+                this.mAPOI = null;
                 mPOIList.clear();
                 mSphinx.getHandler().post(new Runnable() {
 
@@ -954,8 +962,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 }
                 
                 POI poi = dataQuery.getPOI();
-                if (mATotal == 0 && TextUtils.isEmpty(poi.getAddress()) == false &&
-                        BaseQuery.SUB_DATA_TYPE_POI.equals(subDataType)) { // 若POI存在地址且搜索结果的子类型为普通POI则将其列为A类POI
+                if (mATotal == 0 && TextUtils.isEmpty(poi.getAddress()) == false) { // 若POI存在地址且搜索结果的子类型为普通POI则将其列为A类POI
                     mATotal = 1;
                     poi.setResultType(POIResponse.FIELD_A_POI_LIST);
                     aPOIList = new ArrayList<POI>();
@@ -963,9 +970,8 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 }
                 
                 if (mATotal == 1 && mBTotal > 0) {
-                    mShowAPOI = true;
+                    this.mAPOI = aPOIList.get(0);
                     aPOIList.get(0).setOnlyAPOI(true);
-                    mPOIList.addAll(aPOIList);
                 } else if (aPOIList != null){
                     mPOIList.addAll(aPOIList);
                 }
@@ -1016,8 +1022,8 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     }
     
     private boolean canTurnPage() {
-        if (mShowAPOI) {
-            return mPOIList.size()-1 < mBTotal;
+        if (mAPOI != null) {
+            return mPOIList.size() < mBTotal;
         } else if (mATotal > 1) {
             return mPOIList.size() < mATotal;
         } else {

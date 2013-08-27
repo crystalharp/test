@@ -82,6 +82,8 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     
     private ViewGroup mPageIndicatorView;
     
+    private TextView mLocationTxv;
+    
     /**
      * 分类名称列表
      */
@@ -134,6 +136,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         findViews();
         setListener();
                 
+        mLocationTxv.setVisibility(View.VISIBLE);
         Resources resources = mContext.getResources();
         mCategoryNames = resources.getStringArray(R.array.home_category);
         mCategoryLsv.setAdapter(new StringArrayAdapter(mContext, mCategoryNames, mCategoryResIds));
@@ -153,7 +156,8 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     @Override
     public void onResume() {
         super.onResume();
-        mTitleBtn.setText(mSphinx.getString(R.string.at_where_search, Utility.substring(mPOI.getName(), 6)));
+        mTitleBtn.setText(mSphinx.getString(R.string.nearby_search));
+        mLocationTxv.setText(mSphinx.getString(R.string.at_where_search, mPOI.getName()));
         mRightBtn.setVisibility(View.INVISIBLE);
     }
 
@@ -164,6 +168,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     }
 
     protected void findViews() {
+        mLocationTxv = (TextView) mRootView.findViewById(R.id.location_txv);
         mViewPager = (ViewPager) mRootView.findViewById(R.id.view_pager);
         mQueryBtn = (Button)mRootView.findViewById(R.id.query_btn);
         mKeywordEdt = (TKEditText)mRootView.findViewById(R.id.keyword_edt);

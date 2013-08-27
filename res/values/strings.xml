@@ -68,7 +68,7 @@
     <string name="upgrade_map_new">地图更新啦！</string>
     <string name="deleteing_map">正在删除旧版地图数据，请稍候</string>
     
-    <string name="at_where_search">在“%1$s”周边</string>    
+    <string name="at_where_search">在“%1$s”周边搜索</string>    
     <string name="select_where_as_start">选择\u0020%1$s\u0020作为起点</string>  
     <string name="select_where_as_end">选择\u0020%1$s\u0020作为终点</string>
     <string name="click_map_as_start">点击地图选择起点</string>  
