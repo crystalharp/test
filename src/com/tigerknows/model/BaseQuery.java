@@ -669,6 +669,11 @@ public abstract class BaseQuery {
                     }
                 } else if (API_TYPE_BOOTSTRAP.equals(apiType)) {
                     bootstrapRetryTime++;
+                    try {
+                        Thread.sleep(6*1000);
+                    } catch (InterruptedException e1) {
+                        e1.printStackTrace();
+                    }
                     if (bootstrapRetryTime < BOOTSTRAP_RETRY_TIME_MAX) {
                         createHttpClient();
                         continue;
