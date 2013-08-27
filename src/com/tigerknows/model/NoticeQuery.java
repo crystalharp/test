@@ -7,6 +7,7 @@ import com.tigerknows.TKConfig;
 import com.tigerknows.model.test.NoticeQueryTest;
 import com.tigerknows.model.xobject.XMap;
 import android.content.Context;
+import android.text.TextUtils;
 
 public class NoticeQuery extends BaseQuery {
 	
@@ -131,6 +132,8 @@ public class NoticeQuery extends BaseQuery {
 				
 				private long localType;
 				
+				private int localLayoutType;
+				
 				private TKDrawable picTKDrawable;
 				
 				public long getNoticeId() {
@@ -165,6 +168,10 @@ public class NoticeQuery extends BaseQuery {
 					return localType;
 				}
 				
+				public int getLocalLayoutType() {
+					return localLayoutType;
+				}
+				
 				public TKDrawable getpicTkDrawable() {
 					return picTKDrawable;
 				}
@@ -194,7 +201,24 @@ public class NoticeQuery extends BaseQuery {
 						tkDrawable.setUrl(this.picUrl);
 						picTKDrawable = tkDrawable;
 					}
-				}
+					if(localType == 1){
+						// 软件升级专属布局
+						// TODO: 改成3
+						this.localLayoutType = 1;
+					}
+					else{
+						this.localLayoutType = 0;
+						if(this.noticeTitle != null && !TextUtils.isEmpty(this.noticeTitle)){
+							this.localLayoutType += 1;
+						}
+						if(this.picUrl != null && !TextUtils.isEmpty(this.picUrl)){
+							this.localLayoutType += 2;
+						}
+						if(this.noticeDescription != null && !TextUtils.isEmpty(this.noticeDescription)){
+							this.localLayoutType += 4;
+						}
+					}
+			    }
 				
 				public static XMapInitializer<Notice> Initializer = new XMapInitializer<Notice>() {
 

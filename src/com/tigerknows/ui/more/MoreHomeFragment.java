@@ -184,7 +184,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         
         mRootView = mLayoutInflater.inflate(R.layout.more_home, container, false);
     	mRightBtn = mSphinx.getTitleFragment().getRightTxv();
-        findViews();        
+        findViews();
 
         setListener();
         
@@ -639,22 +639,11 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         if (viewMap.containsKey(position)) {
             return viewMap.get(position);
         }
-        int noticeLayoutType = 0;
         String title = notice.getNoticeTitle();
         String description = notice.getDescription();
-        String picUrl = notice.getPicUrl();
         int pd8 = Utility.dip2px(mContext, 8);
         int pd2 = Utility.dip2px(mContext, 2);
-        if(title != null && !TextUtils.isEmpty(title)){
-        	noticeLayoutType += 1;
-        }
-        if(picUrl != null && !TextUtils.isEmpty(picUrl)){
-        	noticeLayoutType += 2;
-        }
-        if(description != null && !TextUtils.isEmpty(description)){
-        	noticeLayoutType += 4;
-        }
-        switch(noticeLayoutType){
+        switch(notice.getLocalLayoutType()){
         case 1:
         	Button button1 = new Button(mSphinx);
         	button1.setText(title);
