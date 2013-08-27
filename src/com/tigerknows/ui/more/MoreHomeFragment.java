@@ -628,7 +628,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     			}
     			imageView.setBackgroundDrawable(drawable);
     		}else{
-    			imageView.setBackgroundDrawable(mSphinx.getResources().getDrawable(defaultResId));
+    			imageView.setBackgroundResource(defaultResId);
     		}
     	}
     }

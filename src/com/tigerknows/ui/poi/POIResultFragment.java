@@ -1022,9 +1022,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     }
     
     private boolean canTurnPage() {
-        if (mAPOI != null) {
-            return mPOIList.size() < mBTotal;
-        } else if (mATotal > 1) {
+        if (mATotal > 1) {
             return mPOIList.size() < mATotal;
         } else {
             return mPOIList.size() < mBTotal;
