@@ -163,22 +163,22 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
             	mProgressBar.setVisibility(View.VISIBLE);
                 String info = URLDecoder.decode(url);
                 LogWrapper.i("Trap", URLDecoder.decode(url));
-            	if(info.contains("wappaygw") && info.contains("authAndExecute") && info.contains("request_token")){
+            	if(info.contains("wappaygw") && info.contains("authAndExecute")){
+            		int c = "<request_token>".length();
             		int i = info.indexOf("<request_token>");
             		int j = info.indexOf("</request_token>");
             		StringBuilder sb = new StringBuilder();
             		sb.append("ordertoken=\"");
-            		if(i > 0 && i < j){
-            			sb.append(info.substring(i+15, j));
+            		if(i >= 0 && i+c <= j){
+            			sb.append(info.substring(i+c, j));
             		}else return;
             		sb.append("\"");
             		MobileSecurePayer msp = new MobileSecurePayer();
             		MobileSecurePayHelper mspHelper = new MobileSecurePayHelper(mThis.getBaseContext());
-            		boolean isMobile_spExist = mspHelper.detectMobile_sp();
-            		if (!isMobile_spExist) {
+            		if (!mspHelper.isMobile_spExist()) {
             			return;
             		}
-            		boolean bRet = msp.pay(sb.toString(), mHandler, ALIX_PAY, mThis);
+            		boolean bRet = msp.pay(sb.toString(), null, 1, mThis);
             	}
             }
 
