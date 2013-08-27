@@ -34,6 +34,11 @@ public class DataOperation extends BaseQuery {
     // 分享到QQ
     public static final String SERVER_PARAMETER_SHARE_QZONE = "qzone";
     
+    // flag     string  false   当前只支持"nocreate",表示只获取购买url不产生订单信息 
+    public static final String SERVER_PARAMETER_FLAG = "flag";
+    
+    public static final String FLAG_NOCREATE = "nocreate";
+    
     // 操作码:
     // 查询 r
     public static final String OPERATION_CODE_QUERY = "r";
@@ -86,7 +91,7 @@ public class DataOperation extends BaseQuery {
             
         	
         } else if (OPERATION_CODE_CREATE.equals(operationCode)) {
-            debugCheckParameters(Utility.mergeArray(ekeys,new String[] {SERVER_PARAMETER_ENTITY}));
+            debugCheckParameters(Utility.mergeArray(ekeys,new String[] {SERVER_PARAMETER_ENTITY, SERVER_PARAMETER_FLAG}));
         } else if (OPERATION_CODE_UPDATE.equals(operationCode)) {
             debugCheckParameters(Utility.mergeArray(ekeys,new String[] {SERVER_PARAMETER_DATA_UID, SERVER_PARAMETER_ENTITY}));
         } else if (OPERATION_CODE_DELETE.equals(operationCode)) {

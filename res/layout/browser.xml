@@ -10,12 +10,18 @@
         android:layout_height="wrap_content" />     
         
     <LinearLayout
+        android:id="@+id/bottom_view"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_alignParentBottom="true"
+	    android:orientation="vertical">
+    <LinearLayout
         android:id="@+id/button_view"
 	    android:layout_width="fill_parent"
 	    android:layout_height="wrap_content"
-	    android:layout_alignParentBottom="true"
 	    android:orientation="horizontal"
-	    android:padding="4dp" >
+	    android:padding="4dp"
+        android:background="#c0000000" >
 	    <Button 
 	        android:id="@+id/back_btn"
 	        android:layout_width="wrap_content" 
@@ -60,13 +66,90 @@
 	        android:visibility="gone">
 	     </Button>
 	</LinearLayout>
+     
+     <RelativeLayout
+         android:id="@+id/bar_view"
+         android:layout_width="fill_parent"
+         android:layout_height="wrap_content"
+         android:background="@color/white"
+         android:paddingBottom="0dp"
+         android:paddingLeft="6dp"
+         android:paddingRight="6dp"
+         android:paddingTop="6dp"
+         android:visibility="gone" >
+
+         <Button 
+             android:id="@+id/buy_btn"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_alignParentRight="true"
+             android:layout_alignParentTop="true"
+             android:textSize="14sp"
+             android:singleLine="true"
+             android:focusable="false"
+             android:background="@drawable/btn_buy"
+             />
+             
+         <TextView 
+             android:id="@+id/price_txv"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_alignParentLeft="true"
+             android:layout_alignBottom="@id/buy_btn"
+             android:layout_marginLeft="8dp"
+             android:textStyle="bold"
+             android:textColor="@color/orange"
+             android:textSize="32sp"
+             android:text="@string/distance"
+             android:singleLine="true"
+             android:includeFontPadding="false"
+             android:focusable="false"
+             />
+         <TextView 
+             android:id="@+id/org_price_txv"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_toRightOf="@id/price_txv"
+             android:layout_alignBottom="@id/buy_btn"
+             android:layout_marginLeft="8dp"
+             android:layout_marginBottom="4dp"
+             android:textColor="@color/black_light"
+             android:textSize="14sp"
+             android:text="@string/distance"
+             android:singleLine="true"
+             android:includeFontPadding="false"
+             android:focusable="false"
+             />
+         <TextView 
+             android:id="@+id/discount_txv"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_toRightOf="@id/price_txv"
+             android:layout_above="@id/org_price_txv"
+             android:layout_marginLeft="8dp"
+             android:textColor="@color/black_light"
+             android:textSize="14sp"
+             android:text="@string/distance"
+             android:singleLine="true"
+             android:includeFontPadding="false"
+             android:focusable="false"
+             />
+          <ImageView
+              android:background="@drawable/bg_line_split"
+              android:layout_width="fill_parent"
+              android:layout_height="wrap_content"
+              android:layout_below="@id/price_txv"
+              android:layout_marginTop="8dp"
+              />
+     </RelativeLayout>
+     </LinearLayout>
         
     <WebView
         android:id="@+id/web_wbv"
 	    android:layout_width="fill_parent"
 	    android:layout_height="fill_parent"
 	    android:layout_below="@id/title_view"
-	    android:layout_above="@id/button_view" />
+	    android:layout_above="@id/bottom_view" />
 
     <ProgressBar android:id="@+id/progress_prb"
         style="?android:attr/progressBarStyleHorizontal"

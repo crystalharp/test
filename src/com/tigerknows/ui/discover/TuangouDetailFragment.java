@@ -201,4 +201,9 @@ public class TuangouDetailFragment extends BaseDetailFragment
             view.onResume();
         }
     }
+    
+    public void dismiss() {
+        super.dismiss();
+        mSphinx.getBrowserFragment().stopLoading();
+    }
 }
