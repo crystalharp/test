@@ -68,7 +68,7 @@
     <string name="upgrade_map_new">地图更新啦！</string>
     <string name="deleteing_map">正在删除旧版地图数据，请稍候</string>
     
-    <string name="at_where_search">在“%1$s”周边</string>    
+    <string name="at_where_search">在“%1$s”周边搜索</string>    
     <string name="select_where_as_start">选择\u0020%1$s\u0020作为起点</string>  
     <string name="select_where_as_end">选择\u0020%1$s\u0020作为终点</string>
     <string name="click_map_as_start">点击地图选择起点</string>  
@@ -911,6 +911,9 @@
     
     <string name="wowotuan_name">窝窝团</string>
     <string name="nuomi_name">糯米</string>
+    <string name="meituan_name">美团</string>
+    <string name="meituan_refund_service">方式一：通过订单查询进入订单详情页面点击“申请退款”\n方式二：致电美团客服 400-660-5335，提供手机号码和商品名称（或订单号），申请退款。 </string>
+    <string name="nuomi_refund_service">致电糯米客服 4006-888-887，提供手机号码和商品名称（或订单号），申请退款。 </string>
     
     <string name="xiangxidizhi">详细地址：</string>
     <string name="lianxidianhua">联系电话：</string>

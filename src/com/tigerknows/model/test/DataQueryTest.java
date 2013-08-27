@@ -8,7 +8,6 @@ import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.Comment;
 import com.tigerknows.model.Coupon;
 import com.tigerknows.model.DataQuery.AlternativeResponse;
-import com.tigerknows.model.DataQuery.AlternativeResponse.Alternative;
 import com.tigerknows.model.DataQuery.CouponResponse;
 import com.tigerknows.model.DataQuery.CouponResponse.CouponList;
 import com.tigerknows.model.DataQuery.FilterConfigResponse;
@@ -249,6 +248,7 @@ public class DataQueryTest {
         data.put(Shangjia.FIELD_URL, "http://www.baidu.com");
         data.put(Shangjia.FIELD_MESSAGE, message);
         data.put(Shangjia.FIELD_LOGO, Utility.getDrawableResource(context, R.drawable.icon));
+        data.put(Shangjia.FIELD_REFUND_SERVICE, "FIELD_REFUND_SERVICE");
         return data;
     }
 
@@ -852,19 +852,9 @@ public class DataQueryTest {
         launchBaseList(data, total, message);
         XArray<XMap> list = new XArray<XMap>();
         for(int i = 0 ; i < size; i ++) {
-            list.add(launchAlternative("Alternative"+i+"AlternativeAlternativeAlternative"));
+            list.add(launchPOI(("Alternative"+i+"AlternativeAlternativeAlternative")));
         }
         data.put(AlternativeResponse.FIELD_LIST, list);
-        return data;
-    }
-
-    protected static XMap launchAlternative(String name) {
-        XMap data = new XMap();
-        data.put(Alternative.FIELD_UUID, POI_UUID);
-        data.put(Alternative.FIELD_NAME, name);
-        data.put(Alternative.FIELD_ADDRESS, "ADDRESS");
-        data.put(Alternative.FIELD_LONGITUDE, ((int) (116.397*100000)));
-        data.put(Alternative.FIELD_LATITUDE, ((int) (39.904*100000)));
         return data;
     }
 

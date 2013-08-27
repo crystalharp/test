@@ -9,11 +9,12 @@
 package com.tigerknows.model;
 
 import com.decarta.android.exception.APIException;
+import com.tigerknows.model.DataOperation.DingdanCreateResponse;
 import com.tigerknows.model.xobject.XMap;
 
 public class Tuangou extends BaseData {
     
-    public static final String NEED_FIELD = "00010405140b0c0d0e10191f20222350565758595b5c";
+    public static final String NEED_FIELD = "00010405140b0c0d0e10191f20222324252650565758595b5c";
     
     // 0x00 x_string uid uid
     public static final byte FIELD_UID = 0x00;
@@ -80,6 +81,15 @@ public class Tuangou extends BaseData {
     
     // 0x23 x_int 命中筛选项的分店数量 实时生成
     public static final byte FIELD_BRANCH_NUM = 0x23;
+    
+    // 0x24     x_int   为1表示免预约     appointment 
+    public static final byte FIELD_APPOINTMENT = 0x24;
+    
+    // 0x25     x_string    快捷购买要用的url，要了但没返回表示不支持  
+    public static final byte FIELD_URL = 0x25;
+    
+    // 0x26     x_string    图文详情url     m_url 
+    public static final byte FIELD_DETAIL_URL = 0x26;
 
     private String uid; // 0x00 x_string uid uid
     private String name; // 0x01 x_string 团购名称 name
@@ -103,11 +113,23 @@ public class Tuangou extends BaseData {
     private String deadline;// 0x21 x_string 团购截止时间 deadline
     private String goodsId;// 0x22 x_string 团购方提供的商品id goods_id
     private long branchNum;// 0x23 x_int 命中筛选项的分店数量 实时生成
+    private long appointment = 0;
+    private String url;
+    private String detailUrl;
     
     private Fendian fendian;
     private DataQuery fendianQuery;
     private String filterArea;
+    private DingdanCreateResponse dingdanCreateResponse;
     
+    public DingdanCreateResponse getDingdanCreateResponse() {
+        return dingdanCreateResponse;
+    }
+
+    public void setDingdanCreateResponse(DingdanCreateResponse dingdanCreateResponse) {
+        this.dingdanCreateResponse = dingdanCreateResponse;
+    }
+
     public Tuangou() {
     }
 
@@ -143,6 +165,9 @@ public class Tuangou extends BaseData {
         this.deadline = getStringFromData(FIELD_DEADLINE, reset ? null : this.deadline);
         this.goodsId = getStringFromData(FIELD_GOODS_ID, reset ? null : this.goodsId);
         this.branchNum = getLongFromData(FIELD_BRANCH_NUM, reset ? 0 : this.branchNum);
+        this.appointment = getLongFromData(FIELD_APPOINTMENT, reset ? 0 : this.appointment);
+        this.url = getStringFromData(FIELD_URL, reset ? null : this.url);
+        this.detailUrl = getStringFromData(FIELD_DETAIL_URL, reset ? null : this.detailUrl);
         if (fendian == null) {
             fendian = new Fendian(this.data);
         } else {
@@ -333,6 +358,18 @@ public class Tuangou extends BaseData {
 
     public void setBranchNum(long branchNum) {
         this.branchNum = branchNum;
+    }
+
+    public long getAppointment() {
+        return appointment;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public String getDetailUrl() {
+        return detailUrl;
     }
 
     public void setFendian(Fendian fendian) {

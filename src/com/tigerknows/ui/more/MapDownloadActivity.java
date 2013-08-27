@@ -619,7 +619,11 @@ public class MapDownloadActivity extends BaseActivity implements View.OnClickLis
         if (cityInfo != null) {
             if (cityInfo.getId() != sAllAddCityInfoList.get(1).getId()) {
                 sAllAddCityInfoList.remove(1);
-                cityInfo.getCityList().add(cityInfo.clone());
+                if (cityInfo.getCityList().size() > 0) {
+                    cityInfo.getCityList().clear();
+                }
+                CityInfo c = cityInfo.clone();
+                cityInfo.getCityList().add(c);
                 sAllAddCityInfoList.add(1, cityInfo);
             }
         } else {
