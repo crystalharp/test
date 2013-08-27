@@ -2233,18 +2233,19 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 TKDrawable tkDrawable = hotel.getImageThumb();
                 if (tkDrawable != null) {
                     Drawable drawable = tkDrawable.loadDrawable(mThis, mLoadedDrawableRun, getResultMapFragment().toString());
+                    Drawable imageInfoWindow = hotel.getImageInfoWindow(); 
                     if(drawable != null) {
-                        Drawable imageInfoWindow = hotel.getImageInfoWindow(); 
                         if (imageInfoWindow == null) {
                             BitmapDrawable bm = (BitmapDrawable) drawable;
                             imageInfoWindow = new BitmapDrawable(bm.getBitmap());
                             hotel.setImageInfoWindow(imageInfoWindow);
                         }
-                        pictureImv.setBackgroundDrawable(imageInfoWindow);
                     }
                     
-                    if (hotel.getImageInfoWindow() == null) {
-                        pictureImv.setBackgroundResource(R.drawable.bg_picture_detail);
+                    if (imageInfoWindow == null) {
+                        pictureImv.setBackgroundResource(R.drawable.bg_picture_none);
+                    } else {
+                        pictureImv.setBackgroundDrawable(imageInfoWindow);
                     }
                     
                 } else {
