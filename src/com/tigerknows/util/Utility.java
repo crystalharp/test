@@ -697,8 +697,9 @@ public class Utility {
             }
 
             // Rename the new file to the filename the original file had.
-            if (!tempFile.renameTo(inFile))
+            if (!tempFile.renameTo(inFile)) {
                 LogWrapper.d(TAG, "removeLineFromFile() Could not rename file");
+            }
 
         } catch (FileNotFoundException ex) {
             ex.printStackTrace();
