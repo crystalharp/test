@@ -433,9 +433,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     		drawables[2] = mContext.getResources().getDrawable(R.drawable.ic_go_comment_new);
     		int w = drawables[2].getIntrinsicWidth();
     		int h = drawables[2].getIntrinsicHeight();
-    		int max = Utility.dip2px(mContext, 28);
-    		int ww = (w > max)?max:w;
-    		drawables[2].setBounds(0, 0, ww, (int)(h*ww/w));
+    		drawables[2].setBounds(0, 0, w, h);
     		mGoCommentBtn.setCompoundDrawables(drawables[0], drawables[1], drawables[2], drawables[3]);
     		mGoCommentBtn.setCompoundDrawablePadding(Utility.dip2px(mContext, 20));
     	}else{
