@@ -26,7 +26,6 @@ import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
 import com.tigerknows.map.MapEngine;
-import com.tigerknows.model.DataQuery.AlternativeResponse.Alternative;
 import com.tigerknows.model.DataQuery.DiscoverResponse.DiscoverConfigList;
 import com.tigerknows.model.DataQuery.DiscoverResponse.DiscoverCategoryList.DiscoverCategory;
 import com.tigerknows.model.DataQuery.DiscoverResponse.DiscoverConfigList.DiscoverConfig;
@@ -800,7 +799,7 @@ public final class DataQuery extends BaseQuery {
             addParameter(SERVER_PARAMETER_NEED_FIELD, Comment.NEED_FIELD);
             addParameter(SERVER_PARAMETER_COMMENT_VERSION, COMMENT_VERSION);
         } else if (DATA_TYPE_ALTERNATIVE.equals(dataType)) {
-            addParameter(SERVER_PARAMETER_NEED_FIELD, Alternative.NEED_FIELD);
+            addParameter(SERVER_PARAMETER_NEED_FIELD, POI.NEED_FIELD);
         } else if (DATA_TYPE_FILTER.equals(dataType)) {
             
             String cfv = null;
@@ -2544,20 +2543,20 @@ public final class DataQuery extends BaseQuery {
             // 0x02 x_array<x_map> 列表
             public static final byte FIELD_LIST = 0x02;
 
-            private List<Alternative> list;
+            private List<POI> list;
 
-            public List<Alternative> getList() {
+            public List<POI> getList() {
                 return list;
             }
 
-            public void setList(List<Alternative> list) {
+            public void setList(List<POI> list) {
                 this.list = list;
             }
 
             public AlternativeList(XMap data) throws APIException {
                 super(data);
 
-                this.list = getListFromData(FIELD_LIST, Alternative.Initializer);
+                this.list = getListFromData(FIELD_LIST, POI.Initializer);
             }
 
             static XMapInitializer<AlternativeList> Initializer = new XMapInitializer<AlternativeList>() {
@@ -2565,68 +2564,6 @@ public final class DataQuery extends BaseQuery {
                 @Override
                 public AlternativeList init(XMap data) throws APIException {
                     return new AlternativeList(data);
-                }
-            };
-        }
-        
-        public static class Alternative extends XMapData {
-            // 0x01    x_string    uuid,全局唯一
-            public static final byte FIELD_UUID = 0x01;
-            // 0x03    x_int   所在经度, 是普通的度数 × 10万
-            public static final byte FIELD_LONGITUDE = 0x03;
-            // 0x04    x_int   所在纬度, 是普通的度数 × 10万
-            public static final byte FIELD_LATITUDE = 0x04;
-            // 0x05    x_string    名称
-            public static final byte FIELD_NAME = 0x05;
-            // 0x09    x_string    地址 
-            public static final byte FIELD_ADDRESS = 0x09;
-            
-            public static final String NEED_FIELD = "0103040509";
-            
-            protected String uuid;
-            protected Position position;
-            protected String name;
-            protected String address;
-            
-            public String getUuid() {
-                return uuid;
-            }
-
-            public Position getPosition() {
-                return position;
-            }
-
-            public String getName() {
-                return name;
-            }
-
-            public String getAddress() {
-                return address;
-            }
-            
-            public POI toPOI() {
-                POI poi = new POI();
-                poi.setUUID(uuid);
-                poi.setName(name);
-                poi.setAddress(address);
-                poi.setPosition(position);
-                return poi;
-            }
-
-            public Alternative(XMap data) throws APIException {
-                super(data);
-
-                uuid = getStringFromData(FIELD_UUID);
-                position = getPositionFromData(FIELD_LONGITUDE, FIELD_LATITUDE);
-                name = getStringFromData(FIELD_NAME);
-                address = getStringFromData(FIELD_ADDRESS);
-            }
-
-            static XMapInitializer<Alternative> Initializer = new XMapInitializer<Alternative>() {
-
-                @Override
-                public Alternative init(XMap data) throws APIException {
-                    return new Alternative(data);
                 }
             };
         }

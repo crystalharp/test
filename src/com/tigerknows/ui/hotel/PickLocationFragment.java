@@ -47,7 +47,6 @@ import com.tigerknows.model.DataQuery.AlternativeResponse.AlternativeList;
 import com.tigerknows.model.DataQuery.Filter;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.DataQuery.FilterResponse;
-import com.tigerknows.model.DataQuery.AlternativeResponse.Alternative;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.Response;
 import com.tigerknows.model.TKWord;
@@ -95,7 +94,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
     
     private AlternativeAdapter mAlternativeAdapter;
     
-    private List<Alternative> mAlternativeList = new ArrayList<DataQuery.AlternativeResponse.Alternative>();
+    private List<POI> mAlternativeList = new ArrayList<POI>();
     
     private SuggestWordListManager mSuggestWordListManager;
     
@@ -287,7 +286,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
                     if (filter != null) {
                         FilterListView.selectedFilter(filter, -1);
                     }
-                    POI poi = mAlternativeList.get(position).toPOI();
+                    POI poi = mAlternativeList.get(position);
                     mInvoker.setPOI(poi);
                     mActionLog.addAction(mActionTag+ActionLog.HotelPickLocationAlternativeSelect, position, poi.getName());
                     HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, poi.getName(), poi.getPosition()), Globals.getCurrentCityInfo().getId(), HistoryWordTable.TYPE_TRAFFIC);
@@ -432,7 +431,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
         if (response != null && response.getResponseCode() == Response.RESPONSE_CODE_OK && response instanceof AlternativeResponse) {
             mAlternativeResponse = (AlternativeResponse) response;
             AlternativeList alternativeList = mAlternativeResponse.getList();
-            List<Alternative> list = null;
+            List<POI> list = null;
             if (alternativeList != null) {
                 list = alternativeList.getList();
             }
@@ -508,13 +507,13 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
         mKeywordEdt.setText(null);
     }
     
-    class AlternativeAdapter extends ArrayAdapter<Alternative> {
+    class AlternativeAdapter extends ArrayAdapter<POI> {
         
         private static final int TEXTVIEW_RESOURCE_ID = R.layout.poi_alternative_list_item;
         
         private LayoutInflater mLayoutInflater;
 
-        public AlternativeAdapter(Context context, List<Alternative> list) {
+        public AlternativeAdapter(Context context, List<POI> list) {
             super(context, TEXTVIEW_RESOURCE_ID, list);
             mLayoutInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }
@@ -528,7 +527,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
                 view = convertView;
             }
             
-            Alternative alternative = getItem(position);
+            POI alternative = getItem(position);
             
             TextView nameTxv = (TextView)view.findViewById(R.id.name_txv);
             nameTxv.setText(alternative.getName());
