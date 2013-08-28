@@ -1165,34 +1165,32 @@ public abstract class BaseQuery {
         StringBuilder s = new StringBuilder();
         s.append(apiType);
         s.append('@');
-        if (criteria != null) {
-            if (criteria.containsKey(SERVER_PARAMETER_DATA_TYPE)) {
-                s.append(criteria.get(SERVER_PARAMETER_DATA_TYPE));
-            }
-            s.append('@');
-            if (criteria.containsKey(SERVER_PARAMETER_SUB_DATA_TYPE)) {
-                s.append(criteria.get(SERVER_PARAMETER_SUB_DATA_TYPE));
-            }
-            s.append('@');
-            if (criteria.containsKey(FeedbackUpload.SERVER_PARAMETER_FEEDBACK)) {
-                s.append(FeedbackUpload.SERVER_PARAMETER_FEEDBACK);
-            } else if (criteria.containsKey(FeedbackUpload.SERVER_PARAMETER_ACTION_LOG)) {
-                s.append(FeedbackUpload.SERVER_PARAMETER_ACTION_LOG);
-            } else if (criteria.containsKey(FeedbackUpload.SERVER_PARAMETER_LOCATION)) {
-                s.append(FeedbackUpload.SERVER_PARAMETER_LOCATION);
-            } else if (criteria.containsKey(FeedbackUpload.SERVER_PARAMETER_LOCATION_IN_ANDROID)) {
-                s.append(FeedbackUpload.SERVER_PARAMETER_LOCATION_IN_ANDROID);
-            } else if (criteria.containsKey(FeedbackUpload.SERVER_PARAMETER_ERROR_RECOVERY)) {
-                s.append(FeedbackUpload.SERVER_PARAMETER_ERROR_RECOVERY);
-            }
-            s.append('@');
-            if (criteria.containsKey(SERVER_PARAMETER_REQUSET_SOURCE_TYPE)) {
-                s.append(criteria.get(SERVER_PARAMETER_REQUSET_SOURCE_TYPE));
-            }
-            s.append('@');
-        } else {
-            s.append("@@@@");
+        
+        if (hasParameter(SERVER_PARAMETER_DATA_TYPE)) {
+            s.append(getParameter(SERVER_PARAMETER_DATA_TYPE));
         }
+        s.append('@');
+        if (hasParameter(SERVER_PARAMETER_SUB_DATA_TYPE)) {
+            s.append(getParameter(SERVER_PARAMETER_SUB_DATA_TYPE));
+        }
+        s.append('@');
+        if (hasParameter(FeedbackUpload.SERVER_PARAMETER_FEEDBACK)) {
+            s.append(FeedbackUpload.SERVER_PARAMETER_FEEDBACK);
+        } else if (hasParameter(FeedbackUpload.SERVER_PARAMETER_ACTION_LOG)) {
+            s.append(FeedbackUpload.SERVER_PARAMETER_ACTION_LOG);
+        } else if (hasParameter(FeedbackUpload.SERVER_PARAMETER_LOCATION)) {
+            s.append(FeedbackUpload.SERVER_PARAMETER_LOCATION);
+        } else if (hasParameter(FeedbackUpload.SERVER_PARAMETER_LOCATION_IN_ANDROID)) {
+            s.append(FeedbackUpload.SERVER_PARAMETER_LOCATION_IN_ANDROID);
+        } else if (hasParameter(FeedbackUpload.SERVER_PARAMETER_ERROR_RECOVERY)) {
+            s.append(FeedbackUpload.SERVER_PARAMETER_ERROR_RECOVERY);
+        }
+        s.append('@');
+        if (hasParameter(SERVER_PARAMETER_REQUSET_SOURCE_TYPE)) {
+            s.append(getParameter(SERVER_PARAMETER_REQUSET_SOURCE_TYPE));
+        }
+        s.append('@');
+        
         return s.toString();
     }
 }
