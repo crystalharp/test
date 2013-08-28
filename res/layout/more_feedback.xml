@@ -65,7 +65,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="left|center_vertical"
                     android:padding="8dp"
-                    android:maxLength="20"
+                    android:maxLength="11"
                     android:maxLines="1"
                     android:singleLine="true"
                     android:inputType="phone"
@@ -73,6 +73,7 @@
                     android:lines="1"
                     android:hint="@string/your_mobile_number"
                     android:imeOptions="actionSend"
+                    android:digits="0123456789"
                     >
                 </EditText>
                 <ImageView
