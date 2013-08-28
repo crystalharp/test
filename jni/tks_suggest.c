@@ -10,8 +10,8 @@
 #include "tks_lexicon.h"
 
 char cur_word[2];
-int cilen, silen, csnum, clnum, ssnum, slnum, wordscount;//Ë÷Òý³¤¶ÈºÍ´ÊÌõ³¤¶È 
-FILE *csfp, *clfp, *ssfp, *slfp;             //ÁªÏë´Ê¿âÎÄ¼þÖ¸Õë
+int cilen, silen, csnum, clnum, ssnum, slnum, wordscount;//ï¿½ï¿½ï¿½ï¿½ÈºÍ´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
+FILE *csfp, *clfp, *ssfp, *slfp;             //ï¿½ï¿½ï¿½ï¿½Ê¿ï¿½ï¿½Ä¼ï¿½Ö¸ï¿½ï¿½
 int cityv, nationv;
 int nflag, cflag;
 
@@ -95,8 +95,8 @@ int set_context(const char* filepath, int citycode, int* version, FILE** sfp, FI
 	int i;
     *version = 0;
 
-    //Ê×ÏÈÅÐ¶ÏÁªÏë´ÊÎÄ¼þµÄÍêÕûÐÔ£ºÈý¸öÎÄ¼þÖÐÖ»ÒªÓÐÒ»¸ö²»´æÔÚ£¬ÔòÈ«²¿É¾³ý
-    //Èç¹û¶¼´æÔÚ£¬ÔòËµÃ÷indexÎÄ¼þÍêÕû£¬¼ÓÔØindex£¬ÅÐ¶Ï_s,_lÁ½¸öÎÄ¼þµÄÍêÕûÐÔ£¬Èç¹û²»ÍêÕûÔòÇå³ýÈ«²¿ÎÄ¼þ
+    //ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô£ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½Ö»Òªï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú£ï¿½ï¿½ï¿½È«ï¿½ï¿½É¾ï¿½ï¿½
+    //ï¿½ï¿½ï¿½ï¿½ï¿½Ú£ï¿½ï¿½ï¿½Ëµï¿½ï¿½indexï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½indexï¿½ï¿½ï¿½Ð¶ï¿½_s,_lï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È«ï¿½ï¿½ï¿½Ä¼ï¿½
     sprintf(ifilename, "%s/sw2_%d_index", filepath, citycode);
     sprintf(sfilename, "%s/sw2_%d_s", filepath, citycode);
     sprintf(lfilename, "%s/sw2_%d_l", filepath, citycode);
@@ -318,7 +318,7 @@ rewind(slfp);
 
 int isprefix(const char* word1, const char* word2) 
 {
-	//Èôword1Îª1-2¸ö×Ö½Ú£¬Ôò¿Ï¶¨·µ»Ø1
+	//ï¿½ï¿½word1Îª1-2ï¿½ï¿½ï¿½Ö½Ú£ï¿½ï¿½ï¿½Ï¶ï¿½ï¿½ï¿½ï¿½ï¿½1
 	int i = 0,j=0;
 	if (dora(word1[0]) && word1[1]=='\0')
 		return 1;
@@ -339,17 +339,17 @@ int isprefix(const char* word1, const char* word2)
 
 #define LIFE_COMMON_WORD_NUM 7
 static const char* life_common_words[] = {
-	"²Í¹Ý", "¾Æµê", "ÒøÐÐ", "ÉÌ³¡", "¹«½»Õ¾", "Ò½Ôº", "Ñ§Ð£"
+	"ï¿½Í¹ï¿½", "ï¿½Æµï¿½", "ï¿½ï¿½ï¿½ï¿½", "ï¿½Ì³ï¿½", "ï¿½ï¿½ï¿½ï¿½Õ¾", "Ò½Ôº", "Ñ§Ð£"
 };
 
 #define TRAFFIC_COMMON_WORD_NUM 8
 static const char* traffic_common_words[TRAFFIC_COMMON_WORD_NUM] = {
-	"Â·", "ºúÍ¬", "´óÑ§", "¹ã³¡", "´óÏÃ", "Ð¡Çø", "¾°µã", "¹«Ô°"
+	"Â·", "ï¿½ï¿½Í¬", "ï¿½ï¿½Ñ§", "ï¿½ã³¡", "ï¿½ï¿½ï¿½ï¿½", "Ð¡ï¿½ï¿½", "ï¿½ï¿½ï¿½ï¿½", "ï¿½ï¿½Ô°"
 };
 
 #define DEFAULT_WORDS_NUM 3
 static const char* default_words[DEFAULT_WORDS_NUM] = {
-    "ÎÒµÄµ±Ç°Î»ÖÃ", "È«ÊÐ·¶Î§", "µ±Ç°µØÍ¼ÖÐÐÄ"
+    "ï¿½ÒµÄµï¿½Ç°Î»ï¿½ï¿½", "È«ï¿½Ð·ï¿½Î§", "ï¿½ï¿½Ç°ï¿½ï¿½Í¼ï¿½ï¿½ï¿½ï¿½"
 }; 
 
 static int fill_nohit_sw_by_common_word(const char* searchword, const char** common_words, int common_word_num) {
@@ -384,7 +384,7 @@ static int fill_nohit_words(const char* searchword, unsigned int type) {
 int tk_getwordslist(const char* searchword, unsigned int type, int *hit) 
 {
 	int count, i, suffixed;
-	//±éÀú¡¢¸ù¾ÝÀà±ðºÍÇ°×ºÉ¸Ñ¡³öÇ° SWCOUNT ¸öÁªÏë´Ê
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç°×ºÉ¸Ñ¡ï¿½ï¿½Ç° SWCOUNT ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	if (dora(searchword[0])) {
 		if (memcmp(cur_word, searchword, 1) != 0){
 			if (loadwords(searchword))
@@ -420,7 +420,7 @@ int tk_getwordslist(const char* searchword, unsigned int type, int *hit)
         *hit = 0;
         /*
         suffixed = 0;
-        //confirm whether the search word has  added the words such as "²Í¹Ý" 
+        //confirm whether the search word has  added the words such as "ï¿½Í¹ï¿½" 
         if (type == 1 || type == 2) {
             for (i = 0; i < LIFE_COMMON_WORD_NUM; i++)
                 if (strstr(searchword, life_common_words[i]) != NULL) {

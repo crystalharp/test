@@ -1,12 +1,12 @@
-ÀÏ»¢µØÍ¼Èí¼þ·¢²¼Ö®Ç°ÐèÒª¼ì²éµÄÏ¸½Ú£º
-1¡¢¸÷¸ö·þÎñ£¨ÖÜ±ß²éÑ¯¡¢¹«½»²éÑ¯¡¢µØÍ¼ÏÂÔØµÈµÈ£©µÄ·þÎñÆ÷URLÓ¦¸ÃÊÇÍâÍøµÄURL£»
-2¡¢¿Í»§¶ËÈí¼þ°æ±¾ºÅ£»
-3¡¢¼ì²éÌá½»µ½·þÎñÆ÷µÄÇëÇóÖÐµÄmÖµ¡¢pkÖµ£¨sSPREADER¡¢sPHONE_KEY£©£»
-4¡¢²âÊÔÈí¼þ×Ô¶¯¸üÐÂ¹¦ÄÜ£»
-5¡¢É¾³ý´úÂëÖÐÎÞÓÃµÄlog´òÓ¡ÐÅÏ¢£»
-6¡¢°æ±¾ºÅÖÐµÄÈÕÆÚ×Ö¶ÎÈ·¶¨ÊÇ·¢²¼µ±ÌìµÄÈÕÆÚÐÅÏ¢£»
-7¡¢Õë¶Ô1.5ºÍ1.6Æ½Ì¨·¢²¼°²×°°üÊ±ÐèÒªÈ¥µôcdma¶¨Î»ºÍ¶àµã´¥Ãþ¹¦ÄÜ£»
-8¡¢É¾³ýtestÎÄ¼þ¼Ð£»
-9¡¢ÐÞ¸Äbuild.xmlÖÐµÄLine:326(½«<arg value="-libraryjars ${android-jar}"/> Ìæ»»ÎªÏàÓ¦Æ½Ì¨android.jarµÄ¾ø¶ÔÂ·¾¶)£»
-10¡¢²âÊÔ»ìÏý°æ±¾µÄ°²×°°ü£»
-11¡¢½«AndroidManifest.xmlÖÐandroid:debuggable="true"ÐÞ¸ÄÎª¡°false¡°
+ï¿½Ï»ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö®Ç°ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½Ï¸ï¿½Ú£ï¿½
+1ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü±ß²ï¿½Ñ¯ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¯ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½ØµÈµÈ£ï¿½ï¿½Ä·ï¿½ï¿½ï¿½ï¿½ï¿½URLÓ¦ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½URLï¿½ï¿½
+2ï¿½ï¿½ï¿½Í»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½æ±¾ï¿½Å£ï¿½
+3ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½á½»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ðµï¿½mÖµï¿½ï¿½pkÖµï¿½ï¿½sSPREADERï¿½ï¿½sPHONE_KEYï¿½ï¿½ï¿½ï¿½
+4ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½Â¹ï¿½ï¿½Ü£ï¿½
+5ï¿½ï¿½É¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ãµï¿½logï¿½ï¿½Ó¡ï¿½ï¿½Ï¢ï¿½ï¿½
+6ï¿½ï¿½ï¿½æ±¾ï¿½ï¿½ï¿½Ðµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¶ï¿½È·ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½
+7ï¿½ï¿½ï¿½ï¿½ï¿½1.5ï¿½ï¿½1.6Æ½Ì¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×°ï¿½ï¿½Ê±ï¿½ï¿½ÒªÈ¥ï¿½ï¿½cdmaï¿½ï¿½Î»ï¿½Í¶ï¿½ã´¥ï¿½ï¿½ï¿½ï¿½ï¿½Ü£ï¿½
+8ï¿½ï¿½É¾ï¿½ï¿½testï¿½Ä¼ï¿½ï¿½Ð£ï¿½
+9ï¿½ï¿½ï¿½Þ¸ï¿½build.xmlï¿½Ðµï¿½Line:326(ï¿½ï¿½<arg value="-libraryjars ${android-jar}"/> ï¿½æ»»Îªï¿½ï¿½Ó¦Æ½Ì¨android.jarï¿½Ä¾ï¿½ï¿½Â·ï¿½ï¿½)ï¿½ï¿½
+10ï¿½ï¿½ï¿½ï¿½ï¿½Ô»ï¿½ï¿½ï¿½æ±¾ï¿½Ä°ï¿½×°ï¿½ï¿½
+11ï¿½ï¿½ï¿½ï¿½AndroidManifest.xmlï¿½ï¿½android:debuggable="true"ï¿½Þ¸ï¿½Îªï¿½ï¿½falseï¿½ï¿½
