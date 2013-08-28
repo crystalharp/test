@@ -565,6 +565,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 
                 @Override
                 public void run() {
+        
+                    CalendarUtil.initExactTime(mContext);
 
                     Shangjia.readShangjiaList(Sphinx.this);
                     try {
@@ -900,8 +902,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         
         checkCitySupportDiscover(Globals.getCurrentCityInfo().getId());
         initWeibo(false, false);
-        
-        CalendarUtil.initExactTime(mContext);
 	}
 	
 	void resetShowInPreferZoom() {
@@ -2816,12 +2816,40 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     fragment.onResume();
                     result = true;
                 } else {
+                    boolean isNormalExit = false;
+                    int count = mBodyView.getChildCount();
+                    if (count == 1) {
+                        View v = mBodyView.getChildAt(0);
+                        if (v instanceof POIHomeFragment ||
+                                v instanceof TrafficQueryFragment ||
+                                v instanceof DiscoverHomeFragment ||
+                                v instanceof MoreHomeFragment) {
+                            isNormalExit = true;
+                        }
+                    }
+                    
+                    if (isNormalExit == false) {
+                        uiStackClose(null);
+                        showView(R.id.view_poi_home);
+                    }
+                }
+            } else {
+                boolean isNormalExit = false;
+                int count = mBodyView.getChildCount();
+                if (count == 1) {
+                    View v = mBodyView.getChildAt(0);
+                    if (v instanceof POIHomeFragment ||
+                            v instanceof TrafficQueryFragment ||
+                            v instanceof DiscoverHomeFragment ||
+                            v instanceof MoreHomeFragment) {
+                        isNormalExit = true;
+                    }
+                }
+                
+                if (isNormalExit == false) {
                     uiStackClose(null);
                     showView(R.id.view_poi_home);
                 }
-            } else {
-                uiStackClose(null);
-                showView(R.id.view_poi_home);
             }
             mUIProcessing = false;
             return result;
