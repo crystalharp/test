@@ -52,6 +52,8 @@ import com.tigerknows.model.NoticeQuery.NoticeResultResponse.NoticeResult;
 import com.tigerknows.model.NoticeQuery.NoticeResultResponse.NoticeResult.Notice;
 import com.tigerknows.model.TKDrawable;
 import com.tigerknows.model.xobject.XMap;
+import com.tigerknows.service.download.ApkDownloadedProcessor;
+import com.tigerknows.service.download.DownloadService;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.ui.BrowserActivity;
 import com.tigerknows.ui.more.MapDownloadActivity.DownloadCity;
@@ -269,8 +271,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 	                    mActionLog.addAction(mActionTag + ActionLog.MoreAppDownload, position, recommendApp.getName());
 	                    final String uri = recommendApp.getUrl();
 	                    if (!TextUtils.isEmpty(uri)) {
-	                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-	                        mSphinx.startActivity(intent);
+                            DownloadService.download(mSphinx, uri, recommendApp.getName(), ApkDownloadedProcessor.getInstance());
 	                    }
 	                }
 				}
@@ -883,8 +884,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
                             case DialogInterface.BUTTON_POSITIVE:
                                 String url = mSoftwareUpdate.getURL();
                                 if (url != null) {
-                                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                                    mSphinx.startActivity(intent);
+                                    DownloadService.download(mSphinx, url, mSphinx.getString(R.string.app_name), ApkDownloadedProcessor.getInstance());
                                 }
                                 break;
                             default:
