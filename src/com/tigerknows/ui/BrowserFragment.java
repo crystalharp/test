@@ -4,7 +4,6 @@
 
 package com.tigerknows.ui;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.http.SslError;
 import android.os.Bundle;
@@ -21,7 +20,6 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.alipay.android.MobileSecurePayHelper;
 import com.alipay.android.MobileSecurePayer;
@@ -33,14 +31,7 @@ import android.widget.Toast;
 
 import java.net.URLDecoder;
 
-import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
-import com.tigerknows.model.BaseQuery;
-import com.tigerknows.model.DataOperation;
-import com.tigerknows.model.Response;
-import com.tigerknows.model.Shangjia;
-import com.tigerknows.model.Tuangou;
-import com.tigerknows.model.DataOperation.DingdanCreateResponse;
 import com.tigerknows.util.Utility;
 
 /**
@@ -225,7 +216,7 @@ public class BrowserFragment extends BaseFragment implements View.OnClickListene
                     sb.append("\"");
                     MobileSecurePayer msp = new MobileSecurePayer();
                     MobileSecurePayHelper mspHelper = new MobileSecurePayHelper(mSphinx.getBaseContext());
-                    boolean isMobile_spExist = mspHelper.detectMobile_sp();
+                    boolean isMobile_spExist = mspHelper.isMobile_spExist();
                     if (!isMobile_spExist) {
                         return;
                     }
