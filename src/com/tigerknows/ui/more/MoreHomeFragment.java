@@ -57,6 +57,7 @@ import com.tigerknows.ui.BrowserActivity;
 import com.tigerknows.ui.more.MapDownloadActivity.DownloadCity;
 import com.tigerknows.ui.user.UserBaseActivity;
 import com.tigerknows.ui.user.UserLoginActivity;
+import com.tigerknows.util.ByteUtil;
 import com.tigerknows.util.Utility;
 
 /**
@@ -262,7 +263,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 				@Override
 				public void onClick(View v) {
 					final int len = mRecommendAppList.size();
-					if(position > len)return;
+					if(position >= len)return;
 	                final RecommendApp recommendApp = mRecommendAppList.get(position);
 	                if (recommendApp != null) {
 	                    mActionLog.addAction(mActionTag + ActionLog.MoreAppDownload, position, recommendApp.getName());
@@ -639,9 +640,33 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
             return viewMap.get(position);
         }
         String title = notice.getNoticeTitle();
+
         String description = notice.getDescription();
         int pd8 = Utility.dip2px(mContext, 8);
         int pd2 = Utility.dip2px(mContext, 2);
+        int screen_px = mContext.getResources().getDisplayMetrics().widthPixels;
+        float titleTextSize = 16;
+        float descTextSize = titleTextSize - 2;
+        float layoutMargin = (notice.getLocalType() == 1) ? 4 : 16;
+        float drawablePadding = (notice.getLocalType() == 1) ? 4 : titleTextSize;
+        int textView_px = screen_px - Utility.dip2px(mContext, layoutMargin + 16 + 16 + 48);
+        float textView_dp = Utility.px2dip(mContext, textView_px);
+        LogWrapper.d("Trap", textView_dp+"");
+        if(title != null && !TextUtils.isEmpty(title)){
+        	while(titleTextSize* ByteUtil.getCharArrayLength(title)/2 + drawablePadding > textView_dp + .5){
+        		titleTextSize -= 1;
+        		drawablePadding = (notice.getLocalType() == 1) ? 4 : titleTextSize;
+        	}
+        	descTextSize = titleTextSize - 2;
+        	if(description != null && !TextUtils.isEmpty(description)){
+        		while(descTextSize* ByteUtil.getCharArrayLength(description)/2 + drawablePadding > textView_dp + .5){
+        			titleTextSize --;
+        			descTextSize --;
+        			drawablePadding = (notice.getLocalType() == 1) ? 4 : titleTextSize;
+        		}
+        	}
+        }
+        LogWrapper.d("Trap", ""+titleTextSize);
         switch(notice.getLocalLayoutType()){
         case 1:
         	Button button1 = new Button(mSphinx);
@@ -693,18 +718,18 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         		refreshDrawable(notice.getpicTkDrawable(), imageView3, R.drawable.bg_picture_none, false);
         	}
         	LinearLayout.LayoutParams layoutParams3 = new LayoutParams(Utility.dip2px(mContext, 48), Utility.dip2px(mContext, 48));
-        	layoutParams3.setMargins(Utility.dip2px(mContext, 16), 0, 0, 0);
+        	layoutParams3.setMargins(Utility.dip2px(mContext, layoutMargin), 0, 0, 0);
         	layoutParams3.gravity = Gravity.CENTER_VERTICAL;
         	imageView3.setLayoutParams(layoutParams3);
         	imageView3.setScaleType(ScaleType.FIT_XY);
         	TextView titleTxv3 = new TextView(mSphinx);
         	titleTxv3.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-        	titleTxv3.setTextSize(16);
+        	titleTxv3.setTextSize(titleTextSize);
         	titleTxv3.setTextColor(getResources().getColor(R.color.black_dark));
         	titleTxv3.setSingleLine(true);
         	titleTxv3.setText(title);
         	titleTxv3.setGravity(Gravity.LEFT | Gravity.CENTER_HORIZONTAL);
-        	titleTxv3.setPadding(Utility.dip2px(mContext, 26), pd8, pd8, pd8);
+        	titleTxv3.setPadding(Utility.dip2px(mContext, drawablePadding), pd8, pd8*2, pd8);
         	linearLayout3.addView(imageView3);
         	linearLayout3.addView(titleTxv3);
         	imageViewMap.put(position, imageView3);
@@ -717,7 +742,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         	ImageView imageView7 = new ImageView(mSphinx);
         	refreshDrawable(notice.getpicTkDrawable(), imageView7, R.drawable.bg_picture_none, false);
         	LinearLayout.LayoutParams layoutParams7 = new LayoutParams(Utility.dip2px(mContext, 48), Utility.dip2px(mContext, 48));
-        	layoutParams7.setMargins(Utility.dip2px(mContext, 16), 0, 0, 0);
+        	layoutParams7.setMargins(Utility.dip2px(mContext, layoutMargin), 0, 0, 0);
         	layoutParams7.gravity = Gravity.CENTER_VERTICAL;
         	imageView7.setLayoutParams(layoutParams7);
         	imageView7.setScaleType(ScaleType.FIT_XY);
@@ -727,18 +752,18 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         	textLly7.setGravity(Gravity.LEFT);
         	TextView titleTxv7 = new TextView(mSphinx);
         	titleTxv7.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-        	titleTxv7.setTextSize(16);
+        	titleTxv7.setTextSize(titleTextSize);
         	titleTxv7.setTextColor(getResources().getColor(R.color.black_dark));
         	titleTxv7.setSingleLine(true);
         	titleTxv7.setText(title);
-        	titleTxv7.setPadding(Utility.dip2px(mContext, 26), pd2, pd8, 0);
+        	titleTxv7.setPadding(Utility.dip2px(mContext, drawablePadding), pd2, pd8*2, 0);
         	TextView descriptionTxv7 = new TextView(mSphinx);
         	descriptionTxv7.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-        	descriptionTxv7.setTextSize(14);
+        	descriptionTxv7.setTextSize(descTextSize);
         	descriptionTxv7.setTextColor(getResources().getColor(R.color.black_light));
         	descriptionTxv7.setSingleLine(true);
         	descriptionTxv7.setText(description);
-        	descriptionTxv7.setPadding(Utility.dip2px(mContext, 26), 0, pd8, 0);
+        	descriptionTxv7.setPadding(Utility.dip2px(mContext, drawablePadding), 0, pd8*2, 0);
         	textLly7.addView(titleTxv7);
         	textLly7.addView(descriptionTxv7);
         	linearLayout7.addView(imageView7);
@@ -749,7 +774,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         default:
         	Button button = new Button(mSphinx);
         	button.setText("该活动不存在或已失效");
-        	button.setTextSize(16);
+        	button.setTextSize(titleTextSize);
         	button.setBackgroundResource(R.drawable.btn_notice);
         	button.setPadding(pd8, pd8, pd8, pd8);
         	viewMap.put(position, button);

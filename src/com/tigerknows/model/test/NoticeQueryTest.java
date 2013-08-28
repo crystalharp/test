@@ -43,7 +43,11 @@ public class NoticeQueryTest {
 			xmap.put(Notice.FIELD_NOTICE_TITLE, context.getString(R.string.message_tip_user_survey));
 		}
 		if( (op & 4)!=0){
-			xmap.put(Notice.FIELD_NOTICE_DESCRIPTION, "FIELD_NOTICE_DESCRIPTION");
+			if(op == 7){
+				xmap.put(Notice.FIELD_NOTICE_DESCRIPTION, "iPhone5, iPad mini, 点评,一二三四五");
+			}else{
+				xmap.put(Notice.FIELD_NOTICE_DESCRIPTION, "FIELD_NOTICE_DESCRIPTION");
+			}
 		}
 		if(op == 2){
 			xmap.put(Notice.FIELD_PIC_URL, BaseQueryTest.PIC_URL);
