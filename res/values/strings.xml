@@ -197,7 +197,7 @@
     <string name="select_point">选择该点</string>
     
     <string name="more">更多</string>
-    <string name="message_tip_software_update">嗷，小虎有新版本了，赶快点击下载吧</string>
+    <string name="message_tip_software_update">嗷，小虎有新版本了，赶快点击下载吧！</string>
     <string name="message_tip_comment">没见解？不可能！来发表个点评吧！</string>
     <string name="message_tip_map_upgrade">地图有更新数据了，点击升级!</string>
     <string name="message_tip_user_survey">欢迎参加老虎宝典有奖用户调研</string>
