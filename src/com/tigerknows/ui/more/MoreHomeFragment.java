@@ -675,7 +675,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         	descriptionTxv5.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
         	descriptionTxv5.setPadding(pd8, 0, pd8, 0);
         	descriptionTxv5.setTextSize(14);
-        	descriptionTxv5.setTextColor(getResources().getColor(R.color.black_dark));
+        	descriptionTxv5.setTextColor(getResources().getColor(R.color.black_light));
         	descriptionTxv5.setSingleLine(true);
         	descriptionTxv5.setText(description);
         	linearLayout5.addView(titleTxv5);
@@ -736,7 +736,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         	TextView descriptionTxv7 = new TextView(mSphinx);
         	descriptionTxv7.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
         	descriptionTxv7.setTextSize(14);
-        	descriptionTxv7.setTextColor(getResources().getColor(R.color.black_dark));
+        	descriptionTxv7.setTextColor(getResources().getColor(R.color.black_light));
         	descriptionTxv7.setSingleLine(true);
         	descriptionTxv7.setText(description);
         	descriptionTxv7.setPadding(Utility.dip2px(mContext, 26), 0, pd8, 0);
