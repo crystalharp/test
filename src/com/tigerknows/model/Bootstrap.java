@@ -50,7 +50,6 @@ public final class Bootstrap extends BaseQuery {
     @Override
     protected void addCommonParameters() {
         super.addCommonParameters();
-        addParameter("fe", "");
     }
 
     @Override
