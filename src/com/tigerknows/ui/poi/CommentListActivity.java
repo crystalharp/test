@@ -171,7 +171,7 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
         mHotCommentLsv.addFooterView(v);
         mCommentTipView = findViewById(R.id.tip_view);
         mCommentTipEdt = (Button) findViewById(R.id.comment_tip_btn);
-        mEmptyView = findViewById(R.id.empty_txv);
+        mEmptyView = findViewById(R.id.empty_view);
     }
     
     protected void setListener() {

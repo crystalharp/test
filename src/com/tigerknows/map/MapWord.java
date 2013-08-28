@@ -132,12 +132,6 @@ public class MapWord {
             if (hashCode == 0) {
             int result = 17;
             result = 37*result + index;
-            if (mercXY != null) {
-                long value = Double.doubleToRawLongBits(mercXY.x);
-                result += (int) (value ^ (value >>> 32));
-                value = Double.doubleToRawLongBits(mercXY.y);
-                result += (int) (value ^ (value >>> 32));
-            }
             hashCode = result;
             }
             return hashCode;

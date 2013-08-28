@@ -18,6 +18,7 @@
     
     <item type="id" name="view_result_map" />
     <item type="id" name="activity_browser" />
+    <item type="id" name="view_browser" />
     <item type="id" name="activity_hint" />
     <item type="id" name="activity_tencent"/>
     

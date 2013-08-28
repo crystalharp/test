@@ -72,7 +72,7 @@ public class DynamicMoviePOI extends POIDetailFragment.DynamicPOIView{
             v.setOnClickListener(mDynamicMovieListener);
 
             TKDrawable tkDrawable = movie.getPicture();
-            LoadImageRunnable loadImageRunnable = new LoadImageRunnable(mSphinx, tkDrawable, pictureImv, -1, mPOIDetailFragment.toString());
+            LoadImageRunnable loadImageRunnable = new LoadImageRunnable(mSphinx, tkDrawable, pictureImv, R.drawable.bg_picture, mPOIDetailFragment.toString());
             Drawable drawable = tkDrawable.loadDrawable(mSphinx, loadImageRunnable, mPOIDetailFragment.toString());
             if(drawable != null) {
                 //To prevent the problem of size change of the same pic 

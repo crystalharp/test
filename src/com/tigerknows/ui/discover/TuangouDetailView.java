@@ -5,8 +5,10 @@
 package com.tigerknows.ui.discover;
 
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
@@ -101,15 +103,18 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
     
     private TextView mNameTxt = null;
     
-    /**
-     * ImageView representing whether this tuangou support give back your money
-     */
-    private ImageView mRefundImv = null;
+    private TextView mViewurlTxv = null;
+
+    private Drawable mRefundIcon;
+    
+    private Drawable mNotRefundIcon;
 
     /**
      * TextView representing whether this tuangou support give back your money
      */
     private TextView mRefundTxv = null;
+    
+    private TextView mRefundDetailTxv = null;
 
     /**
      * Presenting the numbers of customers who has bought this Tuangou
@@ -259,6 +264,9 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
         mActionTag = ActionLog.TuangouDetail;
         
         noRefundStr = mSphinx.getString(R.string.tuangou_no_refund);
+        Resources resources = mSphinx.getResources();
+        mRefundIcon = resources.getDrawable(R.drawable.ic_is_refund);
+        mNotRefundIcon = resources.getDrawable(R.drawable.ic_not_refund);
 
         int width = (int)(Globals.g_metrics.widthPixels);
         int height = (int) (width*((float)168/276));
@@ -320,15 +328,45 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
     public void setData(BaseData data, int position) {
         super.setData(data, position);
         if (data == null || (data instanceof Tuangou) == false || mData == data) {
+            if (mData != null && mParentFragment.position == position) {
+                if (mData.getUrl() != null) {
+                    mParentFragment.mSphinx.getBrowserFragment().setData(mSphinx.getString(R.string.buy), mData.getUrl(), null);
+                } else {
+                    String sessionId = Globals.g_Session_Id;
+                    if (TextUtils.isEmpty(sessionId) == false) {
+                        if (mData.getDingdanCreateResponse() == null) {
+                            buy(true);
+                        } else {
+                            mParentFragment.mSphinx.getBrowserFragment().setData(mSphinx.getString(R.string.buy), mData.getDingdanCreateResponse().getUrl(), null);
+                        }
+                    }
+                }
+            }
             return;
         }
         mData = (Tuangou)data;
+        if (mParentFragment.position == position) {
+            if (mData.getUrl() != null) {
+                mParentFragment.mSphinx.getBrowserFragment().setData(mSphinx.getString(R.string.buy), mData.getUrl(), null);
+            } else {
+                String sessionId = Globals.g_Session_Id;
+                if (TextUtils.isEmpty(sessionId) == false) {
+                    if (mData.getDingdanCreateResponse() == null) {
+                        buy(true);
+                    } else {
+                        mParentFragment.mSphinx.getBrowserFragment().setData(mSphinx.getString(R.string.buy), mData.getDingdanCreateResponse().getUrl(), null);
+                    }
+                }
+            }
+        }
 
         mFilterArea = mData.getFilterArea();
         
+        String refundDetail = null;
         Shangjia shangjia = Shangjia.getShangjiaById(mData.getSource(), mSphinx, mLoadedDrawableRun);
         if (shangjia != null) {
             mShangjiaMarkerImv.setImageDrawable(shangjia.getMarker());
+            refundDetail = shangjia.getRefundService();
         } else {
             mShangjiaMarkerImv.setImageDrawable(null);
         }
@@ -345,11 +383,27 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
         
         mBuyerNumTxv.setText(mSphinx.getString(R.string.tuangou_detail_buyer_num, mData.getBuyerNum()));
         
+        String detailUrl = mData.getDetailUrl();
+        if (detailUrl != null) {
+            mViewurlTxv.setVisibility(View.VISIBLE);
+        } else {
+            mViewurlTxv.setVisibility(View.GONE);
+        }
+        
         String refund = mData.getRefund();
         if (!TextUtils.isEmpty(refund) && !refund.contains(noRefundStr)) {
-            mRefundImv.setImageResource(R.drawable.ic_is_refund);
+            mRefundIcon.setBounds(0, 0, mRefundIcon.getIntrinsicWidth(), mRefundIcon.getIntrinsicHeight());
+            mRefundTxv.setCompoundDrawables(mRefundIcon, null, null, null);
+            if (refundDetail != null) {
+                mRefundDetailTxv.setText(refundDetail);
+                mRefundDetailTxv.setVisibility(View.VISIBLE);
+            } else {
+                mRefundDetailTxv.setVisibility(View.GONE); 
+            }
         } else {
-            mRefundImv.setImageResource(R.drawable.ic_not_refund);
+            mNotRefundIcon.setBounds(0, 0, mNotRefundIcon.getIntrinsicWidth(), mNotRefundIcon.getIntrinsicHeight());
+            mRefundTxv.setCompoundDrawables(mNotRefundIcon, null, null, null);
+            mRefundDetailTxv.setVisibility(View.GONE);
         }
         mRefundTxv.setText(refund);
         
@@ -519,8 +573,9 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
 
         
         mNameTxt = (TextView)findViewById(R.id.name_txv);
-        mRefundImv = (ImageView) findViewById(R.id.refund_imv);
+        mViewurlTxv = (TextView) findViewById(R.id.viewurl_txv);
         mRefundTxv = (TextView) findViewById(R.id.refund_txv);
+        mRefundDetailTxv = (TextView) findViewById(R.id.refund_detail_txv);
         mBuyerNumTxv = (TextView) findViewById(R.id.buyer_num_txv);
 
         View view = findViewById(R.id.tuangou_fendian_list_item);
@@ -576,6 +631,7 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
         mTelephoneView.setOnClickListener(this);
         mNearbyFendianView.setOnClickListener(this);
         mServiceHotlineView.setOnClickListener(this);
+        mViewurlTxv.setOnClickListener(this);
         
         mBodyScv.setOnTouchListener(new OnTouchListener() {
 
@@ -663,8 +719,19 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
                     intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_FAILED, getId());
                     mSphinx.showView(R.id.activity_user_login, intent);
                 } else {
-                    ((TuangouDetailFragment) mParentFragment).isRequsetBuy = false;
-                    buy();
+                    if (mData.getDingdanCreateResponse() != null) {
+
+                        String tip = null;
+                        Shangjia shangjia = Shangjia.getShangjiaById(mData.getSource(), mSphinx, mLoadedDrawableRun);
+                        if (shangjia != null) {
+                            tip = shangjia.getName();
+                        }
+                        mParentFragment.mSphinx.getBrowserFragment().setData(mSphinx.getString(R.string.buy), mData.getDingdanCreateResponse().getUrl(), tip);
+                        mParentFragment.mSphinx.showView(R.id.view_browser);
+                    } else {
+                        ((TuangouDetailFragment) mParentFragment).isRequsetBuy = false;
+                        buy();
+                    }
                 }
                 break;
                 
@@ -693,27 +760,48 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
                 mActionLog.addAction(mActionTag +  ActionLog.TuangouDetailCustomService);
                 Utility.telephone(mSphinx, mServiceHotlineTxv);
                 break;
+                
+            case R.id.viewurl_txv:
+                BrowserActivity.setTuangou(mData);
+                Intent intent = new Intent();
+                intent.putExtra(BrowserActivity.TITLE, "title");
+                intent.putExtra(BrowserActivity.URL, mData.getUrl());
+                mSphinx.showView(R.id.activity_browser, intent);
+                break;
         }
     }
     
     void buy() {
+        buy(false);
+    }
+    
+    void buy(boolean hide) {
+        DataOperation dataOperation = makeDingdanQuery(mSphinx, mData, hide, mParentFragment.getId(), mParentFragment.getId());
+        if (dataOperation != null) {
+            mTKAsyncTasking = mSphinx.queryStart(dataOperation);
+            mBaseQuerying = mTKAsyncTasking.getBaseQueryList();
+        }
+    }
+    
+    public static DataOperation makeDingdanQuery(Activity activity, Tuangou tuangou, boolean hide, int sourceViewId, int targetViewId) {
+        DataOperation dataOperation = null;
         User user = Globals.g_User;
         if (user == null) {
-            return;
+            return dataOperation;
         }
         StringBuilder s = new StringBuilder();
         try {
             s.append(Util.byteToHexString(Dingdan.FIELD_UID));
             s.append(':');
-            s.append(URLEncoder.encode(mData.getGoodsId(), TKConfig.getEncoding()));
+            s.append(URLEncoder.encode(tuangou.getGoodsId(), TKConfig.getEncoding()));
             s.append(',');
             s.append(Util.byteToHexString(Dingdan.FIELD_PNAME));
             s.append(':');
-            s.append(URLEncoder.encode(mData.getName(), TKConfig.getEncoding()));
+            s.append(URLEncoder.encode(tuangou.getName(), TKConfig.getEncoding()));
             s.append(',');
             s.append(Util.byteToHexString(Dingdan.FIELD_SJ_ID));
             s.append(':');
-            s.append(mData.getSource());
+            s.append(tuangou.getSource());
             s.append(',');
             s.append(Util.byteToHexString(Dingdan.FIELD_TYPE));
             s.append(':');
@@ -723,14 +811,17 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
             e.printStackTrace();
         }
         if (s != null) {
-            DataOperation dataOperation = new DataOperation(mSphinx);
-            dataOperation.addParameter(DataOperation.SERVER_PARAMETER_DATA_TYPE, DataOperation.DATA_TYPE_DINGDAN);
-            dataOperation.addParameter(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_CREATE);
-            dataOperation.addParameter(DataOperation.SERVER_PARAMETER_ENTITY, s.toString());
-            dataOperation.setup(Globals.getCurrentCityInfo().getId(), mParentFragment.getId(), mParentFragment.getId(), mSphinx.getString(R.string.doing_and_wait));
-            mTKAsyncTasking = mSphinx.queryStart(dataOperation);
-            mBaseQuerying = mTKAsyncTasking.getBaseQueryList();
+            dataOperation = new DataOperation(activity);
+            dataOperation.addLocalParameter(DataOperation.SERVER_PARAMETER_DATA_TYPE, DataOperation.DATA_TYPE_DINGDAN);
+            dataOperation.addLocalParameter(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_CREATE);
+            dataOperation.addLocalParameter(DataOperation.SERVER_PARAMETER_ENTITY, s.toString());
+            if (hide) {
+                dataOperation.addLocalParameter(DataOperation.SERVER_PARAMETER_FLAG, DataOperation.FLAG_NOCREATE);
+            }
+            dataOperation.setup(Globals.getCurrentCityInfo().getId(), sourceViewId, targetViewId, hide ? null : activity.getString(R.string.doing_and_wait));
         }
+        
+        return dataOperation;
     }
 
     @Override
@@ -752,6 +843,7 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
                 return true;
             }
             DingdanCreateResponse dingdanCreateResponse = (DingdanCreateResponse) response;
+            if (false) {
             Intent intent = new Intent(); 
             intent.putExtra(BrowserActivity.TITLE, mSphinx.getString(R.string.buy));
             intent.putExtra(BrowserActivity.LEFT, mSphinx.getString(R.string.tuangou_detail));
@@ -761,6 +853,21 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
                 intent.putExtra(BrowserActivity.TIP, shangjia.getName());
             }
             mSphinx.showView(R.id.activity_browser, intent);
+            return true;
+            }
+            
+            mData.setDingdanCreateResponse(dingdanCreateResponse);
+            if (TextUtils.isEmpty(dataOperation.getTipText()) == false) {
+                String tip = null;
+                Shangjia shangjia = Shangjia.getShangjiaById(mData.getSource(), mSphinx, mLoadedDrawableRun);
+                if (shangjia != null) {
+                    tip = shangjia.getName();
+                }
+                mParentFragment.mSphinx.getBrowserFragment().setData(mSphinx.getString(R.string.buy), mData.getDingdanCreateResponse().getUrl(), tip);
+                mParentFragment.mSphinx.showView(R.id.view_browser);
+            } else {
+                mParentFragment.mSphinx.getBrowserFragment().setData(mSphinx.getString(R.string.buy), mData.getDingdanCreateResponse().getUrl(), null);
+            }
         } else if (BaseQuery.DATA_TYPE_TUANGOU.equals(dataType)) {
             if (BaseActivity.checkResponseCode(dataOperation, mSphinx, null, false, mParentFragment, false)) {
                 return true;

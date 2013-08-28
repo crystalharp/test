@@ -32,6 +32,15 @@
             android:layout_alignTop="@id/picture_imv"
             android:scaleType="fitXY"
             />
+	    <ImageView
+	        android:id="@+id/fast_purchase_imv"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/picture_imv"
+            android:layout_alignBottom="@id/picture_imv"
+	        android:src="@drawable/icon"
+	        android:background="@color/transparent"
+	        />
     </RelativeLayout>
     <TextView
         android:id="@+id/name_txv"
@@ -50,6 +59,15 @@
         android:lineSpacingExtra="2dp"
         android:includeFontPadding="false"
         android:focusable="false"
+        />
+    <ImageView
+        android:id="@+id/appointment_imv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/name_txv"
+        android:src="@drawable/icon"
+        android:background="@color/transparent"
         />
 
     <TextView

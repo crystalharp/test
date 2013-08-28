@@ -125,6 +125,7 @@ import com.tigerknows.share.TKWeixin;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.ui.BrowserActivity;
+import com.tigerknows.ui.BrowserFragment;
 import com.tigerknows.ui.HintActivity;
 import com.tigerknows.ui.MenuFragment;
 import com.tigerknows.ui.ResultMapFragment;
@@ -565,6 +566,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 
                 @Override
                 public void run() {
+        
+                    CalendarUtil.initExactTime(mContext);
 
                     Shangjia.readShangjiaList(Sphinx.this);
                     try {
@@ -898,8 +901,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         
         checkCitySupportDiscover(Globals.getCurrentCityInfo().getId());
         initWeibo(false, false);
-        
-        CalendarUtil.initExactTime(mContext);
 	}
 	
 	void resetShowInPreferZoom() {
@@ -2231,18 +2232,19 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 TKDrawable tkDrawable = hotel.getImageThumb();
                 if (tkDrawable != null) {
                     Drawable drawable = tkDrawable.loadDrawable(mThis, mLoadedDrawableRun, getResultMapFragment().toString());
+                    Drawable imageInfoWindow = hotel.getImageInfoWindow(); 
                     if(drawable != null) {
-                        Drawable imageInfoWindow = hotel.getImageInfoWindow(); 
                         if (imageInfoWindow == null) {
                             BitmapDrawable bm = (BitmapDrawable) drawable;
                             imageInfoWindow = new BitmapDrawable(bm.getBitmap());
                             hotel.setImageInfoWindow(imageInfoWindow);
                         }
-                        pictureImv.setBackgroundDrawable(imageInfoWindow);
                     }
                     
-                    if (hotel.getImageInfoWindow() == null) {
-                        pictureImv.setBackgroundResource(R.drawable.bg_picture_detail);
+                    if (imageInfoWindow == null) {
+                        pictureImv.setBackgroundResource(R.drawable.bg_picture_none);
+                    } else {
+                        pictureImv.setBackgroundDrawable(imageInfoWindow);
                     }
                     
                 } else {
@@ -3295,6 +3297,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     private MoreHomeFragment mMoreFragment;
     private GoCommentFragment mGoCommentFragment;
     private ResultMapFragment mResultMapFragment;
+    private BrowserFragment mBrowserFragment;
     private FavoriteFragment mFavoriteFragment;
     private HistoryFragment mHistoryFragment;
     private POIDetailFragment mPOIDetailFragment;
@@ -3347,6 +3350,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 
             case R.id.view_result_map:
                 baseFragment = getResultMapFragment();
+                break;
+                
+            case R.id.view_browser:
+                baseFragment = getBrowserFragment();
                 break;
                 
             case R.id.view_more_favorite:
@@ -3547,6 +3554,18 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 mResultMapFragment = resultMapFragment;
             }
             return mResultMapFragment;
+        }
+    }
+    
+    public BrowserFragment getBrowserFragment() {
+        synchronized (mUILock) {
+            if (mBrowserFragment == null) {
+                BrowserFragment fragment = new BrowserFragment(Sphinx.this);
+                fragment.setId(R.id.view_browser);
+                fragment.onCreate(null);
+                mBrowserFragment = fragment;
+            }
+            return mBrowserFragment;
         }
     }
     

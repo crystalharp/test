@@ -6,7 +6,9 @@ package com.tigerknows.ui;
 
 import java.net.URLDecoder;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Paint;
 import android.net.http.SslError;
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,14 +22,25 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.alipay.android.MobileSecurePayer;
 import com.alipay.android.MobileSecurePayHelper;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import android.widget.Toast;
+
+import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
+import com.tigerknows.model.BaseQuery;
+import com.tigerknows.model.DataOperation;
+import com.tigerknows.model.DataOperation.DingdanCreateResponse;
+import com.tigerknows.model.Response;
+import com.tigerknows.model.Tuangou;
+import com.tigerknows.ui.discover.TuangouDetailView;
 import com.tigerknows.ui.more.MoreHomeFragment;
+import com.tigerknows.ui.user.UserBaseActivity;
+import com.tigerknows.ui.user.UserLoginActivity;
 import com.tigerknows.util.Utility;
 
 /**
@@ -95,6 +108,37 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
     private Button mRefreshBtn;
     private Button mStopBtn;
     private String mURL;
+    
+    private View mButtonView = null;
+    
+    /**
+     * The bar view embeded in the details
+     */
+    private View mBarView = null;
+    
+    /**
+     * The price textView
+     */
+    private TextView mPriceTxv;
+    
+    /**
+     * The original price TextView
+     */
+    private TextView mOrgPriceTxv;
+    
+    /**
+     * The discount textView
+     */
+    private TextView mDiscountTxv;
+
+    /**
+     * Buy buton
+     */
+    private Button mBuyBtn = null;
+    
+    private static Tuangou sTuangou;
+    
+    private String mFinishedUrl;
    
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -133,6 +177,20 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
         if (TextUtils.isEmpty(tip) == false) {
             Toast.makeText(mThis, mThis.getString(R.string.going_to_, tip), Toast.LENGTH_LONG).show();
         }
+
+        Tuangou tuangou = sTuangou;
+        if (tuangou == null) {
+            mBarView.setVisibility(View.GONE);
+            mButtonView.setVisibility(View.VISIBLE);
+        } else {
+            mBarView.setVisibility(View.VISIBLE);
+            mButtonView.setVisibility(View.GONE);
+            
+            mPriceTxv.setText(tuangou.getPrice()+getString(R.string.rmb_text));
+            mOrgPriceTxv.setText(tuangou.getOrgPrice()+getString(R.string.rmb_text));
+            mOrgPriceTxv.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
+            mDiscountTxv.setText(tuangou.getDiscount());
+        }
         
         mBackBtn.setEnabled(false);
         mForwardtn.setEnabled(false);
@@ -152,6 +210,10 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
             public void onPageFinished(WebView view, String url) {
                 // 结束
                 super.onPageFinished(view, url);
+                if (mFinishedUrl == null || mFinishedUrl.equals(url)) {
+                    view.clearHistory();
+                }
+                mFinishedUrl = url;
                 mProgressBar.setVisibility(View.GONE);
                 mBackBtn.setEnabled(mWebWbv.canGoBack());
                 mForwardtn.setEnabled(mWebWbv.canGoForward());
@@ -210,6 +272,13 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
         mForwardtn = (Button)findViewById(R.id.forward_btn);
         mRefreshBtn = (Button)findViewById(R.id.refresh_btn);
         mStopBtn = (Button)findViewById(R.id.stop_btn);
+        mButtonView = findViewById(R.id.button_view);
+
+        mPriceTxv = (TextView)findViewById(R.id.price_txv);
+        mBarView = findViewById(R.id.bar_view);
+        mBuyBtn = (Button) findViewById(R.id.buy_btn);
+        mOrgPriceTxv = (TextView)findViewById(R.id.org_price_txv);
+        mDiscountTxv = (TextView) findViewById(R.id.discount_txv);
     }
     
     protected void setListener() {
@@ -218,6 +287,7 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
         mForwardtn.setOnClickListener(this);
         mRefreshBtn.setOnClickListener(this);
         mStopBtn.setOnClickListener(this);
+        mBuyBtn.setOnClickListener(this);
     }
 
     @Override
@@ -238,8 +308,19 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
             mWebWbv.reload();
         } else if (id == R.id.stop_btn) {
             mWebWbv.stopLoading();
+        } else if (id == R.id.buy_btn) {
+            buy();
         }
         
+    }
+    
+    public static void setTuangou(Tuangou tuangou) {
+        sTuangou = tuangou;
+    }
+
+    public void finish() {
+        sTuangou = null;
+        super.finish();
     }
 
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -251,5 +332,75 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
 
         return super.onKeyDown(keyCode, event);
     }
+    
+    void buy() {
+        Tuangou tuangou = sTuangou;
+        if (tuangou != null) {
+            if (tuangou.getUrl() != null) {
+                loadDiandan(tuangou.getUrl());
+            } else if (tuangou.getDingdanCreateResponse() != null) {
+                loadDiandan(tuangou.getDingdanCreateResponse().getUrl());
+            } else {
+                DataOperation dataOperation = TuangouDetailView.makeDingdanQuery(mThis, tuangou, false, mId, mId);
+                if (dataOperation != null) {
+                    queryStart(dataOperation);
+                } else {
+                    Intent intent = new Intent(mThis, UserLoginActivity.class);
+                    intent.putExtra(UserBaseActivity.SOURCE_VIEW_ID_LOGIN, mId);
+                    intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_SUCCESS, mId);
+                    intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_FAILED, mId);
+                    startActivityForResult(intent, R.id.activity_user_login);
+                }
+            }
+        }
+    }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        buy();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    public void onPostExecute(TKAsyncTask tkAsyncTask) {
+        super.onPostExecute(tkAsyncTask);
+        
+        Tuangou tuangou = sTuangou;
+        if (tuangou == null) {
+            return;
+        }
+        
+        final DataOperation dataOperation = (DataOperation)(tkAsyncTask.getBaseQuery());
+        if (BaseActivity.checkReLogin(dataOperation, mThis, false, mId, mId, mId, mCancelLoginListener, true)) {
+            isReLogin = true;
+            return;
+        }
+
+        final Response response = dataOperation.getResponse();
+        String dataType = dataOperation.getParameter(BaseQuery.SERVER_PARAMETER_DATA_TYPE);
+        if (BaseQuery.DATA_TYPE_DINGDAN.equals(dataType)) {
+            if (BaseActivity.checkResponseCode(dataOperation, mThis, null, true, this, false)) {
+                return;
+            }
+            DingdanCreateResponse dingdanCreateResponse = (DingdanCreateResponse) response;
+            
+            tuangou.setDingdanCreateResponse(dingdanCreateResponse);
+            
+            loadDiandan(dingdanCreateResponse.getUrl());
+        }
+    }
+    
+    void loadDiandan(String url) {
+        mFinishedUrl = null;
+        mWebWbv.clearHistory();
+        mWebWbv.loadUrl(url);
+        mButtonView.setVisibility(View.VISIBLE);
+        mBarView.setVisibility(View.GONE);
+    }
 }
