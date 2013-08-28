@@ -19,7 +19,7 @@
 
 typedef struct DiffData {
 	unsigned char label[3];
-	char command;//1 Ôö¼Ó 2 É¾³ý
+	char command;//1 ï¿½ï¿½ï¿½ï¿½ 2 É¾ï¿½ï¿½
 	short int count;
 } DiffData;
 
@@ -39,11 +39,11 @@ int mergefile(int citycode, char* suffix, char* filepath, int wordlen) {
     if (stat(filename, &buf) < 0) 
         return -1;
 	dfile_content = read_whole_file(filename, &dfilesize);
-	//É¾³ýdiffÎÄ¼þ
+	//É¾ï¿½ï¿½diffï¿½Ä¼ï¿½
     remove((char*)filename);
 	sprintf(filename,"%s/sw2_%d%s", filepath, citycode, suffix);
 	ofile_content = read_whole_file(filename, &ofilesize);
-	//É¾³ýÔ­´Ê¿âÎÄ¼þ
+	//É¾ï¿½ï¿½Ô­ï¿½Ê¿ï¿½ï¿½Ä¼ï¿½
     remove((char*)filename);
     newfp = fopen(filename, "wb");	
 	i = 0;
@@ -155,7 +155,7 @@ int tk_decompress(int citycode, char* filepath) {
 	char tz[2];
 	char chr;
 	unsigned int length_index, length_s, length_l, sov, snv;
-	unsigned int deflate_sz;//Ñ¹ËõÊý¾Ý¿éµÄ³¤¶È
+	unsigned int deflate_sz;//Ñ¹ï¿½ï¿½ï¿½ï¿½Ý¿ï¿½Ä³ï¿½ï¿½ï¿½
 	unsigned int filelen, actual;
 	int ret;
     unsigned int have, left;
@@ -190,7 +190,7 @@ int tk_decompress(int citycode, char* filepath) {
 	if (deflate_sz != (filelen - 28))
 		return 0;
 	sprintf(dstname,"%s/sw2_%d_index", filepath, citycode);
-    //É¾³ýÔ­´Ê¿âË÷ÒýÎÄ¼þ
+    //É¾ï¿½ï¿½Ô­ï¿½Ê¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½
     remove(dstname);
     if((dest = fopen(dstname, "wb")) <= 0)
 		return 0;
@@ -246,7 +246,7 @@ int tk_decompress(int citycode, char* filepath) {
 				if (sov == 0) {
 					if (expectedlen == length_index) {
 						sprintf(filename,"%s/sw2_%d_s", filepath, citycode);
-                        //Ö±½ÓÉ¾³ýÔ­´Ê¿âÎÄ¼þ
+                        //Ö±ï¿½ï¿½É¾ï¿½ï¿½Ô­ï¿½Ê¿ï¿½ï¿½Ä¼ï¿½
                         remove(filename);
 						if((dest = fopen(filename, "wb")) <= 0)
 		                    return 0;
@@ -254,7 +254,7 @@ int tk_decompress(int citycode, char* filepath) {
 					}
 					else if (expectedlen == length_index + length_s) {
 						sprintf(filename,"%s/sw2_%d_l", filepath, citycode);
-                        //Ö±½ÓÉ¾³ýÔ­´Ê¿âÎÄ¼þ
+                        //Ö±ï¿½ï¿½É¾ï¿½ï¿½Ô­ï¿½Ê¿ï¿½ï¿½Ä¼ï¿½
                         remove(filename);
 						if((dest = fopen(filename, "wb")) <= 0)
 		                    return 0;

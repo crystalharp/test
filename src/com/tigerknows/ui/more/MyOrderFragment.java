@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
+import com.decarta.Globals;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.common.ActionLog;
@@ -17,10 +18,12 @@ import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.Response;
 import com.tigerknows.model.Shangjia;
+import com.tigerknows.model.User;
 import com.tigerknows.model.DataQuery.ShangjiaResponse;
 import com.tigerknows.model.DataQuery.ShangjiaResponse.ShangjiaList;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.ui.BrowserActivity;
+import com.tigerknows.ui.user.UserBaseActivity;
 import com.tigerknows.util.Utility;
 
 public class MyOrderFragment extends BaseFragment{
@@ -114,17 +117,26 @@ public class MyOrderFragment extends BaseFragment{
 				public void onClick(View v) {
 					// mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position, shangjia.getName());
 					// TODO: 需要区分是否为快捷购买的商家，然后给予不同的跳转逻辑
-                    Intent intent = new Intent();
-                    intent.setClass(mSphinx, BrowserActivity.class);
-                    intent.putExtra(BrowserActivity.TITLE, mSphinx.getString(R.string.wodedingdan));
-                    intent.putExtra(BrowserActivity.LEFT, mSphinx.getString(R.string.tuangou_shop_list));
-                    intent.putExtra(BrowserActivity.URL, shangjia.getUrl());
-                    intent.putExtra(BrowserActivity.TIP, shangjia.getName());
-                    mSphinx.startActivity(intent);
+	                User user = Globals.g_User;
+	                if (user != null && shangjia.getFastPurchase() == 0) {
+	                	Intent intent = new Intent();
+	                	intent.putExtra(UserBaseActivity.SOURCE_VIEW_ID_LOGIN, getId());
+	                	intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_SUCCESS, R.id.activity_browser);
+	                	intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_FAILED, getId());
+	                	mSphinx.showView(R.id.activity_user_login, intent);
+	                } else {
+	                	Intent intent = new Intent();
+	                	intent.setClass(mSphinx, BrowserActivity.class);
+	                	intent.putExtra(BrowserActivity.TITLE, mSphinx.getString(R.string.wodedingdan));
+	                	intent.putExtra(BrowserActivity.LEFT, mSphinx.getString(R.string.tuangou_shop_list));
+	                	intent.putExtra(BrowserActivity.URL, shangjia.getUrl());
+	                	intent.putExtra(BrowserActivity.TIP, shangjia.getName());
+	                	mSphinx.startActivity(intent);
+	                }
+
 				}
 			});
     		mTuangouDingdanLly.addView(btn);
     	}
-
     }
 }
