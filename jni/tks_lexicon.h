@@ -14,18 +14,18 @@ typedef struct Index {
 //  0  0  0  0  0  0  0  0
 // |    reserved    | type |   
 typedef struct SWord {
-	char key[12];               //ÁªÏë´ÊÃû³Æ
-	unsigned short int wordInfo;    //ÀàÐÍ¡¢ÊÇ·ñÓÐ¾­Î³¶È
+	char key[12];               //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	unsigned short int wordInfo;    //ï¿½ï¿½ï¿½Í¡ï¿½ï¿½Ç·ï¿½ï¿½Ð¾ï¿½Î³ï¿½ï¿½
 	unsigned short int rank;
-	float lon;                  //¾­Î³¶È
+	float lon;                  //ï¿½ï¿½Î³ï¿½ï¿½
 	float lat;  
 } SWord;
 
 typedef struct LWord {
-	char key[24];               //ÁªÏë´ÊÃû³Æ
-	unsigned short int wordInfo;    //ÀàÐÍ¡¢ÊÇ·ñÓÐ¾­Î³¶È
+	char key[24];               //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	unsigned short int wordInfo;    //ï¿½ï¿½ï¿½Í¡ï¿½ï¿½Ç·ï¿½ï¿½Ð¾ï¿½Î³ï¿½ï¿½
 	unsigned short int rank;
-	float lon;                  //¾­Î³¶È
+	float lon;                  //ï¿½ï¿½Î³ï¿½ï¿½
 	float lat; 
 } LWord;
 
