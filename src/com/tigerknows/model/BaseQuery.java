@@ -420,6 +420,8 @@ public abstract class BaseQuery {
     
     protected String version;
     
+    protected String actionTag;
+    
     protected int cityId = MapEngine.CITY_ID_BEIJING;
 
     protected int sourceViewId = -1;
@@ -620,7 +622,6 @@ public abstract class BaseQuery {
     
     protected void createHttpClient(boolean needEncrypt) {
         httpClient = new HttpUtils.TKHttpClient();
-        httpClient.setApiType(apiType);
         httpClient.setIsEncrypt(needEncrypt);
         httpClient.setParameters(requestParameters);
     }
@@ -633,6 +634,7 @@ public abstract class BaseQuery {
 
         while ((isFirstConnection || needReconntection) && !isStop) {
             try {
+                httpClient.setApiType(getActionTag());
                 boolean isLaunchTest = false;
                 if (TKConfig.LaunchTest) {
                     if (apiType.equals(API_TYPE_DATA_QUERY)
@@ -706,6 +708,11 @@ public abstract class BaseQuery {
                     }
                 } else if (API_TYPE_BOOTSTRAP.equals(apiType)) {
                     bootstrapRetryTime++;
+                    try {
+                        Thread.sleep(6*1000);
+                    } catch (InterruptedException e1) {
+                        e1.printStackTrace();
+                    }
                     if (bootstrapRetryTime < BOOTSTRAP_RETRY_TIME_MAX) {
                         createHttpClient();
                         continue;
@@ -1152,5 +1159,40 @@ public abstract class BaseQuery {
             
             return buf.substring(0, buf.length() - 1);
         }
+    }
+    
+    String getActionTag() {
+        StringBuilder s = new StringBuilder();
+        s.append(apiType);
+        s.append('@');
+        if (criteria != null) {
+            if (criteria.containsKey(SERVER_PARAMETER_DATA_TYPE)) {
+                s.append(criteria.get(SERVER_PARAMETER_DATA_TYPE));
+            }
+            s.append('@');
+            if (criteria.containsKey(SERVER_PARAMETER_SUB_DATA_TYPE)) {
+                s.append(criteria.get(SERVER_PARAMETER_SUB_DATA_TYPE));
+            }
+            s.append('@');
+            if (criteria.containsKey(FeedbackUpload.SERVER_PARAMETER_FEEDBACK)) {
+                s.append(FeedbackUpload.SERVER_PARAMETER_FEEDBACK);
+            } else if (criteria.containsKey(FeedbackUpload.SERVER_PARAMETER_ACTION_LOG)) {
+                s.append(FeedbackUpload.SERVER_PARAMETER_ACTION_LOG);
+            } else if (criteria.containsKey(FeedbackUpload.SERVER_PARAMETER_LOCATION)) {
+                s.append(FeedbackUpload.SERVER_PARAMETER_LOCATION);
+            } else if (criteria.containsKey(FeedbackUpload.SERVER_PARAMETER_LOCATION_IN_ANDROID)) {
+                s.append(FeedbackUpload.SERVER_PARAMETER_LOCATION_IN_ANDROID);
+            } else if (criteria.containsKey(FeedbackUpload.SERVER_PARAMETER_ERROR_RECOVERY)) {
+                s.append(FeedbackUpload.SERVER_PARAMETER_ERROR_RECOVERY);
+            }
+            s.append('@');
+            if (criteria.containsKey(SERVER_PARAMETER_REQUSET_SOURCE_TYPE)) {
+                s.append(criteria.get(SERVER_PARAMETER_REQUSET_SOURCE_TYPE));
+            }
+            s.append('@');
+        } else {
+            s.append("@@@@");
+        }
+        return s.toString();
     }
 }

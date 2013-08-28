@@ -184,7 +184,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         
         mRootView = mLayoutInflater.inflate(R.layout.more_home, container, false);
     	mRightBtn = mSphinx.getTitleFragment().getRightTxv();
-        findViews();        
+        findViews();
 
         setListener();
         
@@ -433,9 +433,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     		drawables[2] = mContext.getResources().getDrawable(R.drawable.ic_go_comment_new);
     		int w = drawables[2].getIntrinsicWidth();
     		int h = drawables[2].getIntrinsicHeight();
-    		int max = Utility.dip2px(mContext, 28);
-    		int ww = (w > max)?max:w;
-    		drawables[2].setBounds(0, 0, ww, (int)(h*ww/w));
+    		drawables[2].setBounds(0, 0, w, h);
     		mGoCommentBtn.setCompoundDrawables(drawables[0], drawables[1], drawables[2], drawables[3]);
     		mGoCommentBtn.setCompoundDrawablePadding(Utility.dip2px(mContext, 20));
     	}else{
@@ -640,22 +638,11 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         if (viewMap.containsKey(position)) {
             return viewMap.get(position);
         }
-        int noticeLayoutType = 0;
         String title = notice.getNoticeTitle();
         String description = notice.getDescription();
-        String picUrl = notice.getPicUrl();
         int pd8 = Utility.dip2px(mContext, 8);
         int pd2 = Utility.dip2px(mContext, 2);
-        if(title != null && !TextUtils.isEmpty(title)){
-        	noticeLayoutType += 1;
-        }
-        if(picUrl != null && !TextUtils.isEmpty(picUrl)){
-        	noticeLayoutType += 2;
-        }
-        if(description != null && !TextUtils.isEmpty(description)){
-        	noticeLayoutType += 4;
-        }
-        switch(noticeLayoutType){
+        switch(notice.getLocalLayoutType()){
         case 1:
         	Button button1 = new Button(mSphinx);
         	button1.setText(title);
@@ -687,7 +674,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         	descriptionTxv5.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
         	descriptionTxv5.setPadding(pd8, 0, pd8, 0);
         	descriptionTxv5.setTextSize(14);
-        	descriptionTxv5.setTextColor(getResources().getColor(R.color.black_dark));
+        	descriptionTxv5.setTextColor(getResources().getColor(R.color.black_light));
         	descriptionTxv5.setSingleLine(true);
         	descriptionTxv5.setText(description);
         	linearLayout5.addView(titleTxv5);
@@ -700,7 +687,11 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         	linearLayout3.setOrientation(HORIZONTAL);
         	linearLayout3.setBackgroundResource(R.drawable.btn_notice);
         	linearLayout3.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
-        	refreshDrawable(notice.getpicTkDrawable(), imageView3, R.drawable.bg_picture_none, false);
+        	if(notice.getLocalType() == 1){
+        		imageView3.setBackgroundResource(R.drawable.ic_soft_update);
+        	}else{
+        		refreshDrawable(notice.getpicTkDrawable(), imageView3, R.drawable.bg_picture_none, false);
+        	}
         	LinearLayout.LayoutParams layoutParams3 = new LayoutParams(Utility.dip2px(mContext, 48), Utility.dip2px(mContext, 48));
         	layoutParams3.setMargins(Utility.dip2px(mContext, 16), 0, 0, 0);
         	layoutParams3.gravity = Gravity.CENTER_VERTICAL;
@@ -744,7 +735,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         	TextView descriptionTxv7 = new TextView(mSphinx);
         	descriptionTxv7.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
         	descriptionTxv7.setTextSize(14);
-        	descriptionTxv7.setTextColor(getResources().getColor(R.color.black_dark));
+        	descriptionTxv7.setTextColor(getResources().getColor(R.color.black_light));
         	descriptionTxv7.setSingleLine(true);
         	descriptionTxv7.setText(description);
         	descriptionTxv7.setPadding(Utility.dip2px(mContext, 26), 0, pd8, 0);
