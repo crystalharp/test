@@ -301,6 +301,8 @@
     <string name="traffic_noneed_transfer">无需换乘, 步行可达</string>
     <string name="or">或</string>
     <string name="accross">经过%1$s</string>
+    <string name="traffic_enter_subway">，{%1$s}进站</string>
+    <string name="traffic_exit_subway">，{%1$s}出站</string>
     
     <string name="length_str_title">全程\u0020:\u0020%1$s</string>
     <string name="time_str_title">时间\u0020:\u0020%1$s</string>

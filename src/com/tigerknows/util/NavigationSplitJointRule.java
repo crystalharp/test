@@ -9,6 +9,7 @@ import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import com.tigerknows.R;
+import com.tigerknows.model.TrafficModel;
 import com.tigerknows.model.TrafficQuery;
 import com.tigerknows.model.TrafficModel.Plan;
 import com.tigerknows.model.TrafficModel.Plan.Step;
@@ -110,6 +111,9 @@ public class NavigationSplitJointRule {
                     str = context.getString(R.string.set_off_from_start);
                 }
                 
+                if (step.getSubwayEntrance() != null) {
+                    str += context.getString(R.string.traffic_enter_subway, step.getSubwayEntrance());
+                }
             } else {
                 
                 if (previousStep != null && previousStep.getType() == Step.TYPE_TRANSFER) {
@@ -131,12 +135,16 @@ public class NavigationSplitJointRule {
             
         } else if (Step.TYPE_TRANSFER == step.getType()) {
             int stopNumber = Math.abs(step.getTransferStopNumber()+1);
-            if(stopNumber >= 2)
+            if(stopNumber >= 2) {
                 str = context.getString(R.string.traffic_at_where_by_what_to_where_previous, step.getTransferUpStopName(), step.getTransferLineName(), stopNumber
                     , step.getTransferDownStopName(), step.getTransferPreviousStopName());
-            else
+            } else {
                 str = context.getString(R.string.traffic_at_where_by_what_to_where, step.getTransferUpStopName(), step.getTransferLineName(), stopNumber
                         , step.getTransferDownStopName());
+            }
+            if (step.getLineType() == Step.TYPE_LINE_SUBWAY && step.getSubwayEntrance() != null) {
+                str += context.getString(R.string.traffic_exit_subway, step.getSubwayEntrance());
+            }
         } 
 
         return braceTextRender(context, str);
