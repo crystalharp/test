@@ -262,7 +262,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 				@Override
 				public void onClick(View v) {
 					final int len = mRecommendAppList.size();
-					if(position > len)return;
+					if(position >= len)return;
 	                final RecommendApp recommendApp = mRecommendAppList.get(position);
 	                if (recommendApp != null) {
 	                    mActionLog.addAction(mActionTag + ActionLog.MoreAppDownload, position, recommendApp.getName());
