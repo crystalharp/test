@@ -649,21 +649,21 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         float titleTextSize = 16;
         float descTextSize = titleTextSize - 2;
         float layoutMargin = (notice.getLocalType() == 1) ? 4 : 16;
-        float drawablePadding = (notice.getLocalType() == 1) ? 2 : titleTextSize;
+        float drawablePadding = (notice.getLocalType() == 1) ? 4 : titleTextSize;
         int textView_px = screen_px - Utility.dip2px(mContext, layoutMargin + 16 + 16 + 48);
         float textView_dp = Utility.px2dip(mContext, textView_px);
         LogWrapper.d("Trap", textView_dp+"");
         if(title != null && !TextUtils.isEmpty(title)){
         	while(titleTextSize* ByteUtil.getCharArrayLength(title)/2 + drawablePadding > textView_dp + .5){
         		titleTextSize -= 1;
-        		drawablePadding = (notice.getLocalType() == 1) ? 2 : titleTextSize;
+        		drawablePadding = (notice.getLocalType() == 1) ? 4 : titleTextSize;
         	}
         	descTextSize = titleTextSize - 2;
         	if(description != null && !TextUtils.isEmpty(description)){
         		while(descTextSize* ByteUtil.getCharArrayLength(description)/2 + drawablePadding > textView_dp + .5){
         			titleTextSize --;
         			descTextSize --;
-        			drawablePadding = (notice.getLocalType() == 1) ? 2 : titleTextSize;
+        			drawablePadding = (notice.getLocalType() == 1) ? 4 : titleTextSize;
         		}
         	}
         }
