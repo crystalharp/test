@@ -565,6 +565,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 
                 @Override
                 public void run() {
+        
+                    CalendarUtil.initExactTime(mContext);
 
                     Shangjia.readShangjiaList(Sphinx.this);
                     try {
@@ -900,8 +902,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         
         checkCitySupportDiscover(Globals.getCurrentCityInfo().getId());
         initWeibo(false, false);
-        
-        CalendarUtil.initExactTime(mContext);
 	}
 	
 	void resetShowInPreferZoom() {

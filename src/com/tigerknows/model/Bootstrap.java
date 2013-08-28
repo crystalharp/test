@@ -47,8 +47,6 @@ public final class Bootstrap extends BaseQuery {
     protected void makeRequestParameters() throws APIException {
         super.makeRequestParameters();
         addCommonParameters(requestParameters);
-        // TODO 这个参数必须要，那怕是空？！
-        requestParameters.add("fe", "");
         addParameter(SERVER_PARAMETER_FIRST_LOGIN, false);
     }
 
