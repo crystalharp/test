@@ -307,6 +307,9 @@ public class Shangjia extends BaseData implements Parcelable {
                 for(Shangjia shangjia : shangjiaList) {
                     shangjia.data.remove(FIELD_MESSAGE);
                     shangjia.data.remove(FIELD_LOGO);
+                    if (shangjia.fastPurchase != 1) {
+                        shangjia.data.remove(FIELD_URL);
+                    }
                     xarray.add(shangjia.data);
                 }
                 String path = TKConfig.getDataPath(false) + "ShangjiaList";
