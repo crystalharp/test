@@ -1,5 +1,6 @@
 package com.tigerknows.ui.more;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Intent;
@@ -13,6 +14,7 @@ import android.widget.LinearLayout;
 import com.decarta.Globals;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataQuery;
@@ -35,9 +37,10 @@ public class MyOrderFragment extends BaseFragment{
 	private LinearLayout mTuangouDingdanLly;
 	private Button mHotelOrderBtn;
 	
-	private List<Shangjia> mResultList;
+	private List<Shangjia> mResultList = new ArrayList<Shangjia>();
 	private String sessionId;
 	private DataQuery mDataQuery;
+	private Shangjia mRequestLogin = null;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState){
@@ -76,29 +79,23 @@ public class MyOrderFragment extends BaseFragment{
 	@Override
 	public void onResume() {
 		super.onResume();
+		List<Shangjia> list = Shangjia.getShangjiaList();
+		if (list.size() != mResultList.size()) {
+		    mResultList.clear();
+		    mResultList.addAll(list);
+		    createShangjiaListView();
+		}
+		
+		if (mRequestLogin != null) {
+		    if (Globals.g_User != null) {
+		        requestUrl(mRequestLogin);
+		    }
+		    mRequestLogin = null;
+		}
 	}
-
-    private void setData(DataQuery dataQuery) {
-        mResultList.clear();
-        Response response = dataQuery.getResponse();
-        ShangjiaResponse shangjiaResponse = (ShangjiaResponse)response;
-        ShangjiaList shangjiaList = shangjiaResponse.getList();
-        if (shangjiaList != null) {
-            List<Shangjia> shangjiaArrayList = shangjiaList.getList();
-            if (shangjiaArrayList != null && shangjiaArrayList.size() > 0) {
-                mDataQuery = dataQuery;
-                mDataQuery.setParameter(BaseQuery.SERVER_PARAMETER_SESSION_ID, sessionId);
-                mResultList.addAll(shangjiaArrayList);
-                createShangjiaListView();
-            }
-        }
-        
-        if (mResultList.isEmpty()) {
-            dismiss();
-        }
-    }
     
     protected void createShangjiaListView(){
+        mTuangouDingdanLly.removeAllViews();
     	for(int i=0; i<mResultList.size(); i++){
     		final Button btn = new Button(mContext);
     		final Shangjia shangjia = mResultList.get(i);
@@ -116,22 +113,23 @@ public class MyOrderFragment extends BaseFragment{
 				@Override
 				public void onClick(View v) {
 					// mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position, shangjia.getName());
-					// TODO: 需要区分是否为快捷购买的商家，然后给予不同的跳转逻辑
-	                User user = Globals.g_User;
-	                if (user != null && shangjia.getFastPurchase() == 0) {
+	                if (shangjia.getUrl() != null) {
+                        Intent intent = new Intent();
+                        intent.setClass(mSphinx, BrowserActivity.class);
+                        intent.putExtra(BrowserActivity.TITLE, mSphinx.getString(R.string.wodedingdan));
+                        intent.putExtra(BrowserActivity.LEFT, mSphinx.getString(R.string.tuangou_shop_list));
+                        intent.putExtra(BrowserActivity.URL, shangjia.getUrl());
+                        intent.putExtra(BrowserActivity.TIP, shangjia.getName());
+                        mSphinx.startActivity(intent);
+	                } else if (shangjia.getFastPurchase() == 1 || (Globals.g_User != null)) {
+	                    requestUrl(shangjia);
+	                } else {
+	                    mRequestLogin = shangjia;
 	                	Intent intent = new Intent();
 	                	intent.putExtra(UserBaseActivity.SOURCE_VIEW_ID_LOGIN, getId());
-	                	intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_SUCCESS, R.id.activity_browser);
+	                	intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_SUCCESS, getId());
 	                	intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_FAILED, getId());
 	                	mSphinx.showView(R.id.activity_user_login, intent);
-	                } else {
-	                	Intent intent = new Intent();
-	                	intent.setClass(mSphinx, BrowserActivity.class);
-	                	intent.putExtra(BrowserActivity.TITLE, mSphinx.getString(R.string.wodedingdan));
-	                	intent.putExtra(BrowserActivity.LEFT, mSphinx.getString(R.string.tuangou_shop_list));
-	                	intent.putExtra(BrowserActivity.URL, shangjia.getUrl());
-	                	intent.putExtra(BrowserActivity.TIP, shangjia.getName());
-	                	mSphinx.startActivity(intent);
 	                }
 
 				}
@@ -139,4 +137,25 @@ public class MyOrderFragment extends BaseFragment{
     		mTuangouDingdanLly.addView(btn);
     	}
     }
+    
+    void requestUrl(Shangjia shangjia) {
+        DataQuery dataQuery = new DataQuery(mSphinx);
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_SHANGJIA);
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_SHANGJIA_IDS, String.valueOf(shangjia.getId()));
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_NEED_FIELD, Shangjia.NEED_FIELD_ONLY_URL);
+        mSphinx.queryStart(dataQuery);
+    }
+
+    @Override
+    public void onCancelled(TKAsyncTask tkAsyncTask) {
+        // TODO Auto-generated method stub
+        super.onCancelled(tkAsyncTask);
+    }
+
+    @Override
+    public void onPostExecute(TKAsyncTask tkAsyncTask) {
+        super.onPostExecute(tkAsyncTask);
+        
+    }
+    
 }

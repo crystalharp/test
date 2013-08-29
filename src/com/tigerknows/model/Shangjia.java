@@ -38,7 +38,9 @@ public class Shangjia extends BaseData implements Parcelable {
     
     public static final String NEED_FIELD = "1f7071727374757677";
     
-    public static final String NEED_FIELD_NO_LOGON = "1f7071757677";
+    public static final String NEED_FIELD_NO_LOGON = "1f70717374757677";
+    
+    public static final String NEED_FIELD_ONLY_URL = "72";
     
     // 测试 999
     public static final int SOURCE_TEST = 999;
