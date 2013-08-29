@@ -171,7 +171,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         if (lastDataQuerying.getSourceViewId() != getId()) {
             mDataQuery = null;
             mFilterControlView.setVisibility(View.GONE);
-            mLocationTxv.setVisibility(View.GONE);
+            mAPOI = null;
             mFilterList.clear();
         }
 
@@ -225,8 +225,10 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     
     protected void findViews() {
         mFilterControlView = (ViewGroup)mRootView.findViewById(R.id.filter_control_view);
-        mLocationTxv = (TextView) mRootView.findViewById(R.id.location_txv);
         mResultLsv = (SpringbackListView)mRootView.findViewById(R.id.result_lsv);
+        View nearbySearchBarView = mLayoutInflater.inflate(R.layout.poi_nearby_search_bar, null);
+        mResultLsv.addHeaderView(nearbySearchBarView, false);
+        mLocationTxv = (TextView) nearbySearchBarView.findViewById(R.id.location_txv);
         mLoadingView = mLayoutInflater.inflate(R.layout.loading, null);
         mResultLsv.addFooterView(mLoadingView);
         mCurrentFootView = mLoadingView;
@@ -447,6 +449,12 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             }
             mAddMerchantView.setVisibility(View.GONE);
             
+            if (mAPOI != null) {
+                this.mResultLsv.changeHeaderViewByState(true, SpringbackListView.PULL_TO_REFRESH);
+                this.mLocationTxv.setText(this.mAPOI.getName());
+            } else {
+                this.mResultLsv.changeHeaderViewByState(true, SpringbackListView.DONE);
+            }
         }
         refreshResultTitleText(null);
     }

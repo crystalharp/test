@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root_view"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center"
+    >
+    <TextView 
+        android:id="@+id/location_txv"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:drawableLeft="@drawable/ic_mylocation_poi_result"
+        android:drawablePadding="8dp"
+        android:background="@color/white"
+        android:text="@string/app_name"
+        android:textColor="@color/black_dark"
+        android:visibility="visible"/>
+</LinearLayout>

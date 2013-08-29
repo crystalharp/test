@@ -539,6 +539,7 @@ public final class DataQuery extends BaseQuery {
         if (DATA_TYPE_POI.equals(dataType)) {     
             String subDataType = getParameter(SERVER_PARAMETER_SUB_DATA_TYPE);
             ekeys = Utility.mergeArray(ekeys, new String[]{SERVER_PARAMETER_SUB_DATA_TYPE});
+            okeys = Utility.mergeArray(okeys, positionKeys);
             if (SUB_DATA_TYPE_POI.equals(subDataType)) {
                 if (!hasParameter(SERVER_PARAMETER_ID_LIST)) {
                     ekeys = Utility.mergeArray(ekeys, new String[]{SERVER_PARAMETER_NEED_FIELD, SERVER_PARAMETER_COMMENT_VERSION});

@@ -53,7 +53,7 @@ public class SpringbackListView extends ListView {
     private boolean isRecoredHeader = false; 
     private boolean isRecoredFooter = false;   
   
-    private int headerContentHeight;  
+    private int headerContentHeight = 0;  
   
     private int footerContentHeight = 0;  
     
@@ -77,19 +77,24 @@ public class SpringbackListView extends ListView {
         super(context, attrs);  
         MaxSpace = Globals.g_metrics.heightPixels/2;
     }  
-      
+    
     @Override
     public void addHeaderView(View v) {
-        headerView = v;
+        this.addHeaderView(v, true);
+    }
+      
+    public void addHeaderView(View v, boolean headerSpringback) {
+        this.headerView = v;
+        this.headerSpringback = headerSpringback;
+        super.addHeaderView(this.headerView);
         measureView(headerView);  
-  
+        headerView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
         headerContentHeight = headerView.getMeasuredHeight();  
-  
         headerView.setPadding(0, 0, 0, 0);  
+        if (this.headerSpringback) {
+            headerView.setPadding(0, -1 * headerContentHeight, 0, 0);  
+        }
         headerView.invalidate();  
-  
-        super.addHeaderView(headerView);
-        headerSpringback = true;
     }
     
     @Override
@@ -102,13 +107,12 @@ public class SpringbackListView extends ListView {
         this.footerSpringback = footerSpringback;
         this.normalFooterView = !footerSpringback;
         super.addFooterView(footerView); 
+        measureView(footerView);
+        footerView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        footerContentHeight = footerView.getMeasuredHeight();  
+        footerView.setPadding(0, 0, 0, 0);
         if (this.footerSpringback) {
-            measureView(footerView);
-            footerView.setPadding(0, 0, 0, 0);
-            footerView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-            footerContentHeight = footerView.getMeasuredHeight();  
             footerView.setPadding(0, -1 * footerContentHeight, 0, 0);  
-            footerView.invalidate();  
             iconImv = (ImageView)footerView.findViewById(R.id.icon_imv);
             footerLoadintTxv = (TextView)footerView.findViewById(R.id.loading_txv);
             footerProgressBar = (ProgressBar)footerView.findViewById(R.id.progress_prb);
@@ -123,6 +127,7 @@ public class SpringbackListView extends ListView {
                 }
             });
         }
+        footerView.invalidate();  
     }
   
     public boolean onTouchEvent(MotionEvent event) {
