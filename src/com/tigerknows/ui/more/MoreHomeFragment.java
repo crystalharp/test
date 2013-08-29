@@ -691,7 +691,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         	linearLayout5.setGravity(Gravity.CENTER_HORIZONTAL);
         	TextView titleTxv5 = new TextView(mSphinx);
         	titleTxv5.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-        	titleTxv5.setPadding(pd8, pd2, pd8, 0);
+        	titleTxv5.setPadding(pd8, 2 * Utility.dip2px(mContext, 17 - titleTextSize), pd8, 0);
         	titleTxv5.setTextSize(16);
         	titleTxv5.setTextColor(getResources().getColor(R.color.black_dark));
         	titleTxv5.setSingleLine(true);
@@ -757,7 +757,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         	titleTxv7.setTextColor(getResources().getColor(R.color.black_dark));
         	titleTxv7.setSingleLine(true);
         	titleTxv7.setText(title);
-        	titleTxv7.setPadding(Utility.dip2px(mContext, drawablePadding), pd2, pd8*2, 0);
+        	titleTxv7.setPadding(Utility.dip2px(mContext, drawablePadding), 2 * Utility.dip2px(mContext, 17 - titleTextSize), pd8*2, 0);
         	TextView descriptionTxv7 = new TextView(mSphinx);
         	descriptionTxv7.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
         	descriptionTxv7.setTextSize(descTextSize);
