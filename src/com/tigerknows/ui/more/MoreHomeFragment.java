@@ -556,7 +556,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     private void refreshAppRecommendDrawable(){
     	final int len = Math.min(mRecommendAppList.size(), NUM_APP_RECOMMEND);
     	for (int i=0; i<NUM_APP_RECOMMEND && i<len; i++){
-    		refreshDrawable(mRecommendAppList.get(i).getIcon(), mAppRecommendImv[i], R.drawable.bg_picture_none, true);
+    		refreshDrawable(mRecommendAppList.get(i).getIcon(), mAppRecommendImv[i], R.drawable.bg_picture_small, true);
     		mAppRecommendTxv[i].setText(mRecommendAppList.get(i).getName());
     	}
     }

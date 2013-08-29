@@ -12,6 +12,7 @@ import com.tigerknows.model.FeedbackUpload;
 import com.tigerknows.util.Utility;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -117,8 +118,12 @@ public class LogUpload {
                 	file.createNewFile();
                 }
                 FileInputStream fis = new FileInputStream(file);
-                final String log = Utility.readFile(fis)+getLogOutToken();
+                String logText = Utility.readFile(fis);
                 fis.close();
+                if (TextUtils.isEmpty(logText)) {
+                    return;
+                }
+                final String log = logText + getLogOutToken();
                 
                 if (canUpload()) {
                     new Thread(new Runnable() {
