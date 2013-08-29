@@ -76,10 +76,14 @@ public class ExtraSubwayPOI extends DynamicPOIView {
             String timeDetail = "";
             for (PresetTime ptime : time.getPresetTimes()) {
                 timeDetail += ptime.getDirection();
-                timeDetail += "\t";
-                timeDetail += ptime.getStartTime();
-                timeDetail += "-";
-                timeDetail += ptime.getEndTime();
+                timeDetail += "  ";
+                if (ptime.getStartTime() != null || ptime.getEndTime() != null) {
+                    timeDetail += ptime.getStartTime();
+                    timeDetail += "-";
+                    timeDetail += ptime.getEndTime();
+                } else {
+                    timeDetail += mSphinx.getString(R.string.subway_no_time_info);
+                }
                 timeDetail += "\n";
             }
             timeDetail = timeDetail.substring(0, timeDetail.length() - 1);
