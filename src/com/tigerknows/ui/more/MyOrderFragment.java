@@ -5,6 +5,7 @@ import java.util.List;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,7 @@ import com.tigerknows.model.Shangjia;
 import com.tigerknows.model.User;
 import com.tigerknows.model.DataQuery.ShangjiaResponse;
 import com.tigerknows.model.DataQuery.ShangjiaResponse.ShangjiaList;
+import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.ui.BrowserActivity;
 import com.tigerknows.ui.user.UserBaseActivity;
@@ -113,14 +115,8 @@ public class MyOrderFragment extends BaseFragment{
 				@Override
 				public void onClick(View v) {
 					// mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position, shangjia.getName());
-	                if (shangjia.getUrl() != null) {
-                        Intent intent = new Intent();
-                        intent.setClass(mSphinx, BrowserActivity.class);
-                        intent.putExtra(BrowserActivity.TITLE, mSphinx.getString(R.string.wodedingdan));
-                        intent.putExtra(BrowserActivity.LEFT, mSphinx.getString(R.string.tuangou_shop_list));
-                        intent.putExtra(BrowserActivity.URL, shangjia.getUrl());
-                        intent.putExtra(BrowserActivity.TIP, shangjia.getName());
-                        mSphinx.startActivity(intent);
+	                if (shangjia.getUrl()!= null && !TextUtils.isEmpty(shangjia.getUrl())) {
+	                	startShangjia(shangjia);
 	                } else if (shangjia.getFastPurchase() == 1 || (Globals.g_User != null)) {
 	                    requestUrl(shangjia);
 	                } else {
@@ -131,18 +127,27 @@ public class MyOrderFragment extends BaseFragment{
 	                	intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_FAILED, getId());
 	                	mSphinx.showView(R.id.activity_user_login, intent);
 	                }
-
 				}
 			});
     		mTuangouDingdanLly.addView(btn);
     	}
     }
-    
-    void requestUrl(Shangjia shangjia) {
+    private void startShangjia(Shangjia shangjia){
+    	
+        Intent intent = new Intent();
+        intent.setClass(mSphinx, BrowserActivity.class);
+        intent.putExtra(BrowserActivity.TITLE, mSphinx.getString(R.string.wodedingdan));
+        intent.putExtra(BrowserActivity.LEFT, mSphinx.getString(R.string.tuangou_shop_list));
+        intent.putExtra(BrowserActivity.URL, shangjia.getUrl());
+        intent.putExtra(BrowserActivity.TIP, shangjia.getName());
+        mSphinx.startActivity(intent);
+    }
+    private void requestUrl(Shangjia shangjia) {
         DataQuery dataQuery = new DataQuery(mSphinx);
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_SHANGJIA);
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_SHANGJIA_IDS, String.valueOf(shangjia.getId()));
-        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_NEED_FIELD, Shangjia.NEED_FIELD_ONLY_URL);
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_NEED_FIELD, Shangjia.NEED_FIELD);
+        dataQuery.setup(Globals.getCurrentCityInfo().getId(), getId(), getId(), mSphinx.getString(R.string.doing_and_wait));
         mSphinx.queryStart(dataQuery);
     }
 
@@ -155,7 +160,32 @@ public class MyOrderFragment extends BaseFragment{
     @Override
     public void onPostExecute(TKAsyncTask tkAsyncTask) {
         super.onPostExecute(tkAsyncTask);
-        
+        BaseQuery baseQuery = tkAsyncTask.getBaseQuery();
+        if (baseQuery.isStop()){
+        	return;
+        }
+        if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), getId(), getId(), getId(), mCancelLoginListener)){
+        	isReLogin = true;
+        	return;
+        } else if(BaseActivity.checkResponseCode(baseQuery, mSphinx, null, false, MyOrderFragment.this, false)){
+        	return;
+        }
+        Response response = baseQuery.getResponse();
+        ShangjiaResponse shangjiaResponse = null;
+        if (response instanceof ShangjiaResponse) {
+        	shangjiaResponse = (ShangjiaResponse) response;
+        }else{
+        	return;
+        }
+        if(Response.RESPONSE_CODE_OK != response.getResponseCode()){
+        	return;
+        }
+        ShangjiaList shangjiaList = shangjiaResponse.getList();
+        if(shangjiaList != null && shangjiaList.getList()!= null && shangjiaList.getList().size() == 1){
+        	Shangjia shangjia = shangjiaList.getList().get(0);
+        	if(shangjia.getUrl()!= null && !TextUtils.isEmpty(shangjia.getUrl())){
+        		startShangjia(shangjia);
+        	}
+        }
     }
-    
 }
