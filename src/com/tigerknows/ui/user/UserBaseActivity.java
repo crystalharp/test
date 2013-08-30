@@ -3,7 +3,6 @@ package com.tigerknows.ui.user;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Hashtable;
 import java.util.List;
 
 import android.content.DialogInterface;

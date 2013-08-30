@@ -63,8 +63,6 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
         // TODO Auto-generated constructor stub
     }
 
-    private TextView mResultTxv;
-
     private SpringbackListView mResultLsv = null;
 
     private View mEmptyView = null;
@@ -145,7 +143,6 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     }
     
     protected void findViews() {
-        mResultTxv = (TextView) mRootView.findViewById(R.id.result_txv);
         mResultLsv = (SpringbackListView)mRootView.findViewById(R.id.result_lsv);
         mEmptyView = mRootView.findViewById(R.id.empty_view);
         mEmptyTxv = (TextView) mEmptyView.findViewById(R.id.empty_txv);

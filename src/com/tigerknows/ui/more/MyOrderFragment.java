@@ -17,12 +17,10 @@ import com.decarta.Globals;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.android.os.TKAsyncTask;
-import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.Response;
 import com.tigerknows.model.Shangjia;
-import com.tigerknows.model.User;
 import com.tigerknows.model.DataQuery.ShangjiaResponse;
 import com.tigerknows.model.DataQuery.ShangjiaResponse.ShangjiaList;
 import com.tigerknows.ui.BaseActivity;
@@ -41,8 +39,6 @@ public class MyOrderFragment extends BaseFragment{
 	private Button mHotelOrderBtn;
 	
 	private List<Shangjia> mResultList = new ArrayList<Shangjia>();
-	private String sessionId;
-	private DataQuery mDataQuery;
 	private Shangjia mRequestLogin = null;
 	
 	@Override

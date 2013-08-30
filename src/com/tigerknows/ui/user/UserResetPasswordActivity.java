@@ -1,7 +1,5 @@
 package com.tigerknows.ui.user;
 
-import java.util.Hashtable;
-
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;

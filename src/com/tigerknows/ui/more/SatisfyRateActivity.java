@@ -23,7 +23,6 @@ import android.widget.TextView;
 
 import com.decarta.Globals;
 import com.tigerknows.R;
-import com.tigerknows.TKConfig;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BaseQuery;
