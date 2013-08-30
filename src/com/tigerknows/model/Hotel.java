@@ -350,6 +350,12 @@ public class Hotel extends XMapData {
 
         // 0x09 x_int 可预订情况，0不可预订，1可预订 动态判断
         public static final byte FIELD_CAN_RESERVE = 0x09;
+        
+        // 0x10 x_int 是否需要担保，0为不需要，1为需要
+        public static final byte FIELD_NEED_GUARANTEE = 0x10;
+        
+        // 0x11 x_string 房型套餐的特殊说明
+        public static final byte FIELD_SUBTITLE = 0x11;
 
         // 0x00 x_string 房型id room_id
         private String roomId;
@@ -380,6 +386,12 @@ public class Hotel extends XMapData {
 
         // 0x09 x_int 可预订情况，0不可预订，1可预订 动态判断
         private long canReserve;
+        
+        // 0x10 x_int 是否需要担保，0为不需要，1为需要
+        private long needGuarantee;
+        
+        // 0x11 x_string 房型套餐的特殊说明
+        private String subtitle;
 
         public RoomType(XMap data) throws APIException {
             super(data);
@@ -393,6 +405,8 @@ public class Hotel extends XMapData {
             this.breakfast = getStringFromData(FIELD_BREAKFAST);
             this.price = getStringFromData(FIELD_PRICE);
             this.canReserve = getLongFromData(FIELD_CAN_RESERVE);
+            this.needGuarantee = getLongFromData(FIELD_NEED_GUARANTEE);
+            this.subtitle = getStringFromData(FIELD_SUBTITLE);
         }
 
         public String getRoomId() {
@@ -437,6 +451,14 @@ public class Hotel extends XMapData {
         
         public void setCanReserve(long can) {
             canReserve = can;
+        }
+        
+        public long getNeedGuarantee() {
+            return needGuarantee;
+        }
+        
+        public String getSubtitle() {
+            return subtitle;
         }
 
         public static XMapInitializer<RoomType> Initializer = new XMapInitializer<RoomType>() {

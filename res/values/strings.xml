@@ -344,6 +344,7 @@
     <string name="busline_line_listitem_title">时间：%1$s\u0020全程：%2$s</string>
     <string name="busline_station_listitem_title">共有%1$d条线路经过</string>
     <string name="busline_map_bubble_content">%1$d.%2$s</string>
+    <string name="busline_passing_by">途径站点</string>
     
     <string name="about_version">%1$s</string>
     <string name="about_release_date">%1$s</string>
@@ -1015,9 +1016,11 @@
     <string name="hotel_btn_book">预订</string>
     <string name="check_in_time">入住时间</string>
     <string name="hotel_btn_sold_out">售完</string>
+    <string name="hotel_btn_x_room_left">仅剩%1$s间</string>
     <string name="hotel_description">酒店简介</string>
     <string name="hotel_expand_roomtype">展开全部房型</string>
     <string name="hotel_no_roomtype">暂无房型信息</string>
+    <string name="hotel_room_need_guarantee">需担保</string>
     <string name="pictures">%1$s张</string>
     <string name="fold">收起</string>
     <string name="hotel_no_room_left">该房型已被订完，请更换房型试试吧</string>

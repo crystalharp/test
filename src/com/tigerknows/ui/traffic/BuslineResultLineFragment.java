@@ -128,18 +128,16 @@ public class BuslineResultLineFragment extends BaseFragment {
     }
 
 	protected void setListener() {
-		// TODO Auto-generated method stub
 		mResultLsv.setOnItemClickListener(new AdapterView.OnItemClickListener(){
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				// TODO Auto-generated method stub
 				
 				if (mLineList != null && mLineList.size() > position) {
 					mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position);
 					focusedIndex = position;
-					mSphinx.getBuslineDetailFragment().setData(mLineList.get(position), position);
+					mSphinx.getBuslineDetailFragment().setData(mLineList.get(position), position, mBuslineQuery.getKeyword());
 					mSphinx.showView(R.id.view_traffic_busline_detail);
 	            }
 			}
