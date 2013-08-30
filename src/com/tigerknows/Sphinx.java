@@ -917,13 +917,17 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 	}
 	
 	private void checkCitySupportDiscover(int cityId) {
+	    boolean support = DataQuery.checkDiscoveryCity(cityId);
+        if (support == false) {
+            getMenuFragment().setDiscover(View.GONE);
+            return;
+        }
 	    String discover = TKConfig.getPref(this, TKConfig.PREFS_HINT_DISCOVER_HOME);
 	    boolean show = TextUtils.isEmpty(discover);
 	    if (show == false) {
 	        return;
 	    }
-	    TKConfig.setPref(this, TKConfig.PREFS_HINT_DISCOVER_HOME, "1");
-        if (DataQuery.checkDiscoveryCity(cityId)) {
+        if (support) {
             getMenuFragment().setDiscover(View.VISIBLE);
         } else {
             getMenuFragment().setDiscover(View.GONE);
