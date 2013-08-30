@@ -3221,7 +3221,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             case R.id.dialog_prompt_setting_location:
                 View settingLocationView = mLayoutInflater.inflate(R.layout.alert_setting_location, null, false);
                 dialog = Utility.getDialog(Sphinx.this,
-                        getString(R.string.prompt),
+                        getString(R.string.advice_open_gps_title),
                         null,
                         settingLocationView,
                         Sphinx.this.getString(R.string.i_know),
@@ -3250,7 +3250,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             case R.id.dialog_prompt_setting_location_first:
                 View settingLocationView1 = mLayoutInflater.inflate(R.layout.alert_setting_location, null, false);
                 dialog = Utility.getDialog(Sphinx.this,
-                        getString(R.string.prompt),
+                        getString(R.string.advice_open_gps_title),
                         null,
                         settingLocationView1,
                         Sphinx.this.getString(R.string.i_know),
