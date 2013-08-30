@@ -1011,6 +1011,7 @@
 <!-- Hotel Reservation Start -->
     
     <string name="hotel_btn_book">预订</string>
+    <string name="check_in_time">入住时间</string>
     <string name="hotel_btn_sold_out">售完</string>
     <string name="hotel_description">酒店简介</string>
     <string name="hotel_expand_roomtype">展开全部房型</string>

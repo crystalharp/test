@@ -2,9 +2,6 @@ package com.tigerknows.ui.poi;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -49,7 +46,6 @@ import com.tigerknows.model.TKDrawable;
 import com.tigerknows.model.TKDrawable.LoadImageRunnable;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.hotel.DateListView;
-import com.tigerknows.ui.hotel.DateWidget;
 import com.tigerknows.ui.hotel.HotelHomeFragment;
 import com.tigerknows.ui.hotel.HotelIntroFragment;
 import com.tigerknows.ui.poi.POIDetailFragment.BlockRefresher;
@@ -90,12 +86,11 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     ImageView hotelImage;
     ImageView moreRoomTypeArrow;
     TextView hotelSummary;
-    View mCheckView;
+    View mCheckInTimeView;
     TextView moreTxv;
     TextView imageNumTxv;
     TextView retryTxv;
-    private DateWidget mCheckInDat;
-    private DateWidget mCheckOutDat;
+    private TextView mCheckInTimeTxv;
     
     private DateListView mDateListView = null;
     
@@ -284,7 +279,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
                 showDateListView(mPOIDetailFragment.mTitleFragment);
             }
         };
-        mCheckView.setOnClickListener(dateListener);
+        mCheckInTimeView.setOnClickListener(dateListener);
         
         View.OnClickListener retryListener = new OnClickListener() {
 
@@ -336,10 +331,9 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         moreTxv = (TextView) mDynamicRoomTypeMoreView.findViewById(R.id.more_txv);
         retryTxv = (TextView)mRetryView.findViewById(R.id.retry_txv);
         moreRoomTypeArrow = (ImageView) mDynamicRoomTypeMoreView.findViewById(R.id.more_imv);
-        mCheckView = mUpperBlock.mOwnLayout.findViewById(R.id.check_view);
+        mCheckInTimeView = mUpperBlock.mOwnLayout.findViewById(R.id.check_in_time_view);
         hotelSummaryBlock = (LinearLayout) mLowerBlock.mOwnLayout.findViewById(R.id.hotel_summary);
-        mCheckInDat = (DateWidget) mUpperBlock.mOwnLayout.findViewById(R.id.checkin_dat);
-        mCheckOutDat = (DateWidget) mUpperBlock.mOwnLayout.findViewById(R.id.checkout_dat);
+        mCheckInTimeTxv = (TextView) mUpperBlock.mOwnLayout.findViewById(R.id.check_in_time_txv);
     }
     
     class MoreRoomTypeClickListener implements View.OnClickListener{
@@ -398,10 +392,9 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     }
     
     final public void refreshDate() {
-        getDateListView().refresh(checkin, checkout);
-        mCheckInDat.setCalendar(checkin);
-        mCheckOutDat.setCalendar(checkout);
-
+        DateListView dateListView = getDateListView();
+        dateListView.refresh(checkin, checkout);
+        mCheckInTimeTxv.setText(dateListView.getCheckDescription().toString());
     }
 
     public List<DynamicPOIViewBlock> getViewList() {

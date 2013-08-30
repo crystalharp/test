@@ -77,7 +77,7 @@
                 android:background="@drawable/bg_line_split"
                 />
             <RelativeLayout
-                android:id="@+id/check_view"
+                android:id="@+id/check_in_time_view"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
@@ -86,48 +86,13 @@
                 android:paddingTop="12dp"
                 android:paddingRight="8dp"
                 android:paddingBottom="8dp"
-                android:textColor="@color/black_dark"
-                android:textSize="16sp"
                 android:gravity="left|center_vertical"
                 >
-	            <TextView
+	            <include
+	                layout="@layout/hotel_check_in_time"
 	                android:layout_width="fill_parent"
 	                android:layout_height="wrap_content"
-	                android:layout_centerVertical="true"
-	                android:drawablePadding="8dp"
-	                android:drawableLeft="@drawable/ic_date_hotel"
-                	android:drawableRight="@drawable/icon_arrow_right"
-	                android:paddingRight="2dp"
-	                android:background="@color/transparent"
-	                android:textColor="@color/black_dark"
-	                android:textSize="16sp"
-	                android:gravity="center"
 	                />
-	            <com.tigerknows.ui.hotel.DateWidget
-	                android:id="@+id/checkin_dat"
-	                android:layout_width="wrap_content"
-	                android:layout_height="wrap_content"
-	                android:layout_marginLeft="40dp"
-	                tkandroid:checkin="@string/hotel_checkin_"
-	                >
-	                </com.tigerknows.ui.hotel.DateWidget>
-	            <ImageView
-	                android:id="@+id/split_imv"
-	                android:layout_width="wrap_content"
-	                android:layout_height="wrap_content"
-	                android:layout_marginLeft="4dp"
-	                android:layout_toRightOf="@id/checkin_dat"
-	                android:layout_centerVertical="true"
-	                android:background="@drawable/ic_split_hotel_date"
-	                />
-	            <com.tigerknows.ui.hotel.DateWidget
-	                android:id="@+id/checkout_dat"
-	                android:layout_width="wrap_content"
-	                android:layout_height="wrap_content"
-	                android:layout_toRightOf="@id/split_imv"
-	                tkandroid:checkin="@string/hotel_checkout_"
-	                >
-	                </com.tigerknows.ui.hotel.DateWidget>
             </RelativeLayout>
             <ImageView
                 android:layout_width="fill_parent"

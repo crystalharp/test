@@ -45,7 +45,6 @@ import android.widget.TextView;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Hashtable;
 import java.util.List;
 
 
@@ -73,9 +72,10 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     List<Filter> mFilterList = new ArrayList<DataQuery.Filter>();
 
     private Button mCityBtn;
-    private View mCheckView;
-    private DateWidget mCheckInDat;
-    private DateWidget mCheckOutDat;
+    private View mCheckInTimeView;
+    private Calendar mCheckInDat;
+    private Calendar mCheckOutDat;
+    private TextView mCheckInTimeTxv;
     private Button mLocationBtn;
     private ViewGroup mPriceView;
     private TextView mPriceTxv;
@@ -168,8 +168,8 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_POI);
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, DataQuery.SUB_DATA_TYPE_HOTEL);
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_APPENDACTION, DataQuery.APPENDACTION_NOSEARCH);
-        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_CHECKIN, SIMPLE_DATE_FORMAT.format(mCheckInDat.getCalendar().getTime()));
-        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_CHECKOUT, SIMPLE_DATE_FORMAT.format(mCheckOutDat.getCalendar().getTime()));
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_CHECKIN, SIMPLE_DATE_FORMAT.format(mCheckInDat.getTime()));
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_CHECKOUT, SIMPLE_DATE_FORMAT.format(mCheckOutDat.getTime()));
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
         dataQuery.setup(Globals.getCurrentCityInfo().getId(), getId(), getId(), null, true);
         mSphinx.queryStart(dataQuery);
@@ -196,9 +196,8 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     protected void findViews() {
         mPopupWindowContain = new LinearLayout(mSphinx);
         mCityBtn = (Button) mRootView.findViewById(R.id.city_btn);
-        mCheckView = (ViewGroup) mRootView.findViewById(R.id.check_view);
-        mCheckInDat = (DateWidget) mRootView.findViewById(R.id.checkin_dat);
-        mCheckOutDat = (DateWidget) mRootView.findViewById(R.id.checkout_dat);
+        mCheckInTimeView = (ViewGroup) mRootView.findViewById(R.id.check_in_time_view);
+        mCheckInTimeTxv = (TextView) mRootView.findViewById(R.id.check_in_time_txv);
         mLocationBtn = (Button) mRootView.findViewById(R.id.location_btn);
         mPriceView = (ViewGroup) mRootView.findViewById(R.id.price_view);
         mPriceTxv = (TextView) mRootView.findViewById(R.id.price_txv);
@@ -208,7 +207,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
 
     protected void setListener() {
         mCityBtn.setOnClickListener(this);
-        mCheckView.setOnClickListener(this);
+        mCheckInTimeView.setOnClickListener(this);
         mLocationBtn.setOnClickListener(this);
         mPriceView.setOnClickListener(this);
         mQueryBtn.setOnClickListener(this);
@@ -245,7 +244,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                 showFilterCategory(mTitleFragment);
                 break;
                 
-            case R.id.check_view:
+            case R.id.check_in_time_view:
                 mActionLog.addAction(mActionTag + ActionLog.HotelQueryDate);
                 showDateListView(mTitleFragment);
                 break;
@@ -793,16 +792,17 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     
     public void refreshDate() {
         DateListView dateListView = getDateListView();
-        mCheckInDat.setCalendar(dateListView.getCheckin());
-        mCheckOutDat.setCalendar(dateListView.getCheckout());
+        mCheckInDat = dateListView.getCheckin();
+        mCheckOutDat = dateListView.getCheckout();
+        mCheckInTimeTxv.setText(dateListView.getCheckDescription().toString());
     }
     
     public Calendar getCheckin(){
-        return mCheckInDat.getCalendar();
+        return mCheckInDat;
     }
     
     public Calendar getCheckout(){
-        return mCheckOutDat.getCalendar();
+        return mCheckOutDat;
     }
 
     @Override

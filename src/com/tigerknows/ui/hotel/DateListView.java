@@ -183,6 +183,10 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
     }
     
     void refreshTitle() {
+        titleTxv.setText(getCheckDescription());
+    }
+    
+    public SpannableStringBuilder getCheckDescription() {
         today.add(Calendar.DAY_OF_YEAR, checkinPosition-2);
         StringBuilder s = new StringBuilder();
         s.append(monthDayFormat.format(today.getTime())+context.getString(R.string.hotel_checkin_));
@@ -194,8 +198,8 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
         int orange = getContext().getResources().getColor(R.color.orange);
         style.setSpan(new ForegroundColorSpan(orange),0,indexDay,Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
         style.setSpan(new ForegroundColorSpan(orange),indexDay,indexN,Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
-        titleTxv.setText(style);
         today.add(Calendar.DAY_OF_YEAR, -(checkinPosition-2));
+        return style;
     }
 
     public void setData(CallBack callBack, String actionTag) {
