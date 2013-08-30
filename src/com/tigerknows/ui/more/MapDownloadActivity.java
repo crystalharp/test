@@ -1025,10 +1025,6 @@ public class MapDownloadActivity extends BaseActivity implements View.OnClickLis
                                         downloadCity.state = DownloadCity.STATE_STOPPED;
                                         
                                         mMapEngine.removeCityData(cityName);
-                                        List <CityInfo> cityInfoList = cityInfo.getCityList();
-                                        for(int i = 0, size = cityInfoList.size(); i < size; i++) {
-                                            mMapEngine.removeLastRegionId(cityInfoList.get(i).getId());
-                                        }
 
                                         deleteDownloadCity(mThis, mDownloadCityList,downloadCity);
                                         notifyDataSetChanged();

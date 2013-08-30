@@ -37,8 +37,6 @@ import com.tigerknows.util.Utility;
 
 public class MapEngine {
 
-    public static boolean BMP2PNG = false;
-    
     /**
      * 删除或更新地图数据时，通知MapView清除缓存的Tile信息
      */
@@ -61,7 +59,6 @@ public class MapEngine {
      * 用于Bitmap的setPixels方法
      */
     private int[] bitmapIntBuffer;
-    private byte[] pngBuffer;
     private boolean isClosed = true;
     
     private int suggestCityId = CITY_ID_INVALID;  // 联想词引擎所属城市Id
@@ -74,114 +71,7 @@ public class MapEngine {
     }
     
     public static final int MAX_REGION_TOTAL_IN_ROM = 30;
-    private int lastCityId;
-    private List<Integer> lastRegionIdList = new ArrayList<Integer>();
     private Context context;
-    
-    private void readLastRegionIdList(Context context) {
-        synchronized (this) {
-        if (isExternalStorage || isClosed) {
-            return;
-        }
-        lastCityId = CITY_ID_INVALID;
-        lastRegionIdList.clear();
-        String str = TKConfig.getPref(context, TKConfig.PREFS_LAST_REGION_ID_LIST, null);
-        if (str == null || TextUtils.isEmpty(str)) {
-            return;
-        }
-        String strArr[] = str.split(",");
-
-        for(int i = 0, length = strArr.length; i < length; i++) {
-            try {
-                int rid = Integer.parseInt(strArr[i]);
-                addLastRegionId(rid, false);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        }
-    }
-    
-    public void writeLastRegionIdList(Context context) {
-        synchronized (this) {
-        if (isExternalStorage || isClosed) {
-            return;
-        }
-        StringBuilder s = new StringBuilder();
-        for(int i = 0, length = lastRegionIdList.size(); i < length; i++) {
-            if (i > 0) {
-                s.append(",");
-            }
-            s.append(lastRegionIdList.get(i));
-        }
-        TKConfig.setPref(context, TKConfig.PREFS_LAST_REGION_ID_LIST, s.toString());
-        }
-    }
-    
-    public void setLastCityId(int cityId) {
-        synchronized (this) {
-        if (isExternalStorage || isClosed) {
-            return;
-        }
-        if (cityId == CITY_ID_INVALID || cityId == CITY_ID_QUANGUO || lastCityId == cityId) {
-            return;
-        }
-        lastCityId = cityId;
-        String[] regionIdStrArr = getRegionlist(lastCityId);
-        if (regionIdStrArr != null && regionIdStrArr.length > 0) {
-            for(int i = 0, length = regionIdStrArr.length; i < length; i++) {
-                try {
-                    addLastRegionId(getRegionId(regionIdStrArr[i]), false);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        }
-    }
-    
-    public void addLastRegionId(int rid, boolean isBackground) {
-        synchronized (this) {
-        if (isExternalStorage || isClosed) {
-            return;
-        }
-        if (rid == CITY_ID_INVALID || rid == CITY_ID_QUANGUO) {
-            return;
-        }
-        Integer regionId = new Integer(rid);
-        if (isBackground == false) {
-            if (lastRegionIdList.contains(regionId)) {
-                lastRegionIdList.remove(regionId);
-            }
-            lastRegionIdList.add(regionId);
-            if (lastRegionIdList.size() > MAX_REGION_TOTAL_IN_ROM) {
-                removeRegion(lastRegionIdList.remove(0));
-            }
-        } else {
-            if (lastRegionIdList.contains(regionId) == false) {
-                if (lastRegionIdList.size() >= MAX_REGION_TOTAL_IN_ROM) {
-                    removeRegion(lastRegionIdList.remove(0));
-                }
-                lastRegionIdList.add(0, regionId);
-            }
-        }
-        }
-    }
-    
-    public void removeLastRegionId(int rid) {
-        synchronized (this) {
-        if (isExternalStorage || isClosed) {
-            return;
-        }
-        if (rid == CITY_ID_INVALID || rid == CITY_ID_QUANGUO) {
-            return;
-        }
-        Integer regionId = new Integer(rid);
-        if (lastRegionIdList.contains(regionId)) {
-            lastRegionIdList.remove(regionId);
-        }
-        }
-    }
     
     private void initEngine(Context context, String mapPath) {
         synchronized (this) {
@@ -189,9 +79,6 @@ public class MapEngine {
         if (bitmapIntBuffer == null) {
         matrixSize = Ca.tk_get_matrix_size(CONFIG.TILE_SIZE, CONFIG.TILE_SIZE);
         bitmapIntBuffer = new int[matrixSize];
-        if (BMP2PNG) {
-            pngBuffer = new byte[matrixSize];
-        }
         }
         isExternalStorage = false;
         this.mapPath = mapPath;
@@ -203,7 +90,6 @@ public class MapEngine {
                 isExternalStorage = true;
             }
         }
-        readLastRegionIdList(context);
         int status = Ca.tk_init_engine(TKConfig.getDataPath(false), this.mapPath, CONFIG.TILE_SIZE, CONFIG.TILE_SIZE, bitmapIntBuffer, 1);
         if (status == 0) {
             int icon_num = MapWord.Icon.RESOURCE_ID.length;
@@ -390,7 +276,6 @@ public class MapEngine {
         if (metaFile.exists()) {
             metaFile.delete();
         }
-        addLastRegionId(rid, false);
         return ret == 0 ? true : false;
         }
     }
@@ -777,6 +662,7 @@ public class MapEngine {
             Utility.unZipFile(am, "tigermap.zip", mapPath);
             
             TKConfig.setPref(context, TKConfig.PREFS_VERSION_NAME, TKConfig.getClientSoftVersion());
+            LogWrapper.d(TAG, "setup()");
         }
     }
     

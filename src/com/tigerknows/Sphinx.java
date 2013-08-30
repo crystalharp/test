@@ -1197,7 +1197,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         Globals.getAsyncImageLoader().onDestory();
         mTKLocationManager.onDestroy();
         TKWeixin.getInstance(this).onDestory();
-        mMapEngine.writeLastRegionIdList(mContext);
         if (mMapView != null) {
             MapText mapText = mMapView.getMapText();
             if (mapText != null) {
@@ -1905,7 +1904,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     public void onMapCenterChanged() {
         CityInfo cityInfo = mMapEngine.getCityInfo(mMapView.getCenterCityId());
         if (cityInfo != null) {
-            mMapEngine.setLastCityId(cityInfo.getId());
             if (!mViewedCityInfoList.contains(cityInfo)) {
                 mViewedCityInfoList.add(cityInfo);
             }

@@ -425,7 +425,6 @@ public class MapStatsService extends Service {
                         int regionId = mapEngine.getRegionId(regionName);
                         RegionInfo regionInfo = mapEngine.getRegionInfo(regionId);
                         if (null != regionInfo) {
-                            mapEngine.addLastRegionId(regionId, true);
                             String cName = regionInfo.getCCityName();
                             DownloadCity exist = null;
                             
