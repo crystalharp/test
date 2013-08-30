@@ -1841,7 +1841,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             Globals.setCurrentCityInfo(cityInfo);
             Globals.setHotelCityInfo(null);
             
-            TrafficQueryFragment trafficQueryFragment = getTrafficQueryFragment();
             int cityId = cityInfo.getId();
             if (currentCityInfo != null
                     && currentCityInfo.isAvailably()
@@ -1861,7 +1860,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             TKConfig.setPref(mContext, TKConfig.PREFS_LAST_LAT, String.valueOf(position.getLat()));
             TKConfig.setPref(mContext, TKConfig.PREFS_LAST_ZOOM_LEVEL, String.valueOf(cityInfo.getLevel()));
             HistoryWordTable.readHistoryWord(mContext, cityId, HistoryWordTable.TYPE_POI);
-            trafficQueryFragment.TrafficOnCityChanged(this, cityId);
+            TrafficQueryFragment.TrafficOnCityChanged(this, cityId);
         }    
     }
         
