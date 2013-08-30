@@ -10,6 +10,7 @@ import java.util.List;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -50,10 +51,11 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
 
     public BuslineDetailFragment(Sphinx sphinx) {
         super(sphinx);
-        // TODO Auto-generated constructor stub
     }
     
     private int curLineNum = -1;
+    
+    private int highlightIndex = -1;
 
     private StringListAdapter mResultAdapter;
     
@@ -91,7 +93,7 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
             } else {
             	setData(clickedLine, position);
             	onResume();           
-                setSelectionFromTop();
+                setSelectionFromTop(0, 0);
             }
 
         }
@@ -156,18 +158,20 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
 
         history();
 
-        if (mDismissed) {
-            setSelectionFromTop();
+        if (highlightIndex != -1) {
+            highlightStation(highlightIndex);
+        } else if (mDismissed) {
+            setSelectionFromTop(0, 0);
         }
     }
     
-    void setSelectionFromTop() {
+    void setSelectionFromTop(final int pos, final int y) {
       //TODO: 这 里为什么要用posDelayed来调用setSelectionFromTop
         mSphinx.getHandler().postDelayed(new Runnable() {
             
             @Override
             public void run() {
-                mResultLsv.setSelectionFromTop(0, 0);
+                mResultLsv.setSelectionFromTop(pos, y);
             }
         }, 200);
     }
@@ -209,13 +213,23 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
     }
     
     public void setData(Line line, int position) {
+        setData(line, position, null);
+    }
     	
+    public void setData(Line line, int position, String highlightStation) {
+    
     	if (line == null)
     		return;
 
         this.line = line;
         this.mLineList = mSphinx.getBuslineResultLineFragment().getData();
         this.curLineNum = position;
+        
+        highlightIndex = -1;
+        mResultAdapter.setHighlight(-1);
+        if (highlightStation != null) {
+            highlightIndex = findStation(highlightStation, line.getStationList());
+        }
         
         mTitlePopupList.clear();
         if (this.mLineList != null) {
@@ -245,8 +259,14 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
 
     class StringListAdapter extends BaseAdapter {
 
+        int highlightIndex;
         public StringListAdapter(Context context) {
         	super();
+        	highlightIndex = -1;
+        }
+        
+        final public void setHighlight(int index) {
+            highlightIndex = index;
         }
 
         @Override
@@ -274,6 +294,13 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
             style.setSpan(new ForegroundColorSpan(mContext.getResources().getColor(R.color.text_forground_blue)),0, index, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
             
             stationHolder.textView.setText(style);
+            
+            if (position == highlightIndex) {
+                convertView.setBackgroundColor(Color.YELLOW);
+            } else {
+                convertView.setBackgroundResource(R.drawable.list_selector_background_gray_light);
+            }
+            convertView.setPadding(8, 8, 8, 8);
 
             return convertView;
 
@@ -401,5 +428,39 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
     
     public int getCurLine(){
         return curLineNum;
+    }
+    
+    private int findStation(String key, List<Station> stations) {
+        for (Station station : stations) {
+            if (key.equals(station.getName())) {
+                return station.getIndex();
+            }
+        } 
+        
+        key = key.replace("(", "");
+        key = key.replace("（", "");
+        key = key.replace(")", "");
+        key = key.replace("）", "");
+        key = key.replace("公交站", "");
+        key = key.replace("公车站", "");
+        for (Station station : stations) {
+            if (key.equals(station.getName())) {
+                return station.getIndex();
+            }
+        }
+        
+        return -1;
+    }
+    
+    private void highlightStation(int highlightIndex) {
+        if (highlightIndex < 0) {
+            return;
+        }
+        mResultAdapter.setHighlight(highlightIndex);
+        mResultAdapter.notifyDataSetChanged();
+        if (highlightIndex > 1) {
+            highlightIndex--;
+        }
+        mResultLsv.setSelectionFromTop(highlightIndex, 0);
     }
 }

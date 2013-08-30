@@ -200,6 +200,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     
     ExtraSubwayPOI mExtraSubwayPOI;
     
+    ExtraBusstopPOI mExtraBusstopPOI;
+    
     private Button mCommentTipEdt;
     
     private View mLoadingView;
@@ -477,6 +479,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     
     private void initExtraViewEnv() {
         mExtraViewList.add(mExtraSubwayPOI);
+        mExtraViewList.add(mExtraBusstopPOI);
     }
     
     /**
@@ -565,6 +568,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         mDynamicMoviePOI = new DynamicMoviePOI(this, mLayoutInflater);
         
         mExtraSubwayPOI = new ExtraSubwayPOI(this, mLayoutInflater);
+        
+        mExtraBusstopPOI = new ExtraBusstopPOI(this, mLayoutInflater);
         
         return mRootView;
     }
