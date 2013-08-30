@@ -278,7 +278,7 @@ public class Shangjia extends BaseData implements Parcelable {
                 if (exist == false) {
                     XMap xmap = new XMap();
                     xmap.put(FIELD_SOURCE, SOURCE_MEITUAN);
-                    xmap.put(FIELD_SERVICE_TEL, "400");
+                    xmap.put(FIELD_SERVICE_TEL, "4006605335");
                     xmap.put(FIELD_MARKER, Utility.getDrawableResource(context, R.drawable.icon));
                     xmap.put(FIELD_NAME, context.getString(R.string.meituan_name));
                     xmap.put(FIELD_REFUND_SERVICE, context.getString(R.string.meituan_refund_service));

@@ -362,11 +362,9 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
 
         mFilterArea = mData.getFilterArea();
         
-        String refundDetail = null;
         Shangjia shangjia = Shangjia.getShangjiaById(mData.getSource(), mSphinx, mLoadedDrawableRun);
         if (shangjia != null) {
             mShangjiaMarkerImv.setImageDrawable(shangjia.getMarker());
-            refundDetail = shangjia.getRefundService();
         } else {
             mShangjiaMarkerImv.setImageDrawable(null);
         }
@@ -394,17 +392,11 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
         if (!TextUtils.isEmpty(refund) && !refund.contains(noRefundStr)) {
             mRefundIcon.setBounds(0, 0, mRefundIcon.getIntrinsicWidth(), mRefundIcon.getIntrinsicHeight());
             mRefundTxv.setCompoundDrawables(mRefundIcon, null, null, null);
-            if (refundDetail != null) {
-                mRefundDetailTxv.setText(refundDetail);
-                mRefundDetailTxv.setVisibility(View.VISIBLE);
-            } else {
-                mRefundDetailTxv.setVisibility(View.GONE); 
-            }
         } else {
             mNotRefundIcon.setBounds(0, 0, mNotRefundIcon.getIntrinsicWidth(), mNotRefundIcon.getIntrinsicHeight());
             mRefundTxv.setCompoundDrawables(mNotRefundIcon, null, null, null);
-            mRefundDetailTxv.setVisibility(View.GONE);
         }
+        mRefundDetailTxv.setVisibility(View.GONE);
         mRefundTxv.setText(refund);
         
         if (TextUtils.isEmpty(mFilterArea) || mData.getBranchNum() < 2) {
@@ -632,6 +624,7 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
         mNearbyFendianView.setOnClickListener(this);
         mServiceHotlineView.setOnClickListener(this);
         mViewurlTxv.setOnClickListener(this);
+        mRefundTxv.setOnClickListener(this);
         
         mBodyScv.setOnTouchListener(new OnTouchListener() {
 
@@ -767,6 +760,29 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
                 intent.putExtra(BrowserActivity.TITLE, "title");
                 intent.putExtra(BrowserActivity.URL, mData.getUrl());
                 mSphinx.showView(R.id.activity_browser, intent);
+                break;
+                
+            case R.id.refund_txv:
+                if (mRefundDetailTxv.getVisibility() == View.VISIBLE) {
+                    mRefundDetailTxv.setVisibility(View.GONE); 
+                } else {
+                    String refundDetail = null;
+                    Shangjia shangjia = Shangjia.getShangjiaById(mData.getSource(), mSphinx, mLoadedDrawableRun);
+                    if (shangjia != null) {
+                        refundDetail = shangjia.getRefundService();
+                    }
+                    String refund = mData.getRefund();
+                    if (!TextUtils.isEmpty(refund) && !refund.contains(noRefundStr) && !TextUtils.isEmpty(refundDetail)) {
+                        if (refundDetail != null) {
+                            mRefundDetailTxv.setText(refundDetail);
+                            mRefundDetailTxv.setVisibility(View.VISIBLE);
+                        } else {
+                            mRefundDetailTxv.setVisibility(View.GONE); 
+                        }
+                    } else {
+                        mRefundDetailTxv.setVisibility(View.GONE); 
+                    }
+                }
                 break;
         }
     }
