@@ -234,7 +234,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     private TextView mDownloadView;
     private View mCompassView;
 	private LinearLayout mZoomView;
-	private ImageButton mLocationBtn=null;
+    private View mLocationView=null;
+    private ImageButton mLocationBtn=null;
+    private TextView mLocationTxv=null;
     private View mPreviousNextView=null;
     private Button mPreviousBtn=null;
     private Button mNextBtn=null;
@@ -652,7 +654,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 }
             });
             
-            mLocationBtn.setOnClickListener(new OnClickListener() {
+            mLocationView.setOnClickListener(new OnClickListener() {
                 
                 @Override
                 public void onClick(View arg0) {
@@ -1369,7 +1371,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         mPreviousNextView = findViewById(R.id.previous_next_view);
         mPreviousBtn=(Button)(findViewById(R.id.previous_btn));
         mNextBtn=(Button)(findViewById(R.id.next_btn));
+        mLocationView=(findViewById(R.id.location_view));
         mLocationBtn=(ImageButton)(findViewById(R.id.location_btn));
+        mLocationTxv=(TextView)(findViewById(R.id.location_txv));
         mDownloadView = (TextView)findViewById(R.id.download_txv);
         mCompassView = findViewById(R.id.compass_imv);
         mDisableTouchView = (ViewGroup) findViewById(R.id.disable_touch_view);
@@ -4232,11 +4236,13 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             mMapView.refreshMap();
             hideInfoWindow(ItemizedOverlay.MY_LOCATION_OVERLAY);
             mLocationBtn.setImageResource(R.drawable.progress_location);
+            mLocationTxv.setText(R.string.location_text_ing);
             Animatable animationDrawable = (Animatable)(mLocationBtn.getDrawable());
             animationDrawable.start();
-            mLocationBtn.setBackgroundResource(R.drawable.btn_location_white);
+            mLocationBtn.setBackgroundDrawable(null);
         } else {
             int resid;
+            int text;
             Drawable animationDrawable = mLocationBtn.getDrawable();
             if (animationDrawable != null && animationDrawable instanceof AnimationDrawable) {
                 ((AnimationDrawable)animationDrawable).stop();
@@ -4250,7 +4256,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 mMapView.refreshMap();
                 rotateZ = 365;
                 mMapView.rotateZToDegree(0);
-                resid = R.drawable.btn_location_navigation;
+                resid = R.drawable.btn_location_navigation_normal;
+                text = R.string.location_text_navigation;
                 showInfoWindow(mMyLocation);
             } else if (mMyLocation.mode == MyLocation.MODE_ROTATION) {
             	//只有这种情况下要指南针。
@@ -4261,17 +4268,20 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 hideInfoWindow(ItemizedOverlay.MY_LOCATION_OVERLAY);
                 rotateZ = 365;
                 mMapView.refreshMap();
-                resid = R.drawable.btn_location_compass;
+                resid = R.drawable.btn_location_compass_normal;
+                text = R.string.location_text_compass;
             } else {
                 compass.setVisible(false);
                 if (uiStackSize() > 0)
                     mCompassView.setVisibility(View.VISIBLE);
                 mMapView.refreshMap();
-                resid = R.drawable.btn_location_location;
+                resid = R.drawable.btn_location_location_normal;
+                text = R.string.location_text;
                 rotateZ = 365;
                 mMapView.rotateZToDegree(0);
             }
             mLocationBtn.setBackgroundResource(resid);
+            mLocationTxv.setText(text);
         }
     }
     

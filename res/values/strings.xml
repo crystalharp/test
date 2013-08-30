@@ -22,6 +22,11 @@
     <string name="location_failed_and_jump_settings">为了更快更精确的获得您的位置，建议您：\n\n * 开启位置设置中GPS功能</string>
     <string name="location_failed_and_change_city">定位失败，无法找到所在城市，是否直接选择城市？</string>
     <string name="location_doing">正在定位…</string>
+    
+    <string name="location_text">定位</string>
+    <string name="location_text_ing">定位中</string>
+    <string name="location_text_navigation">导航</string>
+    <string name="location_text_compass">罗盘</string>
 
     <string name="poi_change_location">切换位置</string>
     <string name="yuan">%1$d元</string>

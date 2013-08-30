@@ -72,14 +72,26 @@
             >
         </com.tigerknows.widget.ScaleView>
 
-        <ImageButton
-            android:id="@+id/location_btn"
+        <LinearLayout 
+            android:id="@+id/location_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/btn_location_location"
             android:layout_alignParentRight="true"
             android:visibility="visible"
-            android:layout_above="@id/scale_view"/>
+            android:layout_above="@id/scale_view"
+            android:orientation="vertical"
+            android:gravity="center">
+            <ImageButton
+                android:id="@+id/location_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <TextView 
+                android:id="@+id/location_txv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/location_text"/>
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/previous_next_view"
@@ -111,7 +123,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:layout_above="@id/location_btn"
+            android:layout_above="@id/location_view"
             />
 
     </RelativeLayout>
@@ -134,12 +146,12 @@
         android:background="@color/transparent"
         android:visibility="gone" />
     <RelativeLayout 
-	    android:layout_width="fill_parent" 
-	    android:layout_height="fill_parent"
-	    android:id="@+id/hint_root_view"
-	    android:visibility="gone"
-	    android:background="@color/black_transparent_half">
-	</RelativeLayout>
+        android:layout_width="fill_parent" 
+        android:layout_height="fill_parent"
+        android:id="@+id/hint_root_view"
+        android:visibility="gone"
+        android:background="@color/black_transparent_half">
+    </RelativeLayout>
 
     
 </RelativeLayout>
