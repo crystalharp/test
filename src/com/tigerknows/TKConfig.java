@@ -636,6 +636,11 @@ public class TKConfig {
      */
     public static final String PREFS_SATISFY_RATE_OPENED="prefs_satisfy_rate_opened";
     
+    /**
+     * 用户是否打开更多页面以便于看到活动通知栏
+     */
+    public static final String PREFS_MORE_OPENED="prefs_more_opened";
+    
     // 以下三项用来获取一个比较准确的当前时间
     /**
      * ntp校时时记录的服务器时间
