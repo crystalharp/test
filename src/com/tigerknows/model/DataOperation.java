@@ -91,7 +91,7 @@ public class DataOperation extends BaseQuery {
             
         	
         } else if (OPERATION_CODE_CREATE.equals(operationCode)) {
-            debugCheckParameters(Utility.mergeArray(ekeys,new String[] {SERVER_PARAMETER_ENTITY, SERVER_PARAMETER_FLAG}));
+            debugCheckParameters(Utility.mergeArray(ekeys,new String[] {SERVER_PARAMETER_ENTITY}), new String[]{SERVER_PARAMETER_FLAG});
         } else if (OPERATION_CODE_UPDATE.equals(operationCode)) {
             debugCheckParameters(Utility.mergeArray(ekeys,new String[] {SERVER_PARAMETER_DATA_UID, SERVER_PARAMETER_ENTITY}));
         } else if (OPERATION_CODE_DELETE.equals(operationCode)) {
