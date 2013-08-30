@@ -39,6 +39,7 @@ public class ExtraSubwayPOI extends DynamicPOIView {
     LinearLayout mSubwayTimeInfoView;
     LinearLayout mSubwayExitInfoView;
     View mSubwayExitView;
+    View mSubwayPresetTimeView;
     
     LinearListView mSubwayTimeLsv;
     LinearListView mSubwayExitLsv;
@@ -50,9 +51,15 @@ public class ExtraSubwayPOI extends DynamicPOIView {
             if (mExitList == null || mExitList.size() == 0) {
                 mSubwayExitView.setVisibility(View.GONE);
             } else {
+                mSubwayExitView.setVisibility(View.VISIBLE);
                 mSubwayExitLsv.refreshList(mExitList);
             }
-            mSubwayTimeLsv.refreshList(mPresetTimeList);
+            if (mPresetTimeList == null || mPresetTimeList.size() == 0) {
+                mSubwayPresetTimeView.setVisibility(View.GONE);
+            } else {
+                mSubwayPresetTimeView.setVisibility(View.VISIBLE);
+                mSubwayTimeLsv.refreshList(mPresetTimeList);
+            }
         }
         
     };
@@ -69,10 +76,14 @@ public class ExtraSubwayPOI extends DynamicPOIView {
             String timeDetail = "";
             for (PresetTime ptime : time.getPresetTimes()) {
                 timeDetail += ptime.getDirection();
-                timeDetail += "\t";
-                timeDetail += ptime.getStartTime();
-                timeDetail += "-";
-                timeDetail += ptime.getEndTime();
+                timeDetail += "  ";
+                if (ptime.getStartTime() != null || ptime.getEndTime() != null) {
+                    timeDetail += ptime.getStartTime();
+                    timeDetail += "-";
+                    timeDetail += ptime.getEndTime();
+                } else {
+                    timeDetail += mSphinx.getString(R.string.subway_no_time_info);
+                }
                 timeDetail += "\n";
             }
             timeDetail = timeDetail.substring(0, timeDetail.length() - 1);
@@ -134,6 +145,7 @@ public class ExtraSubwayPOI extends DynamicPOIView {
         mSubwayTimeInfoView = (LinearLayout) mSubwayView.findViewById(R.id.subway_time_lst);
         mSubwayExitInfoView = (LinearLayout) mSubwayView.findViewById(R.id.subway_exit_lst);
         mSubwayExitView = mSubwayView.findViewById(R.id.subway_exit);
+        mSubwayPresetTimeView = mSubwayView.findViewById(R.id.subway_preset_time);
         mSubwayBlock.mOwnLayout = mSubwayView;
         
         mSubwayTimeLsv = new LinearListView(mSphinx, mSubwayTimeInfoView, timeInit, R.layout.poi_dynamic_subway_time_item);

@@ -177,7 +177,6 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mActionTag = ActionLog.More;
-
     }
 
     @Override
@@ -294,11 +293,11 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         if (mDismissed) {
             //mListLsv.setSelection(0);
         }
-
         mMenuFragment.display();
-        
+        if(mSphinx.uiStackPeek() == R.id.view_more_home && TextUtils.equals(TKConfig.getPref(mContext, TKConfig.PREFS_MORE_OPENED, ""), "no")){
+        	TKConfig.setPref(mContext, TKConfig.PREFS_MORE_OPENED, "yes");
+        }
         refreshUserEntrance();
-        refreshSatisfyRate();
         refreshBootStrapData();
         refreshMoreData();
         refreshCity(Globals.getCurrentCityInfo().getCName());
@@ -417,7 +416,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     }
     
     public void refreshMenuFragment() {
-        if(mUpgradeMap || TextUtils.isEmpty(TKConfig.getPref(mContext, TKConfig.PREFS_SATISFY_RATE_OPENED, ""))){
+        if(mUpgradeMap || TextUtils.equals(TKConfig.getPref(mContext, TKConfig.PREFS_MORE_OPENED, ""), "no")){
         	mSphinx.getMenuFragment().setFragmentMessage(View.VISIBLE);
         	return;
         }else{
@@ -496,6 +495,10 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 			}
 		}
 		mPagecount = (int)mNoticeList.size();
+		if(!TextUtils.equals("yes", TKConfig.getPref(mContext, TKConfig.PREFS_MORE_OPENED, ""))){
+			TKConfig.setPref(mContext, TKConfig.PREFS_MORE_OPENED, (mPagecount==0) ? "hide" : "no");
+			refreshMenuFragment();
+		}
         if(mPagecount > 1){
         	Utility.pageIndicatorInit(mSphinx, mPageIndicatorView, mPagecount, 0, R.drawable.ic_notice_dot_normal, R.drawable.ic_notice_dot_selected);
         	mNoticeRly.setVisibility(View.VISIBLE);
@@ -555,23 +558,10 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     private void refreshAppRecommendDrawable(){
     	final int len = Math.min(mRecommendAppList.size(), NUM_APP_RECOMMEND);
     	for (int i=0; i<NUM_APP_RECOMMEND && i<len; i++){
-    		refreshDrawable(mRecommendAppList.get(i).getIcon(), mAppRecommendImv[i], R.drawable.bg_picture_none, true);
+    		refreshDrawable(mRecommendAppList.get(i).getIcon(), mAppRecommendImv[i], R.drawable.bg_picture_small, true);
     		mAppRecommendTxv[i].setText(mRecommendAppList.get(i).getName());
     	}
     }
-
-    private void refreshSatisfyRate() {
-    	if (TextUtils.isEmpty(TKConfig.getPref(mContext, TKConfig.PREFS_SATISFY_RATE_OPENED, ""))){
-    		Drawable[] drawables = mSatisfyRateBtn.getCompoundDrawables();
-    		drawables[2] = mContext.getResources().getDrawable(R.drawable.ic_satisfy_new);
-    		drawables[2].setBounds(0, 0, drawables[2].getIntrinsicWidth(), drawables[2].getIntrinsicHeight());
-    		mSatisfyRateBtn.setCompoundDrawables(drawables[0], drawables[1], drawables[2], drawables[3]);
-    		mSatisfyRateBtn.setCompoundDrawablePadding(Utility.dip2px(mContext, 20));
-    	}else{
-    		Drawable[] drawables = mSatisfyRateBtn.getCompoundDrawables();
-    		mSatisfyRateBtn.setCompoundDrawables(drawables[0], drawables[1], null, drawables[3]);
-    	}
-    }        
     
     public void refreshCity(String cityName) {
         mCityName = cityName;
@@ -651,7 +641,6 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         float drawablePadding = (notice.getLocalType() == 1) ? 4 : titleTextSize;
         int textView_px = screen_px - Utility.dip2px(mContext, layoutMargin + 16 + 16 + 48);
         float textView_dp = Utility.px2dip(mContext, textView_px);
-        LogWrapper.d("Trap", textView_dp+"");
         if(title != null && !TextUtils.isEmpty(title)){
         	while(titleTextSize* ByteUtil.getCharArrayLength(title)/2 + drawablePadding > textView_dp + .5){
         		titleTextSize -= 1;
@@ -666,7 +655,6 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         		}
         	}
         }
-        LogWrapper.d("Trap", ""+titleTextSize);
         switch(notice.getLocalLayoutType()){
         case 1:
         	Button button1 = new Button(mSphinx);
@@ -690,7 +678,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         	linearLayout5.setGravity(Gravity.CENTER_HORIZONTAL);
         	TextView titleTxv5 = new TextView(mSphinx);
         	titleTxv5.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-        	titleTxv5.setPadding(pd8, pd2, pd8, 0);
+        	titleTxv5.setPadding(pd8, 2 * Utility.dip2px(mContext, 17 - titleTextSize), pd8, 0);
         	titleTxv5.setTextSize(16);
         	titleTxv5.setTextColor(getResources().getColor(R.color.black_dark));
         	titleTxv5.setSingleLine(true);
@@ -756,7 +744,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         	titleTxv7.setTextColor(getResources().getColor(R.color.black_dark));
         	titleTxv7.setSingleLine(true);
         	titleTxv7.setText(title);
-        	titleTxv7.setPadding(Utility.dip2px(mContext, drawablePadding), pd2, pd8*2, 0);
+        	titleTxv7.setPadding(Utility.dip2px(mContext, drawablePadding), 2 * Utility.dip2px(mContext, 17 - titleTextSize), pd8*2, 0);
         	TextView descriptionTxv7 = new TextView(mSphinx);
         	descriptionTxv7.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
         	descriptionTxv7.setTextSize(descTextSize);

@@ -916,13 +916,17 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 	}
 	
 	private void checkCitySupportDiscover(int cityId) {
+	    boolean support = DataQuery.checkDiscoveryCity(cityId);
+        if (support == false) {
+            getMenuFragment().setDiscover(View.GONE);
+            return;
+        }
 	    String discover = TKConfig.getPref(this, TKConfig.PREFS_HINT_DISCOVER_HOME);
 	    boolean show = TextUtils.isEmpty(discover);
 	    if (show == false) {
 	        return;
 	    }
-	    TKConfig.setPref(this, TKConfig.PREFS_HINT_DISCOVER_HOME, "1");
-        if (DataQuery.checkDiscoveryCity(cityId)) {
+        if (support) {
             getMenuFragment().setDiscover(View.VISIBLE);
         } else {
             getMenuFragment().setDiscover(View.GONE);
@@ -1835,7 +1839,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             Globals.setCurrentCityInfo(cityInfo);
             Globals.setHotelCityInfo(null);
             
-            TrafficQueryFragment trafficQueryFragment = getTrafficQueryFragment();
             int cityId = cityInfo.getId();
             if (currentCityInfo != null
                     && currentCityInfo.isAvailably()
@@ -1855,7 +1858,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             TKConfig.setPref(mContext, TKConfig.PREFS_LAST_LAT, String.valueOf(position.getLat()));
             TKConfig.setPref(mContext, TKConfig.PREFS_LAST_ZOOM_LEVEL, String.valueOf(cityInfo.getLevel()));
             HistoryWordTable.readHistoryWord(mContext, cityId, HistoryWordTable.TYPE_POI);
-            trafficQueryFragment.TrafficOnCityChanged(this, cityId);
+            TrafficQueryFragment.TrafficOnCityChanged(this, cityId);
         }    
     }
         

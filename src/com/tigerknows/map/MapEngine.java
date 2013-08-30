@@ -651,8 +651,10 @@ public class MapEngine {
      */
     public void setup(Context context) throws Exception {
         String versionName = TKConfig.getPref(context, TKConfig.PREFS_VERSION_NAME, null);
+        File file = new File(TKConfig.getDataPath(false)+"citylist");
         if (TextUtils.isEmpty(versionName)   // 第一次安装后使用
-                || !TKConfig.getClientSoftVersion().equals(versionName)) {   // 更新安装后使用
+                || !TKConfig.getClientSoftVersion().equals(versionName)   // 更新安装后使用
+                || file.exists() == false) {
             String mapPath = TKConfig.getDataPath(true);
             AssetManager am = context.getAssets();
             

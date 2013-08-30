@@ -65,7 +65,6 @@ public class SatisfyRateActivity extends BaseActivity implements View.OnClickLis
         super.onCreate(savedInstanceState);
         mActionTag = ActionLog.SatisfyRate;
         mContext = getBaseContext();
-        TKConfig.setPref(mContext, TKConfig.PREFS_SATISFY_RATE_OPENED, "yes");
         setContentView(R.layout.more_satisfy_rate);
     	mSatisfyRbt = new RatingBar[NUM_OF_RATINGBAR];
     	mRateTxv = new TextView[NUM_OF_RATINGBAR];
