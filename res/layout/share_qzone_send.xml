@@ -68,7 +68,6 @@
 	    android:gravity="top|left"
 	    android:isScrollContainer="true"
 	    android:textColor="@color/black"
-	    android:textColorHighlight="@color/black"
 	    android:layout_margin="2dp"/>
 </RelativeLayout>
         <!-- 
