@@ -75,7 +75,7 @@ import com.weibo.sdk.android.sso.SsoHandler;
  * 
  * @author Peng Wenyue
  */
-public class TKActivity extends MapActivity implements TKAsyncTask.EventListener {
+public class TKActivity extends Activity implements TKAsyncTask.EventListener {
     
     static final String TAG = "TKActivity";
     
@@ -430,7 +430,6 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
         mTKLocationManager = new TKLocationManager(TKApplication.getInstance());
         
         mActionLog = ActionLog.getInstance(mThis);
-        BaseQueryTest.setActivity(mThis);
     }
 
     @Override
