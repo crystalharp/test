@@ -647,6 +647,7 @@ public class DataQueryTest {
         data.put(Description.FIELD_STAR, "FIELD_STAR");
         data.put(Description.FIELD_SUBWAY_EXITS, launchSubwayExit());
         data.put(Description.FIELD_SUBWAY_PRESET_TIMES, launchSubwayPresetTime());
+        data.put(Description.FIELD_LINE, "FIELD_LINE");
         return data;
     }
     

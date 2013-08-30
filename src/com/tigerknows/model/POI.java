@@ -82,7 +82,7 @@ public class POI extends BaseData {
                 Description.FIELD_SERVICE_QUALITY, Description.FIELD_RECOMMEND_SCENERY, Description.FIELD_POPEDOM_SCENERY,
                 Description.FIELD_NEARBY_INFO, Description.FIELD_COMPANY_WEB, Description.FIELD_COMPANY_TYPE,
                 Description.FIELD_COMPANY_SCOPE, Description.FIELD_INDUSTRY_INFO, Description.FIELD_FEATURE_SPECIALTY,
-                Description.FIELD_PRODUCT_ATTITUDE, Description.FIELD_SUBWAY_PRESET_TIMES, Description.FIELD_SUBWAY_EXITS);
+                Description.FIELD_PRODUCT_ATTITUDE);
                 
         public static String[] Name_List = null;
         
@@ -980,6 +980,14 @@ public class POI extends BaseData {
         }
         body.append(getDescription(context));
         return body.toString();
+    }
+    
+    public boolean containsDescription(byte key) {
+        boolean result = false;
+        if (description != null) {
+            result = description.containsKey(key);
+        }
+        return result;
     }
     
     /**

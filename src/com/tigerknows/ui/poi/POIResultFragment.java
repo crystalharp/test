@@ -742,27 +742,35 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 }
             }
 
-            str = null;
-            Comment lastComment = poi.getLastComment();
-            if (lastComment != null) {
-                str = lastComment.getContent();
-            }
-            if (!TextUtils.isEmpty(str)) {
-                commentTxv.setText(str);
-                icComment.setBounds(0, 0, icComment.getIntrinsicWidth(), icComment.getIntrinsicHeight());
-                commentTxv.setCompoundDrawablePadding(Util.dip2px(Globals.g_metrics.density, 4));
-                commentTxv.setCompoundDrawables(icComment, null, null, null);
+            if (poi.containsDescription(POI.Description.FIELD_LINE)) {
+                String name = poi.getDescriptionName(activity, POI.Description.FIELD_LINE);
+                String value = poi.getDescriptionValue(POI.Description.FIELD_LINE);
+                commentTxv.setText(name + ": " + value);
+                commentTxv.setCompoundDrawables(null, null, null, null);
                 commentTxv.setVisibility(View.VISIBLE);
             } else {
-                str = poi.getAddress();
+                str = null;
+                Comment lastComment = poi.getLastComment();
+                if (lastComment != null) {
+                    str = lastComment.getContent();
+                }
                 if (!TextUtils.isEmpty(str)) {
                     commentTxv.setText(str);
-                    icAddress.setBounds(0, 0, icAddress.getIntrinsicWidth(), icAddress.getIntrinsicHeight());
+                    icComment.setBounds(0, 0, icComment.getIntrinsicWidth(), icComment.getIntrinsicHeight());
                     commentTxv.setCompoundDrawablePadding(Util.dip2px(Globals.g_metrics.density, 4));
-                    commentTxv.setCompoundDrawables(icAddress, null, null, null);
+                    commentTxv.setCompoundDrawables(icComment, null, null, null);
                     commentTxv.setVisibility(View.VISIBLE);
                 } else {
-                    commentTxv.setVisibility(View.INVISIBLE);
+                    str = poi.getAddress();
+                    if (!TextUtils.isEmpty(str)) {
+                        commentTxv.setText(str);
+                        icAddress.setBounds(0, 0, icAddress.getIntrinsicWidth(), icAddress.getIntrinsicHeight());
+                        commentTxv.setCompoundDrawablePadding(Util.dip2px(Globals.g_metrics.density, 4));
+                        commentTxv.setCompoundDrawables(icAddress, null, null, null);
+                        commentTxv.setVisibility(View.VISIBLE);
+                    } else {
+                        commentTxv.setVisibility(View.INVISIBLE);
+                    }
                 }
             }
 
