@@ -241,13 +241,16 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             roomDetailTxv.setText(roomType.getBedType() + " " + roomType.getBreakfast() + " " + roomType.getNetService()
                     + " " + roomType.getFloor() + " " + roomType.getArea());
             roomGuaranteeTxv.setVisibility(roomType.getNeedGuarantee() == 0 ? View.GONE : View.VISIBLE);
-            roomSubtitle.setText(roomType.getSubtitle());
+            if (roomType.getSubtitle() != null) {
+                roomSubtitle.setVisibility(View.VISIBLE);
+                roomSubtitle.setText(roomType.getSubtitle());
+            } else {
+                roomSubtitle.setVisibility(View.GONE);
+            }
             if (roomType.getCanReserve() == 0) {
-//                bookBtn.setEnabled(false);
                 refreshBookBtn(bookBtn, roomType.getCanReserve());
                 v.setClickable(false);
             } else {
-//                bookBtn.setEnabled(true);
                 refreshBookBtn(bookBtn, roomType.getCanReserve());
                 try {
                     bookBtn.setTag(R.id.tag_hotel_room_type_data, roomType);
@@ -636,7 +639,6 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
                     //更新按钮状态
                     mClickedRoomType.setCanReserve(0);
                     refreshBookBtn(mClickedBookBtn, 0);
-//                    mClickedBookBtn.setEnabled(false);
                     mClickedChild.setClickable(false);
                     Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.hotel_no_room_left));
                 }
