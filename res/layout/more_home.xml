@@ -85,6 +85,46 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_line_split"
                 />
+            <Button
+                android:id="@+id/my_order_btn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/list_middle"
+	            android:paddingTop="8dp"
+	            android:paddingBottom="8dp"
+	            android:paddingRight="8dp"
+	            android:paddingLeft="16dp"
+                android:textColor="@color/black_dark"
+                android:textSize="16sp"
+                android:text="订单"
+                android:gravity="left|center_vertical"
+                />
+            <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_line_split"
+                />
+            <Button
+                android:id="@+id/favorite_btn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/list_middle"
+	            android:paddingTop="8dp"
+	            android:paddingBottom="8dp"
+	            android:paddingRight="8dp"
+	            android:paddingLeft="16dp"
+                android:textColor="@color/black_dark"
+                android:textSize="16sp"
+                android:text="@string/more_favorite"
+                android:gravity="left|center_vertical"
+                />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_margin="8dp"
+            >
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -153,25 +193,6 @@
                     android:text="@string/upgrade_map_new"
                     />
             </RelativeLayout>
-            <ImageView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_line_split"
-                />
-            <Button
-                android:id="@+id/favorite_btn"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/list_middle"
-	            android:paddingTop="8dp"
-	            android:paddingBottom="8dp"
-	            android:paddingRight="8dp"
-	            android:paddingLeft="16dp"
-                android:textColor="@color/black_dark"
-                android:textSize="16sp"
-                android:text="@string/favorite"
-                android:gravity="left|center_vertical"
-                />
             <ImageView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"

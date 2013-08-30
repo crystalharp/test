@@ -598,7 +598,7 @@ public final class DataQuery extends BaseQuery {
             debugCheckParameters(ekeys, okeys);
         } else if (DATA_TYPE_SHANGJIA.equals(dataType)) { 
             ekeys = Utility.mergeArray(ekeys, new String[] {SERVER_PARAMETER_NEED_FIELD});
-            okeys = Utility.mergeArray(okeys, positionKeys);
+            okeys = Utility.mergeArray(okeys, positionKeys, new String[]{SERVER_PARAMETER_SHANGJIA_IDS});
             debugCheckParameters(ekeys, okeys);
         } else if (DATA_TYPE_ZHANLAN.equals(dataType)) { 
             ekeys = Utility.mergeArray(ekeys, new String[]{SERVER_PARAMETER_NEED_FIELD, 

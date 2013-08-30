@@ -85,6 +85,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     private TextView mCurrentCityTxv;
     private TextView mUpgradeMapTxv;
     private Button mUserBtn;
+    private Button mMyOrderBtn;
     private Button mChangeCityBtn;
     private Button mDownloadMapBtn;
     private Button mAppRecommendBtn;
@@ -218,6 +219,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         mUserNameTxv = (TextView) mRootView.findViewById(R.id.user_name_txv);
         mUpgradeMapTxv = (TextView) mRootView.findViewById(R.id.upgrade_map_txv);
         mUserBtn = (Button)mRootView.findViewById(R.id.user_btn);
+        mMyOrderBtn = (Button)mRootView.findViewById(R.id.my_order_btn);
         mChangeCityBtn = (Button)mRootView.findViewById(R.id.change_city_btn);
         mDownloadMapBtn = (Button)mRootView.findViewById(R.id.download_map_btn);
         mAppRecommendBtn = (Button)mRootView.findViewById(R.id.app_recommend_btn);
@@ -246,6 +248,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     protected void setListener() {
     	mRightBtn.setOnClickListener(this);
         mUserBtn.setOnClickListener(this);
+        mMyOrderBtn.setOnClickListener(this);
         mChangeCityBtn.setOnClickListener(this);
         mDownloadMapBtn.setOnClickListener(this);
         mAppRecommendBtn.setOnClickListener(this);
@@ -293,6 +296,14 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         if (mDismissed) {
             //mListLsv.setSelection(0);
         }
+        mFavoriteBtn.setText(Utility.renderColorToPartOfString(mContext, 
+        		R.color.black_light, 
+        		mSphinx.getString(R.string.more_favorite) + mSphinx.getString(R.string.favorite_hint), 
+        		mSphinx.getString(R.string.favorite_hint)));
+        mMyOrderBtn.setText(Utility.renderColorToPartOfString(mContext, 
+        		R.color.black_light, 
+        		mSphinx.getString(R.string.order) + mSphinx.getString(R.string.order_hint), 
+        		mSphinx.getString(R.string.order_hint)));
         mMenuFragment.display();
         if(mSphinx.uiStackPeek() == R.id.view_more_home && TextUtils.equals(TKConfig.getPref(mContext, TKConfig.PREFS_MORE_OPENED, ""), "no")){
         	TKConfig.setPref(mContext, TKConfig.PREFS_MORE_OPENED, "yes");
@@ -338,6 +349,10 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
             		mSphinx.startActivityForResult(intent, 0);
             	}
                 break;
+            case R.id.my_order_btn:
+            	// TODO: mActionLog.addAction(actionLog, args)
+            	mSphinx.showView(R.id.view_more_my_order);
+            	break;
             case R.id.change_city_btn:
                 mActionLog.addAction(mActionTag +  ActionLog.MoreChangeCity);
                 mSphinx.showView(R.id.activity_more_change_city);

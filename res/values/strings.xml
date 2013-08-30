@@ -212,6 +212,9 @@
     <string name="upgrade_all">全部升级</string>
     <string name="upgrade_manual">手动更新</string>
     <string name="download_map">下载地图</string>
+    <string name="order">订单</string>
+    <string name="order_hint">（团购\u2002酒店）</string>
+    <string name="favorite_hint">（地点\u2002交通）</string>
     <string name="app_recommend">你可能喜欢的应用</string>
     <string name="app_recommend_more">更多应用</string>
     <string name="feedback">意见反馈</string>
@@ -222,6 +225,7 @@
     <string name="login_or_regist">登录/注册</string>
     <string name="user_home">个人中心</string>
     <string name="give_favourable_comment">给个好评吧！</string>
+    <string name="more_favorite">收藏</string>
     
     <string name="settings_open_gps">开启GPS（卫星定位）</string>
     <string name="settings_close_gps">关闭GPS（卫星定位）</string>
@@ -923,6 +927,9 @@
     <string name="wowotuan_name">窝窝团</string>
     <string name="nuomi_name">糯米</string>
     <string name="meituan_name">美团</string>
+    <string name="nuomi_message">糯米团订单</string>
+    <string name="meituan_message">美团订单</string>
+    <string name="wowotuan_message">窝窝团订单</string>
     <string name="meituan_refund_service">方式一：通过订单查询进入订单详情页面点击“申请退款”\n方式二：致电美团客服 400-660-5335，提供手机号码和商品名称（或订单号），申请退款。 </string>
     <string name="nuomi_refund_service">致电糯米客服 4006-888-887，提供手机号码和商品名称（或订单号），申请退款。 </string>
     

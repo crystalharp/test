@@ -6,6 +6,7 @@ import java.util.List;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -104,6 +105,7 @@ public class MyOrderFragment extends BaseFragment{
     		btn.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
     		btn.setTextSize(16);
     		btn.setText(mSphinx.getString(R.string.view) + shangjia.getMessage());
+    		btn.setGravity(Gravity.LEFT|Gravity.CENTER_VERTICAL);
     		if (i == mResultList.size() - 1){
     			btn.setBackgroundDrawable(mSphinx.getResources().getDrawable(R.drawable.list_footer));
     		}else{
@@ -145,8 +147,9 @@ public class MyOrderFragment extends BaseFragment{
     private void requestUrl(Shangjia shangjia) {
         DataQuery dataQuery = new DataQuery(mSphinx);
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_SHANGJIA);
-        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_SHANGJIA_IDS, String.valueOf(shangjia.getId()));
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_SHANGJIA_IDS, String.valueOf(shangjia.getSource()));
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_NEED_FIELD, Shangjia.NEED_FIELD);
+        dataQuery.addParameter(BaseQuery.SERVER_PARAMETER_SESSION_ID, Globals.g_Session_Id);
         dataQuery.setup(Globals.getCurrentCityInfo().getId(), getId(), getId(), mSphinx.getString(R.string.doing_and_wait));
         mSphinx.queryStart(dataQuery);
     }
