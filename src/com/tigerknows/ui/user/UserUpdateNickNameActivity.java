@@ -1,8 +1,6 @@
 package com.tigerknows.ui.user;
 
 import java.net.URLEncoder;
-import java.util.Hashtable;
-
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;

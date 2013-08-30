@@ -19,7 +19,6 @@ import com.tigerknows.util.Utility;
 import android.content.Context;
 import android.text.TextUtils;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class HotelOrderOperation extends BaseQuery {

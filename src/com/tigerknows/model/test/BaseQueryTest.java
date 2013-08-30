@@ -44,8 +44,6 @@ import com.tigerknows.ui.traffic.TrafficResultFragment;
 import com.tigerknows.util.CalendarUtil;
 import com.tigerknows.util.Utility;
 import com.tigerknows.widget.StringArrayAdapter;
-import com.weibo.sdk.android.WeiboParameters;
-
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
@@ -76,7 +74,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Calendar;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;

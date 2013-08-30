@@ -29,8 +29,6 @@ import android.widget.TextView;
 import com.tigerknows.ui.BaseActivity;
 import android.widget.TextView.OnEditorActionListener;
 
-import java.util.Hashtable;
-
 /**
  * @author Peng Wenyue
  */

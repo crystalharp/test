@@ -241,6 +241,7 @@ public class Shangjia extends BaseData implements Parcelable {
                     xmap.put(FIELD_SOURCE, SOURCE_WOWOTUAN);
                     xmap.put(FIELD_SERVICE_TEL, "4001055555");
                     xmap.put(FIELD_MARKER, Utility.getDrawableResource(context, R.drawable.ic_wowotuan_marker));
+                    xmap.put(FIELD_MESSAGE, context.getString(R.string.wowotuan_message));
                     xmap.put(FIELD_NAME, context.getString(R.string.wowotuan_name));
                     
                     Shangjia shangjia = new Shangjia();
@@ -261,6 +262,7 @@ public class Shangjia extends BaseData implements Parcelable {
                     xmap.put(FIELD_SERVICE_TEL, "4006888887");
                     xmap.put(FIELD_MARKER, Utility.getDrawableResource(context, R.drawable.ic_nuomi_marker));
                     xmap.put(FIELD_NAME, context.getString(R.string.nuomi_name));
+                    xmap.put(FIELD_MESSAGE, context.getString(R.string.nuomi_message));
                     xmap.put(FIELD_REFUND_SERVICE, context.getString(R.string.nuomi_refund_service));
                     
                     Shangjia shangjia = new Shangjia();
@@ -281,6 +283,7 @@ public class Shangjia extends BaseData implements Parcelable {
                     xmap.put(FIELD_SERVICE_TEL, "4006605335");
                     xmap.put(FIELD_MARKER, Utility.getDrawableResource(context, R.drawable.icon));
                     xmap.put(FIELD_NAME, context.getString(R.string.meituan_name));
+                    xmap.put(FIELD_MESSAGE, context.getString(R.string.meituan_message));
                     xmap.put(FIELD_REFUND_SERVICE, context.getString(R.string.meituan_refund_service));
                     xmap.put(FIELD_URL, "http://r.union.meituan.com/url/visit/?a=1&key=Sl2zGAgo4NiBcy67K83MtEDx5XIsrLjP&url=http://i.meituan.com/orders");
                     xmap.put(FIELD_FAST_PURCHASE, 1);

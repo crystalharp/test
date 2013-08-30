@@ -18,7 +18,6 @@ import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.Response;
 import com.tigerknows.model.Shangjia;
 import com.tigerknows.model.Tuangou;
-import com.tigerknows.model.User;
 import com.tigerknows.model.Yanchu;
 import com.tigerknows.model.Zhanlan;
 import com.tigerknows.model.DataQuery.BaseList;
@@ -31,7 +30,6 @@ import com.tigerknows.model.DataQuery.ZhanlanResponse;
 import com.tigerknows.model.DataQuery.DiscoverResponse.DiscoverCategoryList.DiscoverCategory;
 import com.tigerknows.model.Yingxun.Changci;
 import com.tigerknows.ui.BaseActivity;
-import com.tigerknows.ui.user.UserBaseActivity;
 import com.tigerknows.util.Utility;
 import com.tigerknows.widget.FilterListView;
 import com.tigerknows.widget.QueryingView;
@@ -41,7 +39,6 @@ import com.tigerknows.widget.SpringbackListView.IPagerListCallBack;
 import com.tigerknows.widget.SpringbackListView.OnRefreshListener;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
@@ -63,7 +60,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.PopupWindow.OnDismissListener;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
 
 /**

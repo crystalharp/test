@@ -1,7 +1,5 @@
 package com.tigerknows.ui.user;
 
-import java.util.Hashtable;
-
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;

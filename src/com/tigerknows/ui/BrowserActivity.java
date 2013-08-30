@@ -38,7 +38,6 @@ import com.tigerknows.model.DataOperation.DingdanCreateResponse;
 import com.tigerknows.model.Response;
 import com.tigerknows.model.Tuangou;
 import com.tigerknows.ui.discover.TuangouDetailView;
-import com.tigerknows.ui.more.MoreHomeFragment;
 import com.tigerknows.ui.user.UserBaseActivity;
 import com.tigerknows.ui.user.UserLoginActivity;
 import com.tigerknows.util.Utility;

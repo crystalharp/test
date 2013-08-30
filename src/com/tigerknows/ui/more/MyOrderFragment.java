@@ -6,6 +6,7 @@ import java.util.List;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,12 +17,10 @@ import com.decarta.Globals;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.android.os.TKAsyncTask;
-import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.Response;
 import com.tigerknows.model.Shangjia;
-import com.tigerknows.model.User;
 import com.tigerknows.model.DataQuery.ShangjiaResponse;
 import com.tigerknows.model.DataQuery.ShangjiaResponse.ShangjiaList;
 import com.tigerknows.ui.BaseActivity;
@@ -40,8 +39,6 @@ public class MyOrderFragment extends BaseFragment{
 	private Button mHotelOrderBtn;
 	
 	private List<Shangjia> mResultList = new ArrayList<Shangjia>();
-	private String sessionId;
-	private DataQuery mDataQuery;
 	private Shangjia mRequestLogin = null;
 	
 	@Override
@@ -104,6 +101,7 @@ public class MyOrderFragment extends BaseFragment{
     		btn.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
     		btn.setTextSize(16);
     		btn.setText(mSphinx.getString(R.string.view) + shangjia.getMessage());
+    		btn.setGravity(Gravity.LEFT|Gravity.CENTER_VERTICAL);
     		if (i == mResultList.size() - 1){
     			btn.setBackgroundDrawable(mSphinx.getResources().getDrawable(R.drawable.list_footer));
     		}else{
@@ -145,8 +143,9 @@ public class MyOrderFragment extends BaseFragment{
     private void requestUrl(Shangjia shangjia) {
         DataQuery dataQuery = new DataQuery(mSphinx);
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_SHANGJIA);
-        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_SHANGJIA_IDS, String.valueOf(shangjia.getId()));
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_SHANGJIA_IDS, String.valueOf(shangjia.getSource()));
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_NEED_FIELD, Shangjia.NEED_FIELD);
+        dataQuery.addParameter(BaseQuery.SERVER_PARAMETER_SESSION_ID, Globals.g_Session_Id);
         dataQuery.setup(Globals.getCurrentCityInfo().getId(), getId(), getId(), mSphinx.getString(R.string.doing_and_wait));
         mSphinx.queryStart(dataQuery);
     }
