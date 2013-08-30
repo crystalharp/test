@@ -135,7 +135,6 @@ import com.tigerknows.ui.discover.DiscoverChildListFragment;
 import com.tigerknows.ui.discover.DiscoverHomeFragment;
 import com.tigerknows.ui.discover.DiscoverListFragment;
 import com.tigerknows.ui.discover.TuangouDetailFragment;
-import com.tigerknows.ui.discover.ShangjiaListActivity;
 import com.tigerknows.ui.discover.YanchuDetailFragment;
 import com.tigerknows.ui.discover.ZhanlanDetailFragment;
 import com.tigerknows.ui.hotel.HotelHomeFragment;
@@ -157,6 +156,7 @@ import com.tigerknows.ui.more.HelpActivity;
 import com.tigerknows.ui.more.HistoryFragment;
 import com.tigerknows.ui.more.MapDownloadActivity;
 import com.tigerknows.ui.more.MoreHomeFragment;
+import com.tigerknows.ui.more.MyOrderFragment;
 import com.tigerknows.ui.more.SatisfyRateActivity;
 import com.tigerknows.ui.more.SettingActivity;
 import com.tigerknows.ui.poi.CommentListActivity;
@@ -3082,10 +3082,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 intent.setClass(this, UserLoginActivity.class);
                 startActivityForResult(intent, R.id.activity_user_login);
                 return true;
-            } else if (R.id.activity_discover_shangjia_list == viewId) {
-                intent.setClass(this, ShangjiaListActivity.class);
-                startActivityForResult(intent, R.id.activity_discover_shangjia_list);
-                return true;
             } else if (R.id.activity_browser == viewId) {
                 intent.setClass(this, BrowserActivity.class);
                 startActivityForResult(intent, R.id.activity_browser);
@@ -3324,6 +3320,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     private TitleFragment mTitleFragment;
     private POIHomeFragment mPOIHomeFragment;
     private MoreHomeFragment mMoreFragment;
+    private MyOrderFragment mMyOrderFragment;
     private GoCommentFragment mGoCommentFragment;
     private ResultMapFragment mResultMapFragment;
     private BrowserFragment mBrowserFragment;
@@ -3375,6 +3372,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 
             case R.id.view_poi_home:
                 baseFragment = getPOIHomeFragment();
+                break;
+                
+            case R.id.view_more_my_order:
+                baseFragment = getMyOrderFragment();
                 break;
                 
             case R.id.view_result_map:
@@ -3559,6 +3560,18 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 mPOIHomeFragment = fragment;
             }
             return mPOIHomeFragment;
+        }
+    }
+    
+    public MyOrderFragment getMyOrderFragment() {
+        synchronized (mUILock) {
+            if (mMyOrderFragment == null) {
+                MyOrderFragment fragment = new MyOrderFragment(Sphinx.this);
+                fragment.setId(R.id.view_more_my_order);
+                fragment.onCreate(null);
+                mMyOrderFragment = fragment;
+            }
+            return mMyOrderFragment;
         }
     }
     

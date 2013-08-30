@@ -216,8 +216,7 @@ public class UserUpdateNickNameActivity extends UserBaseActivity {
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
             }
-		} else if (mSourceViewIdLogin != R.id.activity_poi_comment_list &&
-		        mSourceViewIdLogin != R.id.activity_discover_shangjia_list){
+		} else if (mSourceViewIdLogin != R.id.activity_poi_comment_list){
 			Intent intent = new Intent(UserUpdateNickNameActivity.this, Sphinx.class);
 	        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 	        startActivity(intent);

@@ -706,18 +706,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 
             case R.id.dingdan_btn:
                 mActionLog.addAction(mActionTag +  ActionLog.TuangouListDingdan);
-                User user = Globals.g_User;
-                if (user != null) {
-                    Intent intent = new Intent();
-                    intent.putExtra(UserBaseActivity.SOURCE_VIEW_ID, getId());
-                    mSphinx.showView(R.id.activity_discover_shangjia_list, intent);
-                } else {
-                    Intent intent = new Intent();
-                    intent.putExtra(UserBaseActivity.SOURCE_VIEW_ID_LOGIN, getId());
-                    intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_SUCCESS, R.id.activity_discover_shangjia_list);
-                    intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_FAILED, getId());
-                    mSphinx.showView(R.id.activity_user_login, intent);
-                }
+                mSphinx.showView(R.id.view_more_my_order);
                 break;
                 
             default:

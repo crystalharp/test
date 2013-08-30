@@ -780,7 +780,7 @@ public final class DataQuery extends BaseQuery {
             }
             addFilterParameters(cfv, nfv);
         } else if (DATA_TYPE_SHANGJIA.equals(dataType)) { 
-            addParameter(SERVER_PARAMETER_NEED_FIELD, TextUtils.isEmpty(Globals.g_Session_Id) ? Shangjia.NEED_FIELD_NO_LOGON : Shangjia.NEED_FIELD);
+            addParameter(SERVER_PARAMETER_NEED_FIELD, getParameter(SERVER_PARAMETER_NEED_FIELD));
         } else if (DATA_TYPE_ZHANLAN.equals(dataType)) { 
             addParameter(SERVER_PARAMETER_NEED_FIELD, Zhanlan.NEED_FIELD);
             addParameter(SERVER_PARAMETER_PICTURE, 

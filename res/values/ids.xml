@@ -47,6 +47,7 @@
     <item type="id" name="activity_more_setting" />
     <item type="id" name="activity_more_app_recommend" />
     <item type="id" name="activity_more_help" />
+    <item type="id" name="view_more_my_order" />
     
     <item type="id" name="view_discover_home" />
     <item type="id" name="view_discover_list" />
@@ -55,7 +56,6 @@
     <item type="id" name="view_discover_dianying_detail" />
     <item type="id" name="view_discover_yanchu_detail" />
     <item type="id" name="view_discover_zhanlan_detail" />
-    <item type="id" name="activity_discover_shangjia_list" />
     
     <item type="id" name="view_traffic_home" />
     <item type="id" name="view_traffic_fetch_favorite_poi" />
