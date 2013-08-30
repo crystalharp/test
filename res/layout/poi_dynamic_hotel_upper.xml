@@ -16,13 +16,9 @@
          <RelativeLayout
              android:id="@+id/check_in_time_view"
              android:layout_width="fill_parent"
-             android:layout_height="64dp"
+             android:layout_height="wrap_content"
              android:orientation="horizontal"
              android:background="@drawable/list_header"
-             android:paddingLeft="8dp"
-             android:paddingTop="12dp"
-             android:paddingRight="8dp"
-             android:paddingBottom="8dp"
              android:gravity="left|center_vertical"
              >
             <include

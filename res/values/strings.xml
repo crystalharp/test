@@ -113,6 +113,7 @@
     <string name="all_province">全省</string>
     <string name="added">已加</string>
     <string name="map_static_waiting_tip">地图信息读取中...</string>
+    <string name="chengshi">城市</string>
     <string name="city">市</string>
     <string name="province">省</string>
     <string name="please_add_city">请先添加城市...</string>
@@ -1160,6 +1161,7 @@
     <string name="hotel_picture_title">酒店图片（%1$d张）</string>
     <string name="hotel_reserve">酒店预订</string>
     <string name="hotel_select_location">选择位置</string>
+    <string name="position">位置</string>
     <string name="hotel_please_select_location">请选择位置</string>
     <string name="hotel_not_limit">不限</string>
     <string name="hotel_query">查找可预订酒店</string>

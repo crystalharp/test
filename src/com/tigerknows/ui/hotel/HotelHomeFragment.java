@@ -23,6 +23,7 @@ import com.tigerknows.model.DataQuery.FilterResponse;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.Response;
 import com.tigerknows.provider.HistoryWordTable;
+import com.tigerknows.provider.HotelOrderTable;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.ui.more.ChangeCityActivity;
@@ -38,6 +39,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -71,16 +73,20 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     
     List<Filter> mFilterList = new ArrayList<DataQuery.Filter>();
 
-    private Button mCityBtn;
+    private View mCityView;
+    private TextView mCityTxv;
     private View mCheckInTimeView;
     private Calendar mCheckInDat;
     private Calendar mCheckOutDat;
     private TextView mCheckInTimeTxv;
-    private Button mLocationBtn;
-    private ViewGroup mPriceView;
+    private View mLocationView;
+    private TextView mLocationTxv;
+    private View mPriceView;
     private TextView mPriceTxv;
     private Button mQueryBtn;
-    private Button mDingdanBtn;
+    private View mDingdanView;
+    private ImageView mDingdanImv;
+    private TextView mDingdanTxv;
     private POI mPOI;
     
     private FilterListView mFilterCategoryListView = null;
@@ -129,6 +135,18 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         findViews();
         setListener();
         
+        View v = mRootView.findViewById(R.id.query_view);
+        v.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        int h = v.getMeasuredHeight();
+        mQueryBtn.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        h += mQueryBtn.getMeasuredHeight()+Utility.dip2px(mSphinx, 8);
+        
+        LayoutParams l = (LayoutParams) mDingdanView.getLayoutParams();
+        int top = Globals.g_metrics.heightPixels-h-(Utility.dip2px(mSphinx, 160));
+        if (top > Utility.dip2px(mSphinx, 8)) {
+            l.topMargin = top;
+        }
+        
         DataQuery.initStaticField(BaseQuery.DATA_TYPE_POI, BaseQuery.SUB_DATA_TYPE_HOTEL, MapEngine.SW_ID_QUANGUO, mSphinx);
         return mRootView;
     }
@@ -138,6 +156,16 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         super.onResume();
         mTitleBtn.setText(R.string.hotel_reserve);
         refreshDate();
+        
+        HotelOrderTable hotelOrderTable = new HotelOrderTable(mContext);
+        int count = hotelOrderTable.count();
+        if (count > 0) {
+            mDingdanImv.setBackgroundResource(R.drawable.ic_order_hotel);
+            mDingdanTxv.setTextColor(TKConfig.COLOR_BLACK_DARK);
+        } else {
+            mDingdanImv.setBackgroundResource(R.drawable.ic_location_hotel);
+            mDingdanTxv.setTextColor(TKConfig.COLOR_BLACK_LIGHT);
+        }
         
         if (mPOI != null) {
             FilterListView.selectedFilter(getFilter(getFilterList(), FilterArea.FIELD_LIST), -1);
@@ -195,37 +223,41 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
 
     protected void findViews() {
         mPopupWindowContain = new LinearLayout(mSphinx);
-        mCityBtn = (Button) mRootView.findViewById(R.id.city_btn);
-        mCheckInTimeView = (ViewGroup) mRootView.findViewById(R.id.check_in_time_view);
+        mCityView = mRootView.findViewById(R.id.city_view);
+        mCityTxv = (TextView) mRootView.findViewById(R.id.city_txv);
+        mCheckInTimeView = mRootView.findViewById(R.id.check_in_time_view);
         mCheckInTimeTxv = (TextView) mRootView.findViewById(R.id.check_in_time_txv);
-        mLocationBtn = (Button) mRootView.findViewById(R.id.location_btn);
-        mPriceView = (ViewGroup) mRootView.findViewById(R.id.price_view);
+        mLocationView = mRootView.findViewById(R.id.location_view);
+        mLocationTxv = (TextView) mRootView.findViewById(R.id.location_txv);
+        mPriceView = mRootView.findViewById(R.id.price_view);
         mPriceTxv = (TextView) mRootView.findViewById(R.id.price_txv);
         mQueryBtn = (Button) mRootView.findViewById(R.id.query_btn);
-        mDingdanBtn = (Button) mRootView.findViewById(R.id.dingdan_btn);
+        mDingdanView = mRootView.findViewById(R.id.dingdan_view);
+        mDingdanImv = (ImageView) mRootView.findViewById(R.id.dingdan_imv);
+        mDingdanTxv = (TextView) mRootView.findViewById(R.id.dingdan_txv);
     }
 
     protected void setListener() {
-        mCityBtn.setOnClickListener(this);
+        mCityView.setOnClickListener(this);
         mCheckInTimeView.setOnClickListener(this);
-        mLocationBtn.setOnClickListener(this);
+        mLocationView.setOnClickListener(this);
         mPriceView.setOnClickListener(this);
         mQueryBtn.setOnClickListener(this);
-        mDingdanBtn.setOnClickListener(this);
+        mDingdanView.setOnClickListener(this);
     }
         
     @Override
     public void onClick(View view) {
         int id = view.getId();
         switch (id) {
-            case R.id.city_btn:
+            case R.id.city_view:
                 mActionLog.addAction(mActionTag + ActionLog.HotelQueryCity);
                 Intent intent = new Intent();
                 intent.putExtra(ChangeCityActivity.EXTRA_ONLY_CHANGE_HOTEL_CITY, true);
                 mSphinx.showView(R.id.activity_more_change_city, intent);
                 break;
                 
-            case R.id.location_btn:
+            case R.id.location_view:
                 mActionLog.addAction(mActionTag + ActionLog.HotelQueryLocation);
                 mSphinx.getPickLocationFragment().setInvoker(this);
                 mSphinx.getPickLocationFragment().reset();
@@ -257,7 +289,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                 }
                 break;
                 
-            case R.id.dingdan_btn:
+            case R.id.dingdan_view:
                 mActionLog.addAction(mActionTag + ActionLog.HotelQueryOrder);
             	mSphinx.getHotelOrderListFragment().clearOrders();
             	mSphinx.getHotelOrderListFragment().syncOrder();
@@ -320,7 +352,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     
     public void setCityInfo(CityInfo cityInfo) {
         Globals.setHotelCityInfo(cityInfo);
-        mCityBtn.setText(cityInfo.getCName());
+        mCityTxv.setText(cityInfo.getCName());
 
         DataQuery.initStaticField(BaseQuery.DATA_TYPE_POI, BaseQuery.SUB_DATA_TYPE_HOTEL, cityInfo.getId(), mSphinx);
         
@@ -608,13 +640,13 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         List<Filter> filterList = getFilterList();
         POI poi = mPOI;
         if (poi != null) {
-            mLocationBtn.setText(poi.getName());
+            mLocationTxv.setText(poi.getName());
             result = true;
         } else if (filterList != null){
             for(int i = 0, size = filterList.size(); i < size; i++) {
                 Filter filter = filterList.get(i);
                 if (filter.getKey() == FilterResponse.FIELD_FILTER_AREA_INDEX) {
-                    mLocationBtn.setText(FilterListView.getFilterTitle(mSphinx, filter));
+                    mLocationTxv.setText(FilterListView.getFilterTitle(mSphinx, filter));
                     result = true;
                     break;
                 }
@@ -622,7 +654,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         }
         
         if (result == false) {
-            mLocationBtn.setText(R.string.hotel_select_location);
+            mLocationTxv.setText(R.string.hotel_select_location);
         }
     }
     
