@@ -136,17 +136,17 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:layout_margin="8dp"
-                    android:background="@drawable/list_single"
                     >
                     <TextView
                         android:id="@+id/description_title"
-                        android:layout_width="wrap_content"
+                        android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:padding="8dp"
                         android:gravity="left|center_vertical"
                         android:text="@string/yanchu_detail_introduce"
-                        android:textColor="@color/blue"
+                        android:textColor="@color/blue_title"
                         android:textSize="16sp"
+                        android:background="@drawable/list_header_title"
                         />
                     <ImageView
                         android:layout_width="fill_parent"
@@ -165,6 +165,7 @@
                         android:textColor="@color/black_dark"
                         android:textSize="14sp"
                         android:lineSpacingExtra="4dp"
+                        android:background="@drawable/list_footer"
                         />
                  </LinearLayout>
              </LinearLayout>

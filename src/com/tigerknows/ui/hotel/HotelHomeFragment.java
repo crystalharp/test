@@ -163,7 +163,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
             mDingdanImv.setBackgroundResource(R.drawable.ic_order_hotel);
             mDingdanTxv.setTextColor(TKConfig.COLOR_BLACK_DARK);
         } else {
-            mDingdanImv.setBackgroundResource(R.drawable.ic_location_hotel);
+            mDingdanImv.setBackgroundResource(R.drawable.ic_order_hotel_empty);
             mDingdanTxv.setTextColor(TKConfig.COLOR_BLACK_LIGHT);
         }
         

@@ -166,7 +166,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
-                android:background="@drawable/list_header"
+                android:background="@drawable/list_header_title"
                 >
                 <TextView
                     android:id="@+id/shanghu_txv"
@@ -176,7 +176,7 @@
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
                     android:text="@string/shanghu_xingxi"
-                    android:textColor="@color/blue"
+                    android:textColor="@color/blue_title"
                     android:textSize="16sp"
                     />
                 <TextView
@@ -214,16 +214,16 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:layout_margin="8dp"
-                android:background="@drawable/list_single"
                 >
                  <TextView
-                     android:layout_width="wrap_content"
+                     android:layout_width="fill_parent"
                      android:layout_height="wrap_content"
                      android:padding="8dp"
                      android:gravity="left|center_vertical"
                      android:text="@string/dianying_detail_introduce"
-                     android:textColor="@color/blue"
+                     android:textColor="@color/blue_title"
                      android:textSize="16sp"
+                     android:background="@drawable/list_header_title"
                      />
                  <ImageView
                      android:layout_width="fill_parent"
@@ -242,6 +242,7 @@
                      android:textColor="@color/black_dark"
                      android:textSize="14sp"
                      android:lineSpacingExtra="4dp"
+                     android:background="@drawable/list_footer"
                      />
              </LinearLayout>
          </LinearLayout>
