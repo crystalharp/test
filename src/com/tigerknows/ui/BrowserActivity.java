@@ -308,6 +308,7 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
         } else if (id == R.id.stop_btn) {
             mWebWbv.stopLoading();
         } else if (id == R.id.buy_btn) {
+            mTitleBtn.setText(R.string.buy);
             buy();
         }
         

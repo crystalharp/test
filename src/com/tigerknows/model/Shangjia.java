@@ -297,6 +297,7 @@ public class Shangjia extends BaseData implements Parcelable {
                 dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_SHANGJIA);
                 dataQuery.addParameter(DataQuery.SERVER_PARAMETER_NEED_FIELD, Globals.g_Session_Id != null ? NEED_FIELD : NEED_FIELD_NO_LOGON);
                 dataQuery.setup(Globals.getCurrentCityInfo().getId(), -1, -1, null);
+                dataQuery.query();
             } catch (APIException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();

@@ -265,6 +265,8 @@
     <string name="confirm_start_station">你要找的起点是</string>
     <string name="confirm_end_station">你要找的终点是</string>
     
+    <string name="picture_text_detail">图文详情</string>
+    
     <string name="share">分享</string>
     <string name="error_recovery">纠错</string>
     <string name="come_here">到这里去</string>
