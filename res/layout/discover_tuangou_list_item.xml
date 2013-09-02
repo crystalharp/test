@@ -32,14 +32,15 @@
             android:layout_alignTop="@id/picture_imv"
             android:scaleType="fitXY"
             />
-	    <ImageView
-	        android:id="@+id/fast_purchase_imv"
+	    <TextView
+	        android:id="@+id/fast_purchase_txv"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
             android:layout_alignLeft="@id/picture_imv"
             android:layout_alignBottom="@id/picture_imv"
-	        android:src="@drawable/icon"
-	        android:background="@color/transparent"
+            android:background="@drawable/bg_fast_purchase"
+            android:textColor="@color/white"
+            android:text="@string/fast_purchase"
 	        />
     </RelativeLayout>
     <TextView
@@ -59,14 +60,15 @@
         android:includeFontPadding="false"
         android:focusable="false"
         />
-    <ImageView
-        android:id="@+id/appointment_imv"
+    <TextView
+        android:id="@+id/appointment_txv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_below="@id/name_txv"
-        android:src="@drawable/icon"
-        android:background="@color/transparent"
+        android:background="@drawable/bg_need_guarantee"
+        android:textColor="@color/orange"
+        android:text="@string/mian_yu_yue"
         />
 
     <TextView

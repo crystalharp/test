@@ -750,8 +750,8 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             TextView orgPriceTxv = (TextView) view.findViewById(R.id.org_price_txv);
             TextView distanceTxv = (TextView) view.findViewById(R.id.distance_txv);
             TextView buyerNumTxv = (TextView) view.findViewById(R.id.buyer_num_txv);
-            ImageView fastPurchaseImv = (ImageView) view.findViewById(R.id.fast_purchase_imv);
-            ImageView appointmentImv = (ImageView) view.findViewById(R.id.appointment_imv);
+            TextView fastPurchaseTxv = (TextView) view.findViewById(R.id.fast_purchase_txv);
+            TextView appointmentTxv = (TextView) view.findViewById(R.id.appointment_txv);
 
             Tuangou tuangou = getItem(position);
             Drawable drawable = tuangou.getPictures().loadDrawable(mSphinx, mLoadedDrawableRun, DiscoverListFragment.this.toString());
@@ -787,15 +787,15 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             buyerNumTxv.setText(String.valueOf(tuangou.getBuyerNum())+mSphinx.getString(R.string.people));
             
             if (tuangou.getAppointment() == 1) {
-                appointmentImv.setImageResource(R.drawable.icon);
+                appointmentTxv.setVisibility(View.VISIBLE);
             } else {
-                appointmentImv.setImageBitmap(null);
+                appointmentTxv.setVisibility(View.GONE);
             }
 
             if (tuangou.getUrl() != null) {
-                fastPurchaseImv.setImageResource(R.drawable.icon);
+                fastPurchaseTxv.setVisibility(View.VISIBLE);
             } else {
-                fastPurchaseImv.setImageBitmap(null);
+                fastPurchaseTxv.setVisibility(View.GONE);
             }
             
             return view;
