@@ -225,7 +225,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
         	reloadOrders();
         }
         
-        if(couldAnomalyExists() && toSync){
+        if(toSync){
         	logi("Anomaly could exists. Send list sync query.");
         	sendOrderSyncQuery();
         }
@@ -237,7 +237,8 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
      * that an anomaly exists.
      * @return
      */
-    private boolean couldAnomalyExists(){
+    @SuppressWarnings("unused")
+	private boolean couldAnomalyExists(){
     	String orderSubmited = TKConfig.getPref(mContext, TKConfig.PREFS_HOTEL_ORDER_COULD_ANOMALY_EXISTS, "no");
     	logi("orderSubmited: " + orderSubmited);
 		return "yes".equals(orderSubmited);
@@ -590,7 +591,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
 			int state = hotelOrder.getState();
 			switch (state) {
 				case HotelOrder.STATE_PROCESSING:	//订单处理中
-				case HotelOrder.STATE_SUCCESS:	//预订成功哦你
+				case HotelOrder.STATE_SUCCESS:	//预订成功
 					ordersToQuery.addLast(hotelOrder);
 					break;
 			}
@@ -652,8 +653,8 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
         					table.close();
         				}
         			}
-        			Toast.makeText(mContext, mContext.getString(R.string.hotel_order_sync_success), Toast.LENGTH_SHORT).show();
         		}
+        		Toast.makeText(mContext, mContext.getString(R.string.hotel_order_sync_success), Toast.LENGTH_SHORT).show();
         		
         		if(!isExceptExists){
         			//clear the anomaly exists flag
