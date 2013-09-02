@@ -418,6 +418,11 @@ public class TKConfig {
     public static final String PREFS_USER_ACTION_TRACK = "prefs_user_action_track";
     
     /**
+     * 是否采用支付宝快捷支付逻辑
+     */
+    public static final String PREFS_CLIENT_GO_ALIPAY = "prefs_client_go_alipay"; 
+    
+    /**
      * 离开软件时地图上的经度，且此经度一定在选择城市范围内
      */
     public static final String PREFS_LAST_LON = "prefs_last_lon";

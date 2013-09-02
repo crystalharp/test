@@ -26,6 +26,8 @@ import com.alipay.android.MobileSecurePayer;
 import com.alipay.android.MobileSecurePayHelper;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
+import com.tigerknows.TKConfig;
+
 import android.widget.Toast;
 
 import com.tigerknows.android.os.TKAsyncTask;
@@ -184,8 +186,8 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
                 super.onPageStarted(view, url, favicon);
             	mProgressBar.setVisibility(View.VISIBLE);
                 String info = URLDecoder.decode(url);
-                LogWrapper.i("Trap", URLDecoder.decode(url));
-            	if(info.contains("wappaygw") && info.contains("authAndExecute")){
+                String clientGoAlipay = TKConfig.getPref(mThis, TKConfig.PREFS_CLIENT_GO_ALIPAY, "no");
+            	if("yes".equalsIgnoreCase(clientGoAlipay) && info.contains("wappaygw") && info.contains("authAndExecute")){
             		int c = "<request_token>".length();
             		int i = info.indexOf("<request_token>");
             		int j = info.indexOf("</request_token>");
