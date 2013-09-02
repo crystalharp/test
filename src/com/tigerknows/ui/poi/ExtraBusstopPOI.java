@@ -14,6 +14,7 @@ import com.tigerknows.map.MapEngine;
 import com.tigerknows.model.BuslineModel;
 import com.tigerknows.model.BuslineModel.Line;
 import com.tigerknows.model.BuslineQuery;
+import com.tigerknows.model.POI.Description;
 import com.tigerknows.ui.poi.POIDetailFragment.BlockRefresher;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIView;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIViewBlock;
@@ -24,8 +25,10 @@ public class ExtraBusstopPOI extends DynamicPOIView {
     
     @Override
     public boolean isExist() {
-        //FIXME:加上key之后把这段代码换掉
-        return true;
+        if (mPOI.getXDescription() != null && (mPOI.getXDescription().containsKey(Description.FIELD_LINE))) {
+            return true;
+        }
+        return false;
     }
 
     DynamicPOIViewBlock mBusstopBlock;
