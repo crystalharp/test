@@ -727,7 +727,7 @@ public class ActionLog extends LogUpload {
                 }
     
                 if (addTime) {
-                    long current = System.currentTimeMillis();
+                    long current = CalendarUtil.getExactTime(mContext);
                     mStringBuilder.append(SEPARATOR_STAET);
                     mStringBuilder.append((current-mStartMillis)/1000);
                     mStringBuilder.append(SEPARATOR_MIDDLE);
