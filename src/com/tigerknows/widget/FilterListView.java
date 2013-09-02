@@ -442,12 +442,12 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
             
             if (isParent) {
                 if (position == selectedParentPosition) {
-                    view.setBackgroundResource(R.drawable.list_selector_background_gray_light);
-                } else {
                     view.setBackgroundResource(R.drawable.list_selector_background_gray_dark);
+                } else {
+                    view.setBackgroundResource(R.drawable.list_selector_background_gray_light);
                 }
             } else {
-                view.setBackgroundResource(R.drawable.list_selector_background_gray_light);
+                view.setBackgroundResource(R.drawable.list_selector_background_gray_dark);
             }
 
             if (filter.isSelected() && (filter.getChidrenFilterList()==null || filter.getChidrenFilterList().size()==0)) {
