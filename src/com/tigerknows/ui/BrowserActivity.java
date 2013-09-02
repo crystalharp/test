@@ -186,7 +186,7 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
                 super.onPageStarted(view, url, favicon);
             	mProgressBar.setVisibility(View.VISIBLE);
                 String info = URLDecoder.decode(url);
-                String clientGoAlipay = TKConfig.getPref(mThis, TKConfig.PREFS_CLIENT_GO_ALIPAY, "off");
+                String clientGoAlipay = TKConfig.getPref(mThis, TKConfig.PREFS_CLIENT_GO_ALIPAY, "on");
             	if("on".equalsIgnoreCase(clientGoAlipay) && info.contains("wappaygw") && info.contains("authAndExecute")){
             		int c = "<request_token>".length();
             		int i = info.indexOf("<request_token>");
