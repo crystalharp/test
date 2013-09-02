@@ -3,7 +3,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:paddingLeft="8dp"
+    android:paddingLeft="4dp"
     android:paddingTop="14dp"
     android:paddingRight="8dp"
     android:paddingBottom="14dp"
@@ -14,6 +14,7 @@
         android:id="@+id/picture_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="4dp"
         android:layout_marginRight="8dp"
         android:background="@drawable/bg_picture"
         >
@@ -32,17 +33,17 @@
             android:layout_alignTop="@id/picture_imv"
             android:scaleType="fitXY"
             />
-	    <TextView
-	        android:id="@+id/fast_purchase_txv"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-            android:layout_alignLeft="@id/picture_imv"
-            android:layout_alignBottom="@id/picture_imv"
-            android:background="@drawable/bg_fast_purchase"
-            android:textColor="@color/white"
-            android:text="@string/fast_purchase"
-	        />
     </RelativeLayout>
+    <TextView
+        android:id="@+id/fast_purchase_txv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/picture_view"
+        android:background="@drawable/bg_fast_purchase"
+        android:textSize="12sp"
+        android:textColor="@color/white"
+        android:text="@string/fast_purchase"
+        />
     <TextView
         android:id="@+id/name_txv"
         android:layout_width="wrap_content"
@@ -67,6 +68,7 @@
         android:layout_alignParentRight="true"
         android:layout_below="@id/name_txv"
         android:background="@drawable/bg_need_guarantee"
+        android:textSize="12sp"
         android:textColor="@color/orange"
         android:text="@string/mian_yu_yue"
         />

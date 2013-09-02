@@ -31,7 +31,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
 
 public class Shangjia extends BaseData implements Parcelable {
@@ -117,7 +116,9 @@ public class Shangjia extends BaseData implements Parcelable {
         this.serviceTel = getStringFromData(FIELD_SERVICE_TEL, reset ? null : this.serviceTel);
         byte[] bytes = getBytesFromData(FIELD_MARKER, null);
         if (bytes != null) {
-            this.marker = new BitmapDrawable(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
+            BitmapDrawable bd = new BitmapDrawable(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
+            bd.setTargetDensity(Globals.g_metrics);
+            this.marker = bd;
         } else if (reset) {
             this.marker = null;
         }
@@ -125,7 +126,9 @@ public class Shangjia extends BaseData implements Parcelable {
         this.message = getStringFromData(FIELD_MESSAGE, reset ? null : this.message);
         bytes = getBytesFromData(FIELD_LOGO, null);
         if (bytes != null) {
-            this.logo = new BitmapDrawable(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
+            BitmapDrawable bd = new BitmapDrawable(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
+            bd.setTargetDensity(Globals.g_metrics);
+            this.logo = bd;
         } else if (reset) {
             this.logo = null;
         }
@@ -161,6 +164,7 @@ public class Shangjia extends BaseData implements Parcelable {
         bt = (Bitmap)in.readParcelable(Bitmap.class.getClassLoader());
         if (bt != null) {
             bd= new BitmapDrawable(bt);
+            bd.setTargetDensity(Globals.g_metrics);
             logo = bd;
         }
         name = in.readString();

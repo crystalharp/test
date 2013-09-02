@@ -985,7 +985,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         mMenuView.setVisibility(View.VISIBLE);
         mControlView.setVisibility(View.VISIBLE);
         Sphinx.this.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        mMapView.refreshMap();
         
         checkFromThirdParty(false);
     }
