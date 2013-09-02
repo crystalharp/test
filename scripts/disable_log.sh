@@ -29,10 +29,12 @@ process_dir(){
 			if [ $yes = "-y" ] && [[ "${file_filter[@]/$i/}" == "${file_filter[@]}" ]]
 			then
 				sed -i "s|^\s*LogWrapper\.|//$comment_tag\0|" $i;
+				sed -i "s|^\s*log[EWID](|//$comment_tag\0|" $i;
 				sed -i "s|^\s*e.printStack|//$comment_tag\0|" $i;
 			elif [ $yes = "-n" ]
 			then
 				sed -i "s|^\( *\)//$comment_tag\(\s*LogWrapper\.\)|\1\2|" $i;
+				sed -i "s|^\( *\)//$comment_tag\(\s*log[EWID](\)|\1\2|" $i;
 				sed -i "s|^\( *\)//$comment_tag\(\s*e.printStack\)|\1\2|" $i;
 			fi
 		fi

@@ -363,7 +363,7 @@ public class BaseFragment extends LinearLayout {
     	throw new Exception("getTag must be overrided by subclasss to use log*!");
     }
 
-    public void logi(String msg){
+    public void logI(String msg){
     	try {
 			LogWrapper.i(getLogTag(), msg);
 		} catch (Exception e) {
@@ -371,7 +371,7 @@ public class BaseFragment extends LinearLayout {
 		}
     }
 
-    public void logd(String msg){
+    public void logD(String msg){
     	try {
 			LogWrapper.d(getLogTag(), msg);
 		} catch (Exception e) {
@@ -379,7 +379,7 @@ public class BaseFragment extends LinearLayout {
 		}
     }
 
-    public void logw(String msg){
+    public void logW(String msg){
     	try {
 			LogWrapper.w(getLogTag(), msg);
 		} catch (Exception e) {
@@ -387,7 +387,7 @@ public class BaseFragment extends LinearLayout {
 		}
     }
 
-    public void loge(String msg){
+    public void logE(String msg){
     	try {
 			LogWrapper.e(getLogTag(), msg);
 		} catch (Exception e) {

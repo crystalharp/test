@@ -109,7 +109,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {  
-        logd("onCreateView()"+mActionTag);
+        logD("onCreateView()"+mActionTag);
         
         mRootView = mLayoutInflater.inflate(R.layout.hotel_order_list, container, false);
 
@@ -226,7 +226,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
         }
         
         if(toSync){
-        	logi("Anomaly could exists. Send list sync query.");
+        	logI("Anomaly could exists. Send list sync query.");
         	sendOrderSyncQuery();
         }
         toSync = false;
@@ -240,7 +240,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     @SuppressWarnings("unused")
 	private boolean couldAnomalyExists(){
     	String orderSubmited = TKConfig.getPref(mContext, TKConfig.PREFS_HOTEL_ORDER_COULD_ANOMALY_EXISTS, "no");
-    	logi("orderSubmited: " + orderSubmited);
+    	logI("orderSubmited: " + orderSubmited);
 		return "yes".equals(orderSubmited);
     }
     
@@ -250,7 +250,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
 		HotelOrderTable table = new HotelOrderTable(mContext);
 		ids = table.getAllIds();
 		table.close();
-    	logi("send order sync query for: " + ids + "$");
+    	logI("send order sync query for: " + ids + "$");
     	
     	HotelOrderOperation hotelOrderOperation = new HotelOrderOperation(mSphinx);
     	hotelOrderOperation.addParameter(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, HotelOrderOperation.OPERATION_CODE_SYNC);
@@ -390,7 +390,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     @Override
     public void onCancelled(TKAsyncTask tkAsyncTask) {
         super.onCancelled(tkAsyncTask);
-        logi("onCancelled");
+        logI("onCancelled");
         Toast.makeText(mContext, mSphinx.getString(R.string.response_null_hotel_order_sync), Toast.LENGTH_LONG).show();
     }
     
@@ -416,8 +416,8 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
 			    }
 				ordersSize = orders.size();
 			}
-			logi("OrderTotal: " + orderTotal);
-			logi("OrdersSize: " + ordersSize);
+			logI("OrderTotal: " + orderTotal);
+			logI("OrdersSize: " + ordersSize);
 			if(orderTotal > ordersSize){
 				mResultLsv.changeHeaderViewByState(false, SpringbackListView.PULL_TO_REFRESH);
 				mResultLsv.setFooterSpringback(true);
@@ -494,7 +494,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     	System.out.println("launchStateQuery");
     	
     	String ids = prepareIds();
-    	logi("Ids: " + ids);
+    	logI("Ids: " + ids);
     	sendStateQuery(ids);
         
     }
@@ -507,7 +507,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     	if(TextUtils.isEmpty(ids)){
     		return;
     	}
-    	logi("send state query for: " + ids);
+    	logI("send state query for: " + ids);
     	HotelOrderOperation hotelOrderOperation = new HotelOrderOperation(mSphinx);
     	hotelOrderOperation.addParameter(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, HotelOrderOperation.OPERATION_CODE_QUERY);
     	hotelOrderOperation.addParameter(HotelOrderOperation.SERVER_PARAMETER_ORDER_IDS, ids);
@@ -544,8 +544,8 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     			orderTotal = table.count();
     			
 				ordersLoaded = table.read(startIndex, loadCount);
-    			logi("Order total: " + orderTotal);
-    			logi("Orders loaded: " + ordersLoaded.size());
+    			logI("Order total: " + orderTotal);
+    			logI("Orders loaded: " + ordersLoaded.size());
     			checkOrderStateForQuery(ordersLoaded);
  
 			} catch (IOException e) {
@@ -627,7 +627,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
         	
         	// If there exists orders to sync
         	if(orders!=null){
-        		logi("Orders got: " + orders.size());
+        		logI("Orders got: " + orders.size());
         		// write to database
         		boolean isExceptExists = false;
         		
@@ -637,7 +637,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
         			try {
         				table = new HotelOrderTable(mContext);
         				for (HotelOrder hotelOrder : orders) {
-        					logi("Write A Order. Id: " + hotelOrder.getId());
+        					logI("Write A Order. Id: " + hotelOrder.getId());
         					table.write(hotelOrder);
         				}
         				
@@ -770,7 +770,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
 		public void run() {
 			
 			if(ordersToStorage !=null){
-				logi("Update thread");
+				logI("Update thread");
 				synchronized (ordersToStorage) {
 					updateOrderStorage(ordersToStorage);
 					ordersToStorage.clear();
