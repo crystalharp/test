@@ -51,6 +51,7 @@ import com.tigerknows.ui.hotel.HotelIntroFragment;
 import com.tigerknows.ui.poi.POIDetailFragment.BlockRefresher;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIView;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIViewBlock;
+import com.tigerknows.util.CalendarUtil;
 import com.tigerknows.util.Utility;
 import com.tigerknows.widget.LinearListView;
 import com.tigerknows.widget.LinearListView.ItemInitializer;
@@ -383,7 +384,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     final public void initDate() {
         mInitDatePOIid = (mPOI != null ? mPOI.getUUID() : null);
         checkin = Calendar.getInstance();
-        checkin.setTimeInMillis(System.currentTimeMillis());
+        checkin.setTimeInMillis(CalendarUtil.getExactTime(mSphinx));
         checkout = (Calendar) checkin.clone();
         checkout.add(Calendar.DAY_OF_YEAR, 1);
         refreshDate();

@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@android:color/white"
+    android:background="@drawable/list_selector_background_gray_dark"
     android:orientation="vertical" 
     android:descendantFocusability="blocksDescendants">
 
@@ -33,7 +33,6 @@
         android:padding="8dip"
         android:text="找好友"
         android:textColor="@color/black_dark"
-        android:textSize="16sp" 
-        android:background="@drawable/list_selector_background_gray_light"/>
+        android:textSize="16sp" />
 
 </LinearLayout>

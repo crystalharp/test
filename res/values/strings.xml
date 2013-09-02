@@ -266,6 +266,8 @@
     <string name="confirm_end_station">你要找的终点是</string>
     
     <string name="picture_text_detail">图文详情</string>
+    <string name="mian_yu_yue">免预约</string>
+    <string name="fast_purchase">快捷购买</string>
     
     <string name="share">分享</string>
     <string name="error_recovery">纠错</string>

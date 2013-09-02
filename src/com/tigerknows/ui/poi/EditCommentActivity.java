@@ -823,11 +823,13 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
         long commentPattern = mPOI.getCommentPattern();
         if (POI.COMMENT_PATTERN_FOOD == commentPattern) {
             String avg = mFoodAvgEdt.getEditableText().toString().trim();
+            s.append(',');
+            s.append(Util.byteToHexString(Comment.FIELD_AVG));
+            s.append(':');
             if (!TextUtils.isEmpty(avg)) {
-                s.append(',');
-                s.append(Util.byteToHexString(Comment.FIELD_AVG));
-                s.append(':');
                 s.append(avg);
+            } else {
+                s.append('0');
             }
             s.append(',');
             s.append(Util.byteToHexString(Comment.FIELD_TASTE));
@@ -842,18 +844,18 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
             s.append(':');
             s.append((int)mFoodQosRtb.getRating());
             String restair = mRestairBtn.getText().toString();
+            s.append(',');
+            s.append(Util.byteToHexString(Comment.FIELD_RESTAIR));
+            s.append(':');
             if (!TextUtils.isEmpty(restair)) {
-                s.append(',');
-                s.append(Util.byteToHexString(Comment.FIELD_RESTAIR));
-                s.append(':');
                 s.append(URLEncoder.encode(restair));
             }
             
             recommendCook = mRecommendEdt.getEditableText().toString().trim();
+            s.append(',');
+            s.append(Util.byteToHexString(Comment.FIELD_RECOMMEND));
+            s.append(':');
             if (!TextUtils.isEmpty(recommendCook)) {
-                s.append(',');
-                s.append(Util.byteToHexString(Comment.FIELD_RECOMMEND));
-                s.append(':');
                 try {
                     s.append(URLEncoder.encode(recommendCook, TKConfig.getEncoding()));
                 } catch (UnsupportedEncodingException e) {
@@ -862,11 +864,13 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
             }
         } else if (POI.COMMENT_PATTERN_HOTEL == commentPattern) {
             String avg = mHotelAvgEdt.getEditableText().toString().trim();
+            s.append(',');
+            s.append(Util.byteToHexString(Comment.FIELD_AVG));
+            s.append(':');
             if (!TextUtils.isEmpty(avg)) {
-                s.append(',');
-                s.append(Util.byteToHexString(Comment.FIELD_AVG));
-                s.append(':');
                 s.append(avg);
+            } else {
+                s.append('0');
             }
             s.append(',');
             s.append(Util.byteToHexString(Comment.FIELD_QOS));
@@ -878,11 +882,13 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
             s.append((int)mHotelEnvironmentRtb.getRating());
         } else if (POI.COMMENT_PATTERN_CINEMA == commentPattern) {
             String avg = mCinemaAvgEdt.getEditableText().toString().trim();
+            s.append(',');
+            s.append(Util.byteToHexString(Comment.FIELD_AVG));
+            s.append(':');
             if (!TextUtils.isEmpty(avg)) {
-                s.append(',');
-                s.append(Util.byteToHexString(Comment.FIELD_AVG));
-                s.append(':');
                 s.append(avg);
+            } else {
+                s.append('0');
             }
             s.append(',');
             s.append(Util.byteToHexString(Comment.FIELD_EFFECT));
@@ -894,11 +900,13 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
             s.append((int)mCinemaQosRtb.getRating());
         } else if (POI.COMMENT_PATTERN_HOSPITAL == commentPattern) {
             String avg = mHospitalAvgEdt.getEditableText().toString().trim();
+            s.append(',');
+            s.append(Util.byteToHexString(Comment.FIELD_AVG));
+            s.append(':');
             if (!TextUtils.isEmpty(avg)) {
-                s.append(',');
-                s.append(Util.byteToHexString(Comment.FIELD_AVG));
-                s.append(':');
                 s.append(avg);
+            } else {
+                s.append('0');
             }
             s.append(',');
             s.append(Util.byteToHexString(Comment.FIELD_QOS));
@@ -910,11 +918,13 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
             s.append((int)mLevelRtb.getRating());
         } else if (POI.COMMENT_PATTERN_BUY == commentPattern) {
             String avg = mBuyAvgEdt.getEditableText().toString().trim();
+            s.append(',');
+            s.append(Util.byteToHexString(Comment.FIELD_AVG));
+            s.append(':');
             if (!TextUtils.isEmpty(avg)) {
-                s.append(',');
-                s.append(Util.byteToHexString(Comment.FIELD_AVG));
-                s.append(':');
                 s.append(avg);
+            } else {
+                s.append('0');
             }
         }
         s.append(',');
