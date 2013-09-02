@@ -335,7 +335,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
         updateCancelBtn();
         
         // If order state if out-of-date, query the state of the current order
-        long curTime = System.currentTimeMillis();
+        long curTime = CalendarUtil.getExactTime(mContext);
         if(( curTime - mOrder.getStateUpdateTime() ) > ORDER_UPDATE_INTEVAL){
         	sendStateQuery(""+mOrder.getId());
         }
@@ -562,7 +562,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
             		// here only one order is queried, so exactly state will be returned
             		if(states != null && states.size()!=0 && states.get(0) != -1){
             			mOrder.setState(states.get(0).intValue());
-            			mOrder.setStateUpdateTime(System.currentTimeMillis());
+            			mOrder.setStateUpdateTime(CalendarUtil.getExactTime(mContext));
             			updateOrderStorage(mOrder);
             			mOrderStateTxv.setText(getOrderStateDesc(mOrder.getState()));
             	        updateCancelBtn();
@@ -618,7 +618,8 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
         poiQuery.addParameter(DataOperation.SERVER_PARAMETER_DATA_UID, mOrder.getHotelPoiUUID());
         poiQuery.addParameter(DataOperation.SERVER_PARAMETER_NEED_FIELD, POI.NEED_FIELD);
         Calendar today = Calendar.getInstance();
-        Calendar tomorrow = Calendar.getInstance();
+        today.setTimeInMillis(CalendarUtil.getExactTime(mContext));
+        Calendar tomorrow = (Calendar) today.clone();
         tomorrow.add(Calendar.DAY_OF_YEAR, 1);
         poiQuery.addParameter(DataQuery.SERVER_PARAMETER_CHECKIN, SIMPLE_DATE_FORMAT.format(today.getTime()));
         poiQuery.addParameter(DataQuery.SERVER_PARAMETER_CHECKOUT, SIMPLE_DATE_FORMAT.format(tomorrow.getTime()));

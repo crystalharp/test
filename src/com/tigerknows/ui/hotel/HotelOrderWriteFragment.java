@@ -625,7 +625,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
 
             mHotelOrder = new HotelOrder(
                     hotelOrderCreateResponse.getOrderId(),
-                    Calendar.getInstance().getTimeInMillis(),
+                    CalendarUtil.getExactTime(mContext),
                     1,
                     mPOI.getUUID(),
                     mPOI.getName(),

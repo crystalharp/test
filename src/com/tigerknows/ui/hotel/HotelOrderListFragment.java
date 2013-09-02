@@ -45,6 +45,7 @@ import com.tigerknows.model.HotelOrderOperation.HotelOrderStatesResponse;
 import com.tigerknows.provider.HotelOrderTable;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
+import com.tigerknows.util.CalendarUtil;
 import com.tigerknows.util.Utility;
 import com.tigerknows.widget.SpringbackListView;
 import com.tigerknows.widget.SpringbackListView.OnRefreshListener;
@@ -700,7 +701,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
      */
     private void updateOrderInMemory(List<Long> states, String ids, List<HotelOrder> orders){
 
-        long stateUpdateTime = System.currentTimeMillis();
+        long stateUpdateTime = CalendarUtil.getExactTime(mContext);
     	String[] idArray = ids.split("_");
 
     	// for each order get the its id position 

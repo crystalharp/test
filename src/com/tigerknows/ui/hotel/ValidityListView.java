@@ -70,6 +70,7 @@ public class ValidityListView extends LinearLayout {
         mActionTag = actionTag;
         this.calendar = calendar;
         now = Calendar.getInstance();
+        now.setTimeInMillis(CalendarUtil.getExactTime(mSphinx));
         if (this.calendar == null) {
             this.calendar = now;
         }
@@ -186,6 +187,7 @@ public class ValidityListView extends LinearLayout {
                 parentAdapter.notifyDataSetChanged();
                 
                 Calendar now = Calendar.getInstance();
+                now.setTimeInMillis(CalendarUtil.getExactTime(mSphinx));
                 
                 childFilterList.clear();
                 for(int i = (selectedParentPosition == 0 ? now.get(Calendar.MONTH) : 0); i < 12; i++) {
