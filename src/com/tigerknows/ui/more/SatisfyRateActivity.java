@@ -52,8 +52,6 @@ public class SatisfyRateActivity extends BaseActivity implements View.OnClickLis
 	    R.id.rate_6_txv,
 	    R.id.rate_7_txv
 	};
-	private Context mContext;
-
 	private RatingBar[] mSatisfyRbt;
 	private TextView[] mRateTxv;
 	private List<String> mRateList;
@@ -63,7 +61,6 @@ public class SatisfyRateActivity extends BaseActivity implements View.OnClickLis
 	protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mActionTag = ActionLog.SatisfyRate;
-        mContext = getBaseContext();
         setContentView(R.layout.more_satisfy_rate);
     	mSatisfyRbt = new RatingBar[NUM_OF_RATINGBAR];
     	mRateTxv = new TextView[NUM_OF_RATINGBAR];

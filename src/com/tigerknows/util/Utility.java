@@ -1703,7 +1703,6 @@ public class Utility {
      * @param arrays
      * @return
      */
-    @SuppressWarnings("unchecked")
     public static String[] mergeArray(String[] ...arrays) {
         List<String> tmp = new LinkedList<String>();
         for (String[] a : arrays) {
