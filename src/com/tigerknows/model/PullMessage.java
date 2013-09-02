@@ -27,6 +27,8 @@ public class PullMessage extends Response {
         public static final int TYPE_PRODUCT_UPGRADE = 10;
         // 20 重要产品信息推送
         public static final int TYPE_PRODUCT_INFOMATION = 20;
+        // 25 主题活动推送
+        public static final int TYPE_ACTIVITY = 25;
         // 30 节假日推送
         public static final int TYPE_HOLIDAY = 30;
         // 40 新片推送
@@ -256,6 +258,7 @@ public class PullMessage extends Response {
 					break;
 
 				case TYPE_PRODUCT_UPGRADE:
+                case TYPE_ACTIVITY:
 				case TYPE_PRODUCT_INFOMATION:
 					if(data.containsKey(FIELD_PRODUCT_MESSAGE)){
 						productMsg = new PulledProductMessage(this.data.getXMap(FIELD_PRODUCT_MESSAGE));
