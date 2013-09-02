@@ -727,7 +727,7 @@ public class ActionLog extends LogUpload {
                 }
     
                 if (addTime) {
-                    long current = System.currentTimeMillis();
+                    long current = CalendarUtil.getExactTime(mContext);
                     mStringBuilder.append(SEPARATOR_STAET);
                     mStringBuilder.append((current-mStartMillis)/1000);
                     mStringBuilder.append(SEPARATOR_MIDDLE);
@@ -779,8 +779,8 @@ public class ActionLog extends LogUpload {
     public void onCreate() {
         super.onCreate();
         synchronized (mLock) {
-            mStartMillis = System.currentTimeMillis();
-            addAction(SEPARATOR_STAET+simpleDateFormat.format(CalendarUtil.getExactTime(context))+SEPARATOR_MIDDLE+LifecycleCreate+SEPARATOR_MIDDLE+TKConfig.getClientSoftVersion(), false);
+            mStartMillis = CalendarUtil.getExactTime(mContext);
+            addAction(SEPARATOR_STAET+simpleDateFormat.format(mStartMillis)+SEPARATOR_MIDDLE+LifecycleCreate+SEPARATOR_MIDDLE+TKConfig.getClientSoftVersion(), false);
         }
     }
     
