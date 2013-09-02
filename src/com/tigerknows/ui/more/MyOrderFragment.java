@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.decarta.Globals;
@@ -98,6 +99,9 @@ public class MyOrderFragment extends BaseFragment{
     	for(int i=0; i<mResultList.size(); i++){
     		final Button btn = new Button(mContext);
     		final Shangjia shangjia = mResultList.get(i);
+    		ImageView splitImv = new ImageView(mContext);
+    		splitImv.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
+    		splitImv.setBackgroundResource(R.drawable.bg_line_split);
     		btn.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
     		btn.setTextSize(16);
     		btn.setText(mSphinx.getString(R.string.view) + shangjia.getMessage());
@@ -127,6 +131,7 @@ public class MyOrderFragment extends BaseFragment{
 	                }
 				}
 			});
+    		mTuangouDingdanLly.addView(splitImv);
     		mTuangouDingdanLly.addView(btn);
     	}
     }

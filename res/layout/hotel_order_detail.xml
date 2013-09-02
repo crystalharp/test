@@ -6,6 +6,7 @@
     android:layout_height="fill_parent"
     android:background="@color/normal_background"
     >
+
 	<LinearLayout 
 	        android:id="@+id/panel_btns"
 	        android:layout_width="fill_parent"
@@ -91,7 +92,7 @@
 	    <ScrollView
 	        android:id="@+id/body_scv"
 	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
+	        android:layout_height="fill_parent"
 	        
 	        android:layout_above="@id/navigation_widget"
 	        
@@ -105,14 +106,24 @@
 	        <LinearLayout
 	            android:orientation="vertical"
 	            android:layout_width="fill_parent"
-	            android:layout_height="fill_parent"
+	            android:layout_height="wrap_content"
 	            >
-	            <include
+			    <TextView 
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:text="入住时请告知酒店前台入住人姓名"
+			        android:textSize="18sp"
+			        android:textColor="@color/black_dark"
+	                android:layout_marginLeft="8dp"
+	                android:layout_marginRight="8dp"
+	                android:layout_marginTop="8dp"
+	                android:padding="8dp"
+	                />
+	    	    <include
 	                android:layout_width="match_parent"
 	                android:layout_height="wrap_content"
 	                android:layout_marginLeft="8dp"
 	                android:layout_marginRight="8dp"
-	                android:layout_marginTop="8dp"
 	                layout="@layout/discover_tuangou_fendian_list_item"
 	                android:id="@+id/hotel_fendian_poi"/>
 	             
@@ -154,9 +165,9 @@
 	                    android:layout_marginLeft="10dp"
 	                    android:layout_marginBottom="8dp"
 	                    
-	                    android:textColor="@color/black_light"
+	                    android:textColor="@color/black_dark"
 	                    android:textSize="16sp"
-	                    android:text="订  单  号"
+	                    android:text="@string/hotel_order_id"
 	                    android:singleLine="true"
 	                    android:focusable="false"
 	                    />
@@ -210,7 +221,7 @@
 	                    android:maxLines="2"
 	                    android:singleLine="false"
 	                    android:text="订单状态"
-	                    android:textColor="@color/orange"
+	                    android:textColor="@color/black_dark"
 	                    android:textSize="16sp" />
 	
 	                <TextView
@@ -239,7 +250,7 @@
 	                    android:layout_marginLeft="10dp"
 	                    android:layout_marginBottom="8dp"
 	                    
-	                    android:textColor="@color/black_light"
+	                    android:textColor="@color/black_dark"
 	                    android:textSize="16sp"
 	                    android:text="预订日期"
 	                    android:singleLine="true"
@@ -272,7 +283,7 @@
 	                    android:layout_marginLeft="10dp"
 	                    android:layout_marginBottom="8dp"
 	                    
-	                    android:textColor="@color/black_light"
+	                    android:textColor="@color/black_dark"
 	                    android:textSize="16sp"
 	                    android:text="订单总额"
 	                    android:singleLine="true"
@@ -305,7 +316,7 @@
 	                    android:layout_marginLeft="10dp"
 	                    android:layout_marginBottom="8dp"
 	                    
-	                    android:textColor="@color/black_light"
+	                    android:textColor="@color/black_dark"
 	                    android:textSize="16sp"
 	                    android:text="付款方式"
 	                    android:singleLine="true"
@@ -338,7 +349,7 @@
 	                    android:layout_marginLeft="10dp"
 	                    android:layout_marginBottom="8dp"
 	                    
-	                    android:textColor="@color/black_light"
+	                    android:textColor="@color/black_dark"
 	                    android:textSize="16sp"
 	                    android:text="入住日期"
 	                    android:singleLine="true"
@@ -371,7 +382,7 @@
 	                    android:layout_marginLeft="10dp"
 	                    android:layout_marginBottom="8dp"
 	                    
-	                    android:textColor="@color/black_light"
+	                    android:textColor="@color/black_dark"
 	                    android:textSize="16sp"
 	                    android:text="离店日期"
 	                    android:singleLine="true"
@@ -404,7 +415,7 @@
 	                    android:layout_marginLeft="10dp"
 	                    android:layout_marginBottom="8dp"
 	                    
-	                    android:textColor="@color/black_light"
+	                    android:textColor="@color/black_dark"
 	                    android:textSize="16sp"
 	                    android:text="保留日期"
 	                    android:singleLine="true"
@@ -437,7 +448,7 @@
 	                    android:layout_marginLeft="10dp"
 	                    android:layout_marginBottom="8dp"
 	                    
-	                    android:textColor="@color/black_light"
+	                    android:textColor="@color/black_dark"
 	                    android:textSize="16sp"
 	                    android:text="入住房型"
 	                    android:singleLine="true"
@@ -470,7 +481,7 @@
 	                    android:layout_marginLeft="10dp"
 	                    android:layout_marginBottom="8dp"
 	                    
-	                    android:textColor="@color/black_light"
+	                    android:textColor="@color/black_dark"
 	                    android:textSize="16sp"
 	                    android:text="入  住  人"
 	                    android:singleLine="false"
