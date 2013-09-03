@@ -305,6 +305,8 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
                     History traffic = (History) adapterView.getAdapter().getItem(position);
                     if (traffic != null) {
                         mActionLog.addAction(mActionTag + ActionLog.ListViewItem + ActionLog.HistoryTraffic, position);
+                        mTrafficList.remove(traffic);
+                        mTrafficList.add(0, traffic);
                         showTrafficDetail(traffic);
                     }
                 }
@@ -320,6 +322,8 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
                     POI poi = (POI) adapterView.getAdapter().getItem(position);
                     if (poi != null) {
                         mActionLog.addAction(mActionTag + ActionLog.ListViewItem + ActionLog.HistoryPOI, position);
+                        mPOIList.remove(poi);
+                        mPOIList.add(0, poi);
                         mSphinx.showView(R.id.view_poi_detail);
                         mSphinx.getPOIDetailFragment().setData(poi, position);
                     }
@@ -740,20 +744,8 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
     public synchronized void checkData(String trafficType) {
 
         if (trafficType.equals(ItemizedOverlay.POI_OVERLAY)) {
-            for(int i = mPOIList.size() - 1; i >= 0; i--) {
-                if (!mPOIList.get(i).checkHistory(mContext)) {
-                    mPOIList.remove(i);
-                }
-            }
-            Collections.sort(mPOIList, mComparator);
             mPOIAdapter.notifyDataSetChanged();
         } else {
-            for(int i = mTrafficList.size() - 1; i >= 0; i--) {
-                if (!mTrafficList.get(i).checkHistory(mContext)) {
-                    mTrafficList.remove(i);
-                }
-            }
-            Collections.sort(mTrafficList, mComparator);
             mTrafficAdapter.notifyDataSetChanged();
         }
     }
