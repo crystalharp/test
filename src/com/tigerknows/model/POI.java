@@ -1292,9 +1292,14 @@ public class POI extends BaseData {
     @Override
     public int deleteHistory(Context context) {
         int count = 0;
-        BaseData baseData = checkStore(context, Tigerknows.STORE_TYPE_HISTORY, -1, -1);
-        if (baseData != null) {
-            count = SqliteWrapper.delete(context, context.getContentResolver(), ContentUris.withAppendedId(Tigerknows.POI.CONTENT_URI, baseData.id), null, null);
+        if (storeType == Tigerknows.STORE_TYPE_HISTORY && id != -1) {
+            count = SqliteWrapper.delete(context, context.getContentResolver(), ContentUris.withAppendedId(Tigerknows.POI.CONTENT_URI, id), null, null);
+            id = -1;
+        } else {
+            BaseData baseData = checkStore(context, Tigerknows.STORE_TYPE_HISTORY, -1, -1);
+            if (baseData != null) {
+                count = SqliteWrapper.delete(context, context.getContentResolver(), ContentUris.withAppendedId(Tigerknows.POI.CONTENT_URI, baseData.id), null, null);
+            }
         }
         return count;
     }
@@ -1302,24 +1307,35 @@ public class POI extends BaseData {
     @Override
     public int deleteFavorite(Context context) {
         int count = 0;
-        BaseData baseData = checkStore(context, Tigerknows.STORE_TYPE_FAVORITE, -1, -1);
-        if (baseData != null) {
-            if (storeType == Tigerknows.STORE_TYPE_FAVORITE) {
-                alise = null;
+        if (storeType == Tigerknows.STORE_TYPE_FAVORITE && id != -1) {
+            count = SqliteWrapper.delete(context, context.getContentResolver(), ContentUris.withAppendedId(Tigerknows.POI.CONTENT_URI, id), null, null);
+            id = -1;
+        } else {
+            BaseData baseData = checkStore(context, Tigerknows.STORE_TYPE_FAVORITE, -1, -1);
+            if (baseData != null) {
+                if (storeType == Tigerknows.STORE_TYPE_FAVORITE) {
+                    alise = null;
+                }
+                count = SqliteWrapper.delete(context, context.getContentResolver(), ContentUris.withAppendedId(Tigerknows.POI.CONTENT_URI, baseData.id), null, null);
             }
-            count = SqliteWrapper.delete(context, context.getContentResolver(), ContentUris.withAppendedId(Tigerknows.POI.CONTENT_URI, baseData.id), null, null);
         }
         return count;
     }
 
-    @Override
     public boolean checkHistory(Context context) {
-        return checkStore(context, Tigerknows.STORE_TYPE_HISTORY, -1, -1) != null;
+        if (storeType == Tigerknows.STORE_TYPE_HISTORY && id != -1) {
+            return true;
+        } else {
+            return checkStore(context, Tigerknows.STORE_TYPE_HISTORY, -1, -1) != null;
+        }
     }
 
-    @Override
     public boolean checkFavorite(Context context) {
-        return checkStore(context, Tigerknows.STORE_TYPE_FAVORITE, -1, -1) != null;
+        if (storeType == Tigerknows.STORE_TYPE_FAVORITE && id != -1) {
+            return true;
+        } else {
+            return checkStore(context, Tigerknows.STORE_TYPE_FAVORITE, -1, -1) != null;
+        }
     }
     
     public int updateHistory(Context context) {
