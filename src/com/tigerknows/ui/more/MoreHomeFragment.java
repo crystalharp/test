@@ -177,6 +177,10 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(!TextUtils.equals("yes", TKConfig.getPref(mContext, TKConfig.PREFS_MORE_OPENED, ""))){
+        	TKConfig.setPref(mContext, TKConfig.PREFS_MORE_OPENED, "hide");
+        }
+        LogWrapper.d("Trap", ""+Utility.px2dip(mContext, mContext.getResources().getDisplayMetrics().widthPixels));
         mActionTag = ActionLog.More;
     }
 
@@ -511,7 +515,8 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 		}
 		mPagecount = (int)mNoticeList.size();
 		if(!TextUtils.equals("yes", TKConfig.getPref(mContext, TKConfig.PREFS_MORE_OPENED, ""))){
-			TKConfig.setPref(mContext, TKConfig.PREFS_MORE_OPENED, (mPagecount==0) ? "hide" : "no");
+			TKConfig.setPref(mContext, TKConfig.PREFS_MORE_OPENED, (mPagecount==0) ? "hide" : 
+				(mSphinx.uiStackPeek() == R.id.view_more_home ? "yes" : "no"));
 			refreshMenuFragment();
 		}
         if(mPagecount > 1){

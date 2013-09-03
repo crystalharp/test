@@ -151,12 +151,21 @@ public class History extends BaseData{
     }
     
     @Override
-    public BaseData checkStore(Context context, int storeType) {
+    public boolean checkHistory(Context context) {
         return checkStore(context);
     }
+
+    public int deleteHistory(Context context) {
+        int count = SqliteWrapper.delete(context, context.getContentResolver(), Tigerknows.History.CONTENT_URI, "_id="+id, null);
+        this.id = -1;
+        return count;
+    }
     
-    private BaseData checkStore(Context context) {
-        BaseData baseData = null;
+    public boolean checkStore(Context context) {
+        boolean result = false;
+        if (id == -1) {
+            return result;
+        }
         StringBuilder s = new StringBuilder();
         s.append("(");
         s.append(com.tigerknows.provider.Tigerknows.History._ID);
@@ -168,16 +177,11 @@ public class History extends BaseData{
         if (c != null) {
             count = c.getCount();
             if (count > 0) {
-                c.moveToFirst();
-                History other = readFormCursor(context, c);
-                if((null != other && !other.equals(this)) || (null == other && other != this)) {
-                } else {
-                    baseData = other;
-                }
+                result = true;
             }
             c.close();
         }
-        return baseData;
+        return result;
     }
     
     public int updateHistory(Context context) {
