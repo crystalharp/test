@@ -15,6 +15,7 @@ import com.tigerknows.model.BuslineModel;
 import com.tigerknows.model.BuslineModel.Line;
 import com.tigerknows.model.BuslineQuery;
 import com.tigerknows.model.POI.Description;
+import com.tigerknows.model.xobject.XMap;
 import com.tigerknows.ui.poi.POIDetailFragment.BlockRefresher;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIView;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIViewBlock;
@@ -25,7 +26,12 @@ public class ExtraBusstopPOI extends DynamicPOIView {
     
     @Override
     public boolean isExist() {
-        if (mPOI.getXDescription() != null && (mPOI.getXDescription().containsKey(Description.FIELD_LINE))) {
+        XMap description = mPOI.getXDescription();
+        //包含有线路字段，但是不包含地铁信息字段才会显示
+        if (description != null && 
+                (description.containsKey(Description.FIELD_LINE)) &&
+                !(description.containsKey(Description.FIELD_SUBWAY_EXITS)) && 
+                !(description.containsKey(Description.FIELD_SUBWAY_PRESET_TIMES))) {
             return true;
         }
         return false;
