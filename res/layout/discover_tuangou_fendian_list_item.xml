@@ -11,7 +11,7 @@
         android:id="@+id/name_view"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/list_header_normal"
+        android:background="@drawable/list_header_title"
         >
         <TextView 
             android:id="@+id/distance_txv"

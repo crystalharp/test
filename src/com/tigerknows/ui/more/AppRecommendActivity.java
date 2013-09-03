@@ -155,7 +155,7 @@ public class AppRecommendActivity extends BaseActivity {
                 drawable = tkDrawable.loadDrawable(mThis, mLoadedDrawableRun, mThis.toString());
             }
             if (drawable == null) {
-                drawable = getResources().getDrawable(R.drawable.ic_app_icon_loading);
+                drawable = getResources().getDrawable(R.drawable.bg_picture_small);
             }
 			Rect bounds = drawable.getBounds();
 			if(bounds != null && (bounds.width() != iconImv.getWidth() || bounds.height() != iconImv.getHeight())){
