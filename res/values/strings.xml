@@ -916,6 +916,8 @@
     <string name="add_merchant_success">感谢你提交商户信息！</string>
     
     <string name="wodedingdan">我的订单</string>
+    <string name="tuangoudingdan">团购订单</string>
+    <string name="hotel_order">酒店订单</string>
     
     <string name="relogin">重新登录</string>
     <string name="nologin">暂不登录</string>
@@ -1148,6 +1150,7 @@
     <string name="retention_date">保留日期：</string>
     <string name="room_type">入住房型：</string>
     <string name="checkin_person">入\u2002住\u2002人：</string>
+    <string name="hotel_checkin_note">入住时请告知酒店前台入住人姓名</string>
     
     <string name="order_state_processing">处理中</string>
     <string name="order_state_success">预订成功</string>

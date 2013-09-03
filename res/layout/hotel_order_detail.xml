@@ -111,7 +111,7 @@
 			    <TextView 
 			        android:layout_width="wrap_content"
 			        android:layout_height="wrap_content"
-			        android:text="入住时请告知酒店前台入住人姓名"
+			        android:text="@string/hotel_checkin_note"
 			        android:textSize="18sp"
 			        android:textColor="@color/black_dark"
 	                android:layout_marginLeft="8dp"
@@ -184,7 +184,7 @@
 	                    android:gravity="center"
 	                    android:text="@string/cancel_order"
 	                    android:textSize="16sp"
-	                    android:textColor="@color/orange"
+	                    android:textColor="@color/black_dark"
 	                    
 	                    android:padding="12dp"
 	                    android:background="@drawable/btn_hotel_order_cancel"/>
