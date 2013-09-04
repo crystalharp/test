@@ -1711,7 +1711,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                         productMessage != null) {
                     uiStackClose(new int[]{R.id.view_more_home});
                     Intent intent = new Intent();
-                    intent.putExtra(BrowserActivity.TITLE, productMessage.getDescription());
+                    intent.putExtra(BrowserActivity.TITLE, productMessage.getTitle());
                     intent.putExtra(BrowserActivity.URL, productMessage.getDownloadUrl());
                     startActivity(intent);
                 } else {

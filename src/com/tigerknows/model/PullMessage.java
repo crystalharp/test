@@ -178,9 +178,12 @@ public class PullMessage extends Response {
 
         	public static final byte FILED_PRODUCT_DOWNLOAD_URL = 0x01;
         	public static final byte FIELD_PRODUCT_DESCRIPTION = 0x02;
+        	// 0x03   主题活动时有效，表示点击后WAP页的标题，用于在客户端加载的过程中显示。 
+            public static final byte FIELD_PRODUCT_TITLE = 0x03;
         	
         	private String downloadUrl;
         	private String description;
+        	private String title;
         	
             public static final Parcelable.Creator<PulledProductMessage> CREATOR
 		            = new Parcelable.Creator<PulledProductMessage>() {
@@ -202,17 +205,20 @@ public class PullMessage extends Response {
 	        	super(data);
 	            this.downloadUrl = getStringFromData(FILED_PRODUCT_DOWNLOAD_URL);
 	            this.description = getStringFromData(FIELD_PRODUCT_DESCRIPTION);
+                this.title = getStringFromData(FIELD_PRODUCT_TITLE);
 	        }
 
 	        private PulledProductMessage(Parcel in) {
 	        	downloadUrl = in.readString();
 	        	description = in.readString();
+                title = in.readString();
 	        }
 	        
 			@Override
 			public void writeToParcel(Parcel dest, int flags) {
 				dest.writeString(downloadUrl);
 				dest.writeString(description);
+                dest.writeString(title);
 			}
 
 			public String getDownloadUrl() {
@@ -230,6 +236,10 @@ public class PullMessage extends Response {
 			public void setDescription(String description) {
 				this.description = description;
 			}
+
+            public String getTitle() {
+                return title;
+            }
 
         }  
 
