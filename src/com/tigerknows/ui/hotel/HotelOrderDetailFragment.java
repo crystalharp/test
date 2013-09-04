@@ -122,7 +122,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
         findViews();
         setListener();
         mDistanceTxv.setVisibility(View.INVISIBLE);
-        mNameView.setBackgroundResource(R.drawable.list_header);
+        mNameView.setBackgroundResource(R.drawable.list_header_title);
         mActionTag = ActionLog.HotelOrderDetail;
 
     	mHotelNameTxv.setSingleLine(false);
@@ -396,7 +396,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
     	
     	DiscoverChildListFragment.showPOI(mContext, order.getHotelName(), null, order.getHotelAddress(), mOrder.getHotelTel(), mHotelNameTxv, mDistanceTxv, 
     			mRootView.findViewById(R.id.address_view), mRootView.findViewById(R.id.divider_imv), mRootView.findViewById(R.id.telephone_view)
-    			, mHotelAddressTxv, mHotelTelTxv, R.drawable.list_header, R.drawable.list_footer, R.drawable.list_footer);
+    			, mHotelAddressTxv, mHotelTelTxv, R.drawable.list_middle, R.drawable.list_footer, R.drawable.list_footer);
     	
     	mOrderIdTxv.setText(order.getId());
     	mOrderStateTxv.setText(getOrderStateDesc(order.getState()));

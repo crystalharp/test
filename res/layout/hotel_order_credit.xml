@@ -56,7 +56,8 @@
                     android:inputType="phone"
                     android:maxLength="30"
                     android:singleLine="true"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    android:digits="0123456789"/>
 
             </LinearLayout>
 
@@ -134,7 +135,8 @@
                     android:inputType="phone"
                     android:maxLength="3"
                     android:singleLine="true"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    android:digits="0123456789"/>
 
             </LinearLayout>
 
@@ -166,7 +168,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/transparent"
-                    android:drawableRight="@drawable/icon_arrow_right"
+                    android:drawableRight="@drawable/icon_arrow_down"
                     android:gravity="left|center_vertical"
                     android:padding="8dp"
                     android:text="@string/credit_validity_hint"
@@ -193,7 +195,7 @@
                     android:layout_height="wrap_content"
                     android:background="@color/transparent"
                     android:padding="8dp"
-                    android:drawableRight="@drawable/icon_arrow_right"
+                    android:drawableRight="@drawable/icon_arrow_down"
                     android:textColor="@color/black_dark"
                     android:textSize="16sp"
                     android:text="@string/credit_cert_code"

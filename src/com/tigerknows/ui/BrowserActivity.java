@@ -11,8 +11,6 @@ import android.graphics.Bitmap;
 import android.graphics.Paint;
 import android.net.http.SslError;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
@@ -28,6 +26,8 @@ import com.alipay.android.MobileSecurePayer;
 import com.alipay.android.MobileSecurePayHelper;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
+import com.tigerknows.TKConfig;
+
 import android.widget.Toast;
 
 import com.tigerknows.android.os.TKAsyncTask;
@@ -57,49 +57,12 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
 
     public static final String TIP = "tip";
     
-    private static final int ALIX_PAY = 1;
-    
     class MyHandler {
         public void show(String data) {
             Utility.showNormalDialog(BrowserActivity.this, data);
         }
     }
-	//
-	// the handler use to receive the pay result.
-	// 这里接收支付结果，支付宝手机端同步通知
-	private Handler mHandler = new Handler() {
-		public void handleMessage(Message msg) {
-			try {
-				String ret = (String) msg.obj;
-				switch (msg.what) {
-				case ALIX_PAY: {
-					//
-					// 处理交易结果
-					try {
-						// 获取交易状态码，具体状态代码请参看文档
-						String tradeStatus = "resultStatus={";
-						int imemoStart = ret.indexOf("resultStatus=");
-						imemoStart += tradeStatus.length();
-						int imemoEnd = ret.indexOf("};memo=");
-						tradeStatus = ret.substring(imemoStart, imemoEnd);
-
-							if (tradeStatus.equals("9000"))// 判断交易状态码，只有9000表示交易成功
-								Toast.makeText(mThis, "支付成功", Toast.LENGTH_SHORT).show();
-							else
-								Toast.makeText(mThis, "支付失败，状态码："+tradeStatus, Toast.LENGTH_LONG).show();
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-					break;
-				}
-
-				super.handleMessage(msg);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	};    
+ 
     private WebView mWebWbv = null;
     private ProgressBar mProgressBar;
     private Button mBackBtn;
@@ -223,8 +186,8 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
                 super.onPageStarted(view, url, favicon);
             	mProgressBar.setVisibility(View.VISIBLE);
                 String info = URLDecoder.decode(url);
-                LogWrapper.i("Trap", URLDecoder.decode(url));
-            	if(info.contains("wappaygw") && info.contains("authAndExecute")){
+                String clientGoAlipay = TKConfig.getPref(mThis, TKConfig.PREFS_CLIENT_GO_ALIPAY, "on");
+            	if(info.contains("wappaygw") && info.contains("authAndExecute") && "on".equalsIgnoreCase(clientGoAlipay)){
             		int c = "<request_token>".length();
             		int i = info.indexOf("<request_token>");
             		int j = info.indexOf("</request_token>");
@@ -239,7 +202,7 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
             		if (!mspHelper.isMobile_spExist()) {
             			return;
             		}
-            		boolean bRet = msp.pay(sb.toString(), null, 1, mThis);
+            		msp.pay(sb.toString(), null, 1, mThis);
             	}
             }
 

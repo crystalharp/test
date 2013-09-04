@@ -1035,7 +1035,6 @@ public abstract class BaseQuery {
      * @param optionalKeys 可选参数列表
      * @throws APIException
      */
-    @SuppressWarnings("unchecked")
     protected void debugCheckParameters(String[] essentialKeys, String[] optionalKeys, boolean checkCommonParameters) throws APIException{
         checkParameter = requestParameters.clone();
         for (int i = 0; essentialKeys != null && i < essentialKeys.length; i++) {

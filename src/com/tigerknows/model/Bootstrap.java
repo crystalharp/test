@@ -72,5 +72,10 @@ public final class Bootstrap extends BaseQuery {
         if (!TextUtils.isEmpty(uploadLog)) {
             TKConfig.setUserActionTrack(context, uploadLog);
         }
+        
+        String goAlipay = bootstrapModel.getGoAlipay();
+        if (!TextUtils.isEmpty(goAlipay)) {
+        	TKConfig.setPref(context, TKConfig.PREFS_CLIENT_GO_ALIPAY, goAlipay);
+        }
     }
 }
