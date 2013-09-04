@@ -1041,7 +1041,9 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
                     mPOI.setMyComment(mComment);
                     mStatus = STATUS_MODIFY;
                     mTitleBtn.setText(R.string.modify_comment);
-                    mComment.setUid(((CommentCreateResponse)response).getUid());
+                    CommentCreateResponse commentCreateResponse = (CommentCreateResponse)response;
+                    mComment.setUid(commentCreateResponse.getUid());
+                    mComment.setLikes(commentCreateResponse.getLikes());
                     Utility.showNormalDialog(mThis, 
                             mThis.getString(R.string.prompt), 
                             mThis.getString(R.string.response_code_601), 

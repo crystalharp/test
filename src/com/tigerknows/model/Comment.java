@@ -369,6 +369,11 @@ public class Comment extends BaseData {
         getData().put(FIELD_LEVEL, this.level);
     }
 
+    public void setLikes(long likes) {
+        this.likes = likes;
+        getData().put(FIELD_LIKES, this.likes);
+    }
+
     public long getEffect() {
         return effect;
     }

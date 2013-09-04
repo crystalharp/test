@@ -218,15 +218,21 @@ public class DataOperation extends BaseQuery {
         // 0x04 x_string    点评数据的uid 
         public static final byte FIELD_UID = 0x04;
         
+        // 0x05  x_int  601时有效，表示将被覆盖点评的likes  
+        private static final byte FIELD_LIKES = 0x05;
+        
         private String timeStamp;
         
         private String uid;
+        
+        private long likes;
 
         public CommentCreateResponse(XMap data) throws APIException {
             super(data);
             
             timeStamp = getStringFromData(FIELD_TIME_STAMP);
             uid = getStringFromData(FIELD_UID);
+            likes = getLongFromData(FIELD_LIKES);
         }
 
         public String getTimeStamp() {
@@ -243,6 +249,10 @@ public class DataOperation extends BaseQuery {
 
         public void setUid(String uid) {
             this.uid = uid;
+        }
+        
+        public long getLikes() {
+            return likes;
         }
     }
 
