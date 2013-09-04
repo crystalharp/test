@@ -68,14 +68,11 @@
     
     <item type="id" name="view_user_home" />
     <item type="id" name="view_user_my_comment_list" />    
-    <item type="id" name="activity_user_login" />
-    <item type="id" name="activity_user_regist" />
     <item type="id" name="activity_user_login_regist" />
     <item type="id" name="activity_user_reset_password" />
     <item type="id" name="activity_user_update_nickname" />
     <item type="id" name="activity_user_update_password" />
     <item type="id" name="activity_user_update_phone" />
-    <item type="id" name="activity_user_comment_after" />
     
     <item type="id" name="view_hotel_home" />
     <item type="id" name="view_hotel_pick_location" />

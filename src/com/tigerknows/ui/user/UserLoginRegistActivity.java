@@ -11,6 +11,8 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.decarta.Globals;
@@ -20,10 +22,12 @@ import com.tigerknows.TKConfig;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.AccountManage;
 import com.tigerknows.model.BaseQuery;
+import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.Response;
 import com.tigerknows.model.AccountManage.UserRespnose;
 import com.tigerknows.ui.poi.EditCommentActivity;
 import com.tigerknows.util.Utility;
+import com.tigerknows.widget.SpringbackListView;
 
 public class UserLoginRegistActivity extends UserBaseActivity implements View.OnClickListener {
 
@@ -41,6 +45,9 @@ public class UserLoginRegistActivity extends UserBaseActivity implements View.On
 	private Button loginBtn;
 	private Button registBtn;
 	
+	private ScrollView loginScv;
+	private ScrollView registScv;
+	
 	private boolean isRegist;
 	
 	@Override
@@ -50,7 +57,7 @@ public class UserLoginRegistActivity extends UserBaseActivity implements View.On
 		setContentView(R.layout.user_login_regist);
 		findViews();
 		setListener();
-		isRegist = false;
+		changeMode(true);
 	}
 
 	private void setPrefsPhoneNum(String prefsPhoneNum) {
@@ -63,6 +70,8 @@ public class UserLoginRegistActivity extends UserBaseActivity implements View.On
 	@Override
 	protected void findViews() {
 		super.findViews();
+		loginScv = (ScrollView)findViewById(R.id.login_scv);
+		registScv = (ScrollView)findViewById(R.id.regist_scv);
 		registPhoneEdt = (ExtValidationEditText)findViewById(R.id.regist_phone_edt);
 		valiNumEdt = (EditText)findViewById(R.id.vali_num_edt);
 		valiNumBtn = (CountDownButton)findViewById(R.id.vali_num_btn);
@@ -72,6 +81,8 @@ public class UserLoginRegistActivity extends UserBaseActivity implements View.On
 		loginPasswordEdt = (ExtValidationEditText)findViewById(R.id.login_password_edt);
 		forgetPasswordTxt = (TextView)findViewById(R.id.forget_password_txt);
 		loginBtn = (Button)findViewById(R.id.login_btn);
+		titleLoginBtn = (Button)findViewById(R.id.title_login_btn);
+		titleRegistBtn = (Button)findViewById(R.id.title_regist_btn);
 	}
 	
 	@Override
@@ -81,7 +92,24 @@ public class UserLoginRegistActivity extends UserBaseActivity implements View.On
 		registBtn.setOnClickListener(this);
 		forgetPasswordTxt.setOnClickListener(this);
 		loginBtn.setOnClickListener(this);
+		titleLoginBtn.setOnClickListener(this);
+		titleRegistBtn.setOnClickListener(this);
 	}
+	
+    private void changeMode(boolean isLeft) {
+    	isRegist = !isLeft;
+        if (isLeft) {
+        	loginScv.setVisibility(View.VISIBLE);
+            registScv.setVisibility(View.GONE);
+            titleLoginBtn.setBackgroundResource(R.drawable.btn_all_comment_focused);
+            titleRegistBtn.setBackgroundResource(R.drawable.btn_hot_comment);
+        } else {
+            loginScv.setVisibility(View.GONE);
+            registScv.setVisibility(View.VISIBLE);
+            titleLoginBtn.setBackgroundResource(R.drawable.btn_all_comment);
+            titleRegistBtn.setBackgroundResource(R.drawable.btn_hot_comment_focused);
+        }
+    }	
 	@Override
 	protected void onResume() {
 		super.onResume();
@@ -141,6 +169,12 @@ public class UserLoginRegistActivity extends UserBaseActivity implements View.On
 			}
 			requestLogin();
 			break;
+		case R.id.title_login_btn:
+			if(isRegist)changeMode(true);
+			break;
+		case R.id.title_regist_btn:
+			if(!isRegist)changeMode(false);
+			break;
 		}
 	}
 	
@@ -181,7 +215,7 @@ public class UserLoginRegistActivity extends UserBaseActivity implements View.On
 		AccountManage accountManage = new AccountManage(this);
 		
 		String phone = loginPhoneEdt.getText().toString().trim();
-		String password = loginPhoneEdt.getText().toString().trim();
+		String password = loginPasswordEdt.getText().toString().trim();
 		
 		accountManage.addParameter(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, AccountManage.OPERATION_CODE_LOGIN);
 		accountManage.addParameter(BaseQuery.SERVER_PARAMETER_TELEPHONE, phone);
@@ -407,7 +441,7 @@ public class UserLoginRegistActivity extends UserBaseActivity implements View.On
 					if (mSourceViewIdLogin == R.id.activity_poi_edit_comment) {
 						// 点评-点评后登录页-注册
 						// 点评-点评后登录页-登录-注册
-						Intent intent = new Intent(UserLoginRegistActivity.this, UserLoginActivity.class);
+						Intent intent = new Intent(UserLoginRegistActivity.this, UserLoginRegistActivity.class);
 						intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 						intent.putExtra(TKConfig.PREFS_PHONENUM, registPhoneEdt.getText().toString().trim());
 						startActivityForResult(intent, 0);

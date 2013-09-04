@@ -77,8 +77,8 @@ public class AccountManage extends BaseQuery {
             debugCheckParameters(Utility.mergeArray(ekeys, new String[]{SERVER_PARAMETER_TELEPHONE}));
         } else if (OPERATION_CODE_CREATE.equals(operationCode)) {
             debugCheckParameters(Utility.mergeArray(ekeys,new String[] {SERVER_PARAMETER_TELEPHONE,
-                    SERVER_PARAMETER_PASSWORD, SERVER_PARAMETER_VALIDATE_CODE},
-                    new String[]{SERVER_PARAMETER_NICKNAME}));
+                    SERVER_PARAMETER_PASSWORD, SERVER_PARAMETER_VALIDATE_CODE}),
+                    new String[]{SERVER_PARAMETER_NICKNAME});
         } else if (OPERATION_CODE_UPDATE_NICKNAME.equals(operationCode)) {
             debugCheckParameters(Utility.mergeArray(ekeys,new String[] {SERVER_PARAMETER_NICKNAME, SERVER_PARAMETER_SESSION_ID}));
         } else if (OPERATION_CODE_UPDATE_PASSWORD.equals(operationCode)) {

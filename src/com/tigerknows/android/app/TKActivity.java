@@ -41,7 +41,7 @@ import com.tigerknows.share.TKWeibo.AuthDialogListener;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.ui.user.UserBaseActivity;
-import com.tigerknows.ui.user.UserLoginActivity;
+import com.tigerknows.ui.user.UserLoginRegistActivity;
 import com.tigerknows.util.Utility;
 
 import android.app.Activity;
@@ -652,11 +652,11 @@ public class TKActivity extends Activity implements TKAsyncTask.EventListener {
                                 @Override
                                 public void onClick(DialogInterface arg0, int id) {
                                     if (id == DialogInterface.BUTTON_POSITIVE) {
-                                        Intent intent = new Intent(activity, UserLoginActivity.class);
+                                        Intent intent = new Intent(activity, UserLoginRegistActivity.class);
                                         intent.putExtra(UserBaseActivity.SOURCE_VIEW_ID_LOGIN, sourceViewIdLogin);
                                         intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_SUCCESS, targetViewIdLoginSuccess);
                                         intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_FAILED, targetViewIdLoginFailed);
-                                        activity.startActivityForResult(intent, R.id.activity_user_login);
+                                        activity.startActivityForResult(intent, R.id.activity_user_login_regist);
                                 	} else {
                             		    if (cancelOnClickListener != null) {
                             		    	cancelOnClickListener.onClick(arg0, id);
@@ -674,12 +674,12 @@ public class TKActivity extends Activity implements TKAsyncTask.EventListener {
                                                     
                                 @Override
                                 public void onClick(DialogInterface arg0, int arg1) {
-                                    Intent intent = new Intent(activity, UserLoginActivity.class);
+                                    Intent intent = new Intent(activity, UserLoginRegistActivity.class);
                                     intent.putExtra(BaseActivity.SOURCE_USER_HOME, true);
                                     intent.putExtra(UserBaseActivity.SOURCE_VIEW_ID_LOGIN, sourceViewIdLogin);
                                     intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_SUCCESS, R.id.view_user_home);
                                     intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_FAILED, R.id.view_more_home);
-                                    activity.startActivityForResult(intent, R.id.activity_user_login);
+                                    activity.startActivityForResult(intent, R.id.activity_user_login_regist);
                                 }
                             });
                 }

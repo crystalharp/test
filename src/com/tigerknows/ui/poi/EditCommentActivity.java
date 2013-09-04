@@ -29,7 +29,7 @@ import com.tigerknows.share.ShareAPI;
 import com.tigerknows.share.UserAccessIdenty;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.user.UserBaseActivity;
-import com.tigerknows.ui.user.UserCommentAfterActivity;
+import com.tigerknows.ui.user.UserLoginRegistActivity;
 import com.tigerknows.ui.user.UserUpdateNickNameActivity;
 import com.tigerknows.util.Utility;
 import com.tigerknows.widget.MultichoiceArrayAdapter;
@@ -635,7 +635,7 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
         mOnActivityResultSubmitByLogin = false;
         if (requestCode == R.id.activity_user_update_nickname) {
             submit();
-        } else if (requestCode == R.id.activity_user_comment_after) {
+        } else if (requestCode == R.id.activity_user_login_regist) {
             submitByLogin(data);
             mOnActivityResultSubmitByLogin = true;
         }
@@ -645,9 +645,9 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
         User user = Globals.g_User;
         if (user == null && mStatus != STATUS_MODIFY) {
             Intent intent = new Intent();
-            intent.setClass(mThis, UserCommentAfterActivity.class);
+            intent.setClass(mThis, UserLoginRegistActivity.class);
             intent.putExtra(UserBaseActivity.SOURCE_VIEW_ID_LOGIN, mId);
-            startActivityForResult(intent, R.id.activity_user_comment_after);
+            startActivityForResult(intent, R.id.activity_user_login_regist);
         } else if (user != null && user.isNickNameDefault(mThis)) {
             Intent intent = new Intent();
             intent.setClass(mThis, UserUpdateNickNameActivity.class);

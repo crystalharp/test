@@ -126,18 +126,12 @@
             android:windowSoftInputMode="adjustResize"
             android:screenOrientation="portrait" />
         
-        <activity android:name="com.tigerknows.ui.user.UserLoginActivity"
+        <activity android:name="com.tigerknows.ui.user.UserLoginRegistActivity"
             android:theme="@style/Theme.NoTitleBar" 
             android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
             android:windowSoftInputMode="adjustPan|stateVisible"
             android:screenOrientation="portrait" />
         
-        <activity android:name="com.tigerknows.ui.user.UserRegistActivity"
-            android:theme="@style/Theme.NoTitleBar" 
-            android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
-            android:windowSoftInputMode="adjustResize|stateVisible"
-            android:screenOrientation="portrait" />
-         
         <activity android:name="com.tigerknows.ui.user.UserResetPasswordActivity"
             android:theme="@style/Theme.NoTitleBar" 
             android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
@@ -160,12 +154,6 @@
             android:theme="@style/Theme.NoTitleBar" 
             android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
             android:windowSoftInputMode="adjustResize|stateVisible"
-            android:screenOrientation="portrait" />
-         
-        <activity android:name="com.tigerknows.ui.user.UserCommentAfterActivity"
-            android:theme="@style/Theme.NoTitleBar" 
-            android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
-            android:windowSoftInputMode="adjustResize|stateHidden"
             android:screenOrientation="portrait" />
          
         <activity android:name="com.tigerknows.ui.HintActivity"
