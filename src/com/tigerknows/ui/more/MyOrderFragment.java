@@ -127,7 +127,7 @@ public class MyOrderFragment extends BaseFragment{
 	                	intent.putExtra(UserBaseActivity.SOURCE_VIEW_ID_LOGIN, getId());
 	                	intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_SUCCESS, getId());
 	                	intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_FAILED, getId());
-	                	mSphinx.showView(R.id.activity_user_login, intent);
+	                	mSphinx.showView(R.id.activity_user_login_regist, intent);
 	                }
 				}
 			});

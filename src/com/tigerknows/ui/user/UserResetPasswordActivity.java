@@ -186,7 +186,7 @@ public class UserResetPasswordActivity extends UserBaseActivity {
 				
 				Globals.clearSessionAndUser(this);
 				
-				Intent intent = new Intent(UserResetPasswordActivity.this, UserLoginActivity.class);
+				Intent intent = new Intent(UserResetPasswordActivity.this, UserLoginRegistActivity.class);
 		        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		        startActivityForResult(intent, 0);
 				

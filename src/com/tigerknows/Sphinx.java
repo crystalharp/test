@@ -182,7 +182,7 @@ import com.tigerknows.ui.traffic.TrafficResultFragment;
 import com.tigerknows.ui.user.MyCommentListFragment;
 import com.tigerknows.ui.user.UserBaseActivity;
 import com.tigerknows.ui.user.UserHomeFragment;
-import com.tigerknows.ui.user.UserLoginActivity;
+import com.tigerknows.ui.user.UserLoginRegistActivity;
 import com.tigerknows.ui.user.UserUpdateNickNameActivity;
 import com.tigerknows.ui.user.UserUpdatePasswordActivity;
 import com.tigerknows.ui.user.UserUpdatePhoneActivity;
@@ -1076,7 +1076,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             }
         } else if (R.id.activity_more_map_download == requestCode) {
             
-        } else if (R.id.activity_user_login == requestCode) {
+        } else if (R.id.activity_user_login_regist == requestCode) {
             if (data != null) {
                 loginBack(data);
                 mOnActivityResultLoginBack = true;
@@ -3091,9 +3091,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 intent.setClass(this, MapDownloadActivity.class);
                 startActivityForResult(intent, R.id.activity_more_map_download);
                 return true;
-            } else if (R.id.activity_user_login == viewId) {
-                intent.setClass(this, UserLoginActivity.class);
-                startActivityForResult(intent, R.id.activity_user_login);
+            } else if (R.id.activity_user_login_regist == viewId) {
+                intent.setClass(this, UserLoginRegistActivity.class);
+                startActivityForResult(intent, R.id.activity_user_login_regist);
                 return true;
             } else if (R.id.activity_browser == viewId) {
                 intent.setClass(this, BrowserActivity.class);

@@ -39,7 +39,7 @@ import com.tigerknows.model.Response;
 import com.tigerknows.model.Tuangou;
 import com.tigerknows.ui.discover.TuangouDetailView;
 import com.tigerknows.ui.user.UserBaseActivity;
-import com.tigerknows.ui.user.UserLoginActivity;
+import com.tigerknows.ui.user.UserLoginRegistActivity;
 import com.tigerknows.util.Utility;
 
 /**
@@ -308,11 +308,11 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
                 if (dataOperation != null) {
                     queryStart(dataOperation);
                 } else {
-                    Intent intent = new Intent(mThis, UserLoginActivity.class);
+                    Intent intent = new Intent(mThis, UserLoginRegistActivity.class);
                     intent.putExtra(UserBaseActivity.SOURCE_VIEW_ID_LOGIN, mId);
                     intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_SUCCESS, mId);
                     intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_FAILED, mId);
-                    startActivityForResult(intent, R.id.activity_user_login);
+                    startActivityForResult(intent, R.id.activity_user_login_regist);
                 }
             }
         }

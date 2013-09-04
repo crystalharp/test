@@ -6,6 +6,7 @@ import java.util.List;
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.view.View;
 import android.widget.EditText;
 
 import com.decarta.android.util.LogWrapper;
@@ -145,7 +146,9 @@ public class ExtValidationEditText extends EditText {
 	}
 	
 	public boolean isValid() {
-		
+		if(this.getVisibility() == View.GONE || !this.isShown()){
+			return true;
+		}
 		String text = this.getText().toString();
 		
 		if (TextUtils.isEmpty(text)) {

@@ -57,7 +57,7 @@ import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.ui.BrowserActivity;
 import com.tigerknows.ui.more.MapDownloadActivity.DownloadCity;
 import com.tigerknows.ui.user.UserBaseActivity;
-import com.tigerknows.ui.user.UserLoginActivity;
+import com.tigerknows.ui.user.UserLoginRegistActivity;
 import com.tigerknows.util.ByteUtil;
 import com.tigerknows.util.Utility;
 
@@ -346,7 +346,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
             		mSphinx.showView(R.id.view_user_home);
             	} else {
                     mActionLog.addAction(mActionTag +  ActionLog.MoreLoginRegist);
-            		Intent intent = new Intent(mSphinx, UserLoginActivity.class);
+            		Intent intent = new Intent(mSphinx, UserLoginRegistActivity.class);
                     intent.putExtra(UserBaseActivity.SOURCE_VIEW_ID_LOGIN, getId());
                     intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_SUCCESS, R.id.view_user_home);
                     intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_FAILED, getId());
