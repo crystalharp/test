@@ -103,8 +103,8 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
     
     private TextView mNameTxt = null;
     
-    private TextView mViewurlTxv = null;
-
+    private View mViewurlView = null;
+    
     private Drawable mRefundIcon;
     
     private Drawable mNotRefundIcon;
@@ -175,6 +175,8 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
      * View group containing the {@link mContentTxv}
      */
     private View mContentView;
+    
+    private View mContentContainerView;
     
     /**
      * TextView presenting the content
@@ -381,13 +383,6 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
         
         mBuyerNumTxv.setText(mSphinx.getString(R.string.tuangou_detail_buyer_num, mData.getBuyerNum()));
         
-        String detailUrl = mData.getDetailUrl();
-        if (detailUrl != null) {
-            mViewurlTxv.setVisibility(View.VISIBLE);
-        } else {
-            mViewurlTxv.setVisibility(View.GONE);
-        }
-        
         String refund = mData.getRefund();
         if (!TextUtils.isEmpty(refund) && !refund.contains(noRefundStr)) {
             mRefundIcon.setBounds(0, 0, mRefundIcon.getIntrinsicWidth(), mRefundIcon.getIntrinsicHeight());
@@ -514,6 +509,17 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
             mContentView.setVisibility(View.VISIBLE);
         }
         
+        if (mContentView.getVisibility() == View.VISIBLE) {
+            String detailUrl = mData.getDetailUrl();
+            if (detailUrl != null) {
+                mContentContainerView.setBackgroundResource(R.drawable.list_middle);
+                mViewurlView.setVisibility(View.VISIBLE);
+            } else {
+                mContentContainerView.setBackgroundResource(R.drawable.list_footer);
+                mViewurlView.setVisibility(View.GONE);
+            }
+        }
+        
         String noticed = mData.getNoticed();
         if (TextUtils.isEmpty(noticed)) {
             needFiled.append(Util.byteToHexString(Tuangou.FIELD_NOTICED));
@@ -565,7 +571,7 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
 
         
         mNameTxt = (TextView)findViewById(R.id.name_txv);
-        mViewurlTxv = (TextView) findViewById(R.id.viewurl_txv);
+        mViewurlView = findViewById(R.id.viewurl_view);
         mRefundTxv = (TextView) findViewById(R.id.refund_txv);
         mRefundDetailTxv = (TextView) findViewById(R.id.refund_detail_txv);
         mBuyerNumTxv = (TextView) findViewById(R.id.buyer_num_txv);
@@ -585,6 +591,7 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
         mNearbyFendianView = findViewById(R.id.nearby_fendian_view);
         mNearbyFendianTxv = (TextView) findViewById(R.id.nearby_fendian_txv);
         mContentView =  findViewById(R.id.content_view);
+        mContentContainerView =  findViewById(R.id.content_container_view);
         mContentTxv = (TextView) findViewById(R.id.content_txv);
         mNoticedView = findViewById(R.id.noticed_view);
         mNoticedTxv = (TextView)findViewById(R.id.noticed_txv);
@@ -623,7 +630,7 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
         mTelephoneView.setOnClickListener(this);
         mNearbyFendianView.setOnClickListener(this);
         mServiceHotlineView.setOnClickListener(this);
-        mViewurlTxv.setOnClickListener(this);
+        mViewurlView.setOnClickListener(this);
         mRefundTxv.setOnClickListener(this);
         
         mBodyScv.setOnTouchListener(new OnTouchListener() {
@@ -754,11 +761,11 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
                 Utility.telephone(mSphinx, mServiceHotlineTxv);
                 break;
                 
-            case R.id.viewurl_txv:
+            case R.id.viewurl_view:
                 BrowserActivity.setTuangou(mData);
                 Intent intent = new Intent();
                 intent.putExtra(BrowserActivity.TITLE, mSphinx.getString(R.string.picture_text_detail));
-                intent.putExtra(BrowserActivity.URL, mData.getUrl());
+                intent.putExtra(BrowserActivity.URL, mData.getDetailUrl());
                 mSphinx.showView(R.id.activity_browser, intent);
                 break;
                 
