@@ -11,7 +11,6 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -22,12 +21,10 @@ import com.tigerknows.TKConfig;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.AccountManage;
 import com.tigerknows.model.BaseQuery;
-import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.Response;
 import com.tigerknows.model.AccountManage.UserRespnose;
 import com.tigerknows.ui.poi.EditCommentActivity;
 import com.tigerknows.util.Utility;
-import com.tigerknows.widget.SpringbackListView;
 
 public class UserLoginRegistActivity extends UserBaseActivity implements View.OnClickListener {
 
@@ -99,8 +96,8 @@ public class UserLoginRegistActivity extends UserBaseActivity implements View.On
     private void changeMode(boolean isLeft) {
     	isRegist = !isLeft;
         if (isLeft) {
-        	loginScv.setVisibility(View.VISIBLE);
             registScv.setVisibility(View.GONE);
+            loginScv.setVisibility(View.VISIBLE);
             titleLoginBtn.setBackgroundResource(R.drawable.btn_all_comment_focused);
             titleRegistBtn.setBackgroundResource(R.drawable.btn_hot_comment);
         } else {
@@ -257,7 +254,7 @@ public class UserLoginRegistActivity extends UserBaseActivity implements View.On
 	
 	private void dealWith404() {
 		mResponseHandler.showErrorThenClearAndShowSoftkeyboard(R.string.title_error_tip, 
-				R.string.response_code_404, loginPhoneEdt);
+				R.string.response_code_404, loginPasswordEdt);
 	}
 	
 	private void onBack() {
@@ -438,34 +435,12 @@ public class UserLoginRegistActivity extends UserBaseActivity implements View.On
 			public void onClick(DialogInterface dialog,
 					int which) {
 				if (which == DialogInterface.BUTTON_POSITIVE) {
-					if (mSourceViewIdLogin == R.id.activity_poi_edit_comment) {
-						// 点评-点评后登录页-注册
-						// 点评-点评后登录页-登录-注册
-						Intent intent = new Intent(UserLoginRegistActivity.this, UserLoginRegistActivity.class);
-						intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-						intent.putExtra(TKConfig.PREFS_PHONENUM, registPhoneEdt.getText().toString().trim());
-						startActivityForResult(intent, 0);
-						finish();
-					} else {
-						// 更多-登录-注册
-						Intent intent = new Intent();
-						intent.putExtra(TKConfig.PREFS_PHONENUM, registPhoneEdt.getText().toString().trim());
-						setResult(RESULT_OK, intent);
-						finish();
-					}
-				} else {
-					valiNumBtn.reset(getString(R.string.reqest_validate_num));
-				}
+					loginPhoneEdt.setText(registPhoneEdt.getText().toString().trim());
+					changeMode(true);
+				} 
 			}
 		
 		});
-		dlg.setOnDismissListener(new OnDismissListener(){
-			@Override
-			public void onDismiss(DialogInterface dialog) {
-				valiNumBtn.reset(getString(R.string.reqest_validate_num));
-			}
-		});
-		
 	}
 	
 	private void dealWith402() {
