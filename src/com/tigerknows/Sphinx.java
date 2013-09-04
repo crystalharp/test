@@ -105,6 +105,8 @@ import com.tigerknows.model.POI;
 import com.tigerknows.model.PullMessage.Message.PulledDynamicPOI;
 import com.tigerknows.model.LocationQuery;
 import com.tigerknows.model.NoticeQuery;
+import com.tigerknows.model.PullMessage;
+import com.tigerknows.model.PullMessage.Message.PulledProductMessage;
 import com.tigerknows.model.Response;
 import com.tigerknows.model.Shangjia;
 import com.tigerknows.model.TKDrawable;
@@ -1699,11 +1701,19 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     return true;
                 }
             	TKNotificationManager.cancel(mThis);
+            	PulledProductMessage productMessage = message.getProductMsg();
                 if (message.getDynamicPOI() != null) {
                     uiStackClose(new int[]{R.id.view_discover_home});
                     showView(R.id.view_discover_home);
                     //Show the corresponding view
                     showPulledDynamicPOI(message.getDynamicPOI());
+                } else if (message.getType() == PullMessage.Message.TYPE_ACTIVITY &&
+                        productMessage != null) {
+                    uiStackClose(new int[]{R.id.view_more_home});
+                    Intent intent = new Intent();
+                    intent.putExtra(BrowserActivity.TITLE, productMessage.getTitle());
+                    intent.putExtra(BrowserActivity.URL, productMessage.getDownloadUrl());
+                    startActivity(intent);
                 } else {
                     uiStackClose(new int[]{R.id.view_poi_home});
                     showView(R.id.view_poi_home);

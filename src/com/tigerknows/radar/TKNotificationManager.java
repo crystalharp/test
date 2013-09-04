@@ -125,7 +125,8 @@ public class TKNotificationManager {
 	    			intent.setData(Uri.parse(msg.getProductMsg().getDownloadUrl()));
 				}
 				break;
-	
+
+            case Message.TYPE_ACTIVITY:
 			case Message.TYPE_PRODUCT_INFOMATION:
 				if(checkProdcutInfo(msg)){
 					intent = new Intent(context, Sphinx.class)
@@ -212,7 +213,8 @@ public class TKNotificationManager {
 			case Message.TYPE_PRODUCT_UPGRADE:
 				contentText = context.getString(R.string.radar_new_version);
 				break;
-	
+
+            case Message.TYPE_ACTIVITY:
 			case Message.TYPE_PRODUCT_INFOMATION:
 				contentText = msg.getProductMsg().getDescription();
 				break;

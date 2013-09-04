@@ -402,7 +402,7 @@ public class TKActivity extends Activity implements TKAsyncTask.EventListener {
             dialog = new ProgressDialog(this);
             dialog.setCancelable(false);
             dialog.setCanceledOnTouchOutside(false);
-            ((ProgressDialog)dialog).setMessage(getString(R.string.doing_and_wait)+"......");
+            ((ProgressDialog)dialog).setMessage(getString(R.string.doing_and_wait)+"...");
             dialog.setOnDismissListener(new OnDismissListener() {
                 
                 @Override

@@ -27,6 +27,8 @@ public class PullMessage extends Response {
         public static final int TYPE_PRODUCT_UPGRADE = 10;
         // 20 重要产品信息推送
         public static final int TYPE_PRODUCT_INFOMATION = 20;
+        // 25 主题活动推送
+        public static final int TYPE_ACTIVITY = 25;
         // 30 节假日推送
         public static final int TYPE_HOLIDAY = 30;
         // 40 新片推送
@@ -176,9 +178,12 @@ public class PullMessage extends Response {
 
         	public static final byte FILED_PRODUCT_DOWNLOAD_URL = 0x01;
         	public static final byte FIELD_PRODUCT_DESCRIPTION = 0x02;
+        	// 0x03   主题活动时有效，表示点击后WAP页的标题，用于在客户端加载的过程中显示。 
+            public static final byte FIELD_PRODUCT_TITLE = 0x03;
         	
         	private String downloadUrl;
         	private String description;
+        	private String title;
         	
             public static final Parcelable.Creator<PulledProductMessage> CREATOR
 		            = new Parcelable.Creator<PulledProductMessage>() {
@@ -200,17 +205,20 @@ public class PullMessage extends Response {
 	        	super(data);
 	            this.downloadUrl = getStringFromData(FILED_PRODUCT_DOWNLOAD_URL);
 	            this.description = getStringFromData(FIELD_PRODUCT_DESCRIPTION);
+                this.title = getStringFromData(FIELD_PRODUCT_TITLE);
 	        }
 
 	        private PulledProductMessage(Parcel in) {
 	        	downloadUrl = in.readString();
 	        	description = in.readString();
+                title = in.readString();
 	        }
 	        
 			@Override
 			public void writeToParcel(Parcel dest, int flags) {
 				dest.writeString(downloadUrl);
 				dest.writeString(description);
+                dest.writeString(title);
 			}
 
 			public String getDownloadUrl() {
@@ -228,6 +236,10 @@ public class PullMessage extends Response {
 			public void setDescription(String description) {
 				this.description = description;
 			}
+
+            public String getTitle() {
+                return title;
+            }
 
         }  
 
@@ -256,6 +268,7 @@ public class PullMessage extends Response {
 					break;
 
 				case TYPE_PRODUCT_UPGRADE:
+                case TYPE_ACTIVITY:
 				case TYPE_PRODUCT_INFOMATION:
 					if(data.containsKey(FIELD_PRODUCT_MESSAGE)){
 						productMsg = new PulledProductMessage(this.data.getXMap(FIELD_PRODUCT_MESSAGE));
