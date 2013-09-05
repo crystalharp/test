@@ -11,10 +11,10 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:padding="8dp"
-        android:drawableLeft="@drawable/ic_mylocation_poi_result"
+        android:drawableLeft="@drawable/ic_location_nearby"
         android:drawablePadding="8dp"
         android:background="@color/white"
         android:text="@string/app_name"
-        android:textColor="@color/black_dark"
+        android:textColor="@color/blue_title"
         android:visibility="visible"/>
 </LinearLayout>
