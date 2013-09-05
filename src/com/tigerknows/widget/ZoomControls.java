@@ -96,10 +96,20 @@ public class ZoomControls extends LinearLayout {
     
     public void setIsZoomInEnabled(boolean isEnabled) {
         mZoomIn.setEnabled(isEnabled);
+        if (isEnabled) {
+            mZoomIn.setImageResource(R.drawable.ic_zoomin);
+        } else {
+            mZoomIn.setImageResource(R.drawable.ic_zoomin_disabled);
+        }
     }
     
     public void setIsZoomOutEnabled(boolean isEnabled) {
         mZoomOut.setEnabled(isEnabled);
+        if (isEnabled) {
+            mZoomOut.setImageResource(R.drawable.ic_zoomout);
+        } else {
+            mZoomOut.setImageResource(R.drawable.ic_zoomout_disabled);
+        }
     }
     
     @Override

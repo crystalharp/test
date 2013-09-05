@@ -4245,10 +4245,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             mMapView.refreshMap();
             hideInfoWindow(ItemizedOverlay.MY_LOCATION_OVERLAY);
             mLocationBtn.setImageResource(R.drawable.progress_location);
-            mLocationTxv.setText(R.string.location_text_ing);
+            mLocationTxv.setText(R.string.location_text);
             Animatable animationDrawable = (Animatable)(mLocationBtn.getDrawable());
             animationDrawable.start();
-            mLocationBtn.setBackgroundDrawable(null);
         } else {
             int resid;
             int text;
@@ -4265,7 +4264,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 mMapView.refreshMap();
                 rotateZ = 365;
                 mMapView.rotateZToDegree(0);
-                resid = R.drawable.btn_location_navigation_normal;
+                resid = R.drawable.ic_location_navigation;
                 text = R.string.location_text_navigation;
                 showInfoWindow(mMyLocation);
             } else if (mMyLocation.mode == MyLocation.MODE_ROTATION) {
@@ -4277,19 +4276,19 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 hideInfoWindow(ItemizedOverlay.MY_LOCATION_OVERLAY);
                 rotateZ = 365;
                 mMapView.refreshMap();
-                resid = R.drawable.btn_location_compass_normal;
+                resid = R.drawable.ic_location_rotation;
                 text = R.string.location_text_compass;
             } else {
                 compass.setVisible(false);
                 if (uiStackSize() > 0)
                     mCompassView.setVisibility(View.VISIBLE);
                 mMapView.refreshMap();
-                resid = R.drawable.btn_location_location_normal;
+                resid = R.drawable.ic_location_normal;
                 text = R.string.location_text;
                 rotateZ = 365;
                 mMapView.rotateZToDegree(0);
             }
-            mLocationBtn.setBackgroundResource(resid);
+            mLocationBtn.setImageResource(resid);
             mLocationTxv.setText(text);
         }
     }

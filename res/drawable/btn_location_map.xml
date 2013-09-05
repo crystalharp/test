@@ -15,7 +15,7 @@
 -->
 
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_pressed="true" android:drawable="@drawable/btn_location_location_focused"/>
-    <item android:state_focused="false" android:drawable="@drawable/btn_location_location_normal"/>
-    <item android:state_focused="true" android:drawable="@drawable/btn_location_location_focused"/>
+    <item android:state_pressed="true" android:drawable="@drawable/btn_location_map_focused"/>
+    <item android:state_focused="false" android:drawable="@drawable/btn_location_map_normal"/>
+    <item android:state_focused="true" android:drawable="@drawable/btn_location_map_focused"/>
 </selector>

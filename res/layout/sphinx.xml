@@ -76,7 +76,7 @@
             android:id="@+id/location_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/btn_location_location"
+            android:background="@drawable/btn_location_map"
             android:layout_alignParentRight="true"
             android:visibility="visible"
             android:layout_above="@id/scale_view"
@@ -84,14 +84,18 @@
             android:gravity="center">
             <ImageButton
                 android:id="@+id/location_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_location_normal"
+                android:background="@color/transparent"
+                android:scaleType="center"
                 android:clickable="false"/>
             <TextView 
                 android:id="@+id/location_txv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/location_text"/>
+                android:text="@string/location_text"
+                android:textSize="8sp"/>
         </LinearLayout>
 
         <LinearLayout
