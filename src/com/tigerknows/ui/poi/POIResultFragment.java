@@ -615,8 +615,8 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             layoutInflater = (LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             Resources resources = activity.getResources();
             icAPOI = resources.getDrawable(R.drawable.ic_location_nearby);
-            commentTitle = resources.getString(R.string.comment) + ": ";
-            addressTitle = resources.getString(R.string.address);
+            commentTitle = resources.getString(R.string.comment) + " : ";
+            addressTitle = resources.getString(R.string.address) + " : ";
             aColor = resources.getColor(R.color.blue);
             bColor = resources.getColor(R.color.black_dark);
             distanceA = activity.getString(R.string.distanceA);
