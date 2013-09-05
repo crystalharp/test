@@ -218,7 +218,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
             }
             
             // 每个分类下面添加其他
-            String otherText = getString(R.string.poi_ohter_error);
+            String otherText = getString(R.string.other);
             
             categoryFitler = DataQuery.makeFilterResponse(mThis, indexList, filterCategory.getVersion(), filterOptionList, FilterCategoryOrder.FIELD_LIST_CATEGORY, false);
             Filter other = categoryFitler.getChidrenFilterList().remove(0);

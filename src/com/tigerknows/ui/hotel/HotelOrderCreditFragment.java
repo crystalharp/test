@@ -300,6 +300,7 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
     public void setData(String additionMessage, String oneNightPrice, String sumPrice, int assureType, String name) {
         mSumPrice = sumPrice;
         int assureTypeFromServer = 0;
+        clearVerifyEdt();
         mCreditOwnerEdt.setText(name);
         mCreditOwnerEdt.requestFocus();
         Selection.setSelection(mCreditOwnerEdt.getText(), mCreditOwnerEdt.length());
@@ -352,6 +353,10 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         if (mValidityDialog != null && mValidityDialog.isShowing()) {
             mValidityDialog.dismiss();
         }
+    }
+    
+    public void clearVerifyEdt(){
+    	if(mCreditVerifyEdt != null)mCreditVerifyEdt.setText("");
     }
     
 }

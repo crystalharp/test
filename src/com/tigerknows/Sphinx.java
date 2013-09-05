@@ -2808,7 +2808,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                         uiStackClearTop(R.id.view_poi_detail);
                     }
                 } else if (uiStackPeek() == R.id.view_hotel_order_list) {
-                    if (id == R.id.view_hotel_order_detail) {
+                    if (id == R.id.view_hotel_order_detail && !uiStackContains(R.id.view_hotel_order_write)) {
                         uiStackClearTop(R.id.view_hotel_order_list);
                     }
                 } else if (uiStackPeek() == R.id.view_poi_home) {
@@ -4039,10 +4039,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         }
     }
 
-    public void destroyHotelOrderCreditFragment(){
-    	mHotelOrderCreditFragment = null;
-    }
-    
     // TODO: get fragment end
 
     // TODO: my location begin    

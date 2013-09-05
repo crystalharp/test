@@ -237,7 +237,7 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
                 }
                 
                 // 每个分类下面添加其他
-                String otherText = getString(R.string.poi_ohter_error);
+                String otherText = getString(R.string.other);
                 
                 Filter categoryFitler = DataQuery.makeFilterResponse(mThis, indexList, filterCategory.getVersion(), filterOptionList, FilterCategoryOrder.FIELD_LIST_CATEGORY, false);
                 Filter other = categoryFitler.getChidrenFilterList().remove(0);
