@@ -27,7 +27,7 @@ public class CalendarUtil {
 	public static final SimpleDateFormat ym6h = new SimpleDateFormat("yyyy-MM");
 	public static final SimpleDateFormat ymd8s = new SimpleDateFormat("yyyy/MM/dd");
 	public static final SimpleDateFormat y4mc = new SimpleDateFormat("yyyy年M月");
-	public static final SimpleDateFormat ymd8c_hm4 = new SimpleDateFormat("yyyy年MM月dd日 hh:mm");
+	public static final SimpleDateFormat ymd8c_Hm4 = new SimpleDateFormat("yyyy年MM月dd日 HH:mm");
 	
 	static final String TAG = "CalendarUtil";
 	
@@ -136,7 +136,7 @@ public class CalendarUtil {
         
         long realTime = System.currentTimeMillis() - recordedSysTime + recordedNtpTime;
         date.setTime(realTime);
-        LogWrapper.d(TAG, "exactTime:" + ymd8c_hm4.format(date));
+        LogWrapper.d(TAG, "exactTime:" + ymd8c_Hm4.format(date));
 	    
         return realTime;
 	}
@@ -152,7 +152,7 @@ public class CalendarUtil {
             ntpTime = client.getNtpTime() + SystemClock.elapsedRealtime() - client.getNtpTimeReference();
             Date date = new Date();
             date.setTime(ntpTime);
-            LogWrapper.d(TAG, "Ntp request succeed, time:" + ymd8c_hm4.format(date));
+            LogWrapper.d(TAG, "Ntp request succeed, time:" + ymd8c_Hm4.format(date));
         }
         return ntpTime;
 	}
