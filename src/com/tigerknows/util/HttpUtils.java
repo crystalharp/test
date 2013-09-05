@@ -9,9 +9,8 @@ import com.tigerknows.TKConfig;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.crypto.DataEncryptor;
 import com.tigerknows.model.BaseQuery;
-import com.tigerknows.model.BaseQuery.RequestParameters;
+import com.tigerknows.model.BaseQuery.IRequestParameters;
 import com.tigerknows.model.test.BaseQueryTest;
-import com.weibo.sdk.android.WeiboParameters;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
@@ -39,7 +38,6 @@ import android.widget.ScrollView;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.net.URLEncoder;
 
 /**
  * @author Peng Wenyue
@@ -100,7 +98,7 @@ public class HttpUtils {
         
         private String apiType;
         
-        private RequestParameters parameters;
+        private IRequestParameters parameters;
         
         private ProgressUpdate progressUpdate;
         
@@ -143,7 +141,7 @@ public class HttpUtils {
             this.apiType = apiType;
         }
         
-        public void setParameters(RequestParameters parameters) {
+        public void setParameters(IRequestParameters parameters) {
             this.parameters = parameters;
         }
         
@@ -170,7 +168,7 @@ public class HttpUtils {
             this.statusCode = statusCode;
         }
         
-        public static void modifyRequestData(final RequestParameters parameters) {
+        public static void modifyRequestData(final IRequestParameters parameters) {
             final Activity activity = BaseQueryTest.getActivity();
             if (TKConfig.ModifyRequestData && activity != null) {
                 activity.runOnUiThread(new Runnable() {

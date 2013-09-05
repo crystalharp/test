@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
 
@@ -327,14 +327,14 @@ public abstract class BaseQuery {
 
     public static final int KEEP_ALIVE_TIME = 30 * 1000;
     
-    private static RequestParameters sCommonParameters;
+    private static IRequestParameters sCommonParameters;
     
     /**
      * 设置网络请求中的公共参数
      */
     public static void initCommonParameters() {
         
-        sCommonParameters = new RequestParameters();
+        sCommonParameters = new MapRequestParameters();
         
         // 下列参数都是固定值，兼容旧版本服务的公共请求参数约定
         sCommonParameters.add("dv", "1");
@@ -363,7 +363,7 @@ public abstract class BaseQuery {
     }
     
     protected void addCommonParameters(int cityId, boolean isLocateMe) {
-        requestParameters.addAll(sCommonParameters);
+        requestParameters.add(sCommonParameters);
 
         if (cityId < MapEngine.CITY_ID_BEIJING && isLocateMe == false) {
             cityId = MapEngine.CITY_ID_BEIJING;
@@ -428,14 +428,14 @@ public abstract class BaseQuery {
     
     protected int targetViewId = -1;
     
-    private RequestParameters checkParameter = null;
+    private IRequestParameters checkParameter = null;
     
     protected String tipText = null;
     
-    private RequestParameters requestParameters = new RequestParameters();
+    protected IRequestParameters requestParameters = new MapRequestParameters();
     
     //用于该Query的本地控制参数
-    private RequestParameters localParameters = new RequestParameters();
+    private IRequestParameters localParameters = new MapRequestParameters();
     
     protected HttpUtils.TKHttpClient httpClient;
 
@@ -989,7 +989,7 @@ public abstract class BaseQuery {
      * 返回该query的参数对象
      * @return
      */
-    public final RequestParameters getParameters() {
+    public final IRequestParameters getParameters() {
         return requestParameters;
     }
     
@@ -1058,12 +1058,7 @@ public abstract class BaseQuery {
         }
         
         if (!checkParameter.isEmpty()) {
-            String unwantedParameters = "";
-            Iterator<Map.Entry<String, String>> unwantedKeys = checkParameter.getEntryIterator();
-            while (unwantedKeys.hasNext()) {
-                unwantedParameters += unwantedKeys.next().getKey() + ",";
-            }
-            unwantedParameters = unwantedParameters.substring(0, unwantedParameters.length() - 1);
+            String unwantedParameters = checkParameter.getPostParam();
             throw APIException.wrapToUnwantedRequestParameterException(unwantedParameters);
         }
     }
@@ -1081,21 +1076,52 @@ public abstract class BaseQuery {
         debugCheckParameters(essentialKeys, optionalKeys, true);
     }
     
-    public static class RequestParameters implements Cloneable{
+    public interface IRequestParameters {
+        
+        public void add(String key, String value);
+        
+        public void add(String key, int value);
+        
+        public void add(String key, long value);
+        
+        public void remove(String key);
+        
+        public void remove(int location);
+        
+        public String getKey(int location);
+        
+        public String getValue(String key);
+        
+        public String getValue(int location);
+        
+        public int size();
+        
+        public void add(IRequestParameters parameters);
+        
+        public void clear();
+        
+        public boolean isEmpty();
+        
+        public boolean containsKey(String key);
+        
+        public String getPostParam();
+        
+        public String getEncodedPostParam(String enc);
+        
+        public IRequestParameters clone();
+    }
+    
+    public static class MapRequestParameters implements IRequestParameters, Cloneable{
         LinkedHashMap<String, String> parameters;
         public static final String PARAMETER_SEPARATOR = "&";
         public static final String NAME_VALUE_SEPARATOR = "=";
         
-        public RequestParameters() {
+        public MapRequestParameters() {
             parameters = new LinkedHashMap<String, String>();
         }
         
-        public RequestParameters(LinkedHashMap<String, String> parameters) {
+        public MapRequestParameters(LinkedHashMap<String, String> parameters) {
             this.parameters = parameters; 
-        }
-        
-        private Map<String, String> getParameters() {
-            return parameters;
         }
         
         public String getValue(String key) {
@@ -1118,17 +1144,9 @@ public abstract class BaseQuery {
             return parameters.isEmpty();
         }
         
-        public Iterator<Map.Entry<String, String>> getEntryIterator() {
-            return parameters.entrySet().iterator();
-        }
-        
         @SuppressWarnings("unchecked")
-        public RequestParameters clone() {
-            return new RequestParameters((LinkedHashMap<String, String>) parameters.clone());
-        }
-        
-        public void addAll(RequestParameters param) {
-            parameters.putAll(param.getParameters());
+        public IRequestParameters clone() {
+            return new MapRequestParameters((LinkedHashMap<String, String>) parameters.clone());
         }
         
         public String getPostParam() {
@@ -1157,6 +1175,221 @@ public abstract class BaseQuery {
             }
             
             return buf.substring(0, buf.length() - 1);
+        }
+
+        @Override
+        public void add(String key, int value) {
+            parameters.put(key, String.valueOf(value));
+        }
+
+        @Override
+        public void add(String key, long value) {
+            parameters.put(key, String.valueOf(value));
+        }
+
+        @Override
+        public int size() {
+            return parameters.size();
+        }
+
+        @Override
+        public void add(IRequestParameters parameters) {
+            for(int i = 0, size = parameters.size(); i < size; i++){
+                this.add(parameters.getKey(i), parameters.getValue(i));
+            }
+        }
+
+        @Override
+        public void clear() {
+            parameters.clear();
+        }
+
+        @Override
+        public void remove(int location) {
+            int index = 0;
+            Iterator<Entry<String, String>> k = parameters.entrySet().iterator();
+            for (; k.hasNext(); ) {
+                Entry<String, String> e = k.next();
+                if (index == location) {
+                    parameters.remove(e.getKey());
+                    return;
+                }
+                index++;
+            }
+        }
+
+        @Override
+        public String getKey(int location) {
+            int index = 0;
+            Iterator<Entry<String, String>> k = parameters.entrySet().iterator();
+            for (; k.hasNext(); ) {
+                Entry<String, String> e = k.next();
+                if (index == location) {
+                    return e.getKey();
+                }
+                index++;
+            }
+            return null;
+        }
+
+        @Override
+        public String getValue(int location) {
+            int index = 0;
+            Iterator<Entry<String, String>> k = parameters.entrySet().iterator();
+            for (; k.hasNext(); ) {
+                Entry<String, String> e = k.next();
+                if (index == location) {
+                    return e.getValue();
+                }
+                index++;
+            }
+            return null;
+        }
+    }
+    
+    public static class ListRequestParameters implements IRequestParameters, Cloneable{
+        public static final String PARAMETER_SEPARATOR = "&";
+        public static final String NAME_VALUE_SEPARATOR = "=";
+
+        private ArrayList<String> mKeys = new ArrayList<String>();
+        private ArrayList<String> mValues=new ArrayList<String>();
+        
+        public ListRequestParameters(){
+            
+        }
+        
+        public ListRequestParameters(ArrayList<String> keys, ArrayList<String> values){
+            this.mKeys.addAll(keys);
+            this.mValues.addAll(values);
+        }
+        
+        public void add(String key, String value){
+            if(!TextUtils.isEmpty(key)&&!TextUtils.isEmpty(value)){
+                this.mKeys.add(key);
+                this.mValues.add(value);
+            }
+           
+        }
+        
+        public void add(String key, int value){
+            this.mKeys.add(key);
+            this.mValues.add(String.valueOf(value));
+        }
+        public void add(String key, long value){
+            this.mKeys.add(key);
+            this.mValues.add(String.valueOf(value));
+        }
+        
+        public void remove(String key){
+            int firstIndex=this.mKeys.indexOf(key);
+            if(firstIndex>=0){
+                this.mKeys.remove(firstIndex);
+                this.mValues.remove(firstIndex);
+            }
+          
+        }
+        
+        private int getLocation(String key){
+            if(this.mKeys.contains(key)){
+                return this.mKeys.indexOf(key);
+            }
+            return -1;
+        }        
+        
+        public String getValue(String key){
+            int index=getLocation(key);
+            if(index>=0 && index < this.mKeys.size()){
+                return  this.mValues.get(index);
+            }
+            else{
+                return null;
+            }
+        }        
+        
+        public String getValue(int location){
+            if(location>=0 && location < this.mKeys.size()){
+                String rlt = this.mValues.get(location);
+                return rlt;
+            }
+            else{
+                return null;
+            }
+            
+        }
+        
+        public String getKey(int location){
+            if(location >= 0 && location < this.mKeys.size()){
+                return this.mKeys.get(location);
+            }
+            return "";
+        }
+        
+        public int size(){
+            return this.mKeys.size();
+        }
+        
+        public void add(IRequestParameters parameters){
+            for (int loc = 0, size = parameters.size(); loc < size; loc++) {
+                this.add(parameters.getKey(loc), parameters.getValue(loc));
+            }
+        }
+        
+        public void clear(){
+            this.mKeys.clear();
+            this.mValues.clear();
+        }
+        
+        public boolean isEmpty() {
+            return this.mKeys.isEmpty() || this.mValues.isEmpty();
+        }
+        
+        public ListRequestParameters clone() {
+            return new ListRequestParameters(this.mKeys, this.mValues);
+        }
+        
+        public boolean containsKey(String key) {
+            return this.mKeys.contains(key);
+        }
+        
+        public String getPostParam() {
+            return buildQueryString(false, null);
+        }
+        
+        public String getEncodedPostParam(String enc) {
+            return buildQueryString(true, enc);
+        }
+        
+        private String buildQueryString(boolean encoded, String enc) {
+            StringBuilder buf = new StringBuilder();
+            boolean first = true;
+            for (int loc = 0; loc < this.mKeys.size(); loc++) {
+                String key = this.mKeys.get(loc);
+                if (first) {
+                    first = false;
+                } else {
+                    buf.append(PARAMETER_SEPARATOR);
+                }
+                try {
+                    String value = this.mValues.get(loc);
+                    if (encoded) {
+                        buf.append(URLEncoder.encode(key, enc)).append(NAME_VALUE_SEPARATOR).append(URLEncoder.encode(value, enc));
+                    } else {
+                        buf.append(key).append(NAME_VALUE_SEPARATOR).append(value);
+                    }
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+            }
+            
+            return buf.toString();
+        }
+
+        @Override
+        public void remove(int location) {
+            if(location<mKeys.size()){
+                mKeys.remove(location);
+                this.mValues.remove(location);
+            }
         }
     }
     

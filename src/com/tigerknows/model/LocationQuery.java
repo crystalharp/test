@@ -129,6 +129,7 @@ public class LocationQuery extends BaseQuery {
 
     private LocationQuery(Context context) {
         super(context, API_TYPE_LOCATION_QUERY, VERSION);
+        this.requestParameters = new ListRequestParameters();
         this.wifiManager = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
     }
 

@@ -33,6 +33,7 @@ public class MapMetaFileDownload extends BaseQuery {
     public MapMetaFileDownload(Context context, MapEngine mapEngine) {
         super(context, API_TYPE_MAP_META_DOWNLOAD, VERSION);
         this.mapEngine = mapEngine;
+        this.requestParameters = new ListRequestParameters();
     }
     
     private int mRegionId;
@@ -56,6 +57,7 @@ public class MapMetaFileDownload extends BaseQuery {
     @Override
     public synchronized void query() {
         isStop = false;
+        this.requestParameters.clear();
         super.query();
         
         long currentTime = System.currentTimeMillis();
@@ -75,6 +77,8 @@ public class MapMetaFileDownload extends BaseQuery {
 
     @Override
     protected void addCommonParameters() {
+        addParameter(SERVER_PARAMETER_API_TYPE, apiType);
+        addParameter(SERVER_PARAMETER_VERSION, version);
         addParameter("rid", String.valueOf(mRegionId));
         addParameter("vs", TKConfig.getClientSoftVersion());
         String mapPath = TKConfig.getDataPath(true);
@@ -100,10 +104,13 @@ public class MapMetaFileDownload extends BaseQuery {
 
     @Override
     protected void createHttpClient() {
-        super.createHttpClient(false);
-        httpClient.setKeepAlive(true);
+        if (httpClient == null) {
+            httpClient = new TKHttpClient();
+            httpClient.setKeepAlive(true);
+        }
         String url = String.format(TKConfig.getDownloadMapUrl(), TKConfig.getDownloadHost());
         httpClient.setURL(url);
+        httpClient.setParameters(requestParameters);
         httpClient.setProgressUpdate(progressUpdate);
     }
 

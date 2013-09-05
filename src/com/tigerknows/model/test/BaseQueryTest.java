@@ -16,7 +16,7 @@ import com.tigerknows.map.MapEngine.CityInfo;
 import com.tigerknows.map.MapEngine.RegionMetaVersion;
 import com.tigerknows.model.AccountManage;
 import com.tigerknows.model.BaseQuery;
-import com.tigerknows.model.BaseQuery.RequestParameters;
+import com.tigerknows.model.BaseQuery.IRequestParameters;
 import com.tigerknows.model.LocationQuery;
 import com.tigerknows.model.Response;
 import com.tigerknows.model.TKWord;
@@ -74,9 +74,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Calendar;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map.Entry;
 
 public class BaseQueryTest {
     
@@ -131,27 +129,28 @@ public class BaseQueryTest {
         return  data;
     }
     
-    public static ViewGroup genViewToModifyParam(final Activity activity, final RequestParameters parameters) {
+    public static ViewGroup genViewToModifyParam(final Activity activity, final IRequestParameters parameters) {
         final LinearLayout layout = new LinearLayout(activity);
         layout.setOrientation(LinearLayout.VERTICAL);
         layout.setBackgroundResource(R.drawable.list_single);
-        for (Iterator<Entry<String, String>> i = parameters.getEntryIterator();
-                i.hasNext(); ) {
-            Entry<String, String> e = i.next();
-            final String key = e.getKey();
+        for (int loc = 0, size = parameters.size(); loc < size; loc++) {
+            final int index = loc;
+            final String key = parameters.getKey(index);
             TextView keyTxv = new TextView(activity);
             layout.addView(keyTxv);
             keyTxv.setBackgroundResource(R.drawable.btn_default);
             keyTxv.setText(key);
             final EditText valueEdt = new EditText(activity);
             layout.addView(valueEdt);
-            valueEdt.setText(e.getValue());
+            valueEdt.setText(parameters.getValue(index));
             keyTxv.setOnClickListener(new OnClickListener() {
                 
                 @Override
                 public void onClick(View v) {
-                    parameters.remove(key);
+                    parameters.remove(index);
                     parameters.add(key, valueEdt.getEditableText().toString());
+                    layout.removeAllViews();
+                    layout.addView(genViewToModifyParam(activity, parameters));
                 }
             });
         }

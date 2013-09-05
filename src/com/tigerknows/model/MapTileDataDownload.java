@@ -58,6 +58,7 @@ public class MapTileDataDownload extends BaseQuery {
     public MapTileDataDownload(Context context, MapEngine mapEngine) {
         super(context, API_TYPE_MAP_TILE_DOWNLOAD, VERSION);
         this.isTranslatePart = true;
+        this.requestParameters = new ListRequestParameters();
     }
     
     public void setFillMapTile(ITileDownload iTileDownload) {
@@ -84,6 +85,7 @@ public class MapTileDataDownload extends BaseQuery {
     @Override
     public synchronized void query() {
         isStop = false;
+        this.requestParameters.clear();
         super.query();
         long currentTime = System.currentTimeMillis();
         if (statusCode != STATUS_CODE_NETWORK_OK && statusCode > STATUS_CODE_NONE) {
@@ -102,11 +104,13 @@ public class MapTileDataDownload extends BaseQuery {
 
     @Override
     protected void checkRequestParameters() throws APIException {
-        debugCheckParameters(new String[]{"off", "len", "vd", "rid", "vs"}, null, false);
+        
     }
     
     @Override
     protected void addCommonParameters() {
+        addParameter(SERVER_PARAMETER_API_TYPE, apiType);
+        addParameter(SERVER_PARAMETER_VERSION, version);
         addParameter("rid", String.valueOf(rid));
         addParameter("vs", TKConfig.getClientSoftVersion());
         String version = null;
@@ -132,10 +136,13 @@ public class MapTileDataDownload extends BaseQuery {
 
     @Override
     protected void createHttpClient() {
-        super.createHttpClient(false);
-        httpClient.setKeepAlive(true);
+        if (httpClient == null) {
+            httpClient = new TKHttpClient();
+            httpClient.setKeepAlive(true);
+        }
         String url = String.format(TKConfig.getDownloadMapUrl(), TKConfig.getDownloadHost());
         httpClient.setURL(url);
+        httpClient.setParameters(requestParameters);
         
         httpClient.setRealTimeRecive(realTimeRecive);
         httpClient.setProgressUpdate(progressUpdate);

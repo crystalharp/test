@@ -29,6 +29,7 @@ public class MapVersionQuery extends BaseQuery {
 
     public MapVersionQuery(Context context) {
         super(context, API_TYPE_MAP_VERSION_QUERY, VERSION);
+        requestParameters = new ListRequestParameters();
     }
     
     public void setup(List<Integer> regionIdList) {
@@ -66,6 +67,8 @@ public class MapVersionQuery extends BaseQuery {
     
     @Override
     protected void addCommonParameters() {
+        addParameter(SERVER_PARAMETER_API_TYPE, apiType);
+        addParameter(SERVER_PARAMETER_VERSION, version);
         addParameter("vs", TKConfig.getClientSoftVersion());
         for (Integer regionId : regionIdList) {
             addParameter("rid", String.valueOf(regionId));
