@@ -583,8 +583,8 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         
         private Drawable icAPOI;
         private String distanceA;
-        private Drawable icComment;
-        private Drawable icAddress;
+        private String commentTitle;
+        private String addressTitle;
         private int aColor;
         private int bColor;
         private Activity activity;
@@ -614,9 +614,9 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             this.viewToken = viewToken;
             layoutInflater = (LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             Resources resources = activity.getResources();
-            icAPOI = resources.getDrawable(R.drawable.ic_a_poi);
-            icComment = resources.getDrawable(R.drawable.ic_comment);
-            icAddress = resources.getDrawable(R.drawable.ic_discover_address);
+            icAPOI = resources.getDrawable(R.drawable.ic_location_nearby);
+            commentTitle = resources.getString(R.string.comment) + ": ";
+            addressTitle = resources.getString(R.string.address);
             aColor = resources.getColor(R.color.blue);
             bColor = resources.getColor(R.color.black_dark);
             distanceA = activity.getString(R.string.distanceA);
@@ -755,18 +755,12 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                     str = lastComment.getContent();
                 }
                 if (!TextUtils.isEmpty(str)) {
-                    commentTxv.setText(str);
-                    icComment.setBounds(0, 0, icComment.getIntrinsicWidth(), icComment.getIntrinsicHeight());
-                    commentTxv.setCompoundDrawablePadding(Util.dip2px(Globals.g_metrics.density, 4));
-                    commentTxv.setCompoundDrawables(icComment, null, null, null);
+                    commentTxv.setText(commentTitle+str);
                     commentTxv.setVisibility(View.VISIBLE);
                 } else {
                     str = poi.getAddress();
                     if (!TextUtils.isEmpty(str)) {
-                        commentTxv.setText(str);
-                        icAddress.setBounds(0, 0, icAddress.getIntrinsicWidth(), icAddress.getIntrinsicHeight());
-                        commentTxv.setCompoundDrawablePadding(Util.dip2px(Globals.g_metrics.density, 4));
-                        commentTxv.setCompoundDrawables(icAddress, null, null, null);
+                        commentTxv.setText(addressTitle+str);
                         commentTxv.setVisibility(View.VISIBLE);
                     } else {
                         commentTxv.setVisibility(View.INVISIBLE);

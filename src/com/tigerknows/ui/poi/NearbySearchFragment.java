@@ -11,8 +11,11 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.Editable;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.text.style.ForegroundColorSpan;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -27,7 +30,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.TextView.OnEditorActionListener;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
 
 import com.decarta.Globals;
@@ -157,7 +159,13 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     public void onResume() {
         super.onResume();
         mTitleBtn.setText(mSphinx.getString(R.string.nearby_search));
-        mLocationTxv.setText(mSphinx.getString(R.string.at_where_search, mPOI.getName()));
+        String name = mPOI.getName();
+        String title = mSphinx.getString(R.string.at_where_search, name);
+        SpannableStringBuilder style = new SpannableStringBuilder(title);
+        int focusedColor = mSphinx.getResources().getColor(R.color.black_dark);
+        style.setSpan(new ForegroundColorSpan(focusedColor), 0, 2, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+        style.setSpan(new ForegroundColorSpan(focusedColor), 2+name.length(), title.length(), Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+        mLocationTxv.setText(style);
         mRightBtn.setVisibility(View.INVISIBLE);
     }
 
