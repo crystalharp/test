@@ -324,7 +324,7 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         mCreditAssurePriceTxv.setText(mSphinx.getString(R.string.credit_assure_price, (assureType == 2 ) ? mSumPrice : oneNightPrice));
         Calendar c1 = Calendar.getInstance();
         try {
-            c1.setTime(CalendarUtil.ymd8c_hm4.parse(mOrderModifyDeadline));
+            c1.setTime(CalendarUtil.ymd8c_Hm4.parse(mOrderModifyDeadline));
         } catch (ParseException e) {
             // TODO Auto-generated catch block
             // do nothing

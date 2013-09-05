@@ -332,7 +332,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
         mRightBtn.setVisibility(View.GONE);
         mTitleBtn.setText(mContext.getString(R.string.hotel_order_detail));
         if(mSphinx.uiStackContains(R.id.view_hotel_order_write)){
-        	mBtnOrderAgain.setBackgroundResource(R.drawable.btn_order_again_focused);
+        	mBtnOrderAgain.setBackgroundResource(R.drawable.btn_order_again_disable);
         	mBtnOrderAgain.setEnabled(false);
         }else{
         	mBtnOrderAgain.setBackgroundResource(R.drawable.btn_order_again);
