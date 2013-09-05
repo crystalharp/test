@@ -137,7 +137,7 @@
                 <RadioButton android:id="@+id/ne_other_rbt"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/poi_ohter_error"
+                    android:text="@string/other"
                     android:textColor="@color/black"
                     android:button="@drawable/rdb_recovery"
                     android:paddingLeft="40dp"

@@ -331,7 +331,13 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
         // set title fragment content
         mRightBtn.setVisibility(View.GONE);
         mTitleBtn.setText(mContext.getString(R.string.hotel_order_detail));
-        
+        if(mSphinx.uiStackContains(R.id.view_hotel_order_write)){
+        	mBtnOrderAgain.setBackgroundResource(R.drawable.btn_order_again_focused);
+        	mBtnOrderAgain.setEnabled(false);
+        }else{
+        	mBtnOrderAgain.setBackgroundResource(R.drawable.btn_order_again);
+        	mBtnOrderAgain.setEnabled(true);
+        }
         updateCancelBtn();
         
         // If order state if out-of-date, query the state of the current order

@@ -129,7 +129,7 @@
         <activity android:name="com.tigerknows.ui.user.UserLoginRegistActivity"
             android:theme="@style/Theme.NoTitleBar" 
             android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
-            android:windowSoftInputMode="adjustPan|stateVisible"
+            android:windowSoftInputMode="adjustPan|stateHidden"
             android:screenOrientation="portrait" />
         
         <activity android:name="com.tigerknows.ui.user.UserResetPasswordActivity"

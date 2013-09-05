@@ -4,7 +4,6 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
-import android.content.DialogInterface.OnDismissListener;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.KeyEvent;
@@ -15,6 +14,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.decarta.Globals;
+import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
@@ -106,7 +106,26 @@ public class UserLoginRegistActivity extends UserBaseActivity implements View.On
             titleLoginBtn.setBackgroundResource(R.drawable.btn_all_comment);
             titleRegistBtn.setBackgroundResource(R.drawable.btn_hot_comment_focused);
         }
-    }	
+        hideSoftInput();
+    }
+    
+    @Override
+	public void hideSoftInput(){
+    	super.hideSoftInput();
+    	clearAllFocus();
+    }
+    /**
+     * 	//利用让隐藏的Edt获取焦点的办法，来使当前焦点消失
+     * @return 
+     */
+    private void clearAllFocus(){
+    	if(isRegist){
+    		loginPhoneEdt.requestFocus();
+    	}else{
+    		registPhoneEdt.requestFocus();
+    	}
+    }
+    
 	@Override
 	protected void onResume() {
 		super.onResume();
@@ -117,14 +136,6 @@ public class UserLoginRegistActivity extends UserBaseActivity implements View.On
 				if (!TextUtils.isEmpty(tmpPhone)) {
 					setPrefsPhoneNum(tmpPhone);
 				}
-			}
-			
-			// 若是一个有效的电话号码， 则光标停留在密码框;
-			// 反之，停留在电话框
-			if (loginPhoneEdt.simpleCheck()) {
-				loginPasswordEdt.requestFocus();
-			} else {
-				loginPhoneEdt.requestFocus();
 			}
 		}
 	}	
@@ -424,7 +435,7 @@ public class UserLoginRegistActivity extends UserBaseActivity implements View.On
 	}
 	
 	private void dealWith400() {
-		Dialog dlg=Utility.showNormalDialog(UserLoginRegistActivity.this, 
+		Utility.showNormalDialog(UserLoginRegistActivity.this, 
 		        getString(R.string.title_error_tip), 
 				getString(R.string.response_code_400), 
 				getString(R.string.confirm),
@@ -435,7 +446,7 @@ public class UserLoginRegistActivity extends UserBaseActivity implements View.On
 			public void onClick(DialogInterface dialog,
 					int which) {
 				if (which == DialogInterface.BUTTON_POSITIVE) {
-					loginPhoneEdt.setText(registPhoneEdt.getText().toString().trim());
+					setPrefsPhoneNum(registPhoneEdt.getText().toString().trim());
 					changeMode(true);
 				} 
 			}

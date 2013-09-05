@@ -434,7 +434,6 @@
     <!-- Error Recovery Error -->
     <string name="address_error_recovery">地名/地址错误</string>
     <string name="map_flag_error_recovery">地图标记有误</string>
-    <string name="phone_error_recovery">电话错误</string>
     <string name="not_exit_error_recovery">商户不存在/已停业</string>
     <string name="comment_hint_error_recovery">你有什么想补充的吗?</string>
     <string name="mark_error_need_error_recovery">请选择错误类型</string>
@@ -668,14 +667,7 @@
     <string name="station_position_error">站点位置错误</string>
     <string name="station_line_error">路线错误</string>
     <string name="staion_no_line">%1$s无%2$s</string>
-    <string name="poi_base_info_error">基本信息错误</string>
-    <string name="poi_name_error">名称错误</string>
-    <string name="poi_address_error">地址错误</string>
-    <string name="poi_phone_error">电话错误</string>
-    <string name="poi_mark_error">地图标注错误</string>
-    <string name="poi_address_noexist_error">地点不存在</string>
-    <string name="poi_address_duplicate_error">地点重复</string>
-    <string name="poi_ohter_error">其他</string>
+    <string name="other">其他</string>
     <string name="error_recovery_success">我们将尽快处理, 谢谢你的反馈！</string>
 <!-- Error Recover End -->
 
@@ -1077,6 +1069,9 @@
     <string name="credit_code_format">卡号格式不正确，请重新输入</string>
     <string name="credit_verify_format">验证码格式不正确，请重新输入3位验证码</string>
     <string name="hotel_idcard_code_format">输入的身份证号码格式不正确</string>
+    <string name="hotel_duplicate_order">取消原订单</string>
+    <string name="view_order">查看订单</string>
+    <string name="know_la">知道啦</string>
 
     <string name="credit_assure_title">信用卡担保信息</string>
     <string name="credit_bank">发卡银行：</string>
@@ -1110,17 +1105,6 @@
     <string name="credit_cert_type_empty_tip">请选择证件类型</string>
     <string name="credit_cert_code_empty_tip">请输入证件号码</string>
     <string name="mainland_id_card">身份证</string>
-    
-    <string name="seveninn_regist_title">注册7天会员</string>
-    <string name="seveninn_note">发现您的手机号%1$s非7天会员号，如继续预定需要准确填写以下信息进行验证，该号码会自动注册为7天会员手机号。</string>
-    <string name="seveninn_person_name">入住姓名：</string>
-    <string name="seveninn_person_name_hint">输入姓名</string>
-    <string name="seveninn_mobile_number">手&#8194;机&#8194;号：</string>
-    <string name="seveninn_mobile_number_hint">输入手机号</string>
-    <string name="seveninn_idcard_code">身份证号：</string>
-    <string name="seveninn_idcard_code_hint">输入身份证号</string>
-    <string name="seveninn_regist_confirm">注册7天会员</string>
-    <string name="seveninn_idcard_code_empty_error">请填写身份证号</string>
     
     <string name="order_submit_success">订单提交成功</string>
     

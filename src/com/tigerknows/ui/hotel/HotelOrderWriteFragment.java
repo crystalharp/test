@@ -11,6 +11,7 @@ import java.util.List;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputFilter;
@@ -322,6 +323,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     }
     
     public void setData(POI poi, RoomType roomtype, RoomTypeDynamic roomTypeDynamic, Calendar checkIn, Calendar checkOut ) {
+
         mBookUsernameEdt.setText(TKConfig.getPref(mContext, TKConfig.PREFS_HOTEL_LAST_BOOKNAME, ""));
         mBookUsernameEdt.requestFocus();
         Selection.setSelection(mBookUsernameEdt.getText(), mBookUsernameEdt.length());
@@ -646,9 +648,11 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
             TKConfig.setPref(mContext, TKConfig.PREFS_HOTEL_LAST_BOOKNAME, mBookUsername);
             TKConfig.setPref(mContext, TKConfig.PREFS_HOTEL_LAST_MOBILE, mMobile);
             if(mSphinx.uiStackContains(R.id.view_hotel_credit_assure)){
+                if(mSphinx.getHotelOrderCreditFragment().isShowing()){
+                	mSphinx.getHotelOrderCreditFragment().dismiss();
+                }
                 mSphinx.uiStackRemove(R.id.view_hotel_credit_assure);
             }
-            mSphinx.destroyHotelOrderCreditFragment();
             mSphinx.getHotelOrderDetailFragment().setData(mHotelOrder, -1);
             mSphinx.getHotelOrderDetailFragment().setStageIndicatorVisible(true);
             HotelOrderTable hotelOrderTable = new HotelOrderTable(mSphinx);
@@ -666,38 +670,58 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
             //订单列表已经发生了变化，在此处清除列表界面的内容，列表页onResume时会重新加载订单。
             mSphinx.getHotelOrderListFragment().clearOrders();
             mSphinx.getHotelOrderListFragment().syncOrder();
-            mSphinx.showView(R.id.view_hotel_order_detail);
-            destroyFragments(true, true);
             dismiss();
             mSphinx.uiStackRemove(R.id.view_hotel_order_write);
-            
+            mSphinx.showView(R.id.view_hotel_order_detail);
             break;
         case Response.RESPONSE_CODE_HOTEL_NEED_CREDIT_ASSURE:
-            if(mSphinx.uiStackContains(R.id.view_hotel_credit_assure)){
-                mSphinx.uiStackRemove(R.id.view_hotel_credit_assure);
-            }
-            mSphinx.destroyHotelOrderCreditFragment();
-               mSphinx.getHotelOrderCreditFragment().setData(response.getDescription(),
-                       Utility.formatHotelPrice(mOneNightPrice),
-                       Utility.formatHotelPrice(mTotalPrice),
-                       (int)mTypeCreditAssure,
-                       mBookUsername);
-               mSphinx.showView(R.id.view_hotel_credit_assure);
-               break;
+            mSphinx.getHotelOrderCreditFragment().setData(response.getDescription(),
+                    Utility.formatHotelPrice(mOneNightPrice),
+                    Utility.formatHotelPrice(mTotalPrice),
+                    (int)mTypeCreditAssure,
+                    mBookUsername);
+            mSphinx.showView(R.id.view_hotel_credit_assure);
+            break;
         case Response.RESPONSE_CODE_HOTEL_OTHER_ERROR:
-            Utility.showNormalDialog(mSphinx, response.getDescription().split("!")[0].split("！")[0]);
+        	String description = response.getDescription().split("!")[0].split("！")[0];
+        	switch(analysisDescription(description)){
+        	case 1:
+        		Utility.showNormalDialog(mSphinx, 
+        				mSphinx.getString(R.string.prompt), 
+        				description, 
+        				mSphinx.getString(R.string.view_order), 
+        				mSphinx.getString(R.string.know_la), 
+        				new DialogInterface.OnClickListener() {
+
+        			        @Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+                                if (which == DialogInterface.BUTTON_POSITIVE) {
+                                    // TODO: mActionLog.addAction(mActionTag + ActionLog.HotelQueryOrder);
+                                	mSphinx.getHotelOrderListFragment().clearOrders();
+                                	mSphinx.getHotelOrderListFragment().syncOrder();
+                                	if(mSphinx.uiStackContains(R.id.view_hotel_credit_assure)){
+                                		mSphinx.getHotelOrderCreditFragment().clearVerifyEdt();
+                                	}
+                                	mSphinx.showView(R.id.view_hotel_order_list);
+                                }
+                            }								
+						});
+        		break;
+        	default:
+        		Utility.showNormalDialog(mSphinx, description);
+        	}
             break;
         }
     }
-
-    private void destroyFragments(boolean seven, boolean credit){
-        
-        if(credit == true && mSphinx.uiStackContains(R.id.view_hotel_credit_assure)){
-            mSphinx.getHotelOrderCreditFragment().dismiss();
-            mSphinx.uiStackRemove(R.id.view_hotel_credit_assure);
-            mSphinx.destroyHotelOrderCreditFragment();
-        }
+    private int analysisDescription(String description){
+    	if(description.contains(mSphinx.getString(R.string.hotel_duplicate_order))){
+    		return 1;
+    	}else {
+    		return 0;
+    	}
     }
+
     public void setCredit(List<String> credit) {
         mCreditCardNo = credit.get(0);
         mVerifyCode = credit.get(2);
