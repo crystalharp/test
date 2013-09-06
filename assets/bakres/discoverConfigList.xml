@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<citylist version="1.0.0"> 
+ <city seq_id="1">
+    <dp>2</dp>
+    <dp>4</dp>
+    <dp>13</dp>
+    <dp>14</dp>
+ </city>
+ <city seq_id="2">
+    <dp>2</dp>
+    <dp>4</dp>
+    <dp>13</dp>
+    <dp>14</dp>
+ </city>
+ <city seq_id="3">
+    <dp>2</dp>
+    <dp>4</dp>
+    <dp>13</dp>
+    <dp>14</dp>
+ </city>
+ <city seq_id="4">
+    <dp>2</dp>
+    <dp>4</dp>
+    <dp>13</dp>
+    <dp>14</dp>
+ </city>
+ <city seq_id="5">
+    <dp>2</dp>
+    <dp>4</dp>
+ </city>
+ <city seq_id="6">
+    <dp>2</dp>
+    <dp>4</dp>
+ </city>
+ <city seq_id="7">
+    <dp>2</dp>
+    <dp>4</dp>
+ </city>
+ <city seq_id="8">
+    <dp>2</dp>
+    <dp>4</dp>
+ </city>
+ <city seq_id="9">
+    <dp>2</dp>
+    <dp>4</dp>
+    <dp>13</dp>
+    <dp>14</dp>
+ </city>
+ <city seq_id="11">
+    <dp>2</dp>
+    <dp>4</dp>
+ </city>
+ <city seq_id="12">
+    <dp>2</dp>
+    <dp>4</dp>
+ </city>
+ <city seq_id="13">
+    <dp>2</dp>
+    <dp>4</dp>
+    <dp>13</dp>
+    <dp>14</dp>
+ </city>
+ <city seq_id="14">
+    <dp>2</dp>
+    <dp>4</dp>
+ </city>
+ <city seq_id="15">
+    <dp>2</dp>
+    <dp>4</dp>
+ </city>
+ <city seq_id="16">
+    <dp>2</dp>
+    <dp>4</dp>
+ </city>
+ <city seq_id="18">
+    <dp>2</dp>
+    <dp>4</dp>
+ </city>
+ <city seq_id="19">
+    <dp>2</dp>
+    <dp>4</dp>
+ </city>
+ <city seq_id="20">
+    <dp>2</dp>
+    <dp>4</dp>
+ </city>
+ <city seq_id="21">
+    <dp>2</dp>
+    <dp>4</dp>
+ </city>
+ <city seq_id="23">
+    <dp>2</dp>
+    <dp>4</dp>
+ </city>
+ <city seq_id="24">
+    <dp>2</dp>
+    <dp>4</dp>
+ </city>
+ <city seq_id="25">
+    <dp>2</dp>
+    <dp>4</dp>
+ </city>
+ <city seq_id="26">
+    <dp>2</dp>
+    <dp>4</dp>
+ </city>
+ <city seq_id="28">
+    <dp>2</dp>
+    <dp>4</dp>
+ </city>
+ <city seq_id="29">
+    <dp>2</dp>
+    <dp>4</dp>
+ </city>
+ <city seq_id="30">
+    <dp>2</dp>
+    <dp>4</dp>
+ </city>
+ <city seq_id="31">
+    <dp>2</dp>
+    <dp>4</dp>
+ </city>
+ <city seq_id="34">
+    <dp>2</dp>
+    <dp>4</dp>
+ </city>
+ <city seq_id="37">
+    <dp>2</dp>
+    <dp>4</dp>
+ </city>
+ <city seq_id="38">
+    <dp>2</dp>
+    <dp>4</dp>
+ </city>
+ <city seq_id="39">
+    <dp>2</dp>
+    <dp>4</dp>
+ </city>
+ <city seq_id="40">
+    <dp>2</dp>
+    <dp>4</dp>
+ </city>
+ <city seq_id="50">
+    <dp>2</dp>
+    <dp>4</dp>
+ </city>
+ <city seq_id="51">
+    <dp>2</dp>
+    <dp>4</dp>
+ </city>
+ <city seq_id="52">
+    <dp>2</dp>
+    <dp>4</dp>
+ </city>
+ <city seq_id="53">
+    <dp>2</dp>
+    <dp>4</dp>
+ </city>
+ <city seq_id="54">
+    <dp>2</dp>
+    <dp>4</dp>
+ </city>
+ <city seq_id="60">
+    <dp>2</dp>
+    <dp>4</dp>
+ </city>
+ <city seq_id="77">
+    <dp>2</dp>
+    <dp>4</dp>
+ </city>
+ <city seq_id="83">
+    <dp>2</dp>
+    <dp>4</dp>
+ </city>
+ <city seq_id="84">
+    <dp>2</dp>
+    <dp>4</dp>
+ </city>
+ <city seq_id="87">
+    <dp>2</dp>
+    <dp>4</dp>
+ </city>
+</citylist>

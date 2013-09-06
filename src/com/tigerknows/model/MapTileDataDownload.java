@@ -29,11 +29,11 @@ public class MapTileDataDownload extends BaseQuery {
     protected static final String VERSION = "1";
 
     public interface ITileDownload {
-        public int fillMapTile(List<TileDownload> tileInfos, int rid, byte[] data, int start);
+        public int fillMapTile(TileDownload[] tileInfos, int rid, byte[] data, int start);
         public void upgradeRegion(int rid);
     }
     
-    private List<TileDownload> tileDownloads;
+    private TileDownload[] tileDownloads;
     private int rid;
 
     private ITileDownload iTileDownload;
@@ -64,7 +64,7 @@ public class MapTileDataDownload extends BaseQuery {
         this.iTileDownload = iTileDownload;
     }
     
-    public void setup(List<TileDownload> tileDownloadList, int rid) {
+    public void setup(TileDownload[] tileDownloadList, int rid) {
         this.tileDownloads = tileDownloadList;
         this.rid = rid;
     }

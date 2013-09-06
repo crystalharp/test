@@ -8,6 +8,7 @@ import com.tigerknows.TKConfig;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.MapEngine;
 import com.tigerknows.map.MapWord;
+import com.tigerknows.map.label.SingleRectLabel;
 
 import android.app.Application;
 
@@ -35,7 +36,7 @@ public class TKApplication extends Application {
 
         ActionLog.getInstance(this);
         TKConfig.init(this);
-        MapWord.Icon.init(this);
+        SingleRectLabel.init(this);
     }
 
     @Override

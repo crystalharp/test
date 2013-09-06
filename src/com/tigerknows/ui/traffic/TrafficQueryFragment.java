@@ -706,11 +706,6 @@ public class TrafficQueryFragment extends BaseFragment {
 	
 	public static String getMyLocationName(Sphinx mSphinx, Position position) {
 		String mLocationName = mSphinx.getMapEngine().getPositionName(position);
-		
-		if (!TextUtils.isEmpty(mLocationName)) {
-			return mLocationName.substring(1);
-		}
-		
 		return mLocationName;
 	}
 	

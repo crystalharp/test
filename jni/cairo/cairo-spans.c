@@ -62,7 +62,7 @@ _cairo_scan_converter_set_error (void *abstract_converter,
     if (error == CAIRO_STATUS_SUCCESS)
 	ASSERT_NOT_REACHED;
     if (converter->status == CAIRO_STATUS_SUCCESS) {
-	converter->generate = _cairo_nil_scan_converter_generate;
+	converter->generate = _cairo_nil_scan_converter_generate;//为何要进行这个设置？
 	converter->status = error;
     }
     return converter->status;

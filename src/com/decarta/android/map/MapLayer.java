@@ -12,9 +12,9 @@ import com.decarta.android.util.XYZ;
  */
 public class MapLayer{
 	public enum MapLayerType{STREET,SATELLITE,TRANSPARENT};
-	public static HashMap<MapLayerType,Float> MapLayerType_ImageSizeFactor=new HashMap<MapLayerType,Float>();
+	public static HashMap<MapLayerType,Float> MapLayerType_ImageSizeFactor = new HashMap<MapLayerType,Float>();
 	static{
-		MapLayerType_ImageSizeFactor.put(MapLayerType.TRANSPARENT, 2f);
+		MapLayerType_ImageSizeFactor.put(MapLayerType.TRANSPARENT, 2f);//transparent层的factor为2，其他为1
 	}
 	
 	private MapLayerProperty mapLayerProperty;

@@ -98,6 +98,7 @@ import com.tigerknows.map.MapView.DownloadEventListener;
 import com.tigerknows.map.MapView.MapScene;
 import com.tigerknows.map.MapView.SnapMap;
 import com.tigerknows.map.MapView.ZoomEndEventListener;
+import com.tigerknows.map.label.Label;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataOperation;
 import com.tigerknows.model.DataOperation.DiaoyanQueryResponse;
@@ -442,6 +443,12 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         Display display=winMan.getDefaultDisplay();
         display.getMetrics(Globals.g_metrics);
         LogWrapper.i(TAG,"onCreate()"+Globals.g_metrics.density);
+//        CONFIG.TILE_SIZE = (int) (256 * Globals.g_metrics.density);
+//        if(CONFIG.TILE_SIZE > 256)
+//        	CONFIG.TILE_SIZE = 512;
+//        else 
+//        	CONFIG.TILE_SIZE = 256;
+        Label.init();
         
         // 根据屏幕密度计算出地图上显示Shape和OverlayItem内容的Padding
         TKConfig.sMap_Padding = (int)(56*Globals.g_metrics.density);
@@ -462,8 +469,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             finish();
             return;
         }
-        mMapEngine.resetFontSize(1.5f+(Globals.g_metrics.scaledDensity > 1.0f ? Globals.g_metrics.scaledDensity-1.0f : 0));
-        mMapEngine.resetIconSize(Globals.g_metrics.densityDpi >= DisplayMetrics.DENSITY_HIGH ? 3 : 2);
+        
         CityInfo cityInfo = mMapEngine.getCityInfo(MapEngine.CITY_ID_BEIJING);
         if (cityInfo.isAvailably() == false) {
             Utility.showDialogAcitvity(mThis, getString(R.string.not_enough_space_and_please_clear));
@@ -1204,7 +1210,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         Globals.getAsyncImageLoader().onDestory();
         mTKLocationManager.onDestroy();
         TKWeixin.getInstance(this).onDestory();
-        mMapEngine.writeLastRegionIdList(mContext);
         if (mMapView != null) {
             MapText mapText = mMapView.getMapText();
             if (mapText != null) {
@@ -1987,7 +1992,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     public void onMapCenterChanged() {
         CityInfo cityInfo = mMapEngine.getCityInfo(mMapView.getCenterCityId());
         if (cityInfo != null) {
-            mMapEngine.setLastCityId(cityInfo.getId());
             if (!mViewedCityInfoList.contains(cityInfo)) {
                 mViewedCityInfoList.add(cityInfo);
             }
@@ -4186,8 +4190,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             }
             String msg=getString(R.string.my_location);
             String positionName = mMapEngine.getPositionName(myLocation);
-            if (positionName != null && positionName.length() > 1) {
-                msg += "\n" + positionName.substring(1);
+            if (positionName != null && positionName.length() > 0) {
+                msg += "\n" + positionName;
             }
             mMyLocation.setMessage(msg);
             

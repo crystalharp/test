@@ -167,7 +167,7 @@ public class Util {
 
 	public static TileGridResponse handlePortrayMapRequest(XYDouble centerXY, int gxZoom) throws APIException{
 		TileGridResponse resp = new TileGridResponse();
-	    correctToTKXY(centerXY, gxZoom);
+//	    correctToTKXY(centerXY, gxZoom);
 
 		long pixX = Math.round(centerXY.x);
 		long pixY = Math.round(centerXY.y);
@@ -178,10 +178,6 @@ public class Util {
 		float offsetPixY = (CONFIG.TILE_SIZE + ((int)pixY % CONFIG.TILE_SIZE)) % CONFIG.TILE_SIZE - CONFIG.TILE_SIZE / 2;
 		int fixedSeedColumnIdx = (int) Math.floor((double) pixX / CONFIG.TILE_SIZE);
 		int fixedSeedRowIdx = (int) Math.floor((double) pixY / CONFIG.TILE_SIZE);
-        Position pos = mercPixToPos(centerXY, gxZoom);
-        double tkpixY = TKlat2pix(pos.getLat(), gxZoom);
-        offsetPixY = (CONFIG.TILE_SIZE - ((int)tkpixY % CONFIG.TILE_SIZE)) % CONFIG.TILE_SIZE - CONFIG.TILE_SIZE / 2;
-        resp.centerXYZTK = mercPixToTKXYZ(centerXY, gxZoom);
 		resp.setFixedGridPixelOffset(new XYFloat(-offsetPixX, offsetPixY));
 		resp.centerXYZ = new XYZ(fixedSeedColumnIdx, fixedSeedRowIdx, gxZoom);
 		resp.centerXY=new XYDouble(centerXY.x,centerXY.y);
@@ -237,7 +233,7 @@ public class Util {
 		double ecc = 0.08181919084262157;
 		double sinPhi = Math.sin(radLat);
 		double eSinPhi = ecc * sinPhi;
-		double retVal = Math.log(((1.0 + sinPhi) / (1.0 - sinPhi)) * Math.pow((1.0 - eSinPhi) / (1.0 + eSinPhi), ecc)) / 2.0;
+		double retVal = Math.log(((1.0 + sinPhi) / (1.0 - sinPhi))) / 2.0;
 		if(Double.isInfinite(retVal) || Double.isInfinite(retVal/scale)){
 			throw APIException.INVALID_MERCATOR_Y_INFINITY;
 		}
@@ -278,18 +274,18 @@ public class Util {
 	 * scale level.
 	 */
 	public static double pix2lat(double y, double scale) {
-		double phiEpsilon = 1E-7;
-		double phiMaxIter = 12;
+//		double phiEpsilon = 1E-7;
+//		double phiMaxIter = 12;
 		double t = Math.pow(Math.E, -y * scale);
 		double prevPhi = Util.mercatorUnproject(t);
-		double newPhi = Util.findRadPhi(prevPhi, t);
-		double iterCount = 0;
-		while (iterCount < phiMaxIter && Math.abs(prevPhi - newPhi) > phiEpsilon) {
-			prevPhi = newPhi;
-			newPhi = Util.findRadPhi(prevPhi, t);
-			iterCount++;
-		}
-		return newPhi * 180 / Math.PI;
+//		double newPhi = Util.findRadPhi(prevPhi, t);
+//		double iterCount = 0;
+//		while (iterCount < phiMaxIter && Math.abs(prevPhi - newPhi) > phiEpsilon) {
+//			prevPhi = newPhi;
+//			newPhi = Util.findRadPhi(prevPhi, t);
+//			iterCount++;
+//		}
+		return prevPhi * 180 / Math.PI;
 	}
 
 	private static double mercatorUnproject(double t) {
@@ -506,47 +502,11 @@ public class Util {
         return fitZoom;
     }
     
-    private static void correctToTKXY(XYDouble centerXY, int gxZoom) throws APIException {
-        long pixX = Math.round(centerXY.x);
-        long pixY = Math.round(centerXY.y);
-        if (pixY > Integer.MAX_VALUE || pixY < Integer.MIN_VALUE) {
-            throw APIException.INVALID_MERCATOR_Y_INFINITY;
-        }
-        float offsetPixX = (CONFIG.TILE_SIZE + ((int)pixX % CONFIG.TILE_SIZE)) % CONFIG.TILE_SIZE - CONFIG.TILE_SIZE / 2;
-        Position pos = mercPixToPos(centerXY, gxZoom);
-        double tkpixY = TKlat2pix(pos.getLat(), gxZoom);
-        float offsetPixY = (CONFIG.TILE_SIZE - ((int)tkpixY % CONFIG.TILE_SIZE)) % CONFIG.TILE_SIZE - CONFIG.TILE_SIZE / 2;
-        if (Math.abs(Math.abs(offsetPixX) - (CONFIG.TILE_SIZE / 2)) < 2) {
-            centerXY.x = centerXY.x + 2;
-            correctToTKXY(centerXY, gxZoom);
-        } else if (Math.abs(Math.abs(offsetPixY) - (CONFIG.TILE_SIZE / 2)) < 2) {
-            centerXY.y = centerXY.y - 2;
-            correctToTKXY(centerXY, gxZoom);
-        }
-    }
-
-    
-    public static XYZ xyzToTKXYZ(XYZ xyz) {
-        XYDouble mercPix = xyzToMercPix(xyz);
-        xyz = mercPixToTKXYZ(mercPix, xyz.z);
-        return xyz;
-    }
-    
     public static XYDouble xyzToMercPix(XYZ xyz) {
         double x = xyz.x * CONFIG.TILE_SIZE;
         double y =xyz.y * CONFIG.TILE_SIZE;
         XYDouble mercPix = new XYDouble(x, y);
         return mercPix;
-    }
-    
-    public static XYZ mercPixToTKXYZ(XYDouble mercPix, int zoomLevel) {   
-        Position pos = mercPixToPos(mercPix, zoomLevel);
-        double pixX = TKlon2pix(pos.getLon(), zoomLevel);
-        double pixY = TKlat2pix(pos.getLat(), zoomLevel);
-        int fixedSeedColumnIdx = (int) Math.floor((double) pixX / CONFIG.TILE_SIZE);
-        int fixedSeedRowIdx = (int) Math.floor((double) (pixY) / CONFIG.TILE_SIZE);
-        XYZ xyz = new XYZ(fixedSeedColumnIdx, fixedSeedRowIdx, zoomLevel);
-        return xyz;
     }
 
     /**
@@ -779,109 +739,6 @@ public class Util {
         
         if(lat < CONFIG.TK_MIN_LAT || lat > CONFIG.TK_MAX_LAT)
             throw new APIException("invalid lat:"+lat+", must between "+CONFIG.TK_MIN_LAT+"-"+CONFIG.TK_MAX_LAT);
-    }
-    
-//    /**
-//     * Ӧȵtile.
-//     * @param lon 
-//     * @param zoomLevel Zoom Level (0 -23)
-//     * @return tile
-//     * @throws APIException 
-//     */
-//    public static double TKlon2TileX(double lon, int zoomLevel) throws APIException {
-//        return TKlon2pix(lon, zoomLevel) / CONFIG.TILE_SIZE;
-//    }
-//
-//    /**
-//     * Ӧγȵtile.
-//     * @param lat γ
-//     * @param zoomLevel Zoom Level (0 - 23)
-//     * @return Tile
-//     * @throws APIException 
-//     */
-//    public static double TKlat2TileY(double lat, int zoomLevel) throws APIException {
-//        return TKlat2pix(lat, zoomLevel) / CONFIG.TILE_SIZE;
-//    }
-
-    /**
-     * convert from projected y coordinate to latitude.
-     * @param y the projected y coordinate
-     * @param zoomLevel the zoom level
-     * @return the latitide
-     */
-    public static double TKpix2lat(double y, int zoomLevel) {        
-        double c = Float11.exp(Math.PI * 2 
-                * (1 - ((double)y / (1 << (zoomLevel - 1)) / CONFIG.TILE_SIZE)));
-        double result = Float11.asin((c - 1) / (c + 1)) * 180 / Math.PI;
-        return result;
-    }
-    
-    /**
-     * convert from projected x coordinate to longitude.
-     * @param x the projected x coordinate
-     * @param zoomLevel the zoom level
-     * @return the longitude
-     */
-    public static double TKpix2lon(double x, int zoomLevel){      
-        return x * 360d / (1 << zoomLevel) / CONFIG.TILE_SIZE - 180;
-    }
-
-    /**
-     * @param tileX Tile X Index
-     * @param zoomLevel Zoom Level (0-23)
-     * @throws APIException 
-     */
-    public static double TKtileX2lon(int tileX, int zoomLevel) throws APIException {
-        checkXYZ(tileX, zoomLevel);
-                
-        return tileX * 360d / (1 << zoomLevel) - 180;
-    }
-
-    /**
-     * return the latitute of the tile's top edge.
-     * @param tileY the tile index
-     * @param zoomLevel the zoom level (0-23)
-     * @return the latitute of the tile's top edge
-     * @throws APIException 
-     */
-    public static double TKtileY2lat(int tileY, int zoomLevel) throws APIException {
-        checkXYZ(tileY, zoomLevel);        
-        
-        double c = Float11.exp(Math.PI * 2 * (1 - (double)tileY / (1 << (zoomLevel - 1))));
-        double result = Float11.asin((c - 1) / (c + 1)) * 180 / Math.PI;
-        return result;
-    }
-
-    /**
-     * Converts longitude to projected x coordinate.
-     * @param lon longitude
-     * @param zoomLevel Zoom level
-     * @return the projected x coordinate
-     * @throws APIException 
-     */
-    public static double TKlon2pix(double lon, int zoomLevel) {
-        double x = (lon + 180) * (1 << zoomLevel) * CONFIG.TILE_SIZE / 360;
-        if(x > 0)
-            return x;
-        
-        return x;
-    }
-
-    /**
-     * Converts latitude to projected y coordinate.
-     * @param lat latitude
-     * @param zoomLevel the zoom level
-     * @return the projected y coordinate
-     * @throws APIException 
-     */
-    public static double TKlat2pix(double lat, int zoomLevel) {
-        double latInRad = lat * Math.PI / 180;
-        double tmp = Math.sin(latInRad);
-        tmp = (tmp + 1) / (1 - tmp);
-        double y = ((1 - Math.log(tmp) / (2 * Math.PI)) 
-                    * (1 << (zoomLevel - 1)) * CONFIG.TILE_SIZE);
-        
-        return y;
     }
 
     public static void writeBitmap2Uri(Context context, Uri uri, Bitmap bitmap) {
