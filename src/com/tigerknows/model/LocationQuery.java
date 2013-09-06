@@ -138,6 +138,7 @@ public class LocationQuery extends BaseQuery {
         synchronized (this) {
             location = null;
             locationResponseCode = 0;
+            this.requestParameters.clear();
             super.query();
             if (locationResponseCode == LOCATION_RESPONSE_CODE_FAILED || locationResponseCode == LOCATION_RESPONSE_CODE_SUCCEED) {
                 LogWrapper.i("LocationQuery", "query():location="+location);

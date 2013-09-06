@@ -176,6 +176,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
     }
 
     protected void findViews() {
+        mRootView.findViewById(R.id.location_txv).setVisibility(View.GONE);
         mViewPager = (ViewPager) mRootView.findViewById(R.id.view_pager);
         mQueryBtn = (Button)mRootView.findViewById(R.id.query_btn);
         mKeywordEdt = (TKEditText)mRootView.findViewById(R.id.keyword_edt);
