@@ -25,7 +25,6 @@ import com.decarta.CONFIG;
 import com.decarta.Profile;
 import com.decarta.android.exception.APIException;
 import com.decarta.android.location.Position;
-import com.decarta.android.map.TilesView.TileResponse;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
@@ -34,6 +33,8 @@ import com.tigerknows.model.TKWord;
 import com.tigerknows.service.SuggestLexiconService;
 import com.tigerknows.util.ByteUtil;
 import com.tigerknows.util.Utility;
+import com.tigerknows.map.TileResponse;
+import com.tigerknows.map.label.Label;
 
 public class MapEngine {
 
@@ -51,14 +52,7 @@ public class MapEngine {
     public static int CITY_ID_QUANGUO = -3;
     public static int CITY_ID_BEIJING = 1;
     public static int SW_ID_QUANGUO = 9999;
-    
-    private int matrixSize;
-    /**
-     * int数组
-     * 大小是 tile_size*tile_size
-     * 用于Bitmap的setPixels方法
-     */
-    private int[] bitmapIntBuffer;
+    public static int TILE_SIZE_BIT = 8;
     private boolean isClosed = true;
     
     private int suggestCityId = CITY_ID_INVALID;  // 联想词引擎所属城市Id
@@ -72,77 +66,60 @@ public class MapEngine {
     
     public static final int MAX_REGION_TOTAL_IN_ROM = 30;
     private Context context;
-    
     private void initEngine(Context context, String mapPath) {
-        synchronized (this) {
-        if (this.isClosed) {
-        if (bitmapIntBuffer == null) {
-        matrixSize = Ca.tk_get_matrix_size(CONFIG.TILE_SIZE, CONFIG.TILE_SIZE);
-        bitmapIntBuffer = new int[matrixSize];
-        }
-        isExternalStorage = false;
-        this.mapPath = mapPath;
-        String externalStorageState = Environment.getExternalStorageState();
-        if (externalStorageState.equals(Environment.MEDIA_MOUNTED)) {
-            File externalStorageDirectory = Environment.getExternalStorageDirectory();
-            String externalStoragePath = externalStorageDirectory.getAbsolutePath();
-            if (this.mapPath.startsWith(externalStoragePath)) {
-                isExternalStorage = true;
-            }
-        }
-        int status = Ca.tk_init_engine(TKConfig.getDataPath(false), this.mapPath, CONFIG.TILE_SIZE, CONFIG.TILE_SIZE, bitmapIntBuffer, 1);
-        if (status == 0) {
-            int icon_num = MapWord.Icon.RESOURCE_ID.length;
-            Ca.tk_init_icon_num(icon_num);
-            for(int i=0; i < icon_num; i++) {
-                Bitmap bm = MapWord.Icon.getBitmap(i);
-                if (bm != null) {
-                    Ca.tk_set_icon(i, bm.getWidth(), bm.getHeight());
+		synchronized (this) {
+			if (this.isClosed) {
+				isExternalStorage = false;
+				this.mapPath = mapPath;
+				String externalStorageState = Environment
+						.getExternalStorageState();
+				if (externalStorageState.equals(Environment.MEDIA_MOUNTED)) {
+					File externalStorageDirectory = Environment
+							.getExternalStorageDirectory();
+					String externalStoragePath = externalStorageDirectory
+							.getAbsolutePath();
+					if (this.mapPath.startsWith(externalStoragePath)) {
+						isExternalStorage = true;
+					}
+				}
+                if(Ca.tk_is_engine_initialized()) {//地图引擎已被初始化过，静态数据已加载
+                	Ca.tk_engine_reset_map_dir(this.mapPath);
                 }
-            }
-            this.isClosed = false;
-            this.context = context;
-        } else {
-            destroyEngine();
-        }
-        LogWrapper.d(TAG, "initEngine() status="+status);
-        }
-        }
+                else {
+					int status = Ca.tk_init_engine_config(
+							TKConfig.getDataPath(false), this.mapPath,
+							CONFIG.TILE_SIZE);
+					if (status == 0) {
+						this.isClosed = false;
+						this.context = context;
+						Ca.tk_init_context(null, TILE_SIZE_BIT, 0);
+					} else {
+						destroyEngine();
+					}
+					LogWrapper.d(TAG, "initEngine() status=" + status);
+                }
+			}
+		}
     }
 
     public void destroyEngine() {
-        synchronized (this) {
         if (this.isClosed == false) {
-        suggestDownloaded.clear();
-        suggestwordDestroy();
-        Ca.tk_destroy_engine();
-        isClosed = true;
-        mapPath = null;
-        LogWrapper.d(TAG, "destroyEngine()");
-        }
+	        suggestDownloaded.clear();
+	        suggestwordDestroy();
+	        Ca.tk_destroy_engine_config();
+	        isClosed = true;
+	        mapPath = null;
+	        LogWrapper.d(TAG, "destroyEngine()");
         }
     }
 
     public int getCityId(Position position) {
-        synchronized (this) {
         int cityId = CITY_ID_INVALID;
         if (isClosed || position == null) {
             return cityId;
         }
         cityId = Ca.tk_get_city_id(position.getLat(), position.getLon());
         return cityId;
-        }
-    }
-
-    public int getRegionId(Position position) {
-        synchronized (this) {
-        int rid = CITY_ID_INVALID;
-        if (isClosed || position == null) {
-            return rid;
-        }
-        rid = Ca.tk_get_rid_by_point(position.getLat(), position.getLon());
-        return rid;
-        }
     }
 
     /**
@@ -236,35 +213,28 @@ public class MapEngine {
     }
 
     public void removeRegion(int rid) {
-        synchronized (this) {
         if (isClosed) {
             return;
         }
-        int cityId = MapEngine.CITY_ID_INVALID;
-        RegionInfo regionInfo = getRegionInfo(rid);
-        if (regionInfo != null) {
-            cityId = getCityid(regionInfo.getCCityName());
-        }
         Ca.tk_remove_region_data(rid); 
+        int cityId = Ca.tk_get_cid_by_rid(rid);
         sendBroadcastForRemoveMapData(cityId);
-        }
     }
     
     void sendBroadcastForRemoveMapData(int cityId) {
         synchronized (this) {
-        if (isClosed) {
-            return;
-        }
-        if (context != null) {
-            Intent intent = new Intent(ACTION_REMOVE_CITY_MAP_DATA);
-            intent.putExtra(EXTRA_CITY_ID, cityId);
-            context.sendBroadcast(intent);
-        }
+	        if (isClosed) {
+	            return;
+	        }
+	        if (context != null) {
+	            Intent intent = new Intent(ACTION_REMOVE_CITY_MAP_DATA);
+	            intent.putExtra(EXTRA_CITY_ID, cityId);
+	            context.sendBroadcast(intent);
+	        }
         }
     }
 
     public boolean initRegion(int rid) {
-        synchronized (this) {
         if (isClosed) {
             return false;
         }
@@ -277,11 +247,9 @@ public class MapEngine {
             metaFile.delete();
         }
         return ret == 0 ? true : false;
-        }
     }
     
     public int writeRegion(int rid, int offset, byte[] buf, String version) {
-        synchronized (this) {
         if (isClosed) {
             return -1;
         }
@@ -297,37 +265,39 @@ public class MapEngine {
             return -1;
         }
         return Ca.tk_write_region(rid, offset, buf.length, buf);
-        }
     }
     
     public LocalRegionDataInfo getLocalRegionDataInfo(int regionId) {
-        synchronized (this) {
         if (isClosed) {
             return null;
         }
-        byte[] data = Ca.tk_get_region_stat(regionId);
+        int[] data = Ca.tk_get_region_stat(regionId);
         if (data == null || data.length < 1) {
             return null;
         }
-        return ByteUtil.parseRegionMapInfo(data);
-        }
+        LocalRegionDataInfo regionMapInfo = new LocalRegionDataInfo();
+        regionMapInfo.setTotalSize(data[0]);
+        regionMapInfo.setDownloadSize(data[1]);
+        regionMapInfo.setLostDataNum(data[2]);
+        return regionMapInfo;
     }
     
     public String getMapPath() {
         return mapPath;
     }
 
+    public int getMaxLabelPriority() {
+    	return Ca.tk_get_max_label_priority();
+    }
+    
     public int getRegionId(String regionName) {
-        synchronized (this) {
         if (isClosed) {
             return -1;
         }
         return Ca.tk_get_region_id(regionName);
-        }
     }
 
     public List<String> getCitylist(String provinceName) {
-        synchronized (this) {
         ArrayList<String> cityList = new ArrayList<String>();
         if (isClosed) {
             return cityList;
@@ -335,20 +305,16 @@ public class MapEngine {
         if (TextUtils.isEmpty(provinceName)) {
             return cityList;
         }
-        byte[] cityCNamesBytes = Ca.get_citylist(provinceName.trim());
-        if (cityCNamesBytes == null) {
-            return cityList;
-        }
-        String[] cities = new String(cityCNamesBytes).split(",");
+        String[] cities = Ca.get_citylist(provinceName.trim()); 
+        if(cities == null)
+        	return cityList;
         for (String city : cities) {
             cityList.add(city);
         }
         return cityList;
-        }
     }
     
     public int getCityid(String cityName) {
-        synchronized (this) {
         if (isClosed) {
             return -1;
         }
@@ -356,41 +322,35 @@ public class MapEngine {
             return -1;
         }
         return Ca.tk_get_cityid(cityName.trim());
-        }
     }
     
     public RegionInfo getRegionInfo(int regionId) {
-
-        synchronized (this) {
         if (isClosed) {
             return null;
         }
-        byte[] data = Ca.tk_get_region_info(regionId);
-        if (data == null || data.length < 1) {
-            return null;
+        String regionInfoStr = Ca.tk_get_region_info(regionId);
+        if(regionInfoStr == null || regionInfoStr.length() == 0) {
+        	return null;
         }
         RegionInfo regionInfo = new RegionInfo();
-        String[] strs = new String(data, 0, data.length).split(",");
+        String[] strs = regionInfoStr.split(",");
         regionInfo.setCName(strs[0]);
         regionInfo.setEName(strs[1]);
         regionInfo.setFileSize(Integer.parseInt(strs[2]));
         regionInfo.setCCityName(strs[3]);
-//        regionInfo.setCityId(Integer.parseInt(strs[3]));
         return regionInfo;
-        }
     }
 
     public CityInfo getCityInfo(int cityId) {
-        synchronized (this) {
         CityInfo cityInfo = new CityInfo();
         if (isClosed) {
             return cityInfo;
         }
-        byte[] data = Ca.tk_get_city_info(cityId);
-        if (data == null || data.length < 1) {
-            return cityInfo;
+        String cityInfoStr = Ca.tk_get_city_info(cityId);
+        if(cityInfoStr == null || cityInfoStr.length() == 0) {
+        	return cityInfo;
         }
-        String[] strs = new String(data, 0, data.length).split(",");
+        String[] strs = cityInfoStr.split(",");
         cityInfo.setId(cityId);
         cityInfo.setCName(strs[0]);
         cityInfo.setEName(strs[1]);
@@ -399,34 +359,17 @@ public class MapEngine {
         cityInfo.setCProvinceName(strs[5]);
         cityInfo.setEProvinceName(strs[6]);
         return cityInfo;
-        }
-    }
-    
-    public String[] getRegionlist(int cityId) {
-        synchronized (this) {
-        if (isClosed) {
-            return new String[0];
-        }
-        byte[] data = Ca.tk_get_regionlist(cityId);
-        if (data == null || data.length < 1) {
-            return new String[0];
-        }
-        return new String(data).split(",");
-        }
     }
 
     // 得到所有省的中英文名字，去掉香港、澳门
     public HashMap<String, String> getEprovincelist(Context context) {
-        synchronized (this) {
         HashMap<String, String> infoMap = new HashMap<String, String>();
         if (isClosed) {
             return infoMap;
         }
-        byte[] data = Ca.tk_get_eprovincelist();
-        if (data == null || data.length < 1) {
-            return infoMap;
-        }
-        String allProvincesInfoStr = new String(data);
+        String allProvincesInfoStr = Ca.tk_get_eprovincelist();
+        if(allProvincesInfoStr == null || allProvincesInfoStr.length() == 0)
+        	return infoMap;
         String[] provices = allProvincesInfoStr.split(",");
         String hongkong = context.getString(R.string.hongkong);
         String macao = context.getString(R.string.macao);
@@ -439,11 +382,9 @@ public class MapEngine {
             }
         }
         return infoMap;
-        }
     }
     
     public void removeCityData(String cityName) {
-        synchronized (this) {
         if (isClosed) {
             return;
         }
@@ -452,11 +393,9 @@ public class MapEngine {
         }
         Ca.tk_remove_city_data(cityName.trim());
         sendBroadcastForRemoveMapData(getCityid(cityName));
-        }
     }
 
     public RegionMetaVersion getRegionMetaVersion(int regionId) {
-        synchronized (this) {
         if (isClosed) {
             return null;
         }
@@ -466,7 +405,6 @@ public class MapEngine {
         }
         RegionMetaVersion ridDataVersion = new RegionMetaVersion(data);
         return ridDataVersion;
-        }
     }
     
     /**
@@ -477,17 +415,17 @@ public class MapEngine {
      */
     public Position latlonTransform(Position position) {
         synchronized (this) {
-        if (isClosed) {
-            return null;
-        }
-        if (position == null) {
-           return null;
-        } 
-        byte[] data = Ca.tk_latlon_transform(position.getLat(), position.getLon());
-        if (data == null || data.length < 1) {
-           return null;
-        } 
-        return new Position(ByteUtil.arr2double(data, 8), ByteUtil.arr2double(data, 0));
+	        if (isClosed) {
+	            return null;
+	        }
+	        if (position == null) {
+	           return null;
+	        } 
+	        byte[] data = Ca.tk_latlon_transform(position.getLat(), position.getLon());
+	        if (data == null || data.length < 1) {
+	           return null;
+	        }
+	        return new Position(ByteUtil.arr2double(data, 8), ByteUtil.arr2double(data, 0));
         }
     }
     
@@ -506,9 +444,6 @@ public class MapEngine {
         	return poiName;
         }
         poiName = getPOIName(position, zoomLevel, 1);
-        if (!TextUtils.isEmpty(poiName)) {
-            poiName = poiName.substring(1);
-        }
         return poiName;
     }
     
@@ -530,14 +465,13 @@ public class MapEngine {
         int flag = (accurary > 500 && accurary != 0) ? 0 : 1;
         
         poiName = getPOIName(position, 16, flag);
-        if ("G".equals(poiName)) {
+        if (poiName == null) {
             int cityId = getCityId(position);
             CityInfo cityInfo = getCityInfo(cityId);
             if (cityInfo != null) {
-            	poiName = "U" + cityInfo.getCName();
+            	poiName = cityInfo.getCName();
             }
         }
-        
         return poiName;
     }
     
@@ -548,7 +482,6 @@ public class MapEngine {
      * @return
      */
     private String getPOIName(Position position, int zoomLevel, int flag) {
-    	synchronized (this) {
             String poiName = null;
             if (isClosed) {
                 return poiName;
@@ -556,47 +489,12 @@ public class MapEngine {
             if (position == null) {
                 return poiName;
             }
-            byte[] data = null;	
-
-            data = Ca.tk_get_poi_namel(position.getLat(), position.getLon(), zoomLevel, flag);
-            if (data == null || data.length < 1) {
-                return poiName;
-            }
-            try {
-                poiName = new String(data, 0, data.length, "GBK");
-                if (poiName.equals("null")) {
-                    poiName = null;
-                }
-                String encode = poiName.substring(0, 1);
-                if (encode.equals("G")) {
-                    poiName = "G"+poiName.substring(1);
-                } else if (encode.equals("U")){
-                    poiName = new String(data, 0, data.length, "UTF-8");
-                    poiName = "U"+poiName.substring(1);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
+            poiName = Ca.tk_get_poi_name(position.getLat(), position.getLon(), zoomLevel);
+            LogWrapper.i("MapEngine", "getPOIName: " + poiName + "of lat:" + position.getLat() + " lon: " + position.getLon());
+            if (poiName == null || poiName.equals("null")) {
+            	return null;
             }
             return poiName;
-        }
-    }
-    
-    public void resetFontSize(float offset) {
-        synchronized (this) {
-        Ca.tk_reset_font_size(offset);
-        }
-    }
-    
-    public void resetIconSize(int offset) {
-        synchronized (this) {
-        Ca.tk_reset_icon_size(offset);
-        }
-    }
-    
-    public int bmp2Png(byte[] bmpBuf, byte[] pngBuf) {
-        synchronized (this) {
-        return Ca.bmp2Png(bmpBuf, pngBuf);
-        }
     }
 
     private static String TAG = "MapEngine";
@@ -632,7 +530,6 @@ public class MapEngine {
                 }
                 new File(appPath, "try.txt").createNewFile();
                 new File(appPath, "try.txt").delete();
-                destroyEngine();
                 initEngine(context, appPath);
                 LogWrapper.i(TAG, "setupDataPath() app path:"+ appPath + " map path:"+ mapPath + ",exist:" + new File(appPath).exists());
             } catch (Exception e) {
@@ -640,7 +537,6 @@ public class MapEngine {
                 mapPath = null;
                 throw new APIException("Can't write/read cache. Please Grand permission");
             }
-            
         }
     }
     
@@ -668,58 +564,11 @@ public class MapEngine {
         }
     }
     
-    public MapWord[] getScreenLabel(Position position, int width, int height, int zoomLevel) {
-        synchronized (this) {
-            LogWrapper.d(TAG, "getScreenLabel() position="+position+", zoomLevel="+zoomLevel);
-            MapWord[] mapWords = null;
-            int ret = Ca.tk_get_screen_label(position.getLon(), position.getLat(), width, height, zoomLevel);
-            if (ret == 0) {
-                byte[] data = Ca.get_map_text_info();
-                mapWords = ByteUtil.parseMapText(data);
-            }
-            return mapWords;
-        }
-    }
-
-    public TileResponse getTileBuffer(int x, int y, int z) {
-        synchronized (this) {
-            TileResponse tileResponse = new TileResponse(null, 0);
-            if (isClosed) {
-                return tileResponse;
-            }
-            try {
-                long start = System.nanoTime();
-                int ret = Ca.tk_get_tile_buffer(x, y, z);
-                long loadTime=System.nanoTime()-start;    
-                Profile.getTileBufferInc(loadTime);
-                byte[] data;
-                if (ret == 0) {
-                    start=System.nanoTime();
-                    Bitmap bm;
-                    bm = Bitmap.createBitmap(CONFIG.TILE_SIZE, CONFIG.TILE_SIZE, Config.ARGB_8888);
-                    bm.setPixels(bitmapIntBuffer, 0, CONFIG.TILE_SIZE, 0, 0, CONFIG.TILE_SIZE, CONFIG.TILE_SIZE);
-                    loadTime=System.nanoTime()-start;    
-                    Profile.decodeByteArrayInc(loadTime);
-
-                    tileResponse.bitmap = bm;
-                } else {
-                    if (ret < 0) {
-                        data = Ca.tk_get_lost_tile_info();
-                        if (data != null) {
-                            tileResponse.lostTileInfos = ByteUtil.parseTileInfo(data);
-                        }
-                    }
-                }
-            } catch (OutOfMemoryError e) {
-                e.printStackTrace();
-                LogWrapper.e(TAG, "getTileBuffer() outOfMemoryError,heap size:"+android.os.Debug.getNativeHeapAllocatedSize());
-            }
-            return tileResponse;
-        }
+    public TileDownload[] getLostData() {
+    	return Ca.tk_get_lost_tile_info();
     }
 
     public List<CityInfo> getAllProvinceCityList(Context context) {
-        synchronized (this) {
         List<CityInfo> allCityInfoList = new ArrayList<CityInfo>();
         HashMap<String,String> allProvincesInfo = getEprovincelist(context);
         Iterator<String> iterator = allProvincesInfo.keySet().iterator();
@@ -745,21 +594,17 @@ public class MapEngine {
         }
         
         return allCityInfoList;
-        }
     }
 
     //得到一个城市的所有region id
     public ArrayList<Integer> getRegionIdList(String cityName) {
-        synchronized (this) {
         int cityId = getCityid(cityName);
         ArrayList<Integer> regionIdList = new ArrayList<Integer>();
-        String[] regionList = getRegionlist(cityId);
-        for (String regionName : regionList) {
-            int regionId = getRegionId(regionName);
-            regionIdList.add(regionId);
+        int[] rids = Ca.tk_get_regionid_list(cityId);
+        for (int rid : rids) {
+            regionIdList.add(rid);
         }
         return regionIdList;
-        }
     }
 
     public void suggestwordCheck(Sphinx sphinx, int cityId) {
@@ -1172,7 +1017,7 @@ public class MapEngine {
                 pos[0] = position.getLat();
                 pos[1] = position.getLon();
             }
-            parcel.writeDoubleArray(pos);   
+            parcel.writeDoubleArray(pos);
         }
 
         public static final Parcelable.Creator<CityInfo> CREATOR

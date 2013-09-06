@@ -151,7 +151,7 @@ public class ItemizedOverlay {
 //			if(included) continue;
 			
 			ArrayList<OverlayItem> newClusterPins=new ArrayList<OverlayItem>();
-			newClusterPins.add(pin);
+			newClusterPins.add(pin);//只有一个元素？
 			XYDouble refMercXY=new XYDouble(pin.getMercXY().x,pin.getMercXY().y);
 			clusters.add(new ClusterNE(new Cluster(refMercXY,newClusterPins),ne));
 		}

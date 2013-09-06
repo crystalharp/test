@@ -5,16 +5,26 @@
  */
 package com.decarta.android.map;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.LinkedList;
+
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
 
 import com.decarta.CONFIG;
 import com.decarta.Profile;
-import com.decarta.android.map.TilesView.TileResponse;
 import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.XYZ;
+import com.tigerknows.map.Ca;
 import com.tigerknows.map.MapEngine;
 import com.tigerknows.map.TileDownload;
+import com.tigerknows.map.TileResponse;
 import com.tigerknows.map.MapView.DownloadEventListener;
+import com.tigerknows.map.label.Label;
+import com.tigerknows.map.TileInfo;
+import com.tigerknows.map.Ca;
 
 /**
  * Thread class for loading tiles
@@ -49,25 +59,20 @@ public class TileThread extends Thread {
 		this.mapEngine = MapEngine.getInstance();
 	}
 	
-	private void addToTileImages(Tile requestTile, TileResponse tileResponse, boolean loadFromDb){
+	private void addToTileInfos(Tile requestTile, TileInfo tileInfo, boolean loadFromDb){
 		synchronized(tilesView.getDrawingLock()){
-			if(!tilesView.getTileImages().containsKey(requestTile)){
-				tilesView.getTileImages().put(requestTile, tileResponse);
-				//Log.i("TileThread","addToTileImages image size,tileImages num,memory allocated,tile:"+bitmap.getRowBytes()*bitmap.getHeight()+","+tilesView.getTileImages().size()+","+android.os.Debug.getNativeHeapAllocatedSize()+","+requestTile.toString());
-			}else{
-				LogWrapper.i("TileThread","addToTileImages duplicate tile,hashCode:"+requestTile.toString()+","+requestTile.hashCode());
-				
+			if(!tilesView.getTileInfos().containsKey(requestTile)){
+				tilesView.getTileInfos().put(requestTile, tileInfo);
+			} else {
+				LogWrapper.i("TileThread","addToTileInfos duplicate tile,hashCode:"+requestTile.toString()+","+requestTile.hashCode());
 			}
-			
 		}
-		
 	}
 	
 	public boolean isBlocked() {
 		return blocked;
 	}
-	
-	
+	public static final int RENDER_MODE = 1;
 	/**
 	 * main entry method for loading tiles
 	 */
@@ -75,7 +80,9 @@ public class TileThread extends Thread {
 	public void run() {
 		//MapActivity mapActivity=(MapActivity)(tilesView.getContext());
 		LinkedList<Tile> tilesWaitForLoading=tilesView.getTilesWaitForLoading();
-		
+		int matrixSize = Ca.tk_get_matrix_size(CONFIG.TILE_SIZE);
+		int[] bitmapIntBuffer = new int[matrixSize];
+		Ca.tk_init_context(bitmapIntBuffer, MapEngine.TILE_SIZE_BIT, RENDER_MODE);
 		while (true) {
 			if(stop){
 				LogWrapper.i("TileThread","thread "+sequence+" break");
@@ -121,9 +128,9 @@ public class TileThread extends Thread {
 				LogWrapper.i("TileThread","thread "+sequence+" break");
 				break;
 			}
-						
+
 			if (requestTile!=null) {
-				try {					
+				try {
 					int threadSeq=-1;
 					for(int i=0;i<CONFIG.TILE_THREAD_COUNT;i++){
 						if(requestTile.equals(requestTiles[i])){
@@ -138,55 +145,61 @@ public class TileThread extends Thread {
 					requestTiles[sequence]=requestTile;
 										
 					synchronized(tilesView.getDrawingLock()){
-						if(tilesView.getTileTextureRefs().containsKey(requestTile)){
+						if(tilesView.getTileInfos().containsKey(requestTile)){
 							//Log.i("TileThread","check tileTextureRefs duplicate tile,hashCode:"+requestTile.toString()+","+requestTile.hashCode());
-							continue;
-						}
-						if(tilesView.getTileImages().containsKey(requestTile)){
-							//Log.i("TileThread","check tileImages duplicate tile,hashCode:"+requestTile.toString()+","+requestTile.hashCode());
 							continue;
 						}
 					}
 					
 					//Log.i("TileThread" + this.sequence,"loading tile from network:" + Util.formatURL(url));
 					try{
-						TileResponse tileResponse = null;
-                        XYZ xyz = requestTile.xyzTK;
+                        XYZ xyz = requestTile.xyz;
                         long start=System.nanoTime();
-                        tileResponse = mapEngine.getTileBuffer(xyz.x, xyz.y, xyz.z);
-                        long loadTime=System.nanoTime()-start;    
+                        Label[] labels = Ca.tk_render_tile(xyz.x, xyz.y, xyz.z);
+                        long loadTime=System.nanoTime()-start;
                         Profile.tilesNetworkInc(loadTime);
-					    
-						if (tileResponse != null) {				
-							if (tileResponse.bitmap == null) {
-	                            if (tileResponse.lostTileInfos == null) {
-	                                tilesView.refreshMap();
-	                            } else {
-	                                if (tilesView.getZoomingRecord().zoomCenterXY.x == 0 && tilesView.getZoomingRecord().zoomCenterXY.y == 0
-	                                        && tilesView.getEasingRecord().direction.x == 0 && tilesView.getEasingRecord().direction.y == 0) {
-	                                    LinkedList<TileDownload> tilesWaitForDownLoading=tilesView.getTilesWaitForDownloading();
-	                                    synchronized (tilesWaitForDownLoading) {
-	                                        int total = 0;
-	                                        for(TileDownload tileDownload : tileResponse.lostTileInfos) {
-	                                            tilesWaitForDownLoading.remove(tileDownload);
-	                                            if (!DownloadThread.DownloadingTiles.contains(tileDownload)) {
-	                                                tilesWaitForDownLoading.addLast(tileDownload);
-	                                                total++;
-	                                            }
-	                                        }
-	                                        if (total > 0) {
-	                                            tilesView.noticeDownload(DownloadEventListener.STATE_DOWNLOADING);
-	                                            tilesWaitForDownLoading.notifyAll();
-	                                        }
-	                                    }
-	                                }
-	                            }
-							} else {
-	                            addToTileImages(requestTile,tileResponse,false);
-	                            tilesView.refreshMap();
-							}
-						}
-					}catch(OutOfMemoryError e){
+                        if (labels != null) {
+                            start=System.nanoTime();
+                            Bitmap bmp565 = Bitmap.createBitmap(CONFIG.TILE_SIZE, CONFIG.TILE_SIZE, Config.RGB_565);
+                            bmp565.setPixels(bitmapIntBuffer, 0, CONFIG.TILE_SIZE, 0, 0, CONFIG.TILE_SIZE, CONFIG.TILE_SIZE);
+                            
+//                            File myCaptureFile = new File(MapEngine.getInstance().getMapPath() + "test" + xyz + ".jpg");
+//                          BufferedOutputStream bos = new BufferedOutputStream(
+//                                                                   new FileOutputStream(myCaptureFile));
+//                          bmp565.compress(Bitmap.CompressFormat.JPEG, 80, bos);
+//                          bos.flush();
+//                          bos.close();
+//                            bmp565.compress(format, quality, stream)
+                            loadTime = System.nanoTime()-start;
+                            Profile.decodeByteArrayInc(loadTime);
+                            
+                            TileInfo tileInfo = new TileInfo();
+							tileInfo.bitmap = bmp565;
+							tileInfo.labels = labels;
+                            addToTileInfos(requestTile, tileInfo, false);
+                            tilesView.refreshMap();
+                        } else {
+                        	TileDownload[] lostTileInfos = Ca.tk_get_lost_tile_info();
+                        	if (tilesView.getZoomingRecord().zoomCenterXY.x == 0 && tilesView.getZoomingRecord().zoomCenterXY.y == 0
+                                    && tilesView.getEasingRecord().direction.x == 0 && tilesView.getEasingRecord().direction.y == 0) {
+                                LinkedList<TileDownload> tilesWaitForDownLoading=tilesView.getTilesWaitForDownloading();
+                                synchronized (tilesWaitForDownLoading) {
+                                    int total = 0;
+                                    for(TileDownload tileDownload : lostTileInfos) {
+                                        tilesWaitForDownLoading.remove(tileDownload);
+                                        if (!DownloadThread.DownloadingTiles.contains(tileDownload)) {
+                                            tilesWaitForDownLoading.addLast(tileDownload);
+                                            total++;
+                                        }
+                                    }
+                                    if (total > 0) {
+                                        tilesView.noticeDownload(DownloadEventListener.STATE_DOWNLOADING);
+                                        tilesWaitForDownLoading.notifyAll();
+                                    }
+                                }
+                        	}
+                        }
+					} catch(OutOfMemoryError e) {
 						LogWrapper.e("TileThread","getTile from network outOfMemoryError,heap size:"+android.os.Debug.getNativeHeapAllocatedSize());
 						continue;
 					}
@@ -198,5 +211,6 @@ public class TileThread extends Thread {
 				}
 			}
 		}
+		Ca.tk_fini_context();
 	}
 }

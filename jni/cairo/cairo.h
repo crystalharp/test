@@ -374,7 +374,8 @@ typedef enum _cairo_status {
 typedef enum _cairo_content {
     CAIRO_CONTENT_COLOR		= 0x1000,
     CAIRO_CONTENT_ALPHA		= 0x2000,
-    CAIRO_CONTENT_COLOR_ALPHA	= 0x3000
+    CAIRO_CONTENT_COLOR_ALPHA	= 0x3000,
+    CAIRO_CONTENT_COLOR_ALPHA2	= 0x4000,
 } cairo_content_t;
 
 /**
@@ -415,7 +416,8 @@ typedef enum _cairo_format {
     CAIRO_FORMAT_A8        = 2,
     CAIRO_FORMAT_A1        = 3,
     CAIRO_FORMAT_RGB16_565 = 4,
-    CAIRO_FORMAT_RGB30     = 5
+    CAIRO_FORMAT_RGB30     = 5,
+//    CAIRO_FORMAT_BGRA32    = 6,// by cm
 } cairo_format_t;
 
 

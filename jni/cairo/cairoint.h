@@ -434,7 +434,8 @@ struct _cairo_surface_attributes {
 #define CAIRO_GSTATE_LINE_WIDTH_DEFAULT	2.0
 #define CAIRO_GSTATE_LINE_CAP_DEFAULT	CAIRO_LINE_CAP_BUTT
 #define CAIRO_GSTATE_LINE_JOIN_DEFAULT	CAIRO_LINE_JOIN_MITER
-#define CAIRO_GSTATE_MITER_LIMIT_DEFAULT	10.0
+//#define CAIRO_GSTATE_MITER_LIMIT_DEFAULT	10.0
+#define CAIRO_GSTATE_MITER_LIMIT_DEFAULT	2.0
 #define CAIRO_GSTATE_DEFAULT_FONT_SIZE  10.0
 
 #define CAIRO_SURFACE_RESOLUTION_DEFAULT 72.0
@@ -1484,6 +1485,7 @@ slim_hidden_proto (cairo_surface_finish);
 slim_hidden_proto (cairo_surface_flush);
 slim_hidden_proto (cairo_surface_get_device_offset);
 slim_hidden_proto (cairo_surface_get_mime_data);
+slim_hidden_proto (cairo_surface_has_show_text_glyphs);
 slim_hidden_proto (cairo_surface_mark_dirty);
 slim_hidden_proto (cairo_surface_mark_dirty_rectangle);
 slim_hidden_proto_no_warn (cairo_surface_reference);
