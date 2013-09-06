@@ -109,6 +109,8 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             	return;
             }
             if (mHotel == null || mHotel.getRoomTypeList() == null) {
+                setState(STATE_NO_DATA);
+            	roomTypeList.refreshList(null);
                 return;
             }
             mAllRoomList.clear();
