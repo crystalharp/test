@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
+import javax.microedition.khronos.egl.*;
+
 import android.app.ActivityManager;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -191,7 +193,7 @@ import com.tigerknows.util.CalendarUtil;
 import com.tigerknows.util.Utility;
 import com.tigerknows.widget.ScaleView;
 import com.tigerknows.widget.ZoomControls;
-
+import android.opengl.GLSurfaceView;
 /**
  * 此类是应用程序的主类
  * 
@@ -394,7 +396,28 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     public Bundle getBundle() {
     	return mBundle;
     }
-    
+
+	private static class ContextFactory implements
+			GLSurfaceView.EGLContextFactory {
+
+		private static int EGL_CONTEXT_CLIENT_VERSION = 0x3098;
+
+		public EGLContext createContext(EGL10 egl, EGLDisplay display,
+				EGLConfig eglConfig) {
+
+			int[] attrib_list = { EGL_CONTEXT_CLIENT_VERSION, 1,
+					EGL10.EGL_NONE };
+			// attempt to create a OpenGL ES 3.0 context
+			EGLContext context = egl.eglCreateContext(display, eglConfig,
+					EGL10.EGL_NO_CONTEXT, attrib_list);
+			return context; // returns null if 3.0 is not supported;
+		}
+
+		@Override
+		public void destroyContext(EGL10 arg0, EGLDisplay arg1, EGLContext arg2) {
+			
+		}
+	}
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -683,7 +706,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     mScaleView.setMetersPerPixelAtZoom((float)Util.metersPerPixelAtZoom(CONFIG.TILE_SIZE, zoomLevel, mapView.getCenterPosition().getLat()), zoomLevel);
                 }
             });
-                        
+
             final Runnable downloadViewHideRun = new Runnable() {
                 
                 @Override
@@ -1287,7 +1310,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 int cityId = intent.getIntExtra(MapEngine.EXTRA_CITY_ID, MapEngine.CITY_ID_INVALID);
                 if (Globals.getCurrentCityInfo().getId()==cityId || mViewedCityInfoList.contains(cityId)) {
                     if (mMapView != null) {
-                        mMapView.clearTileImages();
+                        mMapView.clearTileTextures();
                         mMapView.refreshMap();
                     }
                 }
@@ -1823,10 +1846,11 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 TKConfig.setPref(mContext, TKConfig.PREFS_LAST_LAT, String.valueOf(position.getLat()));
                 TKConfig.setPref(mContext, TKConfig.PREFS_LAST_ZOOM_LEVEL, String.valueOf(zoom));
             }
+            mMapView.clearAllTextures();
         }
 
         unregisterReceiver(mCountCurrentDownloadCityBroadcastReceiver);
-        
+        System.gc();
         Intent service = new Intent(Sphinx.this, SuggestLexiconService.class);
         stopService(service);
         super.onPause();
