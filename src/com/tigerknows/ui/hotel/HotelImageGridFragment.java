@@ -213,7 +213,7 @@ public class HotelImageGridFragment extends BaseFragment {
                 ImageView iconImv = new ImageView(getContext());
                 iconImv.setId(R.id.icon_imv);
                 iconImv.setScaleType(ImageView.ScaleType.FIT_XY);
-                iconImv.setBackgroundResource(R.drawable.bg_picture_hotel);
+                iconImv.setBackgroundResource(R.drawable.bg_picture);
                 int padding = Util.dip2px(Globals.g_metrics.density, 4);
                 iconImv.setPadding(padding, padding, padding, padding);
                 viewGroup.addView(iconImv);

@@ -6,12 +6,12 @@ package com.tigerknows.common;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.TKConfig;
 import com.tigerknows.model.FeedbackUpload;
+import com.tigerknows.util.CalendarUtil;
 
 import android.content.Context;
 import android.text.TextUtils;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 
 /**
  * 用户行为日志类
@@ -27,6 +27,7 @@ public class ActionLog extends LogUpload {
     
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
     
+    private Context context;
     private static ActionLog sActionLog;
     public static ActionLog getInstance(Context context) {
         if (sActionLog == null) {
@@ -184,12 +185,17 @@ public class ActionLog extends LogUpload {
     public static final String POIDetailCouponSingle = "CA";
     public static final String POIDetailCouponMulti = "CB";
     public static final String POIDetailBusstop = "CD";
+    public static final String POIDetailMoreSameCategory = "CE";
+    public static final String POIDetailSameCategory = "CF";
 
     // POI点评列表页
     public static final String POICommentList = "AE";
     public static final String POICommentListUrl = "BA";
     public static final String POICommentListMyComment = "BB";
     public static final String POICommentListInput = "BC";
+    public static final String POICommentListAllComment = "BD";
+    public static final String POICommentListHotComment = "BE";
+    public static final String POICommentListCommend = "BF";
 
     // 点评输入页
     public static final String POIComment = "AF";
@@ -236,6 +242,8 @@ public class ActionLog extends LogUpload {
     
     // POI详情地图页
     public static final String POIDetailMap = "AL";
+    public static final String POIHotelListMap = "AU";
+    public static final String POIHotelDetailMap = "AV";
     
     // 优惠券列表页
     public static final String CouponList = "AM";
@@ -282,7 +290,7 @@ public class ActionLog extends LogUpload {
 
     // 更多频道
     public static final String More = "CA";
-    public static final String MoreMessageComment = "BA";
+    public static final String MoreGoComment = "BA";
     public static final String MoreLoginRegist = "BB";
     public static final String MoreChangeCity = "BC";
     public static final String MoreMapDownload = "BD";
@@ -293,14 +301,15 @@ public class ActionLog extends LogUpload {
     public static final String MoreFeedback = "BI";
     public static final String MoreHelp = "BJ";
     public static final String MoreAboutUs = "BK";
-    public static final String MoreMessageMap = "BL";
+    //public static final String MoreMessageMap = "BL";
     public static final String MoreUserHome = "BM";
-    public static final String MoreMessageSoft = "BN";
+    public static final String MoreSoftwareUpdate = "BN";
     public static final String MoreGiveFavourableComment = "BO";
-    public static final String MoreMessageUserSurvey = "BP";
+    //public static final String MoreMessageUserSurvey = "BP";
     public static final String MoreAddMerchant = "BQ";
     public static final String MoreSatisfyRate = "BR";
     public static final String MoreAppDownload = "BS";
+    public static final String MoreNotice = "BT";
 
     // 切换城市页
     public static final String ChangeCity = "CB";
@@ -436,6 +445,8 @@ public class ActionLog extends LogUpload {
     public static final String Radar = "FF";
     public static final String RadarShow = Radar + "BA";
     public static final String RadarClick = Radar + "BB";
+    public static final String RadarPushFailed = Radar + "BC";
+    public static final String RadarPushSucceeded = Radar + "BD";
     
     // 交通模块通用
     public static final String TrafficTransferTab = "AA";
@@ -677,6 +688,7 @@ public class ActionLog extends LogUpload {
     
     private ActionLog(Context context, String logFileName, String serverParameterKey) {
         super(context, logFileName, serverParameterKey);
+        this.context = context;
     }
     
     public void addAction(String actionLog, Object... args) {
@@ -740,7 +752,7 @@ public class ActionLog extends LogUpload {
     }
     
     protected String getLogOutToken() {
-        return SEPARATOR_STAET+(simpleDateFormat.format(Calendar.getInstance().getTime()))+SEPARATOR_MIDDLE+LogOut;
+        return SEPARATOR_STAET+(simpleDateFormat.format(CalendarUtil.getExactTime(context)))+SEPARATOR_MIDDLE+LogOut;
     }
     
     protected void onLogOut() {
@@ -770,7 +782,7 @@ public class ActionLog extends LogUpload {
         super.onCreate();
         synchronized (mLock) {
             mStartMillis = System.currentTimeMillis();
-            addAction(SEPARATOR_STAET+simpleDateFormat.format(Calendar.getInstance().getTime())+SEPARATOR_MIDDLE+LifecycleCreate+SEPARATOR_MIDDLE+TKConfig.getClientSoftVersion(), false);
+            addAction(SEPARATOR_STAET+simpleDateFormat.format(CalendarUtil.getExactTime(mContext))+SEPARATOR_MIDDLE+LifecycleCreate+SEPARATOR_MIDDLE+TKConfig.getClientSoftVersion(), false);
         }
     }
     
@@ -787,7 +799,7 @@ public class ActionLog extends LogUpload {
     }
     
     public void onDestroy() {
-        addAction(SEPARATOR_STAET+simpleDateFormat.format(Calendar.getInstance().getTime())+SEPARATOR_MIDDLE+LifecycleDestroy, false);
+        addAction(SEPARATOR_STAET+simpleDateFormat.format(CalendarUtil.getExactTime(context))+SEPARATOR_MIDDLE+LifecycleDestroy, false);
         super.onDestroy();
     }
 }

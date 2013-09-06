@@ -1,7 +1,5 @@
 package com.tigerknows.ui.user;
 
-import java.util.Hashtable;
-
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -31,15 +29,11 @@ public class UserHomeFragment extends UserBaseFragment {
         // TODO Auto-generated constructor stub
     }
 	
-	private Button nickNameTxv;
+	private Button nickNameBtn;
 	
 	private Button myCommentBtn;
-    
-    private Button dingdanBtn;
 	
 	private Button updatePhoneBtn;
-	
-//	private Button updateNicknameBtn;
 	
 	private Button updatePasswordBtn;
 	
@@ -70,11 +64,9 @@ public class UserHomeFragment extends UserBaseFragment {
 	protected void findViews() {
 		super.findViews();
 
-		nickNameTxv = (Button)mRootView.findViewById(R.id.nikename_txv);
+		nickNameBtn = (Button)mRootView.findViewById(R.id.nikename_btn);
 		myCommentBtn = (Button)mRootView.findViewById(R.id.my_comment_btn);
-        dingdanBtn = (Button)mRootView.findViewById(R.id.dingdan_btn);
 		updatePhoneBtn = (Button)mRootView.findViewById(R.id.update_mobile_phone_btn);
-//		updateNicknameBtn = nickNameTxv;
 		updatePasswordBtn = (Button)mRootView.findViewById(R.id.update_password_btn);
 		logoutBtn = (Button)mRootView.findViewById(R.id.logout_btn);
 	}
@@ -106,7 +98,7 @@ public class UserHomeFragment extends UserBaseFragment {
 			}
 		});
 		
-		nickNameTxv.setOnClickListener(new android.view.View.OnClickListener(){
+		nickNameBtn.setOnClickListener(new android.view.View.OnClickListener(){
 
 			@Override
 			public void onClick(View v) {
@@ -165,16 +157,16 @@ public class UserHomeFragment extends UserBaseFragment {
             }
         });
         
-        dingdanBtn.setOnClickListener(new android.view.View.OnClickListener(){
-
-            @Override
-            public void onClick(View v) {
-                mActionLog.addAction(mActionTag +  ActionLog.UserHomeDingdan);
-                Intent intent = new Intent();
-                intent.putExtra(UserBaseActivity.SOURCE_VIEW_ID, getId());
-                mSphinx.showView(R.id.activity_discover_shangjia_list, intent);
-            }
-        });
+//        dingdanBtn.setOnClickListener(new android.view.View.OnClickListener(){
+//
+//            @Override
+//            public void onClick(View v) {
+//                mActionLog.addAction(mActionTag +  ActionLog.UserHomeDingdan);
+//                Intent intent = new Intent();
+//                intent.putExtra(UserBaseActivity.SOURCE_VIEW_ID, getId());
+//                mSphinx.showView(R.id.activity_discover_shangjia_list, intent);
+//            }
+//        });
 	}
 	
 	@Override
@@ -187,7 +179,7 @@ public class UserHomeFragment extends UserBaseFragment {
         mTitleBtn.setText(mContext.getString(R.string.title_user_home));
         
 		if (Globals.g_User != null) {
-			nickNameTxv.setText(Globals.g_User.getNickName());
+			nickNameBtn.setText(mContext.getString(R.string.nickname_colon) + Globals.g_User.getNickName());
 			LogWrapper.d(TAG, "onResume() set username: " + Globals.g_User.getNickName());
 		} else {
 		    dismiss();
@@ -233,11 +225,10 @@ public class UserHomeFragment extends UserBaseFragment {
 		AccountManage accountManage = new AccountManage(mContext);
 		
 		if (TextUtils.isEmpty(Globals.g_Session_Id) == false) {
-			Hashtable<String, String> criteria = new Hashtable<String, String>();
-			criteria.put(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, AccountManage.OPERATION_CODE_LOGOUT);
-			criteria.put(BaseQuery.SERVER_PARAMETER_SESSION_ID, Globals.g_Session_Id);
+			accountManage.addParameter(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, AccountManage.OPERATION_CODE_LOGOUT);
+			accountManage.addParameter(BaseQuery.SERVER_PARAMETER_SESSION_ID, Globals.g_Session_Id);
 			
-			sendRequest(accountManage, criteria);
+			sendRequest(accountManage);
 		} 
 	}
 
@@ -249,7 +240,7 @@ public class UserHomeFragment extends UserBaseFragment {
         // 这里做一个特殊判断，注销操作时返回300也视为注销成功
         if (response != null) {
             int responseCode = response.getResponseCode();
-            String operationCode = baseQuery.getCriteria().get(BaseQuery.SERVER_PARAMETER_OPERATION_CODE);
+            String operationCode = baseQuery.getParameter(BaseQuery.SERVER_PARAMETER_OPERATION_CODE);
             if (AccountManage.OPERATION_CODE_LOGOUT.equals(operationCode)) {
                 if (responseCode == 300) {
                     
@@ -269,7 +260,7 @@ public class UserHomeFragment extends UserBaseFragment {
     @Override
 	protected void responseCodeAction(AccountManage accountManage) {
 		// TODO Auto-generated method stub
-		String operationCode = accountManage.getCriteria().get(BaseQuery.SERVER_PARAMETER_OPERATION_CODE);
+		String operationCode = accountManage.getParameter(BaseQuery.SERVER_PARAMETER_OPERATION_CODE);
 		if (AccountManage.OPERATION_CODE_LOGOUT.equals(operationCode)){
 			// 200, 400, 503
 			switch(accountManage.getResponse().getResponseCode()){

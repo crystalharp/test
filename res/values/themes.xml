@@ -36,4 +36,15 @@
         <item name="android:windowIsTranslucent">false</item>
     </style>
     
+    <style name="Help" parent="android:Theme.NoTitleBar.Fullscreen">      
+    
+        <item name="android:colorForeground">@android:color/transparent</item>
+        <item name="android:colorForegroundInverse">@android:color/transparent</item>
+        <item name="android:colorBackground">@android:color/transparent</item>
+        
+        <item name="android:windowContentOverlay">@android:color/transparent</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsTranslucent">true</item>
+    </style>
+    
 </resources>

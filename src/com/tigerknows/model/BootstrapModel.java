@@ -26,10 +26,14 @@ public class BootstrapModel extends XMapData {
     // 0x04 String 是否上传日志，值为on或off   
     private static final byte FIELD_UPLOAD_LOG = 0x04;
     
+    // 0x05 String 是否更改web支付为客户端支付，值为on或off
+    private static final byte FIELD_GO_ALIPAY = 0x05;
+    
     private SoftwareUpdate softwareUpdate;
     private DomainName domainName;
     private Recommend recommend;
     private String uploadLog;
+    private String goAlipay;
 
     public SoftwareUpdate getSoftwareUpdate() {
         return softwareUpdate;
@@ -55,6 +59,10 @@ public class BootstrapModel extends XMapData {
         return uploadLog;
     }
     
+    public String getGoAlipay() {
+    	return goAlipay;
+    }
+    
     public BootstrapModel(XMap data) throws APIException {
         super(data);
         
@@ -71,6 +79,7 @@ public class BootstrapModel extends XMapData {
         }
         
         this.uploadLog = getStringFromData(FIELD_UPLOAD_LOG);
+        this.goAlipay = getStringFromData(FIELD_GO_ALIPAY);
      }
     
     public static class SoftwareUpdate extends XMapData {

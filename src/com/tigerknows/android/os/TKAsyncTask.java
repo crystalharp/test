@@ -120,13 +120,12 @@ public class TKAsyncTask extends AsyncTask<Void, Integer, Void> {
             if (baseQuery.getAPIType().equals(BaseQuery.API_TYPE_DATA_OPERATION)) {
                 Response response = baseQuery.getResponse();
                 if (response != null && response.getResponseCode() == Response.RESPONSE_CODE_OK) {
-                    Hashtable<String, String> criteria =  baseQuery.getCriteria();
-                    String shareSina = criteria.get(DataOperation.SERVER_PARAMETER_SHARE_SINA);
+                    String shareSina = baseQuery.getParameter(DataOperation.SERVER_PARAMETER_SHARE_SINA);
                     if (!TextUtils.isEmpty(shareSina)) {
                         TKWeibo tkweibo = new TKWeibo(activity, false, false);
                         TKWeibo.update(tkweibo, shareSina, "", "");
                     }
-                    String shareQzone = criteria.get(DataOperation.SERVER_PARAMETER_SHARE_QZONE);
+                    String shareQzone = baseQuery.getParameter(DataOperation.SERVER_PARAMETER_SHARE_QZONE);
                     if (!TextUtils.isEmpty(shareQzone)) {
                         TKTencentOpenAPI.addShare(activity, shareQzone, false, false);
                     }

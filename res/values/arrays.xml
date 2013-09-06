@@ -100,7 +100,7 @@
         <item>推荐 </item>
         <item>推荐菜 </item>
         <item>星级 </item>
-        <item>线路 </item>
+        <item>途径线路 </item>
         <item>营业面积 </item>
         <item>有停车场 </item>
         <item>折扣 </item>
@@ -224,8 +224,8 @@
     
     <string-array name="cert_type">
         <item>身份证</item>
-        <item>护照</item>
-        <item>其他</item>
+        <item>护照\u2003</item>
+        <item>其他\u2003</item>
     </string-array>
     
     <string-array name="preset_filter_area">

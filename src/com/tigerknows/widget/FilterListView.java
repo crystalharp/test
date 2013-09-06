@@ -344,6 +344,19 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
 						}else{
 							childLsv.getAdapter().setSelectedPosition(isCurParentSelected?selectedChildPosition:-1);
 							childLsv.getAdapter().notifyDataSetChanged();
+							final int finalselectedChiledPosition = (isCurParentSelected?selectedChildPosition:-1);
+						    handler.post(new Runnable() {
+					            
+					            @Override
+					            public void run() {
+					                if (finalselectedChiledPosition > 0) {
+					                    int topPosition = finalselectedChiledPosition-1;
+					                    childLsv.getBaseListView().setSelectionFromTop(topPosition, 0);
+					                } else {
+					                    childLsv.getBaseListView().setSelectionFromTop(0, 0);
+					                }
+					            }
+					        });
 						}
                     }
                     
@@ -429,12 +442,12 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
             
             if (isParent) {
                 if (position == selectedParentPosition) {
-                    view.setBackgroundResource(R.drawable.list_selector_background_gray_light);
-                } else {
                     view.setBackgroundResource(R.drawable.list_selector_background_gray_dark);
+                } else {
+                    view.setBackgroundResource(R.drawable.list_selector_background_gray_light);
                 }
             } else {
-                view.setBackgroundResource(R.drawable.list_selector_background_gray_light);
+                view.setBackgroundResource(R.drawable.list_selector_background_gray_dark);
             }
 
             if (filter.isSelected() && (filter.getChidrenFilterList()==null || filter.getChidrenFilterList().size()==0)) {

@@ -18,9 +18,14 @@
     <string name="send_weibo">发微博</string>
     <string name="quit">退出</string>
     <string name="clean_history_message">你要清除所有记录？</string>
-    <string name="location_failed_and_jump_settings">为了提高定位精度，请确认是否开启了‘设置>位置’中的GPS功能。</string>
+    <string name="advice_open_gps_title">提高“我的位置”精确度</string>
+    <string name="location_failed_and_jump_settings">为了更快更精确的获得您的位置，建议您：\n\n * 开启位置设置中GPS功能</string>
     <string name="location_failed_and_change_city">定位失败，无法找到所在城市，是否直接选择城市？</string>
     <string name="location_doing">正在定位…</string>
+    
+    <string name="location_text">定位</string>
+    <string name="location_text_navigation">导航</string>
+    <string name="location_text_compass">罗盘</string>
 
     <string name="poi_change_location">切换位置</string>
     <string name="yuan">%1$d元</string>
@@ -65,9 +70,10 @@
     <string name="delete_map">删除地图</string>
     <string name="pause_download">暂停下载</string>
     <string name="upgrade_map">升级地图</string>
+    <string name="upgrade_map_new">地图更新啦！</string>
     <string name="deleteing_map">正在删除旧版地图数据，请稍候</string>
     
-    <string name="at_where_search">在“%1$s”周边</string>    
+    <string name="at_where_search">在“%1$s”周边搜索</string>    
     <string name="select_where_as_start">选择\u0020%1$s\u0020作为起点</string>  
     <string name="select_where_as_end">选择\u0020%1$s\u0020作为终点</string>
     <string name="click_map_as_start">点击地图选择起点</string>  
@@ -96,8 +102,8 @@
     <string name="cancel_all_select">取消全选</string>
     <string name="feature">特点：</string>
 
-    <string name="doing_and_wait">处理中，请稍候</string>
-    <string name="network_failed">网络异常，请稍后重试。</string>
+    <string name="doing_and_wait">奋力请求中，请稍后</string>
+    <string name="network_failed">嘘，网络断了~请稍后重试</string>
     <string name="no_network">无网络可用，请检查网络后重试！</string>
     <string name="network_error">网络错误！</string>
     
@@ -112,6 +118,7 @@
     <string name="all_province">全省</string>
     <string name="added">已加</string>
     <string name="map_static_waiting_tip">地图信息读取中...</string>
+    <string name="chengshi">城市</string>
     <string name="city">市</string>
     <string name="province">省</string>
     <string name="please_add_city">请先添加城市...</string>
@@ -196,7 +203,7 @@
     <string name="select_point">选择该点</string>
     
     <string name="more">更多</string>
-    <string name="message_tip_software_update">软件有新版本了, 点击下载!</string>
+    <string name="message_tip_software_update">嗷，小虎有新版本了，快来下载吧！</string>
     <string name="message_tip_comment">没见解？不可能！来发表个点评吧！</string>
     <string name="message_tip_map_upgrade">地图有更新数据了，点击升级!</string>
     <string name="message_tip_user_survey">欢迎参加老虎宝典有奖用户调研</string>
@@ -204,6 +211,9 @@
     <string name="upgrade_all">全部升级</string>
     <string name="upgrade_manual">手动更新</string>
     <string name="download_map">下载地图</string>
+    <string name="order">订单</string>
+    <string name="order_hint">（团购\u2002酒店）</string>
+    <string name="favorite_hint">（地点\u2002交通）</string>
     <string name="app_recommend">你可能喜欢的应用</string>
     <string name="app_recommend_more">更多应用</string>
     <string name="feedback">意见反馈</string>
@@ -214,6 +224,7 @@
     <string name="login_or_regist">登录/注册</string>
     <string name="user_home">个人中心</string>
     <string name="give_favourable_comment">给个好评吧！</string>
+    <string name="more_favorite">收藏</string>
     
     <string name="settings_open_gps">开启GPS（卫星定位）</string>
     <string name="settings_close_gps">关闭GPS（卫星定位）</string>
@@ -252,6 +263,10 @@
 
     <string name="confirm_start_station">你要找的起点是</string>
     <string name="confirm_end_station">你要找的终点是</string>
+    
+    <string name="picture_text_detail">查看图文详情</string>
+    <string name="mian_yu_yue">免预约</string>
+    <string name="fast_purchase">快捷购买</string>
     
     <string name="share">分享</string>
     <string name="error_recovery">纠错</string>
@@ -300,6 +315,8 @@
     <string name="traffic_noneed_transfer">无需换乘, 步行可达</string>
     <string name="or">或</string>
     <string name="accross">经过%1$s</string>
+    <string name="traffic_enter_subway">，{%1$s}进站</string>
+    <string name="traffic_exit_subway">，{%1$s}出站</string>
     
     <string name="length_str_title">全程\u0020:\u0020%1$s</string>
     <string name="time_str_title">时间\u0020:\u0020%1$s</string>
@@ -339,6 +356,7 @@
     <string name="busline_line_listitem_title">时间：%1$s\u0020全程：%2$s</string>
     <string name="busline_station_listitem_title">共有%1$d条线路经过</string>
     <string name="busline_map_bubble_content">%1$d.%2$s</string>
+    <string name="busline_passing_by">途径本站点线路</string>
     
     <string name="about_version">%1$s</string>
     <string name="about_release_date">%1$s</string>
@@ -346,7 +364,7 @@
     <string name="about_current_city_sw_version">当前城市联想词版本：%1$s</string>
     <string name="about_me">老虎宝典是老虎地图的全面升级版，致力于让大众的生活更加丰富多彩。</string>
     <string name="about_name">Beijing TigerKnows Technology Co.Ltd</string>
-    <string name="about_right">© 2013 TigerKnows. All Rights reserved</string>
+    <string name="about_right">© 2013 TigerKnows. All Rights Reserved</string>
     <string name="about_web">官网 \u0020 http://www.tigerknows.com</string>
     <string name="about_weibo">微博 \u0020 http://weibo.com/tigermap</string>
     <string name="about_wap">Wap网址 \u0020 http://wap.tigerknows.com</string>
@@ -358,7 +376,7 @@
     <string name="telephone_num">010-58874009</string>
     <string name="about_copyright">北京老虎宝典科技有限责任公司版权所有\n</string>
     
-    <string name="searching">正在搜索...</string>
+    <string name="searching">奋力加载中...</string>
     <string name="at_city_searching">正在%1$s市搜索...</string>
     <string name="at_location_searching">正在所选位置搜索...</string>
     
@@ -401,8 +419,8 @@
     
     <string name="place">地点</string>
     <string name="traffic">交通</string>
-    <string name="loading">正在加载</string>
-    <string name="pull_to_refresh">加载更多</string>
+    <string name="loading">奋力加载中</string>
+    <string name="pull_to_refresh">加油上拉，加载更多</string>
     <string name="bus_transfer_">公交换乘方案：%1$d</string>
     <string name="drive_">自驾方案：</string>    
     <string name="tiger_search">老虎搜索</string>
@@ -416,7 +434,6 @@
     <!-- Error Recovery Error -->
     <string name="address_error_recovery">地名/地址错误</string>
     <string name="map_flag_error_recovery">地图标记有误</string>
-    <string name="phone_error_recovery">电话错误</string>
     <string name="not_exit_error_recovery">商户不存在/已停业</string>
     <string name="comment_hint_error_recovery">你有什么想补充的吗?</string>
     <string name="mark_error_need_error_recovery">请选择错误类型</string>
@@ -576,6 +593,7 @@
     <string name="change_password">修改密码</string>
     <string name="logout_account">退出帐户</string>
     <string name="logout_account_tip">你确定要退出帐户吗?</string>
+    <string name="nickname_colon">昵称：</string>
 	<!-- User Account end -->
 	
 	<!-- User ChangePassword Start -->
@@ -649,14 +667,7 @@
     <string name="station_position_error">站点位置错误</string>
     <string name="station_line_error">路线错误</string>
     <string name="staion_no_line">%1$s无%2$s</string>
-    <string name="poi_base_info_error">基本信息错误</string>
-    <string name="poi_name_error">名称错误</string>
-    <string name="poi_address_error">地址错误</string>
-    <string name="poi_phone_error">电话错误</string>
-    <string name="poi_mark_error">地图标注错误</string>
-    <string name="poi_address_noexist_error">地点不存在</string>
-    <string name="poi_address_duplicate_error">地点重复</string>
-    <string name="poi_ohter_error">其他</string>
+    <string name="other">其他</string>
     <string name="error_recovery_success">我们将尽快处理, 谢谢你的反馈！</string>
 <!-- Error Recover End -->
 
@@ -714,6 +725,7 @@
     <string name="no_select_tip">请选择要删除的项！</string>
     
     <string name="all_comment">全部点评</string>
+    <string name="hot_comment">热门点评</string>
     <string name="go_comment">我要点评</string>
     <string name="my_comment">我的点评</string>
     <string name="logon">登录</string>
@@ -773,12 +785,14 @@
     <string name="publish_comment_failed">发表点评失败！</string>
     <string name="modify_comment">修改点评</string>
     <string name="poi_comment_go_tip">快去写你的第一条点评吧！</string>
+    <string name="poi_no_hot_comment">暂无热门点评！</string>
     <string name="poi_comment_must">还需%1$s字</string>
     <string name="poi_comment_sum">共%1$s字</string>
     
     <string name="subway_preset_time">本站点首末车时间</string>
     <string name="subway_exits">出口附近信息</string>
     <string name="subway_station_nearby">最近车站</string>
+    <string name="subway_no_time_info">暂无数据</string>
     
     <string name="nearby_">附近%1$s个</string>
     <string name="entire_city_">全市%1$s个</string>
@@ -832,6 +846,8 @@
     <string name="after_tomorrow">后天</string>
     <string name="tomorrow_char">明</string>
     <string name="after_tomorrow_char">后</string>
+    <string name="late_at_night">深夜</string>
+    <string name="yestoday">昨天</string>
     
     
     <string name="yanchu_list">演出列表</string>
@@ -891,6 +907,8 @@
     <string name="add_merchant_success">感谢你提交商户信息！</string>
     
     <string name="wodedingdan">我的订单</string>
+    <string name="tuangoudingdan">团购订单</string>
+    <string name="hotel_order">酒店订单</string>
     
     <string name="relogin">重新登录</string>
     <string name="nologin">暂不登录</string>
@@ -905,6 +923,12 @@
     
     <string name="wowotuan_name">窝窝团</string>
     <string name="nuomi_name">糯米</string>
+    <string name="meituan_name">美团</string>
+    <string name="nuomi_message">糯米团订单</string>
+    <string name="meituan_message">美团订单</string>
+    <string name="wowotuan_message">窝窝团订单</string>
+    <string name="meituan_refund_service">方式一：通过订单查询进入订单详情页面点击“申请退款”\n方式二：致电美团客服 400-660-5335，提供手机号码和商品名称（或订单号），申请退款。 </string>
+    <string name="nuomi_refund_service">致电糯米客服 4006-888-887，提供手机号码和商品名称（或订单号），申请退款。 </string>
     
     <string name="xiangxidizhi">详细地址：</string>
     <string name="lianxidianhua">联系电话：</string>
@@ -964,13 +988,14 @@
     <string name="click_here_download_map">点击这里下载地图</string>
     <string name="wifi_enabled">wifi已开启</string>
     <string name="wifi_disabled">wifi已关闭</string>
+    <string name="user_survey_have_done">你已经做过用户调研啦！</string>
     
     <string name="user_survey">用户调研</string>
     
     <string name="shanghu_xingxi">商户信息</string>
     <string name="call_telephone">拨打电话</string>
 
-    <string name="touch_screen_and_retry">点击屏幕，重新加载</string>
+    <string name="touch_screen_and_retry">嘘，网络断了~戳屏幕，重新加载</string>
     <string name="are_you_exit_add_merchart">你确定要放弃添加商户？</string>
     <string name="searching_title">搜索中…</string>
     <string name="public_welfarre">传递正能量，手机照亮失踪宝贝回家之路</string>
@@ -998,28 +1023,32 @@
 <!-- Hotel Reservation Start -->
     
     <string name="hotel_btn_book">预订</string>
+    <string name="check_in_time">入住时间</string>
     <string name="hotel_btn_sold_out">售完</string>
+    <string name="hotel_btn_x_room_left">仅剩%1$s间</string>
     <string name="hotel_description">酒店简介</string>
     <string name="hotel_expand_roomtype">展开全部房型</string>
     <string name="hotel_no_roomtype">暂无房型信息</string>
+    <string name="hotel_room_need_guarantee">需担保</string>
     <string name="pictures">%1$s张</string>
     <string name="fold">收起</string>
-    <string name="hotel_no_room_left">该房型已经订满，建议换个房型吧！</string>
-    <string name="hotel_click_to_reload">网络状况不好,点击此处&lt;font color="#ff6c00"&gt;&lt;U&gt;重新加载&lt;/U&gt;&lt;/font&gt;</string>
+    <string name="hotel_no_room_left">该房型已被订完，请更换房型试试吧</string>
+    <string name="hotel_click_to_reload">戳这里，&lt;font color="#ff6c00"&gt;&lt;U&gt;重新加载&lt;/U&gt;&lt;/font&gt;</string>
     <string name="summary">简介</string>
     <string name="hotel_room_title">订单填写</string>
     <string name="hotel_room_howmany">房间数</string>
     <string name="hotel_room_reserve">房间保留到</string>
-    <string name="hotel_room_person_name">入&#8194;住&#8194;人：</string>
-    <string name="hotel_room_person_name_hint">入住人的姓名</string>
-    <string name="hotel_room_mobile_nubmer">手&#8194;机&#8194;号：</string>
-    <string name="hotel_room_mobile_nubmer_hint">用于订单确认</string>
+    <string name="hotel_room_person_name">入住人：</string>
+    <string name="hotel_room_person_name_hint">输入真实姓名，以便顺利入住</string>
+    <string name="hotel_room_mobile_nubmer">手机号：</string>
+    <string name="hotel_room_mobile_nubmer_hint">用于接收通知短信</string>
     <string name="hotel_room_idcard">身份证号：</string>
     <string name="hotel_room_idcard_hint">输入身份证号</string>
     <string name="hotel_mobile_format">请正确输入手机号，手机号为1开头的11位数字</string>
     <string name="submit_order">提交订单</string>
     <string name="hotel_room_date">入住：%1$d月%2$d日&#8195;离店：%3$d月%4$d日</string>
     <string name="hotel_room_credit_note">（因酒店房间紧张，需信用卡担保，以便保留房间）</string>
+    <string name="hotel_room_credit_note_noquote">说明：因酒店房间紧张，需信用卡担保，以便保留房间</string>
     <string name="hotel_room_person_empty_tip">请填写入住人</string>
     <string name="hotel_room_mobile_empty_tip">请填写手机号</string>
     <string name="hotel_room_idcard_empty_tip">请填写身份证号</string>
@@ -1027,6 +1056,8 @@
     <string name="room_howmany_item">%1$d间/%2$s元</string>
     <string name="choose_room_reserve">房间保留到</string>
     <string name="before_23_59">23:59之前</string>
+    <string name="hotel_room_need_credit_assure">(需担保)</string>
+    <string name="go_credit_assure">使用信用卡担保</string>
     
     <string name="hotel_service_title">酒店服务</string>
     <string name="hotel_room_description_title">房间设施</string>
@@ -1038,22 +1069,25 @@
     <string name="credit_code_format">卡号格式不正确，请重新输入</string>
     <string name="credit_verify_format">验证码格式不正确，请重新输入3位验证码</string>
     <string name="hotel_idcard_code_format">输入的身份证号码格式不正确</string>
+    <string name="hotel_duplicate_order">取消原订单</string>
+    <string name="view_order">查看订单</string>
+    <string name="know_la">知道啦</string>
 
     <string name="credit_assure_title">信用卡担保信息</string>
     <string name="credit_bank">发卡银行：</string>
     <string name="credit_bank_hint">选择银行</string>
-    <string name="credit_code">卡　　号：</string>
+    <string name="credit_code">信用卡号</string>
     <string name="credit_code_hint">输入卡号</string>
-    <string name="credit_owner">持&#8194;卡&#8194;人：</string>
+    <string name="credit_owner">持卡人\u2003</string>
     <string name="credit_owner_hint">输入姓名</string>
-    <string name="credit_verify_number">验&#8194;证&#8194;码：</string>
+    <string name="credit_verify_number">验证码\u2003</string>
     <string name="credit_verify_number_hint">输入信用卡背后三位数</string>
-    <string name="credit_validity">有&#8194;效&#8194;期：</string>
+    <string name="credit_validity">有效期\u2003</string>
     <string name="credit_validity_hint">选择有效期</string>
     <string name="credit_cert_type">证件类型：</string>
-    <string name="credit_cert_code">证件号码：</string>
+    <string name="credit_cert_code">选证件</string>
     <string name="credit_cert_code_hint">输入号码</string>
-    <string name="credit_assure_pricetitle">担保价格：</string>
+    <string name="credit_assure_pricetitle">担保价格</string>
     <string name="credit_assure_price">%1$s元</string>
     <string name="credit_note">信用担保说明</string>
     <string name="credit_note_detail">本订单您可以在%1$s之前取消，如果您到时候没有入住，将按照担保金额扣除房费。请在填写担保前慎重考虑您是否可能会修改行程，以免造成不必要的损失。</string>
@@ -1072,23 +1106,12 @@
     <string name="credit_cert_code_empty_tip">请输入证件号码</string>
     <string name="mainland_id_card">身份证</string>
     
-    <string name="seveninn_regist_title">注册7天会员</string>
-    <string name="seveninn_note">发现您的手机号%1$s非7天会员号，如继续预定需要准确填写以下信息进行验证，该号码会自动注册为7天会员手机号。</string>
-    <string name="seveninn_person_name">入住姓名：</string>
-    <string name="seveninn_person_name_hint">输入姓名</string>
-    <string name="seveninn_mobile_number">手&#8194;机&#8194;号：</string>
-    <string name="seveninn_mobile_number_hint">输入手机号</string>
-    <string name="seveninn_idcard_code">身份证号：</string>
-    <string name="seveninn_idcard_code_hint">输入身份证号</string>
-    <string name="seveninn_regist_confirm">注册7天会员</string>
-    <string name="seveninn_idcard_code_empty_error">请填写身份证号</string>
-    
     <string name="order_submit_success">订单提交成功</string>
     
     <string name="hotel_checkin">入住：</string>
     <string name="hotel_checkout">离店：</string>
     <string name="hotel_total_nights">共%1$d晚</string>
-    <string name="hotel_ordered">已订酒店</string>
+    <string name="hotel_ordered">已订酒店订单</string>
     <string name="hotel_order_detail">订单详情</string>
     
     <string name="issue_comment">发表点评</string>
@@ -1100,7 +1123,7 @@
     <string name="fill_order">填写订单</string>
     <string name="reserve_success">预订成功</string>
 
-    <string name="hotel_order_id">订&#160;&#160;单&#160;&#160;号：</string>
+    <string name="hotel_order_id">订\u2002单\u2002号：</string>
     <string name="hotel_order_state">订单状态：</string>
     <string name="hotel_order_time">预订时间：</string>
     <string name="hotel_order_gross">预订总额：</string>
@@ -1109,7 +1132,8 @@
     <string name="checkout_date">离店日期：</string>
     <string name="retention_date">保留日期：</string>
     <string name="room_type">入住房型：</string>
-    <string name="checkin_person">入&#160;&#160;住&#160;&#160;人：</string>
+    <string name="checkin_person">入\u2002住\u2002人：</string>
+    <string name="hotel_checkin_note">入住时请告知酒店前台入住人姓名</string>
     
     <string name="order_state_processing">处理中</string>
     <string name="order_state_success">预订成功</string>
@@ -1143,6 +1167,7 @@
     <string name="hotel_picture_title">酒店图片（%1$d张）</string>
     <string name="hotel_reserve">酒店预订</string>
     <string name="hotel_select_location">选择位置</string>
+    <string name="position">位置</string>
     <string name="hotel_please_select_location">请选择位置</string>
     <string name="hotel_not_limit">不限</string>
     <string name="hotel_query">查找可预订酒店</string>
@@ -1231,4 +1256,12 @@
     
     <string name="appoint_location">指定地点：</string>
     <string name="appoint_area">指定商区：</string>
+
+<!-- IAlixpay Start -->
+    <string name="alipay_app_name">移动快捷支付DEMO</string>
+    <string name="alipay_remote_call_failed">Failure calling remote service</string>
+    <string name="alipay_confirm_install_hint">"安装提示"</string>
+    <string name="alipay_confirm_install">"为保证您的交易安全，需要您安装移动快捷支付，才能进行付款。\n\n点击确定，立即安装。"</string>
+    <string name="alipay_check_sign_failed">您的订单信息已被非法篡改。</string>
+<!-- IAlixpay End -->
 </resources>

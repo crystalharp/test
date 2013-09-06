@@ -222,6 +222,10 @@ public class BuslineResultStationFragment extends BaseFragment {
         mBuslineModel = mBuslineQuery.getBuslineModel();
         
         if (mBuslineQuery.isTurnPage()) {
+            if (mBuslineQuery.getBuslineModel() == null) {
+                mResultLsv.setFooterLoadFailed(true);
+                return;
+            }
             List<Station> list = mBuslineModel.getStationList();
             if (list != null) {
                 mStationList.addAll(list);
@@ -388,9 +392,15 @@ public class BuslineResultStationFragment extends BaseFragment {
 		
     }
     
-    public void queryBuslineEnd(BuslineQuery buslineQuery) {
+    void queryBuslineEnd(BuslineQuery buslineQuery) {
     	
         BuslineModel buslineModel = buslineQuery.getBuslineModel();
+
+        
+        if (buslineQuery.isTurnPage() && buslineModel == null) {
+            mResultLsv.setFooterLoadFailed(true);
+            return;
+        }
         
         if (buslineModel == null) {
         	mSphinx.showTip(R.string.busline_non_tip, Toast.LENGTH_SHORT);

@@ -7,11 +7,11 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Hashtable;
 import java.util.List;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputFilter;
@@ -84,6 +84,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     private TextView mRoomtypeDetailTxv;
     private TextView mRoomDateTxv;
     private TextView mRoomNightsTxv;
+    private TextView mDanbaoHintTxv;
     private Button mRoomHowmanyBtn;
     private Button mRoomReserveBtn;
     private EditText mRoomMobileNumberEdt;
@@ -114,6 +115,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     private double mTotalPrice;
     
     // 信用卡担保相关数据
+    private long mNeedCreditAssure;
     private long mTypeCreditAssure;
     private String mCreditCardNo;
     private String mVerifyCode;
@@ -131,6 +133,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         mActionTag = ActionLog.HotelOrderWrite;
     }
     
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         mRootView = mLayoutInflater.inflate(R.layout.hotel_order_write, container, false);
         
@@ -141,6 +144,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         return mRootView;
     }
     
+    @Override
     public void onResume(){
         super.onResume();
         mTitleBtn.setText(mSphinx.getString(R.string.hotel_room_title));
@@ -148,8 +152,11 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
 
     }
     
+    @Override
     public void onPause(){
         super.onPause();
+        TKConfig.setPref(mContext, TKConfig.PREFS_HOTEL_LAST_BOOKNAME, mBookUsernameEdt.getText().toString());
+        TKConfig.setPref(mContext, TKConfig.PREFS_HOTEL_LAST_MOBILE, mRoomMobileNumberEdt.getText().toString());
     }
 
     protected void findViews() {
@@ -161,6 +168,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         mRoomtypeDetailTxv = (TextView) mRootView.findViewById(R.id.roomtype_detail_txv);
         mRoomDateTxv = (TextView) mRootView.findViewById(R.id.room_date_txv);
         mRoomNightsTxv = (TextView) mRootView.findViewById(R.id.room_nights_txv);
+        mDanbaoHintTxv = (TextView) mRootView.findViewById(R.id.danbao_hint_txv);
         mRoomHowmanyBtn = (Button) mRootView.findViewById(R.id.room_howmany_btn);
         mRoomReserveBtn = (Button) mRootView.findViewById(R.id.room_reserve_btn);
         mRoomMobileNumberEdt = (EditText) mRootView.findViewById(R.id.room_mobile_number_edt);
@@ -299,7 +307,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     }
     private void refreshData(){
         mTotalPrice = mRoomtypeDynamic.getPrice() * mRoomHowmany;
-        mOneNightPrice = mTotalPrice / mNights;
+        mOneNightPrice = mRoomtypeDynamic.getFirstNightPrice() * mRoomHowmany;
         mRoomHowmanyBtn.setText(mSphinx.getString(R.string.room_howmany_item, mRoomHowmany, Utility.formatHotelPrice(mTotalPrice)));
         RefreshPersonView();
         clearFocus();
@@ -307,25 +315,19 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         mRTime = rtList.get(mRTimeWhich).getTime();
         mRTimeDetail = rtList.get(mRTimeWhich).getTimeDetail();
         rtList.get(mRTimeWhich).getNeed();
+        mNeedCreditAssure = rtList.get(mRTimeWhich).getNeed();
         mTypeCreditAssure = rtList.get(mRTimeWhich).getType();
-        mRoomReserveBtn.setText(mRTime);
+        mRoomReserveBtn.setText(mRTime + ((mNeedCreditAssure == 1) ? mSphinx.getString(R.string.hotel_room_need_credit_assure) : "") );
+        mSubmitOrderBtn.setText((mNeedCreditAssure == 1) ? mSphinx.getString(R.string.go_credit_assure) : mSphinx.getString(R.string.submit_order));
+        mDanbaoHintTxv.setVisibility((mNeedCreditAssure == 1) ? View.VISIBLE : View.GONE);
     }
     
     public void setData(POI poi, RoomType roomtype, RoomTypeDynamic roomTypeDynamic, Calendar checkIn, Calendar checkOut ) {
-        String tempStr;
 
         mBookUsernameEdt.setText(TKConfig.getPref(mContext, TKConfig.PREFS_HOTEL_LAST_BOOKNAME, ""));
         mBookUsernameEdt.requestFocus();
         Selection.setSelection(mBookUsernameEdt.getText(), mBookUsernameEdt.length());
-        tempStr = TKConfig.getPref(mContext, TKConfig.PREFS_HOTEL_LAST_MOBILE, "");
-        if(TextUtils.isEmpty(tempStr)){
-            if(Globals.g_User != null){
-                mRoomMobileNumberEdt.setText(TKConfig.getPref(mContext, TKConfig.PREFS_PHONENUM, ""));
-            }
-            else mRoomMobileNumberEdt.setText("");
-        }else{
-            mRoomMobileNumberEdt.setText(tempStr);
-        }
+        mRoomMobileNumberEdt.setText(TKConfig.getPref(mContext, TKConfig.PREFS_HOTEL_LAST_MOBILE, ""));
         mRoomMobileNumberEdt.requestFocus();
         Selection.setSelection(mRoomMobileNumberEdt.getText(), mRoomMobileNumberEdt.length());
         mPOI = poi;
@@ -381,7 +383,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         
         TextView txv = new TextView(mSphinx);
         txv.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-        txv.setPadding(Utility.dip2px(mContext, 8), Utility.dip2px(mContext, 8), Utility.dip2px(mContext, 8), Utility.dip2px(mContext, 8));
+        txv.setPadding(Utility.dip2px(mContext, 8), 0, 0, 0);
         txv.setTextColor(getResources().getColor(R.color.black_dark));
         txv.setTextSize(16);
         txv.setText(mSphinx.getString(R.string.hotel_room_person_name));
@@ -563,33 +565,32 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
 
     public void submit(boolean HasCreditInfo) {
         HotelOrderOperation hotelOrderOperation = new HotelOrderOperation(mSphinx);
-        Hashtable<String, String> criteria = new Hashtable<String, String>();
-        criteria.put(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, HotelOrderOperation.OPERATION_CODE_CREATE);
-        criteria.put(HotelOrderOperation.SERVER_PARAMETER_HOTEL_ID, mHotel.getUuid());
-        criteria.put(HotelOrderOperation.SERVER_PARAMETER_BRAND, String.valueOf(mHotel.getBrand()));
-        criteria.put(HotelOrderOperation.SERVER_PARAMETER_ROOMTYPE, mRoomType.getRoomId());
-        criteria.put(HotelOrderOperation.SERVER_PARAMETER_PKGID, mRoomType.getRateplanId());
-        criteria.put(HotelOrderOperation.SERVER_PARAMETER_CHECKIN_DATE, 
+        hotelOrderOperation.addParameter(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, HotelOrderOperation.OPERATION_CODE_CREATE);
+        hotelOrderOperation.addParameter(HotelOrderOperation.SERVER_PARAMETER_HOTEL_ID, mHotel.getUuid());
+        hotelOrderOperation.addParameter(HotelOrderOperation.SERVER_PARAMETER_BRAND, String.valueOf(mHotel.getBrand()));
+        hotelOrderOperation.addParameter(HotelOrderOperation.SERVER_PARAMETER_ROOMTYPE, mRoomType.getRoomId());
+        hotelOrderOperation.addParameter(HotelOrderOperation.SERVER_PARAMETER_PKGID, mRoomType.getRateplanId());
+        hotelOrderOperation.addParameter(HotelOrderOperation.SERVER_PARAMETER_CHECKIN_DATE, 
                 HotelHomeFragment.SIMPLE_DATE_FORMAT.format(mCheckIn.getTime()));
-        criteria.put(HotelOrderOperation.SERVER_PARAMETER_CHECKOUT_DATE, 
+        hotelOrderOperation.addParameter(HotelOrderOperation.SERVER_PARAMETER_CHECKOUT_DATE, 
                 HotelHomeFragment.SIMPLE_DATE_FORMAT.format(mCheckOut.getTime()));
-        criteria.put(HotelOrderOperation.SERVER_PARAMETER_RESERVE_TIME, mRTimeDetail);
-        criteria.put(HotelOrderOperation.SERVER_PARAMETER_NUMROOMS, mRoomHowmany + "");
-        criteria.put(HotelOrderOperation.SERVER_PARAMETER_TOTAL_PRICE, Utility.formatHotelPrice(mTotalPrice));
-        criteria.put(HotelOrderOperation.SERVER_PARAMETER_USERNAME, mBookUsername);
-        criteria.put(HotelOrderOperation.SERVER_PARAMETER_MOBILE, mMobile);
-        criteria.put(HotelOrderOperation.SERVER_PARAMETER_GUESTS, mUsername);
-        criteria.put(HotelOrderOperation.SERVER_PARAMETER_GUESTTYPE, mRoomtypeDynamic.getGuesttype());
+        hotelOrderOperation.addParameter(HotelOrderOperation.SERVER_PARAMETER_RESERVE_TIME, mRTimeDetail);
+        hotelOrderOperation.addParameter(HotelOrderOperation.SERVER_PARAMETER_NUMROOMS, mRoomHowmany + "");
+        hotelOrderOperation.addParameter(HotelOrderOperation.SERVER_PARAMETER_TOTAL_PRICE, Utility.formatHotelPrice(mTotalPrice));
+        hotelOrderOperation.addParameter(HotelOrderOperation.SERVER_PARAMETER_USERNAME, mBookUsername);
+        hotelOrderOperation.addParameter(HotelOrderOperation.SERVER_PARAMETER_MOBILE, mMobile);
+        hotelOrderOperation.addParameter(HotelOrderOperation.SERVER_PARAMETER_GUESTS, mUsername);
+        hotelOrderOperation.addParameter(HotelOrderOperation.SERVER_PARAMETER_GUESTTYPE, mRoomtypeDynamic.getGuesttype());
         if(HasCreditInfo){
-            criteria.put(HotelOrderOperation.SERVER_PARAMETER_CREDIT_CARD_NO, mCreditCardNo);
-            criteria.put(HotelOrderOperation.SERVER_PARAMETER_VERIFY_CODE, mVerifyCode);
-            criteria.put(HotelOrderOperation.SERVER_PARAMETER_VALID_YEAR, mValidYear);
-            criteria.put(HotelOrderOperation.SERVER_PARAMETER_VALID_MONTH, mValidMonth);
-            criteria.put(HotelOrderOperation.SERVER_PARAMETER_CARD_HOLDER_NAME, mCardHoldName);
-            criteria.put(HotelOrderOperation.SERVER_PARAMETER_IDCARD_TYPE, mIdCardType);
-            criteria.put(HotelOrderOperation.SERVER_PARAMETER_IDCARD_NO, mIdCardNo);
+            hotelOrderOperation.addParameter(HotelOrderOperation.SERVER_PARAMETER_CREDIT_CARD_NO, mCreditCardNo);
+            hotelOrderOperation.addParameter(HotelOrderOperation.SERVER_PARAMETER_VERIFY_CODE, mVerifyCode);
+            hotelOrderOperation.addParameter(HotelOrderOperation.SERVER_PARAMETER_VALID_YEAR, mValidYear);
+            hotelOrderOperation.addParameter(HotelOrderOperation.SERVER_PARAMETER_VALID_MONTH, mValidMonth);
+            hotelOrderOperation.addParameter(HotelOrderOperation.SERVER_PARAMETER_CARD_HOLDER_NAME, mCardHoldName);
+            hotelOrderOperation.addParameter(HotelOrderOperation.SERVER_PARAMETER_IDCARD_TYPE, mIdCardType);
+            hotelOrderOperation.addParameter(HotelOrderOperation.SERVER_PARAMETER_IDCARD_NO, mIdCardNo);
         }
-        hotelOrderOperation.setup(criteria, Globals.getCurrentCityInfo().getId(), getId(), getId(), mSphinx.getString(R.string.doing_and_wait));
+        hotelOrderOperation.setup(Globals.getCurrentCityInfo().getId(), getId(), getId(), mSphinx.getString(R.string.doing_and_wait));
         mSphinx.queryStart(hotelOrderOperation);
     }
     
@@ -626,7 +627,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
 
             mHotelOrder = new HotelOrder(
                     hotelOrderCreateResponse.getOrderId(),
-                    Calendar.getInstance().getTimeInMillis(),
+                    CalendarUtil.getExactTime(mContext),
                     1,
                     mPOI.getUUID(),
                     mPOI.getName(),
@@ -641,14 +642,17 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
                     mCheckOut.getTimeInMillis(),
                     mNights,
                     mUsername,
-                    mMobile
+                    mMobile,
+                    hotelOrderCreateResponse.getCancelDeadline()
                     );
             TKConfig.setPref(mContext, TKConfig.PREFS_HOTEL_LAST_BOOKNAME, mBookUsername);
             TKConfig.setPref(mContext, TKConfig.PREFS_HOTEL_LAST_MOBILE, mMobile);
             if(mSphinx.uiStackContains(R.id.view_hotel_credit_assure)){
+                if(mSphinx.getHotelOrderCreditFragment().isShowing()){
+                	mSphinx.getHotelOrderCreditFragment().dismiss();
+                }
                 mSphinx.uiStackRemove(R.id.view_hotel_credit_assure);
             }
-            mSphinx.destroyHotelOrderCreditFragment();
             mSphinx.getHotelOrderDetailFragment().setData(mHotelOrder, -1);
             mSphinx.getHotelOrderDetailFragment().setStageIndicatorVisible(true);
             HotelOrderTable hotelOrderTable = new HotelOrderTable(mSphinx);
@@ -666,38 +670,58 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
             //订单列表已经发生了变化，在此处清除列表界面的内容，列表页onResume时会重新加载订单。
             mSphinx.getHotelOrderListFragment().clearOrders();
             mSphinx.getHotelOrderListFragment().syncOrder();
-            mSphinx.showView(R.id.view_hotel_order_detail);
-            destroyFragments(true, true);
             dismiss();
             mSphinx.uiStackRemove(R.id.view_hotel_order_write);
-            
+            mSphinx.showView(R.id.view_hotel_order_detail);
             break;
         case Response.RESPONSE_CODE_HOTEL_NEED_CREDIT_ASSURE:
-            if(mSphinx.uiStackContains(R.id.view_hotel_credit_assure)){
-                mSphinx.uiStackRemove(R.id.view_hotel_credit_assure);
-            }
-            mSphinx.destroyHotelOrderCreditFragment();
-               mSphinx.getHotelOrderCreditFragment().setData(response.getDescription(),
-                       Utility.formatHotelPrice(mOneNightPrice),
-                       Utility.formatHotelPrice(mTotalPrice),
-                       (int)mTypeCreditAssure,
-                       mBookUsername);
-               mSphinx.showView(R.id.view_hotel_credit_assure);
-               break;
+            mSphinx.getHotelOrderCreditFragment().setData(response.getDescription(),
+                    Utility.formatHotelPrice(mOneNightPrice),
+                    Utility.formatHotelPrice(mTotalPrice),
+                    (int)mTypeCreditAssure,
+                    mBookUsername);
+            mSphinx.showView(R.id.view_hotel_credit_assure);
+            break;
         case Response.RESPONSE_CODE_HOTEL_OTHER_ERROR:
-            Utility.showNormalDialog(mSphinx, response.getDescription().split("!")[0].split("！")[0]);
+        	String description = response.getDescription().split("!")[0].split("！")[0];
+        	switch(analysisDescription(description)){
+        	case 1:
+        		Utility.showNormalDialog(mSphinx, 
+        				mSphinx.getString(R.string.prompt), 
+        				description, 
+        				mSphinx.getString(R.string.view_order), 
+        				mSphinx.getString(R.string.know_la), 
+        				new DialogInterface.OnClickListener() {
+
+        			        @Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+                                if (which == DialogInterface.BUTTON_POSITIVE) {
+                                    // TODO: mActionLog.addAction(mActionTag + ActionLog.HotelQueryOrder);
+                                	mSphinx.getHotelOrderListFragment().clearOrders();
+                                	mSphinx.getHotelOrderListFragment().syncOrder();
+                                	if(mSphinx.uiStackContains(R.id.view_hotel_credit_assure)){
+                                		mSphinx.getHotelOrderCreditFragment().clearVerifyEdt();
+                                	}
+                                	mSphinx.showView(R.id.view_hotel_order_list);
+                                }
+                            }								
+						});
+        		break;
+        	default:
+        		Utility.showNormalDialog(mSphinx, description);
+        	}
             break;
         }
     }
-
-    private void destroyFragments(boolean seven, boolean credit){
-        
-        if(credit == true && mSphinx.uiStackContains(R.id.view_hotel_credit_assure)){
-            mSphinx.getHotelOrderCreditFragment().dismiss();
-            mSphinx.uiStackRemove(R.id.view_hotel_credit_assure);
-            mSphinx.destroyHotelOrderCreditFragment();
-        }
+    private int analysisDescription(String description){
+    	if(description.contains(mSphinx.getString(R.string.hotel_duplicate_order))){
+    		return 1;
+    	}else {
+    		return 0;
+    	}
     }
+
     public void setCredit(List<String> credit) {
         mCreditCardNo = credit.get(0);
         mVerifyCode = credit.get(2);

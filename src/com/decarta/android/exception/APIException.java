@@ -26,6 +26,8 @@ public class APIException extends Exception {
     public static final String CRITERIA_IS_NULL ="criteria is null";
     
     private static final String MISSING_REQUEST_PARAMETER = "missing request parameter: %s";
+    
+    private static final String UNWANTED_REQUEST_PARAMETER = "unwanted request parameter: %s";
 	
 	public APIException(String msg){
 		super((msg==null)?"":msg);
@@ -50,5 +52,9 @@ public class APIException extends Exception {
     
     public static APIException wrapToMissingRequestParameterException(String parameterName){
         return new APIException(String.format(MISSING_REQUEST_PARAMETER, parameterName));
+    }
+    
+    public static APIException wrapToUnwantedRequestParameterException(String parameterName) {
+        return new APIException(String.format(UNWANTED_REQUEST_PARAMETER, parameterName));
     }
 }

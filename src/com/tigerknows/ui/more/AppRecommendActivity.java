@@ -15,12 +15,12 @@ import com.tigerknows.model.Bootstrap;
 import com.tigerknows.model.BootstrapModel;
 import com.tigerknows.model.BootstrapModel.Recommend;
 import com.tigerknows.model.BootstrapModel.Recommend.RecommendApp;
+import com.tigerknows.service.download.ApkDownloadedProcessor;
+import com.tigerknows.service.download.DownloadService;
 import com.tigerknows.ui.BaseActivity;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -89,7 +89,7 @@ public class AppRecommendActivity extends BaseActivity {
         }
         
         Bootstrap bootstrap = new Bootstrap(mThis);
-        bootstrap.setup(null, Globals.getCurrentCityInfo().getId(), -1, -1, mThis.getString(R.string.doing_and_wait));
+        bootstrap.setup(Globals.getCurrentCityInfo().getId(), -1, -1, mThis.getString(R.string.doing_and_wait));
         queryStart(bootstrap);
     }
 
@@ -107,10 +107,9 @@ public class AppRecommendActivity extends BaseActivity {
                 final RecommendApp recommendApp = mRecommendAppList.get(postion);
                 if (recommendApp != null) {
                     mActionLog.addAction(mActionTag + ActionLog.ListViewItem, postion, recommendApp.getName());
-                    final String uri = recommendApp.getUrl();
-                    if (!TextUtils.isEmpty(uri)) {
-                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-                        mThis.startActivity(intent);
+                    final String url = recommendApp.getUrl();
+                    if (!TextUtils.isEmpty(url)) {
+                        DownloadService.download(mThis, url, recommendApp.getName(), ApkDownloadedProcessor.getInstance());
                     }
                 }
             }
@@ -156,7 +155,7 @@ public class AppRecommendActivity extends BaseActivity {
                 drawable = tkDrawable.loadDrawable(mThis, mLoadedDrawableRun, mThis.toString());
             }
             if (drawable == null) {
-                drawable = getResources().getDrawable(R.drawable.ic_app_icon_loading);
+                drawable = getResources().getDrawable(R.drawable.bg_picture_small);
             }
 			Rect bounds = drawable.getBounds();
 			if(bounds != null && (bounds.width() != iconImv.getWidth() || bounds.height() != iconImv.getHeight())){

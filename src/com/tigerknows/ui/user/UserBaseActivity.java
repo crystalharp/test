@@ -3,7 +3,6 @@ package com.tigerknows.ui.user;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Hashtable;
 import java.util.List;
 
 import android.content.DialogInterface;
@@ -160,9 +159,9 @@ public abstract class UserBaseActivity extends BaseActivity {
 	/**
 	 * 提供公共参数支持
 	 */
-	protected void sendRequest(AccountManage accountManage, Hashtable<String, String> criteria) {
+	protected void sendRequest(AccountManage accountManage) {
 		hideSoftInput();
-		accountManage.setup(criteria, getCityParameter());
+		accountManage.setup(getCityParameter());
 		accountManage.setTipText(getString(R.string.query_loading_tip));
 		queryStart(accountManage, false);
 	}

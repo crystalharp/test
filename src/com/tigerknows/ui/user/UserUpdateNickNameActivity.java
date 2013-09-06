@@ -1,8 +1,6 @@
 package com.tigerknows.ui.user;
 
 import java.net.URLEncoder;
-import java.util.Hashtable;
-
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
@@ -96,14 +94,11 @@ public class UserUpdateNickNameActivity extends UserBaseActivity {
 					return;
 				}
 				
-				String nickName = null;
 				User user = Globals.g_User;
 				if (user == null) {
 				    onBack();
-				} else {
-				    nickName = user.getNickName();
 				}
-				if (!UserRegistActivity.class.getName().equals(getCallingActivity().getClassName())
+				if (!UserLoginRegistActivity.class.getName().equals(getCallingActivity().getClassName())
 						&& !TextUtils.equals(nickNameEdt.getText().toString().trim(), getString(R.string.default_nick_name))
 						&& TextUtils.equals(Globals.g_User.getNickName(), nickNameEdt.getText().toString().trim())) {
 					Utility.showNormalDialog(UserUpdateNickNameActivity.this, getString(R.string.title_error_tip), getString(R.string.nickname_no_modify), 
@@ -219,8 +214,7 @@ public class UserUpdateNickNameActivity extends UserBaseActivity {
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
             }
-		} else if (mSourceViewIdLogin != R.id.activity_poi_comment_list &&
-		        mSourceViewIdLogin != R.id.activity_discover_shangjia_list){
+		} else if (mSourceViewIdLogin != R.id.activity_poi_comment_list){
 			Intent intent = new Intent(UserUpdateNickNameActivity.this, Sphinx.class);
 	        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 	        startActivity(intent);
@@ -231,7 +225,7 @@ public class UserUpdateNickNameActivity extends UserBaseActivity {
 	
 	private void onSuccess() {
 		
-		if (UserRegistActivity.class.getName().equals(getCallingActivity().getClassName())) {
+		if (UserLoginRegistActivity.class.getName().equals(getCallingActivity().getClassName())) {
 			showToast(R.string.update_nicknam_success1);
 		} else {
 			showToast(R.string.update_nicknam_success2);
@@ -276,12 +270,11 @@ public class UserUpdateNickNameActivity extends UserBaseActivity {
 //		String nickName = nickNameEdt.getText().toString().trim();
 		String nickName = URLEncoder.encode(nickNameEdt.getText().toString().trim());
 		if (TextUtils.isEmpty(Globals.g_Session_Id) == false) {
-			Hashtable<String, String> criteria = new Hashtable<String, String>();
-			criteria.put(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, AccountManage.OPERATION_CODE_UPDATE_NICKNAME);
-			criteria.put(AccountManage.SERVER_PARAMETER_NICKNAME, nickName);
-			criteria.put(BaseQuery.SERVER_PARAMETER_SESSION_ID, Globals.g_Session_Id);
+			accountManage.addParameter(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, AccountManage.OPERATION_CODE_UPDATE_NICKNAME);
+			accountManage.addParameter(AccountManage.SERVER_PARAMETER_NICKNAME, nickName);
+			accountManage.addParameter(BaseQuery.SERVER_PARAMETER_SESSION_ID, Globals.g_Session_Id);
 			
-			sendRequest(accountManage, criteria);
+			sendRequest(accountManage);
 		} 
 	}
 	
@@ -308,7 +301,7 @@ public class UserUpdateNickNameActivity extends UserBaseActivity {
 	
 	@Override
 	protected void responseCodeAction(AccountManage accountManage) {
-		String operationCode = accountManage.getCriteria().get(BaseQuery.SERVER_PARAMETER_OPERATION_CODE);
+		String operationCode = accountManage.getParameter(BaseQuery.SERVER_PARAMETER_OPERATION_CODE);
 		if (AccountManage.OPERATION_CODE_UPDATE_NICKNAME.equals(operationCode)) {
 			//  200, (300, 301, )401(, 500)
 			switch(accountManage.getResponse().getResponseCode()){

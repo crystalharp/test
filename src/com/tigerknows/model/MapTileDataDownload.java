@@ -58,6 +58,7 @@ public class MapTileDataDownload extends BaseQuery {
     public MapTileDataDownload(Context context, MapEngine mapEngine) {
         super(context, API_TYPE_MAP_TILE_DOWNLOAD, VERSION);
         this.isTranslatePart = true;
+        this.requestParameters = new ListRequestParameters();
     }
     
     public void setFillMapTile(ITileDownload iTileDownload) {
@@ -84,6 +85,7 @@ public class MapTileDataDownload extends BaseQuery {
     @Override
     public synchronized void query() {
         isStop = false;
+        this.requestParameters.clear();
         super.query();
         long currentTime = System.currentTimeMillis();
         if (statusCode != STATUS_CODE_NETWORK_OK && statusCode > STATUS_CODE_NONE) {
@@ -101,10 +103,16 @@ public class MapTileDataDownload extends BaseQuery {
     }
 
     @Override
-    protected void makeRequestParameters() throws APIException {
-        super.makeRequestParameters();
-        requestParameters.add("rid", String.valueOf(rid));
-        requestParameters.add("vs", TKConfig.getClientSoftVersion());
+    protected void checkRequestParameters() throws APIException {
+        
+    }
+    
+    @Override
+    protected void addCommonParameters() {
+        addParameter(SERVER_PARAMETER_API_TYPE, apiType);
+        addParameter(SERVER_PARAMETER_VERSION, version);
+        addParameter("rid", String.valueOf(rid));
+        addParameter("vs", TKConfig.getClientSoftVersion());
         String version = null;
         int count = 0;
         
@@ -116,18 +124,13 @@ public class MapTileDataDownload extends BaseQuery {
                 String currentVersion = tileDownload.getVersion();
                 if ((version != null && version.equals(currentVersion)) || (version == null && currentVersion == null)) {
                     count++;
-                    requestParameters.add("off", String.valueOf(tileDownload.getOffset()));
-                    requestParameters.add("len", String.valueOf(tileDownload.getLength()));
+                    addParameter("off", String.valueOf(tileDownload.getOffset()));
+                    addParameter("len", String.valueOf(tileDownload.getLength()));
                 }
             }
         }
-        if (count <= 0) {
-            throw APIException.wrapToMissingRequestParameterException("off,len");
-        }
         if (version != null) {
-            requestParameters.add("vd", version);
-        } else {
-            throw APIException.wrapToMissingRequestParameterException("vd");
+            addParameter("vd", version);
         }
     }
 
@@ -137,7 +140,6 @@ public class MapTileDataDownload extends BaseQuery {
             httpClient = new TKHttpClient();
             httpClient.setKeepAlive(true);
         }
-        httpClient.setApiType(apiType);
         String url = String.format(TKConfig.getDownloadMapUrl(), TKConfig.getDownloadHost());
         httpClient.setURL(url);
         httpClient.setParameters(requestParameters);

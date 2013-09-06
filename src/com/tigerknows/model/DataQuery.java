@@ -26,7 +26,6 @@ import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
 import com.tigerknows.map.MapEngine;
-import com.tigerknows.model.DataQuery.AlternativeResponse.Alternative;
 import com.tigerknows.model.DataQuery.DiscoverResponse.DiscoverConfigList;
 import com.tigerknows.model.DataQuery.DiscoverResponse.DiscoverCategoryList.DiscoverCategory;
 import com.tigerknows.model.DataQuery.DiscoverResponse.DiscoverConfigList.DiscoverConfig;
@@ -168,6 +167,9 @@ public final class DataQuery extends BaseQuery {
     // bias string  false   是否对搜索结果有特殊要求，在“我要点评”请求中bias='1' 
     public static final String BIAS_MY_COMMENT = "1";
     
+    // bias="hot"表示获取热门点评 
+    public static final String BIAS_HOT = "hot";
+    
     private boolean isTurnPage = false;
     
     // POI Request Begin
@@ -266,13 +268,17 @@ public final class DataQuery extends BaseQuery {
         super(context, API_TYPE_DATA_QUERY);
     }
     
-    public void setup(Hashtable<String, String> criteria, int cityId, int sourceViewId, int targetViewId, String tipText, boolean isTurnpage, boolean needReconntection, POI poi) {
-        super.setup(criteria, cityId, sourceViewId, targetViewId, tipText);
+    public DataQuery(DataQuery lastDataQuery) {
+        super(lastDataQuery);
+    }
+
+    public void setup(int cityId, int sourceViewId, int targetViewId, String tipText, boolean isTurnpage, boolean needReconntection, POI poi) {
+        super.setup(cityId, sourceViewId, targetViewId, tipText);
         this.poi = poi;
         this.cityId = cityId;
         this.isTurnPage = isTurnpage;
         this.needReconntection = needReconntection;
-        initStaticField(this.criteria.get(SERVER_PARAMETER_DATA_TYPE), this.criteria.get(SERVER_PARAMETER_SUB_DATA_TYPE), this.cityId);
+        initStaticField(getParameter(SERVER_PARAMETER_DATA_TYPE), getParameter(SERVER_PARAMETER_SUB_DATA_TYPE), this.cityId);
     }
     
     public static boolean checkDiscoveryCity(int cityId) {
@@ -480,29 +486,27 @@ public final class DataQuery extends BaseQuery {
         }
     }
     
+    /*
+     * FIXME:如果是翻页，就不用重新生成位置。
+     */
     @Override
     protected void addMyLocationParameters() {
         if (isTurnPage == false) {
-            String dataType = this.criteria.get(SERVER_PARAMETER_DATA_TYPE);
+            String dataType = getParameter(SERVER_PARAMETER_DATA_TYPE);
             if (DATA_TYPE_FENDIAN.equals(dataType) || DATA_TYPE_YINGXUN.equals(dataType) ||
-                    (SUB_DATA_TYPE_HOTEL.equals(this.criteria.get(SERVER_PARAMETER_SUB_DATA_TYPE)) && criteria.containsKey(SERVER_PARAMETER_LOCATION_CITY))) {
-                if (criteria.containsKey(SERVER_PARAMETER_LOCATION_CITY)
-                        && criteria.containsKey(SERVER_PARAMETER_LOCATION_LONGITUDE)
-                        && criteria.containsKey(SERVER_PARAMETER_LOCATION_LATITUDE)) {
-                    requestParameters.add(SERVER_PARAMETER_LOCATION_CITY, criteria.get(SERVER_PARAMETER_LOCATION_CITY));
-                    requestParameters.add(SERVER_PARAMETER_LOCATION_LONGITUDE, criteria.get(SERVER_PARAMETER_LOCATION_LONGITUDE));
-                    requestParameters.add(SERVER_PARAMETER_LOCATION_LATITUDE, criteria.get(SERVER_PARAMETER_LOCATION_LATITUDE));
-                }
+                    (SUB_DATA_TYPE_HOTEL.equals(getParameter(SERVER_PARAMETER_SUB_DATA_TYPE)) && hasParameter(SERVER_PARAMETER_LOCATION_CITY))) {
+//                if (criteria.containsKey(SERVER_PARAMETER_LOCATION_CITY)
+//                        && criteria.containsKey(SERVER_PARAMETER_LOCATION_LONGITUDE)
+//                        && criteria.containsKey(SERVER_PARAMETER_LOCATION_LATITUDE)) {
+//                    requestParameters.add(SERVER_PARAMETER_LOCATION_CITY, criteria.get(SERVER_PARAMETER_LOCATION_CITY));
+//                    requestParameters.add(SERVER_PARAMETER_LOCATION_LONGITUDE, criteria.get(SERVER_PARAMETER_LOCATION_LONGITUDE));
+//                    requestParameters.add(SERVER_PARAMETER_LOCATION_LATITUDE, criteria.get(SERVER_PARAMETER_LOCATION_LATITUDE));
+//                }
             } else {
+                delParameter(SERVER_PARAMETER_LOCATION_CITY);
+                delParameter(SERVER_PARAMETER_LOCATION_LONGITUDE);
+                delParameter(SERVER_PARAMETER_LOCATION_LATITUDE);
                 super.addMyLocationParameters();
-            }
-        } else {
-            if (criteria.containsKey(SERVER_PARAMETER_LOCATION_CITY)
-                    && criteria.containsKey(SERVER_PARAMETER_LOCATION_LONGITUDE)
-                    && criteria.containsKey(SERVER_PARAMETER_LOCATION_LATITUDE)) {
-                requestParameters.add(SERVER_PARAMETER_LOCATION_CITY, criteria.get(SERVER_PARAMETER_LOCATION_CITY));
-                requestParameters.add(SERVER_PARAMETER_LOCATION_LONGITUDE, criteria.get(SERVER_PARAMETER_LOCATION_LONGITUDE));
-                requestParameters.add(SERVER_PARAMETER_LOCATION_LATITUDE, criteria.get(SERVER_PARAMETER_LOCATION_LATITUDE));
             }
         }
     }
@@ -510,56 +514,151 @@ public final class DataQuery extends BaseQuery {
     @Override
     protected void addUUIDParameter() {
         if (isTurnPage == false) {
+            delParameter(SERVER_PARAMETER_UUID);
             super.addUUIDParameter();
         } else {
-            if (criteria.containsKey(SERVER_PARAMETER_UUID) && criteria.containsKey(SERVER_PARAMETER_INDEX)) {
-                String index = criteria.get(SERVER_PARAMETER_INDEX);
-                String uuid = criteria.get(SERVER_PARAMETER_UUID);
-                requestParameters.add(SERVER_PARAMETER_UUID, uuid+"_"+index);
+            if (hasParameter(SERVER_PARAMETER_UUID) && hasParameter(SERVER_PARAMETER_INDEX)) {
+                String index = getParameter(SERVER_PARAMETER_INDEX);
+                String uuid = getParameter(SERVER_PARAMETER_UUID);
+                addParameter(SERVER_PARAMETER_UUID, uuid+"_"+index);
             }
         }
     }
 
     @Override
-    protected void makeRequestParameters() throws APIException {
-        super.makeRequestParameters();
-        addCommonParameters(requestParameters, cityId);
+    protected void checkRequestParameters() throws APIException {
         
-        if (criteria == null) {
-            throw new APIException(APIException.CRITERIA_IS_NULL);
-        }
-        
-        // 默认分页数目为TKConfig.getPageSize()
-        String pageSize = addParameter(SERVER_PARAMETER_SIZE, false);
-        if (pageSize == null) {
-            requestParameters.add(SERVER_PARAMETER_SIZE, String.valueOf(TKConfig.getPageSize()));
-        }
-        
-        String dataType = addParameter(SERVER_PARAMETER_DATA_TYPE);
+        String[] ekeys = new String[]{SERVER_PARAMETER_DATA_TYPE, SERVER_PARAMETER_SIZE};
+        String[] okeys = new String[]{SERVER_PARAMETER_TIME_STAMP};
+        String[] discoverOptinalKeys = new String[]{SERVER_PARAMETER_DISCOVER_POI_VERSION, SERVER_PARAMETER_DISCOVER_BASEINDEX_VERSION};
+        String[] filterOptionalKeys = new String[]{SERVER_PARAMETER_CITY_FILTER_VERSION, SERVER_PARAMETER_NATION_FILTER_VERSION, 
+                SERVER_PARAMETER_FILTER, SERVER_PARAMETER_FILTER_STRING};
+        String[] indexKeys = new String[]{SERVER_PARAMETER_INDEX};
+        String[] positionKeys = new String[]{SERVER_PARAMETER_LONGITUDE, SERVER_PARAMETER_LATITUDE};
+        String dataType = getParameter(SERVER_PARAMETER_DATA_TYPE);
         if (DATA_TYPE_POI.equals(dataType)) {     
-            String subDataType = addParameter(SERVER_PARAMETER_SUB_DATA_TYPE);
+            String subDataType = getParameter(SERVER_PARAMETER_SUB_DATA_TYPE);
+            ekeys = Utility.mergeArray(ekeys, new String[]{SERVER_PARAMETER_SUB_DATA_TYPE});
+            okeys = Utility.mergeArray(okeys, positionKeys);
             if (SUB_DATA_TYPE_POI.equals(subDataType)) {
-                String idList = addParameter(SERVER_PARAMETER_ID_LIST, false);
-                if (idList == null) {
-                    requestParameters.add(SERVER_PARAMETER_NEED_FIELD, POI.NEED_FIELD);
-                    requestParameters.add(SERVER_PARAMETER_COMMENT_VERSION, COMMENT_VERSION);
-                    String bias = addParameter(SERVER_PARAMETER_BIAS, false);
-                    if (bias == null) {
-                        addParameter(new String[]{SERVER_PARAMETER_KEYWORD});
-                        addParameter(new String[]{SERVER_PARAMETER_INFO}, false);
+                if (!hasParameter(SERVER_PARAMETER_ID_LIST)) {
+                    ekeys = Utility.mergeArray(ekeys, new String[]{SERVER_PARAMETER_NEED_FIELD, SERVER_PARAMETER_COMMENT_VERSION});
+                    okeys = Utility.mergeArray(okeys, new String[]{SERVER_PARAMETER_BIAS});
+                    if (!hasParameter(SERVER_PARAMETER_BIAS)) {
+                        ekeys = Utility.mergeArray(ekeys, new String[]{SERVER_PARAMETER_KEYWORD});
+                        okeys = Utility.mergeArray(okeys, new String[]{SERVER_PARAMETER_INFO});
                     }
-                    addParameter(SERVER_PARAMETER_POI_ID, false);
+                    okeys = Utility.mergeArray(okeys, new String[]{SERVER_PARAMETER_POI_ID});
+                }
+                
+            } else if (SUB_DATA_TYPE_HOTEL.equals(subDataType)) {
+                okeys = Utility.mergeArray(okeys, new String[]{SERVER_PARAMETER_APPENDACTION});
+                if (!hasParameter(SERVER_PARAMETER_APPENDACTION)) {
+                    ekeys = Utility.mergeArray(ekeys, new String[]{SERVER_PARAMETER_NEED_FIELD, 
+                            SERVER_PARAMETER_COMMENT_VERSION, SERVER_PARAMETER_PICTURE});
+                }
+                ekeys = Utility.mergeArray(ekeys, new String[]{SERVER_PARAMETER_CHECKIN, SERVER_PARAMETER_CHECKOUT});
+            }
+
+            ekeys = Utility.mergeArray(ekeys, indexKeys);
+            okeys = Utility.mergeArray(okeys, filterOptionalKeys);
+            debugCheckParameters(ekeys, okeys);
+        } else if (DATA_TYPE_DISCOVER.equals(dataType)) { 
+            ekeys = Utility.mergeArray(ekeys, new String[]{SERVER_PARAMETER_NEED_FIELD, 
+                    SERVER_PARAMETER_DISCOVER_SUPPORT_DATATYPE}, indexKeys);
+            okeys = Utility.mergeArray(okeys, new String[]{SERVER_PARAMETER_DISCOVER_POI_VERSION, 
+                    SERVER_PARAMETER_PICTURE}, positionKeys);
+            debugCheckParameters(ekeys, okeys);
+        } else if (DATA_TYPE_TUANGOU.equals(dataType)) { 
+            ekeys = Utility.mergeArray(ekeys, new String[]{SERVER_PARAMETER_NEED_FIELD, 
+                    SERVER_PARAMETER_PICTURE}, indexKeys);
+            okeys = Utility.mergeArray(okeys, new String[]{SERVER_PARAMETER_INFO}, filterOptionalKeys, 
+                    discoverOptinalKeys, positionKeys);
+            debugCheckParameters(ekeys, okeys);
+        } else if (DATA_TYPE_FENDIAN.equals(dataType)) { 
+            ekeys = Utility.mergeArray(ekeys, new String[]{SERVER_PARAMETER_NEED_FIELD, 
+                    SERVER_PARAMETER_TUANGOU_UUID}, indexKeys);
+            okeys = Utility.mergeArray(okeys, discoverOptinalKeys, filterOptionalKeys, positionKeys);
+            debugCheckParameters(ekeys, okeys);
+        } else if (DATA_TYPE_DIANYING.equals(dataType)) { 
+            ekeys = Utility.mergeArray(ekeys, new String[] {SERVER_PARAMETER_NEED_FIELD, 
+                    SERVER_PARAMETER_PICTURE}, indexKeys);
+            okeys = Utility.mergeArray(okeys, new String[]{SERVER_PARAMETER_DIANYING_UUID, 
+                    SERVER_PARAMETER_POI_ID}, discoverOptinalKeys, filterOptionalKeys, positionKeys);
+            debugCheckParameters(ekeys, okeys);
+        } else if (DATA_TYPE_YINGXUN.equals(dataType)) { 
+            ekeys = Utility.mergeArray(ekeys, new String[]{SERVER_PARAMETER_NEED_FIELD, 
+                    SERVER_PARAMETER_DIANYING_UUID}, indexKeys);
+            okeys = Utility.mergeArray(okeys, discoverOptinalKeys, positionKeys);
+            debugCheckParameters(ekeys, okeys);
+        } else if (DATA_TYPE_YANCHU.equals(dataType)) { 
+            ekeys = Utility.mergeArray(ekeys, new String[]{SERVER_PARAMETER_NEED_FIELD, 
+                    SERVER_PARAMETER_PICTURE}, indexKeys);
+            okeys = Utility.mergeArray(okeys, filterOptionalKeys, discoverOptinalKeys);
+            debugCheckParameters(ekeys, okeys);
+        } else if (DATA_TYPE_SHANGJIA.equals(dataType)) { 
+            ekeys = Utility.mergeArray(ekeys, new String[] {SERVER_PARAMETER_NEED_FIELD});
+            okeys = Utility.mergeArray(okeys, positionKeys, new String[]{SERVER_PARAMETER_SHANGJIA_IDS});
+            debugCheckParameters(ekeys, okeys);
+        } else if (DATA_TYPE_ZHANLAN.equals(dataType)) { 
+            ekeys = Utility.mergeArray(ekeys, new String[]{SERVER_PARAMETER_NEED_FIELD, 
+                    SERVER_PARAMETER_PICTURE}, indexKeys);
+            okeys = Utility.mergeArray(okeys, filterOptionalKeys, discoverOptinalKeys, positionKeys);
+            debugCheckParameters(ekeys, okeys);
+        } else if (DATA_TYPE_DIANPING.equals(dataType)) {
+            ekeys = Utility.mergeArray(ekeys, new String[]{SERVER_PARAMETER_REFER, 
+                    SERVER_PARAMETER_NEED_FIELD, SERVER_PARAMETER_COMMENT_VERSION});
+            okeys = Utility.mergeArray(okeys, new String[]{SERVER_PARAMETER_TIME, 
+                    SERVER_PARAMETER_DIRECTION, SERVER_PARAMETER_POI_ID, SERVER_PARAMETER_BIAS});
+            debugCheckParameters(ekeys, okeys);
+        } else if (DATA_TYPE_PULL_MESSAGE.equals(dataType)) {
+            ekeys = Utility.mergeArray(ekeys, new String[]{SERVER_PARAMETER_LOCATION_CITY, 
+                    SERVER_PARAMETER_LONGITUDE, SERVER_PARAMETER_LATITUDE, 
+                    SERVER_PARAMETER_LOCATION_LONGITUDE, SERVER_PARAMETER_LOCATION_LATITUDE});
+            okeys = Utility.mergeArray(okeys, new String[]{SERVER_PARAMETER_MESSAGE_ID_LIST, 
+                    SERVER_PARAMETER_LAST_PULL_DATE});
+            debugCheckParameters(ekeys, okeys);
+        } else if (DATA_TYPE_ALTERNATIVE.equals(dataType)) {
+            ekeys = Utility.mergeArray(ekeys, new String[]{SERVER_PARAMETER_KEYWORD});
+            debugCheckParameters(ekeys, okeys);
+        } else if (DATA_TYPE_FILTER.equals(dataType)) {
+            okeys = Utility.mergeArray(okeys, filterOptionalKeys, indexKeys);
+            debugCheckParameters(ekeys, okeys);
+        } else if (DATA_TYPE_COUPON.equals(dataType)) {
+            ekeys = Utility.mergeArray(ekeys, new String[] {SERVER_PARAMETER_POI_ID, SERVER_PARAMETER_NEED_FIELD});
+            debugCheckParameters(ekeys, okeys);
+        } else {
+            throw APIException.wrapToMissingRequestParameterException("invalid data type.");
+        }
+
+    }
+    
+    @Override
+    protected void addCommonParameters() {
+        super.addCommonParameters();
+        // 默认分页数目为TKConfig.getPageSize()
+        String pageSize = getParameter(SERVER_PARAMETER_SIZE);
+        if (pageSize == null) {
+            addParameter(SERVER_PARAMETER_SIZE, String.valueOf(TKConfig.getPageSize()));
+        }
+        String dataType = getParameter(SERVER_PARAMETER_DATA_TYPE);
+        if (DATA_TYPE_POI.equals(dataType)) {     
+            String subDataType = getParameter(SERVER_PARAMETER_SUB_DATA_TYPE);
+            if (SUB_DATA_TYPE_POI.equals(subDataType)) {
+                String idList = getParameter(SERVER_PARAMETER_ID_LIST);
+                if (idList == null) {
+                    addParameter(SERVER_PARAMETER_NEED_FIELD, POI.NEED_FIELD);
+                    addParameter(SERVER_PARAMETER_COMMENT_VERSION, COMMENT_VERSION);
                 }
             } else if (SUB_DATA_TYPE_HOTEL.equals(subDataType)) {
-                String appendaction = addParameter(SERVER_PARAMETER_APPENDACTION, false);
+                String appendaction = getParameter(SERVER_PARAMETER_APPENDACTION);
                 if (appendaction == null) {
-                    requestParameters.add(SERVER_PARAMETER_NEED_FIELD, POI.NEED_FIELD+Hotel.NEED_FILED_LIST);
-                    requestParameters.add(SERVER_PARAMETER_COMMENT_VERSION, COMMENT_VERSION);
-                    requestParameters.add(SERVER_PARAMETER_PICTURE, 
+                    addParameter(SERVER_PARAMETER_NEED_FIELD, POI.NEED_FIELD+Hotel.NEED_FILED_LIST);
+                    addParameter(SERVER_PARAMETER_COMMENT_VERSION, COMMENT_VERSION);
+                    addParameter(SERVER_PARAMETER_PICTURE, 
                             Util.byteToHexString(Hotel.FIELD_IMAGE_THUMB)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_HOTEL_LIST)+"_[11000000000000000000]" + ";" +
                             Util.byteToHexString(Hotel.FIELD_IMAGE_LIST)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_HOTEL_DETAIL)+"_[00000000000000000000]");
                 }
-                addParameter(new String[]{SERVER_PARAMETER_CHECKIN, SERVER_PARAMETER_CHECKOUT});
             }
             
             String cfv = null;
@@ -570,10 +669,10 @@ public final class DataQuery extends BaseQuery {
             if (Filter_Category_Order_POI != null) {
                 nfv = Filter_Category_Order_POI.version;
             }
-            addFilterParameters(criteria, requestParameters, cfv, nfv);
+            addFilterParameters(cfv, nfv);
 
         } else if (DATA_TYPE_DISCOVER.equals(dataType)) { 
-            requestParameters.add(SERVER_PARAMETER_NEED_FIELD, DiscoverCategory.NEED_FILED);
+            addParameter(SERVER_PARAMETER_NEED_FIELD, DiscoverCategory.NEED_FILED);
             String pic = "";
             String cdv = "";
             if (Discover_Config_List != null) {
@@ -601,22 +700,21 @@ public final class DataQuery extends BaseQuery {
                     }
                 }
             }
-            requestParameters.add(SERVER_PARAMETER_DISCOVER_SUPPORT_DATATYPE, 
+            addParameter(SERVER_PARAMETER_DISCOVER_SUPPORT_DATATYPE, 
                     DATA_TYPE_TUANGOU+":"+DATA_TYPE_DIANYING+":"+DATA_TYPE_ZHANLAN+":"+DATA_TYPE_YANCHU);
             if (TextUtils.isEmpty(cdv) == false) {
-                requestParameters.add(SERVER_PARAMETER_DISCOVER_POI_VERSION, cdv);
+                addParameter(SERVER_PARAMETER_DISCOVER_POI_VERSION, cdv);
             }
             if (TextUtils.isEmpty(pic) == false) {
-                requestParameters.add(SERVER_PARAMETER_PICTURE, 
+                addParameter(SERVER_PARAMETER_PICTURE, 
                         Util.byteToHexString(DiscoverCategory.FIELD_DATA)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DISCOVER_HOME)+"_["+pic+"]");
             }
         } else if (DATA_TYPE_TUANGOU.equals(dataType)) { 
-            addParameter(new String[]{SERVER_PARAMETER_INFO}, false);
-            requestParameters.add(SERVER_PARAMETER_NEED_FIELD, Tuangou.NEED_FIELD);
-            requestParameters.add(SERVER_PARAMETER_PICTURE, 
+            addParameter(SERVER_PARAMETER_NEED_FIELD, Tuangou.NEED_FIELD);
+            addParameter(SERVER_PARAMETER_PICTURE, 
                     Util.byteToHexString(Tuangou.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_TUANGOU_LIST)+"_[11000000000000000000]" + ";" +
                     Util.byteToHexString(Tuangou.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_TUANGOU_DETAIL)+"_[00000000000000000000]");
-            addDiscoverCategoryParameters(requestParameters);
+            addDiscoverCategoryParameters();
             String cfv = null;
             if (Filter_Area != null && Filter_Area.cityId == cityId) {
                 cfv = Filter_Area.version;
@@ -625,11 +723,10 @@ public final class DataQuery extends BaseQuery {
             if (Filter_Category_Order_Tuangou != null) {
                 nfv = Filter_Category_Order_Tuangou.version;
             }
-            addFilterParameters(criteria, requestParameters, cfv, nfv);
+            addFilterParameters(cfv, nfv);
         } else if (DATA_TYPE_FENDIAN.equals(dataType)) { 
-            requestParameters.add(SERVER_PARAMETER_NEED_FIELD, Fendian.NEED_FIELD);
-            addDiscoverCategoryParameters(requestParameters);
-            addParameter(SERVER_PARAMETER_TUANGOU_UUID);
+            addParameter(SERVER_PARAMETER_NEED_FIELD, Fendian.NEED_FIELD);
+            addDiscoverCategoryParameters();
             String cfv = null;
             if (Filter_Area != null && Filter_Area.cityId == cityId) {
                 cfv = Filter_Area.version;
@@ -638,14 +735,13 @@ public final class DataQuery extends BaseQuery {
             if (Filter_Category_Order_Tuangou != null) {
                 nfv = Filter_Category_Order_Tuangou.version;
             }
-            addFilterParameters(criteria, requestParameters, cfv, nfv);
+            addFilterParameters(cfv, nfv);
         } else if (DATA_TYPE_DIANYING.equals(dataType)) { 
-            addParameter(new String[]{SERVER_PARAMETER_DIANYING_UUID, SERVER_PARAMETER_POI_ID}, false);
-            requestParameters.add(SERVER_PARAMETER_NEED_FIELD, Dianying.NEED_FIELD);
-            requestParameters.add(SERVER_PARAMETER_PICTURE, 
+            addParameter(SERVER_PARAMETER_NEED_FIELD, Dianying.NEED_FIELD);
+            addParameter(SERVER_PARAMETER_PICTURE, 
                     Util.byteToHexString(Dianying.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[11000000000000000000]" + ";" +
                     Util.byteToHexString(Dianying.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[00000000000000000000]");
-            addDiscoverCategoryParameters(requestParameters);
+            addDiscoverCategoryParameters();
             String cfv = null;
             if (Filter_Area != null && Filter_Area.cityId == cityId) {
                 cfv = Filter_Area.version;
@@ -654,11 +750,10 @@ public final class DataQuery extends BaseQuery {
             if (Filter_Category_Order_Dianying != null) {
                 nfv = Filter_Category_Order_Dianying.version;
             }
-            addFilterParameters(criteria, requestParameters, cfv, nfv);
+            addFilterParameters(cfv, nfv);
         } else if (DATA_TYPE_YINGXUN.equals(dataType)) { 
-            requestParameters.add(SERVER_PARAMETER_NEED_FIELD, Yingxun.NEED_FIELD);
-            addDiscoverCategoryParameters(requestParameters);
-            addParameter(SERVER_PARAMETER_DIANYING_UUID);
+            addParameter(SERVER_PARAMETER_NEED_FIELD, Yingxun.NEED_FIELD);
+            addDiscoverCategoryParameters();
             String cfv = null;
             if (Filter_Area != null && Filter_Area.cityId == cityId) {
                 cfv = Filter_Area.version;
@@ -667,13 +762,13 @@ public final class DataQuery extends BaseQuery {
             if (Filter_Category_Order_Dianying != null) {
                 nfv = Filter_Category_Order_Dianying.version;
             }
-            addFilterParameters(criteria, requestParameters, cfv, nfv);
+            addFilterParameters(cfv, nfv);
         } else if (DATA_TYPE_YANCHU.equals(dataType)) { 
-            requestParameters.add(SERVER_PARAMETER_NEED_FIELD, Yanchu.NEED_FIELD);
-            requestParameters.add(SERVER_PARAMETER_PICTURE, 
+            addParameter(SERVER_PARAMETER_NEED_FIELD, Yanchu.NEED_FIELD);
+            addParameter(SERVER_PARAMETER_PICTURE, 
                     Util.byteToHexString(Yanchu.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[11000000000000000000]" + ";" +
                     Util.byteToHexString(Yanchu.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[00000000000000000000]");
-            addDiscoverCategoryParameters(requestParameters);
+            addDiscoverCategoryParameters();
             String cfv = null;
             if (Filter_Area != null && Filter_Area.cityId == cityId) {
                 cfv = Filter_Area.version;
@@ -682,15 +777,15 @@ public final class DataQuery extends BaseQuery {
             if (Filter_Category_Order_Yanchu != null) {
                 nfv = Filter_Category_Order_Yanchu.version;
             }
-            addFilterParameters(criteria, requestParameters, cfv, nfv);
+            addFilterParameters(cfv, nfv);
         } else if (DATA_TYPE_SHANGJIA.equals(dataType)) { 
-            requestParameters.add(SERVER_PARAMETER_NEED_FIELD, TextUtils.isEmpty(Globals.g_Session_Id) ? Shangjia.NEED_FIELD_NO_LOGON : Shangjia.NEED_FIELD);
+            addParameter(SERVER_PARAMETER_NEED_FIELD, getParameter(SERVER_PARAMETER_NEED_FIELD));
         } else if (DATA_TYPE_ZHANLAN.equals(dataType)) { 
-            requestParameters.add(SERVER_PARAMETER_NEED_FIELD, Zhanlan.NEED_FIELD);
-            requestParameters.add(SERVER_PARAMETER_PICTURE, 
+            addParameter(SERVER_PARAMETER_NEED_FIELD, Zhanlan.NEED_FIELD);
+            addParameter(SERVER_PARAMETER_PICTURE, 
                     Util.byteToHexString(Zhanlan.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[11000000000000000000]" + ";" +
                     Util.byteToHexString(Zhanlan.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[00000000000000000000]");
-            addDiscoverCategoryParameters(requestParameters);
+            addDiscoverCategoryParameters();
             String cfv = null;
             if (Filter_Area != null && Filter_Area.cityId == cityId) {
                 cfv = Filter_Area.version;
@@ -699,23 +794,13 @@ public final class DataQuery extends BaseQuery {
             if (Filter_Category_Order_Zhanlan != null) {
                 nfv = Filter_Category_Order_Zhanlan.version;
             }
-            addFilterParameters(criteria, requestParameters, cfv, nfv);
+            addFilterParameters(cfv, nfv);
         } else if (DATA_TYPE_DIANPING.equals(dataType)) {
-            requestParameters.add(SERVER_PARAMETER_NEED_FIELD, Comment.NEED_FIELD);
-            requestParameters.add(SERVER_PARAMETER_COMMENT_VERSION, COMMENT_VERSION);
-            addParameter(new String[]{SERVER_PARAMETER_REFER});
-            addParameter(new String[]{SERVER_PARAMETER_TIME, SERVER_PARAMETER_DIRECTION, SERVER_PARAMETER_POI_ID}, false);
-        } else if (DATA_TYPE_PULL_MESSAGE.equals(dataType)) {
-            addParameter(new String[]{SERVER_PARAMETER_LOCATION_CITY, SERVER_PARAMETER_LONGITUDE, SERVER_PARAMETER_LATITUDE, SERVER_PARAMETER_LOCATION_LONGITUDE, SERVER_PARAMETER_LOCATION_LATITUDE});
-            addParameter(new String[]{SERVER_PARAMETER_MESSAGE_ID_LIST, SERVER_PARAMETER_LAST_PULL_DATE}, false);
+            addParameter(SERVER_PARAMETER_NEED_FIELD, Comment.NEED_FIELD);
+            addParameter(SERVER_PARAMETER_COMMENT_VERSION, COMMENT_VERSION);
         } else if (DATA_TYPE_ALTERNATIVE.equals(dataType)) {
-            requestParameters.add(SERVER_PARAMETER_NEED_FIELD, Alternative.NEED_FIELD);
-            addParameter(new String[]{SERVER_PARAMETER_KEYWORD});
-        } else if (DATA_TYPE_COUPON.equals(dataType)) {
-        	addParameter(SERVER_PARAMETER_POI_ID);
-        	addParameter(SERVER_PARAMETER_NEED_FIELD);
+            addParameter(SERVER_PARAMETER_NEED_FIELD, POI.NEED_FIELD);
         } else if (DATA_TYPE_FILTER.equals(dataType)) {
-            addParameter(SERVER_PARAMETER_CONFIGINFO);
             
             String cfv = null;
             if (Filter_Area != null && Filter_Area.cityId == cityId) {
@@ -725,49 +810,31 @@ public final class DataQuery extends BaseQuery {
             if (Filter_Category_Order_POI != null) {
                 nfv = Filter_Category_Order_POI.version;
             }
-            addFilterParameters(criteria, requestParameters, cfv, nfv, false);
+            addFilterParameters(cfv, nfv);
 
-        } else {
-            throw APIException.wrapToMissingRequestParameterException("invalid data type.");
         }
-
-        requestParameters.add(SERVER_PARAMETER_TIME_STAMP, TIME_STAMP_FORMAT.format(Calendar.getInstance().getTime()));
-        addParameter(new String[]{SERVER_PARAMETER_LONGITUDE, SERVER_PARAMETER_LATITUDE}, false);
         
-        addSessionId(false);
+        addParameter(SERVER_PARAMETER_TIME_STAMP, TIME_STAMP_FORMAT.format(Calendar.getInstance().getTime()));
+        addSessionId();
     }
     
-    private void addDiscoverCategoryParameters(WeiboParameters requestParameters) {
+    private void addDiscoverCategoryParameters() {
         if (Discover_Config_List != null) {
-            requestParameters.add(SERVER_PARAMETER_DISCOVER_POI_VERSION, Discover_Config_List.getVersion());
+            addParameter(SERVER_PARAMETER_DISCOVER_POI_VERSION, Discover_Config_List.getVersion());
         }
         if (TextUtils.isEmpty(Discover_Database_Version) == false) {
-            requestParameters.add(SERVER_PARAMETER_DISCOVER_BASEINDEX_VERSION, Discover_Database_Version);
+            addParameter(SERVER_PARAMETER_DISCOVER_BASEINDEX_VERSION, Discover_Database_Version);
         }
     }
     
-    private void addFilterParameters(Hashtable<String, String> criteria, WeiboParameters requestParameters, String cfv, String nfv) throws APIException {
-        addFilterParameters(criteria, requestParameters, cfv, nfv, true);
-    }
-    
-    private void addFilterParameters(Hashtable<String, String> criteria, WeiboParameters requestParameters, String cfv, String nfv, boolean needIndex) throws APIException {
-        if (criteria.containsKey(SERVER_PARAMETER_FILTER)) {
-            requestParameters.add(SERVER_PARAMETER_FILTER, criteria.get(SERVER_PARAMETER_FILTER));
-        }
-        if (criteria.containsKey(SERVER_PARAMETER_FILTER_STRING)) {
-            requestParameters.add(SERVER_PARAMETER_FILTER_STRING, criteria.get(SERVER_PARAMETER_FILTER_STRING));
-        }
+    private void addFilterParameters(String cfv, String nfv) {
         if (TextUtils.isEmpty(cfv) == false) {
-            requestParameters.add(SERVER_PARAMETER_CITY_FILTER_VERSION, cfv);
+            addParameter(SERVER_PARAMETER_CITY_FILTER_VERSION, cfv);
         }
         if (TextUtils.isEmpty(nfv) == false) {
-            requestParameters.add(SERVER_PARAMETER_NATION_FILTER_VERSION, nfv);
+            addParameter(SERVER_PARAMETER_NATION_FILTER_VERSION, nfv);
         }
-        if (criteria.containsKey(SERVER_PARAMETER_INDEX)) {
-            requestParameters.add(SERVER_PARAMETER_INDEX, criteria.get(SERVER_PARAMETER_INDEX));
-        } else if (needIndex) {
-            throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_INDEX);
-        }
+        
     }
 
     @Override
@@ -780,8 +847,8 @@ public final class DataQuery extends BaseQuery {
     @Override
     protected void translateResponse(byte[] data) throws APIException {
         super.translateResponse(data);
-        String dataType = this.criteria.get(SERVER_PARAMETER_DATA_TYPE);
-        String subDataType = this.criteria.get(SERVER_PARAMETER_SUB_DATA_TYPE);
+        String dataType = getParameter(SERVER_PARAMETER_DATA_TYPE);
+        String subDataType = getParameter(SERVER_PARAMETER_SUB_DATA_TYPE);
         if (DATA_TYPE_POI.equals(dataType)) {
 
             FilterResponse filterResponse = null;
@@ -2476,20 +2543,20 @@ public final class DataQuery extends BaseQuery {
             // 0x02 x_array<x_map> 列表
             public static final byte FIELD_LIST = 0x02;
 
-            private List<Alternative> list;
+            private List<POI> list;
 
-            public List<Alternative> getList() {
+            public List<POI> getList() {
                 return list;
             }
 
-            public void setList(List<Alternative> list) {
+            public void setList(List<POI> list) {
                 this.list = list;
             }
 
             public AlternativeList(XMap data) throws APIException {
                 super(data);
 
-                this.list = getListFromData(FIELD_LIST, Alternative.Initializer);
+                this.list = getListFromData(FIELD_LIST, POI.Initializer);
             }
 
             static XMapInitializer<AlternativeList> Initializer = new XMapInitializer<AlternativeList>() {
@@ -2500,75 +2567,13 @@ public final class DataQuery extends BaseQuery {
                 }
             };
         }
-        
-        public static class Alternative extends XMapData {
-            // 0x01    x_string    uuid,全局唯一
-            public static final byte FIELD_UUID = 0x01;
-            // 0x03    x_int   所在经度, 是普通的度数 × 10万
-            public static final byte FIELD_LONGITUDE = 0x03;
-            // 0x04    x_int   所在纬度, 是普通的度数 × 10万
-            public static final byte FIELD_LATITUDE = 0x04;
-            // 0x05    x_string    名称
-            public static final byte FIELD_NAME = 0x05;
-            // 0x09    x_string    地址 
-            public static final byte FIELD_ADDRESS = 0x09;
-            
-            public static final String NEED_FIELD = "0103040509";
-            
-            protected String uuid;
-            protected Position position;
-            protected String name;
-            protected String address;
-            
-            public String getUuid() {
-                return uuid;
-            }
-
-            public Position getPosition() {
-                return position;
-            }
-
-            public String getName() {
-                return name;
-            }
-
-            public String getAddress() {
-                return address;
-            }
-            
-            public POI toPOI() {
-                POI poi = new POI();
-                poi.setUUID(uuid);
-                poi.setName(name);
-                poi.setAddress(address);
-                poi.setPosition(position);
-                return poi;
-            }
-
-            public Alternative(XMap data) throws APIException {
-                super(data);
-
-                uuid = getStringFromData(FIELD_UUID);
-                position = getPositionFromData(FIELD_LONGITUDE, FIELD_LATITUDE);
-                name = getStringFromData(FIELD_NAME);
-                address = getStringFromData(FIELD_ADDRESS);
-            }
-
-            static XMapInitializer<Alternative> Initializer = new XMapInitializer<Alternative>() {
-
-                @Override
-                public Alternative init(XMap data) throws APIException {
-                    return new Alternative(data);
-                }
-            };
-        }
     }
     
     protected void launchTest() {
         super.launchTest();
-        String dataType = this.criteria.get(SERVER_PARAMETER_DATA_TYPE);
+        String dataType = getParameter(SERVER_PARAMETER_DATA_TYPE);
         if (DATA_TYPE_POI.equals(dataType)) {
-            String subDataType = this.criteria.get(SERVER_PARAMETER_SUB_DATA_TYPE);
+            String subDataType = getParameter(SERVER_PARAMETER_SUB_DATA_TYPE);
             if (SUB_DATA_TYPE_POI.equals(subDataType)) {
                 responseXMap = DataQueryTest.launchPOIResponse(168, "launchPOIResponse");
             } if (SUB_DATA_TYPE_HOTEL.equals(subDataType)) {

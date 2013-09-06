@@ -8,7 +8,6 @@ import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.Comment;
 import com.tigerknows.model.Coupon;
 import com.tigerknows.model.DataQuery.AlternativeResponse;
-import com.tigerknows.model.DataQuery.AlternativeResponse.Alternative;
 import com.tigerknows.model.DataQuery.CouponResponse;
 import com.tigerknows.model.DataQuery.CouponResponse.CouponList;
 import com.tigerknows.model.DataQuery.FilterConfigResponse;
@@ -249,6 +248,7 @@ public class DataQueryTest {
         data.put(Shangjia.FIELD_URL, "http://www.baidu.com");
         data.put(Shangjia.FIELD_MESSAGE, message);
         data.put(Shangjia.FIELD_LOGO, Utility.getDrawableResource(context, R.drawable.icon));
+        data.put(Shangjia.FIELD_REFUND_SERVICE, "FIELD_REFUND_SERVICE");
         return data;
     }
 
@@ -501,7 +501,7 @@ public class DataQueryTest {
         data.put(Zhanlan.FIELD_PLACE_NAME, "FIELD_PLACE_NAME");
         data.put(Zhanlan.FIELD_ADDRESS, "FIELD_ADDRESS");
         data.put(Zhanlan.FIELD_HOT, 3);
-        data.put(Zhanlan.FIELD_URL, "http://www.tigerknows.com");
+        data.put(Zhanlan.FIELD_URL, BaseQueryTest.URL);
         data.put(Zhanlan.FIELD_ADMINNAME, "FIELD_ADMINNAME");
         data.put(Zhanlan.FIELD_AREANAME, "FIELD_AREANAME");
         data.put(Zhanlan.FIELD_SOURCE, "FIELD_SOURCE");
@@ -529,7 +529,7 @@ public class DataQueryTest {
         data.put(Yanchu.FIELD_PLACE_NAME, "FIELD_PLACE_NAME");
         data.put(Yanchu.FIELD_ADDRESS, "FIELD_ADDRESS");
         data.put(Yanchu.FIELD_HOT, 3);
-        data.put(Yanchu.FIELD_URL, "http://www.tigerknows.com");
+        data.put(Yanchu.FIELD_URL, BaseQueryTest.URL);
         data.put(Yanchu.FIELD_ADMINNAME, "FIELD_ADMINNAME");
         data.put(Yanchu.FIELD_AREANAME, "FIELD_AREANAME");
         data.put(Yanchu.FIELD_SOURCE, "FIELD_SOURCE");
@@ -647,6 +647,7 @@ public class DataQueryTest {
         data.put(Description.FIELD_STAR, "FIELD_STAR");
         data.put(Description.FIELD_SUBWAY_EXITS, launchSubwayExit());
         data.put(Description.FIELD_SUBWAY_PRESET_TIMES, launchSubwayPresetTime());
+        data.put(Description.FIELD_LINE, "FIELD_LINE");
         return data;
     }
     
@@ -745,7 +746,7 @@ public class DataQueryTest {
     protected static XMap launchHotelTKDrawable(int order) {
         XMap data = new XMap();
         data.put(HotelTKDrawable.FIELD_NAME, "FIELD_NAME"+order);
-        data.put(HotelTKDrawable.FIELD_URL, "http://www.tigerknows.com/wp-content/themes/tiger/images/logo.jpg");
+        data.put(HotelTKDrawable.FIELD_URL, BaseQueryTest.PIC_URL);
         return data;
     }
 
@@ -852,19 +853,9 @@ public class DataQueryTest {
         launchBaseList(data, total, message);
         XArray<XMap> list = new XArray<XMap>();
         for(int i = 0 ; i < size; i ++) {
-            list.add(launchAlternative("Alternative"+i+"AlternativeAlternativeAlternative"));
+            list.add(launchPOI(("Alternative"+i+"AlternativeAlternativeAlternative")));
         }
         data.put(AlternativeResponse.FIELD_LIST, list);
-        return data;
-    }
-
-    protected static XMap launchAlternative(String name) {
-        XMap data = new XMap();
-        data.put(Alternative.FIELD_UUID, POI_UUID);
-        data.put(Alternative.FIELD_NAME, name);
-        data.put(Alternative.FIELD_ADDRESS, "ADDRESS");
-        data.put(Alternative.FIELD_LONGITUDE, ((int) (116.397*100000)));
-        data.put(Alternative.FIELD_LATITUDE, ((int) (39.904*100000)));
         return data;
     }
 
@@ -890,13 +881,13 @@ public class DataQueryTest {
         XMap data = new XMap();
         data.put(Coupon.FIELD_UID, "FIELD_UID");
         data.put(Coupon.FIELD_DESCRIPTION, "FIELD_DESCRIPTION");
-        data.put(Coupon.FIELD_BRIEF_PIC, "http://wap.tigerknows.com/images/logo_back.png");
+        data.put(Coupon.FIELD_BRIEF_PIC, BaseQueryTest.PIC_URL);
         data.put(Coupon.FIELD_HOT, 123);
         data.put(Coupon.FIELD_LIST_NAME, "FIELD_LIST_NAME");
-        data.put(Coupon.FIELD_DETAIL_PIC, "http://wap.tigerknows.com/images/logo_back.png");
+        data.put(Coupon.FIELD_DETAIL_PIC, BaseQueryTest.PIC_URL);
         data.put(Coupon.FIELD_DETAIL, "FIELD_DETAIL,FIELD_DETAIL,FIELD_DETAIL");
-        data.put(Coupon.FIELD_2D_CODE, "http://wap.tigerknows.com/images/logo_back.png");
-        data.put(Coupon.FIELD_LOGO, "丁丁优惠");
+        data.put(Coupon.FIELD_2D_CODE, BaseQueryTest.PIC_URL);
+        data.put(Coupon.FIELD_LOGO, BaseQueryTest.PIC_URL);
         data.put(Coupon.FIELD_HINT_PIC, "FIELD_HINT_PIC");
         data.put(Coupon.FIELD_REMARK, "FIELD_REMARK");
         return data;

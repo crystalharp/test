@@ -41,7 +41,7 @@ import com.tigerknows.share.TKWeibo.AuthDialogListener;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.ui.user.UserBaseActivity;
-import com.tigerknows.ui.user.UserLoginActivity;
+import com.tigerknows.ui.user.UserLoginRegistActivity;
 import com.tigerknows.util.Utility;
 
 import android.app.Activity;
@@ -75,7 +75,7 @@ import com.weibo.sdk.android.sso.SsoHandler;
  * 
  * @author Peng Wenyue
  */
-public class TKActivity extends MapActivity implements TKAsyncTask.EventListener {
+public class TKActivity extends Activity implements TKAsyncTask.EventListener {
     
     static final String TAG = "TKActivity";
     
@@ -176,19 +176,18 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
             // 如果是打开应用软件第一次定到位，则需要通过用户反馈服务通知服务器进行记录，目的是为统计定位成功率？
             if (Globals.g_My_Location_State == Globals.LOCATION_STATE_NONE) {
                 if (Globals.g_My_Location_City_Info != null) {
-                    ActionLog.getInstance(activity).addAction(ActionLog.LifecycleFirstLocationSuccess, Globals.g_My_Location_City_Info.getCName());
-                    final FeedbackUpload feedbackUpload = new FeedbackUpload(activity);
-                    Hashtable<String, String> criteria = new Hashtable<String, String>();
-                    feedbackUpload.setup(criteria);
-                    new Thread(new Runnable() {
-                        
-                        @Override
-                        public void run() {
-                            feedbackUpload.query();
-                        }
-                    }).start();
-                    Globals.g_My_Location_State = Globals.LOCATION_STATE_FIRST_SUCCESS;
+                    firstLocationSuccess(activity);
                 } else {
+                    Globals.g_My_Location_State = Globals.LOCATION_STATE_AT_YET_FAILED;
+                }
+            } else if (Globals.g_My_Location_State == Globals.LOCATION_STATE_AT_YET_FAILED) {
+                if (Globals.g_My_Location_City_Info != null) {
+                    firstLocationSuccess(activity);
+                } else {
+                    Globals.g_My_Location_State = Globals.LOCATION_STATE_AT_YET_FAILED;
+                }
+            } else {
+                if (Globals.g_My_Location_City_Info == null) {
                     Globals.g_My_Location_State = Globals.LOCATION_STATE_FAILED;
                 }
             }
@@ -196,6 +195,19 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
             if (this.activity != null && this.runnable != null) {
                 this.activity.runOnUiThread(runnable);
             }
+        }
+        
+        void firstLocationSuccess(Activity activity) {
+            ActionLog.getInstance(activity).addAction(ActionLog.LifecycleFirstLocationSuccess, Globals.g_My_Location_City_Info.getCName());
+            final FeedbackUpload feedbackUpload = new FeedbackUpload(activity);
+            new Thread(new Runnable() {
+                
+                @Override
+                public void run() {
+                    feedbackUpload.query();
+                }
+            }).start();
+            Globals.g_My_Location_State = Globals.LOCATION_STATE_FIRST_SUCCESS;
         }
     }
 
@@ -390,7 +402,7 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
             dialog = new ProgressDialog(this);
             dialog.setCancelable(false);
             dialog.setCanceledOnTouchOutside(false);
-            ((ProgressDialog)dialog).setMessage(getString(R.string.doing_and_wait));
+            ((ProgressDialog)dialog).setMessage(getString(R.string.doing_and_wait)+"...");
             dialog.setOnDismissListener(new OnDismissListener() {
                 
                 @Override
@@ -418,7 +430,6 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
         mTKLocationManager = new TKLocationManager(TKApplication.getInstance());
         
         mActionLog = ActionLog.getInstance(mThis);
-        BaseQueryTest.setActivity(mThis);
     }
 
     @Override
@@ -641,11 +652,11 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
                                 @Override
                                 public void onClick(DialogInterface arg0, int id) {
                                     if (id == DialogInterface.BUTTON_POSITIVE) {
-                                        Intent intent = new Intent(activity, UserLoginActivity.class);
+                                        Intent intent = new Intent(activity, UserLoginRegistActivity.class);
                                         intent.putExtra(UserBaseActivity.SOURCE_VIEW_ID_LOGIN, sourceViewIdLogin);
                                         intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_SUCCESS, targetViewIdLoginSuccess);
                                         intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_FAILED, targetViewIdLoginFailed);
-                                        activity.startActivityForResult(intent, R.id.activity_user_login);
+                                        activity.startActivityForResult(intent, R.id.activity_user_login_regist);
                                 	} else {
                             		    if (cancelOnClickListener != null) {
                             		    	cancelOnClickListener.onClick(arg0, id);
@@ -663,12 +674,12 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
                                                     
                                 @Override
                                 public void onClick(DialogInterface arg0, int arg1) {
-                                    Intent intent = new Intent(activity, UserLoginActivity.class);
+                                    Intent intent = new Intent(activity, UserLoginRegistActivity.class);
                                     intent.putExtra(BaseActivity.SOURCE_USER_HOME, true);
                                     intent.putExtra(UserBaseActivity.SOURCE_VIEW_ID_LOGIN, sourceViewIdLogin);
                                     intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_SUCCESS, R.id.view_user_home);
                                     intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_FAILED, R.id.view_more_home);
-                                    activity.startActivityForResult(intent, R.id.activity_user_login);
+                                    activity.startActivityForResult(intent, R.id.activity_user_login_regist);
                                 }
                             });
                 }
@@ -752,7 +763,7 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
             }
             resId = getResponseResId(baseQuery);
         }else {
-            String responseStringRes = baseQuery.getCriteria().get(BaseQuery.RESPONSE_NULL_ERROR_MSG);
+            String responseStringRes = baseQuery.getLocalParameter(BaseQuery.RESPONSE_NULL_ERROR_MSG);
             if(responseStringRes!=null){
             	resId = Integer.parseInt(responseStringRes);
             }
@@ -775,7 +786,7 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
         Response response = baseQuery.getResponse();
         if (response != null) {
             int responseCode = response.getResponseCode();
-            String responseStringRes = baseQuery.getCriteria().get(BaseQuery.RESPONSE_CODE_ERROR_MSG_PREFIX + (responseCode));
+            String responseStringRes = baseQuery.getParameter(BaseQuery.RESPONSE_CODE_ERROR_MSG_PREFIX + (responseCode));
             if(responseStringRes!=null){
             	return Integer.parseInt(responseStringRes);
             }
@@ -807,7 +818,7 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
                     resId = R.string.response_code_402;
                     break;
                 case 403:
-                    if (baseQuery.getCriteria().get(BaseQuery.SERVER_PARAMETER_OPERATION_CODE).equals(DataOperation.OPERATION_CODE_CREATE)) {
+                    if (baseQuery.getParameter(BaseQuery.SERVER_PARAMETER_OPERATION_CODE).equals(DataOperation.OPERATION_CODE_CREATE)) {
                         resId = R.string.response_code_403_login;
                     } else {
                         resId = R.string.response_code_403_resetpassword;
@@ -858,7 +869,7 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
                     break;
             }
         } else {
-            String responseStringRes = baseQuery.getCriteria().get(BaseQuery.RESPONSE_NULL_ERROR_MSG);
+            String responseStringRes = baseQuery.getLocalParameter(BaseQuery.RESPONSE_NULL_ERROR_MSG);
             if(responseStringRes!=null){
             	resId = Integer.parseInt(responseStringRes);
             }else{

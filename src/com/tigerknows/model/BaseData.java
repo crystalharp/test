@@ -25,6 +25,8 @@ public class BaseData extends XMapData {
 
     protected long dateTime = -1;
     
+    protected String alise;
+    
     public BaseData() {
     }
     
@@ -113,6 +115,9 @@ public class BaseData extends XMapData {
         int count = 0;
         BaseData baseData = checkStore(context, Tigerknows.STORE_TYPE_FAVORITE);
         if (baseData != null) {
+            if (storeType == Tigerknows.STORE_TYPE_FAVORITE) {
+                alise = null;
+            }
             count = SqliteWrapper.delete(context, context.getContentResolver(), Tigerknows.Favorite.CONTENT_URI, "_id="+baseData.parentId, null);
         }
         return count;

@@ -56,7 +56,7 @@ public class SuggestLexiconDownload extends BaseQuery {
     }
 
     // 设置下载城市，并初始化文件目录等信息
-    private boolean setup(int cityId) {
+    private boolean setupCityId(int cityId) {
 
         oldversion = 0;
         revision = 0;
@@ -156,20 +156,19 @@ public class SuggestLexiconDownload extends BaseQuery {
 
     @Override
     public void query() {
-        if (setup(cityId) == false) {
+        if (setupCityId(cityId) == false) {
             return;
         }
         super.query();
     }
     
     @Override
-    protected void makeRequestParameters() throws APIException {
-        super.makeRequestParameters();
-        addCommonParameters(requestParameters, currentCityId);
-        requestParameters.add("lr", String.valueOf(oldversion));
-        requestParameters.add("rs", String.valueOf(hasDataLength > 0 ? hasDataLength - VALIDATE_LENGTH : 0));
+    protected void addCommonParameters() {
+        addCommonParameters(currentCityId, false);
+        addParameter("lr", String.valueOf(oldversion));
+        addParameter("rs", String.valueOf(hasDataLength > 0 ? hasDataLength - VALIDATE_LENGTH : 0));
         if (hasDataLength > 0) {
-            requestParameters.add("nr", String.valueOf(revision));
+            addParameter("nr", String.valueOf(revision));
         }
     }
     
@@ -281,5 +280,11 @@ public class SuggestLexiconDownload extends BaseQuery {
                 file.delete();
             }
         }
+    }
+
+    @Override
+    protected void checkRequestParameters() throws APIException {
+        // TODO Auto-generated method stub
+        
     }
 }

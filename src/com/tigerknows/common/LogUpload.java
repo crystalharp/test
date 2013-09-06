@@ -12,6 +12,7 @@ import com.tigerknows.model.FeedbackUpload;
 import com.tigerknows.util.Utility;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -117,8 +118,12 @@ public class LogUpload {
                 	file.createNewFile();
                 }
                 FileInputStream fis = new FileInputStream(file);
-                final String log = Utility.readFile(fis)+getLogOutToken();
+                String logText = Utility.readFile(fis);
                 fis.close();
+                if (TextUtils.isEmpty(logText)) {
+                    return;
+                }
+                final String log = logText + getLogOutToken();
                 
                 if (canUpload()) {
                     new Thread(new Runnable() {
@@ -126,14 +131,13 @@ public class LogUpload {
                         @Override
                         public void run() {
                             FeedbackUpload feedbackUpload = new FeedbackUpload(mContext);
-                            Hashtable<String, String> criteria = new Hashtable<String, String>();
-                            criteria.put(mServerParameterKey, log);
+                            feedbackUpload.addParameter(mServerParameterKey, log);
                             CityInfo cityInfo = Globals.getCurrentCityInfo();
                             int cityId = MapEngine.CITY_ID_BEIJING;
                             if (cityInfo != null) {
                                 cityId = cityInfo.getId();
                             }
-                            feedbackUpload.setup(criteria, cityId);
+                            feedbackUpload.setup(cityId);
                             feedbackUpload.query();
                             com.tigerknows.model.Response response = feedbackUpload.getResponse();
                             if ((response != null && response.getResponseCode() == com.tigerknows.model.Response.RESPONSE_CODE_OK) ||

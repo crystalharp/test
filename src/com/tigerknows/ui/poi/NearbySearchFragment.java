@@ -11,8 +11,11 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.Editable;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.text.style.ForegroundColorSpan;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -27,7 +30,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.TextView.OnEditorActionListener;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
 
 import com.decarta.Globals;
@@ -82,6 +84,8 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     
     private ViewGroup mPageIndicatorView;
     
+    private TextView mLocationTxv;
+    
     /**
      * 分类名称列表
      */
@@ -134,6 +138,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         findViews();
         setListener();
                 
+        mLocationTxv.setVisibility(View.VISIBLE);
         Resources resources = mContext.getResources();
         mCategoryNames = resources.getStringArray(R.array.home_category);
         mCategoryLsv.setAdapter(new StringArrayAdapter(mContext, mCategoryNames, mCategoryResIds));
@@ -153,7 +158,14 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     @Override
     public void onResume() {
         super.onResume();
-        mTitleBtn.setText(mSphinx.getString(R.string.at_where_search, Utility.substring(mPOI.getName(), 6)));
+        mTitleBtn.setText(mSphinx.getString(R.string.nearby_search));
+        String name = mPOI.getName();
+        String title = mSphinx.getString(R.string.at_where_search, name);
+        SpannableStringBuilder style = new SpannableStringBuilder(title);
+        int focusedColor = mSphinx.getResources().getColor(R.color.black_dark);
+        style.setSpan(new ForegroundColorSpan(focusedColor), 0, 2, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+        style.setSpan(new ForegroundColorSpan(focusedColor), 2+name.length(), title.length(), Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+        mLocationTxv.setText(style);
         mRightBtn.setVisibility(View.INVISIBLE);
     }
 
@@ -164,6 +176,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     }
 
     protected void findViews() {
+        mLocationTxv = (TextView) mRootView.findViewById(R.id.location_txv);
         mViewPager = (ViewPager) mRootView.findViewById(R.id.view_pager);
         mQueryBtn = (Button)mRootView.findViewById(R.id.query_btn);
         mKeywordEdt = (TKEditText)mRootView.findViewById(R.id.keyword_edt);
@@ -289,23 +302,22 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
             DataQuery poiQuery = new DataQuery(mContext);
             POI requestPOI = mPOI;
             int cityId = mSphinx.getMapEngine().getCityId(requestPOI.getPosition());
-            Hashtable<String, String> criteria = new Hashtable<String, String>();
-            criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_POI);
-            criteria.put(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_POI);
-            criteria.put(DataQuery.SERVER_PARAMETER_INDEX, "0");
-            criteria.put(DataQuery.SERVER_PARAMETER_KEYWORD, keyword);
-            criteria.put(DataQuery.SERVER_PARAMETER_POI_ID, requestPOI.getUUID());
+            poiQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_POI);
+            poiQuery.addParameter(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_POI);
+            poiQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
+            poiQuery.addParameter(DataQuery.SERVER_PARAMETER_KEYWORD, keyword);
+            poiQuery.addParameter(DataQuery.SERVER_PARAMETER_POI_ID, requestPOI.getUUID());
             Position position = requestPOI.getPosition();
             if (position != null) {
-                criteria.put(DataQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
-                criteria.put(DataQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
+                poiQuery.addParameter(DataQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
+                poiQuery.addParameter(DataQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
             }
             if (isInput) {
                 HistoryWordTable.addHistoryWord(mContext, new TKWord(TKWord.ATTRIBUTE_HISTORY, keyword), cityId, HistoryWordTable.TYPE_POI);
             } else {
-                criteria.put(DataQuery.SERVER_PARAMETER_INFO, DataQuery.INFO_TYPE_TAG);
+                poiQuery.addParameter(DataQuery.SERVER_PARAMETER_INFO, DataQuery.INFO_TYPE_TAG);
             }
-            poiQuery.setup(criteria, cityId, getId(), mSphinx.getPOIResultFragmentID(), null, false, false, requestPOI);
+            poiQuery.setup(cityId, getId(), mSphinx.getPOIResultFragmentID(), null, false, false, requestPOI);
             mSphinx.queryStart(poiQuery);
             ((POIResultFragment)mSphinx.getFragment(poiQuery.getTargetViewId())).setup(isInput ? keyword : null);
             mSphinx.showView(poiQuery.getTargetViewId());

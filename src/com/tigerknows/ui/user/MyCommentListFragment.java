@@ -72,14 +72,13 @@ public class MyCommentListFragment extends BaseFragment {
                     mSphinx.showView(R.id.view_poi_detail);
                     mSphinx.getPOIDetailFragment().setData(poi, position);
                 } else {
-                    Hashtable<String, String> criteria = new Hashtable<String, String>();
-                    criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, DataOperation.DATA_TYPE_POI);
-                    criteria.put(DataOperation.SERVER_PARAMETER_SUB_DATA_TYPE, DataOperation.SUB_DATA_TYPE_POI);
-                    criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
-                    criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, poi.getUUID());
-                    criteria.put(DataOperation.SERVER_PARAMETER_NEED_FIELD, POI.NEED_FIELD);
                     DataOperation poiQuery = new DataOperation(mSphinx);
-                    poiQuery.setup(criteria, Integer.parseInt(comment.getPoiCityId()), getId(), getId(), mSphinx.getString(R.string.doing_and_wait));
+                    poiQuery.addParameter(DataOperation.SERVER_PARAMETER_DATA_TYPE, DataOperation.DATA_TYPE_POI);
+                    poiQuery.addParameter(DataOperation.SERVER_PARAMETER_SUB_DATA_TYPE, DataOperation.SUB_DATA_TYPE_POI);
+                    poiQuery.addParameter(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
+                    poiQuery.addParameter(DataOperation.SERVER_PARAMETER_DATA_UID, poi.getUUID());
+                    poiQuery.addParameter(DataOperation.SERVER_PARAMETER_NEED_FIELD, POI.NEED_FIELD);
+                    poiQuery.setup(Integer.parseInt(comment.getPoiCityId()), getId(), getId(), mSphinx.getString(R.string.doing_and_wait));
                     mSphinx.queryStart(poiQuery);
                 }
             } else {
@@ -168,32 +167,30 @@ public class MyCommentListFragment extends BaseFragment {
         DataQuery lastDataQuery = mDataQuery;
         if (lastDataQuery == null) {
             DataQuery dataQuery = new DataQuery(mSphinx);
-            Hashtable<String, String> criteria = new Hashtable<String, String>();
-            criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_DIANPING);
-            criteria.put(DataQuery.SERVER_PARAMETER_REFER, DataQuery.REFER_USER);
-            dataQuery.setup(criteria, Globals.getCurrentCityInfo().getId(), getId(), getId(), null);
+            dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_DIANPING);
+            dataQuery.addParameter(DataQuery.SERVER_PARAMETER_REFER, DataQuery.REFER_USER);
+            dataQuery.setup(Globals.getCurrentCityInfo().getId(), getId(), getId(), null);
             mSphinx.queryStart(dataQuery);
             return;
         }
 
-        DataQuery dataQuery = new DataQuery(mSphinx);
+        DataQuery dataQuery;
         int cityId = lastDataQuery.getCityId();
-        Hashtable<String, String> criteria;
         if (mCommentArrayList.size() > 0) {
-            criteria = lastDataQuery.getCriteria();
+            dataQuery = new DataQuery(lastDataQuery);
             if (isHeader) {
-                criteria.put(DataQuery.SERVER_PARAMETER_TIME, mCommentArrayList.get(0).getTime());
-                criteria.put(DataQuery.SERVER_PARAMETER_DIRECTION, DataQuery.DIRECTION_AFTER);
+                dataQuery.addParameter(DataQuery.SERVER_PARAMETER_TIME, mCommentArrayList.get(0).getTime());
+                dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DIRECTION, DataQuery.DIRECTION_AFTER);
             } else {
-                criteria.put(DataQuery.SERVER_PARAMETER_TIME, mCommentArrayList.get(mCommentArrayList.size()-1).getTime());
-                criteria.put(DataQuery.SERVER_PARAMETER_DIRECTION, DataQuery.DIRECTION_BEFORE);
+                dataQuery.addParameter(DataQuery.SERVER_PARAMETER_TIME, mCommentArrayList.get(mCommentArrayList.size()-1).getTime());
+                dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DIRECTION, DataQuery.DIRECTION_BEFORE);
             }
         } else {
-            criteria = new Hashtable<String, String>();
-            criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_DIANPING);
-            criteria.put(DataQuery.SERVER_PARAMETER_REFER, DataQuery.REFER_USER);
+            dataQuery = new DataQuery(mSphinx);
+            dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_DIANPING);
+            dataQuery.addParameter(DataQuery.SERVER_PARAMETER_REFER, DataQuery.REFER_USER);
         }
-        dataQuery.setup(criteria, cityId, getId(), getId(), null, true, true, null);
+        dataQuery.setup(cityId, getId(), getId(), null, true, false, null);
         mSphinx.queryStart(dataQuery);
         }
     }
@@ -331,23 +328,25 @@ public class MyCommentListFragment extends BaseFragment {
             
         } else if (baseQuery instanceof DataQuery) { 
 
+            DataQuery dataQuery = (DataQuery)baseQuery;
             boolean exit = true;
-            if (baseQuery.getCriteria().containsKey(DataQuery.SERVER_PARAMETER_TIME)) {
+            if (baseQuery.hasParameter(DataQuery.SERVER_PARAMETER_TIME)) {
                 mCommentLsv.onRefreshComplete(false);
                 mCommentLsv.setFooterSpringback(true);
                 exit = false;
             }    
-            if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, true, this, exit)) {
+            if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, exit, this, exit)) {
+                if (dataQuery.isTurnPage() && dataQuery.getResponse() == null) {
+                    mCommentLsv.setFooterLoadFailed(true);
+                }
                 return;
             }
-            DataQuery dataQuery = (DataQuery)baseQuery;
             boolean isHeader = false;
             if (dataQuery.isTurnPage() == false) {
                 mCommentLsv.onRefreshComplete(false);
             } else {
-                Hashtable<String, String> criteria = dataQuery.getCriteria();
-                if (criteria.containsKey(DataQuery.SERVER_PARAMETER_DIRECTION)) {
-                    String direction = criteria.get(DataQuery.SERVER_PARAMETER_DIRECTION);
+                if (dataQuery.hasParameter(DataQuery.SERVER_PARAMETER_DIRECTION)) {
+                    String direction = dataQuery.getParameter(DataQuery.SERVER_PARAMETER_DIRECTION);
                     if (DataQuery.DIRECTION_AFTER.equals(direction)) {
                         isHeader = true;
                     } else if (DataQuery.DIRECTION_BEFORE.equals(direction)) {

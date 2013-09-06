@@ -3,7 +3,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@drawable/bg_discover"
+    android:background="@color/normal_background"
     >
 
     <ScrollView
@@ -33,7 +33,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
                     android:scaleType="fitXY"
-                    android:background="@drawable/bg_picture_tuangou_detail"
+                    android:background="@drawable/bg_picture_detail"
                     />
                 <ImageView 
                     android:id="@+id/shangjia_marker_imv"
@@ -126,7 +126,7 @@
                     android:focusable="false"
                     />
                  <ImageView
-                     android:background="@drawable/bg_broken_line"
+                     android:background="@drawable/bg_line_split"
                      android:layout_width="fill_parent"
                      android:layout_height="wrap_content"
                      android:layout_below="@id/price_txv"
@@ -140,22 +140,12 @@
                 android:background="@color/white"
                 android:gravity="center"
                 android:padding="6dp" >
-
-                <ImageView
-                    android:id="@+id/refund_imv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/ic_is_refund"
-                    android:layout_marginRight="8dp"
-                    />
                 <TextView
                     android:id="@+id/refund_txv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/refund_imv"
-                    android:layout_centerVertical="true"
+                    android:drawablePadding="8dp"
+                    android:layout_alignParentLeft="true"
                     android:text="@string/app_name"
                     />
                 <TextView
@@ -163,10 +153,17 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
                     android:text="@string/app_name"
                     android:gravity="center_vertical"
                     android:drawablePadding="2dp"
+                    />
+                <TextView
+                    android:id="@+id/refund_detail_txv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/refund_txv"
+                    android:text="@string/app_name"
+                    android:gravity="center_vertical"
                     />
             </RelativeLayout>
             <ImageView 
@@ -182,7 +179,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
-                android:background="@drawable/list_header"
+                android:background="@drawable/list_header_title"
                 >
                 <TextView
                     android:id="@+id/shanghu_txv"
@@ -192,7 +189,7 @@
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
                     android:text="@string/shanghu_xingxi"
-                    android:textColor="@color/blue"
+                    android:textColor="@color/blue_title"
                     android:textSize="16sp"
                     />
                 <TextView
@@ -231,41 +228,75 @@
                 android:layout_marginRight="8dp"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/list_single"
                 >
                  <TextView
-                     android:layout_width="wrap_content"
+                     android:layout_width="fill_parent"
                      android:layout_height="wrap_content"
                      android:gravity="left|center_vertical"
                      android:text="@string/tuangou_taocanxiangqing"
-                     android:textColor="@color/blue"
-                     android:padding="8dp"
+                     android:textColor="@color/blue_title"
+                     android:paddingLeft="12dp"
+                     android:paddingTop="8dp"
+                     android:paddingRight="8dp"
+                     android:paddingBottom="8dp"
                      android:textSize="16sp"
+                     android:background="@drawable/list_header_title"
                      />
 
                  <ImageView
                      android:layout_width="fill_parent"
                      android:layout_height="wrap_content"
-                     android:background="@drawable/bg_broken_line"
+                     android:background="@drawable/bg_line_split"
                      android:layout_marginLeft="8dp"
                      android:layout_marginRight="8dp"
                      />
                  <LinearLayout 
+                     android:id="@+id/content_container_view"
                      android:layout_width="fill_parent"
                      android:layout_height="wrap_content"
-                     android:padding="8dp">
-	                 <TextView
-	                     android:id="@+id/content_txv"
-	                     android:layout_width="fill_parent"
-	                     android:layout_height="wrap_content"
-	                     android:layout_gravity="center_horizontal"
-	                     android:gravity="left|center_vertical"
-	                     android:text="@string/app_name"
-	                     android:textColor="@color/black_dark"
-	                     android:textSize="14sp"
-	                     android:lineSpacingExtra="4dp"
-	                     />
+                     android:background="@drawable/list_middle">
+                     <TextView
+                         android:id="@+id/content_txv"
+                         android:layout_width="fill_parent"
+                         android:layout_height="wrap_content"
+                         android:paddingLeft="12dp"
+                         android:paddingTop="8dp"
+                         android:paddingRight="8dp"
+                         android:paddingBottom="8dp"
+                         android:layout_gravity="center_horizontal"
+                         android:gravity="left|center_vertical"
+                         android:text="@string/app_name"
+                         android:textColor="@color/black_dark"
+                         android:textSize="14sp"
+                         android:lineSpacingExtra="4dp"
+                         />
                  </LinearLayout>
+             
+                 <LinearLayout 
+                     android:id="@+id/viewurl_view"
+                     android:layout_width="fill_parent"
+                     android:layout_height="wrap_content"
+                     android:background="@drawable/list_footer"
+                     android:orientation="vertical">
+
+                     <ImageView
+                         android:layout_width="fill_parent"
+                         android:layout_height="wrap_content"
+                         android:background="@drawable/bg_line_split"
+                         />
+                    <TextView
+                        android:id="@+id/viewurl_txv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:padding="8dp"
+                        android:gravity="center"
+                        android:text="@string/picture_text_detail"
+                        android:textSize="16sp"
+                        android:textColor="@color/blue_title"
+                        android:drawableRight="@drawable/icon_arrow_right"
+                        />
+                    </LinearLayout>
              </LinearLayout>
 
             <LinearLayout
@@ -276,21 +307,24 @@
                 android:layout_marginRight="8dp"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/list_single"
                 >
                 <TextView
-                     android:layout_width="wrap_content"
+                     android:layout_width="fill_parent"
                      android:layout_height="wrap_content"
-                     android:padding="8dp"
+                     android:paddingLeft="12dp"
+                     android:paddingTop="8dp"
+                     android:paddingRight="8dp"
+                     android:paddingBottom="8dp"
                      android:gravity="left|center_vertical"
                      android:text="@string/tuangou_detail_noticed"
-                     android:textColor="@color/blue"
+                     android:textColor="@color/blue_title"
                      android:textSize="16sp"
+                     android:background="@drawable/list_header_title"
                      />
                  <ImageView
                      android:layout_width="fill_parent"
                      android:layout_height="wrap_content"
-                     android:background="@drawable/bg_broken_line"
+                     android:background="@drawable/bg_line_split"
                      android:layout_marginLeft="8dp"
                      android:layout_marginRight="8dp"
                      />
@@ -298,10 +332,14 @@
                      android:id="@+id/noticed_txv"
                      android:layout_width="fill_parent"
                      android:layout_height="wrap_content"
-                     android:padding="8dp"
+                     android:paddingLeft="12dp"
+                     android:paddingTop="8dp"
+                     android:paddingRight="8dp"
+                     android:paddingBottom="8dp"
                      android:textSize="14sp"
                      android:textColor="@color/black_dark"
                      android:lineSpacingExtra="4dp"
+                     android:background="@drawable/list_footer"
                      />
             </LinearLayout>
 
@@ -319,6 +357,7 @@
                 <TextView android:id="@+id/service_hotline_title_txv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:paddingLeft="4dp"
                     android:gravity="left|center_vertical"
                     android:text="@string/service_hotline"
                     android:textColor="@color/black"
@@ -339,85 +378,85 @@
     </ScrollView>
     
     <LinearLayout 
-	            android:id="@+id/bar_view_2"
-	            android:layout_alignParentTop="true"
-	            android:layout_width="fill_parent"
-	            android:layout_height="wrap_content"
-	            android:orientation="vertical"          
-	            android:visibility="invisible"
-	            >
-	    <RelativeLayout 
-	            android:layout_width="fill_parent"
-	            android:layout_height="wrap_content"
-	            android:background="@color/white"
-	            android:padding="6dp"
-	            >
-	            <Button 
-	                android:id="@+id/buy_btn_2"
-	                android:layout_width="wrap_content"
-	                android:layout_height="wrap_content"
-	                android:layout_alignParentRight="true"
-	                android:layout_alignParentTop="true"
-	                android:textSize="14sp"
-	                android:singleLine="true"
-	                android:focusable="false"
-	                android:background="@drawable/btn_buy"
-	                />
-	                
-	            <TextView 
-	                android:id="@+id/price_txv_2"
-	                android:layout_width="wrap_content"
-	                android:layout_height="wrap_content"
-	                android:layout_alignParentLeft="true"
-	                android:layout_alignBottom="@id/buy_btn_2"
-	                android:layout_marginLeft="8dp"
-	                android:textStyle="bold"
-	                android:textColor="@color/orange"
-	                android:textSize="32sp"
-	                android:text="@string/distance"
-	                android:singleLine="true"
-	                android:includeFontPadding="false"
-	                android:focusable="false"
-	                />
-	            <TextView 
-	                android:id="@+id/org_price_txv_2"
-	                android:layout_width="wrap_content"
-	                android:layout_height="wrap_content"
-	                android:layout_toRightOf="@id/price_txv_2"
-	                android:layout_alignBottom="@id/buy_btn_2"
-	                android:layout_marginLeft="8dp"
-	                android:layout_marginBottom="4dp"
-	                android:textColor="@color/black_light"
-	                android:textSize="14sp"
-	                android:text="@string/distance"
-	                android:singleLine="true"
-	                android:includeFontPadding="false"
-	                android:focusable="false"
-	                />
-	            <TextView 
-	                android:id="@+id/discount_txv_2"
-	                android:layout_width="wrap_content"
-	                android:layout_height="wrap_content"
-	                android:layout_toRightOf="@id/price_txv_2"
-	                android:layout_above="@id/org_price_txv_2"
-	                android:layout_marginLeft="8dp"
-	                android:textColor="@color/black_light"
-	                android:textSize="14sp"
-	                android:text="@string/distance"
-	                android:singleLine="true"
-	                android:includeFontPadding="false"
-	                android:focusable="false"
-	                />
-		     
-	        </RelativeLayout>
-	        
-		        <ImageView 
-			        android:id="@+id/shadow1"
-			        android:layout_width="fill_parent"
-			        android:layout_height="wrap_content"
-			        android:background="@drawable/bg_shadow" />
-		        
-	 </LinearLayout>
+                android:id="@+id/bar_view_2"
+                android:layout_alignParentTop="true"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"          
+                android:visibility="invisible"
+                >
+        <RelativeLayout 
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:padding="6dp"
+                >
+                <Button 
+                    android:id="@+id/buy_btn_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentTop="true"
+                    android:textSize="14sp"
+                    android:singleLine="true"
+                    android:focusable="false"
+                    android:background="@drawable/btn_buy"
+                    />
+                    
+                <TextView 
+                    android:id="@+id/price_txv_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignBottom="@id/buy_btn_2"
+                    android:layout_marginLeft="8dp"
+                    android:textStyle="bold"
+                    android:textColor="@color/orange"
+                    android:textSize="32sp"
+                    android:text="@string/distance"
+                    android:singleLine="true"
+                    android:includeFontPadding="false"
+                    android:focusable="false"
+                    />
+                <TextView 
+                    android:id="@+id/org_price_txv_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/price_txv_2"
+                    android:layout_alignBottom="@id/buy_btn_2"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginBottom="4dp"
+                    android:textColor="@color/black_light"
+                    android:textSize="14sp"
+                    android:text="@string/distance"
+                    android:singleLine="true"
+                    android:includeFontPadding="false"
+                    android:focusable="false"
+                    />
+                <TextView 
+                    android:id="@+id/discount_txv_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/price_txv_2"
+                    android:layout_above="@id/org_price_txv_2"
+                    android:layout_marginLeft="8dp"
+                    android:textColor="@color/black_light"
+                    android:textSize="14sp"
+                    android:text="@string/distance"
+                    android:singleLine="true"
+                    android:includeFontPadding="false"
+                    android:focusable="false"
+                    />
+             
+            </RelativeLayout>
+            
+                <ImageView 
+                    android:id="@+id/shadow1"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_shadow" />
+                
+     </LinearLayout>
 
     <include
         android:id="@+id/loading_view"

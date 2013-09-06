@@ -314,10 +314,9 @@ public class DiscoverHomeFragment extends DiscoverBaseFragment {
                     if (discoverCategory.getNumCity() > 0 || discoverCategory.getNumNearby() > 0) {
                         mActionLog.addAction(mActionTag +  ActionLog.DiscoverHomeItem, discoverCategory.getType());
                         DataQuery dataQuery = new DataQuery(mSphinx);
-                        Hashtable<String, String> criteria = new Hashtable<String, String>();
-                        criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, discoverCategory.getType());
-                        criteria.put(DataQuery.SERVER_PARAMETER_INDEX, "0");
-                        dataQuery.setup(criteria, Globals.getCurrentCityInfo().getId(),
+                        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, discoverCategory.getType());
+                        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
+                        dataQuery.setup(Globals.getCurrentCityInfo().getId(),
                                 R.id.view_discover_home, R.id.view_discover_list, null, false, false,
                                 mSphinx.getPOI());
                         mSphinx.queryStart(dataQuery);
@@ -706,10 +705,9 @@ public class DiscoverHomeFragment extends DiscoverBaseFragment {
     private void refreshData() {
         if (mDataQuery == null || mDataQuery.getCityId() != mCityId) {
             DataQuery dataQuery = new DataQuery(mSphinx);
-            Hashtable<String, String> criteria = new Hashtable<String, String>();
-            criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_DISCOVER);
-            criteria.put(DataQuery.SERVER_PARAMETER_INDEX, "0");
-            dataQuery.setup(criteria, Globals.getCurrentCityInfo().getId(), R.id.view_discover_home, R.id.view_discover_home, null, false, true, mSphinx.getPOI());
+            dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_DISCOVER);
+            dataQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
+            dataQuery.setup(Globals.getCurrentCityInfo().getId(), R.id.view_discover_home, R.id.view_discover_home, null, false, true, mSphinx.getPOI());
             mSphinx.queryStart(dataQuery);
         }
     }

@@ -29,7 +29,7 @@ import com.tigerknows.share.ShareAPI;
 import com.tigerknows.share.UserAccessIdenty;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.user.UserBaseActivity;
-import com.tigerknows.ui.user.UserCommentAfterActivity;
+import com.tigerknows.ui.user.UserLoginRegistActivity;
 import com.tigerknows.ui.user.UserUpdateNickNameActivity;
 import com.tigerknows.util.Utility;
 import com.tigerknows.widget.MultichoiceArrayAdapter;
@@ -67,7 +67,6 @@ import android.widget.RatingBar.OnRatingBarChangeListener;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
 
 /**
@@ -349,6 +348,8 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
             String avg = mFoodAvgEdt.getEditableText().toString().trim();
             if (!TextUtils.isEmpty(avg)) {
                 mComment.setAvg(Long.parseLong(avg));
+            } else {
+                mComment.setAvg(-1);
             }
             mComment.setTaste((int) mTasteRtb.getRating());
             mComment.setEnvironment((int)mFoodEnvironmentRtb.getRating());
@@ -357,16 +358,22 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
             String restair = mRestairBtn.getText().toString();
             if (!TextUtils.isEmpty(restair)) {
                 mComment.setRestair(restair);
+            } else {
+                mComment.setRestair(null);
             }
             
             String recommend = mRecommendEdt.getEditableText().toString().trim();
             if (!TextUtils.isEmpty(recommend)) {
                 mComment.setRecommend(recommend);
+            } else {
+                mComment.setRecommend(null);
             }
         } else if (POI.COMMENT_PATTERN_HOTEL == commentPattern) {
             String avg = mHotelAvgEdt.getEditableText().toString().trim();
             if (!TextUtils.isEmpty(avg)) {
                 mComment.setAvg(Long.parseLong(avg));
+            } else {
+                mComment.setAvg(-1);
             }
             mComment.setQos((int)mHotelQosRtb.getRating());
             mComment.setEnvironment((int)mHotelEnvironmentRtb.getRating());
@@ -381,6 +388,8 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
             String avg = mHospitalAvgEdt.getEditableText().toString().trim();
             if (!TextUtils.isEmpty(avg)) {
                 mComment.setAvg(Long.parseLong(avg));
+            } else {
+                mComment.setAvg(-1);
             }
             mComment.setQos((int)mHospitalQosRtb.getRating());
             mComment.setLevel((int)mLevelRtb.getRating());
@@ -388,6 +397,8 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
             String avg = mBuyAvgEdt.getEditableText().toString().trim();
             if (!TextUtils.isEmpty(avg)) {
                 mComment.setAvg(Long.parseLong(avg));
+            } else {
+                mComment.setAvg(-1);
             }
         }
         
@@ -624,7 +635,7 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
         mOnActivityResultSubmitByLogin = false;
         if (requestCode == R.id.activity_user_update_nickname) {
             submit();
-        } else if (requestCode == R.id.activity_user_comment_after) {
+        } else if (requestCode == R.id.activity_user_login_regist) {
             submitByLogin(data);
             mOnActivityResultSubmitByLogin = true;
         }
@@ -634,9 +645,9 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
         User user = Globals.g_User;
         if (user == null && mStatus != STATUS_MODIFY) {
             Intent intent = new Intent();
-            intent.setClass(mThis, UserCommentAfterActivity.class);
+            intent.setClass(mThis, UserLoginRegistActivity.class);
             intent.putExtra(UserBaseActivity.SOURCE_VIEW_ID_LOGIN, mId);
-            startActivityForResult(intent, R.id.activity_user_comment_after);
+            startActivityForResult(intent, R.id.activity_user_login_regist);
         } else if (user != null && user.isNickNameDefault(mThis)) {
             Intent intent = new Intent();
             intent.setClass(mThis, UserUpdateNickNameActivity.class);
@@ -790,8 +801,8 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
         String shareGrade = getString(resId);
         
         String recommendCook = "";
-        Hashtable<String, String> criteria = new Hashtable<String, String>();
-        criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, DataOperation.DATA_TYPE_DIANPING);
+        DataOperation dataOperation = new DataOperation(mThis);
+        dataOperation.addParameter(DataOperation.SERVER_PARAMETER_DATA_TYPE, DataOperation.DATA_TYPE_DIANPING);
         StringBuilder s = new StringBuilder();
         s.append(Util.byteToHexString(Comment.FIELD_GRADE));
         s.append(':');
@@ -812,11 +823,13 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
         long commentPattern = mPOI.getCommentPattern();
         if (POI.COMMENT_PATTERN_FOOD == commentPattern) {
             String avg = mFoodAvgEdt.getEditableText().toString().trim();
+            s.append(',');
+            s.append(Util.byteToHexString(Comment.FIELD_AVG));
+            s.append(':');
             if (!TextUtils.isEmpty(avg)) {
-                s.append(',');
-                s.append(Util.byteToHexString(Comment.FIELD_AVG));
-                s.append(':');
                 s.append(avg);
+            } else {
+                s.append('0');
             }
             s.append(',');
             s.append(Util.byteToHexString(Comment.FIELD_TASTE));
@@ -831,18 +844,18 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
             s.append(':');
             s.append((int)mFoodQosRtb.getRating());
             String restair = mRestairBtn.getText().toString();
+            s.append(',');
+            s.append(Util.byteToHexString(Comment.FIELD_RESTAIR));
+            s.append(':');
             if (!TextUtils.isEmpty(restair)) {
-                s.append(',');
-                s.append(Util.byteToHexString(Comment.FIELD_RESTAIR));
-                s.append(':');
                 s.append(URLEncoder.encode(restair));
             }
             
             recommendCook = mRecommendEdt.getEditableText().toString().trim();
+            s.append(',');
+            s.append(Util.byteToHexString(Comment.FIELD_RECOMMEND));
+            s.append(':');
             if (!TextUtils.isEmpty(recommendCook)) {
-                s.append(',');
-                s.append(Util.byteToHexString(Comment.FIELD_RECOMMEND));
-                s.append(':');
                 try {
                     s.append(URLEncoder.encode(recommendCook, TKConfig.getEncoding()));
                 } catch (UnsupportedEncodingException e) {
@@ -851,11 +864,13 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
             }
         } else if (POI.COMMENT_PATTERN_HOTEL == commentPattern) {
             String avg = mHotelAvgEdt.getEditableText().toString().trim();
+            s.append(',');
+            s.append(Util.byteToHexString(Comment.FIELD_AVG));
+            s.append(':');
             if (!TextUtils.isEmpty(avg)) {
-                s.append(',');
-                s.append(Util.byteToHexString(Comment.FIELD_AVG));
-                s.append(':');
                 s.append(avg);
+            } else {
+                s.append('0');
             }
             s.append(',');
             s.append(Util.byteToHexString(Comment.FIELD_QOS));
@@ -867,11 +882,13 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
             s.append((int)mHotelEnvironmentRtb.getRating());
         } else if (POI.COMMENT_PATTERN_CINEMA == commentPattern) {
             String avg = mCinemaAvgEdt.getEditableText().toString().trim();
+            s.append(',');
+            s.append(Util.byteToHexString(Comment.FIELD_AVG));
+            s.append(':');
             if (!TextUtils.isEmpty(avg)) {
-                s.append(',');
-                s.append(Util.byteToHexString(Comment.FIELD_AVG));
-                s.append(':');
                 s.append(avg);
+            } else {
+                s.append('0');
             }
             s.append(',');
             s.append(Util.byteToHexString(Comment.FIELD_EFFECT));
@@ -883,11 +900,13 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
             s.append((int)mCinemaQosRtb.getRating());
         } else if (POI.COMMENT_PATTERN_HOSPITAL == commentPattern) {
             String avg = mHospitalAvgEdt.getEditableText().toString().trim();
+            s.append(',');
+            s.append(Util.byteToHexString(Comment.FIELD_AVG));
+            s.append(':');
             if (!TextUtils.isEmpty(avg)) {
-                s.append(',');
-                s.append(Util.byteToHexString(Comment.FIELD_AVG));
-                s.append(':');
                 s.append(avg);
+            } else {
+                s.append('0');
             }
             s.append(',');
             s.append(Util.byteToHexString(Comment.FIELD_QOS));
@@ -899,11 +918,13 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
             s.append((int)mLevelRtb.getRating());
         } else if (POI.COMMENT_PATTERN_BUY == commentPattern) {
             String avg = mBuyAvgEdt.getEditableText().toString().trim();
+            s.append(',');
+            s.append(Util.byteToHexString(Comment.FIELD_AVG));
+            s.append(':');
             if (!TextUtils.isEmpty(avg)) {
-                s.append(',');
-                s.append(Util.byteToHexString(Comment.FIELD_AVG));
-                s.append(':');
                 s.append(avg);
+            } else {
+                s.append('0');
             }
         }
         s.append(',');
@@ -915,14 +936,12 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
         s.append(':');
         s.append(TKConfig.sCommentSource);
         if (mStatus == STATUS_MODIFY && TextUtils.isEmpty(mComment.getUid()) == false) {
-            criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_UPDATE);
-            criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, mComment.getUid());
+            dataOperation.addParameter(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_UPDATE);
+            dataOperation.addParameter(DataOperation.SERVER_PARAMETER_DATA_UID, mComment.getUid());
         } else {
-            criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_CREATE);
+            dataOperation.addParameter(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_CREATE);
         }
-        criteria.put(DataOperation.SERVER_PARAMETER_ENTITY, s.toString());
-        DataOperation dataOperation = new DataOperation(mThis);
-        dataOperation.setup(criteria, Globals.getCurrentCityInfo().getId(), -1, mFromViewId, mThis.getString(R.string.comment_publishing_and_wait));
+        dataOperation.addParameter(DataOperation.SERVER_PARAMETER_ENTITY, s.toString());
 
         if (mSyncSinaChb.isChecked()) {
             // http://open.weibo.com/wiki/2/statuses/update
@@ -934,7 +953,7 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
                 shareSina = shareSina.subSequence(0, 104) + "...";
             }
             shareSina = shareSina + mThis.getString(R.string.poi_comment_share_sina_source); // TODO: 但是这个网址被微博删除了
-            criteria.put(DataOperation.SERVER_PARAMETER_SHARE_SINA, shareSina);
+            dataOperation.addParameter(DataOperation.SERVER_PARAMETER_SHARE_SINA, shareSina);
         }
         
         if (mSyncQZoneChb.isChecked()) {
@@ -947,8 +966,9 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
                 shareQzone = shareQzone.subSequence(0, 69) + "...";
             }
             shareQzone = shareQzone + mThis.getString(R.string.poi_comment_share_qzone_source); // 17个
-            criteria.put(DataOperation.SERVER_PARAMETER_SHARE_QZONE, shareQzone);
+            dataOperation.addParameter(DataOperation.SERVER_PARAMETER_SHARE_QZONE, shareQzone);
         }
+        dataOperation.setup(Globals.getCurrentCityInfo().getId(), -1, mFromViewId, mThis.getString(R.string.comment_publishing_and_wait));
         queryStart(dataOperation, false);
     }
     
@@ -1021,7 +1041,9 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
                     mPOI.setMyComment(mComment);
                     mStatus = STATUS_MODIFY;
                     mTitleBtn.setText(R.string.modify_comment);
-                    mComment.setUid(((CommentCreateResponse)response).getUid());
+                    CommentCreateResponse commentCreateResponse = (CommentCreateResponse)response;
+                    mComment.setUid(commentCreateResponse.getUid());
+                    mComment.setLikes(commentCreateResponse.getLikes());
                     Utility.showNormalDialog(mThis, 
                             mThis.getString(R.string.prompt), 
                             mThis.getString(R.string.response_code_601), 
@@ -1031,21 +1053,19 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
                         
                         @Override
                         public void onClick(DialogInterface arg0, int arg1) {
-                            Hashtable<String, String> criteria = commentOperation.getCriteria();
-                            criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_UPDATE);
-                            criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, mComment.getUid());
-                            DataOperation dataOperation = new DataOperation(mThis);
-                            dataOperation.setup(criteria, Globals.getCurrentCityInfo().getId(), -1, mFromViewId, mThis.getString(R.string.doing_and_wait));
+                            DataOperation dataOperation = new DataOperation(commentOperation);
+                            dataOperation.addParameter(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_UPDATE);
+                            dataOperation.addParameter(DataOperation.SERVER_PARAMETER_DATA_UID, mComment.getUid());
+                            dataOperation.setup(Globals.getCurrentCityInfo().getId(), -1, mFromViewId, mThis.getString(R.string.doing_and_wait));
                             queryStart(dataOperation);
                         }
                     });
                 } else if (response.getResponseCode() == 602) {
                     mStatus = STATUS_NEW;
                     mTitleBtn.setText(R.string.publish_comment);
-                    Hashtable<String, String> criteria = commentOperation.getCriteria();
-                    criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_CREATE);
-                    DataOperation dataOperation = new DataOperation(mThis);
-                    dataOperation.setup(criteria, Globals.getCurrentCityInfo().getId(), -1, mFromViewId, mThis.getString(R.string.doing_and_wait));
+                    DataOperation dataOperation = new DataOperation(commentOperation);
+                    dataOperation.addParameter(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_CREATE);
+                    dataOperation.setup(Globals.getCurrentCityInfo().getId(), -1, mFromViewId, mThis.getString(R.string.doing_and_wait));
                     queryStart(dataOperation);
                 } else if (response.getResponseCode() == 603) {
                     BaseActivity.showErrorDialog(mThis, mThis.getString(R.string.response_code_603), mThis, true);
@@ -1130,6 +1150,33 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
             }
         }
         mPOI.updateComment(mThis);
+        
+        dataQuery = mPOI.getHotCommentQuery();
+        if (dataQuery != null) {
+            CommentResponse commentResponse = (CommentResponse)dataQuery.getResponse();
+            if (commentResponse != null) {
+                CommentList commentList = commentResponse.getList();
+                if (commentList != null) {
+                    List<Comment> list = commentList.getList();
+                    commentArrayList = list;
+                    if (list != null) {
+                        boolean isAuthorMe = false;
+                        for(int i = list.size()-1; i >= 0; i--) {
+                            // 如果列表中已经有我的点评则将其删除
+                            if (Comment.isAuthorMe(list.get(i)) > 0) {
+                                list.remove(i);
+                                isAuthorMe = true;
+                                break;
+                            }
+                        }
+                        if (isAuthorMe) {
+                            // 将我的点评插入为第一条
+                            list.add(0, mComment);
+                        }
+                    }
+                }
+            }
+        }
 
         mPOI.update(mThis, mPOI.getStoreType());
         Intent intent = new Intent(EditCommentActivity.this, Sphinx.class);

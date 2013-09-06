@@ -1,6 +1,5 @@
 package com.tigerknows.ui.discover;
 
-import com.decarta.Globals;
 import com.tigerknows.Sphinx;
 import com.tigerknows.ui.BaseFragment;
 
@@ -23,7 +22,6 @@ public class DiscoverBaseFragment extends BaseFragment {
     @Override
     public void onPause() {
         super.onPause();
-        Globals.getAsyncImageLoader().stop(toString());
     }
 
     @Override

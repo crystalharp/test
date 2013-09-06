@@ -46,7 +46,7 @@
 		        android:layout_width="wrap_content"
 		        android:layout_height="fill_parent"
 		        android:layout_weight="1"
-		        android:background="@color/gray_dark">
+		        android:background="@color/gray_light">
 		        <ListView android:id="@+id/parent_lsv"
 		            android:layout_width="wrap_content"
 		            android:layout_height="wrap_content"
@@ -65,7 +65,7 @@
 		        android:layout_width="wrap_content"
 		        android:layout_height="fill_parent"
 		        android:layout_weight="1"
-		        android:background="@drawable/list_selector_background_gray_light">
+		        android:background="@color/gray_dark">
 		        <com.tigerknows.widget.PinnedHeaderBladeListView android:id="@+id/child_lsv"
 		            android:layout_width="wrap_content"
 		            android:layout_height="wrap_content"

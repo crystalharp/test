@@ -24,14 +24,12 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.TextView.OnEditorActionListener;
 
 import com.decarta.Globals;
-import com.decarta.android.location.Position;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.android.widget.TKEditText;
 import android.widget.Toast;
 import com.tigerknows.common.ActionLog;
-import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.TKWord;
@@ -202,15 +200,14 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
             mKeywordEdt.setText(null);
             mActionLog.addAction(mActionTag +  ActionLog.POIHomeInputQueryBtn, keyword);
 
-            DataQuery poiQuery = new DataQuery(mContext);
             POI requestPOI = mSphinx.getPOI();
             POI poi = mSphinx.getPOIHomeFragment().getPOI();
             if (poi != null) {
                 requestPOI = poi;
             }
-            Hashtable<String, String> criteria = mSphinx.getPOIHomeFragment().getCriteria();
-            criteria.put(DataQuery.SERVER_PARAMETER_KEYWORD, keyword);
-            poiQuery.setup(criteria, cityId, getId(), mSphinx.getPOIResultFragmentID(), null, false, false, requestPOI);
+            DataQuery poiQuery = mSphinx.getPOIHomeFragment().getDataQuery();
+            poiQuery.addParameter(DataQuery.SERVER_PARAMETER_KEYWORD, keyword);
+            poiQuery.setup(cityId, getId(), mSphinx.getPOIResultFragmentID(), null, false, false, requestPOI);
             mSphinx.queryStart(poiQuery);
             ((POIResultFragment)mSphinx.getFragment(poiQuery.getTargetViewId())).setup(keyword);
             mSphinx.showView(poiQuery.getTargetViewId());

@@ -72,14 +72,31 @@
             >
         </com.tigerknows.widget.ScaleView>
 
-        <ImageButton
-            android:id="@+id/location_btn"
+        <LinearLayout 
+            android:id="@+id/location_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/btn_location_location"
+            android:background="@drawable/btn_location_map"
             android:layout_alignParentRight="true"
             android:visibility="visible"
-            android:layout_above="@id/scale_view"/>
+            android:layout_above="@id/scale_view"
+            android:orientation="vertical"
+            android:gravity="center">
+            <ImageButton
+                android:id="@+id/location_btn"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_location_normal"
+                android:background="@color/transparent"
+                android:scaleType="center"
+                android:clickable="false"/>
+            <TextView 
+                android:id="@+id/location_txv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/location_text"
+                android:textSize="8sp"/>
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/previous_next_view"
@@ -111,7 +128,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:layout_above="@id/location_btn"
+            android:layout_above="@id/location_view"
             />
 
     </RelativeLayout>
@@ -134,18 +151,12 @@
         android:background="@color/transparent"
         android:visibility="gone" />
     <RelativeLayout 
-	    android:layout_width="fill_parent" 
-	    android:layout_height="fill_parent"
-	    android:id="@+id/hint_root_view"
-	    android:visibility="gone"
-	    android:background="@color/black_transparent_half">
-        
-	    <include android:id="@+id/imv_home_hint"
-		    android:layout_width="fill_parent"
-		    android:layout_height="fill_parent"
-		    layout="@layout/hint_poi_home_drag"
-        />
-	</RelativeLayout>
+        android:layout_width="fill_parent" 
+        android:layout_height="fill_parent"
+        android:id="@+id/hint_root_view"
+        android:visibility="gone"
+        android:background="@color/black_transparent_half">
+    </RelativeLayout>
 
     
 </RelativeLayout>

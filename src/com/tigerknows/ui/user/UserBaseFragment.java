@@ -3,7 +3,6 @@ package com.tigerknows.ui.user;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Hashtable;
 import java.util.List;
 
 import android.content.DialogInterface;
@@ -130,8 +129,8 @@ public abstract class UserBaseFragment extends BaseFragment {
 	/**
 	 * 提供公共参数支持
 	 */
-	protected void sendRequest(AccountManage accountManage, Hashtable<String, String> criteria) {
-		accountManage.setup(criteria, getCityParameter(), getId(), getId(), mContext.getString(R.string.query_loading_tip));
+	protected void sendRequest(AccountManage accountManage) {
+		accountManage.setup(getCityParameter(), getId(), getId(), mContext.getString(R.string.query_loading_tip));
 		mSphinx.queryStart(accountManage, false);
 	}
 

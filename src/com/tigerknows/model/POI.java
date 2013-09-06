@@ -82,7 +82,7 @@ public class POI extends BaseData {
                 Description.FIELD_SERVICE_QUALITY, Description.FIELD_RECOMMEND_SCENERY, Description.FIELD_POPEDOM_SCENERY,
                 Description.FIELD_NEARBY_INFO, Description.FIELD_COMPANY_WEB, Description.FIELD_COMPANY_TYPE,
                 Description.FIELD_COMPANY_SCOPE, Description.FIELD_INDUSTRY_INFO, Description.FIELD_FEATURE_SPECIALTY,
-                Description.FIELD_PRODUCT_ATTITUDE, Description.FIELD_SUBWAY_PRESET_TIMES, Description.FIELD_SUBWAY_EXITS);
+                Description.FIELD_PRODUCT_ATTITUDE);
                 
         public static String[] Name_List = null;
         
@@ -429,8 +429,6 @@ public class POI extends BaseData {
     private Position position = null;
 
     private String name;
-    
-    private String alise;
 
     private XMap description;
 
@@ -455,6 +453,8 @@ public class POI extends BaseData {
     private List<Dianying> dynamicDianyingList;
     
     private DataQuery commentQuery = null;
+    
+    private DataQuery hotCommentQuery = null;
     
     private DataQuery couponQuery = null;
     
@@ -509,7 +509,7 @@ public class POI extends BaseData {
     
     public void updateData(Context context, XMap data) {
         try {
-            BaseData baseData = checkStore(context, storeType, -1, false);
+            BaseData baseData = checkStore(context, storeType, -1, -1);
             init(data, false);
             if (baseData != null) {
                 try {
@@ -530,7 +530,7 @@ public class POI extends BaseData {
     }
     
     public void updateComment(Context context) {
-        BaseData baseData = checkStore(context, storeType, -1, false);
+        BaseData baseData = checkStore(context, storeType, -1, -1);
         if (baseData != null) {
             if (commentQuery != null) {
                 Response response = commentQuery.getResponse();
@@ -617,6 +617,14 @@ public class POI extends BaseData {
     
     public DataQuery getCommentQuery() {
         return this.commentQuery;
+    }
+    
+    public void setHotCommentQuery(DataQuery hotCommentQuery) {
+        this.hotCommentQuery = hotCommentQuery;
+    }
+    
+    public DataQuery getHotCommentQuery() {
+        return this.hotCommentQuery;
     }
     
     public void setCouponQuery(DataQuery couponQuery) {
@@ -974,6 +982,14 @@ public class POI extends BaseData {
         return body.toString();
     }
     
+    public boolean containsDescription(byte key) {
+        boolean result = false;
+        if (description != null) {
+            result = description.containsKey(key);
+        }
+        return result;
+    }
+    
     /**
      * 获取POI描述的某一字段名称
      * 
@@ -1284,9 +1300,14 @@ public class POI extends BaseData {
     @Override
     public int deleteHistory(Context context) {
         int count = 0;
-        BaseData baseData = checkStore(context, Tigerknows.STORE_TYPE_HISTORY, -1, false);
-        if (baseData != null) {
-            count = SqliteWrapper.delete(context, context.getContentResolver(), ContentUris.withAppendedId(Tigerknows.POI.CONTENT_URI, baseData.id), null, null);
+        if (storeType == Tigerknows.STORE_TYPE_HISTORY && id != -1) {
+            count = SqliteWrapper.delete(context, context.getContentResolver(), ContentUris.withAppendedId(Tigerknows.POI.CONTENT_URI, id), null, null);
+            id = -1;
+        } else {
+            BaseData baseData = checkStore(context, Tigerknows.STORE_TYPE_HISTORY, -1, -1);
+            if (baseData != null) {
+                count = SqliteWrapper.delete(context, context.getContentResolver(), ContentUris.withAppendedId(Tigerknows.POI.CONTENT_URI, baseData.id), null, null);
+            }
         }
         return count;
     }
@@ -1294,26 +1315,40 @@ public class POI extends BaseData {
     @Override
     public int deleteFavorite(Context context) {
         int count = 0;
-        BaseData baseData = checkStore(context, Tigerknows.STORE_TYPE_FAVORITE, -1, false);
-        if (baseData != null) {
-            count = SqliteWrapper.delete(context, context.getContentResolver(), ContentUris.withAppendedId(Tigerknows.POI.CONTENT_URI, baseData.id), null, null);
+        if (storeType == Tigerknows.STORE_TYPE_FAVORITE && id != -1) {
+            count = SqliteWrapper.delete(context, context.getContentResolver(), ContentUris.withAppendedId(Tigerknows.POI.CONTENT_URI, id), null, null);
+            id = -1;
+        } else {
+            BaseData baseData = checkStore(context, Tigerknows.STORE_TYPE_FAVORITE, -1, -1);
+            if (baseData != null) {
+                if (storeType == Tigerknows.STORE_TYPE_FAVORITE) {
+                    alise = null;
+                }
+                count = SqliteWrapper.delete(context, context.getContentResolver(), ContentUris.withAppendedId(Tigerknows.POI.CONTENT_URI, baseData.id), null, null);
+            }
         }
         return count;
     }
 
-    @Override
     public boolean checkHistory(Context context) {
-        return checkStore(context, Tigerknows.STORE_TYPE_HISTORY, -1, false) != null;
+        if (storeType == Tigerknows.STORE_TYPE_HISTORY && id != -1) {
+            return true;
+        } else {
+            return checkStore(context, Tigerknows.STORE_TYPE_HISTORY, -1, -1) != null;
+        }
     }
 
-    @Override
     public boolean checkFavorite(Context context) {
-        return checkStore(context, Tigerknows.STORE_TYPE_FAVORITE, -1, false) != null;
+        if (storeType == Tigerknows.STORE_TYPE_FAVORITE && id != -1) {
+            return true;
+        } else {
+            return checkStore(context, Tigerknows.STORE_TYPE_FAVORITE, -1, -1) != null;
+        }
     }
     
     public int updateHistory(Context context) {
         int count = 0;
-        BaseData baseData = checkStore(context, Tigerknows.STORE_TYPE_HISTORY, -1, false);
+        BaseData baseData = checkStore(context, Tigerknows.STORE_TYPE_HISTORY, -1, -1);
         if (baseData != null) {
             ContentValues values = new ContentValues();
             this.dateTime = System.currentTimeMillis();
@@ -1331,9 +1366,9 @@ public class POI extends BaseData {
         return count;
     }
     
-    public int update(Context context, int storyType) {
+    public int update(Context context, int storeType) {
         int count = -1;
-        BaseData baseData = checkStore(context, storyType, -1, false);
+        BaseData baseData = checkStore(context, storeType, -1, -1);
         if (baseData != null) {
             ContentValues values = new ContentValues();
             boolean availably = initContetValues((POI) baseData, values, storeType);
@@ -1341,7 +1376,7 @@ public class POI extends BaseData {
                 count = SqliteWrapper.update(context, context.getContentResolver(), ContentUris.withAppendedId(Tigerknows.POI.CONTENT_URI, baseData.id), values, null, null);
             }
         } else {
-            writeToDatabases(context, -1, storyType);
+            writeToDatabases(context, -1, storeType);
         }
         return count;
     }
@@ -1354,10 +1389,10 @@ public class POI extends BaseData {
         return count;
     }
 
-    public BaseData checkStore(Context context, int store_Type, long parentId, boolean onlyCheckId) {
+    public BaseData checkStore(Context context, int store_Type, long parentId, long id) {
         BaseData baseData = null;
         StringBuilder s = new StringBuilder();
-        if (id > 0 && onlyCheckId) {
+        if (id > -1) {
             s.append("(");
             s.append(com.tigerknows.provider.Tigerknows.POI._ID);
             s.append("=");

@@ -44,14 +44,9 @@ public final class Bootstrap extends BaseQuery {
     }
 
     @Override
-    protected void makeRequestParameters() throws APIException {
-        super.makeRequestParameters();
-        addCommonParameters(requestParameters);
-        // TODO 这个参数必须要，那怕是空？！
-        requestParameters.add("fe", "");
-        addParameter(SERVER_PARAMETER_FIRST_LOGIN, false);
+    protected void checkRequestParameters() throws APIException {
     }
-
+    
     @Override
     protected void translateResponse(byte[] data) throws APIException {
         super.translateResponse(data);
@@ -71,6 +66,11 @@ public final class Bootstrap extends BaseQuery {
         String uploadLog = bootstrapModel.getUploadLog();
         if (!TextUtils.isEmpty(uploadLog)) {
             TKConfig.setUserActionTrack(context, uploadLog);
+        }
+        
+        String goAlipay = bootstrapModel.getGoAlipay();
+        if (!TextUtils.isEmpty(goAlipay)) {
+        	TKConfig.setPref(context, TKConfig.PREFS_CLIENT_GO_ALIPAY, goAlipay);
         }
     }
 }

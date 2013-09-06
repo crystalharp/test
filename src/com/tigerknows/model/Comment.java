@@ -10,11 +10,19 @@ package com.tigerknows.model;
 
 import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
+import com.tigerknows.android.app.TKApplication;
 import com.tigerknows.model.xobject.XMap;
+import com.tigerknows.util.Utility;
 
 import android.content.Context;
 import android.text.TextUtils;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Comparator;
 import java.util.Hashtable;
 
@@ -85,8 +93,11 @@ public class Comment extends BaseData {
 
     // 0x1f    x_string    source  点评来源    是，详细定义见点评数据表中source字段 
     public static final byte FIELD_SOURCE = 0x1f;
+    
+    // 0x20    x_int   likes   被赞次数    否，插入时不准提交，由数据库自动默认为0 
+    public static final byte FIELD_LIKES = 0x20;
 
-    protected static final String NEED_FIELD = "0001020304060708090a0b0c0d0e0f1011121314151f";
+    protected static final String NEED_FIELD = "0001020304060708090a0b0c0d0e0f1011121314151f20";
 
     private String uid; // 0x00    x_string    uid 点评uid   否
     private String content; // 0x01    x_string    content 点评内容    是
@@ -110,9 +121,20 @@ public class Comment extends BaseData {
     private String url; // 0x14 x_string url 新版客户端需要的点评url 否
     private String clientUid; // 0x15 x_string client_uid 发表点评的客户端软件的uid  否 
     private String source; // 0x1f    x_string    source  点评来源   是，详细定义见点评数据表中source字段 
+    private long likes = 0;
     
     private POI poi;
+    private boolean isCommend = false;
     
+    public boolean isCommend() {
+        return isCommend;
+    }
+
+    public void setCommend(boolean isCommend) {
+        this.isCommend = isCommend;
+        likes += 1;
+    }
+
     public Comment() {
     }
 
@@ -145,9 +167,17 @@ public class Comment extends BaseData {
         this.url = getStringFromData(FIELD_URL, reset ? null : this.url);
         this.clientUid = getStringFromData(FIELD_CLIENT_UID, reset ? null : this.clientUid);
         this.source = getStringFromData(FIELD_SOURCE, reset ? null : this.source);
+        this.likes = getLongFromData(FIELD_LIKES, reset ? 0 : this.likes);
         
         if (reset == false) {
             this.data = null;
+        }
+        
+        boolean draft = findCommend(TKApplication.getInstance(), this.uid, false);
+        if (draft) {
+            setCommend(draft);
+        } else {
+            isCommend = findCommend(TKApplication.getInstance(), this.uid, true);
         }
     }
     
@@ -219,6 +249,9 @@ public class Comment extends BaseData {
             }
             if (!TextUtils.isEmpty(this.source)) {
                 data.put(FIELD_SOURCE, this.source);
+            }
+            if (this.likes != 0) {
+                data.put(FIELD_LIKES, this.likes);
             }
             this.data = data;
         }
@@ -320,7 +353,11 @@ public class Comment extends BaseData {
 
     public void setRecommend(String recommend) {
         this.recommend = recommend;
-        getData().put(FIELD_RECOMMEND, this.recommend);
+        if (TextUtils.isEmpty(recommend)) {
+            getData().remove(FIELD_RECOMMEND);
+        } else {
+            getData().put(FIELD_RECOMMEND, this.recommend);
+        }
     }
 
     public long getLevel() {
@@ -330,6 +367,11 @@ public class Comment extends BaseData {
     public void setLevel(long level) {
         this.level = level;
         getData().put(FIELD_LEVEL, this.level);
+    }
+
+    public void setLikes(long likes) {
+        this.likes = likes;
+        getData().put(FIELD_LIKES, this.likes);
     }
 
     public long getEffect() {
@@ -351,7 +393,11 @@ public class Comment extends BaseData {
 
     public void setRestair(String restair) {
         this.restair = restair;
-        getData().put(FIELD_RESTAIR, this.restair);
+        if (TextUtils.isEmpty(restair)) {
+            getData().remove(FIELD_RESTAIR);
+        } else {
+            getData().put(FIELD_RESTAIR, this.restair);
+        }
     }
 
     public long getPOIStatus() {
@@ -386,6 +432,10 @@ public class Comment extends BaseData {
     public void setClientUid(String clientUid) {
         this.clientUid = clientUid;
         getData().put(FIELD_CLIENT_UID, this.clientUid);
+    }
+    
+    public long getLikes() {
+        return likes;
     }
 
     public POI getPOI() {
@@ -503,12 +553,11 @@ public class Comment extends BaseData {
     
     public static DataQuery createPOICommentQuery(Context context, POI poi, int sourceViewId, int targerViewId) {
 
-        Hashtable<String, String> criteria = new Hashtable<String, String>();
-        criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_DIANPING);
-        criteria.put(DataQuery.SERVER_PARAMETER_POI_ID, poi.getUUID());
-        criteria.put(DataQuery.SERVER_PARAMETER_REFER, DataQuery.REFER_POI);
         DataQuery commentQuery = new DataQuery(context);
-        commentQuery.setup(criteria, Globals.getCurrentCityInfo().getId(), sourceViewId, targerViewId, null, false, false, poi);
+        commentQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_DIANPING);
+        commentQuery.addParameter(DataQuery.SERVER_PARAMETER_POI_ID, poi.getUUID());
+        commentQuery.addParameter(DataQuery.SERVER_PARAMETER_REFER, DataQuery.REFER_POI);
+        commentQuery.setup(Globals.getCurrentCityInfo().getId(), sourceViewId, targerViewId, null, false, false, poi);
         return commentQuery;
     }
     
@@ -519,4 +568,104 @@ public class Comment extends BaseData {
             return new Comment(data);
         }
     };
+    
+    private static File getFile(Context context, boolean sent) {
+        File file = new File(context.getFilesDir().getAbsolutePath() + "/commend"+(sent ? "sent" : "draft"));
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+        return file;
+    }
+    
+    public static void addCommend(Context context, String uuid, boolean sent) {
+        File file = getFile(context, sent);
+        Utility.writeFile(file.getAbsolutePath(), (uuid + "\n").getBytes(), false);
+    }
+    
+    public static boolean findCommend(Context context, String uuid, boolean sent) {
+        boolean result = false;
+        if (uuid == null) {
+            return result;
+        }
+        File file = getFile(context, sent);
+        try {
+            BufferedReader br=new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+            String line = null;
+            while((line = br.readLine()) != null) {
+                if (uuid.equals(line.trim())) {
+                    result = true;
+                    break;
+                }
+            }
+            br.close();
+        } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
+        return result;
+    }
+    
+    public static boolean deleteCommend(Context context, String uuids[], boolean sent) {
+        boolean result = false;
+        File file = getFile(context, sent);
+        Utility.removeLineFromFile(file.getAbsolutePath(), uuids);
+        
+        return result;
+    }
+    
+    public static final String JsonHeader = "json{\"up\":[";
+
+    public static String uuid2Json(Context context, String uuid) {
+        StringBuilder json = new StringBuilder();
+        json.append(JsonHeader);
+        json.append('"');
+        json.append(uuid);
+        json.append('"');
+        json.append("]}");
+        return json.toString();
+    }
+
+    public static String draft2Json(Context context) {
+        StringBuilder json = new StringBuilder();
+        json.append(JsonHeader);
+        File file = getFile(context, false);
+
+        int i = 0;
+        try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+            String line = null;
+            while((line = br.readLine()) != null) {
+                line = line.trim();
+                if (TextUtils.isEmpty(line) == false) {
+                    if (i > 0) {
+                        json.append(',');
+                    }
+                    json.append('"');
+                    json.append(line);
+                    json.append('"');
+                    i++;
+                }
+            }
+            json.append("]}");
+            br.close();
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
+        if (i == 0) {
+            return null;
+        } else {
+            return json.toString();
+        }
+    }
 }

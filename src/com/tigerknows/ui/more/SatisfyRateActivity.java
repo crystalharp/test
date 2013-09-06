@@ -6,7 +6,6 @@ package com.tigerknows.ui.more;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Hashtable;
 import java.util.List;
 
 import android.content.Context;
@@ -24,7 +23,6 @@ import android.widget.TextView;
 
 import com.decarta.Globals;
 import com.tigerknows.R;
-import com.tigerknows.TKConfig;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BaseQuery;
@@ -54,8 +52,6 @@ public class SatisfyRateActivity extends BaseActivity implements View.OnClickLis
 	    R.id.rate_6_txv,
 	    R.id.rate_7_txv
 	};
-	private Context mContext;
-
 	private RatingBar[] mSatisfyRbt;
 	private TextView[] mRateTxv;
 	private List<String> mRateList;
@@ -65,8 +61,6 @@ public class SatisfyRateActivity extends BaseActivity implements View.OnClickLis
 	protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mActionTag = ActionLog.SatisfyRate;
-        mContext = getBaseContext();
-        TKConfig.setPref(mContext, TKConfig.PREFS_SATISFY_RATE_OPENED, "yes");
         setContentView(R.layout.more_satisfy_rate);
     	mSatisfyRbt = new RatingBar[NUM_OF_RATINGBAR];
     	mRateTxv = new TextView[NUM_OF_RATINGBAR];
@@ -186,10 +180,9 @@ public class SatisfyRateActivity extends BaseActivity implements View.OnClickLis
     		s.append('_');
     		s.append(Math.round(mSatisfyRbt[i].getRating())+"");
     	}
-        Hashtable<String, String> criteria = new Hashtable<String, String>();
-        criteria.put(FeedbackUpload.SERVER_PARAMETER_SATISFY_RATE, s.toString());
         FeedbackUpload feedbackUpload = new FeedbackUpload(mThis);
-        feedbackUpload.setup(criteria, Globals.getCurrentCityInfo().getId(), -1, -1, mThis.getString(R.string.doing_and_wait));
+        feedbackUpload.addParameter(FeedbackUpload.SERVER_PARAMETER_SATISFY_RATE, s.toString());
+        feedbackUpload.setup(Globals.getCurrentCityInfo().getId(), -1, -1, mThis.getString(R.string.doing_and_wait));
         queryStart(feedbackUpload);
     }
     @Override

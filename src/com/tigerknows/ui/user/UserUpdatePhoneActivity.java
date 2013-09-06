@@ -1,7 +1,5 @@
 package com.tigerknows.ui.user;
 
-import java.util.Hashtable;
-
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
@@ -130,11 +128,10 @@ public class UserUpdatePhoneActivity extends UserBaseActivity {
 
 		String phone = phoneEdt.getText().toString().trim();
 		
-		Hashtable<String, String> criteria = new Hashtable<String, String>();
-		criteria.put(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, AccountManage.OPERATION_CODE_BIND_TELEPHONE);
-		criteria.put(BaseQuery.SERVER_PARAMETER_TELEPHONE, phone);
+		accountManage.addParameter(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, AccountManage.OPERATION_CODE_BIND_TELEPHONE);
+		accountManage.addParameter(BaseQuery.SERVER_PARAMETER_TELEPHONE, phone);
 		
-		sendRequest(accountManage, criteria);
+		sendRequest(accountManage);
 	}
 	
 	/**
@@ -151,14 +148,13 @@ public class UserUpdatePhoneActivity extends UserBaseActivity {
 			String valiNum = valiNumEdt.getText().toString().trim();
 			String password = passwordEdt.getText().toString().trim();
 			
-			Hashtable<String, String> criteria = new Hashtable<String, String>();
-			criteria.put(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, AccountManage.OPERATION_CODE_UPDATE_TELEPHONE);
-			criteria.put(BaseQuery.SERVER_PARAMETER_TELEPHONE, phone);
-			criteria.put(AccountManage.SERVER_PARAMETER_VALIDATE_CODE, valiNum);
-			criteria.put(AccountManage.SERVER_PARAMETER_PASSWORD, Utility.encryptWithSHA1(password));
-			criteria.put(BaseQuery.SERVER_PARAMETER_SESSION_ID, Globals.g_Session_Id);
+			accountManage.addParameter(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, AccountManage.OPERATION_CODE_UPDATE_TELEPHONE);
+			accountManage.addParameter(BaseQuery.SERVER_PARAMETER_TELEPHONE, phone);
+			accountManage.addParameter(AccountManage.SERVER_PARAMETER_VALIDATE_CODE, valiNum);
+			accountManage.addParameter(AccountManage.SERVER_PARAMETER_PASSWORD, Utility.encryptWithSHA1(password));
+			accountManage.addParameter(BaseQuery.SERVER_PARAMETER_SESSION_ID, Globals.g_Session_Id);
 			
-			sendRequest(accountManage, criteria);
+			sendRequest(accountManage);
 		} 
 		
 	}
@@ -192,7 +188,7 @@ public class UserUpdatePhoneActivity extends UserBaseActivity {
 	@Override
 	protected void responseCodeAction(AccountManage accountManage) {
 		
-		String operationCode = accountManage.getCriteria().get(BaseQuery.SERVER_PARAMETER_OPERATION_CODE);
+		String operationCode = accountManage.getParameter(BaseQuery.SERVER_PARAMETER_OPERATION_CODE);
 		if (AccountManage.OPERATION_CODE_BIND_TELEPHONE.equals(operationCode)){
 			// 200, 400, 503
 			switch(accountManage.getResponse().getResponseCode()){
@@ -214,7 +210,7 @@ public class UserUpdatePhoneActivity extends UserBaseActivity {
 				showToast(R.string.update_phone_success);
 				Globals.clearSessionAndUser(this);
 				TKConfig.setPref(UserUpdatePhoneActivity.this, TKConfig.PREFS_PHONENUM, "");
-				startActivityForResult(new Intent(UserUpdatePhoneActivity.this, UserLoginActivity.class), 0);
+				startActivityForResult(new Intent(UserUpdatePhoneActivity.this, UserLoginRegistActivity.class), 0);
 				break;
 			case Response.RESPONSE_CODE_MOBILE_PHONE_EXIST:
 				dealWith400();

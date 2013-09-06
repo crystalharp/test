@@ -5,7 +5,9 @@
     android:layout_height="fill_parent"
     android:background="@color/gray_dark"
     >
-    
+    <include layout="@layout/poi_nearby_search_bar"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"/>
     <include layout="@layout/poi_search_bar"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"

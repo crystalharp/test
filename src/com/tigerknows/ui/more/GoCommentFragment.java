@@ -261,30 +261,28 @@ public class GoCommentFragment extends BaseFragment implements View.OnClickListe
                 DataQuery poiQuery = new DataQuery(mContext);
                 POI requestPOI = mSphinx.getPOI();
                 int cityId = Globals.getCurrentCityInfo().getId();
-                Hashtable<String, String> criteria = new Hashtable<String, String>();
-                criteria.put(DataQuery.SERVER_PARAMETER_INDEX, "0");
-                criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_POI);
-                criteria.put(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_POI);
-                criteria.put(DataQuery.SERVER_PARAMETER_BIAS, DataQuery.BIAS_MY_COMMENT);
+                poiQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
+                poiQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_POI);
+                poiQuery.addParameter(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_POI);
+                poiQuery.addParameter(DataQuery.SERVER_PARAMETER_BIAS, DataQuery.BIAS_MY_COMMENT);
                 Position position = requestPOI.getPosition();
                 if (position != null) {
-                    criteria.put(DataQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
-                    criteria.put(DataQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
+                    poiQuery.addParameter(DataQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
+                    poiQuery.addParameter(DataQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
                 }
-                poiQuery.setup(criteria, cityId, getId(), getId(), null, false, false, requestPOI);
+                poiQuery.setup(cityId, getId(), getId(), null, false, false, requestPOI);
                 mSphinx.queryStart(poiQuery); 
             } else {
                 POIList poiList = ((POIResponse)dataQuery.getResponse()).getBPOIList(); 
-                Hashtable<String, String> criteria = dataQuery.getCriteria();
                 long total = poiList.getTotal();
-                int index = Integer.parseInt(criteria.get(BaseQuery.SERVER_PARAMETER_INDEX));
+                int index = Integer.parseInt(dataQuery.getParameter(BaseQuery.SERVER_PARAMETER_INDEX));
                 if (index + poiList.getList().size() < total) {
-                    DataQuery poiQuery = new DataQuery(mContext);
+                    DataQuery poiQuery = new DataQuery(dataQuery);
                     POI requestPOI = dataQuery.getPOI();
                     int cityId = dataQuery.getCityId();
-                    criteria.put(DataQuery.SERVER_PARAMETER_INDEX, String.valueOf(poiList.getList().size()));
-                    BaseQuery.passLocationToCriteria(dataQuery.getCriteria(), criteria);
-                    poiQuery.setup(criteria, cityId, getId(), getId(), null, true, true, requestPOI);
+                    poiQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, String.valueOf(poiList.getList().size()));
+                    poiQuery.copyLocationParameter(dataQuery);
+                    poiQuery.setup(cityId, getId(), getId(), null, true, false, requestPOI);
                     mSphinx.queryStart(poiQuery); 
                 }
             }       
@@ -293,20 +291,19 @@ public class GoCommentFragment extends BaseFragment implements View.OnClickListe
     }
     
     private void queryPOIByOnline() {
-        Hashtable<String, String> criteria = new Hashtable<String, String>();
-        criteria.put(DataQuery.SERVER_PARAMETER_INDEX, "0");
-        criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_POI);
-        criteria.put(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_POI);
-        criteria.put(DataQuery.SERVER_PARAMETER_BIAS, DataQuery.BIAS_MY_COMMENT);
+        DataQuery poiQuery = new DataQuery(mContext);
+        poiQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
+        poiQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_POI);
+        poiQuery.addParameter(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_POI);
+        poiQuery.addParameter(DataQuery.SERVER_PARAMETER_BIAS, DataQuery.BIAS_MY_COMMENT);
         POI requestPOI = mSphinx.getPOI();
         Position position = requestPOI.getPosition();
         if (position != null) {
-            criteria.put(DataQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
-            criteria.put(DataQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
+            poiQuery.addParameter(DataQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
+            poiQuery.addParameter(DataQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
         }
         int cityId = Globals.getCurrentCityInfo().getId();
-        DataQuery poiQuery = new DataQuery(mContext);
-        poiQuery.setup(criteria, cityId, getId(), getId(), null, false, false, requestPOI);
+        poiQuery.setup(cityId, getId(), getId(), null, false, false, requestPOI);
         mSphinx.queryStart(poiQuery); 
     }
     
@@ -379,14 +376,13 @@ public class GoCommentFragment extends BaseFragment implements View.OnClickListe
             }
         }
         if (idList.length() > 0) {
-            Hashtable<String, String> criteria = new Hashtable<String, String>();
-            criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_POI);
-            criteria.put(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_POI);
-            criteria.put(DataQuery.SERVER_PARAMETER_INDEX, "0");
-            int cityId = Globals.getCurrentCityInfo().getId();
             DataQuery poiQuery = new DataQuery(mContext);
-            criteria.put(DataQuery.SERVER_PARAMETER_ID_LIST, idList.toString());
-            poiQuery.setup(criteria, cityId, GoCommentFragment.this.getId(), GoCommentFragment.this.getId(), null, false, false, null);
+            poiQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_POI);
+            poiQuery.addParameter(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_POI);
+            poiQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
+            int cityId = Globals.getCurrentCityInfo().getId();
+            poiQuery.addParameter(DataQuery.SERVER_PARAMETER_ID_LIST, idList.toString());
+            poiQuery.setup(cityId, GoCommentFragment.this.getId(), GoCommentFragment.this.getId(), null, false, false, null);
             poiQuery.query();
             Response response = poiQuery.getResponse();
             if (response == null || response.getResponseCode() != Response.RESPONSE_CODE_OK) {
@@ -419,8 +415,8 @@ public class GoCommentFragment extends BaseFragment implements View.OnClickListe
         DataQuery dataQuery = ((DataQuery)tkAsyncTask.getBaseQuery());
 
         boolean exit = true;
-        if (dataQuery.getCriteria().containsKey(BaseQuery.SERVER_PARAMETER_INDEX)) {
-            int index = Integer.parseInt(dataQuery.getCriteria().get(BaseQuery.SERVER_PARAMETER_INDEX));
+        if (dataQuery.hasParameter(BaseQuery.SERVER_PARAMETER_INDEX)) {
+            int index = Integer.parseInt(dataQuery.getParameter(BaseQuery.SERVER_PARAMETER_INDEX));
             if (index > 0) {
                 mPOILsv.onRefreshComplete(false);
                 mPOILsv.setFooterSpringback(true);
@@ -430,7 +426,10 @@ public class GoCommentFragment extends BaseFragment implements View.OnClickListe
         if (BaseActivity.checkReLogin(dataQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), getId(), getId(), getId(), mCancelLoginListener)) {
             isReLogin = true;
             return;
-        } else if (BaseActivity.checkResponseCode(dataQuery, mSphinx, null, true, this, exit)) {
+        } else if (BaseActivity.checkResponseCode(dataQuery, mSphinx, null, mPOIList.isEmpty(), this, exit)) {
+            if (dataQuery.isTurnPage() && dataQuery.getResponse() == null) {
+                mPOILsv.setFooterLoadFailed(true);
+            }
             return;
         }
         mPOILsv.onRefreshComplete(false);

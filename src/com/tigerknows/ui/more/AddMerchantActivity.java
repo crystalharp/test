@@ -1,7 +1,6 @@
 package com.tigerknows.ui.more;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -219,7 +218,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
             }
             
             // 每个分类下面添加其他
-            String otherText = getString(R.string.poi_ohter_error);
+            String otherText = getString(R.string.other);
             
             categoryFitler = DataQuery.makeFilterResponse(mThis, indexList, filterCategory.getVersion(), filterOptionList, FilterCategoryOrder.FIELD_LIST_CATEGORY, false);
             Filter other = categoryFitler.getChidrenFilterList().remove(0);
@@ -730,21 +729,19 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
         
         hideSoftInput(false);
         List<BaseQuery> list = new ArrayList<BaseQuery>();
-        Hashtable<String, String> criteria = new Hashtable<String, String>();
-        criteria.put(FeedbackUpload.SERVER_PARAMETER_ADD_MERCHANT, s.toString());
         FeedbackUpload feedbackUpload = new FeedbackUpload(mThis);
-        feedbackUpload.setup(criteria, Globals.getCurrentCityInfo().getId(), -1, -1, mThis.getString(R.string.doing_and_wait));
+        feedbackUpload.addParameter(FeedbackUpload.SERVER_PARAMETER_ADD_MERCHANT, s.toString());
+        feedbackUpload.setup(Globals.getCurrentCityInfo().getId(), -1, -1, mThis.getString(R.string.doing_and_wait));
         list.add(feedbackUpload);
         
         if (mUploadUri != null && mPhotoMD5 != null) {
             String filePath = Utility.imageUri2FilePath(mThis, mUploadUri);
             FileUpload fileUpload = new FileUpload(mThis);
-            criteria = new Hashtable<String, String>();
-            criteria.put(FileUpload.SERVER_PARAMETER_FILE_TYPE, FileUpload.FILE_TYPE_IMAGE);
-            criteria.put(FileUpload.SERVER_PARAMETER_CHECKSUM, mPhotoMD5);
-            criteria.put(FileUpload.SERVER_PARAMETER_FILENAME, mPhotoMD5+filePath.substring(filePath.lastIndexOf(".")));
-            criteria.put(FileUpload.SERVER_PARAMETER_UPFILE, filePath);
-            fileUpload.setup(criteria, Globals.getCurrentCityInfo().getId(), -1, -1, mThis.getString(R.string.doing_and_wait));
+            fileUpload.addParameter(FileUpload.SERVER_PARAMETER_FILE_TYPE, FileUpload.FILE_TYPE_IMAGE);
+            fileUpload.addParameter(FileUpload.SERVER_PARAMETER_CHECKSUM, mPhotoMD5);
+            fileUpload.addParameter(FileUpload.SERVER_PARAMETER_FILENAME, mPhotoMD5+filePath.substring(filePath.lastIndexOf(".")));
+            fileUpload.addParameter(FileUpload.SERVER_PARAMETER_UPFILE, filePath);
+            fileUpload.setup(Globals.getCurrentCityInfo().getId(), -1, -1, mThis.getString(R.string.doing_and_wait));
             list.add(fileUpload);
         }
         queryStart(list);

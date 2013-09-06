@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.decarta.Globals;
@@ -36,7 +37,6 @@ import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.widget.QueryingView;
 import com.tigerknows.widget.RetryView;
-import com.tigerknows.widget.SpringbackListView;
 
 /**
  * @author Peng Wenyue
@@ -57,7 +57,7 @@ public class CouponListFragment extends BaseFragment implements RetryView.CallBa
     
     private int mState = STATE_QUERYING;
     
-    private SpringbackListView mResultLsv = null;
+    private ListView mResultLsv = null;
 
     private QueryingView mQueryingView = null;
     
@@ -115,11 +115,7 @@ public class CouponListFragment extends BaseFragment implements RetryView.CallBa
     }
 
     protected void findViews() {
-        mResultLsv = (SpringbackListView)mRootView.findViewById(R.id.result_lsv);
-        View v = mLayoutInflater.inflate(R.layout.loading, null);
-//        mCommentLsv.addHeaderView(v);
-//        v = mLayoutInflater.inflate(R.layout.loading, null);
-        mResultLsv.addFooterView(v);
+        mResultLsv = (ListView)mRootView.findViewById(R.id.result_lsv);
         mQueryingView = (QueryingView)mRootView.findViewById(R.id.querying_view);
         mEmptyView = mRootView.findViewById(R.id.empty_view);
         mEmptyTxv = (TextView) mEmptyView.findViewById(R.id.empty_txv);
@@ -150,9 +146,6 @@ public class CouponListFragment extends BaseFragment implements RetryView.CallBa
         mTitleBtn.setText(R.string.coupon_list);
         mRightBtn.setVisibility(View.INVISIBLE);
         
-        mResultLsv.setFooterSpringback(false);
-        mResultLsv.changeHeaderViewByState(false, SpringbackListView.DONE);
-        
         if (isReLogin()) {
             return;
         }
@@ -172,11 +165,10 @@ public class CouponListFragment extends BaseFragment implements RetryView.CallBa
             updateView();
             
             dataQuery = new DataQuery(mSphinx);
-            Hashtable<String, String> criteria = new Hashtable<String, String>();
-            criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_COUPON);
-            criteria.put(DataQuery.SERVER_PARAMETER_POI_ID, mPOI.getUUID());
-            criteria.put(DataQuery.SERVER_PARAMETER_NEED_FIELD, Coupon.NEED_FIELD);
-            dataQuery.setup(criteria, Globals.getCurrentCityInfo().getId(), getId(), getId(), null);
+            dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_COUPON);
+            dataQuery.addParameter(DataQuery.SERVER_PARAMETER_POI_ID, mPOI.getUUID());
+            dataQuery.addParameter(DataQuery.SERVER_PARAMETER_NEED_FIELD, Coupon.NEED_FIELD);
+            dataQuery.setup(Globals.getCurrentCityInfo().getId(), getId(), getId(), null);
             mSphinx.queryStart(dataQuery);
         }
     }
@@ -216,7 +208,7 @@ public class CouponListFragment extends BaseFragment implements RetryView.CallBa
                 }
                 
             } else {
-                pictureImv.setBackgroundResource(R.drawable.bg_picture_hotel_none);
+                pictureImv.setBackgroundResource(R.drawable.bg_picture_none);
             }
                 
             return view;

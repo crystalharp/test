@@ -32,19 +32,24 @@ public class Globals {
     public static final int LOCATION_STATE_NONE = 0;
     
     /**
-     * 打开软件来第一次定位成功
+     * 打开软件之后第一次定位成功
      */
     public static final int LOCATION_STATE_FIRST_SUCCESS = 1;
     
     /**
+     * 打开软件之后一直定位失败，没有成功过
+     */
+    public static final int LOCATION_STATE_AT_YET_FAILED = 2;
+    
+    /**
      * 定位失败
      */
-    public static final int LOCATION_STATE_FAILED = 2;
+    public static final int LOCATION_STATE_FAILED = 3;
     
     /**
      * 定位成功后，已经显示出切换城市对话框
      */
-    public static final int LOCATION_STATE_SHOW_CHANGE_CITY_DIALOG = 3;
+    public static final int LOCATION_STATE_SHOW_CHANGE_CITY_DIALOG = 4;
     
     /**
      * 屏幕相关参数
@@ -128,6 +133,7 @@ public class Globals {
     public static String g_Session_Id = null;
     // 用户登录后的用户信息
     public static User g_User = null;
+    
     private static Object userLock = new Object();
     
     public static int g_ApiVersion = android.os.Build.VERSION.SDK_INT;
@@ -147,6 +153,7 @@ public class Globals {
         pic.put(TKConfig.PICTURE_COUPON_LOGO, new XYInteger(175, 37));
         pic.put(TKConfig.PICTURE_COUPON_HINT, new XYInteger(147, 147));
         pic.put(TKConfig.PICTURE_COUPON_QRIMG, new XYInteger(383, 383));
+        pic.put(TKConfig.PICTURE_MORE_NOTICE, new XYInteger(688, 80));
     	sScreenAdaptPic.put(new XYInteger(800, 1280), pic);
 
         sOptimalAdaptive.put(TKConfig.PICTURE_DISCOVER_HOME, new XYInteger(322, 286));
@@ -162,6 +169,7 @@ public class Globals {
         sOptimalAdaptive.put(TKConfig.PICTURE_COUPON_LOGO, new XYInteger(105, 22));
         sOptimalAdaptive.put(TKConfig.PICTURE_COUPON_HINT, new XYInteger(88, 88));
         sOptimalAdaptive.put(TKConfig.PICTURE_COUPON_QRIMG, new XYInteger(230, 230));
+        sOptimalAdaptive.put(TKConfig.PICTURE_MORE_NOTICE, new XYInteger(412, 48));
         sScreenAdaptPic.put(new XYInteger(480, 800), sOptimalAdaptive);
         
         pic = new HashMap<Integer, XYInteger>();
@@ -178,6 +186,7 @@ public class Globals {
         pic.put(TKConfig.PICTURE_COUPON_LOGO, new XYInteger(70, 15));
         pic.put(TKConfig.PICTURE_COUPON_HINT, new XYInteger(59, 59));
         pic.put(TKConfig.PICTURE_COUPON_QRIMG, new XYInteger(153, 153));
+        pic.put(TKConfig.PICTURE_MORE_NOTICE, new XYInteger(276, 32));
         sScreenAdaptPic.put(new XYInteger(320, 480), pic);
     }
     

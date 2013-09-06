@@ -5,7 +5,7 @@
     android:layout_height="fill_parent"
     android:paddingLeft="0dp"
     android:paddingRight="0dp"
-    android:background="@drawable/bg_discover"
+    android:background="@color/normal_background"
     >
     
     <com.tigerknows.ui.hotel.NavigationWidget
@@ -128,7 +128,7 @@
                     android:layout_height="wrap_content"
                     android:background="@color/transparent"
                     android:padding="8dp"
-                    android:drawableRight="@drawable/ic_view_all_comment"
+                    android:drawableRight="@drawable/icon_arrow_right"
                     android:drawablePadding="8dp"
                     android:textColor="@color/orange"
                     android:textSize="16sp"
@@ -168,11 +168,12 @@
                     android:layout_height="wrap_content"
                     android:background="@color/transparent"
                     android:padding="8dp"
-                    android:drawableRight="@drawable/ic_view_all_comment"
+                    android:drawableRight="@drawable/icon_arrow_right"
                     android:drawablePadding="8dp"
                     android:textColor="@color/orange"
                     android:textSize="16sp"
                     android:text="@string/app_name"
+                    android:singleLine="true"
                     android:gravity="right|center_vertical"
                     />
             </LinearLayout>
@@ -202,7 +203,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:padding="8dp"
+                        android:paddingLeft="8dp"
                         android:textColor="@color/black_dark"
                         android:textSize="16sp"
                         android:text="@string/hotel_room_person_name"
@@ -241,11 +242,14 @@
                 android:background="@drawable/list_footer"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
+                android:layout_marginBottom="4dp"
                 >
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="8dp"
+                    android:paddingLeft="8dp"
+                    android:paddingBottom="8dp"
+                    android:paddingTop="8dp"
                     android:textColor="@color/black_dark"
                     android:textSize="16sp"
                     android:text="@string/hotel_room_mobile_nubmer"
@@ -265,6 +269,17 @@
                     android:inputType="phone"
                     />
             </LinearLayout>
+            <TextView android:id="@+id/danbao_hint_txv"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:singleLine="false"
+                android:textSize="14sp"
+                android:layout_marginTop="4dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:text="@string/hotel_room_credit_note_noquote"
+                android:textColor="@color/black_light"
+                />
             <Button android:id="@+id/submit_order_btn"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -273,7 +288,7 @@
                 android:textSize="18sp"
                 android:text="@string/submit_order"
                 android:gravity="center"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginBottom="12dp"

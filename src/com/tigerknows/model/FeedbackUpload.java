@@ -41,26 +41,20 @@ public class FeedbackUpload extends BaseQuery {
     }
 
     @Override
-    protected void makeRequestParameters() throws APIException {
-        super.makeRequestParameters();
-        addCommonParameters(requestParameters, cityId);
-        
-        if (criteria == null) {
-            throw new APIException(APIException.CRITERIA_IS_NULL);
-        }
-        if (criteria.containsKey(SERVER_PARAMETER_FEEDBACK)) {
-            requestParameters.add(SERVER_PARAMETER_FEEDBACK, criteria.get(SERVER_PARAMETER_FEEDBACK));
-        } else {
-            // TODO 这个参数必须要，那怕是空？！
-            requestParameters.add(SERVER_PARAMETER_FEEDBACK, "");
-        }
-        addParameter(new String[]{SERVER_PARAMETER_ACTION_LOG,
-                SERVER_PARAMETER_LOCATION,
-                SERVER_PARAMETER_LOCATION_IN_ANDROID,
-                SERVER_PARAMETER_ERROR_RECOVERY,
-                SERVER_PARAMETER_ADD_MERCHANT,
-                SERVER_PARAMETER_SATISFY_RATE,
-                SERVER_PARAMETER_POI_RANK, SERVER_PARAMETER_DATA_TYPE, SERVER_PARAMETER_SUB_DATA_TYPE, SERVER_PARAMETER_REQUSET_SOURCE_TYPE, DataQuery.SERVER_PARAMETER_POI_ID}, false);
+    protected void checkRequestParameters() throws APIException {
+        debugCheckParameters(new String[] {}, 
+                new String[]{SERVER_PARAMETER_ACTION_LOG, DataQuery.SERVER_PARAMETER_POI_ID, 
+                SERVER_PARAMETER_LOCATION, SERVER_PARAMETER_LOCATION_IN_ANDROID,
+                SERVER_PARAMETER_ERROR_RECOVERY, SERVER_PARAMETER_ADD_MERCHANT,
+                SERVER_PARAMETER_SATISFY_RATE, SERVER_PARAMETER_POI_RANK, 
+                SERVER_PARAMETER_DATA_TYPE, SERVER_PARAMETER_SUB_DATA_TYPE, 
+                SERVER_PARAMETER_REQUSET_SOURCE_TYPE, SERVER_PARAMETER_FEEDBACK});
+    }
+    
+    @Override
+    protected void addCommonParameters() {
+        super.addCommonParameters();
+        addSessionId();
     }
 
     @Override

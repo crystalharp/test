@@ -4,10 +4,14 @@
         android:background="@drawable/btn_zoomin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:src="@drawable/ic_zoomin"
+        android:scaleType="center"
         />
     <ZoomButton android:id="@+id/zoomout_zbt" 
         android:background="@drawable/btn_zoomout" 
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:src="@drawable/ic_zoomout"
+        android:scaleType="center"
         />
 </merge>

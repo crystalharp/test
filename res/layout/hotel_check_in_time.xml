@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root_view"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:gravity="left|center_vertical"
+    >
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:drawablePadding="8dp"
+        android:paddingLeft="10dp"
+        android:paddingTop="8dp"
+        android:paddingRight="8dp"
+        android:paddingBottom="8dp"
+        android:drawableLeft="@drawable/ic_date_hotel"
+        android:background="@color/transparent"
+        android:textColor="@color/black_light"
+        android:textSize="16sp"
+        android:gravity="left|center_vertical"
+        android:text="@string/check_in_time"
+        />
+    <TextView
+        android:id="@+id/check_in_time_txv"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:drawableRight="@drawable/icon_arrow_right"
+        android:drawablePadding="8dp"
+        android:paddingRight="8dp"
+        android:textColor="@color/black_dark"
+        android:textSize="16sp"
+        android:text="@string/app_name"
+        android:gravity="right|center_vertical"
+    />
+</RelativeLayout>

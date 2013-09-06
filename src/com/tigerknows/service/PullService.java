@@ -9,6 +9,7 @@ import com.decarta.android.exception.APIException;
 import com.decarta.android.location.Position;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.TKConfig;
+import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.MapEngine;
 import com.tigerknows.map.MapEngine.CityInfo;
 import com.tigerknows.model.BaseQuery;
@@ -85,12 +86,22 @@ public class PullService extends Service {
     public static PullAlarmAction alarmAction = new PullAlarmAction();
     
     public static String TRIGGER_MODE_NET = "net";
-    public static String TRIGGER_MODE_ALARM = "alarm";
+    public static String TRIGGER_MODE_ALARM = "alm";
+    
+    public static String mTriggerMode;
+    
+    public static ActionLog mActionLog;
+    public static String FAIL_TIME_UNAVAILABLE = "1";
+    public static String FAIL_NEVER_USED = "2";
+    public static String FAIL_NO_LOCATION = "3";
+    public static String FAIL_LOCATION_UNAVAILABLE = "4";
+    public static String FAIL_NETWORK_FAILED = "5";
 
     @Override
     public void onCreate() {
         super.onCreate();
         LogWrapper.d(TAG, "onCreate()");
+        mActionLog = ActionLog.getInstance(getApplicationContext());
         new Thread(new Runnable() {
             
             @Override
@@ -110,8 +121,11 @@ public class PullService extends Service {
 
                 Calendar requestCal = Calendar.getInstance();
                 requestCal.setTimeInMillis(currentTimeMillis);
+                
+                mTriggerMode = getTriggerMode(context);
                 //如果不在请求时间范围内，肯定是请求失败被推迟的定时器，推迟到第二天的随机时间再请求
                 if (requestCal.getTime().getHours() >= requestEndHour ||requestCal.getTime().getHours() < requestStartHour) {
+                    mActionLog.addAction(ActionLog.RadarPushFailed, mTriggerMode, FAIL_TIME_UNAVAILABLE);
                     exitService(STAT_RAND_TIME_NEXT_DAY, requestCal);
                     return;
                 }
@@ -122,6 +136,7 @@ public class PullService extends Service {
                 LogWrapper.d(TAG, "currentCityInfo="+currentCityInfo);
                 // 安装后从来没有使用过老虎宝典的情况
                 if (currentCityInfo == null || currentCityInfo.isAvailably() == false) {
+                    mActionLog.addAction(ActionLog.RadarPushFailed, mTriggerMode, FAIL_NEVER_USED);
                     exitService(STAT_NULL, requestCal);
                     return;
                 }
@@ -142,34 +157,32 @@ public class PullService extends Service {
                         e.printStackTrace();
                     }
                 } else {
+                    mActionLog.addAction(ActionLog.RadarPushFailed, mTriggerMode, FAIL_NO_LOCATION);
                     exitService(STAT_NORMAL_FAIL, requestCal);
                     return;
                 }
                 LogWrapper.d(TAG, "locationCityInfo="+locationCityInfo);
 
-                if (locationCityInfo.isAvailably()
-                        && currentCityInfo.getId() == locationCityInfo.getId()) {    
+                if (locationCityInfo.isAvailably()) {
                     DataQuery dataQuery = new DataQuery(context);
-                    Hashtable<String, String> criteria = new Hashtable<String, String>();
                     String messageIdList = TKConfig.getPref(context, TKConfig.PREFS_RADAR_RECORD_MESSAGE_ID_LIST, "");
                     String lastSucceedTime = TKConfig.getPref(context, TKConfig.PREFS_RADAR_RECORD_LAST_SUCCEED_TIME, "");
-                    criteria.put(BaseQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_PULL_MESSAGE);
-                    criteria.put(DataQuery.SERVER_PARAMETER_LOCATION_CITY, String.valueOf(locationCityInfo.getId()));
-                    criteria.put(DataQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
-                    criteria.put(DataQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
-                    criteria.put(DataQuery.SERVER_PARAMETER_LOCATION_LONGITUDE, String.valueOf(position.getLon()));
-                    criteria.put(DataQuery.SERVER_PARAMETER_LOCATION_LATITUDE, String.valueOf(position.getLat()));
-                    if (getTriggerMode(context).equals(TRIGGER_MODE_NET)) {
-                        criteria.put(DataQuery.SERVER_PARAMETER_INFO, DataQuery.INFO_TYPE_NETWORK_PUSH);
+                    dataQuery.addParameter(BaseQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_PULL_MESSAGE);
+                    dataQuery.addParameter(DataQuery.SERVER_PARAMETER_LOCATION_CITY, String.valueOf(locationCityInfo.getId()));
+                    dataQuery.addParameter(DataQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
+                    dataQuery.addParameter(DataQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
+                    dataQuery.addParameter(DataQuery.SERVER_PARAMETER_LOCATION_LONGITUDE, String.valueOf(position.getLon()));
+                    dataQuery.addParameter(DataQuery.SERVER_PARAMETER_LOCATION_LATITUDE, String.valueOf(position.getLat()));
+                    if (mTriggerMode.equals(TRIGGER_MODE_NET)) {
+                        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_INFO, DataQuery.INFO_TYPE_NETWORK_PUSH);
                     }
                     if (!TextUtils.isEmpty(messageIdList)) {
-                        criteria.put(DataQuery.SERVER_PARAMETER_MESSAGE_ID_LIST, messageIdList);
+                        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_MESSAGE_ID_LIST, messageIdList);
                     }
                     if (!TextUtils.isEmpty(lastSucceedTime)) {
-                        criteria.put(DataQuery.SERVER_PARAMETER_LAST_PULL_DATE, lastSucceedTime);
+                        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_LAST_PULL_DATE, lastSucceedTime);
                     }
-                    LogWrapper.d(TAG, criteria.toString());
-                    dataQuery.setup(criteria, currentCityInfo.getId());
+                    dataQuery.setup(currentCityInfo.getId());
                     dataQuery.query();
                     Response response = dataQuery.getResponse();
                     if (response != null && response.getResponseCode() == 200 && response instanceof PullMessage) {
@@ -177,11 +190,14 @@ public class PullService extends Service {
                         processPullMessage(context, pullMessage, requestCal);
                         //推送成功,设置为定时器触发模式
                         TKConfig.setPref(context, TKConfig.PREFS_RADAR_PULL_TRIGGER_MODE, TRIGGER_MODE_ALARM);
+                        mActionLog.addAction(ActionLog.RadarPushSucceeded, mTriggerMode);
                         exitService(STAT_SUCCESS, requestCal);
                         return;
                     }
+                    mActionLog.addAction(ActionLog.RadarPushFailed, mTriggerMode, FAIL_NETWORK_FAILED);
                 } else {
-                    //定位城市与设置城市不符，则跳到第二天的随机时间
+                    //定位信息不可用（获取不到正确的城市id，可能在国外），则跳到第二天的随机时间
+                    mActionLog.addAction(ActionLog.RadarPushFailed, mTriggerMode, FAIL_LOCATION_UNAVAILABLE);
                     exitService(STAT_RAND_TIME_NEXT_DAY, requestCal);
                     return;
                 }
@@ -245,7 +261,7 @@ public class PullService extends Service {
         
         Context context = getApplicationContext();
         
-        if (getTriggerMode(context).equals(TRIGGER_MODE_NET)) {
+        if (mTriggerMode.equals(TRIGGER_MODE_NET)) {
             //如果是网络触发模式,则不设置定时器,只把失败次数归零
             LogWrapper.d(TAG, "failed in net trigger mode, do not set Alarm.");
             fail = 0;

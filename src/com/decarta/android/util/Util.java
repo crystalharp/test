@@ -720,7 +720,8 @@ public class Util {
      * @throws APIException 
      * @throws IllegalArgumentException
      */
-    private static void checkLon(double lon, int zoomLevel) throws APIException{
+    @SuppressWarnings("unused")
+	private static void checkLon(double lon, int zoomLevel) throws APIException{
         checkZ(zoomLevel);
         
         if (lon < CONFIG.TK_MIN_LON || lon > CONFIG.TK_MAX_LON) {
@@ -734,7 +735,8 @@ public class Util {
      * @throws APIException 
      * @throws IllegalArgumentException
      */
-    private static void checkLat(double lat, int zoomLevel) throws APIException{
+    @SuppressWarnings("unused")
+	private static void checkLat(double lat, int zoomLevel) throws APIException{
         checkZ(zoomLevel);
         
         if(lat < CONFIG.TK_MIN_LAT || lat > CONFIG.TK_MAX_LAT)

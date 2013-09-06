@@ -185,6 +185,9 @@ public class TrafficModel extends XMapData {
             // 0x37 x_int 当前线路是公交还是地铁
             private static final byte FIELD_LINE_TYPE = 0x37;
             
+            // 0x38 x_string 进入的地铁口信息
+            private static final byte FIELD_SUBWAY_ENTRANCE = 0x38;
+            
             //类型
             private int type;
 
@@ -264,6 +267,9 @@ public class TrafficModel extends XMapData {
             
             // 当前线路类型
             private int lineType = TYPE_LINE_BUS;
+            
+            // 进出地铁口信息
+            private String subwayEntrance;
             
             public int getType() {
                 return type;
@@ -489,6 +495,14 @@ public class TrafficModel extends XMapData {
 			public void setLineType(int lineType) {
 				this.lineType = lineType;
 			}
+			
+			public String getSubwayEntrance() {
+			    return subwayEntrance;
+			}
+			
+			public void setSubwayEntrance(String s) {
+			    this.subwayEntrance = s;
+			}
 
 			@SuppressWarnings("unchecked")
             public Step(XMap data) throws APIException {
@@ -528,6 +542,7 @@ public class TrafficModel extends XMapData {
                     walkRoadName = getStringFromData(FIELD_WALK_ROAD_NAME);
                     walkTurnTo = getStringFromData(FIELD_WALK_TURN_TO);
                     walkWhetherRoundabout = (int)getLongFromData(FIELD_WALK_WHETHER_ROUNDABOUT);
+                    subwayEntrance = getStringFromData(FIELD_SUBWAY_ENTRANCE);
                 } else if (type == TYPE_TRANSFER) {
                     transferUpStopName = getStringFromData(FIELD_TRANSFER_UP_STOP_NAME);
                     transferDownStopName = getStringFromData(FIELD_TRANSFER_DOWN_STOP_NAME);
@@ -540,6 +555,7 @@ public class TrafficModel extends XMapData {
                     transferTicketPrice = getStringFromData(FIELD_TRANSFER_TICKET_PRICE);
                     transferOperationCompany = getStringFromData(FIELD_TRANSFER_OPERATION_COMPANY);
                     lineType = (int)getLongFromData(FIELD_LINE_TYPE);
+                    subwayEntrance = getStringFromData(FIELD_SUBWAY_ENTRANCE);
                 } else if (type == TYPE_DRIVE) {
                     driveRoadName = getStringFromData(FIELD_DRIVE_ROAD_NAME);
                     driveTurnTo = getStringFromData(FIELD_DRIVE_TURN_TO);

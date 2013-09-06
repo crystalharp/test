@@ -3,7 +3,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:padding="8dp"
+    android:paddingLeft="4dp"
+    android:paddingTop="14dp"
+    android:paddingRight="8dp"
+    android:paddingBottom="14dp"
     android:background="@drawable/list_selector_background_gray_light"
     >
 
@@ -11,16 +14,10 @@
         android:id="@+id/picture_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="4dp"
         android:layout_marginRight="8dp"
+        android:background="@drawable/bg_picture"
         >
-        <ImageView
-            android:id="@+id/bg_imv"
-            android:layout_width="130dp"
-            android:layout_height="90dp"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:background="@drawable/bg_picture_tuangou"
-            />
         <ImageView
             android:id="@+id/picture_imv"
             android:layout_width="120dp"
@@ -32,12 +29,21 @@
             android:id="@+id/shangjia_marker_imv"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:layout_alignRight="@id/bg_imv"
-            android:layout_alignParentTop="true"
-            android:layout_margin="4dp"
+            android:layout_alignRight="@id/picture_imv"
+            android:layout_alignTop="@id/picture_imv"
             android:scaleType="fitXY"
             />
     </RelativeLayout>
+    <TextView
+        android:id="@+id/fast_purchase_txv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/picture_view"
+        android:background="@drawable/bg_fast_purchase"
+        android:textSize="12sp"
+        android:textColor="@color/white"
+        android:text="@string/fast_purchase"
+        />
     <TextView
         android:id="@+id/name_txv"
         android:layout_width="wrap_content"
@@ -45,16 +51,26 @@
         android:layout_toRightOf="@id/picture_view"
         android:layout_alignParentTop="true"
         android:paddingTop="4dp"
+        android:paddingBottom="4dp"
         android:textColor="@color/black_dark"
         android:textSize="16sp"
         android:text="@string/app_name"
-        android:singleLine="false"
-        android:lines="2"
-        android:maxLines="2"
+        android:singleLine="true"
         android:ellipsize="end"
         android:lineSpacingExtra="2dp"
         android:includeFontPadding="false"
         android:focusable="false"
+        />
+    <TextView
+        android:id="@+id/appointment_txv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/name_txv"
+        android:background="@drawable/bg_need_guarantee"
+        android:textSize="12sp"
+        android:textColor="@color/orange"
+        android:text="@string/mian_yu_yue"
         />
 
     <TextView
@@ -65,7 +81,7 @@
         android:layout_below="@id/name_txv"
         android:textColor="@color/orange"
         android:textStyle="bold"
-        android:textSize="18sp"
+        android:textSize="24sp"
         android:text="@string/distance"
         android:singleLine="true"
         android:includeFontPadding="false"

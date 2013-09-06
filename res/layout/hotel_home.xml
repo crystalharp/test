@@ -6,7 +6,7 @@
     android:layout_height="fill_parent"
     android:paddingLeft="0dp"
     android:paddingRight="0dp"
-    android:background="@drawable/bg_discover"
+    android:background="@color/normal_background"
     >
         
     <com.tigerknows.ui.hotel.NavigationWidget
@@ -25,199 +25,211 @@
         android:layout_above="@id/navigation_widget"
         android:gravity="center"
         android:orientation="vertical"
-        android:padding="8dp"
+        android:paddingLeft="8dp"
+        android:paddingTop="8dp"
+        android:paddingRight="8dp"
+        android:fadingEdgeLength="0dp"
         >
                 
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginBottom="32dp"
             >
-            <Button
-                android:id="@+id/city_btn"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/list_header"
-                android:drawablePadding="8dp"
-                android:paddingLeft="10dp"
-                android:paddingTop="8dp"
-                android:paddingRight="8dp"
-                android:paddingBottom="8dp"
-                android:drawableLeft="@drawable/ic_city_hotel"
-                android:drawableRight="@drawable/icon_arrow_right"
-                android:textColor="@color/black_dark"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:text="@string/app_name"
-                android:gravity="left|center_vertical"
-                />
-            <ImageView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_line_split"
-                />
-            <Button
-                android:id="@+id/location_btn"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/list_middle"
-                android:padding="10dp"
-                android:drawablePadding="8dp"
-                android:drawableLeft="@drawable/ic_location_hotel"
-                android:drawableRight="@drawable/icon_arrow_right"
-                android:textColor="@color/black_dark"
-                android:textSize="16sp"
-                android:text="@string/hotel_select_location"
-                android:gravity="left|center_vertical"
-                />
-            <ImageView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_line_split"
-                />
-            <RelativeLayout
-                android:id="@+id/check_view"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:background="@drawable/list_middle"
-                android:paddingLeft="8dp"
-                android:paddingTop="12dp"
-                android:paddingRight="8dp"
-                android:paddingBottom="8dp"
-                android:textColor="@color/black_dark"
-                android:textSize="16sp"
-                android:gravity="left|center_vertical"
-                >
-	            <TextView
+	        <LinearLayout
+	            android:id="@+id/query_view"
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            android:orientation="vertical"
+	            >
+	            <RelativeLayout
+	                android:id="@+id/city_view"
 	                android:layout_width="fill_parent"
 	                android:layout_height="wrap_content"
-	                android:layout_centerVertical="true"
-	                android:drawablePadding="8dp"
-	                android:drawableLeft="@drawable/ic_date_hotel"
-                	android:drawableRight="@drawable/icon_arrow_right"
-	                android:paddingRight="2dp"
-	                android:background="@color/transparent"
-	                android:textColor="@color/black_dark"
-	                android:textSize="16sp"
-	                android:gravity="center"
-	                />
-	            <com.tigerknows.ui.hotel.DateWidget
-	                android:id="@+id/checkin_dat"
-	                android:layout_width="wrap_content"
-	                android:layout_height="wrap_content"
-	                android:layout_marginLeft="40dp"
-	                tkandroid:checkin="@string/hotel_checkin_"
+	                android:background="@drawable/list_header"
+	                android:gravity="left|center_vertical"
 	                >
-	                </com.tigerknows.ui.hotel.DateWidget>
+	                <TextView
+	                    android:layout_width="fill_parent"
+	                    android:layout_height="wrap_content"
+	                    android:layout_centerVertical="true"
+	                    android:drawablePadding="8dp"
+	                    android:paddingLeft="10dp"
+	                    android:paddingTop="8dp"
+	                    android:paddingRight="8dp"
+	                    android:paddingBottom="8dp"
+	                    android:drawableLeft="@drawable/ic_city_hotel"
+	                    android:textColor="@color/black_light"
+	                    android:textSize="16sp"
+	                    android:text="@string/chengshi"
+	                    android:gravity="left|center_vertical"
+	                    />
+	                <TextView
+	                    android:id="@+id/city_txv"
+	                    android:layout_width="fill_parent"
+	                    android:layout_height="wrap_content"
+	                    android:layout_centerVertical="true"
+	                    android:drawablePadding="8dp"
+	                    android:paddingRight="8dp"
+	                    android:drawableRight="@drawable/icon_arrow_right"
+	                    android:textColor="@color/black_dark"
+	                    android:textSize="16sp"
+	                    android:text="@string/app_name"
+	                    android:gravity="right|center_vertical"
+	                    />
+	            </RelativeLayout>
 	            <ImageView
-	                android:id="@+id/split_imv"
-	                android:layout_width="wrap_content"
-	                android:layout_height="wrap_content"
-	                android:layout_marginLeft="4dp"
-	                android:layout_toRightOf="@id/checkin_dat"
-	                android:layout_centerVertical="true"
-	                android:background="@drawable/ic_split_hotel_date"
-	                />
-	            <com.tigerknows.ui.hotel.DateWidget
-	                android:id="@+id/checkout_dat"
-	                android:layout_width="wrap_content"
-	                android:layout_height="wrap_content"
-	                android:layout_toRightOf="@id/split_imv"
-	                tkandroid:checkin="@string/hotel_checkout_"
-	                >
-	                </com.tigerknows.ui.hotel.DateWidget>
-            </RelativeLayout>
-            <ImageView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_line_split"
-                />
-            <LinearLayout
-                android:id="@+id/price_view"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:background="@drawable/list_middle"
-                android:padding="8dp"
-                android:drawablePadding="8dp"
-                android:textColor="@color/black_dark"
-                android:textSize="16sp"
-                android:gravity="left|center_vertical"
-                >
-	            <TextView
-	                android:layout_width="wrap_content"
-	                android:layout_height="wrap_content"
-	                android:padding="8dp"
-	                android:textColor="@color/black_dark"
-	                android:textSize="16sp"
-	                android:text="@string/hotel_category_title"
-	                android:gravity="center"
-	                />
-	            <TextView
-	                android:id="@+id/price_txv"
 	                android:layout_width="fill_parent"
 	                android:layout_height="wrap_content"
-                    android:drawableRight="@drawable/icon_arrow_right"
-	                android:paddingLeft="8dp"
-	                android:paddingTop="8dp"
-	                android:paddingRight="2dp"
-	                android:paddingBottom="8dp"
-	                android:textColor="@color/orange"
-	                android:textSize="16sp"
-	                android:text="@string/hotel_not_limit"
-	                android:gravity="center"
+	                android:background="@drawable/bg_line_split"
 	                />
-            </LinearLayout>
-            <ImageView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_line_split"
-                />
+	            <RelativeLayout
+	                android:id="@+id/location_view"
+	                android:layout_width="fill_parent"
+	                android:layout_height="wrap_content"
+	                android:background="@drawable/list_middle"
+	                android:gravity="left|center_vertical"
+	                >
+	                <TextView
+	                    android:layout_width="fill_parent"
+	                    android:layout_height="wrap_content"
+	                    android:layout_centerVertical="true"
+	                    android:drawablePadding="8dp"
+	                    android:paddingLeft="10dp"
+	                    android:paddingTop="8dp"
+	                    android:paddingRight="8dp"
+	                    android:paddingBottom="8dp"
+	                    android:drawableLeft="@drawable/ic_location_hotel"
+	                    android:textColor="@color/black_light"
+	                    android:textSize="16sp"
+	                    android:text="@string/position"
+	                    android:gravity="left|center_vertical"
+	                    />
+	                <TextView
+	                    android:id="@+id/location_txv"
+	                    android:layout_width="fill_parent"
+	                    android:layout_height="wrap_content"
+	                    android:layout_centerVertical="true"
+	                    android:drawablePadding="8dp"
+	                    android:paddingRight="8dp"
+	                    android:drawableRight="@drawable/icon_arrow_right"
+	                    android:textColor="@color/black_dark"
+	                    android:textSize="16sp"
+	                    android:text="@string/app_name"
+	                    android:gravity="right|center_vertical"
+	                    />
+	            </RelativeLayout>
+	            <ImageView
+	                android:layout_width="fill_parent"
+	                android:layout_height="wrap_content"
+	                android:background="@drawable/bg_line_split"
+	                />
+	            <RelativeLayout
+	                android:id="@+id/check_in_time_view"
+	                android:layout_width="fill_parent"
+	                android:layout_height="wrap_content"
+	                android:orientation="horizontal"
+	                android:background="@drawable/list_middle"
+	                android:gravity="left|center_vertical"
+	                >
+	                <include
+	                    layout="@layout/hotel_check_in_time"
+	                    android:layout_width="fill_parent"
+	                    android:layout_height="wrap_content"
+	                    />
+	            </RelativeLayout>
+	            <ImageView
+	                android:layout_width="fill_parent"
+	                android:layout_height="wrap_content"
+	                android:background="@drawable/bg_line_split"
+	                />
+	            <RelativeLayout
+	                android:id="@+id/price_view"
+	                android:layout_width="fill_parent"
+	                android:layout_height="wrap_content"
+	                android:background="@drawable/list_footer"
+	                android:gravity="left|center_vertical"
+	                >
+	                <TextView
+	                    android:layout_width="fill_parent"
+	                    android:layout_height="wrap_content"
+	                    android:layout_centerVertical="true"
+	                    android:drawablePadding="8dp"
+	                    android:paddingLeft="10dp"
+	                    android:paddingTop="8dp"
+	                    android:paddingRight="8dp"
+	                    android:paddingBottom="8dp"
+	                    android:drawableLeft="@drawable/ic_price_hotel"
+	                    android:textColor="@color/black_light"
+	                    android:textSize="16sp"
+	                    android:text="@string/hotel_category_title"
+	                    android:gravity="left|center_vertical"
+	                    />
+	                <TextView
+	                    android:id="@+id/price_txv"
+	                    android:layout_width="fill_parent"
+	                    android:layout_height="wrap_content"
+	                    android:layout_centerVertical="true"
+	                    android:drawablePadding="8dp"
+	                    android:paddingRight="8dp"
+	                    android:drawableRight="@drawable/icon_arrow_right"
+	                    android:textColor="@color/black_dark"
+	                    android:textSize="16sp"
+	                    android:text="@string/app_name"
+	                    android:gravity="right|center_vertical"
+	                    />
+	            </RelativeLayout>
+            </LinearLayout>    
+            
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:background="@drawable/list_footer"
-                android:padding="8dp"
-                android:drawablePadding="8dp"
-                android:textColor="@color/black_dark"
-                android:textSize="16sp"
+                android:layout_marginTop="8dp"
                 android:gravity="center"
                 >
-	            <Button
-	                android:id="@+id/query_btn"
-	                android:layout_width="fill_parent"
+                <Button
+                    android:id="@+id/query_btn"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/btn_query_hotel_normal"
+                    android:padding="8dp"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    android:text="@string/hotel_query"
+                    android:gravity="center"
+                    android:shadowDx="0"
+                    android:shadowDy="1"
+                    android:shadowColor="#a77a00"
+                    android:shadowRadius="1"
+                    />
+            </LinearLayout>
+            
+	        <LinearLayout
+	            android:id="@+id/dingdan_view"
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_marginTop="8dp"
+	            android:orientation="horizontal"
+	            android:gravity="center"
+                android:background="@drawable/list_single"
+	            >
+	            <ImageView
+	                android:id="@+id/dingdan_imv"
+	                android:layout_width="wrap_content"
 	                android:layout_height="wrap_content"
-	                android:background="@drawable/btn_query_hotel_normal"
+	                android:background="@drawable/ic_order_hotel"
+	                />
+	            <TextView
+	                android:id="@+id/dingdan_txv"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
 	                android:padding="8dp"
-	                android:textColor="@color/white"
+	                android:textColor="@color/black_dark"
 	                android:textSize="18sp"
-	                android:text="@string/hotel_query"
-	                android:gravity="center"
-			        android:shadowDx="0"
-			        android:shadowDy="1"
-			        android:shadowColor="#a77a00"
-			        android:shadowRadius="1"
+	                android:text="@string/hotel_ordered"
+	                android:gravity="left|center_vertical"
 	                />
             </LinearLayout>
-                
-            <Button
-                android:id="@+id/dingdan_btn"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:drawableLeft="@drawable/ic_order_hotel"
-                android:background="@drawable/list_single"
-                android:drawableRight="@drawable/icon_arrow_right"
-                android:drawablePadding="8dp"
-                android:padding="8dp"
-                android:textColor="@color/black_dark"
-                android:textSize="18sp"
-                android:text="@string/hotel_ordered"
-                android:gravity="left|center_vertical"
-                />
         </LinearLayout>
         
     </ScrollView>

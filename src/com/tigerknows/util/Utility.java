@@ -4,18 +4,24 @@
 
 package com.tigerknows.util;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Formatter;
 import java.util.LinkedList;
@@ -621,7 +627,7 @@ public class Utility {
                 }
             }
             
-            fout = new FileOutputStream(file);
+            fout = new FileOutputStream(file, true);
             fout.write(data);
             fout.flush();
             
@@ -641,6 +647,65 @@ public class Utility {
         }
         
         return false;
+    }
+
+    public static void removeLineFromFile(String file, String[] lineToRemove) {
+
+        try {
+
+            File inFile = new File(file);
+
+            if (!inFile.isFile()) {
+                LogWrapper.d(TAG, "removeLineFromFile() Parameter is not an existing file");
+                return;
+            }
+
+            // Construct the new file that will later be renamed to the original
+            // filename.
+            File tempFile = new File(inFile.getAbsolutePath() + ".tmp");
+
+            BufferedReader br = new BufferedReader(new FileReader(file));
+            PrintWriter pw = new PrintWriter(new FileWriter(tempFile));
+
+            String line = null;
+
+            // Read from the original file and write to the new
+            // unless content matches data to be removed.
+            while ((line = br.readLine()) != null) {
+
+                String lineTrim = line.trim();
+                boolean exist = false;
+                for(int i = 0, l = lineToRemove.length; i < l; i++) {
+                    if (lineTrim.equals(lineToRemove[i])) {
+                        exist = true;
+                        break;
+                    }
+                }
+                if (!exist) {
+
+                    pw.println(line);
+                    pw.flush();
+                }
+            }
+            pw.close();
+            br.close();
+
+            // Delete the original file
+            if (!inFile.delete()) {
+                LogWrapper.d(TAG, "removeLineFromFile() Could not delete file");
+                return;
+            }
+
+            // Rename the new file to the filename the original file had.
+            if (!tempFile.renameTo(inFile)) {
+                LogWrapper.d(TAG, "removeLineFromFile() Could not rename file");
+            }
+
+        } catch (FileNotFoundException ex) {
+            ex.printStackTrace();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
     }
     
     public static Dialog getDialog(Activity activity, View custom) {
@@ -879,7 +944,15 @@ public class Utility {
     public static int dip2px(Context context, float dpValue) { 
         final float scale = context.getResources().getDisplayMetrics().density; 
         return (int) (dpValue * scale + 0.5f); 
-    } 
+    }
+    
+    /**
+     * 根据手机的分辨率从 px 的单位 转成为 dp
+     */
+    public static int px2dip(Context context, int px) {
+    	final float scale = context.getResources().getDisplayMetrics().density;
+    	return (int) (px / scale + 0.5f);
+    }
 
     
     /**
@@ -1624,5 +1697,28 @@ public class Utility {
             return null;
         }
     }
+    
+    /**
+     * 把若干个同类数组合并到一个数组中
+     * @param arrays
+     * @return
+     */
+    public static String[] mergeArray(String[] ...arrays) {
+        List<String> tmp = new LinkedList<String>();
+        for (String[] a : arrays) {
+            if (a != null) {
+                tmp.addAll(Arrays.asList(a));
+            }
+        }
+        return (tmp.toArray(new String[]{}));
+    }
 
+    public void printStackTrace() {
+        try {
+            int a = 1 / 0;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

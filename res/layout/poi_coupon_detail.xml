@@ -4,7 +4,7 @@
     xmlns:tkandroid ="http://schemas.android.com/apk/res/com.tigerknows"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@drawable/bg_discover"
+    android:background="@color/normal_background"
     >
     <ScrollView android:id="@+id/body_scv"
         android:layout_width="fill_parent"
@@ -25,12 +25,13 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginLeft="8dp"
+                android:background="@color/transparent"
                 >
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
-                    android:background="@drawable/list_middle"
+                    android:background="@color/white"
                     android:layout_gravity="center_horizontal"
                     >
                     <ImageView 
@@ -89,7 +90,7 @@
                 <RelativeLayout 
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/list_bg_white"
+                    android:background="@color/white"
                     >
                     <ImageView android:id="@+id/left_circle"
                         android:layout_width="wrap_content"
@@ -119,7 +120,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:gravity="top|center_horizontal"
-                    android:background="@drawable/list_middle"
+                    android:background="@color/white"
                     android:orientation="vertical"
                     >
                     <ImageView
@@ -128,7 +129,7 @@
                         android:layout_height="316dp"
                         android:layout_gravity="center_horizontal"
                         android:contentDescription="@string/app_name"
-                        android:background="@drawable/bg_picture_coupon_detail" 
+                        android:background="@drawable/bg_picture_detail" 
                         android:visibility="gone"
                         />
                     <TextView android:id="@+id/detail_txv"
@@ -195,7 +196,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/transparent"
-                    android:drawableRight="@drawable/ic_view_all_comment"
+                    android:drawableRight="@drawable/icon_arrow_right"
                     android:gravity="left|center_vertical"
                     android:padding="8dp"
                     android:textColor="@color/black_light"
@@ -221,7 +222,7 @@
                 <ImageView 
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/bg_broken_line"
+                    android:background="@drawable/bg_line_split"
                     android:layout_marginLeft="8dp"
                     android:layout_marginRight="8dp"
                     />

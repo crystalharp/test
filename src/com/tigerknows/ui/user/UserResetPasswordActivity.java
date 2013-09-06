@@ -1,7 +1,5 @@
 package com.tigerknows.ui.user;
 
-import java.util.Hashtable;
-
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -109,11 +107,10 @@ public class UserResetPasswordActivity extends UserBaseActivity {
 
 		String phone = phoneEdt.getText().toString().trim();
 		
-		Hashtable<String, String> criteria = new Hashtable<String, String>();
-		criteria.put(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, AccountManage.OPERATION_CODE_GET_VALIDATE_CODE);
-		criteria.put(BaseQuery.SERVER_PARAMETER_TELEPHONE, phone);
+		accountManage.addParameter(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, AccountManage.OPERATION_CODE_GET_VALIDATE_CODE);
+		accountManage.addParameter(BaseQuery.SERVER_PARAMETER_TELEPHONE, phone);
 		
-		sendRequest(accountManage, criteria);
+		sendRequest(accountManage);
 	}
 	
 	/**
@@ -128,13 +125,12 @@ public class UserResetPasswordActivity extends UserBaseActivity {
 		String password = passwordEdt.getText().toString().trim();
 		String valiNum = valiNumEdt.getText().toString().trim();
 		
-		Hashtable<String, String> criteria = new Hashtable<String, String>();
-		criteria.put(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, AccountManage.OPERATION_CODE_RESET_PASSWORD);
-		criteria.put(BaseQuery.SERVER_PARAMETER_TELEPHONE, phone);
-		criteria.put(AccountManage.SERVER_PARAMETER_PASSWORD, Utility.encryptWithSHA1(password));
-		criteria.put(AccountManage.SERVER_PARAMETER_VALIDATE_CODE, valiNum);
+		accountManager.addParameter(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, AccountManage.OPERATION_CODE_RESET_PASSWORD);
+		accountManager.addParameter(BaseQuery.SERVER_PARAMETER_TELEPHONE, phone);
+		accountManager.addParameter(AccountManage.SERVER_PARAMETER_PASSWORD, Utility.encryptWithSHA1(password));
+		accountManager.addParameter(AccountManage.SERVER_PARAMETER_VALIDATE_CODE, valiNum);
 		
-		sendRequest(accountManager, criteria);
+		sendRequest(accountManager);
 	}
 	
 	private void validationAction(final ExtValidationEditText source) {
@@ -167,7 +163,7 @@ public class UserResetPasswordActivity extends UserBaseActivity {
 	@Override
 	protected void responseCodeAction(AccountManage accountManage) {
 		// TODO Auto-generated method stub
-		String operationCode = accountManage.getCriteria().get(BaseQuery.SERVER_PARAMETER_OPERATION_CODE);
+		String operationCode = accountManage.getParameter(BaseQuery.SERVER_PARAMETER_OPERATION_CODE);
 		if (AccountManage.OPERATION_CODE_GET_VALIDATE_CODE.equals(operationCode)){
 			// 200, 403, 503
 			switch(accountManage.getResponse().getResponseCode()){
@@ -190,7 +186,7 @@ public class UserResetPasswordActivity extends UserBaseActivity {
 				
 				Globals.clearSessionAndUser(this);
 				
-				Intent intent = new Intent(UserResetPasswordActivity.this, UserLoginActivity.class);
+				Intent intent = new Intent(UserResetPasswordActivity.this, UserLoginRegistActivity.class);
 		        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		        startActivityForResult(intent, 0);
 				

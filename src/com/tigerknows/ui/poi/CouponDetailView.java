@@ -116,7 +116,7 @@ public class CouponDetailView extends BaseDetailView implements View.OnClickList
     
     protected void refreshDrawable() {
         refreshDrawable(mData.getHintPicTKDrawable(), mHintImv, R.drawable.icon, true);
-        refreshDrawable(mData.getDetailPicTKDrawable(), mDetailImv, R.drawable.bg_picture_coupon_detail, false);
+        refreshDrawable(mData.getDetailPicTKDrawable(), mDetailImv, R.drawable.bg_picture_detail, false);
         boolean loadedLogo = refreshDrawable(mData.getLogoTKDrawable(), mLogoImv, R.drawable.icon, true);
         if (loadedLogo) {
             mLogoView.setVisibility(View.VISIBLE);

@@ -7,32 +7,47 @@
     android:paddingRight="0dp"
     android:gravity="center"
     android:orientation="vertical"
-    android:background="@drawable/bg_discover"
+    android:background="@color/normal_background"
     >
-    <LinearLayout 
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:orientation="vertical"
-        android:padding="8dp"
+
+    <com.tigerknows.widget.ExtScrollView android:id="@+id/more_body_scv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        
         >
         
-        <Button android:id="@+id/message_btn"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:text="@string/app_name"
-            android:textColor="@color/white"
-            android:textSize="14sp"
-            android:background="@drawable/btn_update"
-            android:layout_marginBottom="8dp"
-            android:visibility="gone"
-            />
-                
-        <LinearLayout
+    <LinearLayout 
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+
+        >
+	    <RelativeLayout android:id="@+id/notice_rly"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:visibility="gone"
+	        >
+	        <android.support.v4.view.ViewPager  
+	            android:id="@+id/view_pager"
+	            android:layout_width="fill_parent"
+	            android:layout_height="64dp"
+	            android:focusable="true"
+	            />
+	        <LinearLayout
+	            android:id="@+id/page_indicator_view"
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            android:orientation="horizontal"
+	            android:gravity="center_horizontal"
+	            android:layout_alignParentBottom="true"
+	            android:paddingBottom="4dp"
+	            />
+	    </RelativeLayout>
+	    <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginBottom="8dp"
+            android:layout_margin="8dp"
             >
             <RelativeLayout
                 android:layout_width="wrap_content"
@@ -70,6 +85,46 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_line_split"
                 />
+            <Button
+                android:id="@+id/my_order_btn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/list_middle"
+	            android:paddingTop="8dp"
+	            android:paddingBottom="8dp"
+	            android:paddingRight="8dp"
+	            android:paddingLeft="16dp"
+                android:textColor="@color/black_dark"
+                android:textSize="16sp"
+                android:text="订单"
+                android:gravity="left|center_vertical"
+                />
+            <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_line_split"
+                />
+            <Button
+                android:id="@+id/favorite_btn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/list_middle"
+	            android:paddingTop="8dp"
+	            android:paddingBottom="8dp"
+	            android:paddingRight="8dp"
+	            android:paddingLeft="16dp"
+                android:textColor="@color/black_dark"
+                android:textSize="16sp"
+                android:text="@string/more_favorite"
+                android:gravity="left|center_vertical"
+                />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_margin="8dp"
+            >
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -106,39 +161,38 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_line_split"
                 />
-            <Button
-	            android:id="@+id/download_map_btn"
-	            android:layout_width="fill_parent"
-	            android:layout_height="wrap_content"
-	            android:background="@drawable/list_middle"
-	            android:paddingTop="8dp"
-	            android:paddingBottom="8dp"
-	            android:paddingRight="8dp"
-	            android:paddingLeft="16dp"
-	            android:textColor="@color/black_dark"
-	            android:textSize="16sp"
-	            android:text="@string/download_map"
-	            android:gravity="left|center_vertical"
-	            />
-            <ImageView
-                android:layout_width="fill_parent"
+            <RelativeLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_line_split"
-                />
-            <Button
-                android:id="@+id/favorite_btn"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/list_middle"
-	            android:paddingTop="8dp"
-	            android:paddingBottom="8dp"
-	            android:paddingRight="8dp"
-	            android:paddingLeft="16dp"
-                android:textColor="@color/black_dark"
-                android:textSize="16sp"
-                android:text="@string/favorite"
-                android:gravity="left|center_vertical"
-                />
+                >
+                <Button
+                    android:id="@+id/download_map_btn"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/list_middle"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
+                    android:paddingRight="8dp"
+                    android:paddingLeft="16dp"
+                    android:textColor="@color/black_dark"
+                    android:textSize="16sp"
+                    android:text="@string/download_map"
+                    android:gravity="left|center_vertical"
+                    />
+                
+                <TextView android:id="@+id/upgrade_map_txv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:paddingRight="26dp"
+                    android:singleLine="true"
+                    android:ellipsize="end"
+                    android:textColor="@color/orange"
+                    android:gravity="center"
+                    android:text="@string/upgrade_map_new"
+                    />
+            </RelativeLayout>
             <ImageView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -164,9 +218,29 @@
                 android:background="@drawable/bg_line_split"
                 />
             <Button
+                android:id="@+id/go_comment_btn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/list_middle"
+	            android:paddingTop="8dp"
+	            android:paddingBottom="8dp"
+	            android:paddingRight="26dp"
+	            android:paddingLeft="16dp"
+                android:textColor="@color/black_dark"
+                android:textSize="16sp"
+                android:text="@string/go_comment"
+                android:gravity="left|center_vertical"
+                />
+            <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_line_split"
+                />
+            <Button
                 android:id="@+id/add_merchant_btn"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
                 android:background="@drawable/list_footer"
 	            android:paddingTop="8dp"
 	            android:paddingBottom="8dp"
@@ -185,6 +259,8 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_marginBottom="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
             >
             <Button
                 android:id="@+id/satisfy_btn"
@@ -250,6 +326,8 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:background="@drawable/list_header"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
                 >
                 <TextView 
                     android:layout_width="wrap_content"
@@ -260,7 +338,7 @@
                     android:paddingBottom="8dp"
                     android:paddingTop="4dp"
                     />
-                <LinearLayout 
+                <LinearLayout
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
@@ -298,14 +376,19 @@
                         />
                     
                 </LinearLayout>
-            </LinearLayout>
+            </LinearLayout>       
             <ImageView android:id="@+id/more_home_app_recommend_imv"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_line_split"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
                 />
             <Button
                 android:id="@+id/app_recommend_btn"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginBottom="8dp"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/list_footer"
@@ -319,4 +402,5 @@
 
         
     </LinearLayout>
+    </com.tigerknows.widget.ExtScrollView>            
 </RelativeLayout>

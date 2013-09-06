@@ -80,7 +80,7 @@ public class TKDrawable extends XMapData implements Parcelable {
                 new ImageCallback() {
                     // 请参见实现：如果第一次加载url时下面方法会执行
                     public void imageLoaded(BitmapDrawable imageDrawable) {
-                        if (activity != null && action != null) {
+                        if (activity != null && action != null && viewToken.contains(Globals.getAsyncImageLoader().getViewToken())) {
                             activity.runOnUiThread(action);
                         }
                     }
@@ -145,7 +145,7 @@ public class TKDrawable extends XMapData implements Parcelable {
             Drawable drawable = tkDrawable.loadDrawable(activity, LoadImageRunnable.this, token);
             if(drawable != null) {
                 Rect bounds = drawable.getBounds();
-                if (bounds != null && bounds.width() != pictureImv.getWidth() || bounds.height() != pictureImv.getHeight()) {
+                if (bounds != null && (bounds.width() != pictureImv.getWidth() || bounds.height() != pictureImv.getHeight())) {
                     pictureImv.setBackgroundDrawable(null);
                 }
                 pictureImv.setBackgroundDrawable(drawable);

@@ -69,7 +69,7 @@ public class DataOperationTest {
     public static XMap launchDinydanCreateResponse() {
         XMap data = new XMap();
         BaseQueryTest.launchResponse(data);
-        data.put(ZhanlanQueryResponse.FIELD_DATA, "http://www.tigerknows.com");
+        data.put(ZhanlanQueryResponse.FIELD_DATA, BaseQueryTest.URL);
         return data;
     }
 
@@ -114,7 +114,7 @@ public class DataOperationTest {
         XMap data = new XMap();
         BaseQueryTest.launchResponse(data);
         data.put(DiaoyanQueryResponse.FIELD_HAS_SURVEYED, 0);
-        data.put(DiaoyanQueryResponse.FIELD_URL, "http://www.tigerknows.com");
+        data.put(DiaoyanQueryResponse.FIELD_URL, BaseQueryTest.URL);
         return data;
     }
     

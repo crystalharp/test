@@ -16,6 +16,7 @@ import com.tigerknows.map.MapEngine.CityInfo;
 import com.tigerknows.map.MapEngine.RegionMetaVersion;
 import com.tigerknows.model.AccountManage;
 import com.tigerknows.model.BaseQuery;
+import com.tigerknows.model.BaseQuery.IRequestParameters;
 import com.tigerknows.model.LocationQuery;
 import com.tigerknows.model.Response;
 import com.tigerknows.model.TKWord;
@@ -40,10 +41,9 @@ import com.tigerknows.ui.more.MoreHomeFragment;
 import com.tigerknows.ui.poi.POIResultFragment;
 import com.tigerknows.ui.traffic.BuslineResultLineFragment;
 import com.tigerknows.ui.traffic.TrafficResultFragment;
+import com.tigerknows.util.CalendarUtil;
 import com.tigerknows.util.Utility;
 import com.tigerknows.widget.StringArrayAdapter;
-import com.weibo.sdk.android.WeiboParameters;
-
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
@@ -74,12 +74,17 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Calendar;
-import java.util.Hashtable;
 import java.util.List;
 
 public class BaseQueryTest {
     
     static final String TAG = "BaseQueryTest";
+    
+    public static final String URL = "http://www.tigerknows.com";
+    
+    public static final String PIC_URL = "http://wap.tigerknows.com/images/logo_back.png";
+    
+    public static boolean UnallowedAccessNetwork = false;
     
     private static Activity sActivity;
     
@@ -124,25 +129,28 @@ public class BaseQueryTest {
         return  data;
     }
     
-    public static ViewGroup getViewByWeiboParameters(final Activity activity, final WeiboParameters parameters) {
+    public static ViewGroup genViewToModifyParam(final Activity activity, final IRequestParameters parameters) {
         final LinearLayout layout = new LinearLayout(activity);
         layout.setOrientation(LinearLayout.VERTICAL);
         layout.setBackgroundResource(R.drawable.list_single);
-        for (int loc = 0; loc < parameters.size(); loc++) {
-            final String key = parameters.getKey(loc);
+        for (int loc = 0, size = parameters.size(); loc < size; loc++) {
+            final int index = loc;
+            final String key = parameters.getKey(index);
             TextView keyTxv = new TextView(activity);
             layout.addView(keyTxv);
             keyTxv.setBackgroundResource(R.drawable.btn_default);
             keyTxv.setText(key);
             final EditText valueEdt = new EditText(activity);
             layout.addView(valueEdt);
-            valueEdt.setText(parameters.getValue(key));
+            valueEdt.setText(parameters.getValue(index));
             keyTxv.setOnClickListener(new OnClickListener() {
                 
                 @Override
                 public void onClick(View v) {
-                    parameters.remove(key);
+                    parameters.remove(index);
                     parameters.add(key, valueEdt.getEditableText().toString());
+                    layout.removeAllViews();
+                    layout.addView(genViewToModifyParam(activity, parameters));
                 }
             });
         }
@@ -159,7 +167,7 @@ public class BaseQueryTest {
             public void onClick(View v) {
                 parameters.remove(removeEdt.getEditableText().toString().trim());
                 layout.removeAllViews();
-                layout.addView(getViewByWeiboParameters(activity, parameters));
+                layout.addView(genViewToModifyParam(activity, parameters));
             }
         });
         
@@ -180,7 +188,7 @@ public class BaseQueryTest {
                         parameters.add(input.substring(0, index), input.substring(index+1));
                     }
                     layout.removeAllViews();
-                    layout.addView(getViewByWeiboParameters(activity, parameters));
+                    layout.addView(genViewToModifyParam(activity, parameters));
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -457,8 +465,6 @@ public class BaseQueryTest {
 
         final Button updateSoftTip = new Button(activity);
         layout.addView(updateSoftTip, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-        final Button diaoyanTip = new Button(activity);
-        layout.addView(diaoyanTip, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
         final Button commentTip = new Button(activity);
         layout.addView(commentTip, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
         final Button updateMapTip = new Button(activity);
@@ -488,6 +494,10 @@ public class BaseQueryTest {
         layout.addView(deleteAnOrderBtn, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
         final CheckBox fullOrderChb = new CheckBox(activity);
         layout.addView(fullOrderChb);
+        final CheckBox useSystemTimeChb = new CheckBox(activity);
+        layout.addView(useSystemTimeChb);
+        final CheckBox unallowedAccessNetworkChb = new CheckBox(activity);
+        layout.addView(unallowedAccessNetworkChb);
         
         editConfigBtn.setText("View or Modify config.txt");
         editConfigBtn.setOnClickListener(new View.OnClickListener() {
@@ -559,10 +569,9 @@ public class BaseQueryTest {
             public void onClick(View arg0) {
                 AccountManage accountManage = new AccountManage(activity);
                 String phone = deleteMobileNumEdt.getText().toString().trim();
-                Hashtable<String, String> criteria = new Hashtable<String, String>();
-                criteria.put(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, "du");
-                criteria.put(BaseQuery.SERVER_PARAMETER_TELEPHONE, phone);
-                accountManage.setup(criteria, Globals.getCurrentCityInfo().getId());
+                accountManage.addParameter(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, "du");
+                accountManage.addParameter(BaseQuery.SERVER_PARAMETER_TELEPHONE, phone);
+                accountManage.setup(Globals.getCurrentCityInfo().getId());
                 accountManage.setTipText(activity.getString(R.string.query_loading_tip));
                 if (activity instanceof BaseActivity) {
                     ((BaseActivity)(activity)).queryStart(accountManage, false);
@@ -657,7 +666,7 @@ public class BaseQueryTest {
                 TKConfig.ModifyResponseData = modifyResponseData.isChecked();
             }
         });
-        launchTestChb.setText("Launch fake data(Bootstrap, FeedbackUpload, DataQuery, DataOperation, AccountManage, ProxyQuery, HoteOrderOperation)");
+        launchTestChb.setText("Launch fake data(Bootstrap, FeedbackUpload, DataQuery, DataOperation, AccountManage, ProxyQuery, HotelOrderOperation)");
         launchTestChb.setTextColor(0xffffffff);
         launchTestChb.setChecked(TKConfig.LaunchTest);
         launchTestChb.setOnClickListener(new OnClickListener() {
@@ -701,15 +710,6 @@ public class BaseQueryTest {
                 if (Globals.g_Bootstrap_Model != null) {
                     Globals.g_Bootstrap_Model.setSoftwareUpdate(null);
                 }
-            }
-        });
-        
-        diaoyanTip.setText("clear diaoyanTip");
-        diaoyanTip.setOnClickListener(new OnClickListener() {
-            
-            @Override
-            public void onClick(View arg0) {
-            	(((Sphinx) activity).getMoreFragment()).setDiaoyanQueryResponse(null);
             }
         });
         
@@ -822,6 +822,26 @@ public class BaseQueryTest {
             @Override
             public void onClick(View arg0) {
                 HotelOrderListFragment.Test_Pull_Order_List = fullOrderChb.isChecked();
+            }
+        });
+        
+        useSystemTimeChb.setText("Use system time");
+        useSystemTimeChb.setChecked(CalendarUtil.UseSystemTime);
+        useSystemTimeChb.setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View arg0) {
+                CalendarUtil.UseSystemTime = useSystemTimeChb.isChecked();
+            }
+        });
+        
+        unallowedAccessNetworkChb.setChecked(UnallowedAccessNetwork);
+        unallowedAccessNetworkChb.setText("unallowed access network");
+        unallowedAccessNetworkChb.setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View arg0) {
+                UnallowedAccessNetwork = unallowedAccessNetworkChb.isChecked();
             }
         });
         

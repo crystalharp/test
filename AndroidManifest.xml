@@ -11,9 +11,6 @@
       <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
       <uses-permission android:name="android.permission.WAKE_LOCK" />
       <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" />
-      <uses-permission android:name="android.permission.READ_CONTACTS" />
-      <uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES" />
-      <uses-permission android:name="android.permission.RESTART_PACKAGES" />
       <!-- <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" /> -->
       
     <application android:name="com.tigerknows.android.app.TKApplication" android:icon="@drawable/icon" android:label="@string/app_name"
@@ -41,6 +38,8 @@
         
         <service android:name="com.tigerknows.service.MapDownloadService" android:enabled="true"></service>
         
+        <service android:name="com.tigerknows.service.download.DownloadService" android:enabled="true"></service>
+        
         <activity android:name="com.tigerknows.ui.ErrorDialogActivity"
             android:theme="@style/Theme.NoTitleBar" 
             android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
@@ -48,7 +47,7 @@
             android:screenOrientation="portrait" />
         
         <activity android:name="com.tigerknows.ui.more.HelpActivity"
-            android:theme="@style/Theme.NoTitleBar" 
+            android:theme="@style/Help" 
             android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
             android:windowSoftInputMode="adjustResize|stateHidden"
             android:screenOrientation="portrait" />
@@ -127,18 +126,12 @@
             android:windowSoftInputMode="adjustResize"
             android:screenOrientation="portrait" />
         
-        <activity android:name="com.tigerknows.ui.user.UserLoginActivity"
+        <activity android:name="com.tigerknows.ui.user.UserLoginRegistActivity"
             android:theme="@style/Theme.NoTitleBar" 
             android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
-            android:windowSoftInputMode="adjustPan|stateVisible"
+            android:windowSoftInputMode="adjustPan|stateHidden"
             android:screenOrientation="portrait" />
         
-        <activity android:name="com.tigerknows.ui.user.UserRegistActivity"
-            android:theme="@style/Theme.NoTitleBar" 
-            android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
-            android:windowSoftInputMode="adjustResize|stateVisible"
-            android:screenOrientation="portrait" />
-         
         <activity android:name="com.tigerknows.ui.user.UserResetPasswordActivity"
             android:theme="@style/Theme.NoTitleBar" 
             android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
@@ -161,12 +154,6 @@
             android:theme="@style/Theme.NoTitleBar" 
             android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
             android:windowSoftInputMode="adjustResize|stateVisible"
-            android:screenOrientation="portrait" />
-         
-        <activity android:name="com.tigerknows.ui.user.UserCommentAfterActivity"
-            android:theme="@style/Theme.NoTitleBar" 
-            android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
-            android:windowSoftInputMode="adjustResize|stateHidden"
             android:screenOrientation="portrait" />
          
         <activity android:name="com.tigerknows.ui.HintActivity"
@@ -225,17 +212,20 @@
 
         <receiver android:name="com.tigerknows.radar.AlarmInitReceiver">
             <intent-filter>
-                <action android:name="android.intent.action.MEDIA_SCANNER_FINISHED" />
-                <data android:scheme="file" />
-            </intent-filter>
-            <intent-filter>
                 <action android:name="action.com.tigerknows.first.startup" />
                 <action android:name="com.tigerknows.action.AlarmInit" />
                 <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
             </intent-filter>
         </receiver>
         
-        <receiver android:name="com.tigerknows.radar.AlarmAdjustReceiver">
+        <receiver android:name="com.tigerknows.radar.BootCompleteReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.MEDIA_SCANNER_FINISHED" />
+                <data android:scheme="file" />
+            </intent-filter>
+        </receiver>
+        
+        <receiver android:name="com.tigerknows.radar.TimeAdjustReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.TIME_SET" />
                 <action android:name="android.intent.action.TIMEZONE_CHANGED" />
@@ -275,19 +265,6 @@
             android:name=".FromThirdPartyActivity"
             android:label="@string/app_name"
             android:exported="true">
-            <intent-filter android:label="@string/app_name" >
-                <action android:name="android.intent.action.VIEW">
-                </action>
-                <category android:name="android.intent.category.DEFAULT">
-                </category>
-                <data android:mimeType="vnd.android.cursor.item/postal-address">
-                </data>
-            </intent-filter>
-            <intent-filter android:label="@string/app_name">
-                <action android:name="android.intent.action.VIEW"></action>
-                <category android:name="android.intent.category.DEFAULT"></category>
-                <data android:mimeType="vnd.android.cursor.item/postal-address_v2"></data>
-            </intent-filter>
             <intent-filter android:label="@string/app_name" >
                 <action android:name="android.intent.action.VIEW"></action>
                 <category android:name="android.intent.category.DEFAULT"></category>

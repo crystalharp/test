@@ -8,13 +8,13 @@
     <ScrollView 
         android:id="@+id/hotel_scrollView"
 	    android:background="@color/white"
-	    android:padding="8dp"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" >
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+		    android:padding="8dp"
             android:orientation="vertical" >
 		    <TextView
 		        android:id="@+id/hotel_head"
@@ -39,7 +39,7 @@
 			        android:layout_height="wrap_content"
 			        android:layout_marginTop="8dp"
 			        android:layout_marginBottom="8dp"
-			        android:background="@drawable/bg_broken_line"
+			        android:background="@drawable/bg_line_split"
 			        />
 		        
 			    <TextView
@@ -76,7 +76,7 @@
 			        android:layout_height="wrap_content"
 			        android:layout_marginTop="8dp"
 			        android:layout_marginBottom="8dp"
-			        android:background="@drawable/bg_broken_line"
+			        android:background="@drawable/bg_line_split"
 			        />
 			    <TextView
 			        android:layout_width="fill_parent"
@@ -112,7 +112,7 @@
 			        android:layout_height="wrap_content"
 			        android:layout_marginTop="8dp"
 			        android:layout_marginBottom="8dp"
-			        android:background="@drawable/bg_broken_line"
+			        android:background="@drawable/bg_line_split"
 			        />
 		    
 			    <TextView

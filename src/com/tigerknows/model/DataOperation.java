@@ -10,10 +10,15 @@ package com.tigerknows.model;
 
 import com.decarta.android.exception.APIException;
 import com.tigerknows.TKConfig;
+import com.tigerknows.model.test.BaseQueryTest;
 import com.tigerknows.model.test.DataOperationTest;
 import com.tigerknows.model.xobject.XMap;
+import com.tigerknows.util.Utility;
 
 import android.content.Context;
+
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 
 public class DataOperation extends BaseQuery {
 
@@ -28,6 +33,11 @@ public class DataOperation extends BaseQuery {
 
     // 分享到QQ
     public static final String SERVER_PARAMETER_SHARE_QZONE = "qzone";
+    
+    // flag     string  false   当前只支持"nocreate",表示只获取购买url不产生订单信息 
+    public static final String SERVER_PARAMETER_FLAG = "flag";
+    
+    public static final String FLAG_NOCREATE = "nocreate";
     
     // 操作码:
     // 查询 r
@@ -56,43 +66,47 @@ public class DataOperation extends BaseQuery {
         super(context, API_TYPE_DATA_OPERATION);
     }
 
+    public DataOperation(BaseQuery query) {
+        super(query);
+    }
+
     @Override
-    protected void makeRequestParameters() throws APIException {
-        super.makeRequestParameters();
-        addCommonParameters(requestParameters, cityId);
-        
-        if (criteria == null) {
-            throw new APIException(APIException.CRITERIA_IS_NULL);
-        }
-        
-        String dataType = addParameter(SERVER_PARAMETER_DATA_TYPE);
-        String operationCode = addParameter(SERVER_PARAMETER_OPERATION_CODE);
+    protected void checkRequestParameters() throws APIException {
+        String dataType = getParameter(SERVER_PARAMETER_DATA_TYPE);
+        String operationCode = getParameter(SERVER_PARAMETER_OPERATION_CODE);
+        String[] ekeys = new String[] {SERVER_PARAMETER_DATA_TYPE, SERVER_PARAMETER_OPERATION_CODE};
         if (OPERATION_CODE_QUERY.equals(operationCode)) {
             if(DATA_TYPE_POI.equals(dataType)){
-                String subDataType = addParameter(SERVER_PARAMETER_SUB_DATA_TYPE);
+                String[] poiEkeys = new String[]{SERVER_PARAMETER_NEED_FIELD, SERVER_PARAMETER_DATA_UID, 
+                        SERVER_PARAMETER_SUB_DATA_TYPE};
+                String subDataType = getParameter(SERVER_PARAMETER_SUB_DATA_TYPE);
                 if (SUB_DATA_TYPE_HOTEL.equals(subDataType)) {
-                    addParameter(new String[] {SERVER_PARAMETER_CHECKIN, SERVER_PARAMETER_CHECKOUT});
+                    debugCheckParameters(Utility.mergeArray(ekeys, poiEkeys, 
+                            new String[] {SERVER_PARAMETER_CHECKIN, SERVER_PARAMETER_CHECKOUT}));
+                } else {
+                    debugCheckParameters(Utility.mergeArray(ekeys, poiEkeys),
+                            new String[] {SERVER_PARAMETER_PICTURE});
                 }
             }
             
-        	if(dataType.equals(DATA_TYPE_DIAOYAN) == false){
-        		addParameter(new String[] {SERVER_PARAMETER_NEED_FIELD, SERVER_PARAMETER_DATA_UID});
-            }
         	
-        	// 部分查询需要提交pic信息和dsrc信息，据说上一个写这行代码的人懒得用一堆if判断于是就直接用这行代码了
-        	// fengtianxiao 2013.05.10
-        	addParameter(new String[] {SERVER_PARAMETER_PICTURE}, false);
         } else if (OPERATION_CODE_CREATE.equals(operationCode)) {
-            addParameter(SERVER_PARAMETER_ENTITY);
+            debugCheckParameters(Utility.mergeArray(ekeys,new String[] {SERVER_PARAMETER_ENTITY}), new String[]{SERVER_PARAMETER_FLAG});
         } else if (OPERATION_CODE_UPDATE.equals(operationCode)) {
-            addParameter(new String[] {SERVER_PARAMETER_DATA_UID, SERVER_PARAMETER_ENTITY});
+            debugCheckParameters(Utility.mergeArray(ekeys,new String[] {SERVER_PARAMETER_DATA_UID, SERVER_PARAMETER_ENTITY}));
         } else if (OPERATION_CODE_DELETE.equals(operationCode)) {
-            addParameter(SERVER_PARAMETER_DATA_UID);
+            debugCheckParameters(Utility.mergeArray(ekeys,new String[] {SERVER_PARAMETER_DATA_UID}));
+        } else if (operationCode.startsWith(URLEncoder.encode(Comment.JsonHeader))) {
+            
         } else {
             throw APIException.wrapToMissingRequestParameterException("operationCode invalid.");
         }
-
-        addSessionId(false);
+    }
+    
+    @Override
+    protected void addCommonParameters() {
+        super.addCommonParameters();
+        addSessionId();
     }
 
     @Override
@@ -106,8 +120,8 @@ public class DataOperation extends BaseQuery {
     protected void translateResponse(byte[] data) throws APIException {
         super.translateResponse(data);
 
-        String dataType = criteria.get(SERVER_PARAMETER_DATA_TYPE);
-        String operationCode = criteria.get(SERVER_PARAMETER_OPERATION_CODE);
+        String dataType = getParameter(SERVER_PARAMETER_DATA_TYPE);
+        String operationCode = getParameter(SERVER_PARAMETER_OPERATION_CODE);
         
         if (OPERATION_CODE_QUERY.equals(operationCode)) {
             if (DATA_TYPE_POI.equals(dataType)) {
@@ -140,6 +154,16 @@ public class DataOperation extends BaseQuery {
         } else if (OPERATION_CODE_UPDATE.equals(operationCode)) {
             if (DATA_TYPE_DIANPING.equals(dataType)) {
                 response = new CommentUpdateResponse(responseXMap);
+            }
+        } else if (operationCode.startsWith(URLEncoder.encode(Comment.JsonHeader))) {
+            if (DATA_TYPE_DIANPING.equals(dataType)) {
+                response = new Response(responseXMap);
+                if (response.getResponseCode() == Response.RESPONSE_CODE_OK) {
+                    operationCode = URLDecoder.decode(operationCode);
+                    operationCode = operationCode.substring(Comment.JsonHeader.length()+1, operationCode.length()-3);
+                    String[] uuids = operationCode.split("\",\"");
+                    Comment.deleteCommend(context, uuids, false);
+                }
             }
         }
     }
@@ -194,15 +218,21 @@ public class DataOperation extends BaseQuery {
         // 0x04 x_string    点评数据的uid 
         public static final byte FIELD_UID = 0x04;
         
+        // 0x05  x_int  601时有效，表示将被覆盖点评的likes  
+        private static final byte FIELD_LIKES = 0x05;
+        
         private String timeStamp;
         
         private String uid;
+        
+        private long likes;
 
         public CommentCreateResponse(XMap data) throws APIException {
             super(data);
             
             timeStamp = getStringFromData(FIELD_TIME_STAMP);
             uid = getStringFromData(FIELD_UID);
+            likes = getLongFromData(FIELD_LIKES);
         }
 
         public String getTimeStamp() {
@@ -219,6 +249,10 @@ public class DataOperation extends BaseQuery {
 
         public void setUid(String uid) {
             this.uid = uid;
+        }
+        
+        public long getLikes() {
+            return likes;
         }
     }
 
@@ -413,9 +447,9 @@ public class DataOperation extends BaseQuery {
     
     protected void launchTest() {
         super.launchTest();
-        String dataType = this.criteria.get(SERVER_PARAMETER_DATA_TYPE);
-        if (criteria.containsKey(SERVER_PARAMETER_OPERATION_CODE)) {
-            String operationCode = criteria.get(SERVER_PARAMETER_OPERATION_CODE);
+        String dataType = getParameter(SERVER_PARAMETER_DATA_TYPE);
+        if (hasParameter(SERVER_PARAMETER_OPERATION_CODE)) {
+            String operationCode = getParameter(SERVER_PARAMETER_OPERATION_CODE);
             
             if (OPERATION_CODE_CREATE.equals(operationCode)) {
                 if (DATA_TYPE_DINGDAN.equals(dataType)) {
@@ -425,7 +459,7 @@ public class DataOperation extends BaseQuery {
                 }
             } if (OPERATION_CODE_QUERY.equals(operationCode)) {
                 if (DATA_TYPE_POI.equals(dataType)) {
-                    String subDataType = criteria.get(SERVER_PARAMETER_SUB_DATA_TYPE);
+                    String subDataType = getParameter(SERVER_PARAMETER_SUB_DATA_TYPE);
                     if (SUB_DATA_TYPE_POI.equals(subDataType)) {
                         responseXMap = DataOperationTest.launchPOIQueryResponse();
                     }else if(SUB_DATA_TYPE_HOTEL.equals(subDataType)){
@@ -453,6 +487,10 @@ public class DataOperation extends BaseQuery {
             } if (OPERATION_CODE_UPDATE.equals(operationCode)) {
                 if (DATA_TYPE_DIANPING.equals(dataType)) {
                     responseXMap = DataOperationTest.launchDianpingUpdateResponse();
+                }
+            } else if (operationCode.startsWith(URLEncoder.encode(Comment.JsonHeader))) {
+                if (DATA_TYPE_DIANPING.equals(dataType)) {
+                    responseXMap = BaseQueryTest.launchResponse(new XMap());
                 }
             }
         }

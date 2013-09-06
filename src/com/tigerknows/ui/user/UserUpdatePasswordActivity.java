@@ -1,7 +1,5 @@
 package com.tigerknows.ui.user;
 
-import java.util.Hashtable;
-
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
@@ -94,13 +92,12 @@ public class UserUpdatePasswordActivity extends UserBaseActivity {
 		String newPassword = newPasswordEdt.getText().toString().trim();
 		
 		if (TextUtils.isEmpty(Globals.g_Session_Id) == false) {
-			Hashtable<String, String> criteria = new Hashtable<String, String>();
-			criteria.put(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, AccountManage.OPERATION_CODE_UPDATE_PASSWORD);
-			criteria.put(AccountManage.SERVER_PARAMETER_OLD_PASSWORD, Utility.encryptWithSHA1(oldPassword));
-			criteria.put(AccountManage.SERVER_PARAMETER_PASSWORD, Utility.encryptWithSHA1(newPassword));
-			criteria.put(BaseQuery.SERVER_PARAMETER_SESSION_ID, Globals.g_Session_Id);
+			accountManage.addParameter(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, AccountManage.OPERATION_CODE_UPDATE_PASSWORD);
+			accountManage.addParameter(AccountManage.SERVER_PARAMETER_OLD_PASSWORD, Utility.encryptWithSHA1(oldPassword));
+			accountManage.addParameter(AccountManage.SERVER_PARAMETER_PASSWORD, Utility.encryptWithSHA1(newPassword));
+			accountManage.addParameter(BaseQuery.SERVER_PARAMETER_SESSION_ID, Globals.g_Session_Id);
 			
-			sendRequest(accountManage, criteria);
+			sendRequest(accountManage);
 		} 
 	}
 	
@@ -130,7 +127,7 @@ public class UserUpdatePasswordActivity extends UserBaseActivity {
 
 	@Override
 	protected void responseCodeAction(AccountManage accountManage) {
-		String operationCode = accountManage.getCriteria().get(BaseQuery.SERVER_PARAMETER_OPERATION_CODE);
+		String operationCode = accountManage.getParameter(BaseQuery.SERVER_PARAMETER_OPERATION_CODE);
 		if (AccountManage.OPERATION_CODE_UPDATE_PASSWORD.equals(operationCode)) {
 			//  200, 405
 			switch(accountManage.getResponse().getResponseCode()){

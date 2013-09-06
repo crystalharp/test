@@ -38,8 +38,6 @@ import com.tigerknows.map.label.Label;
 
 public class MapEngine {
 
-    public static boolean BMP2PNG = false;
-    
     /**
      * 删除或更新地图数据时，通知MapView清除缓存的Tile信息
      */
@@ -68,7 +66,6 @@ public class MapEngine {
     
     public static final int MAX_REGION_TOTAL_IN_ROM = 30;
     private Context context;
-
     private void initEngine(Context context, String mapPath) {
 		synchronized (this) {
 			if (this.isClosed) {
@@ -85,7 +82,6 @@ public class MapEngine {
 						isExternalStorage = true;
 					}
 				}
-
                 if(Ca.tk_is_engine_initialized()) {//地图引擎已被初始化过，静态数据已加载
                 	Ca.tk_engine_reset_map_dir(this.mapPath);
                 }
@@ -551,8 +547,10 @@ public class MapEngine {
      */
     public void setup(Context context) throws Exception {
         String versionName = TKConfig.getPref(context, TKConfig.PREFS_VERSION_NAME, null);
+        File file = new File(TKConfig.getDataPath(false)+"citylist");
         if (TextUtils.isEmpty(versionName)   // 第一次安装后使用
-                || !TKConfig.getClientSoftVersion().equals(versionName)) {   // 更新安装后使用
+                || !TKConfig.getClientSoftVersion().equals(versionName)   // 更新安装后使用
+                || file.exists() == false) {
             String mapPath = TKConfig.getDataPath(true);
             AssetManager am = context.getAssets();
             
@@ -562,6 +560,7 @@ public class MapEngine {
             Utility.unZipFile(am, "tigermap.zip", mapPath);
             
             TKConfig.setPref(context, TKConfig.PREFS_VERSION_NAME, TKConfig.getClientSoftVersion());
+            LogWrapper.d(TAG, "setup()");
         }
     }
     

@@ -18,7 +18,6 @@ import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.Response;
 import com.tigerknows.model.Shangjia;
 import com.tigerknows.model.Tuangou;
-import com.tigerknows.model.User;
 import com.tigerknows.model.Yanchu;
 import com.tigerknows.model.Zhanlan;
 import com.tigerknows.model.DataQuery.BaseList;
@@ -31,7 +30,6 @@ import com.tigerknows.model.DataQuery.ZhanlanResponse;
 import com.tigerknows.model.DataQuery.DiscoverResponse.DiscoverCategoryList.DiscoverCategory;
 import com.tigerknows.model.Yingxun.Changci;
 import com.tigerknows.ui.BaseActivity;
-import com.tigerknows.ui.user.UserBaseActivity;
 import com.tigerknows.util.Utility;
 import com.tigerknows.widget.FilterListView;
 import com.tigerknows.widget.QueryingView;
@@ -41,7 +39,6 @@ import com.tigerknows.widget.SpringbackListView.IPagerListCallBack;
 import com.tigerknows.widget.SpringbackListView.OnRefreshListener;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
@@ -63,7 +60,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.PopupWindow.OnDismissListener;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
 
 /**
@@ -184,10 +180,9 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             
             //Build the query
             DataQuery dataQuery = new DataQuery(mSphinx);
-            Hashtable<String, String> criteria = new Hashtable<String, String>();
-            criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, discoverCategory.getType());
-            criteria.put(DataQuery.SERVER_PARAMETER_INDEX, "0");
-            dataQuery.setup(criteria, Globals.getCurrentCityInfo().getId(),
+            dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, discoverCategory.getType());
+            dataQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
+            dataQuery.setup(Globals.getCurrentCityInfo().getId(),
                     R.id.view_discover_home, R.id.view_discover_list, null, false, false,
                     mSphinx.getPOI());
             mSphinx.queryStart(dataQuery);
@@ -236,16 +231,16 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             return;
         }
         if (lastDataQuery.getSourceViewId() != getId()
-                || lastDataQuery.getCriteria().get(BaseQuery.SERVER_PARAMETER_DATA_TYPE).equals(mDataType) == false) {
+                || lastDataQuery.getParameter(BaseQuery.SERVER_PARAMETER_DATA_TYPE).equals(mDataType) == false) {
             mDataQuery = null;
             mFilterControlView.setVisibility(View.GONE);
             mFilterList.clear();
         }
         
-        String str = mContext.getString(R.string.loading);
+        String str = mContext.getString(R.string.searching);
         mQueryingTxv.setText(str);
         
-        mDataType = lastDataQuery.getCriteria().get(BaseQuery.SERVER_PARAMETER_DATA_TYPE);
+        mDataType = lastDataQuery.getParameter(BaseQuery.SERVER_PARAMETER_DATA_TYPE);
         if (BaseQuery.DATA_TYPE_TUANGOU.equals(mDataType)) {
             if (mTuangouAdapter == null) {
                 mTuangouAdapter = new TuangouAdapter(mSphinx, mTuangouList);
@@ -569,16 +564,12 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                     }else{
                     	mRightBtn.setVisibility(View.VISIBLE);
                     }
-                    if (BaseQuery.DATA_TYPE_TUANGOU.equals(mDataType)) {
-                        if (TKConfig.getPref(mSphinx, TKConfig.PREFS_HINT_POI_LIST) == null) {
-                            TKConfig.setPref(mSphinx, TKConfig.PREFS_HINT_POI_LIST, "1");
-                            TKConfig.setPref(mSphinx, TKConfig.PREFS_HINT_DISCOVER_TUANGOU_DINGDAN, "1");
-                            mSphinx.showHint(TKConfig.PREFS_HINT_DISCOVER_TUANGOU_LIST, R.layout.hint_discover_tuangou_list);
-                        } else {
-                            mSphinx.showHint(TKConfig.PREFS_HINT_DISCOVER_TUANGOU_DINGDAN, R.layout.hint_discover_tuangou_dingdan);
+                    if (mSphinx.getFromThirdParty() == 0) {
+                        if (BaseQuery.DATA_TYPE_TUANGOU.equals(mDataType)) {
+                            if (TKConfig.getPref(mSphinx, TKConfig.PREFS_HINT_DISCOVER_TUANGOU_DINGDAN) == null) {
+                                mSphinx.showHint(TKConfig.PREFS_HINT_DISCOVER_TUANGOU_DINGDAN, R.layout.hint_discover_tuangou_dingdan);
+                            }
                         }
-                    } else {
-                        mSphinx.showHint(TKConfig.PREFS_HINT_POI_LIST, R.layout.hint_poi_list);
                     }
                 } else {
                     mRightBtn.setVisibility(View.GONE);
@@ -597,14 +588,13 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         mResultLsv.changeHeaderViewByState(false, SpringbackListView.REFRESHING);
         mActionLog.addAction(mActionTag+ActionLog.ListViewItemMore);
 
-        DataQuery dataQuery = new DataQuery(mContext);
-        Hashtable<String, String> criteria = lastDataQuery.getCriteria();
-        criteria.put(DataQuery.SERVER_PARAMETER_INDEX, String.valueOf(getList().size()));
+        DataQuery dataQuery = new DataQuery(lastDataQuery);
+        dataQuery.setParameter(DataQuery.SERVER_PARAMETER_INDEX, String.valueOf(getList().size()));
         int dianyingSize = mDianyingList.size();
         if (BaseQuery.DATA_TYPE_DIANYING.equals(mDataType) && dianyingSize > 0) {
-            criteria.put(DataQuery.SERVER_PARAMETER_DIANYING_UUID, mDianyingList.get(dianyingSize-1).getUid());
+            dataQuery.setParameter(DataQuery.SERVER_PARAMETER_DIANYING_UUID, mDianyingList.get(dianyingSize-1).getUid());
         }
-        dataQuery.setup(criteria, lastDataQuery.getCityId(), getId(), getId(), tip, true, true, lastDataQuery.getPOI());
+        dataQuery.setup(lastDataQuery.getCityId(), getId(), getId(), tip, true, false, lastDataQuery.getPOI());
         mSphinx.queryStart(dataQuery);
         }
     }
@@ -666,14 +656,13 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             return;
         }
 
-        DataQuery dataQuery = new DataQuery(mContext);
+        DataQuery dataQuery = new DataQuery(lastDataQuery);
 
         POI requestPOI = lastDataQuery.getPOI();
         int cityId = lastDataQuery.getCityId();
-        Hashtable<String, String> criteria = lastDataQuery.getCriteria();
-        criteria.put(DataQuery.SERVER_PARAMETER_INDEX, "0");
-        criteria.put(DataQuery.SERVER_PARAMETER_FILTER, DataQuery.makeFilterRequest(mFilterList));
-        dataQuery.setup(criteria, cityId, getId(), getId(), null, false, false, requestPOI);
+        dataQuery.setParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
+        dataQuery.setParameter(DataQuery.SERVER_PARAMETER_FILTER, DataQuery.makeFilterRequest(mFilterList));
+        dataQuery.setup(cityId, getId(), getId(), null, false, false, requestPOI);
         mSphinx.queryStart(dataQuery);
         setup();
         
@@ -713,18 +702,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 
             case R.id.dingdan_btn:
                 mActionLog.addAction(mActionTag +  ActionLog.TuangouListDingdan);
-                User user = Globals.g_User;
-                if (user != null) {
-                    Intent intent = new Intent();
-                    intent.putExtra(UserBaseActivity.SOURCE_VIEW_ID, getId());
-                    mSphinx.showView(R.id.activity_discover_shangjia_list, intent);
-                } else {
-                    Intent intent = new Intent();
-                    intent.putExtra(UserBaseActivity.SOURCE_VIEW_ID_LOGIN, getId());
-                    intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_SUCCESS, R.id.activity_discover_shangjia_list);
-                    intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_FAILED, getId());
-                    mSphinx.showView(R.id.activity_user_login, intent);
-                }
+                mSphinx.showView(R.id.view_more_my_order);
                 break;
                 
             default:
@@ -772,6 +750,8 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             TextView orgPriceTxv = (TextView) view.findViewById(R.id.org_price_txv);
             TextView distanceTxv = (TextView) view.findViewById(R.id.distance_txv);
             TextView buyerNumTxv = (TextView) view.findViewById(R.id.buyer_num_txv);
+            TextView fastPurchaseTxv = (TextView) view.findViewById(R.id.fast_purchase_txv);
+            TextView appointmentTxv = (TextView) view.findViewById(R.id.appointment_txv);
 
             Tuangou tuangou = getItem(position);
             Drawable drawable = tuangou.getPictures().loadDrawable(mSphinx, mLoadedDrawableRun, DiscoverListFragment.this.toString());
@@ -779,7 +759,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             	//To prevent the problem of size change of the same pic 
             	//After it is used at a different place with smaller size
                 Rect bounds = drawable.getBounds();
-            	if(bounds != null && bounds.width() != pictureImv.getWidth() || bounds.height() != pictureImv.getHeight() ){
+            	if(bounds != null && (bounds.width() != pictureImv.getWidth() || bounds.height() != pictureImv.getHeight())){
             		pictureImv.setBackgroundDrawable(null);
             	}
             	pictureImv.setBackgroundDrawable(drawable);
@@ -805,6 +785,18 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 distanceTxv.setVisibility(View.VISIBLE);
             }
             buyerNumTxv.setText(String.valueOf(tuangou.getBuyerNum())+mSphinx.getString(R.string.people));
+            
+            if (tuangou.getAppointment() == 1) {
+                appointmentTxv.setVisibility(View.VISIBLE);
+            } else {
+                appointmentTxv.setVisibility(View.GONE);
+            }
+
+            if (tuangou.getUrl() != null) {
+                fastPurchaseTxv.setVisibility(View.VISIBLE);
+            } else {
+                fastPurchaseTxv.setVisibility(View.GONE);
+            }
             
             return view;
         }
@@ -839,9 +831,9 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             if(drawable != null) {
             	//To prevent the problem of size change of the same pic 
             	//After it is used at a different place with smaller size
-            	pictureImv.setBackgroundDrawable(drawable);
+            	pictureImv.setImageDrawable(drawable);
             } else {
-                pictureImv.setBackgroundDrawable(null);
+                pictureImv.setImageDrawable(null);
             }
             
             nameTxv.setText(dianying.getName());
@@ -897,12 +889,12 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             	//To prevent the problem of size change of the same pic 
             	//After it is used at a different place with smaller size
                 Rect bounds = drawable.getBounds();
-            	if(bounds != null && bounds.width() != pictureImv.getWidth() || bounds.height() != pictureImv.getHeight() ){
-            		pictureImv.setBackgroundDrawable(null);
+            	if(bounds != null && (bounds.width() != pictureImv.getWidth() || bounds.height() != pictureImv.getHeight())){
+            		pictureImv.setImageDrawable(null);
             	}
-            	pictureImv.setBackgroundDrawable(drawable);
+            	pictureImv.setImageDrawable(drawable);
             } else {
-                pictureImv.setBackgroundDrawable(null);
+                pictureImv.setImageDrawable(null);
             }
             
             nameTxv.setText(yanchu.getName());
@@ -945,12 +937,12 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             	//To prevent the problem of size change of the same pic 
             	//After it is used at a different place with smaller size
                 Rect bounds = drawable.getBounds();
-            	if(bounds != null && bounds.width() != pictureImv.getWidth() || bounds.height() != pictureImv.getHeight() ){
-            		pictureImv.setBackgroundDrawable(null);
+            	if(bounds != null && (bounds.width() != pictureImv.getWidth() || bounds.height() != pictureImv.getHeight())){
+            		pictureImv.setImageDrawable(null);
             	}
-            	pictureImv.setBackgroundDrawable(drawable);
+            	pictureImv.setImageDrawable(drawable);
             } else {
-                pictureImv.setBackgroundDrawable(null);
+                pictureImv.setImageDrawable(null);
             }
             
             nameTxv.setText(yanchu.getName());
@@ -1008,6 +1000,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 }
             } else {
                 if (dataQuery.isTurnPage()) {
+                    mResultLsv.setFooterLoadFailed(true);
                     invokeIPagerListCallBack();
                     return;
                 }
@@ -1197,7 +1190,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     
     private void makeFilterArea(DataQuery dataQuery) {
         if (dataQuery.isTurnPage() == false) {
-            dataQuery.getCriteria().put(DataQuery.SERVER_PARAMETER_FILTER, DataQuery.makeFilterRequest(mFilterList));
+            dataQuery.setParameter(DataQuery.SERVER_PARAMETER_FILTER, DataQuery.makeFilterRequest(mFilterList));
             if (mFilterList.size() > 0) {
                 mFilterArea = FilterListView.getFilterTitle(mSphinx, mFilterList.get(0));
             }
@@ -1241,12 +1234,8 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         return null;
     }    
     
-    public Hashtable<String, String> getCriteria() {
-        DataQuery lastDataQuery = mDataQuery;
-        if (lastDataQuery == null) {
-            return null;
-        }
-        return lastDataQuery.getCriteria();
+    public DataQuery getLastQuery() {
+        return mDataQuery;
     }
     
     private void showFilterListView(View parent) {
