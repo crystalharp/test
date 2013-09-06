@@ -102,6 +102,10 @@ public class MapEngine {
 		}
     }
 
+    public void setTileSize(int tile_size) {
+    	Ca.tk_set_global_tile_size(tile_size);
+    }
+    
     public void destroyEngine() {
         if (this.isClosed == false) {
 	        suggestDownloaded.clear();

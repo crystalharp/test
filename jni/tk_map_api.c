@@ -92,6 +92,10 @@ unsigned char tk_is_engine_initialized() {
 	return tk_global_info.is_initialized;
 }
 
+void tk_set_global_tile_size(int tile_size) {
+	tk_global_info.tile_size_pix = tile_size;
+}
+
 void tk_destroy_engine_config() {
     tk_destroy_static_data();
     tk_global_info.is_initialized = 0;

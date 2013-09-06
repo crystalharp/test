@@ -86,6 +86,16 @@ JNIEXPORT void JNICALL Java_com_tigerknows_map_Ca_ba
 
 /*
  * Class:     com_tigerknows_map_Ca
+ * Method:    ca
+ * Signature: (I)V
+ */
+JNIEXPORT void JNICALL Java_com_tigerknows_map_Ca_ca
+  (JNIEnv *env, jclass this, jint tile_size) {
+	tk_set_global_tile_size(tile_size);
+}
+
+/*
+ * Class:     com_tigerknows_map_Ca
  * Method:    bb
  * Signature: ()Z
  */
