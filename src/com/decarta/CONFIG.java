@@ -96,7 +96,7 @@ public class CONFIG {
 	 * every 33 miniseconds, which is approximately one frame.
 	 * valid value is (0,1). The bigger, the longer it will ease.
 	 */
-	public static double DECELERATE_RATE=0.8;
+	public static double DECELERATE_RATE=0.85;
 	
 	/**
 	 * background color for canvas mode

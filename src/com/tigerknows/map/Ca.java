@@ -31,6 +31,11 @@ public class Ca {
     	return bb();
     }
     
+    private static native void ca(int tile_size);
+    protected static void tk_set_global_tile_size(int tile_size) {
+    	ca(tile_size);
+    }
+    
     private static native int c(int[] img_buf, int tile_size_bit, int mod);
     public static int tk_init_context(int[] img_buf, int tile_size_bit, int mod) {
     	return c(img_buf, tile_size_bit, mod);

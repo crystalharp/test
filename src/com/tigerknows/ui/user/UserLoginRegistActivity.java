@@ -55,6 +55,7 @@ public class UserLoginRegistActivity extends UserBaseActivity implements View.On
 		findViews();
 		setListener();
 		changeMode(true);
+		setPrefsPhoneNum(TKConfig.getPref(mThis, TKConfig.PREFS_PHONENUM, ""));
 	}
 
 	private void setPrefsPhoneNum(String prefsPhoneNum) {

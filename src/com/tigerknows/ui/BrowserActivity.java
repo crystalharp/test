@@ -6,6 +6,7 @@ package com.tigerknows.ui;
 
 import java.net.URLDecoder;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Paint;
@@ -101,6 +102,33 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
     private static Tuangou sTuangou;
     
     private String mFinishedUrl;
+    
+    /**
+     * 检测url，满足特殊条件时调用支付宝快捷支付
+     * @param activity
+     * @param url
+     */
+    public static void checkFastAlipay(Activity activity, String url) {
+        String info = URLDecoder.decode(url);
+        String clientGoAlipay = TKConfig.getPref(activity, TKConfig.PREFS_CLIENT_GO_ALIPAY, "on");
+        if(info.contains("wappaygw") && info.contains("authAndExecute") && "on".equalsIgnoreCase(clientGoAlipay)){
+            int c = "<request_token>".length();
+            int i = info.indexOf("<request_token>");
+            int j = info.indexOf("</request_token>");
+            StringBuilder sb = new StringBuilder();
+            sb.append("ordertoken=\"");
+            if(i >= 0 && i+c <= j){
+                sb.append(info.substring(i+c, j));
+            }else return;
+            sb.append("\"");
+            MobileSecurePayer msp = new MobileSecurePayer();
+            MobileSecurePayHelper mspHelper = new MobileSecurePayHelper(activity);
+            if (!mspHelper.isMobile_spExist()) {
+                return;
+            }
+            msp.pay(sb.toString(), null, 1, activity);
+        }
+    }
    
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -163,8 +191,13 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
         mWebWbv.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                // 在这里也如同onPageStarted这样处理，详见新浪的demo
-                view.loadUrl(url);
+
+                Tuangou tuangou = sTuangou;
+                if (mFinishedUrl != null && tuangou != null && mTitleBtn.getText().toString().equals(mThis.getString(R.string.picture_text_detail))) {
+                    return true;
+                } else {
+                    view.loadUrl(url);
+                }
                 return true;
             }
 
@@ -185,25 +218,7 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
             	mProgressBar.setVisibility(View.VISIBLE);
-                String info = URLDecoder.decode(url);
-                String clientGoAlipay = TKConfig.getPref(mThis, TKConfig.PREFS_CLIENT_GO_ALIPAY, "on");
-            	if(info.contains("wappaygw") && info.contains("authAndExecute") && "on".equalsIgnoreCase(clientGoAlipay)){
-            		int c = "<request_token>".length();
-            		int i = info.indexOf("<request_token>");
-            		int j = info.indexOf("</request_token>");
-            		StringBuilder sb = new StringBuilder();
-            		sb.append("ordertoken=\"");
-            		if(i >= 0 && i+c <= j){
-            			sb.append(info.substring(i+c, j));
-            		}else return;
-            		sb.append("\"");
-            		MobileSecurePayer msp = new MobileSecurePayer();
-            		MobileSecurePayHelper mspHelper = new MobileSecurePayHelper(mThis.getBaseContext());
-            		if (!mspHelper.isMobile_spExist()) {
-            			return;
-            		}
-            		msp.pay(sb.toString(), null, 1, mThis);
-            	}
+            	checkFastAlipay(mThis, url);
             }
 
             @Override
@@ -272,7 +287,7 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
             mWebWbv.stopLoading();
         } else if (id == R.id.buy_btn) {
             mTitleBtn.setText(R.string.buy);
-            buy();
+            buy(true);
         }
         
     }
@@ -296,7 +311,7 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
         return super.onKeyDown(keyCode, event);
     }
     
-    void buy() {
+    void buy(boolean login) {
         Tuangou tuangou = sTuangou;
         if (tuangou != null) {
             if (tuangou.getUrl() != null) {
@@ -307,7 +322,7 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
                 DataOperation dataOperation = TuangouDetailView.makeDingdanQuery(mThis, tuangou, false, mId, mId);
                 if (dataOperation != null) {
                     queryStart(dataOperation);
-                } else {
+                } else if (login){
                     Intent intent = new Intent(mThis, UserLoginRegistActivity.class);
                     intent.putExtra(UserBaseActivity.SOURCE_VIEW_ID_LOGIN, mId);
                     intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_SUCCESS, mId);
@@ -322,7 +337,7 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        buy();
+        buy(false);
     }
 
     @Override

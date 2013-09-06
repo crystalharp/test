@@ -41,6 +41,14 @@ JNIEXPORT jboolean JNICALL Java_com_tigerknows_map_Ca_bb
 
 /*
  * Class:     com_tigerknows_map_Ca
+ * Method:    ca
+ * Signature: (I)V
+ */
+JNIEXPORT void JNICALL Java_com_tigerknows_map_Ca_ca
+  (JNIEnv *, jclass, jint);
+
+/*
+ * Class:     com_tigerknows_map_Ca
  * Method:    c
  * Signature: ([III)I
  */

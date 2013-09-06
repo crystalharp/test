@@ -63,6 +63,8 @@ void tk_engine_reset_map_dir(const char *mapdir);
 
 unsigned char tk_is_engine_initialized(void);
 
+void tk_set_global_tile_size(int tile_size);
+
 /*
  * Destroy the enine. Should be called for each tk_init_engine()
  */

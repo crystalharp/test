@@ -327,8 +327,12 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         mBookUsernameEdt.setText(TKConfig.getPref(mContext, TKConfig.PREFS_HOTEL_LAST_BOOKNAME, ""));
         mBookUsernameEdt.requestFocus();
         Selection.setSelection(mBookUsernameEdt.getText(), mBookUsernameEdt.length());
-        mRoomMobileNumberEdt.setText(TKConfig.getPref(mContext, TKConfig.PREFS_HOTEL_LAST_MOBILE, 
-        		Globals.g_User != null ? TKConfig.getPref(mContext, TKConfig.PREFS_PHONENUM, "") : ""));
+        String lastMobile = TKConfig.getPref(mContext, TKConfig.PREFS_HOTEL_LAST_MOBILE, "");
+        if(TextUtils.isEmpty(lastMobile)){
+        	mRoomMobileNumberEdt.setText(Globals.g_User != null ? TKConfig.getPref(mContext, TKConfig.PREFS_PHONENUM, "") : "");
+        }else{
+        	mRoomMobileNumberEdt.setText(lastMobile);
+        }
         mRoomMobileNumberEdt.requestFocus();
         Selection.setSelection(mRoomMobileNumberEdt.getText(), mRoomMobileNumberEdt.length());
         mPOI = poi;
