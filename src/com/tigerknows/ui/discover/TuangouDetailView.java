@@ -108,6 +108,12 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
     private Drawable mRefundIcon;
     
     private Drawable mNotRefundIcon;
+    
+    private Drawable mUpIcon;
+    
+    private Drawable mDownIcon;
+    
+    private View mRefundView = null;
 
     /**
      * TextView representing whether this tuangou support give back your money
@@ -269,6 +275,13 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
         Resources resources = mSphinx.getResources();
         mRefundIcon = resources.getDrawable(R.drawable.ic_is_refund);
         mNotRefundIcon = resources.getDrawable(R.drawable.ic_not_refund);
+        mUpIcon = resources.getDrawable(R.drawable.icon_arrow_up);
+        mDownIcon = resources.getDrawable(R.drawable.icon_arrow_down);
+
+        mRefundIcon.setBounds(0, 0, mRefundIcon.getIntrinsicWidth(), mRefundIcon.getIntrinsicHeight());
+        mNotRefundIcon.setBounds(0, 0, mNotRefundIcon.getIntrinsicWidth(), mNotRefundIcon.getIntrinsicHeight());
+        mUpIcon.setBounds(0, 0, mUpIcon.getIntrinsicWidth(), mUpIcon.getIntrinsicHeight());
+        mDownIcon.setBounds(0, 0, mDownIcon.getIntrinsicWidth(), mDownIcon.getIntrinsicHeight());
 
         int width = (int)(Globals.g_metrics.widthPixels);
         int height = (int) (width*((float)168/276));
@@ -385,10 +398,8 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
         
         String refund = mData.getRefund();
         if (!TextUtils.isEmpty(refund) && !refund.contains(noRefundStr)) {
-            mRefundIcon.setBounds(0, 0, mRefundIcon.getIntrinsicWidth(), mRefundIcon.getIntrinsicHeight());
-            mRefundTxv.setCompoundDrawables(mRefundIcon, null, null, null);
+            mRefundTxv.setCompoundDrawables(mRefundIcon, null, mUpIcon, null);
         } else {
-            mNotRefundIcon.setBounds(0, 0, mNotRefundIcon.getIntrinsicWidth(), mNotRefundIcon.getIntrinsicHeight());
             mRefundTxv.setCompoundDrawables(mNotRefundIcon, null, null, null);
         }
         mRefundDetailTxv.setVisibility(View.GONE);
@@ -572,6 +583,7 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
         
         mNameTxt = (TextView)findViewById(R.id.name_txv);
         mViewurlView = findViewById(R.id.viewurl_view);
+        mRefundView = findViewById(R.id.refund_view);
         mRefundTxv = (TextView) findViewById(R.id.refund_txv);
         mRefundDetailTxv = (TextView) findViewById(R.id.refund_detail_txv);
         mBuyerNumTxv = (TextView) findViewById(R.id.buyer_num_txv);
@@ -631,7 +643,7 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
         mNearbyFendianView.setOnClickListener(this);
         mServiceHotlineView.setOnClickListener(this);
         mViewurlView.setOnClickListener(this);
-        mRefundTxv.setOnClickListener(this);
+        mRefundView.setOnClickListener(this);
         
         mBodyScv.setOnTouchListener(new OnTouchListener() {
 
@@ -769,9 +781,10 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
                 mSphinx.showView(R.id.activity_browser, intent);
                 break;
                 
-            case R.id.refund_txv:
+            case R.id.refund_view:
                 if (mRefundDetailTxv.getVisibility() == View.VISIBLE) {
                     mRefundDetailTxv.setVisibility(View.GONE); 
+                    mRefundTxv.setCompoundDrawables(mRefundIcon, null, mUpIcon, null);
                 } else {
                     String refundDetail = null;
                     Shangjia shangjia = Shangjia.getShangjiaById(mData.getSource(), mSphinx, mLoadedDrawableRun);
@@ -783,8 +796,10 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
                         if (refundDetail != null) {
                             mRefundDetailTxv.setText(refundDetail);
                             mRefundDetailTxv.setVisibility(View.VISIBLE);
+                            mRefundTxv.setCompoundDrawables(mRefundIcon, null, mDownIcon, null);
                         } else {
                             mRefundDetailTxv.setVisibility(View.GONE); 
+                            mRefundTxv.setCompoundDrawables(mRefundIcon, null, mUpIcon, null);
                         }
                     } else {
                         mRefundDetailTxv.setVisibility(View.GONE); 
@@ -835,11 +850,11 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
         }
         if (s != null) {
             dataOperation = new DataOperation(activity);
-            dataOperation.addLocalParameter(DataOperation.SERVER_PARAMETER_DATA_TYPE, DataOperation.DATA_TYPE_DINGDAN);
-            dataOperation.addLocalParameter(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_CREATE);
-            dataOperation.addLocalParameter(DataOperation.SERVER_PARAMETER_ENTITY, s.toString());
+            dataOperation.addParameter(DataOperation.SERVER_PARAMETER_DATA_TYPE, DataOperation.DATA_TYPE_DINGDAN);
+            dataOperation.addParameter(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_CREATE);
+            dataOperation.addParameter(DataOperation.SERVER_PARAMETER_ENTITY, s.toString());
             if (hide) {
-                dataOperation.addLocalParameter(DataOperation.SERVER_PARAMETER_FLAG, DataOperation.FLAG_NOCREATE);
+                dataOperation.addParameter(DataOperation.SERVER_PARAMETER_FLAG, DataOperation.FLAG_NOCREATE);
             }
             dataOperation.setup(Globals.getCurrentCityInfo().getId(), sourceViewId, targetViewId, hide ? null : activity.getString(R.string.doing_and_wait));
         }

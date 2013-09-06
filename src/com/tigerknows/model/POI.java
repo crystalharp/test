@@ -1318,12 +1318,10 @@ public class POI extends BaseData {
         if (storeType == Tigerknows.STORE_TYPE_FAVORITE && id != -1) {
             count = SqliteWrapper.delete(context, context.getContentResolver(), ContentUris.withAppendedId(Tigerknows.POI.CONTENT_URI, id), null, null);
             id = -1;
+            alise = null;
         } else {
             BaseData baseData = checkStore(context, Tigerknows.STORE_TYPE_FAVORITE, -1, -1);
             if (baseData != null) {
-                if (storeType == Tigerknows.STORE_TYPE_FAVORITE) {
-                    alise = null;
-                }
                 count = SqliteWrapper.delete(context, context.getContentResolver(), ContentUris.withAppendedId(Tigerknows.POI.CONTENT_URI, baseData.id), null, null);
             }
         }

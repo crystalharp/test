@@ -52,6 +52,7 @@ public class MapVersionQuery extends BaseQuery {
     @Override
     public synchronized void query() {
         isStop = false;
+        requestParameters.clear();
         super.query();
     }
     

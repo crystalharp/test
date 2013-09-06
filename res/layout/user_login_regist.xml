@@ -111,12 +111,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="8dp"
-                    android:drawableLeft="@drawable/user_center_user"
-                    android:drawablePadding="8dp"
                     android:singleLine="true"
                     android:maxLength="11"
                     android:ellipsize="end"
-                    android:textSize="14sp"
+                    android:textSize="18sp"
                     android:background="@drawable/list_header_normal"
                     emptyErrorTip="@string/phone_empty_tip"
                     flag="0"
@@ -124,33 +122,43 @@
                     android:hint="@string/please_input_phone"
                     android:inputType="phone"
                     validateType="phone" >
-            
-                    <requestFocus />
                 </com.tigerknows.ui.user.ExtValidationEditText>
                 
                 <ImageView
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/bg_line_split" />
-                
-                <com.tigerknows.ui.user.ExtValidationEditText
-                    android:id="@+id/login_password_edt"
-                    android:layout_width="match_parent"
+                <RelativeLayout 
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:padding="8dp"
-                    android:drawableLeft="@drawable/user_center_passwd"
-                    android:drawablePadding="8dp"
-                    android:singleLine="true"
-                    android:ellipsize="end"
-                    android:textSize="14sp"
-                    android:maxLength="16"
-                    android:background="@drawable/list_footer_normal"
-                    emptyErrorTip="@string/password_empty_tip"
-                    validateType="password"
-                    formatErrorTip="@string/password_format_error_tip"
-                    flag="1"
-                    android:hint="@string/please_input_password"
-                    android:inputType="textPassword" />
+                    >
+	                <com.tigerknows.ui.user.ExtValidationEditText
+	                    android:id="@+id/login_password_edt"
+	                    android:layout_width="match_parent"
+	                    android:layout_height="wrap_content"
+	                    android:padding="8dp"
+	                    android:singleLine="true"
+	                    android:ellipsize="end"
+	                    android:textSize="18sp"
+	                    android:maxLength="16"
+                        android:background="@drawable/list_footer_normal"
+	                    emptyErrorTip="@string/password_empty_tip"
+	                    validateType="password"
+	                    formatErrorTip="@string/password_format_error_tip"
+	                    flag="1"
+	                    android:hint="@string/please_input_password"
+	                    android:inputType="textPassword" /> 
+		            <TextView
+		                android:id="@+id/forget_password_txt"
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:layout_alignParentRight="true"
+		                android:paddingRight="8dp"
+		                android:layout_centerVertical="true"
+		                android:text="@string/forget_password"
+		                android:textColor="#009CFF"
+		                android:textSize="16sp" />	                                       
+                </RelativeLayout>
             </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
@@ -160,24 +168,20 @@
 
                 <Button
                     android:id="@+id/login_btn"
-                    android:layout_width="0dp"
-                    android:layout_weight="3"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/login"
-                    android:textSize="14sp"
+                    android:textSize="18sp"
                     android:textColor="@color/white"
                     android:padding="12dp"
-                    android:background="@drawable/btn_blue_green" />
+                    android:background="@drawable/btn_orangle" 
+	                android:shadowDx="0"
+	                android:shadowDy="1"
+	                android:shadowColor="#a77a00"
+	                android:shadowRadius="1"
+                />
             </LinearLayout>
-            <TextView
-                android:id="@+id/forget_password_txt"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingTop="8dp"
-                android:layout_gravity="right|center_vertical"
-                android:text="@string/forget_password"
-                android:textColor="#009CFF"
-                android:textSize="14sp" />
+
         </LinearLayout>
     </ScrollView>
     <ScrollView
@@ -185,6 +189,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/title_view"
+        android:visibility="gone"
         >
         <LinearLayout 
             android:layout_width="match_parent"
@@ -202,24 +207,28 @@
                 android:ellipsize="end"
                 android:textSize="18sp"
                 android:hint="@string/please_input_11_phone"
-                android:background="@drawable/list_single_normal"
+                android:background="@drawable/list_header_normal"
                 flag="0"
                 validateType="phone"
                 emptyErrorTip="@string/phone_empty_tip"
                 formatErrorTip="@string/phone_format_error_tip" >
             </com.tigerknows.ui.user.ExtValidationEditText>
+            <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_line_split" />
             <RelativeLayout 
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp" >
+                android:background="@drawable/list_middle_normal">
                 <com.tigerknows.ui.user.CountDownButton
                     android:id="@+id/vali_num_btn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
-                    android:layout_marginRight="8dp"
-                    android:padding="13dp"
+                    android:layout_margin="8dp"
+                    android:padding="9dp"
                     android:text="@string/reqest_validate_num"
                     android:textSize="16sp"
                     android:textColor="@color/black"
@@ -237,16 +246,19 @@
                     android:ellipsize="end"
                     android:textSize="18sp"
                     android:hint="@string/please_input_4_validate_num"
-                    android:background="@drawable/list_single_normal"
+                    android:background="@drawable/transparent_bg"
                     flag="1"
                     validateType="validnum"
                     emptyErrorTip="@string/code_empty_tip" />
             </RelativeLayout>
+            <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_line_split" />
             <LinearLayout 
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingTop="8dp" >
+                android:orientation="vertical">
                 <com.tigerknows.ui.user.ExtValidationEditText
                     android:id="@+id/regist_password_edt"
                     android:layout_width="match_parent"
@@ -258,7 +270,7 @@
                     android:textSize="18sp"
                     android:maxLength="16"
                     android:hint="@string/please_input_616_password"
-                    android:background="@drawable/list_header_normal"
+                    android:background="@drawable/list_middle_normal"
                     flag="2"
                     validateType="password"
                     emptyErrorTip="@string/password_empty_tip"
@@ -289,12 +301,17 @@
                 android:id="@+id/regist_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:padding="8dp"
+                android:layout_marginTop="8dp"
+                android:padding="12dp"
                 android:text="@string/regist"
                 android:textSize="18sp"
                 android:textColor="@color/white"
-                android:background="@drawable/btn_blue_green"  />
+                android:background="@drawable/btn_orangle" 
+                android:shadowDx="0"
+                android:shadowDy="1"
+                android:shadowColor="#a77a00"
+                android:shadowRadius="1"
+                />
         </LinearLayout>
     </ScrollView>    
 </RelativeLayout>

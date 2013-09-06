@@ -122,6 +122,9 @@ public abstract class BaseQuery {
     // 图片上传
     public static final String API_TYPE_FILE_UPLOAD = "fileUpload";
     
+    // 帮助
+    public static final String API_TYPE_HELP = "help";
+    
     // 消息通知
     public static final String API_TYPE_NOTICE = "notice";
     
@@ -358,7 +361,7 @@ public abstract class BaseQuery {
         addCommonParameters(cityId, false);
     }
     
-    protected void addCommonParameters(int cityId, boolean isLocateMe) {
+    public void addCommonParameters(int cityId, boolean isLocateMe) {
         requestParameters.add(sCommonParameters);
 
         if (cityId < MapEngine.CITY_ID_BEIJING && isLocateMe == false) {
@@ -390,7 +393,8 @@ public abstract class BaseQuery {
         if (API_TYPE_PROXY.equals(apiType) == false 
                 && API_TYPE_HOTEL_ORDER.equals(apiType) == false 
                 && API_TYPE_FILE_UPLOAD.equals(apiType) == false 
-                && API_TYPE_NOTICE.equals(apiType) == false) {
+                && API_TYPE_NOTICE.equals(apiType) == false
+                && API_TYPE_HELP.equals(apiType) == false) {
             requestParameters.add(SERVER_PARAMETER_API_TYPE, apiType);
             requestParameters.add(SERVER_PARAMETER_VERSION, version);
         }
