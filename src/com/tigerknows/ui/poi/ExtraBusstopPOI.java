@@ -51,6 +51,7 @@ public class ExtraBusstopPOI extends DynamicPOIView {
         @Override
         public void refresh() {
             mBuslinelsv.refreshList(mBuslineList);
+            refreshBackground(mBuslinelsv, mBuslineList.size());
         }
         
     };
@@ -73,6 +74,20 @@ public class ExtraBusstopPOI extends DynamicPOIView {
         }
         
     };
+    
+    void refreshBackground(LinearListView lsv, int size) {
+        for(int i = 0; i < size; i++) {
+            View child = mBuslineListView.getChildAt(i);
+            if (i == (size-1)) {
+                child.setBackgroundResource(R.drawable.list_footer);
+                child.findViewById(R.id.list_separator_imv).setVisibility(View.GONE);
+            } else {
+                child.setBackgroundResource(R.drawable.list_middle);
+                child.findViewById(R.id.list_separator_imv).setVisibility(View.VISIBLE);
+            }
+        }
+    }
+
     
     public ExtraBusstopPOI(POIDetailFragment poiFragment,
             LayoutInflater inflater) {
@@ -126,7 +141,7 @@ public class ExtraBusstopPOI extends DynamicPOIView {
         int cityId = mapEngine.getCityId(mPOI.getPosition());
         
         BuslineQuery buslineQuery = new BuslineQuery(mSphinx);
-        buslineQuery.setup(cityId, mPOI.getName(), 0, false, R.id.view_traffic_home, mSphinx.getString(R.string.doing_and_wait));
+        buslineQuery.setup(cityId, mPOI.getName(), 0, false, R.id.view_traffic_home, null);
         
         queryStart(buslineQuery);
 

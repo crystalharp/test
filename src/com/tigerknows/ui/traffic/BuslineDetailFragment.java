@@ -291,16 +291,14 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
             int index = txt.indexOf((String)getItem(position))-1; 
 
             SpannableStringBuilder style=new SpannableStringBuilder(txt);               
-            style.setSpan(new ForegroundColorSpan(mContext.getResources().getColor(R.color.text_forground_blue)),0, index, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+            if (position == highlightIndex) {
+                style.setSpan(new ForegroundColorSpan(mContext.getResources().getColor(R.color.orange)),0, txt.length(), Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+            } else {
+                style.setSpan(new ForegroundColorSpan(mContext.getResources().getColor(R.color.text_forground_blue)),0, index, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+            }
             
             stationHolder.textView.setText(style);
             
-            if (position == highlightIndex) {
-                convertView.setBackgroundColor(Color.YELLOW);
-            } else {
-                convertView.setBackgroundResource(R.drawable.list_selector_background_gray_light);
-            }
-            convertView.setPadding(8, 8, 8, 8);
 
             return convertView;
 
