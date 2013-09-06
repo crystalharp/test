@@ -274,9 +274,19 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 	                final RecommendApp recommendApp = mRecommendAppList.get(position);
 	                if (recommendApp != null) {
 	                    mActionLog.addAction(mActionTag + ActionLog.MoreAppDownload, position, recommendApp.getName());
-	                    final String uri = recommendApp.getUrl();
-	                    if (!TextUtils.isEmpty(uri)) {
-                            DownloadService.download(mSphinx, uri, recommendApp.getName(), ApkDownloadedProcessor.getInstance());
+	                    final String url = recommendApp.getUrl();
+	                    if (!TextUtils.isEmpty(url)) {
+                            Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.prompt), 
+                                    mSphinx.getString(R.string.are_you_sure_download_this_software), 
+                                    new DialogInterface.OnClickListener() {
+
+                                        @Override
+                                        public void onClick(DialogInterface arg0, int which) {
+                                            if (which == DialogInterface.BUTTON_POSITIVE) {
+                                                DownloadService.download(mSphinx, url, recommendApp.getName(), ApkDownloadedProcessor.getInstance());
+                                            }
+                                        }
+                            });
 	                    }
 	                }
 				}
