@@ -335,6 +335,11 @@ public class TKConfig {
      * 消息通知服务访问URL路径
      */
     private static String sNOTICE_URL = "http://%s/notice/13";
+
+    /**
+     * 帮助服务访问URL路径
+     */
+    private static String sHELP_URL = "http://%s/help/13";
     
     /**
      * 默认下载服务器Host
@@ -370,6 +375,11 @@ public class TKConfig {
      * 默认消息通知的Host
      */
     private static String sNOTICE_HOST = "notice.tigerknows.net";
+    
+    /**
+     * 默认帮助服务的Host
+     */
+    private static String sHELP_HOST = "help.laohubaodian.net ";
 
     /**
      * 软件登录服务推送用于动态负载均衡的下载服务器Host
@@ -1055,6 +1065,22 @@ public class TKConfig {
     }
     
     /**
+     * 获取帮助服务的URL
+     * @return
+     */
+    public static String getHelpUrl() {
+        return sHELP_URL;
+    }
+    
+    /**
+     * 获取帮助服务的Host
+     * @return
+     */
+    public static String getHelpHost() {
+        return sHELP_HOST;
+    }
+    
+    /**
      * 获取引导服务器Host列表
      * @return
      */
@@ -1604,6 +1630,18 @@ public class TKConfig {
                 if (start > -1 && end > -1) {
                     start += "noticeHost=".length();
                     TKConfig.sNOTICE_HOST = text.substring(start, end);
+                }
+                start = text.indexOf("helpUrl=");
+                end = text.indexOf(";", start);
+                if (start > -1 && end > -1) {
+                    start += "helpUrl=".length();
+                    TKConfig.sHELP_URL = text.substring(start, end);
+                }
+                start = text.indexOf("helpHost=");
+                end = text.indexOf(";", start);
+                if (start > -1 && end > -1) {
+                    start += "helpHost=".length();
+                    TKConfig.sHELP_HOST = text.substring(start, end);
                 }
                 BaseQuery.initCommonParameters();
             } catch (Exception e) {

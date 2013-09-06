@@ -10,10 +10,12 @@ import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
 import com.tigerknows.common.ActionLog;
+import com.tigerknows.model.HelpQuery;
 import com.tigerknows.radar.AlarmInitReceiver;
 import com.tigerknows.radar.Alarms;
 import com.tigerknows.service.PullService;
 import com.tigerknows.ui.BaseActivity;
+import com.tigerknows.ui.BrowserActivity;
 import com.tigerknows.util.Utility;
 
 import android.app.Dialog;
@@ -299,8 +301,12 @@ public class SettingActivity extends BaseActivity {
 	                    	break;
 	                    case DataBean.TYPE_HELP:
 	                    	mActionLog.addAction(mActionTag + ActionLog.SettingHelp);
-	                    	intent = new Intent(SettingActivity.this, HelpActivity.class);
-	                    	startActivityForResult(intent, 0);
+	                    	intent = new Intent(mThis, BrowserActivity.class);
+	                        intent.putExtra(BrowserActivity.TITLE, getString(R.string.help));
+	                        HelpQuery baseQuery = new HelpQuery(mThis);
+	                        baseQuery.addCommonParameters(Globals.getCurrentCityInfo().getId(), false);
+	                        intent.putExtra(BrowserActivity.URL, String.format(TKConfig.getHelpUrl(), TKConfig.getHelpHost()) + "?" + baseQuery.getParameters().getEncodedPostParam(TKConfig.getEncoding()));
+	                        startActivityForResult(intent, 0);
 	                    	break;
 	                    case DataBean.TYPE_ABOUT:
 	                    	mActionLog.addAction(mActionTag + ActionLog.SettingAboutMe);
