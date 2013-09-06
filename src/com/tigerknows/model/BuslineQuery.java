@@ -78,7 +78,7 @@ public final class BuslineQuery extends BaseQuery {
     
     @Override
     protected void addCommonParameters() {
-        super.addCommonParameters(cityId);
+        super.addCommonParameters();
         
         addParameter(SERVER_PARAMETER_KEYWORD, keyword);
         addParameter(SERVER_PARAMETER_INDEX, String.valueOf(startPos));

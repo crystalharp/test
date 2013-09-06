@@ -65,7 +65,7 @@ public class ProxyQuery extends BaseQuery {
     
     @Override
     protected void addCommonParameters() {
-        super.addCommonParameters(cityId);
+        super.addCommonParameters();
         addSessionId();
     }
 

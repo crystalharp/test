@@ -48,11 +48,6 @@ public final class Bootstrap extends BaseQuery {
     }
     
     @Override
-    protected void addCommonParameters() {
-        super.addCommonParameters();
-    }
-
-    @Override
     protected void translateResponse(byte[] data) throws APIException {
         super.translateResponse(data);
 

@@ -19,8 +19,8 @@ public class NoticeQuery extends BaseQuery {
 	
 	@Override
 	protected void addCommonParameters() {
-		super.addCommonParameters(cityId);
-                addSessionId();
+		super.addCommonParameters();
+        addSessionId();
 	}
 	
 	@Override

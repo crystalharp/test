@@ -155,7 +155,7 @@ public class HotelOrderOperation extends BaseQuery {
     
     @Override
     protected void addCommonParameters() {
-        super.addCommonParameters(cityId);
+        super.addCommonParameters();
         addSessionId();
     }
 

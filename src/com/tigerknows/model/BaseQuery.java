@@ -355,10 +355,6 @@ public abstract class BaseQuery {
      * 添加Query的公共参数，继承自此类的Query可以override这个函数
      */
     protected void addCommonParameters() {
-        addCommonParameters(MapEngine.CITY_ID_BEIJING, false);
-    }
-    
-    protected void addCommonParameters(int cityId) {
         addCommonParameters(cityId, false);
     }
     

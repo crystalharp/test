@@ -636,7 +636,6 @@ public final class DataQuery extends BaseQuery {
     @Override
     protected void addCommonParameters() {
         super.addCommonParameters();
-        addCommonParameters(cityId);
         // 默认分页数目为TKConfig.getPageSize()
         String pageSize = getParameter(SERVER_PARAMETER_SIZE);
         if (pageSize == null) {

@@ -53,7 +53,7 @@ public final class FileUpload extends BaseQuery {
         statusCode = STATUS_CODE_NONE;
 
         try {
-            addCommonParameters(Globals.getCurrentCityInfo().getId());
+            addCommonParameters(Globals.getCurrentCityInfo().getId(), false);
 
             HttpUtils.TKHttpClient.modifyRequestData(getParameters());
 

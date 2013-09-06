@@ -106,7 +106,7 @@ public class AccountManage extends BaseQuery {
     
     @Override
     protected void addCommonParameters() {
-        super.addCommonParameters(cityId);
+        super.addCommonParameters();
         addSessionId();
     }
     

@@ -97,7 +97,7 @@ public final class TrafficQuery extends BaseQuery {
 
     @Override
     protected void addCommonParameters() {
-        addCommonParameters(cityId);
+        super.addCommonParameters();
 
         if (Util.inChina(startPOI.getPosition())) {
             addParameter("sx", String.valueOf(startPOI.getPosition().getLon()));
