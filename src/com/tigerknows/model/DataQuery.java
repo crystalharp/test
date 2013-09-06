@@ -619,7 +619,7 @@ public final class DataQuery extends BaseQuery {
                     SERVER_PARAMETER_LAST_PULL_DATE});
             debugCheckParameters(ekeys, okeys);
         } else if (DATA_TYPE_ALTERNATIVE.equals(dataType)) {
-            ekeys = Utility.mergeArray(ekeys, new String[]{SERVER_PARAMETER_KEYWORD});
+            ekeys = Utility.mergeArray(ekeys, new String[]{SERVER_PARAMETER_KEYWORD, SERVER_PARAMETER_INDEX, SERVER_PARAMETER_NEED_FIELD});
             debugCheckParameters(ekeys, okeys);
         } else if (DATA_TYPE_FILTER.equals(dataType)) {
             okeys = Utility.mergeArray(okeys, filterOptionalKeys, indexKeys);
