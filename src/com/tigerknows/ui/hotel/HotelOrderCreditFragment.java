@@ -322,15 +322,16 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         mCreditCertTypeBtn.setText(mCertTypeList.get(0));
         mGetCreditCertPosition = 0;
         mCreditAssurePriceTxv.setText(mSphinx.getString(R.string.credit_assure_price, (assureType == 2 ) ? mSumPrice : oneNightPrice));
-        Calendar c1 = Calendar.getInstance();
+        Calendar cancelDeadline = Calendar.getInstance();
         try {
-            c1.setTime(CalendarUtil.ymd8c_Hm4.parse(mOrderModifyDeadline));
+            cancelDeadline.setTime(CalendarUtil.ymd8c_Hm4.parse(mOrderModifyDeadline));
         } catch (ParseException e) {
             // TODO Auto-generated catch block
             // do nothing
         }
-        Calendar c2 = Calendar.getInstance();
-        if(c1.after(c2) == false){
+        Calendar currentTime = Calendar.getInstance();
+        currentTime.setTimeInMillis(CalendarUtil.getExactTime(mContext));
+        if(cancelDeadline.after(currentTime) == false){
             mCreditNoteTxv.setText(Utility.renderColorToPartOfString(mContext,
                     R.color.orange,
                     mSphinx.getString(R.string.credit_note_detail_2, mSphinx.getString(R.string.credit_cannot_cancel)),
