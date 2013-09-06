@@ -145,6 +145,7 @@ public class TilesView extends GLSurfaceView {
             this.mapText.refresh = refresh;
         }
     }
+    private boolean paused = false;
     private MapRender mapRender;
     private MapText mapText = new MapText();
     private Grid labelGrid;
@@ -597,7 +598,12 @@ public class TilesView extends GLSurfaceView {
 		});
 	}
 	
+	public void resume() {
+		paused = false;
+	}
+	
 	public void clearAllTextures() {
+		paused = true;
 		this.queueEvent(new Runnable() {
 			public void run() {
 				mapRender.clearAllTextures();
@@ -2540,6 +2546,8 @@ public class TilesView extends GLSurfaceView {
 		 * the main method to draw all the map elements
 		 */
 		public void onDrawFrame(GL10 gl){
+			if(paused)
+				return;
 			if(centerXY==null){
 				return;
 			}
