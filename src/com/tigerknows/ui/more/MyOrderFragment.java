@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Gravity;
@@ -53,7 +54,6 @@ public class MyOrderFragment extends BaseFragment{
         
         findViews();
         setListener();
-        
         return mRootView;
     }
     
@@ -79,6 +79,7 @@ public class MyOrderFragment extends BaseFragment{
 	@Override
 	public void onResume() {
 		super.onResume();
+		mTitleBtn.setText(mSphinx.getString(R.string.wodedingdan));
 		List<Shangjia> list = Shangjia.getShangjiaList();
 		if (list.size() != mResultList.size()) {
 		    mResultList.clear();
@@ -111,7 +112,10 @@ public class MyOrderFragment extends BaseFragment{
     		}else{
     			btn.setBackgroundDrawable(mSphinx.getResources().getDrawable(R.drawable.list_middle));
     		}
-    		btn.setPadding(Utility.dip2px(mContext, 8), 0, Utility.dip2px(mContext, 16), 0);
+    		btn.setPadding(Utility.dip2px(mContext, 16), 0, Utility.dip2px(mContext, 16), 0);
+    		Drawable arrowRight = getResources().getDrawable(R.drawable.icon_arrow_right);
+    		arrowRight.setBounds(0, 0, arrowRight.getIntrinsicWidth(), arrowRight.getIntrinsicHeight());
+    		btn.setCompoundDrawables(null, null, arrowRight, null);
     		btn.setOnClickListener(new OnClickListener() {
 				
 				@Override

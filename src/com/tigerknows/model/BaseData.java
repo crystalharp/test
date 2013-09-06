@@ -66,6 +66,11 @@ public class BaseData extends XMapData {
         return null;
     }
     
+    public boolean checkStore(Context context) {
+        return false;
+    }
+
+    // 仅用于交通数据（公交换乘、自驾、步行、线路） begin
     protected Uri writeToDatabasesInternal(Context context, Uri insertUri, ContentValues values, int storeType, int type) {
         boolean isFailed = false;
         Uri uri = null;
@@ -108,34 +113,56 @@ public class BaseData extends XMapData {
     }
     
     public boolean checkFavorite(Context context) {
-        return checkStore(context, Tigerknows.STORE_TYPE_FAVORITE) != null;
+        if (id != -1 && storeType == Tigerknows.STORE_TYPE_FAVORITE) {
+            return true;
+        } else {
+            return checkStore(context, Tigerknows.STORE_TYPE_FAVORITE) != null;
+        }
     }
 
     public int deleteFavorite(Context context) {
         int count = 0;
-        BaseData baseData = checkStore(context, Tigerknows.STORE_TYPE_FAVORITE);
-        if (baseData != null) {
-            if (storeType == Tigerknows.STORE_TYPE_FAVORITE) {
-                alise = null;
+        if (id != -1 && storeType == Tigerknows.STORE_TYPE_FAVORITE && parentId != -1) {
+            count = SqliteWrapper.delete(context, context.getContentResolver(),
+                Tigerknows.Favorite.CONTENT_URI, "_id=" + parentId, null);
+            alise = null;
+            id = -1;
+            parentId = -1;
+        } else {
+            BaseData baseData = checkStore(context, Tigerknows.STORE_TYPE_FAVORITE);
+            if (baseData != null) {
+                count = SqliteWrapper.delete(context, context.getContentResolver(), Tigerknows.Favorite.CONTENT_URI, "_id="+baseData.parentId, null);
             }
-            count = SqliteWrapper.delete(context, context.getContentResolver(), Tigerknows.Favorite.CONTENT_URI, "_id="+baseData.parentId, null);
         }
+        
         return count;
     }
     
     public boolean checkHistory(Context context) {
-        return checkStore(context, Tigerknows.STORE_TYPE_HISTORY) != null;
+        if (id != -1 && storeType == Tigerknows.STORE_TYPE_HISTORY) {
+            return true;
+        } else {
+            return checkStore(context, Tigerknows.STORE_TYPE_HISTORY) != null;
+        }
     }
 
     public int deleteHistory(Context context) {
         int count = 0;
-        BaseData baseData = checkStore(context, Tigerknows.STORE_TYPE_HISTORY);
-        if (baseData != null) {
+        if (id != -1 && storeType == Tigerknows.STORE_TYPE_HISTORY && parentId != -1) {
             count = SqliteWrapper.delete(context, context.getContentResolver(),
-                Tigerknows.History.CONTENT_URI, "_id=" + baseData.parentId, null);
+                Tigerknows.History.CONTENT_URI, "_id=" + parentId, null);
+            id = -1;
+            parentId = -1;
+        } else {
+            BaseData baseData = checkStore(context, Tigerknows.STORE_TYPE_HISTORY);
+            if (baseData != null) {
+                count = SqliteWrapper.delete(context, context.getContentResolver(),
+                    Tigerknows.History.CONTENT_URI, "_id=" + baseData.parentId, null);
+            }
         }
         return count;
     }
+    // 仅用于交通数据（公交换乘、自驾、步行、线路） end
     
     public POI getPOI(int sourceType){
     	POI poi = getPOI();
