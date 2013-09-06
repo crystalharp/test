@@ -173,6 +173,16 @@ public class Ca {
     protected static int tk_get_max_label_priority() {
     	return al();
     }
+    private static native void am();
+    protected static void tk_clean_engine_cache() {
+    	am();
+    }
+    
+    private static native void an();
+    protected static void tk_clean_engine_label() {
+    	an();
+    }
+    
     /**联系词解压、销毁、获取联想词、联想词版本*/
     private static native int p(int citycode, String filepath);
     protected static int tk_decompress(int citycode, String filepath) { return p(citycode, filepath); }

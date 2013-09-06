@@ -1150,4 +1150,9 @@ public class MapEngine {
         
         return result;
     }
+    
+    public static void cleanEngineCache() {
+    	Ca.tk_clean_engine_cache();
+    	Ca.tk_clean_engine_label();
+    }
 }

@@ -249,6 +249,22 @@ JNIEXPORT jint JNICALL Java_com_tigerknows_map_Ca_al
 
 /*
  * Class:     com_tigerknows_map_Ca
+ * Method:    am
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_com_tigerknows_map_Ca_am
+  (JNIEnv *, jclass);
+
+/*
+ * Class:     com_tigerknows_map_Ca
+ * Method:    an
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_com_tigerknows_map_Ca_an
+  (JNIEnv *, jclass);
+
+/*
+ * Class:     com_tigerknows_map_Ca
  * Method:    p
  * Signature: (ILjava/lang/String;)I
  */

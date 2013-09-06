@@ -1846,6 +1846,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 TKConfig.setPref(mContext, TKConfig.PREFS_LAST_ZOOM_LEVEL, String.valueOf(zoom));
             }
             mMapView.clearAllTextures();
+            MapEngine.cleanEngineCache();
         }
 
         unregisterReceiver(mCountCurrentDownloadCityBroadcastReceiver);
