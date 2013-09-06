@@ -164,7 +164,7 @@ public class SuggestLexiconDownload extends BaseQuery {
     
     @Override
     protected void addCommonParameters() {
-        addCommonParameters(currentCityId);
+        addCommonParameters(currentCityId, false);
         addParameter("lr", String.valueOf(oldversion));
         addParameter("rs", String.valueOf(hasDataLength > 0 ? hasDataLength - VALIDATE_LENGTH : 0));
         if (hasDataLength > 0) {

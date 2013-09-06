@@ -53,7 +53,7 @@ public class FeedbackUpload extends BaseQuery {
     
     @Override
     protected void addCommonParameters() {
-        super.addCommonParameters(cityId);
+        super.addCommonParameters();
         addSessionId();
     }
 
