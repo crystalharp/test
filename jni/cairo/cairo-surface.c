@@ -128,80 +128,10 @@ const cairo_surface_t name = {					\
     { NULL, NULL },			/* snapshots */		\
     { NULL, NULL },			/* snapshot */		\
 }
-//    { CAIRO_ANTIALIAS_DEFAULT,		/* antialias */		\
-//     CAIRO_SUBPIXEL_ORDER_DEFAULT,	/* subpixel_order */	\
-//      CAIRO_LCD_FILTER_DEFAULT,		/* lcd_filter */	\
-//      CAIRO_HINT_STYLE_DEFAULT,		/* hint_style */	\
-//      CAIRO_HINT_METRICS_DEFAULT,	/* hint_metrics */	\
-//    },					/* font_options */	\
-//}
 
 /* XXX error object! */
-static const cairo_surface_t _cairo_surface_nil = { 
-	((void *)0), 
-	((void *)0), 
-	CAIRO_SURFACE_TYPE_IMAGE, 
-	CAIRO_CONTENT_COLOR, 
-	{
-		((cairo_atomic_int_t) -1)
-	},
-	CAIRO_STATUS_NO_MEMORY, 
-	0, 
-	0, 
-	((void *)0), 
-	0, 
-	0, 
-	1, 
-	0, 
-	0, 
-	{ 
-		0, 
-		0, 
-		0, 
-		((void *)0), 
-	}, 
-	{ 
-		0, 
-		0, 
-		0, 
-		((void *)0), 
-	}, 
-	{ 
-		1.0, 
-		0.0, 
-		0.0, 
-		1.0, 
-		0.0, 
-		0.0 
-	}, 
-	{ 
-		1.0, 
-		0.0, 
-		0.0, 
-		1.0, 
-		0.0, 
-		0.0 
-	}, 
-	{ 
-		((void *)0), 
-		((void *)0) 
-	}, 
-	0.0, 
-	0.0, 
-	0.0, 
-	0.0, 
-	((void *)0), 
-	((void *)0), 
-	{ 
-		((void *)0), 
-		((void *)0) 
-	}, 
-	{ 
-		((void *)0), 
-		((void *)0) 
-	}, 
-};
-//static DEFINE_NIL_SURFACE(CAIRO_STATUS_NO_MEMORY, _cairo_surface_nil);
+
+static DEFINE_NIL_SURFACE(CAIRO_STATUS_NO_MEMORY, _cairo_surface_nil);
 static DEFINE_NIL_SURFACE(CAIRO_STATUS_SURFACE_TYPE_MISMATCH, _cairo_surface_nil_surface_type_mismatch);
 static DEFINE_NIL_SURFACE(CAIRO_STATUS_INVALID_STATUS, _cairo_surface_nil_invalid_status);
 static DEFINE_NIL_SURFACE(CAIRO_STATUS_INVALID_CONTENT, _cairo_surface_nil_invalid_content);

@@ -26,6 +26,8 @@
  * ========================== */
 #define TK_LOST_DATA_PIECE 100 
 #define TK_MAX_POINT_IN_BOUND 100
+#define TK_MAX_REGION_CACHE_SIZE 5
+#define TK_MAX_REGION_INTERSECT_COUNT 12
 
 struct tk_map_lostdata {
     int rid;

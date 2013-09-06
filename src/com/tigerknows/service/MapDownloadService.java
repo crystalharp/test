@@ -161,10 +161,10 @@ public class MapDownloadService extends Service implements MapTileDataDownload.I
                                     if (null != regionMetaVersion) {
                                         String localVersion = regionMetaVersion.toString();
                                         String serverVersion = severRegionDataInfo.getRegionVersion();
-                                        List<TileDownload> lostDatas = localRegionDataInfo.getLostDatas();
+                                        TileDownload lostDatas[] = mapEngine.getLostData();
                                         
                                         // 更新地图数据文件
-                                        if ((lostDatas != null && lostDatas.size() > 0 && lostDatas.get(0).getOffset() == 0)
+                                        if ((lostDatas != null && lostDatas.length > 0 && lostDatas[0].getOffset() == 0)
                                                 || (serverVersion != null && !serverVersion.equalsIgnoreCase(localVersion))) {
                                             
                                             mapEngine.removeRegion(regionId);
@@ -271,19 +271,19 @@ public class MapDownloadService extends Service implements MapTileDataDownload.I
      * @see com.tigerknows.model.MapTileDataDownload.ITileDownload#fillMapTile(java.util.List, int, byte[], int)
      */
     @Override
-    public int fillMapTile(List<TileDownload> tileDownloadList, int rid, byte[] data, int start) {
-        if (tileDownloadList == null || tileDownloadList.isEmpty() || data == null) {
+    public int fillMapTile(TileDownload[] tileDownloadList, int rid, byte[] data, int start) {
+        if (tileDownloadList == null || tileDownloadList.length == 0 || data == null) {
             return -1;
         }
         
         int remainDataLenth = data.length - start;
-        int size = tileDownloadList.size();
+        int size = tileDownloadList.length;
         for(int i = 0; i < size; i++) {
             refreshProgress(false);
             if (isStopAll || isStopCurrentCity) {
                 return -1;
             }
-            TileDownload tileInfo = tileDownloadList.get(i);
+            TileDownload tileInfo = tileDownloadList[i];
             if (remainDataLenth <= 0) {
                 break;
             } 
@@ -377,7 +377,7 @@ public class MapDownloadService extends Service implements MapTileDataDownload.I
                 if (isStopAll || isStopCurrentCity) {
                     break;
                 }
-                List<TileDownload> lostDatas = regionMapInfo.getLostDatas();
+                TileDownload[] lostDatas = mapEngine.getLostData();
                 statusCode = downloadTileData(lostDatas);
                 regionMapInfo = mapEngine.getLocalRegionDataInfo(regionId);
             }
@@ -388,7 +388,7 @@ public class MapDownloadService extends Service implements MapTileDataDownload.I
     /*
      * 下载Tile数据
      */
-    int downloadTileData(List<TileDownload> lostDatas) {
+    int downloadTileData(TileDownload[] lostDatas) {
         int statusCode =  BaseQuery.STATUS_CODE_NETWORK_OK;
         if (lostDatas == null) {
             return statusCode;

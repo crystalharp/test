@@ -85,7 +85,7 @@ void log_print(const char *fname, int line, int level, const char * format, ...)
 #endif
 
 #ifdef IPHONE_PLAT
-
+#include "TKLog.h"
 #define MES_BUF_LEN 1024
 char *log_tag[] = {"[DEBUG]", "[INFO ]", "[ERROR]"};
 
@@ -99,18 +99,23 @@ void log_print(const char *fname, int line, int level, const char * format, ...)
     va_start(ap, format);
 
     time(&tm);
-    n = 0;
+    n = 1;
 #ifdef LOG_TIME
-    n = sprintf(message, "[%s", ctime(&tm));
+    n = sprintf(message + n - 1, "[%s", ctime(&tm));
 #endif
 #ifdef LOG_FNAME
-    n = sprintf(message, "[%s : %d", fname, line);
+    n = sprintf(message + n - 1, "[%s : %d", fname, line);
 #endif
+#ifdef LOG_TAG
     n += sprintf(message + n - 1, "] %s: ", log_tag[level]);
+#endif
     vsnprintf(message + n - 1, MES_BUF_LEN - n + 1, format, ap);
+#ifdef TK_LOG_DEFAULT_METHOD
     fputs(message, log_fp);
     fflush(log_fp);
-
+#else
+    printGBString(message);
+#endif
     va_end(ap);
 }
 #endif
@@ -155,24 +160,28 @@ void log_print(const char *fname, int line, int level, const char * format, ...)
 {
     va_list ap;
     time_t tm;
-    int n;
+    int n, len;
     char message[MES_BUF_LEN];
-
+    char *buf = message;
     va_start(ap, format);
 
     time(&tm);
     n = 0;
+    len = 0;
 #ifdef LOG_TIME
-    n = sprintf(message, "[%s", ctime(&tm));
+    len = sprintf(buf, "[%s", ctime(&tm));
+    buf += len;
 #endif
 #ifdef LOG_FNAME
-    n = sprintf(message, "[%s : %d", fname, line);
+    len = sprintf(buf, "[%s : %d", fname, line);
+    buf += len;
 #endif
-    n += sprintf(message + n - 1, "] ");
-    vsnprintf(message + n - 1, MES_BUF_LEN -n + 1, format, ap);
-    if (level == DEBUG) {
+    len = sprintf(buf, "] ");
+    buf += len;
+    vsnprintf(buf, MES_BUF_LEN - (buf - message), format, ap);
+    if (level == TK_DEBUG) {
         __android_log_write(ANDROID_LOG_DEBUG, "TKMapEngine", message);
-    } else if (level == INFO) {
+    } else if (level == TK_INFO) {
         __android_log_write(ANDROID_LOG_INFO, "TKMapEngine", message);
     } else {
         __android_log_write(ANDROID_LOG_ERROR, "TKMapEngine", message);

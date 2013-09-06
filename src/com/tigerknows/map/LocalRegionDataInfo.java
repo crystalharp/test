@@ -7,16 +7,14 @@ public class LocalRegionDataInfo {
     private int mTotalSize;
     private int mDownloadedSize;
     private int mLostDataNum;
-    private List<TileDownload> mLostDatas;
     
     public LocalRegionDataInfo() {
     }
     
-    public LocalRegionDataInfo(int totalSize, int downloadedSize, int lostDataNum, List<TileDownload> lostDatas) {
+    public LocalRegionDataInfo(int totalSize, int downloadedSize, int lostDataNum) {
         mTotalSize = totalSize;
         mDownloadedSize = downloadedSize;
         mLostDataNum = lostDataNum;
-        mLostDatas = lostDatas;
     }
 
     public int getLostDataNum() {
@@ -39,18 +37,11 @@ public class LocalRegionDataInfo {
     public void setDownloadSize(final int downloadedSize) {
         mDownloadedSize = downloadedSize;
     }
-    
-    public List<TileDownload> getLostDatas() {
-        return mLostDatas;
-    }
-    public void setLostDatas(List<TileDownload> lostDatas) {
-        mLostDatas = lostDatas;
-    }
 
     @Override
     public String toString() {
         return "mTotalSize: " + mTotalSize + "\tmDownloadedSize: " + mDownloadedSize
-                + "\t mLostDataNum: " + mLostDataNum + "\t lostDatas:" + mLostDatas;
+                + "\t mLostDataNum: " + mLostDataNum;
     }
 
 }

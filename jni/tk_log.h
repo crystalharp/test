@@ -24,30 +24,30 @@
 extern FILE *log_fp;
 
 enum log_tag_level {
-    DEBUG, INFO, ERROR, IGNORE
+    TK_DEBUG, TK_INFO, TK_ERROR, TK_IGNORE
 };
 
 extern void log_print(const char *fname, int line, int level, const char * format, ...);
 
-#ifdef LOG_LEVEL_DEBUG 
-    #define LOG_DBG(...)  log_print(__func__, __LINE__, DEBUG, __VA_ARGS__)
-    #define LOG_INFO(...)   log_print(__func__, __LINE__, INFO, __VA_ARGS__)
-    #define LOG_ERR(...)  log_print(__func__, __LINE__, ERROR, __VA_ARGS__)
+#ifdef TK_LOG_LEVEL_DEBUG 
+    #define LOG_DBG(...)  log_print(__func__, __LINE__, TK_DEBUG, __VA_ARGS__)
+    #define LOG_INFO(...)   log_print(__func__, __LINE__, TK_INFO, __VA_ARGS__)
+    #define LOG_ERR(...)  log_print(__func__, __LINE__, TK_ERROR, __VA_ARGS__)
 #endif
 
-#ifdef LOG_LEVEL_INFO 
+#ifdef TK_LOG_LEVEL_INFO 
     #define LOG_DBG(...)  
-    #define LOG_INFO(...) log_print(__func__, __LINE__, INFO, __VA_ARGS__)   
-    #define LOG_ERR(...)  log_print(__func__, __LINE__, ERROR, __VA_ARGS__)
+    #define LOG_INFO(...) log_print(__func__, __LINE__, TK_INFO, __VA_ARGS__)   
+    #define LOG_ERR(...)  log_print(__func__, __LINE__, TK_ERROR, __VA_ARGS__)
 #endif
 
-#ifdef LOG_LEVEL_ERROR
+#ifdef TK_LOG_LEVEL_ERROR
     #define LOG_DBG(...) 
     #define LOG_INFO(...) 
-    #define LOG_ERR(...)  log_print(__func__, __LINE__, ERROR, __VA_ARGS__)   
+    #define LOG_ERR(...)  log_print(__func__, __LINE__, TK_ERROR, __VA_ARGS__)   
 #endif
 
-#ifdef LOG_LEVEL_IGNORE
+#ifdef TK_LOG_LEVEL_IGNORE
     #define LOG_DBG(...)
     #define LOG_INFO(...)
     #define LOG_ERR(...)

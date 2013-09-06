@@ -195,31 +195,31 @@ public final class ByteUtil {
         return list;
     }
     
-    /**
-     * 
-     * @param byteTileInfo:lost data num, real return lost data num, total size, downloaded size, lost data
-     * @return
-     */
-    public static LocalRegionDataInfo parseRegionMapInfo(final byte[] byteRegionMapInfo) {
-        LocalRegionDataInfo regionMapInfo = new LocalRegionDataInfo();
-        if (byteRegionMapInfo == null) {
-            return regionMapInfo;
-        }
-        
-        int lostDataNum = arr2int(byteRegionMapInfo, 0);
-        regionMapInfo.setLostDataNum(lostDataNum);
-        
-        int returnLostDataNum = arr2int(byteRegionMapInfo, 4);
-        regionMapInfo.setLostDatas(parseLostData(byteRegionMapInfo, 16, returnLostDataNum));
-        
-        int totalSize = arr2int(byteRegionMapInfo, 8);
-        regionMapInfo.setTotalSize(totalSize);
-        
-        int downloadedSize = arr2int(byteRegionMapInfo, 12);
-        regionMapInfo.setDownloadSize(downloadedSize);
-        
-        return regionMapInfo;
-    }
+//    /**
+//     * 
+//     * @param byteTileInfo:lost data num, real return lost data num, total size, downloaded size, lost data
+//     * @return
+//     */
+//    public static LocalRegionDataInfo parseRegionMapInfo(final byte[] byteRegionMapInfo) {
+//        LocalRegionDataInfo regionMapInfo = new LocalRegionDataInfo();
+//        if (byteRegionMapInfo == null) {
+//            return regionMapInfo;
+//        }
+//        
+//        int lostDataNum = arr2int(byteRegionMapInfo, 0);
+//        regionMapInfo.setLostDataNum(lostDataNum);
+//        
+//        int returnLostDataNum = arr2int(byteRegionMapInfo, 4);
+//        regionMapInfo.setLostDatas(parseLostData(byteRegionMapInfo, 16, returnLostDataNum));
+//        
+//        int totalSize = arr2int(byteRegionMapInfo, 8);
+//        regionMapInfo.setTotalSize(totalSize);
+//        
+//        int downloadedSize = arr2int(byteRegionMapInfo, 12);
+//        regionMapInfo.setDownloadSize(downloadedSize);
+//        
+//        return regionMapInfo;
+//    }
     
      /**    
      * 全角转半角    

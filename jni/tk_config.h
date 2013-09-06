@@ -10,8 +10,8 @@
  *       Revision:  none
  *       Compiler:  gcc
  *
- *         Author:  Huiqiang Yang 
- *        Company: TigerKnows 
+ *         Author:  Huiqiang Yang
+ *        Company: TigerKnows
  *
  * =====================================================================================
  */
@@ -20,22 +20,23 @@
 #define __TKCONFIG_H
 
 
-//#define ANDROID_PLAT
+#define ANDROID_PLAT
 //#define SYMBIAN_PLAT
-#define IPHONE_PLAT
+//#define IPHONE_PLAT
 //#define WINDOWS_PLAT
-//#define LINUX_PLAT 
+//#define LINUX_PLAT
 //#define BADA_PLAT
 
-//#define LOG_LEVEL_DEBUG
-//#define LOG_LEVEL_INFO
-#define LOG_LEVEL_ERROR
-//#define LOG_LEVEL_IGNORE
+//#define TK_LOG_LEVEL_DEBUG
+#define TK_LOG_LEVEL_INFO
+//#define TK_LOG_LEVEL_ERROR
+//#define TK_LOG_LEVEL_IGNORE
 
-#define LOG_FNAME
-//#define LOG_TIME
-
-//#define LOG_TO_FILE 
+//#define TK_LOG_FNAME
+//#define TK_LOG_TIME
+//#define TK_LOG_TAG
+//#define TK_LOG_TO_FILE
+//#define TK_LOG_DEFAULT_METHOD
 //#define DRAW_STRING
 //#define NEED_BMP_HEADER
 

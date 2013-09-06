@@ -615,14 +615,14 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
 
         String name = mSphinx.getMapEngine().getPositionName(myLocationPosition);
         
-        if (!TextUtils.isEmpty(name) && name.length() > 1) {
+        if (!TextUtils.isEmpty(name) && name.length() > 0) {
             if ((myLocation != null && myLocation.getProvider().equals(LocationManager.GPS_PROVIDER) && distance > 100)) {
                 isUpdate = true;
             } else if (currentTime - mLastTime > 30*1000 && distance > 600) {
                 isUpdate = true;
             } else if (mLastTime == 0) {
                 isUpdate = true;
-            } else if (!TextUtils.isEmpty(mLocationName) && mLocationName.startsWith("U") && name.startsWith("G")) {
+            } else if (!TextUtils.isEmpty(mLocationName) && !mLocationName.equals(name)) {
                 isUpdate = true;
             }
         }
@@ -631,7 +631,7 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
             mLocationName = name;
             if (mSelectedLocation == false) {
                 mMyLoactionTxv.setBackgroundResource(R.drawable.btn_my_location);
-                mMyLoactionTxv.setText(mContext.getString(R.string.current_location, mLocationName.substring(1)));
+                mMyLoactionTxv.setText(mContext.getString(R.string.current_location, mLocationName));
             }
             mLastPosition = myLocationPosition;
             mLastTime = currentTime;
