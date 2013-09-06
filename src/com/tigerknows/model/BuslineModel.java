@@ -307,16 +307,37 @@ public class BuslineModel extends XMapData {
             }
             return line;
         }
+        
+        String buildSelectionString(int storeType) {
+            return "(" + Tigerknows.Busline.BUSLINE_NAME
+                    + "='" + name.replace("'", "''") + "') AND ("
+                    + Tigerknows.Busline.TOTAL_LENGTH + "=" + length
+                    + ") AND (" + Tigerknows.Busline.STORE_TYPE + "=" + storeType + ")";
+        }
 
         @Override
-        public Line checkStore(Context context, int store_Type) {
+        public boolean checkStore(Context context) {
+            boolean result = false;
+            //运营时间是否也要判断?
+            Cursor c = SqliteWrapper.query(context, context.getContentResolver(),
+                    Tigerknows.Busline.CONTENT_URI, null, buildSelectionString(storeType),
+                    null, null);
+            if (c != null) {
+                int count = c.getCount();
+                if (count > 0) {
+                    result = true;
+                }
+                c.close();
+            }
+            return result;
+        }
+
+        @Override
+        public Line checkStore(Context context, int storeType) {
             Line line = null;
             //运营时间是否也要判断?
             Cursor c = SqliteWrapper.query(context, context.getContentResolver(),
-                    Tigerknows.Busline.CONTENT_URI, null, "(" + Tigerknows.Busline.BUSLINE_NAME
-                            + "='" + name.replace("'", "''") + "') AND ("
-                            + Tigerknows.Busline.TOTAL_LENGTH + "=" + length
-                            + ") AND (" + Tigerknows.Busline.STORE_TYPE + "=" + store_Type + ")",
+                    Tigerknows.Busline.CONTENT_URI, null, buildSelectionString(storeType),
                     null, null);
             if (c != null) {
                 int count = c.getCount();

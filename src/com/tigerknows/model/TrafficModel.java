@@ -985,15 +985,34 @@ public class TrafficModel extends XMapData {
             }
             return planList;
         }
+        
+        String buildSelectionString(int storeType) {
+            return  "(" + Tigerknows.TransitPlan.TOTAL_LENGTH + "="
+                    + length + ") AND (" + Tigerknows.TransitPlan.TYPE + "="
+                    + type + ") AND (" + Tigerknows.TransitPlan.STORE_TYPE + "="
+                    + storeType + ")";
+        }
+        
+        @Override
+        public boolean checkStore(Context context) {
+            boolean result = false;
+            Cursor c = SqliteWrapper.query(context, context.getContentResolver(),
+                    Tigerknows.TransitPlan.CONTENT_URI, null, buildSelectionString(storeType), null, null);
+            if (c != null) {
+                int count = c.getCount();
+                if (count > 0) {
+                    result = true;
+                }
+                c.close();
+            }
+            return result;
+        }
             
         @Override
         public Plan checkStore(Context context, int storeType) {
             Plan path = null;
             Cursor c = SqliteWrapper.query(context, context.getContentResolver(),
-                    Tigerknows.TransitPlan.CONTENT_URI, null, "(" + Tigerknows.TransitPlan.TOTAL_LENGTH + "="
-                            + length + ") AND (" + Tigerknows.TransitPlan.TYPE + "="
-                            + type + ") AND (" + Tigerknows.TransitPlan.STORE_TYPE + "="
-                            + storeType + ")", null, null);
+                    Tigerknows.TransitPlan.CONTENT_URI, null, buildSelectionString(storeType), null, null);
             if (c != null) {
                 int count = c.getCount();
                 if (count > 0) {
