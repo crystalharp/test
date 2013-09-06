@@ -1155,6 +1155,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 		mOnPause = false;
 		Log.i(TAG,"onResume()");
 		mActionLog.onResume();
+		mMapView.resume();
 		if (uiStackSize() > 0) {
 		    mMapView.refreshMap();
 		}

@@ -1162,4 +1162,8 @@ public class MapView extends RelativeLayout implements
     public void clearAllTextures() {
     	tilesView.clearAllTextures();
     }
+    
+    public void resume() {
+    	tilesView.resume();
+    }
 }
