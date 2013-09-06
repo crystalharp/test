@@ -6,6 +6,7 @@ package com.tigerknows.ui;
 
 import java.net.URLDecoder;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Paint;
@@ -101,6 +102,33 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
     private static Tuangou sTuangou;
     
     private String mFinishedUrl;
+    
+    /**
+     * 检测url，满足特殊条件时调用支付宝快捷支付
+     * @param activity
+     * @param url
+     */
+    public static void checkFastAlipay(Activity activity, String url) {
+        String info = URLDecoder.decode(url);
+        String clientGoAlipay = TKConfig.getPref(activity, TKConfig.PREFS_CLIENT_GO_ALIPAY, "on");
+        if(info.contains("wappaygw") && info.contains("authAndExecute") && "on".equalsIgnoreCase(clientGoAlipay)){
+            int c = "<request_token>".length();
+            int i = info.indexOf("<request_token>");
+            int j = info.indexOf("</request_token>");
+            StringBuilder sb = new StringBuilder();
+            sb.append("ordertoken=\"");
+            if(i >= 0 && i+c <= j){
+                sb.append(info.substring(i+c, j));
+            }else return;
+            sb.append("\"");
+            MobileSecurePayer msp = new MobileSecurePayer();
+            MobileSecurePayHelper mspHelper = new MobileSecurePayHelper(activity);
+            if (!mspHelper.isMobile_spExist()) {
+                return;
+            }
+            msp.pay(sb.toString(), null, 1, activity);
+        }
+    }
    
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -185,25 +213,7 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
             	mProgressBar.setVisibility(View.VISIBLE);
-                String info = URLDecoder.decode(url);
-                String clientGoAlipay = TKConfig.getPref(mThis, TKConfig.PREFS_CLIENT_GO_ALIPAY, "on");
-            	if(info.contains("wappaygw") && info.contains("authAndExecute") && "on".equalsIgnoreCase(clientGoAlipay)){
-            		int c = "<request_token>".length();
-            		int i = info.indexOf("<request_token>");
-            		int j = info.indexOf("</request_token>");
-            		StringBuilder sb = new StringBuilder();
-            		sb.append("ordertoken=\"");
-            		if(i >= 0 && i+c <= j){
-            			sb.append(info.substring(i+c, j));
-            		}else return;
-            		sb.append("\"");
-            		MobileSecurePayer msp = new MobileSecurePayer();
-            		MobileSecurePayHelper mspHelper = new MobileSecurePayHelper(mThis.getBaseContext());
-            		if (!mspHelper.isMobile_spExist()) {
-            			return;
-            		}
-            		msp.pay(sb.toString(), null, 1, mThis);
-            	}
+            	checkFastAlipay(mThis, url);
             }
 
             @Override

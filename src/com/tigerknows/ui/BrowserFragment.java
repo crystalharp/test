@@ -7,8 +7,6 @@ package com.tigerknows.ui;
 import android.graphics.Bitmap;
 import android.net.http.SslError;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -21,15 +19,11 @@ import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.ProgressBar;
 
-import com.alipay.android.MobileSecurePayHelper;
-import com.alipay.android.MobileSecurePayer;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 
 import android.widget.Toast;
-
-import java.net.URLDecoder;
 
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.util.Utility;
@@ -44,43 +38,6 @@ public class BrowserFragment extends BaseFragment implements View.OnClickListene
         // TODO Auto-generated constructor stub
     }
     
-    private static final int ALIX_PAY = 1;
-    //
-    // the handler use to receive the pay result.
-    // 这里接收支付结果，支付宝手机端同步通知
-    private Handler mHandler = new Handler() {
-        public void handleMessage(Message msg) {
-            try {
-                String ret = (String) msg.obj;
-                switch (msg.what) {
-                case ALIX_PAY: {
-                    //
-                    // 处理交易结果
-                    try {
-                        // 获取交易状态码，具体状态代码请参看文档
-                        String tradeStatus = "resultStatus={";
-                        int imemoStart = ret.indexOf("resultStatus=");
-                        imemoStart += tradeStatus.length();
-                        int imemoEnd = ret.indexOf("};memo=");
-                        tradeStatus = ret.substring(imemoStart, imemoEnd);
-
-                            if (tradeStatus.equals("9000"))// 判断交易状态码，只有9000表示交易成功
-                                Toast.makeText(mSphinx, "支付成功", Toast.LENGTH_SHORT).show();
-                            else
-                                Toast.makeText(mSphinx, "支付失败，状态码："+tradeStatus, Toast.LENGTH_LONG).show();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-                    break;
-                }
-
-                super.handleMessage(msg);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    };
 
     static final String TAG = "BrowserFragment";
     
@@ -202,26 +159,8 @@ public class BrowserFragment extends BaseFragment implements View.OnClickListene
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
-                mProgressBar.setVisibility(View.VISIBLE);
-                String info = URLDecoder.decode(url);
-                LogWrapper.i("Trap", URLDecoder.decode(url));
-                if(info.contains("wappaygw") && info.contains("authAndExecute") && info.contains("request_token")){
-                    int i = info.indexOf("<request_token>");
-                    int j = info.indexOf("</request_token>");
-                    StringBuilder sb = new StringBuilder();
-                    sb.append("ordertoken=\"");
-                    if(i > 0 && i < j){
-                        sb.append(info.substring(i+15, j));
-                    }else return;
-                    sb.append("\"");
-                    MobileSecurePayer msp = new MobileSecurePayer();
-                    MobileSecurePayHelper mspHelper = new MobileSecurePayHelper(mSphinx.getBaseContext());
-                    boolean isMobile_spExist = mspHelper.isMobile_spExist();
-                    if (!isMobile_spExist) {
-                        return;
-                    }
-                    boolean bRet = msp.pay(sb.toString(), mHandler, ALIX_PAY, mSphinx);
-                }
+            	mProgressBar.setVisibility(View.VISIBLE);
+                BrowserActivity.checkFastAlipay(mSphinx, url);
             }
 
             @Override
