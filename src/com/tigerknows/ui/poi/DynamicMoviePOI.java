@@ -197,16 +197,16 @@ public class DynamicMoviePOI extends POIDetailFragment.DynamicPOIView{
                 return;
             }
             mPOIDetailFragment.mActionLog.addAction(mPOIDetailFragment.mActionTag+ActionLog.POIDetailDianying);
-            DataOperation dataOperation = new DataOperation(mSphinx);
+            DataOperation dataOperation;
             if (object instanceof Dianying) {
                 Dianying dynamic = (Dianying) object;
                 List<BaseQuery> list = new ArrayList<BaseQuery>();
 
+                dataOperation = new DataOperation(mSphinx);
                 dataOperation.addParameter(DataOperation.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_DIANYING);
                 dataOperation.addParameter(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
                 dataOperation.addParameter(DataOperation.SERVER_PARAMETER_DATA_UID, dynamic.getUid());
                 
-                dataOperation = new DataOperation(mSphinx);
                 dataOperation.addParameter(DataOperation.SERVER_PARAMETER_NEED_FIELD,
                         Dianying.NEED_FIELD_ONLY_DIANYING
                         + Util.byteToHexString(Dianying.FIELD_DESCRIPTION));
