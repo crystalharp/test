@@ -464,7 +464,7 @@ public class DiscoverHomeFragment extends DiscoverBaseFragment {
         	
             if (myLocatedCityInfo.getId() == currentCityInfo.getId()) {
             	
-                mMyLoactionTxv.setText(mContext.getString(R.string.current_location, TextUtils.isEmpty(locationName) ? "" : locationName.substring(1)));
+                mMyLoactionTxv.setText(mContext.getString(R.string.current_location, TextUtils.isEmpty(locationName) ? "" : locationName));
                 mMyLoactionTxv.setVisibility(View.VISIBLE);
                 
             } else {
