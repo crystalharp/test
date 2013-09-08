@@ -105,6 +105,7 @@ public class DynamicMoviePOI extends POIDetailFragment.DynamicPOIView{
         @Override
         public void refresh() {
             if (mPOI == null) {
+                mViewBlock.clear();
                 return;
             }
             
@@ -147,20 +148,6 @@ public class DynamicMoviePOI extends POIDetailFragment.DynamicPOIView{
         lsv = new LinearListView(mSphinx, mDynamicDianyingListView, initer, R.layout.poi_dynamic_movie_list_item);
         mDynamicDianyingMoreView.setOnClickListener(mMoreClickListener);
     }
-
-//    @Override
-//    public boolean checkExistence(POI poi) {
-//        List<DynamicPOI> list = poi.getDynamicPOIList();
-//        if (list != null) {
-//            for(int i = 0, size = list.size(); i < size; i++) {
-//                DynamicPOI dynamic = list.get(i);
-//                if (BaseQuery.DATA_TYPE_DIANYING.equals(dynamic.getType())) {
-//                    return true;
-//                }
-//            }
-//        }
-//        return false;
-//    }
     
     public DataQuery buildQuery(POI poi) {
         DataQuery dataQuery = new DataQuery(mSphinx);
@@ -225,8 +212,6 @@ public class DynamicMoviePOI extends POIDetailFragment.DynamicPOIView{
                 dataOperation.setup(Globals.getCurrentCityInfo().getId(), mPOIDetailFragment.getId(), mPOIDetailFragment.getId(), mSphinx.getString(R.string.doing_and_wait));
                 list.add(dataOperation);
                 
-//                mTkAsyncTasking = mSphinx.queryStart(list);
-//                mBaseQuerying = list;
                 queryStart(list);
             }
             

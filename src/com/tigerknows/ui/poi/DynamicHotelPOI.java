@@ -103,16 +103,13 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         @Override
         public void refresh() {
             refreshDate();
-            if (!mUpperBlock.mLoadSucceed) {
+            if (!mUpperBlock.mLoadSucceed
+                    || mHotel == null || mHotel.getRoomTypeList() == null) {
             	setState(STATE_LOAD_FAILED);
             	roomTypeList.refreshList(null);
             	return;
             }
-            if (mHotel == null || mHotel.getRoomTypeList() == null) {
-                setState(STATE_NO_DATA);
-            	roomTypeList.refreshList(null);
-                return;
-            }
+            
             mAllRoomList.clear();
             mShowingRoomList.clear();
             mAllRoomList.addAll(mHotel.getRoomTypeList());
@@ -518,22 +515,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         query.setup(mHotelCityId, mPOIDetailFragment.getId(), mPOIDetailFragment.getId(), mSphinx.getString(R.string.doing_and_wait));
         return query;
     }
-    
-//    @Override
-//    public boolean checkExistence(POI poi) {
-//        List<DynamicPOI> list = poi.getDynamicPOIList();
-//        mHotel = poi.getHotel();
-//        int size = (list == null ? 0 : list.size()); 
-//        for (int i = 0; i < size; i++) {
-//            DynamicPOI iter = list.get(i);
-//            if (iter.getType().equals(DynamicPOI.TYPE_HOTEL)) {
-//                LogWrapper.i(TAG, "Dynamic Hotel info exists.");
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
-    
+        
     public List<BaseQuery> generateQuery(POI poi) {
         mPOI = poi;
         mHotel = mPOI.getHotel();
