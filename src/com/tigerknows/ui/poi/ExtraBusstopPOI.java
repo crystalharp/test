@@ -26,6 +26,9 @@ public class ExtraBusstopPOI extends DynamicPOIView {
     
     @Override
     public boolean isExist() {
+        if (mPOI == null) {
+            return false;
+        }
         XMap description = mPOI.getXDescription();
         //包含有线路字段，但是不包含地铁信息字段才会显示
         if (description != null && 

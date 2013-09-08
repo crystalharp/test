@@ -52,19 +52,22 @@ import com.tigerknows.model.DataQuery.CommentResponse;
 import com.tigerknows.model.DataQuery.CommentResponse.CommentList;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.util.Utility;
+import com.tigerknows.widget.RetryView;
 import com.tigerknows.widget.SpringbackListView;
 import com.tigerknows.widget.SpringbackListView.OnRefreshListener;
 
 /**
  * @author Peng Wenyue
  */
-public class CommentListActivity extends BaseActivity implements View.OnClickListener {
+public class CommentListActivity extends BaseActivity implements View.OnClickListener, RetryView.CallBack {
     
     static final String TAG = "POICommentList";
     
     public static final int REQUEST_CODE_COMMENT = 1;
 
     private static POI sPOI = null;
+    
+    private RetryView mRetryView;
     
     private Button mHotBtn;
     private POI mPOI = null;
@@ -125,6 +128,8 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
         findViews();
         setListener();
 
+        mRetryView.setText(R.string.touch_screen_and_retry, true);
+        
         mCommentAdapter = new CommentAdapter(mThis, mCommentArrayList);
         mCommentLsv.setAdapter(mCommentAdapter);
 
@@ -172,12 +177,14 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
         mCommentTipView = findViewById(R.id.tip_view);
         mCommentTipEdt = (Button) findViewById(R.id.comment_tip_btn);
         mEmptyView = findViewById(R.id.empty_view);
+        mRetryView = (RetryView) findViewById(R.id.retry_view);
     }
     
     protected void setListener() {
         super.setListener();
         mTitleBtn.setOnClickListener(this);
         mHotBtn.setOnClickListener(this);
+        mRetryView.setCallBack(this, mActionTag);
         mCommentLsv.setOnRefreshListener(new OnRefreshListener() {
             
             @Override
@@ -680,6 +687,9 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
                 if (isHeader) {
                     
                 } else {
+                    if (isNormal == false && mHotCommentArrayList.size() == 0) {
+                        mRetryView.setVisibility(View.VISIBLE);
+                    }
                     mCommentLsv.setFooterLoadFailed(true);
                 }
                 return;
@@ -801,6 +811,7 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
             mTitleBtn.setBackgroundResource(R.drawable.btn_all_comment);
             mHotBtn.setBackgroundResource(R.drawable.btn_hot_comment_focused);
         }
+        mRetryView.setVisibility(View.GONE);
         mEmptyView.setVisibility(View.GONE);
         mCommentAdapter.notifyDataSetChanged();
         mCommentLsv.setFooterSpringback(false);
@@ -826,5 +837,11 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
             setData(isNormal, dataQuery);
             mCommentAdapter.notifyDataSetChanged();
         }
+    }
+
+    @Override
+    public void retry() {
+        turnPage(false, false);
+        mRetryView.setVisibility(View.GONE);
     }
 }

@@ -59,8 +59,6 @@ public class RetryView extends LinearLayout {
         
         findViews();
         setListener();
-        
-        setBackgroundColor(0x00000000);
     }
 
     protected void findViews() {

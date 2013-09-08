@@ -110,6 +110,11 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
     boolean beforeDawn = false;
     
     public void refresh(Calendar checkIn, Calendar checkOut) {
+        // 进入到日期选择控件，先停止之前的列表滑动
+        MotionEvent me = MotionEvent.obtain(0, 0, MotionEvent.ACTION_DOWN, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        checkinLsv.onTouchEvent(me);
+        checkoutLsv.onTouchEvent(me);
+        
         today = Calendar.getInstance();
         today.setTimeInMillis(CalendarUtil.getExactTime(context));
         beforeDawn = false;

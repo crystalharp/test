@@ -9,6 +9,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -178,6 +179,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         if(!TextUtils.equals("yes", TKConfig.getPref(mContext, TKConfig.PREFS_MORE_OPENED, ""))){
         	TKConfig.setPref(mContext, TKConfig.PREFS_MORE_OPENED, "hide");
         }
+        GenerateNoticeView.pd8 = Utility.dip2px(mContext, 8);
         LogWrapper.d("Trap", ""+Utility.px2dip(mContext, mContext.getResources().getDisplayMetrics().widthPixels));
         mActionTag = ActionLog.More;
     }
@@ -648,145 +650,32 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         if (viewMap.containsKey(position)) {
             return viewMap.get(position);
         }
-        String title = notice.getNoticeTitle();
-
-        String description = notice.getDescription();
-        int pd8 = Utility.dip2px(mContext, 8);
-        int pd2 = Utility.dip2px(mContext, 2);
-        int screen_px = mContext.getResources().getDisplayMetrics().widthPixels;
-        float titleTextSize = 16;
-        float descTextSize = titleTextSize - 2;
-        float layoutMargin = (notice.getLocalType() == 1) ? 4 : 16;
-        float drawablePadding = (notice.getLocalType() == 1) ? 4 : titleTextSize;
-        int textView_px = screen_px - Utility.dip2px(mContext, layoutMargin + 16 + 16 + 48);
-        float textView_dp = Utility.px2dip(mContext, textView_px);
-        if(title != null && !TextUtils.isEmpty(title)){
-        	while(titleTextSize* ByteUtil.getCharArrayLength(title)/2 + drawablePadding > textView_dp + .5){
-        		titleTextSize -= 1;
-        		drawablePadding = (notice.getLocalType() == 1) ? 4 : titleTextSize;
-        	}
-        	descTextSize = titleTextSize - 2;
-        	if(description != null && !TextUtils.isEmpty(description)){
-        		while(descTextSize* ByteUtil.getCharArrayLength(description)/2 + drawablePadding > textView_dp + .5){
-        			titleTextSize --;
-        			descTextSize --;
-        			drawablePadding = (notice.getLocalType() == 1) ? 4 : titleTextSize;
-        		}
-        	}
-        }
+    	Button button; 
+        ImageView imageView;
+        LinearLayout linearLayout;
         switch(notice.getLocalLayoutType()){
-        case 1:
-        	Button button1 = new Button(mSphinx);
-        	button1.setText(title);
-        	button1.setBackgroundResource(R.drawable.btn_notice);
-        	button1.setPadding(pd8, pd8, pd8, pd8);
-        	button1.setTextSize(16);
-        	viewMap.put(position, button1);
-        	return button1;
         case 2:
-        	ImageView imageView2 = new ImageView(mSphinx);
-        	refreshDrawable(notice.getpicTkDrawable(), imageView2, R.drawable.bg_picture_detail, false);
-        	imageView2.setScaleType(ScaleType.FIT_XY);
-        	imageViewMap.put(position, imageView2);
-        	viewMap.put(position, imageView2);
-        	return imageView2;
+        	imageView = GenerateNoticeView.getImageView(mSphinx, notice);
+        	imageViewMap.put(position, imageView);
+        	viewMap.put(position, imageView);
+        	return imageView;
         case 5:
-        	LinearLayout linearLayout5 = new LinearLayout(mSphinx);
-        	linearLayout5.setOrientation(VERTICAL);
-        	linearLayout5.setBackgroundResource(R.drawable.btn_notice);
-        	linearLayout5.setGravity(Gravity.CENTER_HORIZONTAL);
-        	TextView titleTxv5 = new TextView(mSphinx);
-        	titleTxv5.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-        	titleTxv5.setPadding(pd8, 2 * Utility.dip2px(mContext, 17 - titleTextSize), pd8, 0);
-        	titleTxv5.setTextSize(16);
-        	titleTxv5.setTextColor(getResources().getColor(R.color.black_dark));
-        	titleTxv5.setSingleLine(true);
-        	titleTxv5.setText(title);
-        	TextView descriptionTxv5 = new TextView(mSphinx);
-        	descriptionTxv5.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-        	descriptionTxv5.setPadding(pd8, 0, pd8, 0);
-        	descriptionTxv5.setTextSize(14);
-        	descriptionTxv5.setTextColor(getResources().getColor(R.color.black_light));
-        	descriptionTxv5.setSingleLine(true);
-        	descriptionTxv5.setText(description);
-        	linearLayout5.addView(titleTxv5);
-        	linearLayout5.addView(descriptionTxv5);
-        	viewMap.put(position, linearLayout5);
-        	return linearLayout5;
+        	linearLayout = GenerateNoticeView.getNoticeLinearLayout(mSphinx, notice, null);
+        	viewMap.put(position, linearLayout);
+        	return linearLayout;
         case 3:
-        	LinearLayout linearLayout3 = new LinearLayout(mSphinx);
-        	ImageView imageView3 = new ImageView(mSphinx);
-        	linearLayout3.setOrientation(HORIZONTAL);
-        	linearLayout3.setBackgroundResource(R.drawable.btn_notice);
-        	linearLayout3.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
-        	if(notice.getLocalType() == 1){
-        		imageView3.setBackgroundResource(R.drawable.ic_soft_update);
-        	}else{
-        		refreshDrawable(notice.getpicTkDrawable(), imageView3, R.drawable.bg_picture_none, false);
-        	}
-        	LinearLayout.LayoutParams layoutParams3 = new LayoutParams(Utility.dip2px(mContext, 48), Utility.dip2px(mContext, 48));
-        	layoutParams3.setMargins(Utility.dip2px(mContext, layoutMargin), 0, 0, 0);
-        	layoutParams3.gravity = Gravity.CENTER_VERTICAL;
-        	imageView3.setLayoutParams(layoutParams3);
-        	imageView3.setScaleType(ScaleType.FIT_XY);
-        	TextView titleTxv3 = new TextView(mSphinx);
-        	titleTxv3.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-        	titleTxv3.setTextSize(titleTextSize);
-        	titleTxv3.setTextColor(getResources().getColor(R.color.black_dark));
-        	titleTxv3.setSingleLine(true);
-        	titleTxv3.setText(title);
-        	titleTxv3.setGravity(Gravity.LEFT | Gravity.CENTER_HORIZONTAL);
-        	titleTxv3.setPadding(Utility.dip2px(mContext, drawablePadding), pd8, pd8*2, pd8);
-        	linearLayout3.addView(imageView3);
-        	linearLayout3.addView(titleTxv3);
-        	imageViewMap.put(position, imageView3);
-        	viewMap.put(position, linearLayout3);
-        	return linearLayout3;
         case 7:
-        	LinearLayout linearLayout7 = new LinearLayout(mSphinx);
-        	linearLayout7.setOrientation(HORIZONTAL);
-        	linearLayout7.setBackgroundResource(R.drawable.btn_notice);
-        	ImageView imageView7 = new ImageView(mSphinx);
-        	refreshDrawable(notice.getpicTkDrawable(), imageView7, R.drawable.bg_picture_none, false);
-        	LinearLayout.LayoutParams layoutParams7 = new LayoutParams(Utility.dip2px(mContext, 48), Utility.dip2px(mContext, 48));
-        	layoutParams7.setMargins(Utility.dip2px(mContext, layoutMargin), 0, 0, 0);
-        	layoutParams7.gravity = Gravity.CENTER_VERTICAL;
-        	imageView7.setLayoutParams(layoutParams7);
-        	imageView7.setScaleType(ScaleType.FIT_XY);
-        	LinearLayout textLly7 = new LinearLayout(mSphinx);
-        	textLly7.setOrientation(VERTICAL);
-        	textLly7.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
-        	textLly7.setGravity(Gravity.LEFT);
-        	TextView titleTxv7 = new TextView(mSphinx);
-        	titleTxv7.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-        	titleTxv7.setTextSize(titleTextSize);
-        	titleTxv7.setTextColor(getResources().getColor(R.color.black_dark));
-        	titleTxv7.setSingleLine(true);
-        	titleTxv7.setText(title);
-        	titleTxv7.setPadding(Utility.dip2px(mContext, drawablePadding), 2 * Utility.dip2px(mContext, 17 - titleTextSize), pd8*2, 0);
-        	TextView descriptionTxv7 = new TextView(mSphinx);
-        	descriptionTxv7.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-        	descriptionTxv7.setTextSize(descTextSize);
-        	descriptionTxv7.setTextColor(getResources().getColor(R.color.black_light));
-        	descriptionTxv7.setSingleLine(true);
-        	descriptionTxv7.setText(description);
-        	descriptionTxv7.setPadding(Utility.dip2px(mContext, drawablePadding), 0, pd8*2, 0);
-        	textLly7.addView(titleTxv7);
-        	textLly7.addView(descriptionTxv7);
-        	linearLayout7.addView(imageView7);
-        	linearLayout7.addView(textLly7);
-        	imageViewMap.put(position, imageView7);
-        	viewMap.put(position, linearLayout7);
-        	return linearLayout7;
+        	imageView = GenerateNoticeView.getImageView(mSphinx, notice);
+        	linearLayout = GenerateNoticeView.getNoticeLinearLayout(mSphinx, notice, imageView);
+        	imageViewMap.put(position, imageView);
+        	viewMap.put(position, linearLayout);
+        	return linearLayout;
+        case 1:
         default:
-        	Button button = new Button(mSphinx);
-        	button.setText("该活动不存在或已失效");
-        	button.setTextSize(titleTextSize);
-        	button.setBackgroundResource(R.drawable.btn_notice);
-        	button.setPadding(pd8, pd8, pd8, pd8);
+        	button = GenerateNoticeView.getBtn(mContext, notice);
         	viewMap.put(position, button);
         	return button;
-        	}
+        }
     }
 
 	public class MyAdapter extends PagerAdapter {
@@ -899,6 +788,158 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
                         }
                     }
                 });
+    }
+    
+    private static class GenerateNoticeView{
+    	
+    	public static int pd8;
+    	
+    	private static TextView getTitleTxv(Context context, Notice notice, float textSize, float drawablePadding){
+    		String title = notice.getNoticeTitle();
+    		if(TextUtils.isEmpty(title)){
+    			return null;
+    		}
+            TextView titleTxv = new TextView(context);
+            titleTxv.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+            titleTxv.setTextColor(context.getResources().getColor(R.color.black_dark));
+            titleTxv.setSingleLine(true);
+            titleTxv.setText(title);
+            titleTxv.setTextSize(textSize);
+            switch(notice.getLocalLayoutType()){
+            case 3:
+            	titleTxv.setPadding(Utility.dip2px(context, drawablePadding), pd8, pd8*2, pd8);
+            	break;
+            case 5:
+            	titleTxv.setPadding(pd8, 2 * Utility.dip2px(context, 17 - textSize), pd8, 0);
+            	break;
+            case 7:
+            	titleTxv.setPadding(Utility.dip2px(context, drawablePadding), 2 * Utility.dip2px(context, 17 - textSize), pd8*2, 0);
+            	break;
+            }
+            return titleTxv;
+    	}
+    	
+    	private static TextView getDescriptionTxv(Context context, Notice notice, float textSize, float drawablePadding){
+    		String description = notice.getDescription();
+    		if(TextUtils.isEmpty(description)){
+    			return null;
+    		}
+    		TextView descriptionTxv = new TextView(context);
+    		descriptionTxv.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+    		descriptionTxv.setTextColor(context.getResources().getColor(R.color.black_light));
+    		descriptionTxv.setSingleLine(true);
+        	descriptionTxv.setText(description);
+        	descriptionTxv.setTextSize(textSize);
+        	switch(notice.getLocalLayoutType()){
+        	case 5:
+        		descriptionTxv.setPadding(pd8, 0, pd8, 0);
+        		break;
+        	case 7:
+        		descriptionTxv.setPadding(Utility.dip2px(context, drawablePadding), 0, pd8*2, 0);
+        		break;
+        	}
+        	return descriptionTxv;
+    	}
+    	
+    	public static Button getBtn(Context context, Notice notice){
+        	Button button = new Button(context);
+        	if(notice.getLocalLayoutType() == 1){
+        		button.setText(notice.getNoticeTitle());
+        	}else{
+        		button.setText("该活动不存在或已失效");
+        	}
+        	button.setBackgroundResource(R.drawable.btn_notice);
+        	button.setPadding(pd8, pd8, pd8, pd8);
+        	button.setTextSize(16);
+        	return button;
+    	}
+    	
+    	public static ImageView getImageView(Sphinx sphinx, Notice notice){
+    		ImageView imageView = new ImageView(sphinx);
+    		float layoutMargin = notice.getLocalType()==1 ? 4 : 16;
+    		LinearLayout.LayoutParams layoutParams = new LayoutParams(Utility.dip2px(sphinx, 48), Utility.dip2px(sphinx, 48));
+        	layoutParams.setMargins(Utility.dip2px(sphinx, layoutMargin), 0, 0, 0);
+        	layoutParams.gravity = Gravity.CENTER_VERTICAL;
+        	imageView.setScaleType(ScaleType.FIT_XY);
+        	switch(notice.getLocalLayoutType()){
+        	case 2:
+        		sphinx.getMoreFragment().refreshDrawable(notice.getpicTkDrawable(), imageView, R.drawable.bg_picture_detail, false);
+        		break;
+        	case 3:
+        		if(notice.getLocalType()==1){
+        		    imageView.setBackgroundResource(R.drawable.ic_soft_update);
+        		}else{
+        			sphinx.getMoreFragment().refreshDrawable(notice.getpicTkDrawable(), imageView, R.drawable.bg_picture_none, false);
+        		}
+        		imageView.setLayoutParams(layoutParams);
+        		break;
+        	case 7:
+        		sphinx.getMoreFragment().refreshDrawable(notice.getpicTkDrawable(), imageView, R.drawable.bg_picture_none, false);
+        		imageView.setLayoutParams(layoutParams);
+        	}
+        	imageView.setLayoutParams(layoutParams);
+        	return imageView;
+    	}
+    	
+    	public static LinearLayout getNoticeLinearLayout(Sphinx sphinx, Notice notice, ImageView imageView){
+    		LinearLayout linearLayout = new LinearLayout(sphinx);
+    		linearLayout.setBackgroundResource(R.drawable.btn_notice);
+    		float textSize = calcTitleTextSize(sphinx, notice);
+    		float drawablePadding = notice.getLocalType() == 1 ? 4 : textSize;
+    		switch(notice.getLocalLayoutType()){
+    		case 3:
+    			linearLayout.setOrientation(HORIZONTAL);
+    			linearLayout.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
+    			linearLayout.addView(imageView);
+    			linearLayout.addView(getTitleTxv(sphinx, notice, textSize, drawablePadding));
+    			break;
+    		case 5:
+    			linearLayout.setOrientation(VERTICAL);
+    			linearLayout.setGravity(Gravity.CENTER_HORIZONTAL);
+    			linearLayout.addView(getTitleTxv(sphinx, notice, 16, drawablePadding));
+    			linearLayout.addView(getDescriptionTxv(sphinx, notice, 14, drawablePadding));
+    			break;
+    		case 7:
+    			linearLayout.setOrientation(HORIZONTAL);
+    			LinearLayout textLly = new LinearLayout(sphinx);
+            	textLly.setOrientation(VERTICAL);
+            	textLly.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
+            	textLly.setGravity(Gravity.LEFT);
+            	textLly.addView(getTitleTxv(sphinx, notice, textSize, drawablePadding));
+            	textLly.addView(getDescriptionTxv(sphinx, notice, textSize - 2, drawablePadding));
+            	linearLayout.addView(imageView);
+            	linearLayout.addView(textLly);
+            	break;
+    		}
+    		return linearLayout;
+    	}
+    	
+    	private static float calcTitleTextSize(Context context, Notice notice){
+    		String title = notice.getNoticeTitle();
+    		String description = notice.getDescription();
+            float titleTextSize = 16;
+            float descTextSize = titleTextSize - 2;
+            float drawablePadding = (notice.getLocalType() == 1) ? 4 : titleTextSize;
+            float layoutMargin = (notice.getLocalType() == 1) ? 4 : 16;
+            int screen_px = context.getResources().getDisplayMetrics().widthPixels;
+            int textView_px = screen_px - Utility.dip2px(context, layoutMargin + 16 + 16 + 48);
+            float textView_dp = Utility.px2dip(context, textView_px);
+            if(title != null && !TextUtils.isEmpty(title)){
+            	while(titleTextSize* ByteUtil.getCharArrayLength(title)/2 + drawablePadding > textView_dp + .5){
+            		titleTextSize -= 1;
+            		drawablePadding = (notice.getLocalType() == 1) ? 4 : titleTextSize;
+            	}
+            	descTextSize = titleTextSize - 2;
+            	if(description != null && !TextUtils.isEmpty(description)){
+            		while(descTextSize* ByteUtil.getCharArrayLength(description)/2 + drawablePadding > textView_dp + .5){
+            			titleTextSize --;
+            			descTextSize --;
+            			drawablePadding = (notice.getLocalType() == 1) ? 4 : titleTextSize;
+            		}
+            	}
+            }
+    		return titleTextSize;
+    	}
     }
 
 }
