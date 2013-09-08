@@ -225,11 +225,7 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
         this.mLineList = mSphinx.getBuslineResultLineFragment().getData();
         this.curLineNum = position;
         
-        highlightIndex = -1;
-        mResultAdapter.setHighlight(-1);
-        if (highlightStation != null) {
-            highlightIndex = findStation(highlightStation, line.getStationList());
-        }
+        setHighlightStation(highlightStation);
         
         mTitlePopupList.clear();
         if (this.mLineList != null) {
@@ -245,6 +241,14 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
             mStrList.add(stationList.get(i).getName());
         }
         mResultAdapter.notifyDataSetChanged();
+    }
+    
+    public void setHighlightStation(String s) {
+        highlightIndex = -1;
+        mResultAdapter.setHighlight(-1);
+        if (s != null) {
+            highlightIndex = findStation(s, line.getStationList());
+        }
     }
 
     public static class StationViewHolder {
@@ -415,8 +419,12 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
             mActionLog.addAction(mActionTag + ActionLog.TitleRightButton);
         	// 绘制交通图层
 			viewMap();
-			// 将地图缩放至可以显示完整的交通路径, 并平移到交通路径中心点
-			BuslineOverlayHelper.panToViewWholeOverlay(line, mSphinx.getMapView(), (Activity)mSphinx);
+			if (highlightIndex != -1) {
+			    BuslineOverlayHelper.panToPosition(mSphinx.getHandler(), highlightIndex, mSphinx.getMapView());
+			} else {
+			    // 将地图缩放至可以显示完整的交通路径, 并平移到交通路径中心点
+			    BuslineOverlayHelper.panToViewWholeOverlay(line, mSphinx.getMapView(), (Activity)mSphinx);
+			}
         }
     }
     
