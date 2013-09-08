@@ -13,7 +13,7 @@
 #include "tk_log.h"
 #include "tk_map_api.h"
 
-#define DEBUG
+//#define DEBUG
 #ifdef DEBUG
 #include <android/log.h>
 char message[1000];

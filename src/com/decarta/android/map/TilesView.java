@@ -848,7 +848,7 @@ public class TilesView extends GLSurfaceView {
 				multiTouch = true;
 			}
 			isTouchBegin = true;
-			LogWrapper.i("Label", "--------touch begin---------");
+			LogWrapper.d("Label", "--------touch begin---------");
 		} else if (action == MotionEvent.ACTION_MOVE) {
 			if (pCount > 1) {
 				resetLongTouchTimer();
@@ -923,9 +923,9 @@ public class TilesView extends GLSurfaceView {
 							isTouchBegin = false;
 						}
 						lastMoveTime = System.currentTimeMillis();
-						LogWrapper.i("Moving", "drag: " + draggingConv.toString() + "centerXY: " + centerXY.toString());
+//						LogWrapper.i("Moving", "drag: " + draggingConv.toString() + "centerXY: " + centerXY.toString());
 						moveView(draggingConv.x, draggingConv.y);
-						LogWrapper.i("Moving", "after dragging centerXY: " + centerXY.toString());
+//						LogWrapper.i("Moving", "after dragging centerXY: " + centerXY.toString());
 					}
 					refreshMap();
 				}
@@ -1272,7 +1272,7 @@ public class TilesView extends GLSurfaceView {
 							easingRecord.listener = null;
 						}
 						// Log.i("Moving","onTouchEvent s:"+s+",t(ms):"+(int)(timeInterval/1000000));
-						LogWrapper.i("Moving","onTouchEvent speed:"+easingRecord.speed+",decelerate:"+easingRecord.decelerate_rate+",direction:"+easingRecord.direction);
+//						LogWrapper.i("Moving","onTouchEvent speed:"+easingRecord.speed+",decelerate:"+easingRecord.decelerate_rate+",direction:"+easingRecord.direction);
 					}
 					if (CONFIG.DECELERATE_RATE <= 0 || easingRecord.speed <= 0) {
 						Position center;
@@ -1654,10 +1654,6 @@ public class TilesView extends GLSurfaceView {
 			int numY = Math.round(centerDelta.y / CONFIG.TILE_SIZE);
 			centerXYZ.x -= numX;
 			centerXYZ.x = Util.indexXMod(centerXYZ.x, centerXYZ.z);
-			if(centerXYZ.x < 0) {
-				int debug = 0;
-				++ debug;
-			}
 			centerXYZ.y += numY;
 			centerDelta.x -= (numX * CONFIG.TILE_SIZE);
 			centerDelta.y -= (numY * CONFIG.TILE_SIZE);
@@ -1805,13 +1801,10 @@ public class TilesView extends GLSurfaceView {
 		double mapScale = Math.pow(2, centerXYZ.z - zoomLevel);
 		float moveX = left * (float) mapScale;
 		float moveY = top * (float) (mapScale);
-		if(centerXY.x - moveX < 0) {
-			int debug = 0;
-			++debug;
-		}
+
 		if (!Util.inChina(new XYDouble(centerXY.x - moveX, centerXY.y + moveY),
 				centerXYZ.z)) {
-			LogWrapper.i("Moving", "out of China: centerXY: " + centerXY.toString() + "moveX: " + moveX + "moveY: " + moveY);
+//			LogWrapper.i("Moving", "out of China: centerXY: " + centerXY.toString() + "moveX: " + moveX + "moveY: " + moveY);
 			return;
 		}
 
@@ -2268,12 +2261,12 @@ public class TilesView extends GLSurfaceView {
 			LogWrapper.i("centerXY","centerXY"+centerXY.toString());
 			moveView((float) (distance) * easingRecord.direction.x,
 					(float) (distance) * easingRecord.direction.y);
-			LogWrapper.i("centerXY","centerXY after move distance: " + distance + ", " + centerXY.toString());
+//			LogWrapper.i("centerXY","centerXY after move distance: " + distance + ", " + centerXY.toString());
 			if (newSpeed <= 0) {
 				easingRecord.reset();
 			}
-			LogWrapper.i("Moving","TilesView.onDraw distance:"+(int)distance+",timeElapsed:"+(int)(timeElapsed/(1E6))+
-					",newSpeed:"+newSpeed + "decelerate: " + easingRecord.decelerate_rate);
+//			LogWrapper.i("Moving","TilesView.onDraw distance:"+(int)distance+",timeElapsed:"+(int)(timeElapsed/(1E6))+
+//					",newSpeed:"+newSpeed + "decelerate: " + easingRecord.decelerate_rate);
 		}
 	}
 
@@ -2334,10 +2327,7 @@ public class TilesView extends GLSurfaceView {
 
 			centerXY = new XYDouble(resp.centerXY.x, resp.centerXY.y);
 			centerXYZ.x = resp.centerXYZ.x;
-			if(centerXYZ.x < 0) {
-				int debug = 0;
-				++ debug;
-			}
+
 			centerXYZ.y = resp.centerXYZ.y;
 			centerXYZ.z = resp.centerXYZ.z;
 			centerDelta.x = resp.getFixedGridPixelOffset().x;
@@ -3072,7 +3062,7 @@ public class TilesView extends GLSurfaceView {
 														.addFirst(requestTile);
 											} else {
 												requestTiles.add(requestTile);
-												LogWrapper.i("requestTiles", requestTile.xyz.toString());
+//												LogWrapper.i("requestTiles", requestTile.xyz.toString());
 											}
 										}
 										continue;
@@ -3119,7 +3109,7 @@ public class TilesView extends GLSurfaceView {
 											requestTiles.addFirst(requestTile);
 										} else {
 											requestTiles.add(requestTile);
-											LogWrapper.i("requestTiles", requestTile.xyz.toString());
+//											LogWrapper.i("requestTiles", requestTile.xyz.toString());
 										}
 										continue;
 									} else {
@@ -3257,7 +3247,7 @@ public class TilesView extends GLSurfaceView {
 														.addFirst(requestTile);
 											} else {
 												requestTiles.add(requestTile);
-												LogWrapper.i("requestTiles", requestTile.xyz.toString());
+//												LogWrapper.i("requestTiles", requestTile.xyz.toString());
 											}
 											continue;
 										}
@@ -3405,10 +3395,10 @@ public class TilesView extends GLSurfaceView {
 						long end = System.currentTimeMillis();
 						if (refreshText) {
 							isStaying = false;
-							LogWrapper.i("Label", "------draw all label cost: "
+							LogWrapper.d("Label", "------draw all label cost: "
 									+ (end - start));
 						} else {
-							LogWrapper.i("Label", "+++draw label cost: "
+							LogWrapper.d("Label", "+++draw label cost: "
 									+ (end - start));
 						}
 						gl.glPopMatrix();
