@@ -13,11 +13,114 @@
 #include "tk_log.h"
 #include "tk_map_api.h"
 
-//#define DEBUG
+#define DEBUG
 #ifdef DEBUG
 #include <android/log.h>
 char message[1000];
 #endif
+
+jclass lost_data_cls, str_cls, label_cls, single_label_cls, multi_label_cls, xy_cls;
+
+jmethodID str_cid_ca;
+jmethodID str_cid_ba;
+jmethodID lost_data_cid;
+jmethodID single_label_cid, multi_label_cid, xy_cid;
+/*
+ * Class:     com_tigerknows_map_Ca
+ * Method:    initNativeIDs
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_com_tigerknows_map_Ca_cai
+  (JNIEnv *env, jclass this) {
+	jclass lost_data_cls_local = (*env)->FindClass(env, "com/tigerknows/map/TileDownload");
+	if(lost_data_cls_local != NULL) {
+		lost_data_cls = (*env)->NewGlobalRef(env, lost_data_cls_local);
+//		(*env)->DeleteLocalRef(env, lost_data_cls_local);
+	}
+	else {
+
+	}
+
+	jclass str_cls_local = (*env)->FindClass(env, "java/lang/String");
+	if(str_cls_local != NULL) {
+		str_cls = (*env)->NewGlobalRef(env, str_cls_local);
+//		(*env)->DeleteLocalRef(env, str_cls_local);
+	}
+	else {
+
+	}
+
+	str_cid_ba = (*env)->GetMethodID(env, str_cls, "<init>",
+			"([BLjava/lang/String;)V");
+	if(str_cid_ba == NULL) {
+
+	}
+
+
+	lost_data_cid = (*env)->GetMethodID(env, lost_data_cls, "<init>", "(IIILjava/lang/String;)V");
+	if(lost_data_cid == NULL) {
+
+	}
+
+	str_cid_ca = (*env)->GetMethodID(env, str_cls, "<init>", "([C)V");
+	if(str_cid_ca == NULL) {
+
+	}
+
+	jclass label_cls_local = (*env)->FindClass(env, "com/tigerknows/map/label/Label");
+	if(label_cls_local != NULL) {
+		label_cls = (*env)->NewGlobalRef(env, label_cls_local);
+//		(*env)->DeleteLocalRef(env, label_cls_local);
+	}
+	else {
+
+	}
+
+	jclass single_label_cls_local = (*env)->FindClass(env, "com/tigerknows/map/label/SingleRectLabel");
+	if(single_label_cls_local != NULL) {
+		single_label_cls = (*env)->NewGlobalRef(env, single_label_cls_local);
+//		(*env)->DeleteLocalRef(env, single_label_cls_local);
+	}
+	else {
+
+	}
+
+	jclass multi_label_cls_local = (*env)->FindClass(env, "com/tigerknows/map/label/MultiRectLabel");
+	if(multi_label_cls_local != NULL) {
+		multi_label_cls = (*env)->NewGlobalRef(env, multi_label_cls_local);
+//		(*env)->DeleteLocalRef(env, multi_label_cls_local);
+	}
+	else {
+
+	}
+
+	single_label_cid = (*env)->GetMethodID(env, single_label_cls, "<init>",
+				"(Ljava/lang/String;IIIIIILcom/decarta/android/util/XYInteger;III)V");
+	if(single_label_cid == NULL) {
+
+	}
+
+	multi_label_cid = (*env)->GetMethodID(env, multi_label_cls, "<init>",
+			"(Ljava/lang/String;IIIIII[Lcom/decarta/android/util/XYInteger;III)V");
+	if(multi_label_cid == NULL) {
+
+	}
+
+	jclass xy_cls_local = (*env)->FindClass(env, "com/decarta/android/util/XYInteger");
+	if(xy_cls_local != NULL) {
+		xy_cls = (*env)->NewGlobalRef(env, xy_cls_local);
+//		(*env)->DeleteLocalRef(env, xy_cls_local);
+	}
+	else {
+
+	}
+
+	xy_cid = (*env)->GetMethodID(env, xy_cls, "<init>", "(II)V");
+	if(xy_cid == NULL) {
+
+	}
+
+}
 
 /*
  * Class:     com_tigerknows_map_Ca
@@ -28,11 +131,6 @@ JNIEXPORT jint JNICALL Java_com_tigerknows_map_Ca_a
   (JNIEnv *env, jclass this, jstring jresdir, jstring jmapdir, jint tile_size) {
 	const char *resdir = (*env)->GetStringUTFChars(env, jresdir, 0);
 	const char *mapdir = (*env)->GetStringUTFChars(env, jmapdir, 0);
-
-	#ifdef DEBUG
-	sprintf(message, "...........Java_com_tigerknows_map_Ca_a...tk_init_engine_config...resdir:%s...mapdir:%s...tile_size_bit:%d", jresdir, jmapdir, tile_size_bit);
-	__android_log_write(ANDROID_LOG_ERROR, "TKEngine-stat", message);
-	#endif
 
 	int ret = tk_init_engine_config(resdir, mapdir, tile_size);
 
@@ -181,15 +279,14 @@ JNIEXPORT jobjectArray JNICALL Java_com_tigerknows_map_Ca_f
 	__android_log_write(ANDROID_LOG_ERROR, "TKEngine-stat", message);
 	#endif
 	jobjectArray result;
-	jmethodID lost_data_cid, string_cid;
 	int lost_count = 0, i = 0;
 	int year;
 	char version[32] = {0};
 	unsigned char buf[6] = {0};
 	tk_lost_data_t *lost_datas = tk_get_lost_data(&lost_count);
 	// todo: move jclass to buffer
-	jclass lost_data_cls = (*env)->FindClass(env, "com/tigerknows/map/TileDownload");
-	jclass str_cls = (*env)->FindClass(env, "java/lang/String");
+//	jclass lost_data_cls = (*env)->FindClass(env, "com/tigerknows/map/TileDownload");
+//	jclass str_cls = (*env)->FindClass(env, "java/lang/String");
 	if (lost_data_cls == NULL) {
 		return NULL;//todo: exception thrown
 	}
@@ -197,13 +294,10 @@ JNIEXPORT jobjectArray JNICALL Java_com_tigerknows_map_Ca_f
 	if (result == NULL) {
 		return NULL;//todo: out of memory error thrown
 	}
-	//int rid, int offset, int length, String version
-	lost_data_cid = (*env)->GetMethodID(env, lost_data_cls, "<init>", "(IIILjava/lang/String;)V");
 	if (lost_data_cid == NULL) {
 		return NULL;//todo: exception thrown
 	}
-	string_cid = (*env)->GetMethodID(env, str_cls, "<init>", "([C)V");
-	if (string_cid == NULL) {
+	if (str_cid_ca == NULL) {
 		return NULL;
 	}
 	for (i = 0; i < lost_count; ++i) {
@@ -238,18 +332,16 @@ jstring CharTojstring(JNIEnv* env, const char* str) {
 	jstring rtn = 0;
 	jsize len = strlen(str);
 
-	jclass clsstring = (*env)->FindClass(env, "java/lang/String");
+//	jclass clsstring = (*env)->FindClass(env, "java/lang/String");
 
 	//new   encode   string   default   "GBK"
 	jstring strencode = (*env)->NewStringUTF(env, CURRENT_ENCODE);
-	jmethodID mid = (*env)->GetMethodID(env, clsstring, "<init>",
-			"([BLjava/lang/String;)V");
 	jbyteArray barr = (*env)->NewByteArray(env, len);
 
 	(*env)->SetByteArrayRegion(env, barr, 0, len, (jbyte*) str);
 
 	//call   new   String(byte[]   b,String   encode)
-	rtn = (jstring) (*env)->NewObject(env, clsstring, mid, barr, strencode);
+	rtn = (jstring) (*env)->NewObject(env, str_cls, str_cid_ba, barr, strencode);
 	(*env)->DeleteLocalRef(env, strencode);
 	return rtn;
 }
@@ -262,8 +354,6 @@ jstring CharTojstring(JNIEnv* env, const char* str) {
 JNIEXPORT jobjectArray JNICALL Java_com_tigerknows_map_Ca_g
   (JNIEnv *env, jclass this, jint tile_x, jint tile_y, jint zoom) {
 	jobjectArray result;
-	jclass label_cls, single_label_cls, multi_label_cls, xy_cls;
-	jmethodID single_label_cid, multi_label_cid, xy_cid;
 	tk_label_t *labels;
 	int label_num = 0, i = 0;
 	int halfOfTotalNumber = 1 << (zoom - 1);
@@ -273,15 +363,12 @@ JNIEXPORT jobjectArray JNICALL Java_com_tigerknows_map_Ca_g
 	if (labels == NULL) {
 		return NULL;
 	}
-	label_cls = (*env)->FindClass(env, "com/tigerknows/map/label/Label");
 	if (label_cls == NULL) {
 		return NULL;
 	}
-	single_label_cls = (*env)->FindClass(env, "com/tigerknows/map/label/SingleRectLabel");
 	if (single_label_cls == NULL) {
 		return NULL;
 	}
-	multi_label_cls = (*env)->FindClass(env, "com/tigerknows/map/label/MultiRectLabel");
 	if (multi_label_cls == NULL) {
 		return NULL;
 	}
@@ -289,35 +376,34 @@ JNIEXPORT jobjectArray JNICALL Java_com_tigerknows_map_Ca_g
 	if (result == NULL) {
 		return NULL;//todo: out of memory error thrown
 	}
-	single_label_cid = (*env)->GetMethodID(env, single_label_cls, "<init>",
-			"(Ljava/lang/String;IIIIIILcom/decarta/android/util/XYInteger;III)V");
 	if(single_label_cid == NULL) {
 		return NULL;
 	}
-	multi_label_cid = (*env)->GetMethodID(env, multi_label_cls, "<init>",
-			"(Ljava/lang/String;IIIIII[Lcom/decarta/android/util/XYInteger;III)V");
 	if(multi_label_cid == NULL) {
 		return NULL;
 	}
-	xy_cls = (*env)->FindClass(env, "com/decarta/android/util/XYInteger");
 	if(xy_cls == NULL) {
 		return NULL;
 	}
-	xy_cid = (*env)->GetMethodID(env, xy_cls, "<init>", "(II)V");
 	if(xy_cid == NULL) {
 		return NULL;
 	}
 
+	jobject label = NULL;
+	jobject point = NULL;
+	int point_num = 0;
+	tk_point_t *points = NULL;
+	jstring name = NULL;
+	jobjectArray jpoints = NULL;
 	for(i = 0; i < label_num; ++i) {
-		jobject label;
-		int point_num = labels[i].point_num;
-		tk_point_t *points = labels[i].points;
+		point_num = labels[i].point_num;
+		points = labels[i].points;
 		if (point_num == 1){
-			jobject point = (*env)->NewObject(env, xy_cls, xy_cid, points[0].x, points[0].y);
+			point = (*env)->NewObject(env, xy_cls, xy_cid, points[0].x, points[0].y);
 			if(point == NULL) {
 				return NULL;
 			}
-			jstring name = CharTojstring(env, labels[i].name);
+			name = CharTojstring(env, labels[i].name);
 			if(name == NULL) {
 				return NULL;
 			}
@@ -331,17 +417,17 @@ JNIEXPORT jobjectArray JNICALL Java_com_tigerknows_map_Ca_g
 			(*env)->DeleteLocalRef(env, point);
 		}
 		else if (point_num > 1) {
-			jobjectArray jpoints = (*env)->NewObjectArray(env, point_num, xy_cls, NULL);
+			jpoints = (*env)->NewObjectArray(env, point_num, xy_cls, NULL);
 			if(jpoints == NULL) {
 				return NULL;
 			}
-			jstring name = CharTojstring(env, labels[i].name);
+			name = CharTojstring(env, labels[i].name);
 			if(name == NULL) {
 				return NULL;
 			}
 			int j;
 			for (j = 0; j < point_num; ++j) {
-				jobject point = (*env)->NewObject(env, xy_cls, xy_cid, points[j].x, points[j].y);
+				point = (*env)->NewObject(env, xy_cls, xy_cid, points[j].x, points[j].y);
 				if(point == NULL) {
 					return NULL;
 				}
@@ -434,7 +520,7 @@ JNIEXPORT jint JNICALL Java_com_tigerknows_map_Ca_l
 JNIEXPORT jintArray JNICALL Java_com_tigerknows_map_Ca_m
   (JNIEnv *env, jclass this, jint rid) {
 	jintArray iarr = (*env)->NewIntArray(env, 3);
-	int ret, total_size, downloaded_size, lost_data_count;
+	int ret, total_size = 0, downloaded_size = 0, lost_data_count = 0;
 	jint size[3];
 //	int tk_get_region_state(int rid, int *ptotal_size, int *pdownloaded_size);
 	ret = tk_get_region_state(rid, &total_size, &downloaded_size);
@@ -443,6 +529,12 @@ JNIEXPORT jintArray JNICALL Java_com_tigerknows_map_Ca_m
 	tk_get_lost_data(&lost_data_count);
 	size[2] = lost_data_count;
 	(*env)->SetIntArrayRegion(env, iarr, 0, 3, size);
+#ifdef DEBUG
+//	char message[256] = {0};
+sprintf(message, "...........Java_com_tigerknows_map_Ca_m...tk_get_region_stat...total_size: %d, downloaded_size: %d, lost_count: %d",
+		total_size, downloaded_size, lost_data_count);
+__android_log_write(ANDROID_LOG_ERROR, "TKEngine-stat", message);
+#endif
 	return iarr;
 }
 
@@ -472,7 +564,6 @@ JNIEXPORT jobjectArray JNICALL Java_com_tigerknows_map_Ca_o
   (JNIEnv *env, jclass this, jstring jprovname) {
 //	char **tk_get_city_list(char *pname, int *num_of_cities);
 	jobjectArray jcitylist;
-	jclass str_cls;
 	char **city_list;
 	int num_of_cities, i;
 	const char *prov_name = (*env)->GetStringUTFChars(env, jprovname, NULL);
@@ -484,7 +575,6 @@ JNIEXPORT jobjectArray JNICALL Java_com_tigerknows_map_Ca_o
 		return NULL;
 	}
 	(*env)->ReleaseStringUTFChars(env, jprovname, prov_name);
-	str_cls = (*env)->FindClass(env, "java/lang/String");
 	if(str_cls == NULL) {
 		return NULL;
 	}

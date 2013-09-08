@@ -9,6 +9,14 @@ extern "C" {
 #endif
 /*
  * Class:     com_tigerknows_map_Ca
+ * Method:    initNativeIDs
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_com_tigerknows_map_Ca_cai
+  (JNIEnv *, jclass);
+
+/*
+ * Class:     com_tigerknows_map_Ca
  * Method:    a
  * Signature: (Ljava/lang/String;Ljava/lang/String;I)I
  */

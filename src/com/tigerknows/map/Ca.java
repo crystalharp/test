@@ -6,8 +6,11 @@ import com.tigerknows.map.label.Label;
 public class Ca {
     static {
         System.load(TKApplication.getInstance().getFilesDir().getParent() + "/lib/libtkengine.so");
+        cai();
     }
 
+    private static native void cai();
+    
     /**初始化/销毁引擎配置、初始化/销毁context、计算bmpBuf大小*/
     private static native int a(String resdir, String mapdir, int tile_size);
     protected static int tk_init_engine_config(String resdir, String mapdir, int tile_size) {
