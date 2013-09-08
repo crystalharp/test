@@ -253,7 +253,7 @@ public class WeiboSendActivity extends BaseActivity implements OnClickListener, 
                             getString(R.string.are_you_delete_all), 
                             null,
                             getString(R.string.yes),
-                            getString(R.string.cancel),
+                            getString(R.string.no),
                             new DialogInterface.OnClickListener() {
                                 
                                 @Override
