@@ -37,7 +37,9 @@ public class TileThread extends Thread {
 	private MapEngine mapEngine=null;
 	                    
 	public static void startAllThreads(){
-		requestTiles=new Tile[CONFIG.TILE_THREAD_COUNT];
+		if(requestTiles == null) {
+			requestTiles=new Tile[CONFIG.TILE_THREAD_COUNT];
+		}
 		stop=false;
 		LogWrapper.i("TileThread","startAllThreads, tile thread count:"+CONFIG.TILE_THREAD_COUNT);
 	}

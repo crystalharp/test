@@ -212,7 +212,7 @@ public class SingleRectLabel extends Label {
         
         GLES10.glBindTexture(GLES10.GL_TEXTURE_2D, textureRef);
         try {
-        	Bitmap bm = BitmapPool[this.iconId];
+        	Bitmap bm = BitmapPool[iconId];
             int width = Util.getPower2(bm.getWidth());
             int height = Util.getPower2(bm.getHeight());
             Bitmap.Config config = Bitmap.Config.ARGB_8888;
@@ -224,17 +224,17 @@ public class SingleRectLabel extends Label {
             GLES10.glTexParameterf(GLES10.GL_TEXTURE_2D, GLES10.GL_TEXTURE_WRAP_S, GLES10.GL_CLAMP_TO_EDGE);
             GLES10.glTexParameterf(GLES10.GL_TEXTURE_2D, GLES10.GL_TEXTURE_WRAP_T, GLES10.GL_CLAMP_TO_EDGE);
             GLUtils.texImage2D(GLES10.GL_TEXTURE_2D, 0, bitmap, 0);
-            Texture newTexture = new Texture();
-            newTexture.textureRef = textureRef;
-            newTexture.size.x = width;
-            newTexture.size.y = height;
+            texture = new Texture();
+            texture.textureRef = textureRef;
+            texture.size.x = width;
+            texture.size.y = height;
             if(iconSize == null) {
             	iconSize = new XYInteger(bm.getWidth(), bm.getHeight());
             }
-            mapWordIconPool.put(iconId, newTexture);            
-            return newTexture;
+            mapWordIconPool.put(iconId, texture);            
+            return texture;
         } catch (Exception e) {
-			IntBuffer textureRefBuf=IntBuffer.allocate(1);
+			IntBuffer textureRefBuf = IntBuffer.allocate(1);
 			textureRefBuf.clear();
 			textureRefBuf.put(0,textureRef);
 			textureRefBuf.position(0);
@@ -258,8 +258,8 @@ public class SingleRectLabel extends Label {
     	GLES10.glColor4f(opacity, opacity, opacity, opacity);
     	if(style == STYLE_NO_ICON_WITHOUT_BACKGROUND || style == STYLE_NO_ICON_WITH_BACKGROUND) {
         	GLES10.glBindTexture(GLES10.GL_TEXTURE_2D, textTexture.textureRef);
-        	x = 0 - width/2;
-        	y = 0 - height/2;
+        	x = - (width >> 1);
+        	y = - (height >> 1);
         	vertexBuffer.clear();
         	vertexBuffer.put(x);
         	vertexBuffer.put(y);
@@ -274,7 +274,7 @@ public class SingleRectLabel extends Label {
         	GLES10.glDrawArrays(GLES10.GL_TRIANGLE_STRIP, 0, 4);
     	}
     	else if (style == STYLE_ICON_ON_LEFT) {
-        	float iconx = 0 - iconSize.x / 2, icony = 0 - iconSize.y / 2;
+        	float iconx = - iconSize.x >> 1, icony = - iconSize.y >> 1;
         	GLES10.glBindTexture(GLES10.GL_TEXTURE_2D, iconTexture.textureRef);
         	vertexBuffer.clear();
         	vertexBuffer.put(iconx);
@@ -288,8 +288,8 @@ public class SingleRectLabel extends Label {
         	TEXTURE_COORDS.position(0);
         	vertexBuffer.position(0);
         	GLES10.glDrawArrays(GLES10.GL_TRIANGLE_STRIP, 0, 4);
-        	x = 0 + iconSize.x / 2;
-        	y = 0 - height / 2;
+        	x = iconSize.x >> 1;
+        	y = - (height >> 1);
         	GLES10.glBindTexture(GLES10.GL_TEXTURE_2D, textTexture.textureRef);
         	vertexBuffer.clear();
         	vertexBuffer.put(x);
@@ -305,7 +305,7 @@ public class SingleRectLabel extends Label {
         	GLES10.glDrawArrays(GLES10.GL_TRIANGLE_STRIP, 0, 4);
     	}
     	else if (style == STYLE_ICON_ON_RIGHT) {
-        	float iconx = 0 - iconSize.x / 2, icony = 0 - iconSize.y / 2;
+        	float iconx = - (iconSize.x >> 1), icony = - (iconSize.y >> 1);
         	GLES10.glBindTexture(GLES10.GL_TEXTURE_2D, iconTexture.textureRef);
         	vertexBuffer.clear();
         	vertexBuffer.put(iconx);
@@ -319,8 +319,8 @@ public class SingleRectLabel extends Label {
         	TEXTURE_COORDS.position(0);
         	vertexBuffer.position(0);
         	GLES10.glDrawArrays(GLES10.GL_TRIANGLE_STRIP, 0, 4);
-        	x = - iconSize.x / 2 - width;
-        	y = - height / 2;
+        	x = - (iconSize.x >> 1) - width;
+        	y = - (height >> 1);
         	GLES10.glBindTexture(GLES10.GL_TEXTURE_2D, textTexture.textureRef);
         	vertexBuffer.clear();
         	vertexBuffer.put(x);
@@ -351,7 +351,7 @@ public class SingleRectLabel extends Label {
     	}
     	GLES10.glRotatef(-rot, 0, 0, 1);
     	GLES10.glTexEnvf(GLES10.GL_TEXTURE_ENV, GLES10.GL_TEXTURE_ENV_MODE, GLES10.GL_REPLACE);
-    	float iconx = 0 - iconSize.x / 2, icony = 0 - iconSize.y / 2;
+    	float iconx = - (iconSize.x >> 1), icony = - (iconSize.y >> 1);
     	GLES10.glBindTexture(GLES10.GL_TEXTURE_2D, iconTexture.textureRef);
     	vertexBuffer.clear();
     	vertexBuffer.put(iconx);
@@ -375,7 +375,7 @@ public class SingleRectLabel extends Label {
         int textureRef = textureRefBuf.get(0);
         GLES10.glBindTexture(GLES10.GL_TEXTURE_2D, textureRef);
         try {
-        	Bitmap textBitmap = getTextBitmap(name, style == STYLE_NO_ICON_WITH_BACKGROUND ? 0 : -1);
+        	Bitmap textBitmap = getTextBitmap(name, style == STYLE_NO_ICON_WITH_BACKGROUND ? 0 : -1, fontSize, color);
             int width = textBitmap.getWidth();
             int height = textBitmap.getHeight();
             GLES10.glTexParameterf(GLES10.GL_TEXTURE_2D, GLES10.GL_TEXTURE_MIN_FILTER, GLES10.GL_LINEAR);
@@ -492,10 +492,10 @@ public class SingleRectLabel extends Label {
     		ByteBuffer TEXTURE_COORDS, FloatBuffer vertexBuffer, boolean needGenTexture, IntegerRef leftCountToDraw) {
     	int width, height;
         int tileSize = CONFIG.TILE_SIZE;
-        float refx = center.x + centerDelta.x + (this.x - centerXYZ.x) * tileSize - tileSize/2;//label所在tile的左上角坐标
-        float refy = center.y + centerDelta.y + (centerXYZ.y - this.y) * tileSize - tileSize/2;
         int cx = center.x;
         int cy = center.y;
+        float refx = cx + centerDelta.x + (this.x - centerXYZ.x) * tileSize - (tileSize >> 1);//label所在tile的左上角坐标
+        float refy = cy + centerDelta.y + (centerXYZ.y - this.y) * tileSize - (tileSize >> 1);
         Texture textTexture, iconTexture;
         if (z != centerXYZ.z) {
             state = LABEL_STATE_CANT_BE_SHOWN;
@@ -504,10 +504,10 @@ public class SingleRectLabel extends Label {
         RectInteger rect = new RectInteger();
         float sx = point.x + refx;//point.x + refx为实际原始坐标
         float sy = point.y + refy;
-        float dx = scale * (sx - cx);
-        float dy = scale * (sy - cy);
-        float x = cosRot * (dx) - (dy) * sinRot + cx;//旋转变换
-        float y = (dx) * sinRot + (dy) * cosRot + cy;
+        float dx = scale == 1 ? (sx - cx) : scale * (sx - cx);
+        float dy = scale == 1 ? (sy - cy) : scale * (sy - cy);
+        float x = rotation == 0 ? (dx + cx) : (cosRot * (dx) - (dy) * sinRot + cx);//旋转变换
+        float y = rotation == 0 ? (dy + cy) : ((dx) * sinRot + (dy) * cosRot + cy);
         XYFloat size = calcTextRectSize(name);
         width = (int) size.x;
         height = (int) size.y;

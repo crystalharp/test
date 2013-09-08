@@ -34,8 +34,10 @@ public class MultiRectLabel extends Label {
 	public float[] rotationArray;
     public XYFloat startPoint;
     public int startIndex;
-    public XYFloat[] sizeArray;
-    public float[] halfCharWidthArray;
+//    public XYFloat[] sizeArray;
+//    public float[] halfCharWidthArray;
+    public XYFloat charSize;
+    public float halfCharWidth;
     private Texture[] textTextures;
     public static float SQRT2 = (float) Math.sqrt(2d);
     public MultiRectLabel(
@@ -77,11 +79,14 @@ public class MultiRectLabel extends Label {
     	rotationArray = new float[length];
         startPoint = new XYFloat(0, 0);
         startIndex = 0;
-        sizeArray = null;
-        halfCharWidthArray = null;
+        String subname = name.substring(0, 1);
+		charSize = super.calcTextRectSize(subname);
+		halfCharWidth = charSize.x / 2;
+//        sizeArray = null;
+//        halfCharWidthArray = null;
     }
     
-    private void drawSubLabel(String subLabelName, float x, float y, float rot, float scale, float width, float height, Texture texture, 
+    private void drawSubLabel(float x, float y, float rot, float scale, float width, float height, Texture texture, 
     		ByteBuffer TEXTURE_COORDS, FloatBuffer vertexBuffer) {
     	GLES10.glPushMatrix();
     	GLES10.glTranslatef(x, y, 0);
@@ -119,7 +124,7 @@ public class MultiRectLabel extends Label {
         int textureRef = textureRefBuf.get(0);
         GLES10.glBindTexture(GLES10.GL_TEXTURE_2D, textureRef);
         try {
-        	Bitmap textBitmap = getTextBitmap(subname, -1);
+        	Bitmap textBitmap = getTextBitmap(subname, -1, fontSize, color);
             int width = textBitmap.getWidth();
             int height = textBitmap.getHeight();
             GLES10.glTexParameterf(GLES10.GL_TEXTURE_2D, GLES10.GL_TEXTURE_MIN_FILTER, GLES10.GL_LINEAR);
@@ -143,24 +148,24 @@ public class MultiRectLabel extends Label {
         }
     }
     
-    private void initSize(int nameLength) {
-    	sizeArray = new XYFloat[nameLength];
-    	halfCharWidthArray = new float[nameLength];
-    	for(int i = 0; i < nameLength; ++i) {
-    		String subname = name.substring(i, i + 1);
-    		sizeArray[i] = super.calcTextRectSize(subname);
-    		halfCharWidthArray[i] = sizeArray[i].x / 2;
-    	}
-    }
+//    private void initSize(int nameLength) {
+//    	sizeArray = new XYFloat[nameLength];
+//    	halfCharWidthArray = new float[nameLength];
+//    	for(int i = 0; i < nameLength; ++i) {
+//    		String subname = name.substring(i, i + 1);
+//    		sizeArray[i] = super.calcTextRectSize(subname);
+//    		halfCharWidthArray[i] = sizeArray[i].x / 2;
+//    	}
+//    }
     
     public int draw(XYInteger center, XYZ centerXYZ, XYFloat centerDelta, 
     		float rotation, float sinRot, float cosRot, float scale, Grid grid, 
     		ByteBuffer TEXTURE_COORDS, FloatBuffer vertexBuffer, boolean needGenTexture, IntegerRef leftCountToDraw) {
         int tileSize = CONFIG.TILE_SIZE;
-        float refx = center.x + centerDelta.x + (this.x - centerXYZ.x) * tileSize - tileSize/2;//label所在tile的左上角坐标
-        float refy = center.y + centerDelta.y + (centerXYZ.y - this.y) * tileSize - tileSize/2;
         int cx = center.x;
         int cy = center.y;
+        float refx = cx + centerDelta.x + (this.x - centerXYZ.x) * tileSize - (tileSize >> 1);//label所在tile的左上角坐标
+        float refy = cy + centerDelta.y + (centerXYZ.y - this.y) * tileSize - (tileSize >> 1);
         Texture textTexture;
         if (z != centerXYZ.z) {
             state = LABEL_STATE_CANT_BE_SHOWN;
@@ -178,10 +183,10 @@ public class MultiRectLabel extends Label {
         int alphaFlag = 0;
         float stepx = 0, stepy = 0;
         float cosAlpha = 0, sinAlpha = 0, cosBeta = 0, sinBeta = 0;
-        if(sizeArray == null) {
-        	initSize(num);
-        }
-        float charWidth = 0, halfCharWidth = 0, radiusWidth = 0;
+//        if(sizeArray == null) {
+//        	initSize(num);
+//        }
+        float charWidth = charSize.x / scale, radiusWidth = halfCharWidth * SQRT2;
 		if (state != LABEL_STATE_CANT_BE_SHOWN
 				&& state != LABEL_STATE_PRIMITIVE) {
 			tempStartPoint.x = startPoint.x;
@@ -192,14 +197,14 @@ public class MultiRectLabel extends Label {
 			startPoint.y = (int) tempStartPoint.y;
 			startIndex = nextEndPointIndex;
 		}
-		charWidth = sizeArray[0].x / scale;
-		halfCharWidth = charWidth / 2;
-		radiusWidth = halfCharWidth * SQRT2;
+//		charWidth = sizeArray[0].x / scale;
+//		halfCharWidth = charWidth / 2;
+//		radiusWidth = halfCharWidth * SQRT2;
 		while (nextEndPointIndex < pointNum && i < num) {
 			if (isNewStart) {
 				endPoint = points[nextEndPointIndex];
-				int dx = (int) (endPoint.x - tempStartPoint.x);
-				int dy = (int) (endPoint.y - tempStartPoint.y);
+				float dx = (endPoint.x - tempStartPoint.x);
+				float dy = (endPoint.y - tempStartPoint.y);
 				remainLength = (float) Math.sqrt(dx * dx + dy * dy);
 //				charWidth = sizeArray[i].x / scale;
 				if (remainLength < charWidth) {// length < width
@@ -251,16 +256,10 @@ public class MultiRectLabel extends Label {
 				XYFloat labelCenter = centerPointArray[i];// 留着用于标识字的位置
 				labelCenter.x = tempStartPoint.x + stepx / 2;
 				labelCenter.y = tempStartPoint.y + stepy / 2;
-				float dx = scale * (labelCenter.x + refx - cx);
-				float dy = scale * (labelCenter.y + refy - cy);
-				float x, y;
-				if (rotation == 0) {
-					x = dx + cx;
-					y = dy + cy;
-				} else {
-					x = cosRot * (dx) - (dy) * sinRot + cx;// 旋转平移缩放变换
-					y = (dx) * sinRot + (dy) * cosRot + cy;
-				}
+				float dx = scale == 1 ? (labelCenter.x + refx - cx) : scale * (labelCenter.x + refx - cx);
+				float dy = scale == 1 ? (labelCenter.y + refy - cy) : scale * (labelCenter.y + refy - cy);
+				float x = rotation == 0 ? (dx + cx) : (cosRot * (dx) - (dy) * sinRot + cx);
+				float y = rotation == 0 ? (dy + cy) : ((dx) * sinRot + (dy) * cosRot + cy);
 				rect.left = Math.round(x - radiusWidth);
 				rect.right = Math.round(x + radiusWidth);
 				rect.top = Math.round(y - radiusWidth);
@@ -327,8 +326,7 @@ public class MultiRectLabel extends Label {
 		}
 		//draw
 //		LogWrapper.i("MultiRectLabel", "draw label: " + name + "at: " + startPoint.x + ", " + startPoint.y);
-		for (int j = 0; j < num; ++j) {
-			RectInteger rect = rectArray[j];
+		for (RectInteger rect : rectArray) {
 			grid.addRect(rect);
 		}
 		if (state == LABEL_STATE_PRIMITIVE
@@ -351,9 +349,11 @@ public class MultiRectLabel extends Label {
 			}
 		}
 		boolean is_label_drawn = false;
+		String subLabelName = null;
+		String key = null;
 		for (int j = 0; j < num; ++j) {
-			String subLabelName = name.substring(j, j + 1);
-			String key = subLabelName + fontSize + color;
+			subLabelName = name.substring(j, j + 1);
+			key = subLabelName + fontSize + color;
 			textTexture = textTexturePool.get(key);
 			if ((textTexture == null && !needGenTexture)) {
 				state = LABEL_STATE_WAITING;
@@ -384,7 +384,6 @@ public class MultiRectLabel extends Label {
 		double lastrot = 0;
 		double rot = 0;
 		for (int j = 0; j < num; ++j) {
-			String subLabelName = null;
 			int texRefIdx = j;
 			if (j > 0 && rotationArray[j] == rotationArray[j - 1]) {
 				rot = lastrot;
@@ -393,7 +392,6 @@ public class MultiRectLabel extends Label {
 					rot = -Math.acos(rotationArray[j] - 3);
 				else
 					rot = Math.acos(rotationArray[j]);
-
 				lastrot = rot;
 			}
 			if (lastScreenPoint.x - firstScreenPoint.x < 0) {
@@ -401,8 +399,8 @@ public class MultiRectLabel extends Label {
 				rot += Math.PI;
 			}
 			XYFloat labelCenter = centerPointArray[j];
-			drawSubLabel(subLabelName, labelCenter.x + refx, labelCenter.y + refy, (float) (rot * 180 / Math.PI), scale,
-					sizeArray[j].x, sizeArray[j].y, textTextures[texRefIdx], TEXTURE_COORDS, vertexBuffer);
+			drawSubLabel(labelCenter.x + refx, labelCenter.y + refy, (float) (rot * 180 / Math.PI), scale,
+					charSize.x, charSize.y, textTextures[texRefIdx], TEXTURE_COORDS, vertexBuffer);
 		}
 		return state;
     }

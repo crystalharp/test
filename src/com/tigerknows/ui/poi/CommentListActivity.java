@@ -743,16 +743,21 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
                     
                     @Override
                     public void run() {
-                        List<Comment> mCommentArrayList;
-                        if (mHotCommentLsv.getVisibility() == View.VISIBLE) {
-                            mCommentArrayList = CommentListActivity.this.mCommentArrayList;
-                        } else {
-                            mCommentArrayList = CommentListActivity.this.mHotCommentArrayList;
-                        }
                         for(int i = mCommentArrayList.size()-1; i >= 0; i--) {
                             Comment c = mCommentArrayList.get(i);
                             if (uuid != null && uuid.equals(c.getUid())) {
-                                c.setCommend(true);
+                                if (c.isCommend() == false) {
+                                    c.setCommend(true);
+                                }
+                                break;
+                            }
+                        }
+                        for(int i = mHotCommentArrayList.size()-1; i >= 0; i--) {
+                            Comment c = mHotCommentArrayList.get(i);
+                            if (uuid != null && uuid.equals(c.getUid())) {
+                                if (c.isCommend() == false) {
+                                    c.setCommend(true);
+                                }
                                 break;
                             }
                         }

@@ -776,7 +776,7 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
             case R.id.viewurl_view:
                 BrowserActivity.setTuangou(mData);
                 Intent intent = new Intent();
-                intent.putExtra(BrowserActivity.TITLE, mSphinx.getString(R.string.picture_text_detail));
+                intent.putExtra(BrowserActivity.TITLE, mSphinx.getString(R.string.tuanguo_picture_text_detail));
                 intent.putExtra(BrowserActivity.URL, mData.getDetailUrl());
                 mSphinx.showView(R.id.activity_browser, intent);
                 break;
