@@ -111,21 +111,6 @@
         android:scrollingCache="false"
         android:paddingBottom="50dp"/>
     
-    <LinearLayout android:id="@+id/tip_view"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:background="@color/white"
-        android:paddingLeft="4dp"
-        android:paddingRight="4dp"
-        android:paddingBottom="4dp">
-        <include
-            layout="@layout/poi_tip_comment"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
-        
-    
     <LinearLayout android:id="@+id/empty_view"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
@@ -144,6 +129,30 @@
 	        android:textColor="@color/black_light"
 	        android:textSize="16sp"
 	        android:text="@string/poi_no_hot_comment"/>
+    </LinearLayout>
+    
+    <com.tigerknows.widget.RetryView
+        android:id="@+id/retry_view"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@id/title_view"
+        android:background="@color/white"
+        android:visibility="gone"
+        >
+    </com.tigerknows.widget.RetryView>
+    
+    <LinearLayout android:id="@+id/tip_view"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/white"
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp"
+        android:paddingBottom="4dp">
+        <include
+            layout="@layout/poi_tip_comment"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" />
     </LinearLayout>
     
     <LinearLayout
