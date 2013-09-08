@@ -88,6 +88,7 @@ import com.decarta.android.util.XYZ;
 import com.tigerknows.map.Grid;
 import com.tigerknows.map.MapEngine;
 import com.tigerknows.map.MapView;
+import com.tigerknows.map.ScaleView;
 import com.tigerknows.map.TexturePool;
 import com.tigerknows.map.TileDownload;
 import com.tigerknows.map.MapView.MapType;
@@ -338,6 +339,9 @@ public class TilesView extends GLSurfaceView {
 	 * info window. There is only one instance of info window.
 	 */
 	private InfoWindow infoWindow = new InfoWindow();
+	
+	private ScaleView scaleView = new ScaleView();
+	
 	private XYInteger gridSize = new XYInteger(0, 0);
 	private XYInteger displaySize = new XYInteger(0, 0);
 	private double radiusX;
@@ -919,8 +923,9 @@ public class TilesView extends GLSurfaceView {
 							isTouchBegin = false;
 						}
 						lastMoveTime = System.currentTimeMillis();
-						LogWrapper.i("Label", "move time changed");
+						LogWrapper.i("Moving", "drag: " + draggingConv.toString() + "centerXY: " + centerXY.toString());
 						moveView(draggingConv.x, draggingConv.y);
+						LogWrapper.i("Moving", "after dragging centerXY: " + centerXY.toString());
 					}
 					refreshMap();
 				}
@@ -1267,7 +1272,7 @@ public class TilesView extends GLSurfaceView {
 							easingRecord.listener = null;
 						}
 						// Log.i("Moving","onTouchEvent s:"+s+",t(ms):"+(int)(timeInterval/1000000));
-						// Log.i("Moving","onTouchEvent speed:"+easingRecord.speed+",decelerate:"+easingRecord.decelerate_rate+",direction:"+easingRecord.direction);
+						LogWrapper.i("Moving","onTouchEvent speed:"+easingRecord.speed+",decelerate:"+easingRecord.decelerate_rate+",direction:"+easingRecord.direction);
 					}
 					if (CONFIG.DECELERATE_RATE <= 0 || easingRecord.speed <= 0) {
 						Position center;
@@ -1452,6 +1457,7 @@ public class TilesView extends GLSurfaceView {
 				refreshMap();
 
 			} else {
+				LogWrapper.d("Moving", "panToPosition: " + x + " , " + y);
 				moveView(x, y);
 				moveJustDown = true;
 			}
@@ -1641,13 +1647,17 @@ public class TilesView extends GLSurfaceView {
 	// _panDirection.y=numY>=0?1:-1;
 	// }
 	private void adjustCenter() {
-		int thresh = CONFIG.TILE_SIZE >> 1;
+		int thresh = CONFIG.TILE_SIZE;
 		if (Math.abs(centerDelta.x) > thresh
 				|| Math.abs(centerDelta.y) > thresh) {
 			int numX = Math.round(centerDelta.x / CONFIG.TILE_SIZE);
 			int numY = Math.round(centerDelta.y / CONFIG.TILE_SIZE);
 			centerXYZ.x -= numX;
 			centerXYZ.x = Util.indexXMod(centerXYZ.x, centerXYZ.z);
+			if(centerXYZ.x < 0) {
+				int debug = 0;
+				++ debug;
+			}
 			centerXYZ.y += numY;
 			centerDelta.x -= (numX * CONFIG.TILE_SIZE);
 			centerDelta.y -= (numY * CONFIG.TILE_SIZE);
@@ -1665,6 +1675,7 @@ public class TilesView extends GLSurfaceView {
 			panDirection.x = numX >= 0 ? 1 : -1;
 			panDirection.y = numY >= 0 ? 1 : -1;
 		}
+		LogWrapper.i("center", centerXYZ.toString() + "......" + centerXY.toString() + "......" + centerDelta.toString());
 	}
 
 	public void zoomView(float newZoomLevel, XYFloat zoomCenterXY)
@@ -1794,8 +1805,13 @@ public class TilesView extends GLSurfaceView {
 		double mapScale = Math.pow(2, centerXYZ.z - zoomLevel);
 		float moveX = left * (float) mapScale;
 		float moveY = top * (float) (mapScale);
+		if(centerXY.x - moveX < 0) {
+			int debug = 0;
+			++debug;
+		}
 		if (!Util.inChina(new XYDouble(centerXY.x - moveX, centerXY.y + moveY),
 				centerXYZ.z)) {
+			LogWrapper.i("Moving", "out of China: centerXY: " + centerXY.toString() + "moveX: " + moveX + "moveY: " + moveY);
 			return;
 		}
 
@@ -2249,12 +2265,15 @@ public class TilesView extends GLSurfaceView {
 				easingRecord.movedDistance += (float) distance;
 				status[0] = true;
 			}
+			LogWrapper.i("centerXY","centerXY"+centerXY.toString());
 			moveView((float) (distance) * easingRecord.direction.x,
 					(float) (distance) * easingRecord.direction.y);
+			LogWrapper.i("centerXY","centerXY after move distance: " + distance + ", " + centerXY.toString());
 			if (newSpeed <= 0) {
 				easingRecord.reset();
 			}
-			// Log.i("Moving","TilesView.onDraw distance:"+(int)distance+",timeElapsed:"+(int)(timeElapsed/(1E6))+",newSpeed:"+newSpeed);
+			LogWrapper.i("Moving","TilesView.onDraw distance:"+(int)distance+",timeElapsed:"+(int)(timeElapsed/(1E6))+
+					",newSpeed:"+newSpeed + "decelerate: " + easingRecord.decelerate_rate);
 		}
 	}
 
@@ -2315,6 +2334,10 @@ public class TilesView extends GLSurfaceView {
 
 			centerXY = new XYDouble(resp.centerXY.x, resp.centerXY.y);
 			centerXYZ.x = resp.centerXYZ.x;
+			if(centerXYZ.x < 0) {
+				int debug = 0;
+				++ debug;
+			}
 			centerXYZ.y = resp.centerXYZ.y;
 			centerXYZ.z = resp.centerXYZ.z;
 			centerDelta.x = resp.getFixedGridPixelOffset().x;
@@ -2732,6 +2755,7 @@ public class TilesView extends GLSurfaceView {
 				else
 					CONFIG.TILE_SIZE = 256;
 			}
+			Util.init();
 			MapEngine.getInstance().setTileSize(CONFIG.TILE_SIZE);
 
 			max_tile_texture_ref = (int) ((Math.ceil(displaySize.x
@@ -3048,6 +3072,7 @@ public class TilesView extends GLSurfaceView {
 														.addFirst(requestTile);
 											} else {
 												requestTiles.add(requestTile);
+												LogWrapper.i("requestTiles", requestTile.xyz.toString());
 											}
 										}
 										continue;
@@ -3094,6 +3119,7 @@ public class TilesView extends GLSurfaceView {
 											requestTiles.addFirst(requestTile);
 										} else {
 											requestTiles.add(requestTile);
+											LogWrapper.i("requestTiles", requestTile.xyz.toString());
 										}
 										continue;
 									} else {
@@ -3231,6 +3257,7 @@ public class TilesView extends GLSurfaceView {
 														.addFirst(requestTile);
 											} else {
 												requestTiles.add(requestTile);
+												LogWrapper.i("requestTiles", requestTile.xyz.toString());
 											}
 											continue;
 										}
@@ -3422,7 +3449,36 @@ public class TilesView extends GLSurfaceView {
 							++movingFrameCount;
 						}
 					}
-
+					
+					//draw scale view
+					gl.glPushMatrix();
+					gl.glVertexPointer(2, GL_FLOAT, 0, mVertexBuffer);
+					float density = Globals.g_metrics.density;
+//					gl.glTranslatef(displaySize.x >> 1, displaySize.y >> 1, 0);//中心点移到屏幕中心点
+//					gl.glScalef(mapMode.scale, mapMode.scale, mapMode.scale);//缩放
+//					gl.glTranslatef(-(displaySize.x >> 1), -(displaySize.y >> 1), 0);
+			        Position centerPos = getCenterPosition();
+			        XYFloat leftTop = new XYFloat(10 * density, displaySize.y - 50 * density);
+					scaleView.renderGL(leftTop, zoomLevel, (float)centerPos.getLat(), centerXYZ.z, TEXTURE_COORDS);
+//			        gl.glColor4f(0, 0, 0, 1);
+//			        gl.glLineWidth(4 * density);
+//			        gl.glTranslatef(0, -100, 0);
+//			        mVertexBuffer.clear();
+//			        float[] vertexArray = {
+//			        		leftTop.x, displaySize.y - 50,
+//			        		leftTop.x + 300, displaySize.y - 50,
+//			        };
+//			        mVertexBuffer.put(vertexArray);
+//			        mVertexBuffer.position(0);
+//					mVertexBuffer.clear();
+//					mVertexBuffer.put(leftTop.x);
+//					mVertexBuffer.put(displaySize.y - 200);
+//					mVertexBuffer.put(leftTop.x + 300);
+//					mVertexBuffer.put(displaySize.y - 200);
+//					mVertexBuffer.position(0);
+//					gl.glDrawArrays(GLES10.GL_LINES, 0, 2);
+					gl.glPopMatrix();
+					
 					// draw the shapes
 					gl.glEnable(GL10.GL_BLEND);
 					gl.glDisable(GL_TEXTURE_2D);
@@ -3626,6 +3682,7 @@ public class TilesView extends GLSurfaceView {
 						compass.drawCompassOpenGL(gl);
 						// compass.renderGL(gl);
 					}
+				    
 					// end of draw
 
 					// if(visibleLayerNum>1 && requestTiles.size()>0){

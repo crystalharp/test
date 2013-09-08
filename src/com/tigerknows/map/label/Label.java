@@ -15,6 +15,7 @@ import android.graphics.Typeface;
 import android.graphics.Paint.Style;
 import android.graphics.drawable.NinePatchDrawable;
 import android.opengl.GLES10;
+import android.opengl.GLUtils;
 
 import com.decarta.Globals;
 import com.decarta.android.map.TilesView.Texture;
@@ -140,7 +141,7 @@ public abstract class Label {
         }
     };
     
-    protected XYFloat calcTextRectSize(String text) {
+    public static XYFloat calcTextRectSize(String text, int fontSize) {
     	XYFloat size = new XYFloat(0, 0);
     	tilePText.setTextSize(fontSize);
         int nameLength = text.length();
@@ -168,7 +169,7 @@ public abstract class Label {
 //    	orgHeight = (int)height;
 //    }
     
-    protected static Bitmap getTextBitmap(String text, int backGroundIdx, int fontSize, int color) {
+    public static Bitmap getTextBitmap(String text, int backGroundIdx, int fontSize, int color) {
 //    	LogWrapper.i("Label", "to generate text texture:" + text);
         tilePText.setTextSize(fontSize);
         String[] names = new String[2];
@@ -231,6 +232,37 @@ public abstract class Label {
         	canvas.drawText(names[i], x, y + lineHeight * i, tilePText);
         }
         return bitmap;
+    }
+    
+    public static Texture genNormalTextTextureRef(String name, int fontSize, int color) {
+    	IntBuffer textureRefBuf=IntBuffer.allocate(1);
+        GLES10.glGenTextures(1, textureRefBuf);
+        int textureRef = textureRefBuf.get(0);
+        GLES10.glBindTexture(GLES10.GL_TEXTURE_2D, textureRef);
+        try {
+        	Bitmap textBitmap = getTextBitmap(name, -1, fontSize, color);
+            int width = textBitmap.getWidth();
+            int height = textBitmap.getHeight();
+            GLES10.glTexParameterf(GLES10.GL_TEXTURE_2D, GLES10.GL_TEXTURE_MIN_FILTER, GLES10.GL_LINEAR);
+            GLES10.glTexParameterf(GLES10.GL_TEXTURE_2D, GLES10.GL_TEXTURE_MAG_FILTER, GLES10.GL_LINEAR);
+            GLES10.glTexParameterf(GLES10.GL_TEXTURE_2D, GLES10.GL_TEXTURE_WRAP_S, GLES10.GL_CLAMP_TO_EDGE);
+            GLES10.glTexParameterf(GLES10.GL_TEXTURE_2D, GLES10.GL_TEXTURE_WRAP_T, GLES10.GL_CLAMP_TO_EDGE);
+            GLUtils.texImage2D(GLES10.GL_TEXTURE_2D, 0, textBitmap, 0);
+            Texture texture = new Texture();
+            texture.size.x = Util.getPower2(width);
+            texture.size.y = Util.getPower2(height);
+            texture.textureRef = textureRef;
+//            textBitmap.recycle();
+//            textBitmap = null;
+            return texture;
+        } catch (Exception e) {
+            textureRefBuf.clear();
+            textureRefBuf.put(0, textureRef);
+            textureRefBuf.position(0);
+            glDeleteTextures(1, textureRefBuf);
+            textureRef=0;
+            return null;
+        }
     }
     
     public static void clearTextTexture() {
