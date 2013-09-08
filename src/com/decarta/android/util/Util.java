@@ -335,7 +335,7 @@ public class Util {
 	public static int getPower2(float size){
 		int r=1;
 		while(r<size){
-			r*=2;
+			r = (r << 1);
 		}
 		return r;
 	}

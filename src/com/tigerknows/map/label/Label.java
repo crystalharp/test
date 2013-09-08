@@ -146,8 +146,8 @@ public abstract class Label {
         int nameLength = text.length();
         if(nameLength >= 8) {
             String[] names = new String[2];
-        	names[0] = text.substring(0, nameLength / 2);
-        	names[1] = text.substring(nameLength / 2);
+        	names[0] = text.substring(0, (nameLength + 1) >> 1);
+        	names[1] = text.substring((nameLength + 1) >> 1);
         	size.x = Math.max(tilePText.measureText(names[0]), tilePText.measureText(names[1]));
         	size.y = (2 * (-tilePText.ascent()+tilePText.descent()));
         }
@@ -158,7 +158,17 @@ public abstract class Label {
     	return size;
     }
     
-    protected Bitmap getTextBitmap(String text, int backGroundIdx) {
+//    protected Bitmap getCharBitmap(String c) {
+//    	float width, height, orgWidth, orgHeight, lineHeight;
+//    	tilePText.setTextSize(fontSize);
+//    	width = tilePText.measureText(c);
+//    	orgWidth = (int)width;
+//    	height = (-tilePText.ascent()+tilePText.descent());
+//    	lineHeight = height;
+//    	orgHeight = (int)height;
+//    }
+    
+    protected static Bitmap getTextBitmap(String text, int backGroundIdx, int fontSize, int color) {
 //    	LogWrapper.i("Label", "to generate text texture:" + text);
         tilePText.setTextSize(fontSize);
         String[] names = new String[2];
@@ -167,10 +177,10 @@ public abstract class Label {
         int seg = 1;
         float width, height, orgWidth, orgHeight, lineHeight;
         if(nameLength >= 8) {
-        	names[0] = text.substring(0, nameLength / 2);
-        	names[1] = text.substring(nameLength / 2);
+        	names[0] = text.substring(0, (nameLength + 1) >> 1);
+        	names[1] = text.substring((nameLength + 1) >> 1);
         	seg = 2;
-        	width=Math.max(tilePText.measureText(names[0]), tilePText.measureText(names[1]));
+        	width = Math.max(tilePText.measureText(names[0]), tilePText.measureText(names[1]));
         	orgWidth = (int)width;
         	lineHeight = -tilePText.ascent()+tilePText.descent();
         	height = 2 * lineHeight;
