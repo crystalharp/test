@@ -82,11 +82,7 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
             }
             List<DynamicPOI> list = mPOI.getDynamicPOIList();
             List<DynamicPOI> dataList = new LinkedList<DynamicPOI>();
-            int dPOIsize = (list != null ? list.size() : 0);
-            if (dPOIsize == 0) {
-                return;
-            }
-            for(int i = 0; i < dPOIsize; i++) {
+            for(int i = 0; i < list.size(); i++) {
                 final DynamicPOI dynamicPOI = list.get(i);
                 final String dataType = dynamicPOI.getType();
                 if (BaseQuery.DATA_TYPE_TUANGOU.equals(dataType) 
@@ -156,7 +152,6 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
         public void onClick(View view) {
             DynamicPOI dynamicPOI = (DynamicPOI)view.getTag();
             final String dataType = dynamicPOI.getType();
-            List<BaseQuery> list = new ArrayList<BaseQuery>();
             DataOperation dataOperation = new DataOperation(mSphinx);
             dataOperation.addParameter(DataOperation.SERVER_PARAMETER_DATA_TYPE, dataType);
             dataOperation.addParameter(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
@@ -166,6 +161,7 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
             }
             
             if (BaseQuery.DATA_TYPE_TUANGOU.equals(dataType)) {
+                List<BaseQuery> list = new ArrayList<BaseQuery>();
                 mPOIDetailFragment.mActionLog.addAction(mPOIDetailFragment.mActionTag +  ActionLog.POIDetailTuangou);
                 dataOperation.addParameter(DataOperation.SERVER_PARAMETER_NEED_FIELD,
                              Tuangou.NEED_FIELD
@@ -177,7 +173,6 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
                         Util.byteToHexString(Tuangou.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_TUANGOU_DETAIL)+"_[0]" + ";" +
                         Util.byteToHexString(Tuangou.FIELD_CONTENT_PIC)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_TUANGOU_TAOCAN)+"_[0]");
                 dataOperation.setup(Globals.getCurrentCityInfo().getId(), mPOIDetailFragment.getId(), mPOIDetailFragment.getId(), mSphinx.getString(R.string.doing_and_wait));
-//                List<BaseQuery> list = new ArrayList<BaseQuery>();
                 list.add(dataOperation);
                 dataOperation = new DataOperation(mSphinx);
                 dataOperation.addParameter(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
@@ -195,9 +190,7 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
                         Util.byteToHexString(Yanchu.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[0]" + ";" +
                         Util.byteToHexString(Yanchu.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[0]");
                 dataOperation.setup(Globals.getCurrentCityInfo().getId(), mPOIDetailFragment.getId(), mPOIDetailFragment.getId(), mSphinx.getString(R.string.doing_and_wait));
-//                List<BaseQuery> list = new ArrayList<BaseQuery>();
-                list.add(dataOperation);
-                queryStart(list);
+                queryStart(dataOperation);
             } else if (BaseQuery.DATA_TYPE_ZHANLAN.equals(dataType)) {
                 mPOIDetailFragment.mActionLog.addAction(mPOIDetailFragment.mActionTag +  ActionLog.POIDetailZhanlan);
                 dataOperation.addParameter(DataOperation.SERVER_PARAMETER_NEED_FIELD,
@@ -206,17 +199,14 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
                         Util.byteToHexString(Zhanlan.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[0]" + ";" +
                         Util.byteToHexString(Zhanlan.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[0]");
                 dataOperation.setup(Globals.getCurrentCityInfo().getId(), mPOIDetailFragment.getId(), mPOIDetailFragment.getId(), mSphinx.getString(R.string.doing_and_wait));
-//                List<BaseQuery> list = new ArrayList<BaseQuery>();
-                list.add(dataOperation);
-                queryStart(list);
+                queryStart(dataOperation);
             } else if (BaseQuery.DATA_TYPE_COUPON.equals(dataType)) {
                 // 1 coupon, d operation
                 if (DPOIMasterUid != null && !TextUtils.isEmpty(DPOIMasterUid)) {
                 	mPOIDetailFragment.mActionLog.addAction(mPOIDetailFragment.mActionTag + ActionLog.POIDetailCouponSingle);
                     dataOperation.addParameter(DataOperation.SERVER_PARAMETER_NEED_FIELD, Coupon.NEED_FIELD);
                     dataOperation.setup(Globals.getCurrentCityInfo().getId(), mPOIDetailFragment.getId(), mPOIDetailFragment.getId(), mSphinx.getString(R.string.doing_and_wait));
-                    list.add(dataOperation);
-                    queryStart(list);
+                    queryStart(dataOperation);
                 // some coupons, s operation
                 } else {
                 	mPOIDetailFragment.mActionLog.addAction(mPOIDetailFragment.mActionTag + ActionLog.POIDetailCouponMulti);
@@ -226,11 +216,6 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
             }
         }
     }
-
-//    @Override
-//    public boolean checkExistence(POI poi) {
-//        return false;
-//    }
 
     @Override
     public void refresh() {
