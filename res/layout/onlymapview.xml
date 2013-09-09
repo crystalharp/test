@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:id="@+id/root_view"
+    android:gravity="top|left"
+    android:orientation="vertical"
+    >
+
+    <com.tigerknows.map.MapView
+        android:id="@+id/mapview"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        />
+
+    <RelativeLayout
+        android:id="@+id/control_view"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:gravity="left"
+        android:padding="6dp">
+        <LinearLayout
+            android:orientation="vertical"
+            android:id="@+id/zoomview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_above="@id/location_view"
+            />
+
+    </RelativeLayout>
+
+    
+</RelativeLayout>
