@@ -333,12 +333,12 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         currentTime.setTimeInMillis(CalendarUtil.getExactTime(mContext));
         if(cancelDeadline.after(currentTime) == false){
             mCreditNoteTxv.setText(Utility.renderColorToPartOfString(mContext,
-                    R.color.orange,
+                    R.color.black_dark,
                     mSphinx.getString(R.string.credit_note_detail_2, mSphinx.getString(R.string.credit_cannot_cancel)),
                     mSphinx.getString(R.string.credit_cannot_cancel)));
         }else{
             mCreditNoteTxv.setText(Utility.renderColorToPartOfString(mContext,
-                    R.color.orange,
+                    R.color.black_dark,
                     mSphinx.getString(R.string.credit_note_detail, mOrderModifyDeadline).trim(),
                     mOrderModifyDeadline));
         }
