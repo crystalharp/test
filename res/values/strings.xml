@@ -27,6 +27,7 @@
     <string name="location_text_navigation">导航</string>
     <string name="location_text_compass">罗盘</string>
 
+    <string name="go_buy">立即抢购</string>
     <string name="poi_change_location">切换位置</string>
     <string name="yuan">%1$d元</string>
     <string name="rmb_text">元</string>
