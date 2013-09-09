@@ -81,6 +81,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     private LinearLayout mPersonNameLly;
     private TextView mHotelNameTxv;
     private TextView mRoomtypeTxv;
+    private TextView mRoomtypeSubtitleTxv;
     private TextView mRoomtypeDetailTxv;
     private TextView mRoomDateTxv;
     private TextView mRoomNightsTxv;
@@ -165,6 +166,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         mPersonNameLly = (LinearLayout) mRootView.findViewById(R.id.person_name_lly);
         mHotelNameTxv = (TextView) mRootView.findViewById(R.id.hotel_name_txv);
         mRoomtypeTxv = (TextView) mRootView.findViewById(R.id.roomtype_txv);
+        mRoomtypeSubtitleTxv = (TextView) mRootView.findViewById(R.id.roomtype_subtitle_txv);
         mRoomtypeDetailTxv = (TextView) mRootView.findViewById(R.id.roomtype_detail_txv);
         mRoomDateTxv = (TextView) mRootView.findViewById(R.id.room_date_txv);
         mRoomNightsTxv = (TextView) mRootView.findViewById(R.id.room_nights_txv);
@@ -189,6 +191,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         });
         mHotelNameTxv.setOnClickListener(this);
         mRoomtypeTxv.setOnClickListener(this);
+        mRoomtypeSubtitleTxv.setOnClickListener(this);
         mRoomtypeDetailTxv.setOnClickListener(this);
         mRoomDateTxv.setOnClickListener(this);
         mRoomNightsTxv.setOnClickListener(this);
@@ -341,8 +344,15 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         mRoomtypeDynamic = roomTypeDynamic;
         mHotelNameTxv.setText(mPOI.getName());
         mRoomtypeTxv.setText(mRoomType.getRoomType());
-        String roomTypeDetail="";
         String appendContent;
+        appendContent = mRoomType.getSubtitle();
+        if(TextUtils.isEmpty(appendContent)){
+        	mRoomtypeSubtitleTxv.setVisibility(View.GONE);
+        }else{
+        	mRoomtypeSubtitleTxv.setVisibility(View.VISIBLE);
+        	mRoomtypeSubtitleTxv.setText(appendContent);
+        }
+        String roomTypeDetail="";
         appendContent = mRoomType.getBedType();
         roomTypeDetail += appendContent;
         roomTypeDetail += (appendContent != null) ? " " : null;
