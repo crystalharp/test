@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 pengwenyue@tigerknows.com
+ * Copyright (C) 2013 fengtianxiao@tigerknows.com
  */
 
 package com.tigerknows.ui.more;

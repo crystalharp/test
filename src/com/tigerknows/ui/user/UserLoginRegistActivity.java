@@ -1,6 +1,5 @@
 package com.tigerknows.ui.user;
 
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
@@ -14,7 +13,6 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.decarta.Globals;
-import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
