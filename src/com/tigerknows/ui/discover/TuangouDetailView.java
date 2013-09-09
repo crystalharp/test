@@ -398,7 +398,7 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
         
         String refund = mData.getRefund();
         if (!TextUtils.isEmpty(refund) && !refund.contains(noRefundStr)) {
-            mRefundTxv.setCompoundDrawables(mRefundIcon, null, mUpIcon, null);
+            mRefundTxv.setCompoundDrawables(mRefundIcon, null, mDownIcon, null);
         } else {
             mRefundTxv.setCompoundDrawables(mNotRefundIcon, null, null, null);
         }
@@ -783,8 +783,9 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
                 
             case R.id.refund_view:
                 if (mRefundDetailTxv.getVisibility() == View.VISIBLE) {
+                    mActionLog.addAction(mActionTag +  ActionLog.TuangouDetailRefund, "1");
                     mRefundDetailTxv.setVisibility(View.GONE); 
-                    mRefundTxv.setCompoundDrawables(mRefundIcon, null, mUpIcon, null);
+                    mRefundTxv.setCompoundDrawables(mRefundIcon, null, mDownIcon, null);
                 } else {
                     String refundDetail = null;
                     Shangjia shangjia = Shangjia.getShangjiaById(mData.getSource(), mSphinx, mLoadedDrawableRun);
@@ -793,13 +794,14 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
                     }
                     String refund = mData.getRefund();
                     if (!TextUtils.isEmpty(refund) && !refund.contains(noRefundStr) && !TextUtils.isEmpty(refundDetail)) {
+                        mActionLog.addAction(mActionTag +  ActionLog.TuangouDetailRefund, "0");
                         if (refundDetail != null) {
                             mRefundDetailTxv.setText(refundDetail);
                             mRefundDetailTxv.setVisibility(View.VISIBLE);
-                            mRefundTxv.setCompoundDrawables(mRefundIcon, null, mDownIcon, null);
+                            mRefundTxv.setCompoundDrawables(mRefundIcon, null, mUpIcon, null);
                         } else {
                             mRefundDetailTxv.setVisibility(View.GONE); 
-                            mRefundTxv.setCompoundDrawables(mRefundIcon, null, mUpIcon, null);
+                            mRefundTxv.setCompoundDrawables(mRefundIcon, null, mDownIcon, null);
                         }
                     } else {
                         mRefundDetailTxv.setVisibility(View.GONE); 
