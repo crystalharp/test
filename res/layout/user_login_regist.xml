@@ -175,6 +175,10 @@
                     android:textColor="@color/white"
                     android:padding="12dp"
                     android:background="@drawable/btn_hotel_book" 
+	                android:shadowDx="0"
+	                android:shadowDy="1"
+	                android:shadowColor="#a77a00"
+	                android:shadowRadius="1"
                 />
             </LinearLayout>
 
@@ -304,6 +308,10 @@
                 android:textSize="18sp"
                 android:textColor="@color/white"
                 android:background="@drawable/btn_hotel_book" 
+                android:shadowDx="0"
+                android:shadowDy="1"
+                android:shadowColor="#a77a00"
+                android:shadowRadius="1"
                 />
         </LinearLayout>
     </ScrollView>    
