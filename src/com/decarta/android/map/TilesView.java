@@ -159,6 +159,10 @@ public class TilesView extends GLSurfaceView {
 
 	float tkZRotation;
 
+	public boolean isPaused() {
+		return paused;
+	}
+	
 	public void tkRotateZToDegree(float zRotation) {
 		synchronized (drawingLock) {
 			tkZRotation = zRotation;

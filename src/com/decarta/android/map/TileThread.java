@@ -63,10 +63,16 @@ public class TileThread extends Thread {
 	
 	private void addToTileInfos(Tile requestTile, TileInfo tileInfo, boolean loadFromDb){
 		synchronized(tilesView.getDrawingLock()){
-			if(!tilesView.getTileInfos().containsKey(requestTile)){
-				tilesView.getTileInfos().put(requestTile, tileInfo);
-			} else {
-				LogWrapper.i("TileThread","addToTileInfos duplicate tile,hashCode:"+requestTile.toString()+","+requestTile.hashCode());
+			if(!tilesView.isPaused()) {
+				if(!tilesView.getTileInfos().containsKey(requestTile)){
+					tilesView.getTileInfos().put(requestTile, tileInfo);
+				} else {
+					LogWrapper.i("TileThread","addToTileInfos duplicate tile,hashCode:"+requestTile.toString()+","+requestTile.hashCode());
+				}
+			}
+			else {
+				tileInfo.bitmap.recycle();
+				tileInfo = null;
 			}
 		}
 	}
@@ -156,12 +162,12 @@ public class TileThread extends Thread {
 					//Log.i("TileThread" + this.sequence,"loading tile from network:" + Util.formatURL(url));
 					try{
                         XYZ xyz = requestTile.xyz;
-                        long start=System.nanoTime();
+//                        long start=System.nanoTime();
                         Label[] labels = Ca.tk_render_tile(xyz.x, xyz.y, xyz.z);
-                        long loadTime=System.nanoTime()-start;
-                        Profile.tilesNetworkInc(loadTime);
+//                        long loadTime=System.nanoTime()-start;
+//                        Profile.tilesNetworkInc(loadTime);
                         if (labels != null) {
-                            start=System.nanoTime();
+//                            start=System.nanoTime();
                             Bitmap bmp565 = Bitmap.createBitmap(CONFIG.TILE_SIZE, CONFIG.TILE_SIZE, Config.RGB_565);
                             bmp565.setPixels(bitmapIntBuffer, 0, CONFIG.TILE_SIZE, 0, 0, CONFIG.TILE_SIZE, CONFIG.TILE_SIZE);
                             
@@ -172,8 +178,8 @@ public class TileThread extends Thread {
 //                          bos.flush();
 //                          bos.close();
 //                            bmp565.compress(format, quality, stream)
-                            loadTime = System.nanoTime()-start;
-                            Profile.decodeByteArrayInc(loadTime);
+//                            loadTime = System.nanoTime()-start;
+//                            Profile.decodeByteArrayInc(loadTime);
                             
                             TileInfo tileInfo = new TileInfo();
 							tileInfo.bitmap = bmp565;
