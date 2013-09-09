@@ -146,7 +146,8 @@ public class TrafficQueryMapAndLocationHelper {
         }
     	
         if (result.getId() == lastCityInfo.getId()) {
-            mQueryFragment.mSphinx.getMapView().zoomTo(result.getLevel(), result.getPosition());
+            mQueryFragment.mSphinx.getMapView().setZoomLevel(result.getLevel());
+            mQueryFragment.mSphinx.getMapView().panToPosition(result.getPosition());
         } else {
             mQueryFragment.mSphinx.getMapView().centerOnPosition(result.getPosition(), result.getLevel());
         }

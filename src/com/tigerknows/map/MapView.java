@@ -545,14 +545,14 @@ public class MapView extends RelativeLayout implements
 	 * level. you need to call { centerOnPosition} or { renderMap} to
 	 * reload the whole map
 	 */
-	public void setZoomLevel(int newLevel) throws APIException {
-		tilesView.setZoomLevel(newLevel);
-	}
+//	public void setZoomLevel(int newLevel) throws APIException {
+//		tilesView.setZoomLevel(newLevel);
+//	}
 
 	public void centerOnPosition(Position position, float zoomLevel,
 			boolean clear) {
 	    try {
-		tilesView.centerOnPosition(position, zoomLevel, clear);
+	    	tilesView.centerOnPosition(position, zoomLevel, clear);
 	    } catch (APIException e) {
             e.printStackTrace();
         }
@@ -579,7 +579,7 @@ public class MapView extends RelativeLayout implements
 	 */
 	public void centerOnPosition(Position position, float zoomLevel) {
 	    try {
-		tilesView.centerOnPosition(position, zoomLevel);
+	    	tilesView.centerOnPosition(position, zoomLevel);
 	    } catch (APIException e) {
             e.printStackTrace();
         }
@@ -592,39 +592,39 @@ public class MapView extends RelativeLayout implements
 	 */
 	public void panToPosition(Position position) {
         try{
-        tilesView.zoomTo((int)tilesView.getZoomLevel(), position, -1, null);
+        	tilesView.panToPosition(position, -1, null);
         }catch(APIException e){
             LogWrapper.w("MapView", "panToPosition exception:"+e.getMessage());
         }
 	}
-//	
-//	/**
-//	 * pan to the specified position
-//	 * 
-//	 * @param position
-//	 */
-//	public void panToPosition(Position position, long duration) {
-//        try {
-//		tilesView.panToPosition(position,duration,null);
-//        } catch (APIException e) {
-//            e.printStackTrace();
-//        }
-//	}
-//	
-//	/**
-//	 * pan to the position inside duration time, and execute listener when the pan is done.
-//	 * @param position
-//	 * @param duration
-//	 * @param listener
-//	 * @throws APIException
-//	 */
-//	public void panToPosition(Position position, long duration, MoveEndEventListener listener) {
-//	    try {
-//		tilesView.panToPosition(position,duration,listener);
-//	    } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//	}
+	
+	/**
+	 * pan to the specified position
+	 * 
+	 * @param position
+	 */
+	public void panToPosition(Position position, long duration) {
+        try {
+        	tilesView.panToPosition(position,duration,null);
+        } catch (APIException e) {
+            e.printStackTrace();
+        }
+	}
+	
+	/**
+	 * pan to the position inside duration time, and execute listener when the pan is done.
+	 * @param position
+	 * @param duration
+	 * @param listener
+	 * @throws APIException
+	 */
+	public void panToPosition(Position position, long duration, MoveEndEventListener listener) {
+	    try {
+	    	tilesView.panToPosition(position,duration,listener);
+	    } catch (Exception e) {
+            e.printStackTrace();
+        }
+	}
 
 	/**
 	 * clear the routeId, overlays and info window
@@ -894,34 +894,41 @@ public class MapView extends RelativeLayout implements
 		tilesView.moveView(left, top);
 	}
 
-	/**
-	 * zoom the map to the new level. This can be used instead of setZoomLevel,
-	 * which only set the zoom leve and doesn't render the map again.
-	 * 
-	 * @param newZoomLevel
-	 */
-	public void zoomTo(int newZoomLevel){
+	public void setZoomLevel(int newZoomLevel){
 		try{
-			tilesView.zoomTo(newZoomLevel, null, -1, null);
+			tilesView.setZoomLevel(newZoomLevel);
 		}catch(APIException e){
 			LogWrapper.w("MapView", "zoomTo exception:"+e.getMessage());
 		}
 	}
-	
+
+	/**
+	 * zoom the map to the new level. This can be used instead of setZoomLevel,
+	 * which only set the zoom level and doesn't render the map again.
+	 * 
+	 * @param newZoomLevel
+	 */
+	public void zoomTo(int newZoomLevel) {
+        try{
+        	tilesView.zoomTo(newZoomLevel, null, -1, null);
+        } catch(APIException e) {
+            LogWrapper.w("MapView", "zoomTo exception:"+e.getMessage());
+        }
+	}
 	/**
 	 * zoom the map to newZoomLevel at zoomCenter
 	 * @param newZoomLevel
 	 * @param zoomCenter
 	 * @throws APIException
 	 */
-	public void zoomTo(int newZoomLevel, Position zoomCenter) {
-        try{
-		tilesView.zoomTo(newZoomLevel, zoomCenter, -1, null);
-        }catch(APIException e){
-            LogWrapper.w("MapView", "zoomTo exception:"+e.getMessage());
-        }
-		
-	}
+//	public void zoomTo(int newZoomLevel, Position zoomCenter) {
+//        try{
+//        	tilesView.zoomTo(newZoomLevel, null, -1, null);
+//        }catch(APIException e){
+//            LogWrapper.w("MapView", "zoomTo exception:"+e.getMessage());
+//        }
+//		
+//	}
 	
 	/**
 	 * zoom the map to newZoomLevel at zoomCenter with ZoomEnd listener
@@ -931,20 +938,21 @@ public class MapView extends RelativeLayout implements
 	 * @param listener
 	 * @throws APIException
 	 */
-	public void zoomTo(int newZoomLevel, Position zoomCenter, long duration, ZoomEndEventListener listener) {
-        try{
-		tilesView.zoomTo(newZoomLevel, zoomCenter, duration, listener);
-        }catch(APIException e){
-            LogWrapper.w("MapView", "zoomTo exception:"+e.getMessage());
-        }
-	}
+//	public void zoomTo(int newZoomLevel, Position zoomCenter, long duration, ZoomEndEventListener listener) {
+//        try{
+//        	tilesView.zoomTo(newZoomLevel, null, duration, listener);
+////        	tilesView.panToPosition(zoomCenter, duration, null);
+//        }catch(APIException e){
+//            LogWrapper.w("MapView", "zoomTo exception:"+e.getMessage());
+//        }
+//	}
 
 	/**
 	 * zoom in the map one level
 	 */
-	public void zoomIn(){
+	public void zoomIn() {
 		try{
-			tilesView.zoomTo(Math.round(getZoomLevel())+1, null, -1, null);
+			tilesView.zoomTo(Math.round(getZoomLevel()) + 1, null, -1, null);
 		}catch(APIException e){
 			LogWrapper.w("MapView","zoomIn exception:"+e.getMessage());
 		}
@@ -952,7 +960,7 @@ public class MapView extends RelativeLayout implements
 
 	public void zoomIn(Position zoomCenter) {
         try{
-		tilesView.zoomTo(Math.round(getZoomLevel()+1),zoomCenter,-1,null);
+        	tilesView.zoomTo(Math.round(getZoomLevel() + 1), zoomCenter, -1, null);
         }catch(APIException e){
             LogWrapper.w("MapView","zoomIn exception:"+e.getMessage());
         }

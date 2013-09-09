@@ -213,7 +213,8 @@ public class TrafficOverlayHelper {
 			Position centerPosition = boundingBox.getCenterPosition();
 			LogWrapper.d(TAG, "get centerPosition: " + centerPosition.getLon() + " " + centerPosition.getLat());
 //			mapview.zoomTo(fitZoom, centerPosition);
-			mapview.zoomTo(fitZoom, centerPosition, -1, null);
+			mapview.setZoomLevel(fitZoom);
+			mapview.panToPosition(centerPosition);
 			position = centerPosition;
 		} catch (APIException e) {
 			e.printStackTrace();

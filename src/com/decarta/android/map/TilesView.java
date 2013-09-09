@@ -1585,41 +1585,9 @@ public class TilesView extends GLSurfaceView {
 					+ " must be between " + CONFIG.ZOOM_LOWER_BOUND + " - "
 					+ CONFIG.ZOOM_UPPER_BOUND);
 		}
-		final XYFloat zc = new XYFloat(displaySize.x / 2, displaySize.y / 2);
 		if (zoomCenter != null) {
 			XYFloat screenXY = positionToScreenXYConv(zoomCenter);
-			try {
-				if (screenXY.equals(zc)) {
-					if (duration == -1) {
-						duration = Math
-								.round(MapView.DIGITAL_ZOOMING_TIME_PER_LEVEL
-										* Math.abs(newZoomLevel - zoomLevel));
-					}
-					zoomTo(newZoomLevel, zc, duration, listener);
-				} else {
-					final int finalnewZoomLevel = newZoomLevel;
-					panToPosition(zoomCenter, duration,
-							new MoveEndEventListener() {
-
-								@Override
-								public void onMoveEndEvent(MapView mapView,
-										Position position) {
-									try {
-										centerOnPosition(zoomCenter,
-												finalnewZoomLevel);
-										if (listener != null) {
-											listener.onZoomEndEvent(mapView,
-													finalnewZoomLevel);
-										}
-									} catch (APIException e) {
-										e.printStackTrace();
-									}
-								}
-							});
-				}
-			} catch (APIException e) {
-				e.printStackTrace();
-			}
+			zoomTo(newZoomLevel, screenXY, duration, listener);	
 		} else if ((zoomLevel > CONFIG.ZOOM_JUMP && newZoomLevel == CONFIG.ZOOM_JUMP - 1)
 				|| (zoomLevel < CONFIG.ZOOM_JUMP && newZoomLevel == CONFIG.ZOOM_JUMP + 1)) {
 			setZoomLevel(newZoomLevel);
@@ -1629,6 +1597,7 @@ public class TilesView extends GLSurfaceView {
 			}
 			mParentMapView.executeZoomEndListeners(newZoomLevel);
 		} else {
+			final XYFloat zc = new XYFloat(displaySize.x / 2, displaySize.y / 2);
 			if (duration == -1) {
 				duration = Math.round(MapView.DIGITAL_ZOOMING_TIME_PER_LEVEL
 						* Math.abs(newZoomLevel - zoomLevel));

@@ -190,7 +190,8 @@ public class BuslineOverlayHelper {
 			LogWrapper.d(TAG, "get fitZoom: " + fitZoom);
 			Position centerPosition = boundingBox.getCenterPosition();
 			LogWrapper.d(TAG, "get centerPosition: " + centerPosition.getLon() + " " + centerPosition.getLat());
-			mapview.zoomTo(fitZoom, centerPosition, -1, null);
+			mapview.setZoomLevel(fitZoom);
+			mapview.panToPosition(centerPosition);
 			position = centerPosition;
 		} catch (APIException e) {
 			e.printStackTrace();

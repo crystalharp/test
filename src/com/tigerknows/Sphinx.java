@@ -1419,7 +1419,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 POI poi = new POI();
                 if ("latlon".equals(parm[0])) {
                     Position position = new Position(parm[1]);
-                    mMapView.zoomTo(TKConfig.ZOOM_LEVEL_LOCATION, position);
+                    mMapView.setZoomLevel(TKConfig.ZOOM_LEVEL_LOCATION);
+                    mMapView.panToPosition(position);
                     poi.setPosition(position);
                     String name = mMapEngine.getPositionName(poi.getPosition(), (int)mMapView.getZoomLevel());
                     if (!TextUtils.isEmpty(name)) {
@@ -1486,12 +1487,12 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 if (uriStr.indexOf("?") > -1) {
                     lon = Double.parseDouble(uriStr.substring(0, uriStr.indexOf("?")));
                     LogWrapper.d("Sphinx", "initIntent() lon="+lon);
-                    mMapView.zoomTo(TKConfig.ZOOM_LEVEL_LOCATION, new Position(lat, lon));
+                    mMapView.centerOnPosition(new Position(lat, lon), TKConfig.ZOOM_LEVEL_LOCATION, false);
                     poi.setPosition(new Position(lat, lon));
                     uriStr = uriStr.substring(uriStr.indexOf("?")+1);
                     String[] parm = uriStr.split("=");
                     if ("z".equals(parm[0])) {
-                        mMapView.zoomTo(Integer.parseInt(parm[1]));
+                        mMapView.setZoomLevel(Integer.parseInt(parm[1]));
                     } else if ("q".equals(parm[0])) {
                         String keyword = parm[1];
                         if (!TextUtils.isEmpty(keyword)) {
@@ -1505,7 +1506,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 } else {
                     lon = Double.parseDouble(uriStr);
                     poi.setPosition(new Position(lat, lon));
-                    mMapView.zoomTo(TKConfig.ZOOM_LEVEL_LOCATION, new Position(lat, lon));
+                    mMapView.centerOnPosition(new Position(lat, lon), TKConfig.ZOOM_LEVEL_LOCATION, false);
                 }
                 if (query == false && Util.inChina(poi.getPosition())) {
                     String name = mMapEngine.getPositionName(poi.getPosition(), (int)mMapView.getZoomLevel());
@@ -2079,11 +2080,13 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             int screenX = Globals.g_metrics.widthPixels;
             int screenY = Globals.g_metrics.heightPixels;
             int fitZoomLevle = Util.getZoomLevelToFitPositions(screenX, screenY, TKConfig.sMap_Padding, positions, srcreenPosition);
-            mMapView.zoomTo(fitZoomLevle, srcreenPosition, -1, null);
+            mMapView.setZoomLevel(fitZoomLevle);
+            mMapView.panToPosition(srcreenPosition);
             mPreviousNextView.setVisibility(View.VISIBLE);
         } else {
             mPreviousNextView.setVisibility(View.INVISIBLE);
-            mMapView.zoomTo(TKConfig.ZOOM_LEVEL_POI, srcreenPosition, -1, null);
+            mMapView.setZoomLevel(TKConfig.ZOOM_LEVEL_POI);
+            mMapView.panToPosition(srcreenPosition);
         }
         } catch (APIException e) {
             e.printStackTrace();
@@ -4059,7 +4062,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             if (myPosition != null) {
                 if (MyLocation.MODE_NONE == mMyLocation.mode) {
                     updateLoactionButtonState(MyLocation.MODE_NAVIGATION);
-                    mMapView.zoomTo(TKConfig.ZOOM_LEVEL_LOCATION, myPosition);
+                    mMapView.setZoomLevel(TKConfig.ZOOM_LEVEL_LOCATION);
+                    mMapView.panToPosition(myPosition);
                     resetShowInPreferZoom();
                 } else if (MyLocation.MODE_NAVIGATION == mMyLocation.mode || MyLocation.MODE_ROTATION == mMyLocation.mode) {
                     mMapView.panToPosition(myPosition);
@@ -4203,7 +4207,14 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     showTip(getString(R.string.location_success, Utility.formatMeterString((int)myLocationCityInfo.getPosition().getAccuracy())), 3000);
                     updateLoactionButtonState(MyLocation.MODE_NAVIGATION);
                     int zoomLevel = (int)mMapView.getZoomLevel();
-                    mMapView.zoomTo(zoomLevel < TKConfig.ZOOM_LEVEL_LOCATION ? TKConfig.ZOOM_LEVEL_LOCATION : zoomLevel, myLocationCityInfo.getPosition());
+                    Position pos = myLocationCityInfo.getPosition();
+                    if(zoomLevel < TKConfig.ZOOM_LEVEL_LOCATION) {
+                    	mMapView.setZoomLevel(zoomLevel);
+                    	mMapView.panToPosition(pos);
+                    }
+                    else {
+                    	mMapView.panToPosition(pos);
+                    }
                     resetShowInPreferZoom();
                 } else if (mMyLocation.mode == MyLocation.MODE_NAVIGATION && mSensorOrientation) {
                     updateLoactionButtonState(MyLocation.MODE_ROTATION);
@@ -4301,7 +4312,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 //            if (overlayItem.hasPreferZoomLevel() && (overlayItem.getPreferZoomLevel() > mMapView.getZoomLevel())) {
             if (itemizedOverlay.isShowInPreferZoom) {
             	if (overlayItem.hasPreferZoomLevel() && (overlayItem.getPreferZoomLevel() > mMapView.getZoomLevel())) {
-            		mMapView.zoomTo(overlayItem.getPreferZoomLevel(), overlayItem.getPosition(), -1, null);
+            		mMapView.setZoomLevel(overlayItem.getPreferZoomLevel());
+            		mMapView.panToPosition(overlayItem.getPosition());
             	} else {
                 	mMapView.panToPosition(overlayItem.getPosition());
                 }
