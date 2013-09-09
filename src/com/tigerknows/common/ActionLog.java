@@ -576,6 +576,7 @@ public class ActionLog extends LogUpload {
     public static final String TuangouDetailBuy = "BA";
     public static final String TuangouDetailCustomService = "BB";
     public static final String TuangouDetailRefund = "BC";
+    public static final String TuangouDetailPicutreTextDetail = "BD";
     
     // 团购详情页地图页
     public static final String ResultMapTuangouDetail = "DF";

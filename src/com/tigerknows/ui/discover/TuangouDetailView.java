@@ -774,6 +774,7 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
                 break;
                 
             case R.id.viewurl_view:
+                mActionLog.addAction(mActionTag +  ActionLog.TuangouDetailPicutreTextDetail);
                 BrowserActivity.setTuangou(mData);
                 Intent intent = new Intent();
                 intent.putExtra(BrowserActivity.TITLE, mSphinx.getString(R.string.tuanguo_picture_text_detail));
