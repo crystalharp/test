@@ -28,6 +28,7 @@ import com.decarta.android.util.XYFloat;
 import com.decarta.android.util.XYInteger;
 import com.decarta.android.util.XYZ;
 import com.tigerknows.R;
+import com.tigerknows.android.app.TKApplication;
 import com.tigerknows.map.Grid;
 import com.tigerknows.map.MapWord;
 import com.tigerknows.map.RectInteger;
@@ -107,7 +108,8 @@ public class SingleRectLabel extends Label {
         return NinePatchDrawablePool[index];
     }
     
-    public static void clearIconTextureRef() {
+    public static void clearIcon() {
+    	//清空纹理
         Iterator<Texture> iterator5 = mapWordIconPool.values().iterator();
         while(iterator5.hasNext()){
             Texture texture = iterator5.next();
@@ -121,6 +123,13 @@ public class SingleRectLabel extends Label {
             }
         }
         mapWordIconPool.clear();
+        //清空图片
+        for(int i = 0, len = BitmapPool.length; i < len; ++i) {
+        	if(BitmapPool[i] != null) {
+        		BitmapPool[i].recycle();
+        		BitmapPool[i] = null;
+        	}
+        }
     }
 
     private static final int MAX_WORD_SIZE=128; 
@@ -185,12 +194,16 @@ public class SingleRectLabel extends Label {
         	this.style = STYLE_NO_ICON_WITH_BACKGROUND;
         	this.iconSize = null;
         }
-        else if (RESOURCE_ID[iconId] == R.drawable.icon) {
+        else if (RESOURCE_ID[iconId] == R.drawable.icon || iconId >= RESOURCE_ID.length || iconId < 0) {
         		this.style = STYLE_NO_ICON_WITHOUT_BACKGROUND;
             	this.iconSize = null;
         }
         else {
         	this.style = STYLE_ICON_ON_LEFT;
+        	if(BitmapPool[iconId] == null) {
+        		BitmapPool[iconId] = BitmapFactory.decodeResource(
+        				TKApplication.getInstance().getApplicationContext().getResources(), RESOURCE_ID[iconId]);
+        	}
         	this.iconSize = new XYInteger(BitmapPool[iconId].getWidth(), BitmapPool[iconId].getHeight());
         }
     }
@@ -212,6 +225,10 @@ public class SingleRectLabel extends Label {
         
         GLES10.glBindTexture(GLES10.GL_TEXTURE_2D, textureRef);
         try {
+        	if(BitmapPool[iconId] == null) {
+        		BitmapPool[iconId] = BitmapFactory.decodeResource(
+        				TKApplication.getInstance().getApplicationContext().getResources(), RESOURCE_ID[iconId]);
+        	}
         	Bitmap bm = BitmapPool[iconId];
             int width = Util.getPower2(bm.getWidth());
             int height = Util.getPower2(bm.getHeight());

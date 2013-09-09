@@ -2801,6 +2801,8 @@ public class TilesView extends GLSurfaceView {
 			synchronized (drawingLock) {
 				Label.clearTextTexture();
 				Label.clearTextBitmap();
+				SingleRectLabel.clearIcon();
+				scaleView.clearTexture();
 			}
 		}
 
@@ -3818,7 +3820,7 @@ public class TilesView extends GLSurfaceView {
 
 			infoWindow.clearTextureRef(gl);
 
-			SingleRectLabel.clearIconTextureRef();
+			SingleRectLabel.clearIcon();
 			Label.clearTextBitmap();
 			Label.clearTextTexture();
 
