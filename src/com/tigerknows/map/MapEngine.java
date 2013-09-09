@@ -47,6 +47,7 @@ public class MapEngine {
      * 城市Id
      */
     public static final String EXTRA_CITY_ID = "extra_city_id";
+    public static final int DEFAULT_CITY_LEVEL = 15;
     
     public static int CITY_ID_INVALID = -1;
     public static int CITY_ID_QUANGUO = -3;
@@ -362,7 +363,8 @@ public class MapEngine {
         cityInfo.setCName(strs[0]);
         cityInfo.setEName(strs[1]);
         cityInfo.setPosition(new Position(Double.parseDouble(strs[2]), Double.parseDouble(strs[3])));
-        cityInfo.setLevel(Integer.parseInt(strs[4]));
+//        cityInfo.setLevel(Integer.parseInt(strs[4]));
+        cityInfo.setLevel(DEFAULT_CITY_LEVEL);
         cityInfo.setCProvinceName(strs[5]);
         cityInfo.setEProvinceName(strs[6]);
         return cityInfo;

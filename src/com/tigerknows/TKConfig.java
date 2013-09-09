@@ -71,7 +71,7 @@ public class TKConfig {
     /**
      * 点击定位按钮时显示地图的最低级别
      */
-    public static final int ZOOM_LEVEL_LOCATION = 14; // 200m
+    public static final int ZOOM_LEVEL_LOCATION = MapEngine.DEFAULT_CITY_LEVEL; // 200m
     
     /**
      * 切换至单个POI时显示地图的最低级别
