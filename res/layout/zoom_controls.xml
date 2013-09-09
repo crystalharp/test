@@ -2,15 +2,15 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android">
     <ZoomButton android:id="@+id/zoomin_zbt" 
         android:background="@drawable/btn_zoomin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="52dp"
+        android:layout_height="52dp"
         android:src="@drawable/ic_zoomin"
         android:scaleType="center"
         />
     <ZoomButton android:id="@+id/zoomout_zbt" 
         android:background="@drawable/btn_zoomout" 
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="52dp"
+        android:layout_height="52dp"
         android:src="@drawable/ic_zoomout"
         android:scaleType="center"
         />

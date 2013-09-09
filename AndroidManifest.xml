@@ -18,7 +18,6 @@
         <provider android:name="com.tigerknows.provider.TigerknowsProvider"
             android:authorities="com.tigerknows.provider.Tigerknows" />
         
-        <!-- Sphinx OnlyMapView -->
         <activity android:name="com.tigerknows.Sphinx"
                   android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
                   android:windowSoftInputMode="adjustPan|stateHidden"

@@ -11,7 +11,7 @@ public class MyLocation extends OverlayItem {
     
     public static final double REFRESH_TIME = 1000000000*1.5;
     
-    public int mode;
+    public int mode = MODE_NORMAL;
     public Icon focused;
     public long refreshTime;
     public Icon faceToNormal;
