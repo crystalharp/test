@@ -191,7 +191,6 @@ import com.tigerknows.ui.user.UserUpdatePasswordActivity;
 import com.tigerknows.ui.user.UserUpdatePhoneActivity;
 import com.tigerknows.util.CalendarUtil;
 import com.tigerknows.util.Utility;
-import com.tigerknows.widget.ScaleView;
 import com.tigerknows.widget.ZoomControls;
 import android.opengl.GLSurfaceView;
 /**
@@ -245,7 +244,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     private View mPreviousNextView=null;
     private Button mPreviousBtn=null;
     private Button mNextBtn=null;
-//    private ScaleView mScaleView=null;
     private int mTitleViewHeight;
     private int mMenuViewHeiht;
     private int mCityViewHeight;
@@ -702,8 +700,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 public void onMoveEndEvent(MapView mapView, Position position) {
                     mActionLog.addAction(ActionLog.MapMove);
                     mHandler.sendEmptyMessage(MAP_MOVE);
-                    int zoomLevel = Math.round(mapView.getZoomLevel());
-//                    mScaleView.setMetersPerPixelAtZoom((float)Util.metersPerPixelAtZoom(CONFIG.TILE_SIZE, zoomLevel, mapView.getCenterPosition().getLat()), zoomLevel);
                 }
             });
 
@@ -736,7 +732,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                         
                         @Override
                         public void run() {
-//                            mScaleView.setMetersPerPixelAtZoom((float)Util.metersPerPixelAtZoom(CONFIG.TILE_SIZE, newZoomLevel, mMapView.getCenterPosition().getLat()), newZoomLevel);
                             if (newZoomLevel >= CONFIG.ZOOM_UPPER_BOUND) {
                                 mMapView.getZoomControls().setIsZoomInEnabled(false);
                             } else if (newZoomLevel <= CONFIG.ZOOM_LOWER_BOUND) {
@@ -1395,7 +1390,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         mBodyView = (ViewGroup)findViewById(R.id.body_view);
         mMenuView = (ViewGroup)findViewById(R.id.menu_view);
         mControlView = (ViewGroup)findViewById(R.id.control_view);
-//        mScaleView = (ScaleView)findViewById(R.id.scale_view);
         mZoomView = (LinearLayout) findViewById(R.id.zoomview);
         mMapView = (MapView) findViewById(R.id.mapview);
         mPreviousNextView = findViewById(R.id.previous_next_view);
