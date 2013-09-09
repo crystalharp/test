@@ -357,6 +357,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
                 break;
             case R.id.my_order_btn:
             	mActionLog.addAction(mActionTag + ActionLog.MoreDingdan);
+            	mSphinx.getMyOrderFragment().setData(false);
             	mSphinx.showView(R.id.view_more_my_order);
             	break;
             case R.id.change_city_btn:

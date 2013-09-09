@@ -702,6 +702,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 
             case R.id.dingdan_btn:
                 mActionLog.addAction(mActionTag +  ActionLog.TuangouListDingdan);
+                mSphinx.getMyOrderFragment().setData(true);
                 mSphinx.showView(R.id.view_more_my_order);
                 break;
                 
