@@ -5,12 +5,10 @@
 package com.tigerknows;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
 
 import javax.microedition.khronos.egl.*;
 
-import android.app.ActivityManager;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
@@ -37,8 +35,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.view.ViewPager.LayoutParams;
 import android.text.TextUtils;
-import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -49,7 +45,6 @@ import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
@@ -97,7 +92,6 @@ import com.tigerknows.map.MapEngine.CityInfo;
 import com.tigerknows.map.MapView.DownloadEventListener;
 import com.tigerknows.map.MapView.MapScene;
 import com.tigerknows.map.MapView.SnapMap;
-import com.tigerknows.map.MapView.ZoomEndEventListener;
 import com.tigerknows.map.label.Label;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataQuery;
@@ -242,8 +236,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     private ImageButton mLocationBtn=null;
     private TextView mLocationTxv=null;
     private View mPreviousNextView=null;
-    private Button mPreviousBtn=null;
-    private Button mNextBtn=null;
+    private ImageButton mPreviousBtn=null;
+    private ImageButton mNextBtn=null;
     private int mTitleViewHeight;
     private int mMenuViewHeiht;
     private int mCityViewHeight;
@@ -748,7 +742,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             EventRegistry.addEventListener(mMapView, MapView.EventType.ROTATEEND, new MapView.RotateEndEventListener(){
                 @Override
                 public void onRotateEndEvent(MapView mapView, float rotation) {
-                    Log.i(TAG,"MapView.RotateEndEventListener rotation:"+rotation);
+                    LogWrapper.i(TAG,"MapView.RotateEndEventListener rotation:"+rotation);
                     if(rotation!=0 && mMapView.getCompass()!=null) {
                         mMapView.refreshMap();
                     }
@@ -758,7 +752,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             EventRegistry.addEventListener(mMapView, MapView.EventType.TILTEND, new MapView.TiltEndEventListener(){
                 @Override
                 public void onTiltEndEvent(MapView mapView, float tilt) {
-                    Log.i(TAG,"MapView.TiltEndEventListener tilt:"+tilt);
+                    LogWrapper.i(TAG,"MapView.TiltEndEventListener tilt:"+tilt);
                     if(tilt!=0 && mMapView.getCompass()!=null) {
                         mMapView.refreshMap();
                     }
@@ -838,7 +832,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                         return;
                     }
                     mActionLog.addAction(ActionLog.MapLongClick);
-                    Log.i(TAG,"MapView.onLongClickEvent position:"+position.toString());
+                    LogWrapper.i(TAG,"MapView.onLongClickEvent position:"+position.toString());
                     String positionName = mMapEngine.getPositionName(position, (int)mMapView.getZoomLevel());
                     if (TextUtils.isEmpty(positionName)) {
                         positionName = mContext.getString(R.string.select_has_point);
@@ -934,7 +928,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 
       savedInstanceState.putIntegerArrayList("uistack", mUIStack);
       super.onSaveInstanceState(savedInstanceState);
-      Log.d(TAG, "onSaveInstanceState");
+      LogWrapper.d(TAG, "onSaveInstanceState");
 
     }  
 
@@ -945,11 +939,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
       if (savedInstanceState != null) {
           uiStack = savedInstanceState.getIntegerArrayList("uistack");
       }
-      LogWrapper.d(TAG, "onCreate() uiStack="+uiStack);
+      LogWrapper.d(TAG, "onRestoreInstanceState() uiStack="+uiStack);
       if (uiStack != null) {
           initView();
       }
-      Log.d(TAG, "onRestoreInstanceState+()");
 
     }
     
@@ -1112,7 +1105,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 	protected void onResume() {
 		super.onResume();
 		mOnPause = false;
-		Log.i(TAG,"onResume()");
+		LogWrapper.i(TAG,"onResume()");
 		mActionLog.onResume();
 		mMapView.resume();
 		if (uiStackSize() > 0) {
@@ -1357,8 +1350,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         mZoomView = (LinearLayout) findViewById(R.id.zoomview);
         mMapView = (MapView) findViewById(R.id.mapview);
         mPreviousNextView = findViewById(R.id.previous_next_view);
-        mPreviousBtn=(Button)(findViewById(R.id.previous_btn));
-        mNextBtn=(Button)(findViewById(R.id.next_btn));
+        mPreviousBtn=(ImageButton)(findViewById(R.id.previous_btn));
+        mNextBtn=(ImageButton)(findViewById(R.id.next_btn));
         mLocationView=(findViewById(R.id.location_view));
         mLocationBtn=(ImageButton)(findViewById(R.id.location_btn));
         mLocationTxv=(TextView)(findViewById(R.id.location_txv));
@@ -1632,7 +1625,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         DataQuery poiQuery = new DataQuery(mContext);
         POI requestPOI = getPOI();
         int cityId = Globals.getCurrentCityInfo().getId();
-        Hashtable<String, String> criteria = new Hashtable<String, String>();
         poiQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_POI);
         poiQuery.addParameter(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_POI);
         poiQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");

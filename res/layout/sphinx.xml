@@ -59,17 +59,24 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:gravity="left"
         android:visibility="invisible"
-        android:padding="6dp">
+        android:padding="8dp">
+        
+        <LinearLayout
+            android:orientation="vertical"
+            android:id="@+id/zoomview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            />
 
         <LinearLayout 
             android:id="@+id/location_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
             android:background="@drawable/btn_location_map"
             android:layout_alignParentRight="true"
-            android:visibility="visible"
+            android:layout_below="@id/zoomview"
             android:orientation="vertical"
             android:gravity="center">
             <ImageButton
@@ -93,32 +100,29 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_alignParentLeft="true"
+            android:layout_centerHorizontal="true"
+            android:layout_alignBottom="@id/location_view"
             android:visibility="invisible"
             >
 
-            <Button
+            <ImageButton
                 android:id="@+id/previous_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="52dp"
+                android:layout_height="52dp"
                 android:background="@drawable/btn_up"
+                android:src="@drawable/ic_overlayitem_previous"
+                android:scaleType="center"
                 />
 
-            <Button
+            <ImageButton
                 android:id="@+id/next_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="52dp"
+                android:layout_height="52dp"
                 android:background="@drawable/btn_down"
+                android:src="@drawable/ic_overlayitem_next"
+                android:scaleType="center"
                 />
         </LinearLayout>
-        <LinearLayout
-            android:orientation="vertical"
-            android:id="@+id/zoomview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_above="@id/location_view"
-            />
 
     </RelativeLayout>
    

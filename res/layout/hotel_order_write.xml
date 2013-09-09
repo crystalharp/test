@@ -54,7 +54,6 @@
                     android:paddingRight="16dp"
                     android:textSize="16sp"
                     android:text="@string/app_name"
-                    android:textColor="@color/orange"
                     />
                 <TextView android:id="@+id/roomtype_subtitle_txv"
                     android:layout_width="wrap_content"
@@ -93,6 +92,7 @@
                         android:ellipsize="marquee"
                         android:textSize="14sp"
                         android:text="@string/hotel_room_date"
+                        android:textColor="@color/black_light"
                         />
                     <TextView android:id="@+id/room_nights_txv"
                         android:layout_width="fill_parent"
@@ -105,7 +105,8 @@
                         android:paddingRight="16dp"
                         android:paddingBottom="12dp"
                         android:textSize="14sp"
-                        />
+                        android:textColor="@color/black_light"
+                    />
                 </LinearLayout>
             </LinearLayout>
             <ImageView

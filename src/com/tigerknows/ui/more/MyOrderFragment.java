@@ -49,6 +49,8 @@ public class MyOrderFragment extends BaseFragment{
 	private List<Shangjia> mResultList = new ArrayList<Shangjia>();
 	private Shangjia mRequestLogin = null;
 	
+	private boolean showHotelOrder;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
@@ -98,6 +100,12 @@ public class MyOrderFragment extends BaseFragment{
 		        requestUrl(mRequestLogin);
 		    }
 		    mRequestLogin = null;
+		}
+		
+		if (showHotelOrder){
+			mHotelOrderBtn.setVisibility(View.VISIBLE);
+		}else{
+			mHotelOrderBtn.setVisibility(View.GONE);
 		}
 	}
     
@@ -201,5 +209,13 @@ public class MyOrderFragment extends BaseFragment{
         		startShangjia(shangjia);
         	}
         }
+    }
+    
+    public void setData(boolean fromTuangou){
+    	if(fromTuangou){
+    		showHotelOrder = false;
+    	}else{
+    		showHotelOrder = true;
+    	}
     }
 }

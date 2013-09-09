@@ -9,12 +9,17 @@
         android:id="@+id/logout_btn" 
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" 
-        android:textColor="@color/black_dark"
+        android:textColor="@color/white"
         android:textSize="18sp"
+        android:padding="8dp"
         android:text="@string/logout_account"
-        android:background="@drawable/bg_bottom_control"
+        android:background="@drawable/btn_red"
         android:gravity="center"
         android:layout_alignParentBottom="true"
+        android:shadowDx="0"
+        android:shadowDy="1"
+        android:shadowColor="#a77a00"
+        android:shadowRadius="1"
         />
 
 	<ScrollView
@@ -89,7 +94,8 @@
 	            android:text="@string/my_comment"
 	            android:layout_marginBottom="8dp"
 	            android:textColor="@color/black_dark"
-	            android:textSize="16sp" />                
+	            android:textSize="16sp" 
+	            />                
                 
 	    </LinearLayout>
 	</ScrollView>
