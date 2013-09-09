@@ -276,6 +276,10 @@ public class UserLoginRegistActivity extends UserBaseActivity implements View.On
 	}
 	
 	private void onBack() {
+	    if (mSourceViewIdLogin == R.id.activity_browser) {
+	        finish();
+	        return;
+	    }
         if (mSourceUserHome && Globals.g_User == null) {
             Intent intent = new Intent(UserLoginRegistActivity.this, Sphinx.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -353,7 +357,9 @@ public class UserLoginRegistActivity extends UserBaseActivity implements View.On
 	private void onSuccess() {
 		if(isRegist){
 			showToast(R.string.regist_success);
-			if (mSourceViewIdLogin != R.id.activity_poi_edit_comment) {
+			if (mSourceViewIdLogin == R.id.activity_browser) {
+			    
+			} else if (mSourceViewIdLogin != R.id.activity_poi_edit_comment) {
 				Intent intent = new Intent(UserLoginRegistActivity.this, UserUpdateNickNameActivity.class);
 				startActivityForResult(intent, 0);
 			} else {
@@ -361,11 +367,11 @@ public class UserLoginRegistActivity extends UserBaseActivity implements View.On
 				intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 				startActivity(intent);
 			}
-			
-			finish();
 		}
 		else{
-			if (mSourceViewIdLogin == R.id.activity_poi_edit_comment) {
+		    if (mSourceViewIdLogin == R.id.activity_browser) {
+		        
+		    } else if (mSourceViewIdLogin == R.id.activity_poi_edit_comment) {
 	            Intent intent = new Intent(UserLoginRegistActivity.this, EditCommentActivity.class);
 	            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 	            startActivity(intent);
@@ -375,6 +381,8 @@ public class UserLoginRegistActivity extends UserBaseActivity implements View.On
 		        startActivity(intent);
 			}
 		}
+        
+        finish();
 	}
 	
 	@Override
