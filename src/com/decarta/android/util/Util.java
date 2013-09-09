@@ -69,10 +69,14 @@ public class Util {
     }
 	
 	public static double mercXMod(double x,int z){
+//		long mod = MERC_X_MODS[z];
+//		long mod2 = mod/2;
+//		if(x < mod2 && x >= -mod2) return x;
+//		return (((long)x + mod2)%mod + mod)%mod - mod2 + (x - (long)x);
 		long mod=MERC_X_MODS[z];
 		long mod2=mod/2;
 		if(x<mod2 && x>=-mod2) return x;
-		return ((x+mod2)%mod+mod)%mod-mod2;
+		return ((x + mod2)%mod + mod)%mod - mod2 + (x - (long)x);
 	}
 	
 	public static int indexXMod(int x,int z){

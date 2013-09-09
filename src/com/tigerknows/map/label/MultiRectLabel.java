@@ -79,11 +79,8 @@ public class MultiRectLabel extends Label {
     	rotationArray = new float[length];
         startPoint = new XYFloat(0, 0);
         startIndex = 0;
-        String subname = name.substring(0, 1);
-		charSize = super.calcTextRectSize(subname);
-		halfCharWidth = charSize.x / 2;
-//        sizeArray = null;
-//        halfCharWidthArray = null;
+        charSize = null;
+        halfCharWidth = 0;
     }
     
     private void drawSubLabel(float x, float y, float rot, float scale, float width, float height, Texture texture, 
@@ -148,7 +145,10 @@ public class MultiRectLabel extends Label {
         }
     }
     
-//    private void initSize(int nameLength) {
+    private void initSize() {
+        String subname = name.substring(0, 1);
+		charSize = calcTextRectSize(subname, fontSize);
+		halfCharWidth = charSize.x / 2;
 //    	sizeArray = new XYFloat[nameLength];
 //    	halfCharWidthArray = new float[nameLength];
 //    	for(int i = 0; i < nameLength; ++i) {
@@ -156,7 +156,7 @@ public class MultiRectLabel extends Label {
 //    		sizeArray[i] = super.calcTextRectSize(subname);
 //    		halfCharWidthArray[i] = sizeArray[i].x / 2;
 //    	}
-//    }
+    }
     
     public int draw(XYInteger center, XYZ centerXYZ, XYFloat centerDelta, 
     		float rotation, float sinRot, float cosRot, float scale, Grid grid, 
@@ -170,6 +170,9 @@ public class MultiRectLabel extends Label {
         if (z != centerXYZ.z) {
             state = LABEL_STATE_CANT_BE_SHOWN;
             return state;
+        }
+        if(charSize == null) {
+        	initSize();
         }
         int num = name.length();
         int nextEndPointIndex = 1;

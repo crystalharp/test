@@ -508,7 +508,7 @@ public class SingleRectLabel extends Label {
         float dy = scale == 1 ? (sy - cy) : scale * (sy - cy);
         float x = rotation == 0 ? (dx + cx) : (cosRot * (dx) - (dy) * sinRot + cx);//旋转变换
         float y = rotation == 0 ? (dy + cy) : ((dx) * sinRot + (dy) * cosRot + cy);
-        XYFloat size = calcTextRectSize(name);
+        XYFloat size = calcTextRectSize(name, fontSize);
         width = (int) size.x;
         height = (int) size.y;
         
