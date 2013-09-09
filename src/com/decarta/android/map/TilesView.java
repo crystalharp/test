@@ -1647,7 +1647,7 @@ public class TilesView extends GLSurfaceView {
 	// _panDirection.y=numY>=0?1:-1;
 	// }
 	private void adjustCenter() {
-		int thresh = CONFIG.TILE_SIZE;
+		int thresh = CONFIG.TILE_SIZE / 2;
 		if (Math.abs(centerDelta.x) > thresh
 				|| Math.abs(centerDelta.y) > thresh) {
 			int numX = Math.round(centerDelta.x / CONFIG.TILE_SIZE);
@@ -2454,9 +2454,9 @@ public class TilesView extends GLSurfaceView {
 	 */
 	public class EasingRecord {
 		public double TIME_SCALE = 33 * 1E6; // 33 miniseconds
-		public double MAXIMUM_SPEED = 5E-6;
+		public double MAXIMUM_SPEED = 8E-6;
 		public double MINIMUM_SPEED_RATIO = 0.001; // ratio to original speed
-		public double CUTOFF_SPEED = 100 * 1E-9;
+		public double CUTOFF_SPEED = 200 * 1E-9;
 
 		public double decelerate_rate = CONFIG.DECELERATE_RATE;
 		public double speed = 0;
@@ -3378,15 +3378,15 @@ public class TilesView extends GLSurfaceView {
 							gl.glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 						}
 						long start = System.currentTimeMillis();
-						isWating = (start - lastMoveTime) < 22;
+						isWating = (start - lastMoveTime) < 10;
 						isStaying = touching && !isWating;
 						isLastLabelFading = isLabelFading;
 						boolean refreshText = (!zoomingL
 								&& ((easingRecord.startMoveTime == 0
 										&& zoomingRecord.digitalZoomEndTime == 0 && !touching))
 								|| zoomingJustDoneL || isManuelZoom
-								|| rotatingZJustDoneL || rotatingXJustDoneL || (isStaying
-								&& !isTouchBegin && !isBeginMoving && !movingL));// isStaying
+								|| rotatingZJustDoneL || rotatingXJustDoneL || (
+								!isTouchBegin && !isBeginMoving && !movingL));// isStaying
 																					// &&
 
 						isLabelFading = this.shownLabels((float) zoomScale,
@@ -3394,15 +3394,15 @@ public class TilesView extends GLSurfaceView {
 						if (refreshText || zoomingJustDoneL) {
 							isManuelZoom = false;
 						}
-						long end = System.currentTimeMillis();
-						if (refreshText) {
-							isStaying = false;
-							LogWrapper.d("Label", "------draw all label cost: "
-									+ (end - start));
-						} else {
-							LogWrapper.d("Label", "+++draw label cost: "
-									+ (end - start));
-						}
+//						long end = System.currentTimeMillis();
+//						if (refreshText) {
+//							isStaying = false;
+//							LogWrapper.d("Label", "------draw all label cost: "
+//									+ (end - start));
+//						} else {
+//							LogWrapper.d("Label", "+++draw label cost: "
+//									+ (end - start));
+//						}
 						gl.glPopMatrix();
 						gl.glColor4f(1, 1, 1, 1);
 

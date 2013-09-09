@@ -513,7 +513,6 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
             ImageView roomHowmanyIconImv = (ImageView) view.findViewById(R.id.room_reserve_icon_imv);
             TextView roomReserveTxv = (TextView) view.findViewById(R.id.room_reserve_txv);
             RetentionTime rt = getItem(position);
-            //roomReserveTxv.setText(rt.getTime());
             if(rt.getNeed() == 1){
                 roomReserveTxv.setText(Utility.renderColorToPartOfString(mContext,
                         R.color.orange,
@@ -674,10 +673,8 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
             try {
                 hotelOrderTable.write(mHotelOrder);
             } catch (IOException e) {
-                // Auto-generated catch block
                 e.printStackTrace();
             } catch (APIException e) {
-                // Auto-generated catch block
                 e.printStackTrace();
             } finally {
                 hotelOrderTable.close();
@@ -712,7 +709,6 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
 							public void onClick(DialogInterface dialog,
 									int which) {
                                 if (which == DialogInterface.BUTTON_POSITIVE) {
-                                    // TODO: mActionLog.addAction(mActionTag + ActionLog.HotelQueryOrder);
                                 	mSphinx.getHotelOrderListFragment().clearOrders();
                                 	mSphinx.getHotelOrderListFragment().syncOrder();
                                 	if(mSphinx.uiStackContains(R.id.view_hotel_credit_assure)){

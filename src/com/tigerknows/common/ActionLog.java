@@ -301,16 +301,15 @@ public class ActionLog extends LogUpload {
     public static final String MoreFeedback = "BI";
     public static final String MoreHelp = "BJ";
     public static final String MoreAboutUs = "BK";
-    //public static final String MoreMessageMap = "BL";
     public static final String MoreUserHome = "BM";
     public static final String MoreSoftwareUpdate = "BN";
     public static final String MoreGiveFavourableComment = "BO";
-    //public static final String MoreMessageUserSurvey = "BP";
     public static final String MoreAddMerchant = "BQ";
     public static final String MoreSatisfyRate = "BR";
     public static final String MoreAppDownload = "BS";
     public static final String MoreNotice = "BT";
-
+    public static final String MoreDingdan = "BU";
+    
     // 切换城市页
     public static final String ChangeCity = "CB";
     public static final String ChangeCityInput =  "BA";
@@ -515,9 +514,11 @@ public class ActionLog extends LogUpload {
     
     // == 登录页面 ==
     public static final String UserLogin = "EA";
+    public static final String UserGoRegist = "BA";
     
     // == 注册页面 ==
     public static final String UserRegist = "EB";
+    public static final String UserGoLogin = "BA";
     
     // == 个人中心页面 == 
     public static final String UserHome = "EC";
@@ -526,7 +527,9 @@ public class ActionLog extends LogUpload {
     public static final String UserHomeUpdateName = "BC";
     public static final String UserHomeUpdatePassword = "BD";
     public static final String UserHomeLogout = "BE";
-    public static final String UserHomeDingdan = "BF";
+    //BF 已使用，下一个定义请从BG开始
+    //public static final String User????? = "BG";
+
     
     // == 更换手机号 ==
     public static final String UserUpdatePhone = "ED";

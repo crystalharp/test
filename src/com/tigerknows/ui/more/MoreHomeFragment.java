@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 pengwenyue@tigerknows.com
+ * Copyright (C) 2013 fengtianxiao@tigerknows.com
  */
 
 package com.tigerknows.ui.more;
@@ -355,7 +355,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
             	}
                 break;
             case R.id.my_order_btn:
-            	// TODO: mActionLog.addAction(actionLog, args)
+            	mActionLog.addAction(mActionTag + ActionLog.MoreDingdan);
             	mSphinx.showView(R.id.view_more_my_order);
             	break;
             case R.id.change_city_btn:
