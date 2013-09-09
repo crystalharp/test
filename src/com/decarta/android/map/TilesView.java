@@ -2313,7 +2313,25 @@ public class TilesView extends GLSurfaceView {
 			refreshMap();
 		}
 	}
+	
+	public void zoomInAtPosition(Position position) {
+		int newZoom = Math.round(zoomLevel) + 1;
+		long duration = Math.round(MapView.DIGITAL_ZOOMING_TIME_PER_LEVEL
+				* Math.abs(newZoom - zoomLevel));
+		try {
+			XYFloat screenXY = positionToScreenXYConv(position);
+			this.zoomTo(newZoom, screenXY, duration, null);
+		} catch (Exception e) {
+			LogWrapper.e("TilesView", "zoomInAtPosition to " + newZoom + "failed. Cause exception: " + e.getMessage());
+		}
+	}
 
+//-(void)zoomInAtPosition:(deCartaPosition *)zoomCenter{
+//	double duration=DIGITAL_ZOOMING_TIME_PER_LEVEL*ABS(roundf(_zoomLevel)+1-_zoomLevel);
+//    
+//    deCartaXYFloat * c=[self positionToScreenXYConv:zoomCenter];
+//	[self zoomTo:roundf(_zoomLevel)+1 center:c duration:duration listener:nil];
+//}
 	/**
 	 * initilize/reset tiles, set coordinate for each tile, put tiles for
 	 * loading queue
@@ -2454,7 +2472,7 @@ public class TilesView extends GLSurfaceView {
 	 */
 	public class EasingRecord {
 		public double TIME_SCALE = 33 * 1E6; // 33 miniseconds
-		public double MAXIMUM_SPEED = 8E-6;
+		public double MAXIMUM_SPEED = 6.8E-6;
 		public double MINIMUM_SPEED_RATIO = 0.001; // ratio to original speed
 		public double CUTOFF_SPEED = 200 * 1E-9;
 
@@ -3446,33 +3464,14 @@ public class TilesView extends GLSurfaceView {
 					gl.glPushMatrix();
 					gl.glVertexPointer(2, GL_FLOAT, 0, mVertexBuffer);
 					float density = Globals.g_metrics.density;
-//					gl.glTranslatef(displaySize.x >> 1, displaySize.y >> 1, 0);//中心点移到屏幕中心点
-//					gl.glScalef(mapMode.scale, mapMode.scale, mapMode.scale);//缩放
-//					gl.glTranslatef(-(displaySize.x >> 1), -(displaySize.y >> 1), 0);
 			        Position centerPos = getCenterPosition();
 			        XYFloat leftTop = new XYFloat(10 * density, displaySize.y - 50 * density);
 					scaleView.renderGL(leftTop, zoomLevel, (float)centerPos.getLat(), centerXYZ.z, TEXTURE_COORDS);
-//			        gl.glColor4f(0, 0, 0, 1);
-//			        gl.glLineWidth(4 * density);
-//			        gl.glTranslatef(0, -100, 0);
-//			        mVertexBuffer.clear();
-//			        float[] vertexArray = {
-//			        		leftTop.x, displaySize.y - 50,
-//			        		leftTop.x + 300, displaySize.y - 50,
-//			        };
-//			        mVertexBuffer.put(vertexArray);
-//			        mVertexBuffer.position(0);
-//					mVertexBuffer.clear();
-//					mVertexBuffer.put(leftTop.x);
-//					mVertexBuffer.put(displaySize.y - 200);
-//					mVertexBuffer.put(leftTop.x + 300);
-//					mVertexBuffer.put(displaySize.y - 200);
-//					mVertexBuffer.position(0);
-//					gl.glDrawArrays(GLES10.GL_LINES, 0, 2);
 					gl.glPopMatrix();
 					
 					// draw the shapes
 					gl.glEnable(GL10.GL_BLEND);
+					gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 					gl.glDisable(GL_TEXTURE_2D);
 					for (int i = 0; i < shapes.size(); i++) {
 						Shape shape = shapes.get(i);
@@ -3511,8 +3510,6 @@ public class TilesView extends GLSurfaceView {
 							- ItemizedOverlay.ZOOM_LEVEL);
 					gl.glEnable(GL10.GL_BLEND);
 					gl.glBlendFunc(GL10.GL_ONE, GL10.GL_ONE_MINUS_SRC_ALPHA);
-					// gl.glBlendFunc(GL10.GL_SRC_ALPHA,
-					// GL10.GL_ONE_MINUS_SRC_ALPHA);
 					for (int i = 0; i < overlays.size(); i++) {
 						ItemizedOverlay overlay = overlays.get(i);
 

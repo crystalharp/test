@@ -1166,4 +1166,8 @@ public class MapView extends RelativeLayout implements
     public void resume() {
     	tilesView.resume();
     }
+    
+    public void zoomInAtPosition(Position position) {
+    	tilesView.zoomInAtPosition(position);
+    }
 }
