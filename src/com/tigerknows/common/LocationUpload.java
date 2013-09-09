@@ -207,7 +207,7 @@ public class LocationUpload extends LogUpload {
             reset();
             StringBuilder s = mStringBuilder;
             if (s.length() > 0 && s.charAt(0) == '|') {
-                s.deleteCharAt(0);
+                s = s.deleteCharAt(0);
             }
             mStringBuilder = new StringBuilder();
             mStringBuilder.append(s);
