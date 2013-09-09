@@ -200,6 +200,10 @@ public class UserUpdateNickNameActivity extends UserBaseActivity {
 	}
 
 	private void onBack() {
+        if (mSourceViewIdLogin == R.id.activity_browser) {
+            finish();
+            return;
+        }
         if (mSourceUserHome && Globals.g_User == null) {
             Intent intent = new Intent(mThis, Sphinx.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -239,6 +243,8 @@ public class UserUpdateNickNameActivity extends UserBaseActivity {
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
             }
+		} else if (mSourceViewIdLogin == R.id.activity_browser) {
+		    
 		} else if (mSourceViewIdLogin != R.id.activity_poi_comment_list){
 			// 从此页返回个人中心页时, 需刷新用户名
 			Intent intent = new Intent(UserUpdateNickNameActivity.this, Sphinx.class);
