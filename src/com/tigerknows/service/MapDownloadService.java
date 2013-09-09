@@ -49,7 +49,7 @@ public class MapDownloadService extends Service implements MapTileDataDownload.I
     /**
      * 网络出错时的重试时间间隔
      */
-    static final int NETWORK_FAILURE_RETRY_INTERVAL =15000;
+    static final int NETWORK_FAILURE_RETRY_INTERVAL =12000;
     
     public static final String EXTRA_CITY_INFO = "extra_city_info";
     
@@ -150,7 +150,14 @@ public class MapDownloadService extends Service implements MapTileDataDownload.I
                             while (isStopAll == false
                                     && isStopCurrentCity == false
                                     && localRegionDataInfo == null) {
-                                localRegionDataInfo = downloadMetaData(regionId);     
+                                localRegionDataInfo = downloadMetaData(regionId);
+                                if (localRegionDataInfo == null) {
+                                    try {
+                                        Thread.sleep(NETWORK_FAILURE_RETRY_INTERVAL);
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
                             }
                             
                             ServerRegionDataInfo severRegionDataInfo = null;
@@ -172,7 +179,14 @@ public class MapDownloadService extends Service implements MapTileDataDownload.I
                                             while (isStopAll == false
                                                     && isStopCurrentCity == false
                                                     && localRegionDataInfo == null) {
-                                                localRegionDataInfo = downloadMetaData(regionId);     
+                                                localRegionDataInfo = downloadMetaData(regionId);
+                                                if (localRegionDataInfo == null) {
+                                                    try {
+                                                        Thread.sleep(NETWORK_FAILURE_RETRY_INTERVAL);
+                                                    } catch (InterruptedException e) {
+                                                        e.printStackTrace();
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -380,6 +394,13 @@ public class MapDownloadService extends Service implements MapTileDataDownload.I
                 TileDownload[] lostDatas = mapEngine.getLostData();
                 statusCode = downloadTileData(lostDatas);
                 regionMapInfo = mapEngine.getLocalRegionDataInfo(regionId);
+                if (statusCode != BaseQuery.STATUS_CODE_NETWORK_OK) {
+                    try {
+                        Thread.sleep(NETWORK_FAILURE_RETRY_INTERVAL);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         }
         return statusCode;
