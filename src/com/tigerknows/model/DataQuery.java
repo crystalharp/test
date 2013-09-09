@@ -622,7 +622,7 @@ public final class DataQuery extends BaseQuery {
             ekeys = Utility.mergeArray(ekeys, new String[]{SERVER_PARAMETER_KEYWORD, SERVER_PARAMETER_INDEX, SERVER_PARAMETER_NEED_FIELD});
             debugCheckParameters(ekeys, okeys);
         } else if (DATA_TYPE_FILTER.equals(dataType)) {
-            okeys = Utility.mergeArray(okeys, filterOptionalKeys, indexKeys);
+            okeys = Utility.mergeArray(okeys, filterOptionalKeys, indexKeys, new String[]{SERVER_PARAMETER_CONFIGINFO});
             debugCheckParameters(ekeys, okeys);
         } else if (DATA_TYPE_COUPON.equals(dataType)) {
             ekeys = Utility.mergeArray(ekeys, new String[] {SERVER_PARAMETER_POI_ID, SERVER_PARAMETER_NEED_FIELD});
