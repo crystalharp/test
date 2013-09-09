@@ -6,10 +6,14 @@ import android.location.Location;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 
+import java.io.File;
+import java.io.FileFilter;
 import java.util.HashMap;
+import java.util.regex.Pattern;
 
 import com.decarta.android.exception.APIException;
 import com.decarta.android.location.Position;
+import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.decarta.android.util.XYInteger;
 import com.tigerknows.R;
@@ -129,6 +133,41 @@ public class Globals {
 
     public static String g_ClientUID = null; 
     
+    /**
+     * Gets the number of cores available in this device, across all processors.
+     * Requires: Ability to peruse the filesystem at "/sys/devices/system/cpu"
+     * @return The number of cores, or 1 if failed to get result
+     */
+    private static int getNumCores() {
+        //Private Class to display only CPU devices in the directory listing
+        class CpuFilter implements FileFilter {
+            @Override
+            public boolean accept(File pathname) {
+                //Check if filename is "cpu", followed by a single digit number
+                if(Pattern.matches("cpu[0-9]", pathname.getName())) {
+                    return true;
+                }
+                return false;
+            }      
+        }
+
+        try {
+            //Get directory containing CPU info
+        	File dir = new File("/sys/devices/system/cpu/");
+        	//Filter to only list the devices we care about
+            File[] files = dir.listFiles(new CpuFilter());
+            LogWrapper.d("Globals", "CPU Count: "+files.length);
+            //Return the number of cores (virtual CPU devices)
+            return files.length;
+        } catch(Exception e) {
+            //Print exception
+        	LogWrapper.d("Globals", "CPU Count: Failed.");
+            e.printStackTrace();
+            //Default to return 1 core
+            return 1;
+        }
+    }
+    public static int g_cpuNum = getNumCores();
     // 用户登录后的SessionId
     public static String g_Session_Id = null;
     // 用户登录后的用户信息

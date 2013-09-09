@@ -3,9 +3,12 @@
  */
 package com.tigerknows.map;
 
+import static android.opengl.GLES10.glDeleteTextures;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 
 import android.graphics.Bitmap;
 import android.opengl.GLES10;
@@ -68,8 +71,16 @@ public class ScaleView {
     }
     
     public void clearTexture() {
-    	for(Texture texture : textures) {
-//    		GLES10.glDeleteTextures(n, textures)
+    	for(int i = 0, len = textures.length; i < len; ++i) {
+    		Texture texture = textures[i];
+    		if(texture != null) {
+    			IntBuffer textureRefBuf = IntBuffer.allocate(1);
+				textureRefBuf.clear();
+				textureRefBuf.put(0, texture.textureRef);
+				textureRefBuf.position(0);
+				glDeleteTextures(1, textureRefBuf);
+	    		textures[i] = null;
+    		}
     	}
     }
     
