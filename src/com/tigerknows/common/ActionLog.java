@@ -590,6 +590,7 @@ public class ActionLog extends LogUpload {
     public static final String BrowserForward = "BA";
     public static final String BrowserBack = "BB";
     public static final String BrowserRefresh = "BC";
+    public static final String BrowserBuy = "BD";
     
     // 展览结果列表页
     public static final String YanchuList = "DJ";
