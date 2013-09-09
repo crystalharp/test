@@ -712,7 +712,6 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
 							public void onClick(DialogInterface dialog,
 									int which) {
                                 if (which == DialogInterface.BUTTON_POSITIVE) {
-                                    // TODO: mActionLog.addAction(mActionTag + ActionLog.HotelQueryOrder);
                                 	mSphinx.getHotelOrderListFragment().clearOrders();
                                 	mSphinx.getHotelOrderListFragment().syncOrder();
                                 	if(mSphinx.uiStackContains(R.id.view_hotel_credit_assure)){

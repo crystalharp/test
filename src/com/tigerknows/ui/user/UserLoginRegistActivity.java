@@ -97,11 +97,13 @@ public class UserLoginRegistActivity extends UserBaseActivity implements View.On
     private void changeMode(boolean isLeft) {
     	isRegist = !isLeft;
         if (isLeft) {
+        	mActionTag = ActionLog.UserLogin;
             registScv.setVisibility(View.GONE);
             loginScv.setVisibility(View.VISIBLE);
             titleLoginBtn.setBackgroundResource(R.drawable.btn_all_comment_focused);
             titleRegistBtn.setBackgroundResource(R.drawable.btn_hot_comment);
         } else {
+        	mActionTag = ActionLog.UserRegist;
             loginScv.setVisibility(View.GONE);
             registScv.setVisibility(View.VISIBLE);
             titleLoginBtn.setBackgroundResource(R.drawable.btn_all_comment);
@@ -179,10 +181,16 @@ public class UserLoginRegistActivity extends UserBaseActivity implements View.On
 			requestLogin();
 			break;
 		case R.id.title_login_btn:
-			if(isRegist)changeMode(true);
+			if(isRegist){
+				mActionLog.addAction(mActionTag + ActionLog.UserGoLogin);
+				changeMode(true);
+			}
 			break;
 		case R.id.title_regist_btn:
-			if(!isRegist)changeMode(false);
+			if(!isRegist){
+				mActionLog.addAction(mActionTag + ActionLog.UserGoRegist);
+				changeMode(false);
+			}
 			break;
 		}
 	}
