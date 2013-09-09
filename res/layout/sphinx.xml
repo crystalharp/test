@@ -62,15 +62,6 @@
         android:gravity="left"
         android:visibility="invisible"
         android:padding="6dp">
-        <com.tigerknows.widget.ScaleView
-            android:id="@+id/scale_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginLeft="6dp"
-            >
-        </com.tigerknows.widget.ScaleView>
 
         <LinearLayout 
             android:id="@+id/location_view"
@@ -79,7 +70,6 @@
             android:background="@drawable/btn_location_map"
             android:layout_alignParentRight="true"
             android:visibility="visible"
-            android:layout_above="@id/scale_view"
             android:orientation="vertical"
             android:gravity="center">
             <ImageButton
@@ -104,7 +94,6 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_alignParentLeft="true"
-            android:layout_above="@id/scale_view"
             android:visibility="invisible"
             >
 
