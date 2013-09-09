@@ -398,6 +398,11 @@ public class ActionLog extends LogUpload {
     public static final String SatisfyRate = "CL";
     public static final String[] SatisfyRatingBar = {"BA", "BB", "BC", "BD", "BE", "BF", "BG"};
     public static final String SatisfyRateSubmit = "BH";
+    
+    // 我的订单页
+    public static final String MyAllOrder = "CM";
+    public static final String MyAllOrderTuangou = "BA";
+    public static final String MyAllOrderHotel = "BB";
 
     // 软件生命周期  AO
     public static final String Lifecycle = "FA";

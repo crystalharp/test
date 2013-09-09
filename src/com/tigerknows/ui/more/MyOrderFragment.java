@@ -1,3 +1,8 @@
+/*
+ * Copyright (C) 2013 fengtianxiao@tigerknows.com
+ * 2013.08
+ */
+
 package com.tigerknows.ui.more;
 
 import java.util.ArrayList;
@@ -19,6 +24,7 @@ import com.decarta.Globals;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.android.os.TKAsyncTask;
+import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.Response;
@@ -46,7 +52,7 @@ public class MyOrderFragment extends BaseFragment{
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
-		// TODO: mActionTag
+		mActionTag = ActionLog.MyAllOrder;
 	}
 	
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
@@ -68,7 +74,7 @@ public class MyOrderFragment extends BaseFragment{
 			
 			@Override
 			public void onClick(View v) {
-				// TODO mActionLog.addAction(mActionTag + ActionLog.HotelQueryOrder);
+				mActionLog.addAction(mActionTag + ActionLog.MyAllOrderHotel);
             	mSphinx.getHotelOrderListFragment().clearOrders();
             	mSphinx.getHotelOrderListFragment().syncOrder();
                 mSphinx.showView(R.id.view_hotel_order_list);
@@ -120,7 +126,7 @@ public class MyOrderFragment extends BaseFragment{
 				
 				@Override
 				public void onClick(View v) {
-					// mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position, shangjia.getName());
+					mActionLog.addAction(mActionTag + ActionLog.MyAllOrderTuangou, shangjia.getName());
 	                if (shangjia.getUrl()!= null && !TextUtils.isEmpty(shangjia.getUrl())) {
 	                	startShangjia(shangjia);
 	                } else if (shangjia.getFastPurchase() == 1 || (Globals.g_User != null)) {
