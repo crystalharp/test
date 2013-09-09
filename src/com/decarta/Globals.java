@@ -356,7 +356,7 @@ public class Globals {
         if (cityInfo == null || cityInfo.isAvailably() == false) {
             double lastLon = Double.parseDouble(TKConfig.getPref(context, TKConfig.PREFS_LAST_LON, "361"));
             double lastLat = Double.parseDouble(TKConfig.getPref(context, TKConfig.PREFS_LAST_LAT, "361"));
-            int lastZoomLevel = Integer.parseInt(TKConfig.getPref(context, TKConfig.PREFS_LAST_ZOOM_LEVEL, String.valueOf(TKConfig.ZOOM_LEVEL_DEFAULT)));
+            int lastZoomLevel = MapEngine.DEFAULT_CITY_LEVEL;//Integer.parseInt(TKConfig.getPref(context, TKConfig.PREFS_LAST_ZOOM_LEVEL, String.valueOf(TKConfig.ZOOM_LEVEL_DEFAULT)));
 
             Position lastPosition = new Position(lastLat, lastLon);
             if(Util.inChina(lastPosition)) {
