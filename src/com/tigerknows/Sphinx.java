@@ -726,14 +726,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                         
                         @Override
                         public void run() {
-                            if (newZoomLevel >= CONFIG.ZOOM_UPPER_BOUND) {
-                                mMapView.getZoomControls().setIsZoomInEnabled(false);
-                            } else if (newZoomLevel <= CONFIG.ZOOM_LOWER_BOUND) {
-                                mMapView.getZoomControls().setIsZoomOutEnabled(false);
-                            } else {
-                                mMapView.getZoomControls().setIsZoomInEnabled(true);
-                                mMapView.getZoomControls().setIsZoomOutEnabled(true);
-                            }
+                            mMapView.setZoomControlsState(newZoomLevel);
+//                            LogWrapper.i("zoom", "zoom end at: " + newZoomLevel);
                         }
                     });
                 }
@@ -809,11 +803,16 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             });
             
             EventRegistry.addEventListener(mMapView, MapView.EventType.MULTITOUCHZOOM, new MapView.MultiTouchZoomEventListener(){
-
                 @Override
-                public void onMultiTouchZoomEvent(MapView mapView, int newZoomLevel) {
+                public void onMultiTouchZoomEvent(MapView mapView, final float newZoomLevel) {
                     resetShowInPreferZoom();
                     mActionLog.addAction(ActionLog.MapMultiTouchZoom);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mMapView.setZoomControlsState(newZoomLevel);
+                        }
+                    });
                 }
             });
             
@@ -1423,7 +1422,17 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     parm = parms[1].split("=");
                     if ("z".equals(parm[0])) {
                         int zoomLevel = Integer.parseInt(parm[1]);
-                        mMapView.zoomTo(zoomLevel);
+                        mMapView.zoomTo(zoomLevel, new MapView.ZoomEndEventListener() {
+                            @Override
+                            public void onZoomEndEvent(MapView mapView, final int newZoomLevel) {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                    	mMapView.setZoomControlsState(newZoomLevel);
+                                    }
+                                });
+                            }
+                        });
                     }
                     parm = parms[2].split("=");
                     if ("n".equals(parm[0])) {

@@ -1029,6 +1029,7 @@ public class TilesView extends GLSurfaceView {
 							synchronized (drawingLock) {
 								try {
 									zoomView(newZoomLevel, lastCenterConv);
+									mParentMapView.executeMultiTouchZoomListeners(newZoomLevel);
 								} catch (Exception e) {
 									e.printStackTrace();
 									return true;
@@ -1571,6 +1572,8 @@ public class TilesView extends GLSurfaceView {
 		} else {
 			zoomView(newLevel,
 					new XYFloat(displaySize.x / 2, displaySize.y / 2));
+			mParentMapView.executeZoomEndListeners(Math
+					.round(newLevel));
 		}
 
 	}
@@ -1579,11 +1582,17 @@ public class TilesView extends GLSurfaceView {
 			long duration, final MapView.ZoomEndEventListener listener)
 			throws APIException {
 		newZoomLevel = (int) tkJumpZoomLevel(newZoomLevel);
-		if (newZoomLevel < CONFIG.ZOOM_LOWER_BOUND
-				|| newZoomLevel > CONFIG.ZOOM_UPPER_BOUND) {
-			throw new APIException("invalid zoom level: " + newZoomLevel
-					+ " must be between " + CONFIG.ZOOM_LOWER_BOUND + " - "
-					+ CONFIG.ZOOM_UPPER_BOUND);
+//		if (newZoomLevel < CONFIG.ZOOM_LOWER_BOUND
+//				|| newZoomLevel > CONFIG.ZOOM_UPPER_BOUND) {
+//			throw new APIException("invalid zoom level: " + newZoomLevel
+//					+ " must be between " + CONFIG.ZOOM_LOWER_BOUND + " - "
+//					+ CONFIG.ZOOM_UPPER_BOUND);
+//		}
+		if(newZoomLevel < CONFIG.ZOOM_LOWER_BOUND) {
+			newZoomLevel = CONFIG.ZOOM_LOWER_BOUND;
+		}
+		if(newZoomLevel > CONFIG.ZOOM_UPPER_BOUND) {
+			newZoomLevel = CONFIG.ZOOM_UPPER_BOUND;
 		}
 		if (zoomCenter != null) {
 			XYFloat screenXY = positionToScreenXYConv(zoomCenter);
@@ -1652,12 +1661,18 @@ public class TilesView extends GLSurfaceView {
 		newZoomLevel = tkJumpZoomLevel(newZoomLevel);
 		if (zooming || newZoomLevel == zoomLevel)
 			return;
-		if (newZoomLevel < CONFIG.ZOOM_LOWER_BOUND
-				|| newZoomLevel > CONFIG.ZOOM_UPPER_BOUND) {
-			LogWrapper.d("TilesView", "zoomTo invalid zoom level:"
-					+ newZoomLevel + ", must between "
-					+ CONFIG.ZOOM_LOWER_BOUND + "-" + CONFIG.ZOOM_UPPER_BOUND);
-			return;
+//		if (newZoomLevel < CONFIG.ZOOM_LOWER_BOUND
+//				|| newZoomLevel > CONFIG.ZOOM_UPPER_BOUND) {
+//			LogWrapper.d("TilesView", "zoomTo invalid zoom level:"
+//					+ newZoomLevel + ", must between "
+//					+ CONFIG.ZOOM_LOWER_BOUND + "-" + CONFIG.ZOOM_UPPER_BOUND);
+//			return;
+//		}
+		if(newZoomLevel < CONFIG.ZOOM_LOWER_BOUND) {
+			newZoomLevel = CONFIG.ZOOM_LOWER_BOUND;
+		}
+		if(newZoomLevel > CONFIG.ZOOM_UPPER_BOUND) {
+			newZoomLevel = CONFIG.ZOOM_UPPER_BOUND;
 		}
 		try {
 			zooming = true;

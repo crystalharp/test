@@ -980,7 +980,7 @@ public class BaseQueryTest {
                               
                               @Override
                               public void run() {
-                                  mapView.zoomTo((int)(mapView.getZoomLevel()+2));
+                                  mapView.zoomTo((int)(mapView.getZoomLevel()+2), null);
                               }
                           });
                           Thread.sleep(5*1000);
