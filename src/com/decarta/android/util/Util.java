@@ -204,6 +204,13 @@ public class Util {
 		return new XYInteger(e,n);
 	}
 	
+	public static void mercXYToNE(XYDouble mercXY, XYInteger result){
+		if(mercXY == null || result == null)
+			return;
+		result.x = (int) Math.floor(mercXY.x / CONFIG.TILE_SIZE);
+		result.y = (int) Math.floor(mercXY.y / CONFIG.TILE_SIZE);
+	}
+	
 	/**
      * convert from position to mercator pixels based on current zoom level
      * @param pos
@@ -303,15 +310,19 @@ public class Util {
 	}
 	
 	public static List<XYZ> findOverlapXYZs(XYZ xyz, int zoomLevel){
-		ArrayList<XYZ> xyzs=new ArrayList<XYZ>();
-		if(zoomLevel<xyz.z){
+		ArrayList<XYZ> xyzs = new ArrayList<XYZ>();
+		if(zoomLevel < xyz.z){
 			float scale=((float)1)/(1<<(xyz.z-zoomLevel));
 			xyzs.add(new XYZ((int)Math.floor(xyz.x*scale),(int)Math.floor(xyz.y*scale),zoomLevel));
-		}else{
-			int expand=1<<(zoomLevel-xyz.z);
-			for(int x=xyz.x*expand;x<(xyz.x+1)*expand;x++){
-				for(int y=xyz.y*expand;y<(xyz.y+1)*expand;y++){
-					xyzs.add(new XYZ(x,y,zoomLevel));
+		} else {
+			int expand = 1<<(zoomLevel-xyz.z);
+			if(expand > 1) {
+				int debug = 0;
+				++debug;
+			}
+			for(int x = xyz.x * expand, boundx = (xyz.x + 1) * expand; x < boundx; ++x){
+				for(int y = xyz.y * expand, boundy = (xyz.y+1) * expand; y < boundy; ++y){
+					xyzs.add(new XYZ(x, y, zoomLevel));
 				}
 			}
 		}
