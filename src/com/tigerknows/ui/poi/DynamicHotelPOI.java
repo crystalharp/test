@@ -222,6 +222,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             popupWindow.update();
             mPOIDetailFragment.setPopupWindow(popupWindow);
         }
+        view.refresh(checkin, checkout);
         popupWindow.showAsDropDown(parent, 0, 0);
     }
     
