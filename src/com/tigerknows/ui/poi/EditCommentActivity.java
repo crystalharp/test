@@ -953,7 +953,7 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
                 shareSina = shareSina.subSequence(0, 104) + "...";
             }
             shareSina = shareSina + mThis.getString(R.string.poi_comment_share_sina_source); // TODO: 但是这个网址被微博删除了
-            dataOperation.addParameter(DataOperation.SERVER_PARAMETER_SHARE_SINA, shareSina);
+            dataOperation.addLocalParameter(DataOperation.SERVER_PARAMETER_SHARE_SINA, shareSina);
         }
         
         if (mSyncQZoneChb.isChecked()) {
@@ -966,7 +966,7 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
                 shareQzone = shareQzone.subSequence(0, 69) + "...";
             }
             shareQzone = shareQzone + mThis.getString(R.string.poi_comment_share_qzone_source); // 17个
-            dataOperation.addParameter(DataOperation.SERVER_PARAMETER_SHARE_QZONE, shareQzone);
+            dataOperation.addLocalParameter(DataOperation.SERVER_PARAMETER_SHARE_QZONE, shareQzone);
         }
         dataOperation.setup(Globals.getCurrentCityInfo().getId(), -1, mFromViewId, mThis.getString(R.string.comment_publishing_and_wait));
         queryStart(dataOperation, false);
