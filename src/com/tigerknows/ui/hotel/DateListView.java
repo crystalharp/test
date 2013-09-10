@@ -114,6 +114,9 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
         MotionEvent me = MotionEvent.obtain(0, 0, MotionEvent.ACTION_DOWN, 0, 0, 0, 0, 0, 0, 0, 0, 0);
         checkinLsv.onTouchEvent(me);
         checkoutLsv.onTouchEvent(me);
+        me = MotionEvent.obtain(0, 0, MotionEvent.ACTION_UP, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        checkinLsv.onTouchEvent(me);
+        checkoutLsv.onTouchEvent(me);
         
         today = Calendar.getInstance();
         today.setTimeInMillis(CalendarUtil.getExactTime(context));
