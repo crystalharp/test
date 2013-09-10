@@ -271,7 +271,7 @@ public class MapView extends RelativeLayout implements
 			com.decarta.android.event.EventListener {
 		public void onZoomEndEvent(MapView mapView, int newZoomLevel);
 	}
-
+	
 	/**
 	 * define dobule click listener of map
 	 * 
@@ -287,7 +287,7 @@ public class MapView extends RelativeLayout implements
      */
     public interface MultiTouchZoomEventListener extends
             com.decarta.android.event.EventListener {
-        public void onMultiTouchZoomEvent(MapView mapView, int newZoomLevel);
+        public void onMultiTouchZoomEvent(MapView mapView, float newZoomLevel);
     }
 
 	/**
@@ -415,6 +415,23 @@ public class MapView extends RelativeLayout implements
 		}
 	}
 
+	/**
+	 * provide a simple way to call all the multi touch listeners together
+	 * 
+	 * @param newZoomLevel
+	 *            the new zoom level the map has zoomed to
+	 */
+	public void executeMultiTouchZoomListeners(float newZoomLevel) {
+		if (eventListeners.containsKey(MapView.EventType.MULTITOUCHZOOM)) {
+			ArrayList<EventListener> listeners = eventListeners
+					.get(MapView.EventType.MULTITOUCHZOOM);
+			for (int i = 0; i < listeners.size(); i++) {
+				((MultiTouchZoomEventListener) (listeners.get(i))).onMultiTouchZoomEvent(
+						this, newZoomLevel);
+			}
+		}
+	}
+	
 	public void executeTouchDownListeners(Position position) {
 		if (eventListeners.containsKey(MapView.EventType.TOUCHDOWN)) {
 			ArrayList<EventListener> listeners = eventListeners.get(MapView.EventType.TOUCHDOWN);
@@ -893,18 +910,34 @@ public class MapView extends RelativeLayout implements
 	public void moveView(float left, float top) {
 		tilesView.moveView(left, top);
 	}
+	
+	public void setZoomControlsState() {
+		float zoomLevel = tilesView.getZoomLevel();
+		if (zoomLevel >= CONFIG.ZOOM_UPPER_BOUND) {
+            zoomControls.setIsZoomInEnabled(false);
+        } else if (zoomLevel <= CONFIG.ZOOM_LOWER_BOUND) {
+        	zoomControls.setIsZoomOutEnabled(false);
+        } else {
+        	zoomControls.setIsZoomInEnabled(true);
+        	zoomControls.setIsZoomOutEnabled(true);
+        }
+	}
 
+	public void setZoomControlsState(float zoomLevel) {
+		if (zoomLevel >= CONFIG.ZOOM_UPPER_BOUND) {
+            zoomControls.setIsZoomInEnabled(false);
+        } else if (zoomLevel <= CONFIG.ZOOM_LOWER_BOUND) {
+        	zoomControls.setIsZoomOutEnabled(false);
+        } else {
+        	zoomControls.setIsZoomInEnabled(true);
+        	zoomControls.setIsZoomOutEnabled(true);
+        }
+	}
+	
 	public void setZoomLevel(int newZoomLevel){
 		try{
 			tilesView.setZoomLevel(newZoomLevel);
-			if (newZoomLevel >= CONFIG.ZOOM_UPPER_BOUND) {
-                zoomControls.setIsZoomInEnabled(false);
-            } else if (newZoomLevel <= CONFIG.ZOOM_LOWER_BOUND) {
-            	zoomControls.setIsZoomOutEnabled(false);
-            } else {
-            	zoomControls.setIsZoomInEnabled(true);
-            	zoomControls.setIsZoomOutEnabled(true);
-            }
+			setZoomControlsState(newZoomLevel);
 		}catch(APIException e){
 			LogWrapper.w("MapView", "zoomTo exception:"+e.getMessage());
 		}
