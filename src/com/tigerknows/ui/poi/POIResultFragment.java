@@ -481,8 +481,8 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         }
     }
 
-    public void viewMap(int firstVisiblePosition, int lastVisiblePosition) {
-        if (firstVisiblePosition < 0 || mPOIList.size() < firstVisiblePosition || lastVisiblePosition < 0 || mPOIList.size() < lastVisiblePosition || mPOIList.isEmpty()) {
+    public void viewMap(int firstVisiblePosition) {
+        if (firstVisiblePosition < 0 || mPOIList.size() < firstVisiblePosition || mPOIList.isEmpty()) {
             return;            
         }
         int size = mPOIList.size();
@@ -544,7 +544,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                     return;
                 }
                 mActionLog.addAction(mActionTag + ActionLog.TitleRightButton);
-                viewMap(mResultLsv.getFirstVisiblePosition(), mResultLsv.getLastVisiblePosition());
+                viewMap(mResultLsv.getFirstVisiblePosition());
                 break;
                 
             case R.id.add_merchant_item_view:
