@@ -549,6 +549,8 @@ public final class DataQuery extends BaseQuery {
                         okeys = Utility.mergeArray(okeys, new String[]{SERVER_PARAMETER_INFO});
                     }
                     okeys = Utility.mergeArray(okeys, new String[]{SERVER_PARAMETER_POI_ID});
+                } else {
+                    ekeys = Utility.mergeArray(ekeys, new String[]{SERVER_PARAMETER_ID_LIST});
                 }
                 
             } else if (SUB_DATA_TYPE_HOTEL.equals(subDataType)) {
