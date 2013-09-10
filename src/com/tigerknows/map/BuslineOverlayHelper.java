@@ -32,7 +32,7 @@ import com.tigerknows.model.POI;
 
 public class BuslineOverlayHelper {
 
-	private static final int DEFAULT_SHOW_STEP_ZOOMLEVEL = 14;
+	private static final int DEFAULT_SHOW_STEP_ZOOMLEVEL = MapEngine.DEFAULT_CITY_LEVEL;
 
 	private static String TAG = "BuslineOverlayHelper";
 
