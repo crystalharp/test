@@ -323,7 +323,7 @@ tk_bool_t tk_is_tile_adjacent(tk_base_tile_data_t *tile1, tk_base_tile_data_t *t
 
 /* map scale to the meters, use the zoom level as the index to get the value */
 static const int scale2meter[20] = {0, 0, 0, 0, 0, 200000, 100000, 50000, 25000,
-    20000, 10000, 5000, 2000, 1000, 500, 200, 100, 50, 25, 10};
+    10000, 5000, 2000, 1000, 500, 200, 100, 50, 25, 10, 5};
 
 double tk_meters_per_pixel(double lat, short int z) {
 	return (cos(lat * MATH_PI / 180)) * MATH_PI * 2 * EARTH_RADIUS / ((1 << z) * tk_global_info.tile_size_pix);
