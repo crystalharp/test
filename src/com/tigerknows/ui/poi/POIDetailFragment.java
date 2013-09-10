@@ -557,7 +557,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         });
 
         Resources resources = mSphinx.getResources();
-        mIcAPOI = resources.getDrawable(R.drawable.ic_a_poi);
+        mIcAPOI = resources.getDrawable(R.drawable.ic_location_nearby);
         mDistance = mSphinx.getString(R.string.distance);
         mDistanceA = mSphinx.getString(R.string.distanceA);
         
