@@ -68,7 +68,6 @@ import com.decarta.android.map.Compass;
 import com.decarta.android.map.Icon;
 import com.decarta.android.map.InfoWindow;
 import com.decarta.android.map.ItemizedOverlay;
-import com.decarta.android.map.MapText;
 import com.decarta.android.map.MyLocation;
 import com.decarta.android.map.OverlayItem;
 import com.decarta.android.map.RotationTilt;
@@ -942,6 +941,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     }
     
     private void initView() {
+        mMapView.setVisibility(View.VISIBLE);
         mUIStack.clear();
         getTitleFragment();
         getMenuFragment();
@@ -956,7 +956,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         mCityViewHeight = Util.dip2px(Globals.g_metrics.density, 30);
         mMapView.getPadding().top = mTitleViewHeight + mCityViewHeight;
 
-        mMapView.setVisibility(View.VISIBLE);
         mTitleView.setVisibility(View.VISIBLE);
         mBodyView.setVisibility(View.VISIBLE);
         mMenuView.setVisibility(View.VISIBLE);
@@ -1180,15 +1179,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         Globals.getAsyncImageLoader().onDestory();
         mTKLocationManager.onDestroy();
         TKWeixin.getInstance(this).onDestory();
-        if (mMapView != null) {
-            MapText mapText = mMapView.getMapText();
-            if (mapText != null) {
-                Bitmap bm = mapText.bitmap;
-                if (bm != null && bm.isRecycled() == false) {
-                    bm.recycle();
-                }
-        }
-        }
         Globals.getImageCache().stopWritingAndRemoveOldTiles();
 		LogWrapper.i("Sphinx","onDestroy()");
         if(DiscoverChildListFragment.viewQueueForChangciItems!=null){

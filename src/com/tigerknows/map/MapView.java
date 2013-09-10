@@ -36,7 +36,6 @@ import com.decarta.android.map.Compass;
 import com.decarta.android.map.Icon;
 import com.decarta.android.map.InfoWindow;
 import com.decarta.android.map.ItemizedOverlay;
-import com.decarta.android.map.MapText;
 import com.decarta.android.map.Shape;
 import com.decarta.android.map.TilesView;
 import com.decarta.android.map.Compass.PlaceLocation;
@@ -1148,10 +1147,6 @@ public class MapView extends RelativeLayout implements
     
     public void showOverlay(String overlayName, boolean top){
         tilesView.showOverlay(overlayName, top);
-    }
-    
-    public MapText getMapText() {
-        return tilesView.getMapText();
     }
     
     public void setStopRefreshMyLocation(boolean stopRefreshMyLocation) {

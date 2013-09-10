@@ -144,14 +144,10 @@ public class TilesView extends GLSurfaceView {
 	public boolean stopRefreshMyLocation = false;
 
 	public void setRefreshMapText(boolean refresh) {
-		synchronized (drawingLock) {
-			this.mapText.refresh = refresh;
-		}
 	}
 
 	private boolean paused = false;
 	private MapRender mapRender;
-	private MapText mapText = new MapText();
 	private Grid labelGrid;
 	private TileThread tileRunners[] = new TileThread[CONFIG.TILE_THREAD_COUNT];
 	private DownloadThread downloadRunners[] = new DownloadThread[CONFIG.TILE_THREAD_COUNT];
@@ -216,10 +212,6 @@ public class TilesView extends GLSurfaceView {
 
 	public Rect getPadding() {
 		return padding;
-	}
-
-	public MapText getMapText() {
-		return mapText;
 	}
 
 	public void noticeDownload(int state) {
@@ -487,10 +479,6 @@ public class TilesView extends GLSurfaceView {
 			downloadRunners[i] = new DownloadThread(i, this);
 			downloadRunners[i].start();
 		}
-		mapText.canvasSize.x = displaySize.x;
-		mapText.canvasSize.y = displaySize.y;
-		XYFloat offset = new XYFloat(0, 0);
-		mapText.setOffset(offset, new RotationTilt());
 
 		drawMyLocationTimer = new Timer();
 		TimerTask timerTask = new TimerTask() {
@@ -3415,24 +3403,6 @@ public class TilesView extends GLSurfaceView {
 						int drawNum = willDrawTiles.size();
 						drawFullTile = (drawNum == ((bottomDist - topDist + 1) * (rightDist
 								- leftDist + 1)));
-						int mapTextZoomLevel = mapText.getZoomLevel();
-						XYDouble mapTextMercXY = mapText.getMercXY();
-						boolean same = true;
-						long time = System.nanoTime();
-						if (Math.abs(mapTextMercXY.x - centerXY.x) > 8
-								|| Math.abs(mapTextMercXY.y - centerXY.y) > 8
-								|| mapTextZoomLevel != centerXYZ.z
-								|| mapText.refresh) {
-							same = false;
-						}
-						if (!same && refreshText) {
-							mapText.mercXYGetting.x = centerXY.x;
-							mapText.mercXYGetting.y = centerXY.y;
-							mapText.zoomLevelGetting = centerXYZ.z;
-							mapText.refresh = false;
-							mapText.screenTextGetting = true;
-							mapText.lastTime = time;
-						}
 					}
 					gl.glDisable(GL_BLEND);
 
@@ -3684,10 +3654,7 @@ public class TilesView extends GLSurfaceView {
 							|| isLabelFading || fading || movingL || rotatingX
 							|| rotatingZ) {
 						requestRender();
-					} else if (isCancelSnap == false && snapCenterPos != null
-							&& mapText.texImageChanged == false
-							&& mapText.screenTextGetting == false
-							&& drawFullTile) {
+					} else if (isCancelSnap == false && snapCenterPos != null) {
 						XYFloat xy = mercXYToScreenXYConv(Util.posToMercPix(
 								snapCenterPos, getZoomLevel()), getZoomLevel());
 						// 确保快照地图时，地图已经移动到指定的中心位置，误差为32像素?
@@ -3811,9 +3778,6 @@ public class TilesView extends GLSurfaceView {
 
 			compass.clearTextureRef(gl);
 
-			mapText.screenTextGetting = true;
-			mapText.lastTime = 0;
-			mapText.refresh = false;
 		}
 
 		private int genTextureRef(GL10 gl) {
