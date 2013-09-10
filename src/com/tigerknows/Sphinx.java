@@ -860,10 +860,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             finish();
             return;
         }
-        
-        Intent service = new Intent(MapStatsService.ACTION_STATS_CURRENT_DOWNLOAD_CITY);
-        service.setClass(mThis, MapStatsService.class);
-        startService(service);
 
         List<BaseQuery> list = new ArrayList<BaseQuery>();
         
@@ -1871,6 +1867,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             TKConfig.setPref(mContext, TKConfig.PREFS_LAST_ZOOM_LEVEL, String.valueOf(cityInfo.getLevel()));
             HistoryWordTable.readHistoryWord(mContext, cityId, HistoryWordTable.TYPE_POI);
             TrafficQueryFragment.TrafficOnCityChanged(this, cityId);
+            
+            Intent service = new Intent(MapStatsService.ACTION_STATS_CURRENT_DOWNLOAD_CITY);
+            service.setClass(mThis, MapStatsService.class);
+            startService(service);
         }    
     }
         
@@ -2575,6 +2575,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         }
         if (mMoreFragment != null) {
             getMoreFragment().refreshCity(cName);
+            getMoreFragment().refreshMapDownloadData();
         }
     };
     
@@ -4250,7 +4251,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             mMapView.refreshMap();
             hideInfoWindow(ItemizedOverlay.MY_LOCATION_OVERLAY);
             mLocationBtn.setImageResource(R.drawable.progress_location);
-            mLocationTxv.setText(R.string.location_text);
+            mLocationTxv.setText(R.string.location_text_doing);
             Animatable animationDrawable = (Animatable)(mLocationBtn.getDrawable());
             animationDrawable.start();
         } else {

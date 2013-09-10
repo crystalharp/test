@@ -24,6 +24,7 @@
     <string name="location_doing">正在定位…</string>
     
     <string name="location_text">定位</string>
+    <string name="location_text_doing">定位中</string>
     <string name="location_text_navigation">导航</string>
     <string name="location_text_compass">罗盘</string>
 

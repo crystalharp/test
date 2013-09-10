@@ -319,11 +319,10 @@ public class HttpUtils {
                 revTime = System.currentTimeMillis();
                 if (entity != null) {
                     try {
-                        // 从联想词汇服务器返回来的数据其长度总是-1，尽管其实是有实际数据内容的
-                        long size = entity.getContentLength();
+                        DataInputStream dis = new DataInputStream(entity.getContent());
+                        long size = dis.available();
                         revSize = size;
                         if (size > 0) {
-                            DataInputStream dis = new DataInputStream(entity.getContent());
                             try {
                                 ByteArrayOutputStream baos = new ByteArrayOutputStream(BUFFER_SIZE);
                                 byte[] buffer = new byte[BUFFER_SIZE];
