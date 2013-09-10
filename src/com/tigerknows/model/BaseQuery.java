@@ -1003,11 +1003,15 @@ public abstract class BaseQuery {
         String sessionId = Globals.g_Session_Id;
         if (!TextUtils.isEmpty(sessionId)) {
             requestParameters.add(SERVER_PARAMETER_SESSION_ID, sessionId);
+        } else {
+            requestParameters.remove(SERVER_PARAMETER_SESSION_ID);
         }
         
         String clientId = Globals.g_ClientUID;
         if (!TextUtils.isEmpty(clientId)) {
             requestParameters.add(SERVER_PARAMETER_CLIENT_ID, clientId);
+        } else {
+            requestParameters.remove(SERVER_PARAMETER_CLIENT_ID);
         }
     }
         
