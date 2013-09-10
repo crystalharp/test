@@ -4233,7 +4233,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             mMapView.refreshMap();
             hideInfoWindow(ItemizedOverlay.MY_LOCATION_OVERLAY);
             mLocationBtn.setImageResource(R.drawable.progress_location);
-            mLocationTxv.setText(R.string.location_text);
+            mLocationTxv.setText(R.string.location_text_doing);
             Animatable animationDrawable = (Animatable)(mLocationBtn.getDrawable());
             animationDrawable.start();
         } else {
