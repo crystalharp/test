@@ -57,7 +57,7 @@ public class MultiRectLabel extends Label {
     	this.pointNum = pointNum;
     	this.color = color;
     	this.bgColor = bgColor;
-    	int realFontSize = (int) (fontSize * Globals.g_metrics.density);
+    	int realFontSize = (int) ((fontSize) * Globals.g_metrics.density) + 1;
     	this.fontSize = realFontSize > fontSize ? realFontSize : fontSize;
     	this.type = type;
     	this.priority = priority;

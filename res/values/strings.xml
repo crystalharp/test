@@ -24,6 +24,7 @@
     <string name="location_doing">正在定位…</string>
     
     <string name="location_text">定位</string>
+    <string name="location_text_doing">定位中</string>
     <string name="location_text_navigation">导航</string>
     <string name="location_text_compass">罗盘</string>
 
@@ -1026,7 +1027,7 @@
     
     <string name="hotel_btn_book">预订</string>
     <string name="check_in_time">入住时间</string>
-    <string name="hotel_btn_sold_out">售完</string>
+    <string name="hotel_btn_sold_out">订满</string>
     <string name="hotel_btn_x_room_left">仅剩%1$s间</string>
     <string name="hotel_description">酒店简介</string>
     <string name="hotel_expand_roomtype">展开全部房型</string>

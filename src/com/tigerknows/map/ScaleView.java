@@ -33,6 +33,7 @@ public class ScaleView {
     float density;
     float lineWidth;
     float coreWidth;
+    float deltaHeight;
     public ScaleView() {
     	labelArray = new String[] {
     			"",
@@ -68,6 +69,7 @@ public class ScaleView {
 		vertexBuffer = vbb.asFloatBuffer();
 		lineWidth = 4f * density;
 		coreWidth = 1.5f * density;
+		deltaHeight = 0.5f * density;
     }
     
     public void clearTexture() {
@@ -127,13 +129,19 @@ public class ScaleView {
         scaleLength = (float) (scaleLength * Math.pow(2, zoomLevel - z));
         GLES10.glColor4f(1, 1, 1, 1);
         GLES10.glLineWidth(lineWidth);
-        drawScaleLine(vertexBuffer, topLeftXY.x, topLeftXY.y + labelHeight, topLeftXY.x, topLeftXY.y + labelHeight + scaleHeight + 1);
-        drawScaleLine(vertexBuffer, topLeftXY.x, topLeftXY.y + labelHeight + scaleHeight, topLeftXY.x + scaleLength, topLeftXY.y + labelHeight + scaleHeight);
-        drawScaleLine(vertexBuffer, topLeftXY.x + scaleLength, topLeftXY.y + labelHeight, topLeftXY.x + scaleLength, topLeftXY.y + labelHeight + scaleHeight + 1);
+        drawScaleLine(vertexBuffer, topLeftXY.x, topLeftXY.y + labelHeight, 
+        		topLeftXY.x, topLeftXY.y + labelHeight + scaleHeight + deltaHeight);
+        drawScaleLine(vertexBuffer, topLeftXY.x, topLeftXY.y + labelHeight + scaleHeight, 
+        		topLeftXY.x + scaleLength, topLeftXY.y + labelHeight + scaleHeight);
+        drawScaleLine(vertexBuffer, topLeftXY.x + scaleLength, topLeftXY.y + labelHeight, 
+        		topLeftXY.x + scaleLength, topLeftXY.y + labelHeight + scaleHeight + deltaHeight);
         GLES10.glLineWidth(coreWidth);
         GLES10.glColor4f(0, 0, 0, 1);
-        drawScaleLine(vertexBuffer, topLeftXY.x, topLeftXY.y + labelHeight, topLeftXY.x, topLeftXY.y + labelHeight + scaleHeight + 1);
-        drawScaleLine(vertexBuffer, topLeftXY.x, topLeftXY.y + labelHeight + scaleHeight, topLeftXY.x + scaleLength, topLeftXY.y + labelHeight + scaleHeight);
-        drawScaleLine(vertexBuffer, topLeftXY.x + scaleLength, topLeftXY.y + labelHeight, topLeftXY.x + scaleLength, topLeftXY.y + labelHeight + scaleHeight + 1);
+        drawScaleLine(vertexBuffer, topLeftXY.x, topLeftXY.y + labelHeight, 
+        		topLeftXY.x, topLeftXY.y + labelHeight + scaleHeight + deltaHeight);
+        drawScaleLine(vertexBuffer, topLeftXY.x, topLeftXY.y + labelHeight + scaleHeight, 
+        		topLeftXY.x + scaleLength, topLeftXY.y + labelHeight + scaleHeight);
+        drawScaleLine(vertexBuffer, topLeftXY.x + scaleLength, topLeftXY.y + labelHeight, 
+        		topLeftXY.x + scaleLength, topLeftXY.y + labelHeight + scaleHeight + deltaHeight);
     }
 }

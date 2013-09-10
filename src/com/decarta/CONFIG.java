@@ -23,7 +23,7 @@ public class CONFIG {
 	 * TILE_THREAD_COUNT for tile network thread pool 
 	 * default 6
 	 */
-	public static int TILE_THREAD_COUNT = Globals.g_cpuNum > 3 ? (Globals.g_cpuNum - 1) : 1;
+	public static int TILE_THREAD_COUNT = Globals.g_cpuNum > 2 ? (Globals.g_cpuNum >> 1) : 1;
     
     /**
      * To maximum number of tiles be cached. Oldest tiles will be removed when cached 
@@ -36,7 +36,7 @@ public class CONFIG {
 	 * possible range : 0-20. Bigger number means more ability to zoom in.
 	 */
 	public static int ZOOM_LOWER_BOUND=5;
-	public static int ZOOM_UPPER_BOUND=18;
+	public static int ZOOM_UPPER_BOUND=19;
     public static int ZOOM_JUMP=9;
 	
 	/**

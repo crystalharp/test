@@ -43,13 +43,14 @@ public class MyOrderFragment extends BaseFragment{
 		super(sphinx);
 	}
 	
+	private LinearLayout mTuangouTitleLly;
 	private LinearLayout mTuangouDingdanLly;
 	private Button mHotelOrderBtn;
 	
 	private List<Shangjia> mResultList = new ArrayList<Shangjia>();
 	private Shangjia mRequestLogin = null;
 	
-	private boolean showHotelOrder;
+	private boolean mFromTuangou;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState){
@@ -66,6 +67,7 @@ public class MyOrderFragment extends BaseFragment{
     }
     
     protected void findViews() {
+    	mTuangouTitleLly = (LinearLayout)mRootView.findViewById(R.id.tuangou_title_lly);
     	mTuangouDingdanLly = (LinearLayout)mRootView.findViewById(R.id.tuangou_dingdan_lly);
     	mHotelOrderBtn = (Button)mRootView.findViewById(R.id.hotel_order_btn);
     	
@@ -102,10 +104,14 @@ public class MyOrderFragment extends BaseFragment{
 		    mRequestLogin = null;
 		}
 		
-		if (showHotelOrder){
-			mHotelOrderBtn.setVisibility(View.VISIBLE);
-		}else{
+		if (mFromTuangou){
+			mTitleBtn.setText(mSphinx.getString(R.string.tuangoudingdan));
+			mTuangouTitleLly.setVisibility(View.GONE);
 			mHotelOrderBtn.setVisibility(View.GONE);
+		}else{
+			mTitleBtn.setText(mSphinx.getString(R.string.wodedingdan));
+			mTuangouTitleLly.setVisibility(View.VISIBLE);
+			mHotelOrderBtn.setVisibility(View.VISIBLE);
 		}
 	}
     
@@ -123,13 +129,22 @@ public class MyOrderFragment extends BaseFragment{
     		btn.setGravity(Gravity.LEFT|Gravity.CENTER_VERTICAL);
     		if (i == mResultList.size() - 1){
     			btn.setBackgroundDrawable(mSphinx.getResources().getDrawable(R.drawable.list_footer));
+    		}else if(i == 0 && mFromTuangou == true){
+    			btn.setBackgroundDrawable(mSphinx.getResources().getDrawable(R.drawable.list_header));
     		}else{
     			btn.setBackgroundDrawable(mSphinx.getResources().getDrawable(R.drawable.list_middle));
     		}
     		btn.setPadding(Utility.dip2px(mContext, 16), 0, Utility.dip2px(mContext, 16), 0);
     		Drawable arrowRight = getResources().getDrawable(R.drawable.icon_arrow_right);
     		arrowRight.setBounds(0, 0, arrowRight.getIntrinsicWidth(), arrowRight.getIntrinsicHeight());
-    		btn.setCompoundDrawables(null, null, arrowRight, null);
+    		Drawable logo = shangjia.getLogo();
+    		if (logo != null){
+    			int hh = Utility.dip2px(mContext, 28);
+    			int ww = Math.round(hh * logo.getIntrinsicWidth() / logo.getIntrinsicHeight());
+    			logo.setBounds(0, 0, ww, hh);
+    		}
+    		btn.setCompoundDrawablePadding(Utility.dip2px(mContext, 16));
+    		btn.setCompoundDrawables(logo, null, arrowRight, null);
     		btn.setOnClickListener(new OnClickListener() {
 				
 				@Override
@@ -213,9 +228,9 @@ public class MyOrderFragment extends BaseFragment{
     
     public void setData(boolean fromTuangou){
     	if(fromTuangou){
-    		showHotelOrder = false;
+    		mFromTuangou = true;
     	}else{
-    		showHotelOrder = true;
+    		mFromTuangou = false;
     	}
     }
 }
