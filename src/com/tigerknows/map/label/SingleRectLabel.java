@@ -45,7 +45,7 @@ public class SingleRectLabel extends Label {
     public static final int STYLE_NO_ICON_WITHOUT_BACKGROUND = 3;
 
     public static final int[] RESOURCE_ID = {
-    	R.drawable.ic_map_residential, 
+    	R.drawable.icon, 
     	R.drawable.ic_map_train_station, 
     	R.drawable.ic_map_bus_station,
         R.drawable.ic_map_subway, 
