@@ -23,7 +23,7 @@ public class CONFIG {
 	 * TILE_THREAD_COUNT for tile network thread pool 
 	 * default 6
 	 */
-	public static int TILE_THREAD_COUNT = Globals.g_cpuNum > 3 ? (Globals.g_cpuNum - 1) : 1;
+	public static int TILE_THREAD_COUNT = Globals.g_cpuNum > 2 ? (Globals.g_cpuNum >> 1) : 1;
     
     /**
      * To maximum number of tiles be cached. Oldest tiles will be removed when cached 
