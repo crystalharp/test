@@ -462,6 +462,7 @@ public class UserLoginRegistActivity extends UserBaseActivity implements View.On
 					int which) {
 				if (which == DialogInterface.BUTTON_POSITIVE) {
 					setPrefsPhoneNum(registPhoneEdt.getText().toString().trim());
+					valiNumBtn.reset(getString(R.string.reqest_validate_num));
 					changeMode(true);
 				} 
 			}
