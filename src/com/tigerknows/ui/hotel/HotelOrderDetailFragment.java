@@ -411,7 +411,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
     	mPayTypeTxv.setText(mContext.getString(R.string.hotel_order_default_pay_type));
     	mCheckinDateTxv.setText(formatOrderTime(order.getCheckinTime()));
     	mCheckoutDateTxv.setText(formatOrderTime(order.getCheckoutTime()));
-    	mRetentionDateTxv.setText(formatOrderTime(order.getRetentionTime()));
+    	mRetentionDateTxv.setText(CalendarUtil.ymd8c_Hm4.format(new Date(order.getRetentionTime())));
     	mRoomTypeTxv.setText(order.getRoomType());
     	mCheckinPersonTxv.setText(order.getGuestName());
 
