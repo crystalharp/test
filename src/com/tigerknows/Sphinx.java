@@ -860,10 +860,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             finish();
             return;
         }
-        
-        Intent service = new Intent(MapStatsService.ACTION_STATS_CURRENT_DOWNLOAD_CITY);
-        service.setClass(mThis, MapStatsService.class);
-        startService(service);
 
         List<BaseQuery> list = new ArrayList<BaseQuery>();
         
@@ -1854,6 +1850,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             TKConfig.setPref(mContext, TKConfig.PREFS_LAST_ZOOM_LEVEL, String.valueOf(cityInfo.getLevel()));
             HistoryWordTable.readHistoryWord(mContext, cityId, HistoryWordTable.TYPE_POI);
             TrafficQueryFragment.TrafficOnCityChanged(this, cityId);
+            
+            Intent service = new Intent(MapStatsService.ACTION_STATS_CURRENT_DOWNLOAD_CITY);
+            service.setClass(mThis, MapStatsService.class);
+            startService(service);
         }    
     }
         
@@ -2558,6 +2558,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         }
         if (mMoreFragment != null) {
             getMoreFragment().refreshCity(cName);
+            getMoreFragment().refreshMapDownloadData();
         }
     };
     
