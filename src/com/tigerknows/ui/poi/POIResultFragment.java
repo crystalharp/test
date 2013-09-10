@@ -485,6 +485,12 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         if (firstVisiblePosition < 0 || mPOIList.size() < firstVisiblePosition || mPOIList.isEmpty()) {
             return;            
         }
+
+        // 此处判断减1，是因为第0个是A类POI
+        if (firstVisiblePosition > 0) {
+            firstVisiblePosition--;
+        }
+        
         int size = mPOIList.size();
         List<POI> poiList = new ArrayList<POI>();
         int[] page = Utility.makePagedIndex(mResultLsv, size, firstVisiblePosition);
