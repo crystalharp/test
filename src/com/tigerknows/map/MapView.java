@@ -897,6 +897,14 @@ public class MapView extends RelativeLayout implements
 	public void setZoomLevel(int newZoomLevel){
 		try{
 			tilesView.setZoomLevel(newZoomLevel);
+			if (newZoomLevel >= CONFIG.ZOOM_UPPER_BOUND) {
+                zoomControls.setIsZoomInEnabled(false);
+            } else if (newZoomLevel <= CONFIG.ZOOM_LOWER_BOUND) {
+            	zoomControls.setIsZoomOutEnabled(false);
+            } else {
+            	zoomControls.setIsZoomInEnabled(true);
+            	zoomControls.setIsZoomOutEnabled(true);
+            }
 		}catch(APIException e){
 			LogWrapper.w("MapView", "zoomTo exception:"+e.getMessage());
 		}
@@ -908,9 +916,9 @@ public class MapView extends RelativeLayout implements
 	 * 
 	 * @param newZoomLevel
 	 */
-	public void zoomTo(int newZoomLevel) {
+	public void zoomTo(int newZoomLevel, ZoomEndEventListener listener) {
         try{
-        	tilesView.zoomTo(newZoomLevel, null, -1, null);
+        	tilesView.zoomTo(newZoomLevel, null, -1, listener);
         } catch(APIException e) {
             LogWrapper.w("MapView", "zoomTo exception:"+e.getMessage());
         }

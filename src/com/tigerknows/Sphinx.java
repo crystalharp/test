@@ -1427,7 +1427,24 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     parm = parms[1].split("=");
                     if ("z".equals(parm[0])) {
                         int zoomLevel = Integer.parseInt(parm[1]);
-                        mMapView.zoomTo(zoomLevel);
+                        mMapView.zoomTo(zoomLevel, new MapView.ZoomEndEventListener() {
+                            @Override
+                            public void onZoomEndEvent(MapView mapView, final int newZoomLevel) {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (newZoomLevel >= CONFIG.ZOOM_UPPER_BOUND) {
+                                        	mMapView.getZoomControls().setIsZoomInEnabled(false);
+                                        } else if (newZoomLevel <= CONFIG.ZOOM_LOWER_BOUND) {
+                                        	mMapView.getZoomControls().setIsZoomOutEnabled(false);
+                                        } else {
+                                        	mMapView.getZoomControls().setIsZoomInEnabled(true);
+                                        	mMapView.getZoomControls().setIsZoomOutEnabled(true);
+                                        }
+                                    }
+                                });
+                            }
+                        });
                     }
                     parm = parms[2].split("=");
                     if ("n".equals(parm[0])) {
