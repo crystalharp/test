@@ -32,7 +32,7 @@ import com.tigerknows.util.NavigationSplitJointRule;
 
 public class TrafficOverlayHelper {
 
-	private static final int DEFAULT_SHOW_STEP_ZOOMLEVEL = 14;
+	private static final int DEFAULT_SHOW_STEP_ZOOMLEVEL = MapEngine.DEFAULT_CITY_LEVEL;
 	
 	private static final float HIGHLIGHT_POSITION_ACCURACY = 0.00001f;
 	
