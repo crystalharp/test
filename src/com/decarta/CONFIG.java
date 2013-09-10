@@ -36,7 +36,7 @@ public class CONFIG {
 	 * possible range : 0-20. Bigger number means more ability to zoom in.
 	 */
 	public static int ZOOM_LOWER_BOUND=5;
-	public static int ZOOM_UPPER_BOUND=18;
+	public static int ZOOM_UPPER_BOUND=19;
     public static int ZOOM_JUMP=9;
 	
 	/**
