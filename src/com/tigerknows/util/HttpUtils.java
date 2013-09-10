@@ -319,10 +319,11 @@ public class HttpUtils {
                 revTime = System.currentTimeMillis();
                 if (entity != null) {
                     try {
-                        DataInputStream dis = new DataInputStream(entity.getContent());
-                        long size = dis.available();
+                        // 从联想词汇服务器返回来的数据其长度总是-1，尽管其实是有实际数据内容的
+                        long size = entity.getContentLength();
                         revSize = size;
-                        if (size > 0) {
+//                        if (size > 0) {
+                            DataInputStream dis = new DataInputStream(entity.getContent());
                             try {
                                 ByteArrayOutputStream baos = new ByteArrayOutputStream(BUFFER_SIZE);
                                 byte[] buffer = new byte[BUFFER_SIZE];
@@ -355,7 +356,7 @@ public class HttpUtils {
                                     if (baos.size() > 0) {
                                         if (realTimeRecive == null) {
                                             data = baos.toByteArray();
-                                            if (receivedSize == size) {
+                                            if (isStop == false) { // receivedSize == size, 此处判断是否下载完返回的数据
                                                 receivedAllData = true;
                                             } else {
                                                 receivedAllData = false;
@@ -372,7 +373,7 @@ public class HttpUtils {
                                     LogWrapper.e(TAG, "TKHttpClient->sendAndRecive():apiType="+apiType+", Error closing input stream: " + e.getMessage());
                                 }
                             }
-                        }
+//                        }
                     } finally {
                         if (entity != null) {
                             entity.consumeContent();
