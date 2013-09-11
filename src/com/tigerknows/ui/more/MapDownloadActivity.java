@@ -841,6 +841,7 @@ public class MapDownloadActivity extends BaseActivity implements View.OnClickLis
                 List<CityInfo> cityInfoList = cityInfo.getCityList();
                 if (cityInfoList.size() == 1) {
                     mActionLog.addAction(mActionTag + ActionLog.MapDownloadAddListCity, groupPosition, 0, cityInfo.getCName());
+                    addDownloadCity(cityInfoList.get(0), DownloadCity.STATE_WAITING);
                 } else {
                     mActionLog.addAction(mActionTag + ActionLog.MapDownloadAddListProvince, groupPosition, cityInfo.getCName(), "0");
                 }
