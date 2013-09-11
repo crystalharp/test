@@ -125,6 +125,7 @@ public class MyOrderFragment extends BaseFragment{
     		splitImv.setBackgroundResource(R.drawable.bg_line_split);
     		btn.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
     		btn.setTextSize(16);
+    		btn.setTextColor(mSphinx.getResources().getColor(R.color.black_dark));
     		btn.setText(mSphinx.getString(R.string.view) + shangjia.getMessage());
     		btn.setGravity(Gravity.LEFT|Gravity.CENTER_VERTICAL);
     		if (i == mResultList.size() - 1){
