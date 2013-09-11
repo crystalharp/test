@@ -1792,8 +1792,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 TKConfig.setPref(mContext, TKConfig.PREFS_LAST_LAT, String.valueOf(position.getLat()));
                 TKConfig.setPref(mContext, TKConfig.PREFS_LAST_ZOOM_LEVEL, String.valueOf(zoom));
             }
-            mMapView.clearAllTextures();
-            MapEngine.cleanEngineCache();
         }
 
         unregisterReceiver(mCountCurrentDownloadCityBroadcastReceiver);
@@ -1808,6 +1806,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         super.onStop();
         BaseQuery.sClentStatus = BaseQuery.CLIENT_STATUS_STOP;
         LogWrapper.i(TAG, "onStop");
+        
+        if(mMapView != null)
+        	mMapView.clearAllTextures();
+        MapEngine.cleanEngineCache();
         
         mActionLog.onStop();
         unregisterReceiver(mRemoveCityMapDataBroadcastReceiver);
