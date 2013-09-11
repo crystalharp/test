@@ -69,37 +69,35 @@ public class MapEngine {
     private Context context;
     private void initEngine(Context context, String mapPath) {
 		synchronized (this) {
-			if (this.isClosed) {
-				isExternalStorage = false;
-				this.mapPath = mapPath;
-				String externalStorageState = Environment
-						.getExternalStorageState();
-				if (externalStorageState.equals(Environment.MEDIA_MOUNTED)) {
-					File externalStorageDirectory = Environment
-							.getExternalStorageDirectory();
-					String externalStoragePath = externalStorageDirectory
-							.getAbsolutePath();
-					if (this.mapPath.startsWith(externalStoragePath)) {
-						isExternalStorage = true;
-					}
-				}
-                if(Ca.tk_is_engine_initialized()) {//地图引擎已被初始化过，静态数据已加载
-                	Ca.tk_engine_reset_map_dir(this.mapPath);
-                }
-                else {
-					int status = Ca.tk_init_engine_config(
-							TKConfig.getDataPath(false), this.mapPath,
-							CONFIG.TILE_SIZE);
-					if (status == 0) {
-						this.isClosed = false;
-						this.context = context;
-						Ca.tk_init_context(null, TILE_SIZE_BIT, 0);
-					} else {
-						destroyEngine();
-					}
-					LogWrapper.d(TAG, "initEngine() status=" + status);
-                }
-			}
+		    isExternalStorage = false;
+    		this.mapPath = mapPath;
+    		String externalStorageState = Environment
+    				.getExternalStorageState();
+    		if (externalStorageState.equals(Environment.MEDIA_MOUNTED)) {
+    			File externalStorageDirectory = Environment
+    					.getExternalStorageDirectory();
+    			String externalStoragePath = externalStorageDirectory
+    					.getAbsolutePath();
+    			if (this.mapPath.startsWith(externalStoragePath)) {
+    				isExternalStorage = true;
+    			}
+    		}
+            if(Ca.tk_is_engine_initialized()) {//地图引擎已被初始化过，静态数据已加载
+            	Ca.tk_engine_reset_map_dir(this.mapPath);
+            }
+            else {
+    			int status = Ca.tk_init_engine_config(
+    					TKConfig.getDataPath(false), this.mapPath,
+    					CONFIG.TILE_SIZE);
+    			if (status == 0) {
+    				this.isClosed = false;
+    				this.context = context;
+    				Ca.tk_init_context(null, TILE_SIZE_BIT, 0);
+    			} else {
+    				destroyEngine();
+    			}
+    			LogWrapper.d(TAG, "initEngine() status=" + status);
+    		}
 		}
     }
 
