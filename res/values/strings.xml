@@ -1155,7 +1155,7 @@
     
     <string name="hotel_order_sync_success">酒店订单更新成功！</string>
     
-    <string name="hotel_order_cancel_confirm">是否取消订单？\n取消后本次预订将失效</string>
+    <string name="hotel_order_cancel_confirm">是否取消订单？\n订单取消后，将在一分钟后失效！</string>
     <string name="hotel_order_cancel_failed">订单取消失败</string>
     <string name="hotel_order_cancel_success">订单取消成功</string>
     

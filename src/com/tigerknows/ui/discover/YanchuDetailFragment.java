@@ -39,8 +39,8 @@ public class YanchuDetailFragment extends BaseDetailFragment
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         mActionTag = ActionLog.YanchuDetail;
+        super.onCreate(savedInstanceState);
     }
 
     @Override

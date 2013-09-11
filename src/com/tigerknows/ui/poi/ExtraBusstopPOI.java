@@ -70,7 +70,7 @@ public class ExtraBusstopPOI extends DynamicPOIView {
                 
                 @Override
                 public void onClick(View v) {
-                    mSphinx.getBuslineDetailFragment().setData(busline, 0, mPOI.getName());
+                    mSphinx.getBuslineDetailFragment().setData(busline, -1, mPOI.getName());
                     mSphinx.showView(mSphinx.getBuslineDetailFragment().getId());
                 }
             });

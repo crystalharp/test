@@ -96,6 +96,7 @@ public class ZhanlanDetailView extends BaseDetailView implements View.OnClickLis
     @Override
     public void dismiss() {
         super.dismiss();
+        mData = null;
         mPictureImv.setImageDrawable(null);
     }
     

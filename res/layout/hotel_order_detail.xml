@@ -122,18 +122,16 @@
 	    	    <include
 	                android:layout_width="match_parent"
 	                android:layout_height="wrap_content"
-	                android:layout_marginLeft="8dp"
-	                android:layout_marginRight="8dp"
 	                layout="@layout/discover_tuangou_fendian_list_item"
 	                android:id="@+id/hotel_fendian_poi"/>
 	             
 	            <RelativeLayout
 	                android:layout_width="fill_parent"
 	                android:layout_height="wrap_content"
-	                android:layout_marginBottom="16dp"
-	                android:layout_marginLeft="16dp"
-	                android:layout_marginRight="16dp"
-	                android:layout_marginTop="8dp"
+	                android:layout_marginBottom="12dp"
+	                android:layout_marginLeft="8dp"
+	                android:layout_marginRight="8dp"
+	                android:layout_marginTop="4dp"
 	                android:padding="8dp" 
 	                android:background="@drawable/list_single">
 	                
@@ -183,11 +181,11 @@
 	                    
 	                    android:gravity="center"
 	                    android:text="@string/cancel_order"
-	                    android:textSize="16sp"
+	                    android:textSize="14sp"
 	                    android:textColor="@color/black_dark"
 	                    
 	                    android:padding="12dp"
-	                    android:background="@drawable/btn_hotel_order_cancel"/>
+	                    android:background="@drawable/btn_subway_busstop"/>
 	
 	                <TextView
 	                    android:id="@+id/order_state"
@@ -494,8 +492,6 @@
 			        android:layout_width="fill_parent" 
 			        android:layout_height="wrap_content"
 			        layout="@layout/hotel_hot_line"
-			        android:layout_marginLeft="8dp"
-			        android:layout_marginRight="8dp"
 			        android:layout_marginBottom="8dp"
 			        />
 	             

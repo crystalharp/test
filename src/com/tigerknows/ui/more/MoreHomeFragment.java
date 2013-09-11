@@ -181,7 +181,6 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         	TKConfig.setPref(mContext, TKConfig.PREFS_MORE_OPENED, "hide");
         }
         GenerateNoticeView.pd8 = Utility.dip2px(mContext, 8);
-        LogWrapper.d("Trap", ""+Utility.px2dip(mContext, mContext.getResources().getDisplayMetrics().widthPixels));
         mActionTag = ActionLog.More;
     }
 
@@ -809,13 +808,13 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
             titleTxv.setTextSize(textSize);
             switch(notice.getLocalLayoutType()){
             case 3:
-            	titleTxv.setPadding(Utility.dip2px(context, drawablePadding), pd8, pd8*2, pd8);
+            	titleTxv.setPadding(Utility.dip2px(context, drawablePadding), pd8, 0, pd8);
             	break;
             case 5:
             	titleTxv.setPadding(pd8, 2 * Utility.dip2px(context, 17 - textSize), pd8, 0);
             	break;
             case 7:
-            	titleTxv.setPadding(Utility.dip2px(context, drawablePadding), 2 * Utility.dip2px(context, 17 - textSize), pd8*2, 0);
+            	titleTxv.setPadding(Utility.dip2px(context, drawablePadding), 2 * Utility.dip2px(context, 17 - textSize), 0, 0);
             	break;
             }
             return titleTxv;
@@ -837,7 +836,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         		descriptionTxv.setPadding(pd8, 0, pd8, 0);
         		break;
         	case 7:
-        		descriptionTxv.setPadding(Utility.dip2px(context, drawablePadding), 0, pd8*2, 0);
+        		descriptionTxv.setPadding(Utility.dip2px(context, drawablePadding), 0, 0, 0);
         		break;
         	}
         	return descriptionTxv;
@@ -921,22 +920,27 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     		String description = notice.getDescription();
             float titleTextSize = 16;
             float descTextSize = titleTextSize - 2;
-            float drawablePadding = (notice.getLocalType() == 1) ? 4 : titleTextSize;
+            int drawablePadding = Utility.dip2px(context, (notice.getLocalType() == 1) ? 4 : titleTextSize);
             float layoutMargin = (notice.getLocalType() == 1) ? 4 : 16;
             int screen_px = context.getResources().getDisplayMetrics().widthPixels;
-            int textView_px = screen_px - Utility.dip2px(context, layoutMargin + 16 + 16 + 48);
-            float textView_dp = Utility.px2dip(context, textView_px);
+            int textView_px = screen_px - Utility.dip2px(context, layoutMargin + 16 + 48 + 8);
             if(title != null && !TextUtils.isEmpty(title)){
-            	while(titleTextSize* ByteUtil.getCharArrayLength(title)/2 + drawablePadding > textView_dp + .5){
+            	TextView textView = new TextView(context);
+            	textView.setPadding(0, 0, 0, 0);
+            	textView.setTextSize(titleTextSize);
+            	while(textView.getPaint().measureText(title) + drawablePadding > textView_px + .5){
             		titleTextSize -= 1;
-            		drawablePadding = (notice.getLocalType() == 1) ? 4 : titleTextSize;
+            		textView.setTextSize(titleTextSize);
+                    drawablePadding = Utility.dip2px(context, (notice.getLocalType() == 1) ? 4 : titleTextSize);
             	}
             	descTextSize = titleTextSize - 2;
             	if(description != null && !TextUtils.isEmpty(description)){
-            		while(descTextSize* ByteUtil.getCharArrayLength(description)/2 + drawablePadding > textView_dp + .5){
+            		textView.setTextSize(descTextSize);
+            		while(textView.getPaint().measureText(description) + drawablePadding > textView_px + .5){
             			titleTextSize --;
             			descTextSize --;
-            			drawablePadding = (notice.getLocalType() == 1) ? 4 : titleTextSize;
+            			textView.setTextSize(descTextSize);
+                        drawablePadding = Utility.dip2px(context, (notice.getLocalType() == 1) ? 4 : titleTextSize);
             		}
             	}
             }

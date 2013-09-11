@@ -188,8 +188,6 @@ public class PullService extends Service {
                     if (response != null && response.getResponseCode() == 200 && response instanceof PullMessage) {
                         PullMessage pullMessage = (PullMessage) response;
                         processPullMessage(context, pullMessage, requestCal);
-                        //推送成功,设置为定时器触发模式
-                        TKConfig.setPref(context, TKConfig.PREFS_RADAR_PULL_TRIGGER_MODE, TRIGGER_MODE_ALARM);
                         mActionLog.addAction(ActionLog.RadarPushSucceeded, mTriggerMode);
                         exitService(STAT_SUCCESS, requestCal);
                         return;
@@ -262,8 +260,17 @@ public class PullService extends Service {
         Context context = getApplicationContext();
         
         if (mTriggerMode.equals(TRIGGER_MODE_NET)) {
-            //如果是网络触发模式,则不设置定时器,只把失败次数归零
-            LogWrapper.d(TAG, "failed in net trigger mode, do not set Alarm.");
+            if (status == STAT_SUCCESS) {
+                //推送成功,设置为定时器触发模式
+                LogWrapper.d(TAG, "succeed in net trigger mode, change to alarm mode.");
+                TKConfig.setPref(context, TKConfig.PREFS_RADAR_PULL_TRIGGER_MODE, TRIGGER_MODE_ALARM);
+                Calendar next = Alarms.alarmAddDays(now, requsetIntervalDays);
+                Alarms.enableAlarm(context, next, alarmAction);
+                LogWrapper.d(TAG, "next Alarm: " + next.getTime().toLocaleString());
+            } else {
+                //如果是网络触发模式,则不设置定时器,只把失败次数归零
+                LogWrapper.d(TAG, "failed in net trigger mode, do not set Alarm.");
+            }
             fail = 0;
         } else {
             //如果是正常定时器触发模式

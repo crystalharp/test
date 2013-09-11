@@ -247,6 +247,7 @@ public class FetchFavoriteFragment extends BaseFragment {
 	public void show() {
 		// TODO Auto-generated method stub
 		super.show();
+		mEmptyView.setVisibility(View.GONE);
 		mFavoriteList.clear();
 		mFavoriteAdapter.notifyDataSetChanged();
 		loadData(0);

@@ -102,6 +102,7 @@ public class UserLoginRegistActivity extends UserBaseActivity implements View.On
             titleRegistBtn.setBackgroundResource(R.drawable.btn_hot_comment);
         } else {
         	mActionTag = ActionLog.UserRegist;
+        	valiNumBtn.reset(getString(R.string.reqest_validate_num));
             loginScv.setVisibility(View.GONE);
             registScv.setVisibility(View.VISIBLE);
             titleLoginBtn.setBackgroundResource(R.drawable.btn_all_comment);
@@ -265,9 +266,27 @@ public class UserLoginRegistActivity extends UserBaseActivity implements View.On
 	}
 
 	private void dealWith403() {
-		mResponseHandler.showErrorThenSelectAllAndShowSoftkeyboard(R.string.title_error_tip, 
-				R.string.response_code_403_login, loginPhoneEdt);
+		Utility.showNormalDialog(UserLoginRegistActivity.this, 
+		        getString(R.string.title_error_tip), 
+				getString(R.string.response_code_403_login), 
+				getString(R.string.confirm),
+				null,
+				new OnClickListener() {
+
+			@Override
+			public void onClick(DialogInterface dialog,
+					int which) {
+				if (which == DialogInterface.BUTTON_POSITIVE) {
+					String phoneNum = loginPhoneEdt.getText().toString().trim();
+					if (!TextUtils.isEmpty(phoneNum)) {
+						registPhoneEdt.setText(phoneNum);
+						registPhoneEdt.setSelection(phoneNum.length());
+			        }
+					changeMode(false);
+				} 
+			}
 		
+		});
 	}
 	
 	private void dealWith404() {
@@ -462,7 +481,6 @@ public class UserLoginRegistActivity extends UserBaseActivity implements View.On
 					int which) {
 				if (which == DialogInterface.BUTTON_POSITIVE) {
 					setPrefsPhoneNum(registPhoneEdt.getText().toString().trim());
-					valiNumBtn.reset(getString(R.string.reqest_validate_num));
 					changeMode(true);
 				} 
 			}

@@ -19,7 +19,7 @@
 	        android:id="@+id/name_txv"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
-	        
+	        android:paddingRight="8dp"
 	        android:drawableRight="@drawable/ic_goto_here"
 	        
 	        android:focusable="false"
@@ -36,130 +36,139 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/bg_line_split"
-        />	
-    <LinearLayout 
-	    android:layout_width="fill_parent"
-	    android:layout_height="wrap_content"
-	    android:paddingTop="8dp"
-	    android:paddingLeft="8dp"
-	    android:background="@drawable/list_middle">
+        />
+    <LinearLayout  android:id="@+id/item_detail_lly"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/list_footer"
+        >
         
-	    <TextView
-	        android:id="@+id/price_txv"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
+	    <LinearLayout
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    android:layout_marginTop="4dp"
+		    android:paddingLeft="8dp"
+		    android:gravity="left|center_vertical"
+		    android:background="@drawable/transparent_bg">
 	        
-	        android:focusable="false"
-	        android:singleLine="true"
-	        android:text="158"
-	        android:textColor="@color/black_light"
-	        android:textSize="16sp" />
+		    <TextView
+		        android:id="@+id/price_txv"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        
+		        android:focusable="false"
+		        android:singleLine="true"
+		        android:text="158"
+		        android:textColor="@color/black_light"
+		        android:textSize="16sp" />
+		
+		    <TextView
+		        android:id="@+id/yuan_txv"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:textColor="@color/black_light"
+		        android:focusable="false"
+		        android:singleLine="true"
+		        android:text="@string/rmb_text"
+		        android:textSize="16sp" />
+		
+		    <TextView
+		        android:id="@+id/room_type_txv"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        
+		        android:layout_marginLeft="16dp"
+		        android:drawablePadding="4dp"
+		        
+		        android:focusable="false"
+		        android:singleLine="true"
+		        android:text="多媒体标准间"
+		        android:textColor="@color/black_light"
+		        android:textSize="16sp" />
+		    
+	    </LinearLayout>
 	
-	    <TextView
-	        android:id="@+id/yuan_txv"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:textColor="@color/black_light"
-	        android:focusable="false"
-	        android:singleLine="true"
-	        android:text="@string/rmb_text"
-	        android:textSize="16sp" />
-	
-	    <TextView
-	        android:id="@+id/room_type_txv"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        
-	        android:layout_marginLeft="16dp"
-	        android:drawablePadding="4dp"
-	        
-	        android:focusable="false"
-	        android:singleLine="true"
-	        android:text="多媒体标准间"
-	        android:textColor="@color/black_light"
-	        android:textSize="16sp" />
-	    
-    </LinearLayout>
-	
-    <RelativeLayout 
-	    android:layout_width="fill_parent"
-	    android:layout_height="wrap_content"
-	    android:paddingTop="8dp"
-	    android:paddingLeft="8dp"
-	    android:paddingBottom="8dp"
-	    android:background="@drawable/list_footer">
-	    
-	    <TextView
-	        android:id="@+id/checkin_txv"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        
-	        android:layout_alignParentLeft="true"
-	        android:drawablePadding="4dp"
-	        
-	        android:focusable="false"
-	        android:singleLine="true"
-	        android:text="@string/hotel_checkin"
-	        android:textColor="@color/black_light"
-	        android:textSize="16sp" />
-	
-	    <TextView
-	        android:id="@+id/checkin_date_txv"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        
-	        android:layout_toRightOf="@id/checkin_txv"
-	        android:drawablePadding="4dp"
-	        
-	        android:focusable="false"
-	        android:singleLine="true"
-	        android:text="3.13"
-	        android:textColor="@color/black_light"
-	        android:textSize="16sp" />
-	
-	    <TextView
-	        android:id="@+id/checkout_txv"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        
-	        android:layout_toRightOf="@id/checkin_date_txv"
-	        android:layout_marginLeft="16dp"
-	        android:drawablePadding="4dp"
-	        
-	        android:focusable="false"
-	        android:singleLine="true"
-	        android:text="@string/hotel_checkout"
-	        android:textColor="@color/black_light"
-	        android:textSize="16sp" />
-	
-	    <TextView
-	        android:id="@+id/checkout_date_txv"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        
-	        android:layout_toRightOf="@id/checkout_txv"
-	        android:drawablePadding="4dp"
-	        
-	        android:focusable="false"
-	        android:singleLine="true"
-	        android:text="3.33"
-	        android:textColor="@color/black_light"
-	        android:textSize="16sp" />
-	
-	    <TextView
-	        android:id="@+id/day_count_txv"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        
-	        android:layout_alignParentRight="true"
-	        android:layout_marginRight="4dp"
-	        
-	        android:focusable="false"
-	        android:singleLine="true"
-	        android:text="共住2晚"
-	        android:textColor="@color/black_light"
-	        android:textSize="16sp" />
+	    <RelativeLayout 
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    android:paddingLeft="8dp"
+		    android:layout_marginBottom="4dp"
+		    android:gravity="center_vertical"
+		    android:background="@drawable/transparent_bg">
+		    
+		    <TextView
+		        android:id="@+id/checkin_txv"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        
+		        android:layout_alignParentLeft="true"
+		        android:drawablePadding="4dp"
+		        
+		        android:focusable="false"
+		        android:singleLine="true"
+		        android:text="@string/hotel_checkin"
+		        android:textColor="@color/black_light"
+		        android:textSize="16sp" />
+		
+		    <TextView
+		        android:id="@+id/checkin_date_txv"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        
+		        android:layout_toRightOf="@id/checkin_txv"
+		        android:drawablePadding="4dp"
+		        
+		        android:focusable="false"
+		        android:singleLine="true"
+		        android:text="3.13"
+		        android:textColor="@color/black_light"
+		        android:textSize="16sp" />
+		
+		    <TextView
+		        android:id="@+id/checkout_txv"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        
+		        android:layout_toRightOf="@id/checkin_date_txv"
+		        android:layout_marginLeft="16dp"
+		        android:drawablePadding="4dp"
+		        
+		        android:focusable="false"
+		        android:singleLine="true"
+		        android:text="@string/hotel_checkout"
+		        android:textColor="@color/black_light"
+		        android:textSize="16sp" />
+		
+		    <TextView
+		        android:id="@+id/checkout_date_txv"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        
+		        android:layout_toRightOf="@id/checkout_txv"
+		        android:drawablePadding="4dp"
+		        
+		        android:focusable="false"
+		        android:singleLine="true"
+		        android:text="3.33"
+		        android:textColor="@color/black_light"
+		        android:textSize="16sp" />
+		
+		    <TextView
+		        android:id="@+id/day_count_txv"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        
+		        android:layout_alignParentRight="true"
+		        android:layout_marginRight="4dp"
+		        
+		        android:focusable="false"
+		        android:singleLine="true"
+		        android:text="共住2晚"
+		        android:textColor="@color/black_light"
+		        android:textSize="16sp" />
 	
 	    </RelativeLayout>
-
+    </LinearLayout>
+    
 </LinearLayout>
