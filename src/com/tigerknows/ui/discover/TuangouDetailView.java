@@ -335,6 +335,7 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
     @Override
     public void dismiss() {
         super.dismiss();
+        mData = null;
         mPictureImv.setBackgroundResource(R.drawable.bg_picture_detail);
         mContentTxv.setBackgroundDrawable(null);
     }

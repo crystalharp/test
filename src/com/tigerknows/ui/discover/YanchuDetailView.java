@@ -96,6 +96,7 @@ public class YanchuDetailView extends BaseDetailView implements View.OnClickList
     @Override
     public void dismiss() {
         super.dismiss();
+        mData = null;
         mPictureImv.setImageDrawable(null);
     }
     

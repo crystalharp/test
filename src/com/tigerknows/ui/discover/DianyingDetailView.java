@@ -134,6 +134,7 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
     @Override
     public void dismiss() {
         super.dismiss();
+        mData = null;
         mPictureImv.setImageDrawable(null);
     }
     

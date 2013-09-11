@@ -591,7 +591,7 @@ public final class DataQuery extends BaseQuery {
         } else if (DATA_TYPE_YINGXUN.equals(dataType)) { 
             ekeys = Utility.mergeArray(ekeys, new String[]{SERVER_PARAMETER_NEED_FIELD, 
                     SERVER_PARAMETER_DIANYING_UUID}, indexKeys);
-            okeys = Utility.mergeArray(okeys, discoverOptinalKeys, positionKeys);
+            okeys = Utility.mergeArray(okeys, discoverOptinalKeys, filterOptionalKeys, positionKeys);
             debugCheckParameters(ekeys, okeys);
         } else if (DATA_TYPE_YANCHU.equals(dataType)) { 
             ekeys = Utility.mergeArray(ekeys, new String[]{SERVER_PARAMETER_NEED_FIELD, 
