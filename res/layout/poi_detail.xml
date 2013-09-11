@@ -238,7 +238,7 @@
                 <ImageView 
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
+                    android:layout_marginBottom="12dp"
                     android:background="@drawable/bg_sawtooth" /> 
                     
                 <LinearLayout
@@ -247,7 +247,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="8dp"
                     android:layout_marginRight="8dp"
-                    android:layout_marginBottom="16dp"
+                    android:layout_marginBottom="12dp"
                     android:orientation="vertical">
                     
                     <RelativeLayout android:id="@+id/address_view"
@@ -361,7 +361,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="8dp"
                     android:layout_marginRight="8dp"
-                    android:layout_marginBottom="16dp">
+                    android:layout_marginBottom="12dp">
                     <include 
                         layout="@layout/poi_tip_comment"
                         android:layout_width="fill_parent"
@@ -387,7 +387,7 @@
                     android:layout_height="wrap_content" 
                     android:layout_marginLeft="8dp"
                     android:layout_marginRight="8dp"
-                    android:layout_marginBottom="16dp"
+                    android:layout_marginBottom="12dp"
                     android:paddingLeft="10dp"
                     android:paddingRight="8dp"
                     android:orientation="vertical"
