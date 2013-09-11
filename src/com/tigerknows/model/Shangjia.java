@@ -13,6 +13,8 @@ import com.decarta.android.exception.APIException;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
+import com.tigerknows.model.DataQuery.ShangjiaResponse;
+import com.tigerknows.model.DataQuery.ShangjiaResponse.ShangjiaList;
 import com.tigerknows.model.xobject.XArray;
 import com.tigerknows.model.xobject.XMap;
 import com.tigerknows.util.ByteUtil;
@@ -197,6 +199,22 @@ public class Shangjia extends BaseData implements Parcelable {
         out.writeLong(fastPurchase);
     }
     
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        }
+        
+        if (object instanceof Shangjia) {
+            Shangjia other = (Shangjia) object;
+            if (other.source == this.source) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
     @SuppressWarnings("unchecked")
     public static void readShangjiaList(Context context) {
         synchronized (shangjiaList) {
@@ -229,18 +247,9 @@ public class Shangjia extends BaseData implements Parcelable {
                         }
                     }
                 }
-            }
+            } else {
 
-            try {
-
-                boolean exist = false;
-                for(Shangjia shangjia : shangjiaList) {
-                    if (shangjia.source == SOURCE_WOWOTUAN) {
-                        exist = true;
-                        break;
-                    }
-                }
-                if (exist == false) {
+                try {
                     XMap xmap = new XMap();
                     xmap.put(FIELD_SOURCE, SOURCE_WOWOTUAN);
                     xmap.put(FIELD_SERVICE_TEL, "4001055555");
@@ -251,17 +260,8 @@ public class Shangjia extends BaseData implements Parcelable {
                     Shangjia shangjia = new Shangjia();
                     shangjia.init(xmap, true);
                     shangjiaList.add(shangjia);
-                }
-                
-                exist = false;
-                for(Shangjia shangjia : shangjiaList) {
-                    if (shangjia.source == SOURCE_NUOMI) {
-                        exist = true;
-                        break;
-                    }
-                }
-                if (exist == false) {
-                    XMap xmap = new XMap();
+                    
+                    xmap = new XMap();
                     xmap.put(FIELD_SOURCE, SOURCE_NUOMI);
                     xmap.put(FIELD_SERVICE_TEL, "4006888887");
                     xmap.put(FIELD_MARKER, Utility.getDrawableResource(context, R.drawable.ic_nuomi_marker));
@@ -269,20 +269,11 @@ public class Shangjia extends BaseData implements Parcelable {
                     xmap.put(FIELD_MESSAGE, context.getString(R.string.nuomi_message));
                     xmap.put(FIELD_REFUND_SERVICE, context.getString(R.string.nuomi_refund_service));
                     
-                    Shangjia shangjia = new Shangjia();
+                    shangjia = new Shangjia();
                     shangjia.init(xmap, true);
                     shangjiaList.add(shangjia);
-                }
-
-                exist = false;
-                for(Shangjia shangjia : shangjiaList) {
-                    if (shangjia.source == SOURCE_MEITUAN) {
-                        exist = true;
-                        break;
-                    }
-                }
-                if (exist == false) {
-                    XMap xmap = new XMap();
+                    
+                    xmap = new XMap();
                     xmap.put(FIELD_SOURCE, SOURCE_MEITUAN);
                     xmap.put(FIELD_SERVICE_TEL, "4006605335");
                     xmap.put(FIELD_MARKER, Utility.getDrawableResource(context, R.drawable.ic_meituan_marker));
@@ -292,24 +283,57 @@ public class Shangjia extends BaseData implements Parcelable {
                     xmap.put(FIELD_URL, "http://r.union.meituan.com/url/visit/?a=1&key=Sl2zGAgo4NiBcy67K83MtEDx5XIsrLjP&url=http://i.meituan.com/orders");
                     xmap.put(FIELD_FAST_PURCHASE, 1);
                     
-                    Shangjia shangjia = new Shangjia();
+                    shangjia = new Shangjia();
                     shangjia.init(xmap, true);
                     shangjiaList.add(shangjia);
+    
+                } catch (APIException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
                 }
-                
-                DataQuery dataQuery = new DataQuery(context);
-                dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_SHANGJIA);
-                dataQuery.addParameter(DataQuery.SERVER_PARAMETER_NEED_FIELD, Globals.g_Session_Id != null ? NEED_FIELD : NEED_FIELD_NO_LOGON);
-                dataQuery.setup(Globals.getCurrentCityInfo().getId(), -1, -1, null);
-                dataQuery.query();
-            } catch (APIException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+            }
+            
+            DataQuery dataQuery = new DataQuery(context);
+            dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_SHANGJIA);
+            dataQuery.addParameter(DataQuery.SERVER_PARAMETER_NEED_FIELD, Globals.g_Session_Id != null ? NEED_FIELD : NEED_FIELD_NO_LOGON);
+            dataQuery.setup(Globals.getCurrentCityInfo().getId(), -1, -1, null);
+            dataQuery.query();
+            
+            Response response = dataQuery.getResponse();
+            if (response != null) {
+                ShangjiaResponse shangjiaResponse = (ShangjiaResponse)response;
+                ShangjiaList shangjiaList = shangjiaResponse.getList();
+                if (shangjiaList != null) {
+                    List<Shangjia> shangjiaArrayList = shangjiaList.getList();
+                    List<Shangjia> oldShangjiaList = new ArrayList<Shangjia>();
+                    oldShangjiaList.addAll(Shangjia.shangjiaList);
+                    
+                    Shangjia.shangjiaList.clear();
+                    if (shangjiaArrayList != null && shangjiaArrayList.size() > 0) {
+                        
+                        Shangjia.shangjiaList.addAll(shangjiaArrayList);
+                        
+                        // 如果此时返回的url为空且之前存在url(没有提交sessionId)，那么需要沿用之前的url
+                        for(int i = Shangjia.shangjiaList.size()-1; i >= 0; i--) {
+                            Shangjia shangjia = Shangjia.shangjiaList.get(i);
+                            if (shangjia.url == null) {
+                                for(int j = oldShangjiaList.size()-1; j >= 0; j--) {
+                                    Shangjia oldShangjia = oldShangjiaList.get(j);
+                                    if (oldShangjia.source == shangjia.source) {
+                                        shangjia.url = oldShangjia.url;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    writeShangjiaList();
+                }
             }
         }
     }
     
-    public static void writeShangjiaList() {
+    private static void writeShangjiaList() {
         synchronized (shangjiaList) {
             try {
                 XArray<XMap> xarray = new XArray<XMap>();
