@@ -12,7 +12,6 @@ import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.android.app.TKActivity;
-import android.widget.Toast;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.Comment;
 import com.tigerknows.model.DataOperation;
@@ -61,6 +60,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.RatingBar.OnRatingBarChangeListener;
 
@@ -817,8 +817,6 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
-        } else {
-            Toast.makeText(mThis, R.string.app_name, Toast.LENGTH_LONG).show();
         }
         long commentPattern = mPOI.getCommentPattern();
         if (POI.COMMENT_PATTERN_FOOD == commentPattern) {
@@ -1177,6 +1175,14 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
                 }
             }
         }
+        
+        int tipResId;
+        if (mStatus == STATUS_MODIFY) {
+            tipResId = R.string.poi_comment_update_success;
+        } else {
+            tipResId = R.string.poi_comment_publish_success;
+        }
+        Toast.makeText(mThis, tipResId, Toast.LENGTH_LONG).show();
 
         mPOI.update(mThis, mPOI.getStoreType());
         Intent intent = new Intent(EditCommentActivity.this, Sphinx.class);
