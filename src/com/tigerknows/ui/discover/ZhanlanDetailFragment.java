@@ -39,8 +39,8 @@ public class ZhanlanDetailFragment extends BaseDetailFragment
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         mActionTag = ActionLog.ZhanlanDetail;
+        super.onCreate(savedInstanceState);
     }
 
     @Override

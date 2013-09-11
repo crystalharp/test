@@ -89,8 +89,8 @@ public class TuangouDetailFragment extends BaseDetailFragment
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         mActionTag = ActionLog.TuangouDetail;
+        super.onCreate(savedInstanceState);
     }
 
     @Override

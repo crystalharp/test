@@ -39,8 +39,8 @@ public class DianyingDetailFragment extends BaseDetailFragment
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         mActionTag = ActionLog.DianyingDetail;
+        super.onCreate(savedInstanceState);
     }
 
     @Override
