@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"
             android:gravity="left|center_vertical"
             android:text="@string/service_hotline"
-            android:textColor="@color/black"
+            android:textColor="@color/black_light"
             android:textSize="16sp"
             />
         <TextView android:id="@+id/service_hotline_txv"
@@ -29,8 +29,9 @@
             android:layout_height="wrap_content"
             android:gravity="left|center_vertical"
             android:drawableRight="@drawable/ic_telephone"
+            android:layout_marginLeft="10dp"
             android:text="@string/hotel_hot_line"
-            android:textColor="@color/black"
+            android:textColor="@color/black_dark"
             android:textSize="16sp"
             android:autoLink="none"
             />
