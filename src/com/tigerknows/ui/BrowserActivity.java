@@ -25,6 +25,7 @@ import android.widget.TextView;
 
 import com.alipay.android.MobileSecurePayer;
 import com.alipay.android.MobileSecurePayHelper;
+import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
@@ -315,20 +316,19 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
     void buy(boolean login) {
         Tuangou tuangou = sTuangou;
         if (tuangou != null) {
-            if (tuangou.getUrl() != null) {
-                loadDiandan(tuangou.getUrl());
-            } else if (tuangou.getDingdanCreateResponse() != null) {
-                loadDiandan(tuangou.getDingdanCreateResponse().getUrl());
-            } else {
-                DataOperation dataOperation = TuangouDetailView.makeDingdanQuery(mThis, tuangou, false, mId, mId);
-                if (dataOperation != null) {
-                    queryStart(dataOperation);
-                } else if (login){
+            String sessionId = Globals.g_Session_Id;
+            if (TextUtils.isEmpty(sessionId) && TextUtils.isEmpty(tuangou.getUrl())) {
+                if (login) {
                     Intent intent = new Intent(mThis, UserLoginRegistActivity.class);
                     intent.putExtra(UserBaseActivity.SOURCE_VIEW_ID_LOGIN, mId);
                     intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_SUCCESS, mId);
                     intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_FAILED, mId);
                     startActivityForResult(intent, R.id.activity_user_login_regist);
+                }
+            } else {
+                DataOperation dataOperation = TuangouDetailView.makeDingdanQuery(mThis, tuangou, false, mId, mId);
+                if (dataOperation != null) {
+                    queryStart(dataOperation);
                 }
             }
         }
