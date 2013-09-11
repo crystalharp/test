@@ -24,6 +24,7 @@ import com.decarta.android.event.EventListener;
 import com.decarta.android.event.EventSource;
 import com.decarta.android.exception.APIException;
 import com.decarta.android.location.Position;
+import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.decarta.android.util.XYDouble;
 import com.decarta.android.util.XYInteger;
@@ -404,7 +405,7 @@ public class Polyline extends Shape implements EventSource{
 		//Log.i("Polyline","renderGL red,green,blue,opacity,line width,point size:"+red+","+green+","+blue+","+opacity+","+width+","+width/2f);
         
 		double zoomScale=(float)Math.pow(2,zoomLevel-Shape.ZOOM_LEVEL);
-		for(int m=0;m<pointIdx.size();m++){
+		for(int m = 0, size = pointIdx.size();m < size; ++m){
 			double xx=0,yy=0;
 			if(genLevel==20){
 				xx=mercXYs[0x0000FFFF & pointIdx.get(m)].x;
@@ -458,13 +459,11 @@ public class Polyline extends Shape implements EventSource{
 			lastY=y;
 			
 		}
-
 		indiceBuffer.clear();
         gl.glColor4f(1, 1, 1, 1);
         gl.glLineWidth(1);
         gl.glPointSize(1);
         gl.glDepthMask(true);
-        
         //Log.i("Polyline","draw points, time:"+pointIdx.size()+","+(System.nanoTime()-start)/1E6);
 	}
 	
