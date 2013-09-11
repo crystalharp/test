@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.tigerknows.R;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.map.MapEngine;
+import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.BuslineModel;
 import com.tigerknows.model.BuslineModel.Line;
 import com.tigerknows.model.BuslineQuery;
@@ -106,6 +107,7 @@ public class ExtraBusstopPOI extends DynamicPOIView {
 
     @Override
     public void onPostExecute(TKAsyncTask tkAsyncTask) {
+        mPOIDetailFragment.minusLoadingView();
         BuslineQuery query = (BuslineQuery) tkAsyncTask.getBaseQuery();
         BuslineModel model = query.getBuslineModel();
         if (model != null && model.getType() == BuslineModel.TYPE_BUSLINE) {
@@ -144,9 +146,11 @@ public class ExtraBusstopPOI extends DynamicPOIView {
         int cityId = mapEngine.getCityId(mPOI.getPosition());
         
         BuslineQuery buslineQuery = new BuslineQuery(mSphinx);
+        buslineQuery.addParameter(BaseQuery.SERVER_PARAMETER_SIZE, "10000");
         buslineQuery.setup(cityId, mPOI.getName(), 0, false, R.id.view_traffic_home, null);
         
         queryStart(buslineQuery);
+        mPOIDetailFragment.addLoadingView();
 
     }
 
