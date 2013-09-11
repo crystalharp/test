@@ -4201,7 +4201,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     int zoomLevel = (int)mMapView.getZoomLevel();
                     Position pos = myLocationCityInfo.getPosition();
                     if(zoomLevel < TKConfig.ZOOM_LEVEL_LOCATION) {
-                    	mMapView.setZoomLevel(zoomLevel);
+                    	mMapView.setZoomLevel(TKConfig.ZOOM_LEVEL_LOCATION);
                     	mMapView.panToPosition(pos);
                     }
                     else {
