@@ -1376,7 +1376,6 @@ public class TilesView extends GLSurfaceView {
 				this.mapPreference.realTimeTraffic = false;
 				centerXY = null;
 				throw APIException.wrapToAPIException(e);
-
 			}
 		}
 		refreshMap();
@@ -1459,7 +1458,6 @@ public class TilesView extends GLSurfaceView {
 		if (moveJustDown) {
 			mParentMapView.executeMoveEndListeners(position);
 		}
-
 	}
 
 	/**
@@ -1554,16 +1552,17 @@ public class TilesView extends GLSurfaceView {
 					+ " must be between " + CONFIG.ZOOM_LOWER_BOUND + " - "
 					+ CONFIG.ZOOM_UPPER_BOUND);
 		}
-		if (centerXY == null || displaySize == null || displaySize.x == 0
-				|| displaySize.y == 0) {
-			zoomLevel = newLevel;
-		} else {
-			zoomView(newLevel,
-					new XYFloat(displaySize.x / 2, displaySize.y / 2));
-			mParentMapView.executeZoomEndListeners(Math
-					.round(newLevel));
+		synchronized (drawingLock) {
+			if (centerXY == null || displaySize == null || displaySize.x == 0
+					|| displaySize.y == 0) {
+				zoomLevel = newLevel;
+			} else {
+				zoomView(newLevel,
+						new XYFloat(displaySize.x / 2, displaySize.y / 2));
+				mParentMapView.executeZoomEndListeners(Math
+						.round(newLevel));
+			}
 		}
-
 	}
 
 	public void zoomTo(int newZoomLevel, final Position zoomCenter,
@@ -1703,9 +1702,7 @@ public class TilesView extends GLSurfaceView {
 
 				adjustCenter();
 			}
-
 			zoomLevel = newZoomLevel;
-
 			if (zoomLevel > centerXYZ.z + 0.5 || zoomLevel < centerXYZ.z - 0.5) {
 				int roundLevel = Math.round(zoomLevel);
 				if (roundLevel > CONFIG.ZOOM_UPPER_BOUND
@@ -2838,7 +2835,7 @@ public class TilesView extends GLSurfaceView {
 			if (centerXY == null) {
 				return;
 			}
-
+			LogWrapper.d("shake", "shake");
 			boolean movingL = false;
 			boolean movingJustDoneL = false;
 			MapView.MoveEndEventListener movingListener = easingRecord.listener;
@@ -2851,7 +2848,6 @@ public class TilesView extends GLSurfaceView {
 			boolean rotatingZJustDoneL = false;
 			// Tigerknows begin
 			isMyLocation = false;
-			boolean drawFullTile = false;
 			// Tigerknows end
 			isStaying = false;
 			boolean isWating = false;
@@ -3388,21 +3384,8 @@ public class TilesView extends GLSurfaceView {
 						if (refreshText || zoomingJustDoneL) {
 							isManuelZoom = false;
 						}
-//						long end = System.currentTimeMillis();
-//						if (refreshText) {
-//							isStaying = false;
-//							LogWrapper.d("Label", "------draw all label cost: "
-//									+ (end - start));
-//						} else {
-//							LogWrapper.d("Label", "+++draw label cost: "
-//									+ (end - start));
-//						}
 						gl.glPopMatrix();
 						gl.glColor4f(1, 1, 1, 1);
-
-						int drawNum = willDrawTiles.size();
-						drawFullTile = (drawNum == ((bottomDist - topDist + 1) * (rightDist
-								- leftDist + 1)));
 					}
 					gl.glDisable(GL_BLEND);
 
@@ -3420,13 +3403,16 @@ public class TilesView extends GLSurfaceView {
 					
 					//draw scale view
 					gl.glPushMatrix();
+					gl.glTranslatef(displaySize.x/2.0f, displaySize.y/2.0f, 0);//中心点移到屏幕中心点
+					gl.glRotatef(-mapMode.getxRotation(), 1, 0, 0);
+					gl.glRotatef(-mapMode.getzRotation(), 0, 0, 1);
+					gl.glTranslatef(-displaySize.x/2.0f, -displaySize.y/2.0f, 0);//中心点移到屏幕中心点
 					gl.glVertexPointer(2, GL_FLOAT, 0, mVertexBuffer);
 					float density = Globals.g_metrics.density;
 			        Position centerPos = getCenterPosition();
 			        XYFloat leftTop = new XYFloat(10 * density, displaySize.y - 50 * density);
 					scaleView.renderGL(leftTop, zoomLevel, (float)centerPos.getLat(), centerXYZ.z, TEXTURE_COORDS);
 					gl.glPopMatrix();
-					
 					// draw the shapes
 					gl.glEnable(GL10.GL_BLEND);
 					gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
@@ -3462,7 +3448,6 @@ public class TilesView extends GLSurfaceView {
 					gl.glDisable(GL_BLEND);
 					gl.glEnable(GL_TEXTURE_2D);
 					gl.glVertexPointer(2, GL_FLOAT, 0, mVertexBuffer);
-
 					// draw the overlays
 					double overlayZoomScale = Math.pow(2, zoomLevel
 							- ItemizedOverlay.ZOOM_LEVEL);
@@ -3567,7 +3552,6 @@ public class TilesView extends GLSurfaceView {
 					gl.glDisable(GL10.GL_BLEND);
 					gl.glBlendFunc(GL10.GL_SRC_ALPHA,
 							GL10.GL_ONE_MINUS_SRC_ALPHA);
-
 					// draw the info window
 					if (infoWindow.isVisible()
 							&& infoWindow.getMercXY() != null) {

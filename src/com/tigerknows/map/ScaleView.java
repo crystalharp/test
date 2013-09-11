@@ -111,6 +111,7 @@ public class ScaleView {
     	GLES10.glBlendFunc(GLES10.GL_ONE, GLES10.GL_ONE_MINUS_SRC_ALPHA);
     	GLES10.glColor4f(1, 1, 1, 1);
     	GLES10.glVertexPointer(2, GLES10.GL_FLOAT, 0, vertexBuffer);
+    	GLES10.glBindTexture(GLES10.GL_TEXTURE_2D, texture.textureRef);
     	vertexBuffer.clear();
     	vertexBuffer.put(topLeftXY.x + 0);
     	vertexBuffer.put(topLeftXY.y + 0);
@@ -122,7 +123,6 @@ public class ScaleView {
     	vertexBuffer.put(topLeftXY.y + texture.size.y);
     	TEXTURE_COORDS.position(0);
     	vertexBuffer.position(0);
-    	GLES10.glBindTexture(GLES10.GL_TEXTURE_2D, texture.textureRef);
     	GLES10.glDrawArrays(GLES10.GL_TRIANGLE_STRIP, 0, 4);
     	GLES10.glDisable(GLES10.GL_TEXTURE_2D);
         float scaleLength = Ca.tk_get_pix_count_of_scale(lat, z);
