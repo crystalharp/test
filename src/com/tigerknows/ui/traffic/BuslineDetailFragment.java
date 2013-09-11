@@ -10,7 +10,6 @@ import java.util.List;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -56,6 +55,8 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
     private int curLineNum = -1;
     
     private int highlightIndex = -1;
+    
+    private String highlightStation = null;
 
     private StringListAdapter mResultAdapter;
     
@@ -91,9 +92,11 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
             if (clickedLine.equals(line)) {
             	return;
             } else {
-            	setData(clickedLine, position);
+            	setData(clickedLine, position, highlightStation);
             	onResume();           
-                setSelectionFromTop(0, 0);
+            	if (highlightStation == null) {
+            	    setSelectionFromTop(0, 0);
+            	}
             }
 
         }
@@ -138,7 +141,7 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
         	mTimeTxv.setVisibility(View.GONE);
         }
         
-        if (mLineList != null) {
+        if (mLineList != null && curLineNum != -1) {
         	mTitleBtn.setText(mSphinx.getString(R.string.title_busline_line_popup, TrafficQuery.numToStr(mSphinx, curLineNum + 1)));
         	if (mLineList.size() > 1) {
     	        mTitleBtn.setBackgroundResource(R.drawable.btn_title_popup);
@@ -228,7 +231,7 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
         setHighlightStation(highlightStation);
         
         mTitlePopupList.clear();
-        if (this.mLineList != null) {
+        if (this.mLineList != null && curLineNum != -1) {
             mTitlePopupArrayAdapter.mSelectedItem = mSphinx.getString(R.string.title_popup_content, curLineNum + 1, this.line.getName());
             for(int i = 0, size = mLineList.size(); i < size; i++) {
                 mTitlePopupList.add(mSphinx.getString(R.string.title_popup_content,i + 1, mLineList.get(i).getName()));
@@ -246,6 +249,7 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
     public void setHighlightStation(String s) {
         highlightIndex = -1;
         mResultAdapter.setHighlight(-1);
+        this.highlightStation = s;
         if (s != null) {
             highlightIndex = findStation(s, line.getStationList());
         }
@@ -419,12 +423,8 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
             mActionLog.addAction(mActionTag + ActionLog.TitleRightButton);
         	// 绘制交通图层
 			viewMap();
-			if (highlightIndex != -1) {
-			    BuslineOverlayHelper.panToPosition(mSphinx.getHandler(), highlightIndex, mSphinx.getMapView());
-			} else {
-			    // 将地图缩放至可以显示完整的交通路径, 并平移到交通路径中心点
-			    BuslineOverlayHelper.panToViewWholeOverlay(line, mSphinx.getMapView(), (Activity)mSphinx);
-			}
+			// 将地图缩放至可以显示完整的交通路径, 并平移到交通路径中心点
+			BuslineOverlayHelper.panToViewWholeOverlay(line, mSphinx.getMapView(), (Activity)mSphinx);
         }
     }
     
