@@ -435,6 +435,16 @@ public class TKActivity extends Activity implements TKAsyncTask.EventListener {
     @Override
     protected void onResume() {
         super.onResume();
+        LogWrapper.d(TAG, "onResume()");
+        
+        if (TextUtils.isEmpty(TKConfig.getPref(mThis, TKConfig.PREFS_ACQUIRE_WAKELOCK))) {
+            if (mWakeLock.isHeld() == false) {
+                mWakeLock.acquire();
+            }
+        } else if (mWakeLock.isHeld()) {
+            mWakeLock.release();
+        }
+        
         try {
             mMapEngine.initMapDataPath(getApplicationContext());
         } catch (Exception exception){
@@ -442,10 +452,6 @@ public class TKActivity extends Activity implements TKAsyncTask.EventListener {
             Utility.showDialogAcitvity(mThis, getString(R.string.not_enough_space_and_please_clear));
             finish();
             return;
-        }
-        LogWrapper.d(TAG, "onResume()");
-        if (mWakeLock.isHeld() == false && TextUtils.isEmpty(TKConfig.getPref(mThis, TKConfig.PREFS_ACQUIRE_WAKELOCK))) {
-            mWakeLock.acquire();
         }
         
         mTKLocationManager.addLocationListener(mLocationListener);
