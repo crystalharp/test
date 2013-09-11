@@ -44,7 +44,7 @@ public class NoticeQueryTest {
 		}
 		if( (op & 4)!=0){
 			if(op == 7){
-				xmap.put(Notice.FIELD_NOTICE_DESCRIPTION, "iPhone5, iPad mini, 点评,一二三四五");
+				xmap.put(Notice.FIELD_NOTICE_DESCRIPTION, "iPhone5, iPad mini, 点评,一二三四五六七八九十");
 			}else{
 				xmap.put(Notice.FIELD_NOTICE_DESCRIPTION, "FIELD_NOTICE_DESCRIPTION");
 			}
