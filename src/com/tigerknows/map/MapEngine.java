@@ -280,8 +280,8 @@ public class MapEngine {
         if (data == null || data.length < 1) {
             return null;
         }
-        LogWrapper.i("regionInfo", "totalSize: " + data[0] + "downloadedSize: " + data[1] + "lostCount: " + data[2]);
-        if((data[0] == 0 && data[1] == 0) || (data[0] == data[1] && data[0] != 0))
+        LogWrapper.i(TAG, "getLocalRegionDataInfo()regionId: " + regionId + " totalSize: " + data[0] + "downloadedSize: " + data[1] + "lostCount: " + data[2]);
+        if(data[0] == 0 && data[1] == 0)
         	return null;
         LocalRegionDataInfo regionMapInfo = new LocalRegionDataInfo();
         regionMapInfo.setTotalSize(data[0]);
