@@ -67,8 +67,8 @@ public class HttpManager {
 	private static final String HTTPMETHOD_POST = "POST";
 	public static final String HTTPMETHOD_GET = "GET";
 
-	private static final int SET_CONNECTION_TIMEOUT = 5 * 1000;
-	private static final int SET_SOCKET_TIMEOUT = 20 * 1000;
+    private static final int SET_CONNECTION_TIMEOUT = 30 * 1000;
+    private static final int SET_SOCKET_TIMEOUT = 20 * 1000;
 	/**
 	 * 
 	 * @param url 服务器地址

@@ -86,7 +86,7 @@ public class TKConfig {
     /**
      * 网络超时值
      */
-    private static int sHTTP_SOCKET_TIMEOUT = 60*1000;            // default to 1 min
+    private static int sHTTP_SOCKET_TIMEOUT = 30*1000;            // default to 1 min
 
     /**
      * 地图数据文件夹名称
