@@ -140,12 +140,12 @@ public class MapDownloadService extends Service implements MapTileDataDownload.I
                             }
                         }
                         
-                        List<Integer> regionIdList = mapEngine.getRegionIdList(currentCityInfo.getCName());
+                        List<Integer> regionIdList = MapEngine.getRegionIdList(currentCityInfo.getCName());
                         for (int i = 0, size = regionIdList.size(); i < size; i++) {
                             int regionId = regionIdList.get(i);
                             LogWrapper.d(TAG, "count regionId="+regionId);
                             
-                            LocalRegionDataInfo localRegionDataInfo = mapEngine.getLocalRegionDataInfo(regionId);
+                            LocalRegionDataInfo localRegionDataInfo = MapEngine.getLocalRegionDataInfo(regionId);
                             // 如果本地没有Region元数据则去下载并生成Region数据文件
                             while (isStopAll == false
                                     && isStopCurrentCity == false
@@ -164,11 +164,11 @@ public class MapDownloadService extends Service implements MapTileDataDownload.I
                             if (serverRegionDataInfoMap != null && serverRegionDataInfoMap.containsKey(regionId)) {
                                 severRegionDataInfo = serverRegionDataInfoMap.get(regionId);
                                 if (localRegionDataInfo != null && severRegionDataInfo != null) {
-                                    RegionMetaVersion regionMetaVersion = mapEngine.getRegionMetaVersion(regionId);
+                                    RegionMetaVersion regionMetaVersion = MapEngine.getRegionMetaVersion(regionId);
                                     if (null != regionMetaVersion) {
                                         String localVersion = regionMetaVersion.toString();
                                         String serverVersion = severRegionDataInfo.getRegionVersion();
-                                        TileDownload lostDatas[] = mapEngine.getLostData();
+                                        TileDownload lostDatas[] = MapEngine.getLostData();
                                         
                                         // 更新地图数据文件
                                         if ((lostDatas != null && lostDatas.length > 0 && lostDatas[0].getOffset() == 0)
@@ -308,7 +308,7 @@ public class MapDownloadService extends Service implements MapTileDataDownload.I
             if (tileLen <= remainDataLenth) {
                 byte[] dest = new byte[tileLen];
                 System.arraycopy(data, start, dest, 0, tileLen);
-                int ret = mapEngine.writeRegion(tileInfo.getRid(), tileInfo.getOffset(), dest, tileInfo.getVersion());
+                int ret = MapEngine.writeRegion(tileInfo.getRid(), tileInfo.getOffset(), dest, tileInfo.getVersion());
                 if (ret != 0) {
                     return -1;
                 }
@@ -320,7 +320,7 @@ public class MapDownloadService extends Service implements MapTileDataDownload.I
             } else {
                 byte[] dest = new byte[remainDataLenth];
                 System.arraycopy(data, start, dest, 0, remainDataLenth);
-                int ret = mapEngine.writeRegion(tileInfo.getRid(), tileInfo.getOffset(), dest, tileInfo.getVersion());
+                int ret = MapEngine.writeRegion(tileInfo.getRid(), tileInfo.getOffset(), dest, tileInfo.getVersion());
                 if (ret != 0) {
                     return -1;
                 }
@@ -370,7 +370,7 @@ public class MapDownloadService extends Service implements MapTileDataDownload.I
         LogWrapper.d(TAG, "download meta regionId="+regionId);
         mapMetaFileDownload.setup(regionId);
         mapMetaFileDownload.query();
-        LocalRegionDataInfo regionMapInfo = mapEngine.getLocalRegionDataInfo(regionId);
+        LocalRegionDataInfo regionMapInfo = MapEngine.getLocalRegionDataInfo(regionId);
         return regionMapInfo;
     }
     
@@ -386,14 +386,14 @@ public class MapDownloadService extends Service implements MapTileDataDownload.I
             }
             int regionId = regionIdList.get(i);
             LogWrapper.d(TAG, "download tile regionId="+regionId);
-            LocalRegionDataInfo regionMapInfo = mapEngine.getLocalRegionDataInfo(regionId);
+            LocalRegionDataInfo regionMapInfo = MapEngine.getLocalRegionDataInfo(regionId);
             while (regionMapInfo != null && regionMapInfo.getLostDataNum() > 0) {
                 if (isStopAll || isStopCurrentCity) {
                     break;
                 }
-                TileDownload[] lostDatas = mapEngine.getLostData();
+                TileDownload[] lostDatas = MapEngine.getLostData();
                 statusCode = downloadTileData(lostDatas);
-                regionMapInfo = mapEngine.getLocalRegionDataInfo(regionId);
+                regionMapInfo = MapEngine.getLocalRegionDataInfo(regionId);
                 if (statusCode != BaseQuery.STATUS_CODE_NETWORK_OK) {
                     try {
                         Thread.sleep(NETWORK_FAILURE_RETRY_INTERVAL);

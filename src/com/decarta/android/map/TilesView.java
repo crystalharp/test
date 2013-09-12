@@ -996,7 +996,15 @@ public class TilesView extends GLSurfaceView {
 							lastDistConv = distConv;
 							synchronized (drawingLock) {
 								try {
-									zoomView(newZoomLevel, lastCenterConv);
+									if (Math.round(newZoomLevel) == 9) {
+		                                if (newZoomLevel > zoomLevel) {
+		                                	setZoomLevel(10);
+		                                } else {
+		                                	setZoomLevel(8);
+		                                }
+		                            } else {
+										zoomView(newZoomLevel, lastCenterConv);
+		                            }
 									mParentMapView.executeMultiTouchZoomListeners(newZoomLevel);
 								} catch (Exception e) {
 									e.printStackTrace();
@@ -2766,6 +2774,7 @@ public class TilesView extends GLSurfaceView {
 				Label.clearTextBitmap();
 				SingleRectLabel.clearIcon();
 				scaleView.clearTexture();
+				clearTexRefs();
 			}
 			LogWrapper.i("onStop", "clearAllTextures success");
 		}
@@ -2808,7 +2817,7 @@ public class TilesView extends GLSurfaceView {
 				LogWrapper.i("Sequence", "onDrawFrame paused");
 				return;
 			}
-			LogWrapper.i("Sequence", "onDrawFrame begin");
+//			LogWrapper.i("Sequence", "onDrawFrame begin");
 			if (centerXY == null) {
 				return;
 			}
@@ -3685,58 +3694,45 @@ public class TilesView extends GLSurfaceView {
 					-displaySize.y / 2f, displaySize.y / 2f, mapMode.nearZ,
 					mapMode.farZ + 1);
 
-			clearTexRefs(gl);
+//			clearTexRefs();
 		}
 
-		/**************************************************** private methods *************************************************/
-		private void clearTexRefs(GL10 gl) {
-			LogWrapper.i(
-					"TilesView",
-					"clean tilePool total texture and image num:"
-							+ tileInfos.size());
-//			Iterator<TileInfo> iterator1 = tileInfos.values().iterator();
-//			while (iterator1.hasNext()) {
-//				TileInfo info = iterator1.next();
-//				if (info.tileTextureRef != 0) {
-//					if (!texturePool.returnTexture(info.tileTextureRef)) {
-//						IntBuffer textureRefBuf = IntBuffer.allocate(1);
-//						textureRefBuf.clear();
-//						textureRefBuf.put(0, info.tileTextureRef);
-//						textureRefBuf.position(0);
-//						glDeleteTextures(1, textureRefBuf);
-//					}
-//				}
-//			}
-//			tileInfos.clear();
-//			texturePool.clean();
-
+		private void clearIconPool() {
 			LogWrapper.i("TilesView", "clean iconPool total texture num:"
 					+ iconPool.size());
 			Iterator<Integer> iterator2 = iconPool.values().iterator();
 			while (iterator2.hasNext()) {
 				int textureRef = iterator2.next();
-				deleteTextureRef(gl, textureRef);
+				deleteTextureRef(textureRef);
 			}
 			iconPool.clear();
-
+		}
+		
+		private void clearClusterTextPool() {
 			LogWrapper.i("TilesView",
 					"clean clusterTextPool total texture num:"
 							+ clusterTextPool.size());
 			Iterator<Integer> iterator3 = clusterTextPool.values().iterator();
 			while (iterator3.hasNext()) {
 				int textureRef = iterator3.next();
-				deleteTextureRef(gl, textureRef);
+				deleteTextureRef(textureRef);
 			}
 			clusterTextPool.clear();
-
-			infoWindow.clearTextureRef(gl);
+		}
+		
+		/**************************************************** private methods *************************************************/
+		private void clearTexRefs() {
+			clearIconPool();
+			clearClusterTextPool();
+//			infoWindow.clearTextureRef(gl);
+			infoWindow.clearTextureRef();
 
 //			SingleRectLabel.clearIcon();
 //			Label.clearTextBitmap();
 //			Label.clearTextTexture();
 
-			compass.clearTextureRef(gl);
-
+//			compass.clearTextureRef(gl);
+			compass.clearTextureRef();
 		}
 
 		private int genTextureRef(GL10 gl) {
@@ -3747,7 +3743,17 @@ public class TilesView extends GLSurfaceView {
 			return textureRefBuf.get(0);
 
 		}
-
+		
+		private void deleteTextureRef(int textureRef) {
+			if (textureRef == 0)
+				return;
+			IntBuffer textureRefBuf = IntBuffer.allocate(1);
+			textureRefBuf.clear();
+			textureRefBuf.put(0, textureRef);
+			textureRefBuf.position(0);
+			GLES10.glDeleteTextures(1, textureRefBuf);
+		}
+		
 		private void deleteTextureRef(GL10 gl, int textureRef) {
 			if (textureRef == 0)
 				return;
@@ -3917,19 +3923,9 @@ public class TilesView extends GLSurfaceView {
 					Bitmap bm = Bitmap.createBitmap(bmSizeX, bmSizeY, config);
 					Canvas canvas = new Canvas(bm);
 					bm.eraseColor(0);
-
-					// canvas.drawRect(new RectF(0, 0,size.x,size.y), new
-					// Paint());
+					
 					canvas.drawBitmap(icon.getImage(), null, new RectF(0, 0,
 							size.x, size.y), null);
-					// int order = icon.getOrder();
-					// if (order > 0) {
-					// String orderStr = String.valueOf(order);
-					// int width = Math.round(orderP.measureText(orderStr));
-					// int height=Math.round(-orderP.ascent()+orderP.descent());
-					// canvas.drawText(orderStr, size.x/2-width/2,
-					// size.y/8+height, orderP);
-					// }
 
 					gl.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
 							GL_NEAREST);
@@ -3941,7 +3937,7 @@ public class TilesView extends GLSurfaceView {
 							GL_CLAMP_TO_EDGE);
 					GLUtils.texImage2D(GL_TEXTURE_2D, 0, bm, 0);
 					iconPool.put(icon.clone(), textureRef);
-					// Log.d("TilesView","iconPool put textureRef,pin:"+textureRef+","+pin.getMessage());
+					bm.recycle();
 				} catch (Exception e) {
 					deleteTextureRef(gl, textureRef);
 					textureRef = 0;
