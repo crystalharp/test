@@ -378,7 +378,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     public static final int THIRD_PARTY_PULL = 8;
     
     // 老虎动画时间
-    private static final int LOGO_ANIMATION_TIME = 2000;
+    private static final int LOGO_ANIMATION_TIME = 1000;
 
     private Context mContext;
     
@@ -583,7 +583,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                             }
                         }
                     }
-                }, LOGO_ANIMATION_TIME);
+                }, (fristUse || upgrade) ? 0 : LOGO_ANIMATION_TIME);
             }
             
             new Thread(new Runnable() {
