@@ -1392,7 +1392,7 @@ public class TKConfig {
         if (context == null || TextUtils.isEmpty(name)) {
             return;
         }
-        SharedPreferences sharedPreferences = context.getSharedPreferences(TKConfig.TIGERKNOWS_PREFS, Context.MODE_WORLD_WRITEABLE);
+        SharedPreferences sharedPreferences = context.getSharedPreferences(TKConfig.TIGERKNOWS_PREFS, Context.MODE_PRIVATE);
         sharedPreferences.edit().remove(name).commit();
     }
 
@@ -1405,7 +1405,7 @@ public class TKConfig {
         if (context == null || TextUtils.isEmpty(name)) {
             return;
         }
-        SharedPreferences sharedPreferences = context.getSharedPreferences(TKConfig.TIGERKNOWS_PREFS, Context.MODE_WORLD_WRITEABLE);
+        SharedPreferences sharedPreferences = context.getSharedPreferences(TKConfig.TIGERKNOWS_PREFS, Context.MODE_PRIVATE);
         try {
             sharedPreferences.edit().putString(name, value).commit();
         } catch (Exception e) {
@@ -1433,7 +1433,7 @@ public class TKConfig {
         if (context == null || TextUtils.isEmpty(name)) {
             return value;
         }
-        SharedPreferences sharedPreferences = context.getSharedPreferences(TKConfig.TIGERKNOWS_PREFS, Context.MODE_WORLD_READABLE);
+        SharedPreferences sharedPreferences = context.getSharedPreferences(TKConfig.TIGERKNOWS_PREFS, Context.MODE_PRIVATE);
         try {
             value = sharedPreferences.getString(name, defaultValue);
         } catch (Exception e) {
