@@ -2817,7 +2817,7 @@ public class TilesView extends GLSurfaceView {
 				LogWrapper.i("Sequence", "onDrawFrame paused");
 				return;
 			}
-			LogWrapper.i("Sequence", "onDrawFrame begin");
+//			LogWrapper.i("Sequence", "onDrawFrame begin");
 			if (centerXY == null) {
 				return;
 			}
