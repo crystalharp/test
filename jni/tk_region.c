@@ -95,14 +95,15 @@ static tk_status_t _tk_get_verify_code(tk_region_t *region, const char *chk_path
         fread(buff, 1, 8, chk_fp);
         if (memcmp(region->version, buff, 6) != 0) {
             region->verifycode = NULL;//todo:
+            fclose(chk_fp);
             return TK_STATUS_DATA_VERSION_NOT_MATCH;
         }
         else {
             byte_num = (buff[7] << 8) | (buff[6]);
             region->verifycode = malloc(byte_num);
             fread(region->verifycode, 1, byte_num, chk_fp);
+            fclose(chk_fp);
         }
-        fclose(chk_fp);
     } else {
         region->verifycode = NULL;
     }
@@ -158,7 +159,6 @@ tk_region_t *tk_get_region(int rid) {
     char map_data_path[TK_MAX_PATH_LENGTH];
     tk_status_t result = TK_STATUS_SUCCESS;
     unsigned long key = rid;
-    FILE *region_fp = NULL;
     tk_lru_cache_lock(&tk_region_data_pool);
     tk_region_t *region = tk_lru_cache_fetch(&tk_region_data_pool, &key);
     if (region) {/* already been loaded */
@@ -189,11 +189,11 @@ tk_region_t *tk_get_region(int rid) {
     memset(region, 0, sizeof(tk_region_t));
     pthread_mutex_init(&region->region_lock, NULL);
     
-    region_fp = fopen(map_data_path, "r+b");
-    if (region_fp == NULL) {
-        result = TK_STATUS_FILE_OPEN_FAILED;
-        goto CATCH;
-    }
+//    region_fp = fopen(map_data_path, "r+b");
+//    if (region_fp == NULL) {
+//        result = TK_STATUS_FILE_OPEN_FAILED;
+//        goto CATCH;
+//    }
     region->rid = rid;
     region->region_data = tk_read_file_content(map_data_path, &region->region_data_length);
     if (region->region_data == NULL) {
@@ -565,12 +565,14 @@ static int _tk_get_region_state_from_file(int rid, int *ptotal_size, int *pdownl
     map_data = fopen(map_data_path, "rb");
     if (map_data == NULL) {
         result = TK_STATUS_FILE_OPEN_FAILED;
+        fclose(chk_fp);
         goto CATCH;
     }
     
     buff = malloc(6);
     if (buff == NULL) {
         fclose(map_data);
+        fclose(chk_fp);
         result = TK_STATUS_NO_MEMORY;
         goto CATCH;
     }
@@ -606,6 +608,7 @@ static int _tk_get_region_state_from_file(int rid, int *ptotal_size, int *pdownl
     
     verifycode = malloc(byte_num);
     if (verifycode == NULL) {
+    	fclose(map_data);
         fclose(chk_fp);
         result = TK_STATUS_NO_MEMORY;
         goto CATCH;
