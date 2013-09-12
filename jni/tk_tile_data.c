@@ -654,7 +654,7 @@ tk_status_t tk_load_tile_data(tk_context_t *context, int tile_x, int tile_y, int
         }
         tk_return_region(rid);
     }
-    if(tk_lru_cache_insert(&_tk_tile_data_pool, tile_data, tile_data) == TK_STATUS_SUCCESS) {
+    if((result = tk_lru_cache_insert(&_tk_tile_data_pool, tile_data, tile_data)) == TK_STATUS_SUCCESS) {
         tk_lru_cache_unlock(&_tk_tile_data_pool);
         goto SUCCESS;
     }
@@ -671,7 +671,7 @@ CATCH:
         tile_data = NULL;
     }
     tk_lru_cache_unlock(&_tk_tile_data_pool);
-    LOG_INFO("tk_load_tile failed : %i", tk_get_last_result());
+    LOG_INFO("tk_load_tile failed : %i", result);
     return result;
 SUCCESS:
     if (context->tile_data[0]) {

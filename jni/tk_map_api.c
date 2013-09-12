@@ -190,6 +190,7 @@ static void _tk_writer_end()
 }
 
 tk_label_t *tk_render_tile(int tile_x, int tile_y, int zoom, int *label_num) {
+	LOG_INFO("to render :%i, %i, %i", tile_x, tile_y, zoom);
     tk_status_t result = TK_STATUS_SUCCESS;
     tk_context_t *context = tk_get_context();
     assert(label_num != NULL);

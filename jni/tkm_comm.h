@@ -26,7 +26,7 @@
  * ========================== */
 #define TK_LOST_DATA_PIECE 100 
 #define TK_MAX_POINT_IN_BOUND 100
-#define TK_MAX_REGION_CACHE_SIZE 5
+#define TK_MAX_REGION_CACHE_SIZE 7
 #define TK_MAX_REGION_INTERSECT_COUNT 12
 
 struct tk_map_lostdata {
@@ -38,12 +38,12 @@ struct tk_map_lostdata {
 struct tk_label
 {
     char *name;                //标注名字
-    int font_color;      //颜色 
+    int font_color;      //颜色
     int font_size;             //大小
     float slope;                 //角度
     int outline_color;          //描边颜色
     int x;
-    int y;     //显示位置 
+    int y;     //显示位置
     int icon_id;
     int icon_x;
     int icon_y;
