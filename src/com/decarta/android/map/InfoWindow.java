@@ -33,6 +33,7 @@ import android.graphics.Point;
 import android.graphics.RectF;
 import android.graphics.Paint.Align;
 import android.graphics.Paint.Style;
+import android.opengl.GLES10;
 import android.opengl.GLUtils;
 import android.view.MotionEvent;
 import android.view.ViewGroup;
@@ -124,6 +125,7 @@ public class InfoWindow implements com.decarta.android.event.EventSource{
 	
 	private int textureRef=0;
 	private boolean changed=false;
+	private boolean isRectGot = false;
 	private RectF rect=new RectF();
 	
 	private Map<Integer,ArrayList<EventListener>> eventListeners = new HashMap<Integer,ArrayList<EventListener>>();
@@ -198,13 +200,26 @@ public class InfoWindow implements com.decarta.android.event.EventSource{
 		return type;
 	}
 	
-	public void clearTextureRef(GL10 gl){
+//	public void clearTextureRef(GL10 gl){
+//		if(textureRef!=0){
+//			IntBuffer textureRefBuf=IntBuffer.allocate(1);
+//			textureRefBuf.clear();
+//			textureRefBuf.put(0,textureRef);
+//			textureRefBuf.position(0);
+//			gl.glDeleteTextures(1, textureRefBuf);
+//			
+//			LogWrapper.i("InfoWindow","remove texture:"+textureRef);
+//			textureRef=0;
+//			changed=true;
+//		}
+//	}
+	public void clearTextureRef(){
 		if(textureRef!=0){
 			IntBuffer textureRefBuf=IntBuffer.allocate(1);
 			textureRefBuf.clear();
 			textureRefBuf.put(0,textureRef);
 			textureRefBuf.position(0);
-			gl.glDeleteTextures(1, textureRefBuf);
+			GLES10.glDeleteTextures(1, textureRefBuf);
 			
 			LogWrapper.i("InfoWindow","remove texture:"+textureRef);
 			textureRef=0;
@@ -369,11 +384,11 @@ public class InfoWindow implements com.decarta.android.event.EventSource{
                 ivg.setBackgroundResource(R.drawable.btn_bubble_normal);
             }
     		ivg.measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED);
-    		float infoWindowWidth=ivg.getMeasuredWidth()+2*InfoWindow.INFO_BORDER_SIZE;
-    		float infoWindowHeight=ivg.getMeasuredHeight()+2*InfoWindow.INFO_BORDER_SIZE;
+    		int infoWindowWidth=ivg.getMeasuredWidth() + (InfoWindow.INFO_BORDER_SIZE << 1);
+    		int infoWindowHeight=ivg.getMeasuredHeight() + (InfoWindow.INFO_BORDER_SIZE << 1);
     		
-    		RectF infoWindowRect=new RectF(screenXY.x-infoWindowWidth/2,
-    				screenXY.y-infoWindowHeight,screenXY.x+infoWindowWidth/2,screenXY.y);
+    		RectF infoWindowRect = new RectF(screenXY.x - (infoWindowWidth>>1),
+    				screenXY.y - infoWindowHeight, screenXY.x + (infoWindowWidth>>1), screenXY.y);
 //                    screenXY.y-infoWindowHeight-InfoWindow.INFO_TRIANGLE_HEIGHT,screenXY.x+infoWindowWidth/2,screenXY.y-InfoWindow.INFO_TRIANGLE_HEIGHT);
     		return infoWindowRect;
     	}
@@ -432,17 +447,20 @@ public class InfoWindow implements com.decarta.android.event.EventSource{
 	 * @param screenXY
 	 */
     public void drawInfoWindow(Canvas canvas, XYFloat screenXY){
-    	if(changed){
-    		rect=getInfoWindowRecF();
+    	if(changed && !isRectGot){
+    		rect = getInfoWindowRecF();
     	}
-    	RectF infoWindowRect=new RectF(rect);
+    	RectF infoWindowRect = new RectF(rect);
     	infoWindowRect.offset(screenXY.x, screenXY.y);
     	
     	float roundRadius=InfoWindow.INFO_ROUND_RADIUS*Globals.g_metrics.density;
 		
 		if(type.equals(InfoWindow.InfoWindowType.VIEWGROUP) && viewGroup!=null){
 			Bitmap.Config config = Bitmap.Config.ARGB_8888;
-			Bitmap vgBitmap=Bitmap.createBitmap((int)(infoWindowRect.width()-2*InfoWindow.INFO_BORDER_SIZE), (int)(infoWindowRect.height()-2*InfoWindow.INFO_BORDER_SIZE), config);
+			int width = (int)(infoWindowRect.width()-2*InfoWindow.INFO_BORDER_SIZE);
+			int height = (int)(infoWindowRect.height()-2*InfoWindow.INFO_BORDER_SIZE);
+			LogWrapper.i("infoWindowBug", "bgBitmap width: " + width + ", height: " + height);
+			Bitmap vgBitmap=Bitmap.createBitmap(width, height, config);
 			Canvas infoImageCanvas= new Canvas(vgBitmap);
 			
 			ViewGroup ivg=viewGroup;
@@ -452,11 +470,13 @@ public class InfoWindow implements com.decarta.android.event.EventSource{
 			    } else {
 			        ivg.setBackgroundResource(R.drawable.btn_bubble_normal);
 			    }
-				ivg.layout(0, 0, (int)(infoWindowRect.width()-2*InfoWindow.INFO_BORDER_SIZE), (int)(infoWindowRect.height()-2*InfoWindow.INFO_BORDER_SIZE));
+				ivg.layout(0, 0, width, height);
 			}
 			ivg.draw(infoImageCanvas);
 			Paint paint=new Paint();
 			paint.setAntiAlias(true);
+			LogWrapper.i("infoWindowBug", "drawBitmap left: " + (infoWindowRect.left+InfoWindow.INFO_BORDER_SIZE) + 
+					", top: " + (infoWindowRect.top+InfoWindow.INFO_BORDER_SIZE));
 			canvas.drawBitmap(vgBitmap,infoWindowRect.left+InfoWindow.INFO_BORDER_SIZE,infoWindowRect.top+InfoWindow.INFO_BORDER_SIZE,paint);
 		}
 		else if(type.equals(InfoWindow.InfoWindowType.TEXT) && message!=null){
@@ -530,15 +550,17 @@ public class InfoWindow implements com.decarta.android.event.EventSource{
 		
 		if(changed){
 			rect=getInfoWindowRecF();
+			isRectGot = true;
     	}
+		LogWrapper.i("infoWindowBug", "rect width: " + rect.width() + ", height: " + rect.height());
 		int infoWindowCanvasSizeX=Util.getPower2(rect.width());
 		int infoWindowCanvasSizeY=Util.getPower2(rect.height()+InfoWindow.INFO_TRIANGLE_HEIGHT);
-		
 		float originX=infoWindowCanvasSizeX/2f;
 		float originY=infoWindowCanvasSizeY;
 		float x=screenXY.x-infoWindowCanvasSizeX/2f;
 		float y=screenXY.y-infoWindowCanvasSizeY;
-									
+		LogWrapper.i("infoWindowBug", "infoBitmap width: " + infoWindowCanvasSizeX + ", height: " + infoWindowCanvasSizeY + 
+				"originX: " + originX + ", originY: " + originY);
 		if(changed){
 			//Log.i("MapRender","infoWindow bind texture image start");
 			Bitmap.Config config = Bitmap.Config.ARGB_8888;
@@ -553,7 +575,6 @@ public class InfoWindow implements com.decarta.android.event.EventSource{
 			gl.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 			gl.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 			GLUtils.texImage2D(GL_TEXTURE_2D, 0, infoBitmap, 0);
-			
 			changed=false;
 		}
 	
@@ -575,8 +596,9 @@ public class InfoWindow implements com.decarta.android.event.EventSource{
 		TEXTURE_COORDS.position(0);
 		
 		gl.glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-		    		
+		LogWrapper.i("infoWindowBug", "texture width: " + infoWindowCanvasSizeX + ", height: " + infoWindowCanvasSizeY);
 		gl.glDisable(GL10.GL_BLEND);
+		isRectGot = false;
 	}
     
     /**

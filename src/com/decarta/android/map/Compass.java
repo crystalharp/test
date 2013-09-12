@@ -315,7 +315,8 @@ public class Compass implements EventSource{
                 gl.glTexParameterf(GLES10.GL_TEXTURE_2D, GLES10.GL_TEXTURE_WRAP_T, GLES10.GL_CLAMP_TO_EDGE);
                 GLUtils.texImage2D(GLES10.GL_TEXTURE_2D, 0, bm, 0);
             }catch(Exception e){
-                clearTextureRef(gl);
+//                clearTextureRef(gl);
+            	clearTextureRef();
             }
         }
         gl.glBindTexture(GLES10.GL_TEXTURE_2D, textureRef);
@@ -338,14 +339,26 @@ public class Compass implements EventSource{
         gl.glDisable(GL10.GL_BLEND);
 	}
 
-	public void clearTextureRef(GL10 gl){
+//	public void clearTextureRef(GL10 gl){
+//		if(textureRef!=0){
+//			IntBuffer textureRefBuf=IntBuffer.allocate(1);
+//			textureRefBuf.clear();
+//			textureRefBuf.put(0,textureRef);
+//			textureRefBuf.position(0);
+//			gl.glDeleteTextures(1, textureRefBuf);
+//			
+//			LogWrapper.i("Compass","remove texture:"+textureRef);
+//			textureRef=0;
+//		}
+//	}
+	
+	public void clearTextureRef(){
 		if(textureRef!=0){
 			IntBuffer textureRefBuf=IntBuffer.allocate(1);
 			textureRefBuf.clear();
 			textureRefBuf.put(0,textureRef);
 			textureRefBuf.position(0);
-			gl.glDeleteTextures(1, textureRefBuf);
-			
+			GLES10.glDeleteTextures(1, textureRefBuf);
 			LogWrapper.i("Compass","remove texture:"+textureRef);
 			textureRef=0;
 		}
