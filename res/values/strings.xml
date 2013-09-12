@@ -297,7 +297,7 @@
     <string name="do_not_show_this_message">以后不再提醒</string>
     <string name="location_waiting">正在等待定位</string>
     <string name="location_failed">暂时无法获得你的位置，正在重试</string>
-    <string name="location_success">当前位置-精确到%1$s</string>
+    <string name="location_success">定位精确到%1$s</string>
     <string name="mapview_start_click">点击即可选择该点</string>
     
     <!-- \u2192为一个箭头符号，这个用于交通方案的路线换乘表示。328路 \u2192 239路 -->

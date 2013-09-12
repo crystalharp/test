@@ -2130,9 +2130,6 @@ public final class DataQuery extends BaseQuery {
                 super(data);
                 
                 list = getListFromData(FIELD_LIST, Shangjia.Initializer);
-                if (list != null) {
-                    Shangjia.writeShangjiaList();
-                }                
             }
             
             public List<Shangjia> getList() {

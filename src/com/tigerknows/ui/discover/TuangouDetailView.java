@@ -23,10 +23,10 @@ import android.widget.TextView;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.Hashtable;
 
 import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
+import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
@@ -43,7 +43,6 @@ import com.tigerknows.model.Response;
 import com.tigerknows.model.Shangjia;
 import com.tigerknows.model.TKDrawable;
 import com.tigerknows.model.Tuangou;
-import com.tigerknows.model.User;
 import com.tigerknows.model.DataOperation.DingdanCreateResponse;
 import com.tigerknows.model.DataOperation.TuangouQueryResponse;
 import com.tigerknows.ui.BaseActivity;
@@ -57,6 +56,8 @@ import com.tigerknows.util.Utility;
  * 
  */
 public class TuangouDetailView extends BaseDetailView implements View.OnClickListener {
+    
+    static final String TAG = "TuangouDetailView";
     
     private ImageView mPictureImv = null;
     
@@ -724,7 +725,7 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
             case R.id.buy_btn_2:
                 mActionLog.addAction(mActionTag +  ActionLog.TuangouDetailBuy);
                 String sessionId = Globals.g_Session_Id;
-                if (TextUtils.isEmpty(sessionId)) {
+                if (TextUtils.isEmpty(sessionId) && TextUtils.isEmpty(mData.getUrl())) {
                     ((TuangouDetailFragment) mParentFragment).isRequsetBuy = true;
                     Intent intent = new Intent();
                     intent.putExtra(UserBaseActivity.SOURCE_VIEW_ID_LOGIN, getId());
@@ -732,19 +733,8 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
                     intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_FAILED, getId());
                     mSphinx.showView(R.id.activity_user_login_regist, intent);
                 } else {
-                    if (mData.getDingdanCreateResponse() != null) {
-
-                        String tip = null;
-                        Shangjia shangjia = Shangjia.getShangjiaById(mData.getSource(), mSphinx, mLoadedDrawableRun);
-                        if (shangjia != null) {
-                            tip = shangjia.getName();
-                        }
-                        mParentFragment.mSphinx.getBrowserFragment().setData(mSphinx.getString(R.string.buy), mData.getDingdanCreateResponse().getUrl(), tip);
-                        mParentFragment.mSphinx.showView(R.id.view_browser);
-                    } else {
-                        ((TuangouDetailFragment) mParentFragment).isRequsetBuy = false;
-                        buy();
-                    }
+                    ((TuangouDetailFragment) mParentFragment).isRequsetBuy = false;
+                    buy(false);
                 }
                 break;
                 
@@ -813,10 +803,6 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
         }
     }
     
-    void buy() {
-        buy(false);
-    }
-    
     void buy(boolean hide) {
         DataOperation dataOperation = makeDingdanQuery(mSphinx, mData, hide, mParentFragment.getId(), mParentFragment.getId());
         if (dataOperation != null) {
@@ -827,10 +813,6 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
     
     public static DataOperation makeDingdanQuery(Activity activity, Tuangou tuangou, boolean hide, int sourceViewId, int targetViewId) {
         DataOperation dataOperation = null;
-        User user = Globals.g_User;
-        if (user == null) {
-            return dataOperation;
-        }
         StringBuilder s = new StringBuilder();
         try {
             s.append(Util.byteToHexString(Dingdan.FIELD_UID));
@@ -899,16 +881,18 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
             }
             
             mData.setDingdanCreateResponse(dingdanCreateResponse);
+            String url = mData.getDingdanCreateResponse().getUrl();
+            LogWrapper.d(TAG, "onPostExecute() url:"+url);
             if (TextUtils.isEmpty(dataOperation.getTipText()) == false) {
                 String tip = null;
                 Shangjia shangjia = Shangjia.getShangjiaById(mData.getSource(), mSphinx, mLoadedDrawableRun);
                 if (shangjia != null) {
                     tip = shangjia.getName();
                 }
-                mParentFragment.mSphinx.getBrowserFragment().setData(mSphinx.getString(R.string.buy), mData.getDingdanCreateResponse().getUrl(), tip);
+                mParentFragment.mSphinx.getBrowserFragment().setData(mSphinx.getString(R.string.buy), url, tip);
                 mParentFragment.mSphinx.showView(R.id.view_browser);
             } else {
-                mParentFragment.mSphinx.getBrowserFragment().setData(mSphinx.getString(R.string.buy), mData.getDingdanCreateResponse().getUrl(), null);
+                mParentFragment.mSphinx.getBrowserFragment().setData(mSphinx.getString(R.string.buy), url, null);
             }
         } else if (BaseQuery.DATA_TYPE_TUANGOU.equals(dataType)) {
             if (BaseActivity.checkResponseCode(dataOperation, mSphinx, null, false, mParentFragment, false)) {
