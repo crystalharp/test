@@ -341,7 +341,9 @@ public class MapStatsService extends Service {
                     }
                     
                     if (downloadCity == null) {
-                        CityInfo cityInfo = mapEngine.getCityInfo(mapEngine.getCityid(cName));
+                        CityInfo cityInfo = MapEngine.getCityInfo(MapEngine.getCityid(cName));
+                        if(cityInfo == null)
+                        	continue;
                         if (cityInfo.isAvailably() && cityInfo.getId() > 0) {   // && cityInfo.getId() > 0 是排除全国概要
                             downloadCity = new DownloadCity(cityInfo);
                             list.add(downloadCity);
@@ -452,7 +454,9 @@ public class MapStatsService extends Service {
 
                             // 都不存在时才创建一个DownloadCity
                             if (exist == null) {
-                                CityInfo cityInfo = mapEngine.getCityInfo(mapEngine.getCityid(cName));
+                                CityInfo cityInfo = MapEngine.getCityInfo(MapEngine.getCityid(cName));
+                                if(cityInfo == null)
+                                	continue;
                                 if (cityInfo.isAvailably() && cityInfo.getId() > 0) {   // && cityInfo.getId() > 0 是排除全国概要
                                     exist = new DownloadCity(cityInfo);
                                     statsDownloadCity(exist, queryServerRegionDataInfoMapInternally(context));

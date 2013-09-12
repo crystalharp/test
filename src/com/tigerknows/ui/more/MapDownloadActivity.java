@@ -48,6 +48,7 @@ import com.tigerknows.TKConfig;
 import android.widget.TextView.OnEditorActionListener;
 
 import com.decarta.Globals;
+import com.decarta.android.util.LogWrapper;
 import com.tigerknows.android.widget.TKEditText;
 import android.widget.Toast;
 import com.tigerknows.common.ActionLog;
@@ -1896,10 +1897,12 @@ public class MapDownloadActivity extends BaseActivity implements View.OnClickLis
             if (MapEngine.hasMunicipality(cityId)) {
                 list.add(list.size(), downloadCity);
             } else if (province == null) {
-                MapEngine mapEngine = MapEngine.getInstance();
-                List<String> cityNameList = mapEngine.getCitylist(pName);
+                List<String> cityNameList = MapEngine.getCitylist(pName);
                 if (cityNameList.size() > 0) {
-                    CityInfo cityInfo2 = mapEngine.getCityInfo(mapEngine.getCityid(cityNameList.get(cityNameList.size()-1)));
+                    CityInfo cityInfo2 = MapEngine.getCityInfo(MapEngine.getCityid(cityNameList.get(cityNameList.size()-1)));
+                    if(cityInfo2 == null) {
+                    	return;
+                    }
                     if (cityInfo2.isAvailably()) {
                         cityId = cityInfo2.getId();
                     }

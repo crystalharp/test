@@ -54,7 +54,6 @@ public class MapEngine {
     public static int CITY_ID_BEIJING = 1;
     public static int SW_ID_QUANGUO = 9999;
     public static int TILE_SIZE_BIT = 8;
-    private boolean isClosed = true;
     
     private int suggestCityId = CITY_ID_INVALID;  // 联想词引擎所属城市Id
     private List<Integer> suggestDownloaded = new ArrayList<Integer>(); // 记录被下载更新过的城市Id
@@ -90,7 +89,6 @@ public class MapEngine {
     					TKConfig.getDataPath(false), this.mapPath,
     					CONFIG.TILE_SIZE);
     			if (status == 0) {
-    				this.isClosed = false;
     				this.context = context;
     				Ca.tk_init_context(null, TILE_SIZE_BIT, 0);
     			} else {
@@ -106,19 +104,16 @@ public class MapEngine {
     }
     
     public void destroyEngine() {
-        if (this.isClosed == false) {
-	        suggestDownloaded.clear();
-	        suggestwordDestroy();
-	        Ca.tk_destroy_engine_config();
-	        isClosed = true;
-	        mapPath = null;
-	        LogWrapper.d(TAG, "destroyEngine()");
-        }
+    	suggestDownloaded.clear();
+	    suggestwordDestroy();
+	    Ca.tk_destroy_engine_config();
+	    mapPath = null;
+	    LogWrapper.d(TAG, "destroyEngine()");
     }
 
-    public int getCityId(Position position) {
+    public static int getCityId(Position position) {
         int cityId = CITY_ID_INVALID;
-        if (isClosed || position == null) {
+        if (position == null) {
             return cityId;
         }
         cityId = Ca.tk_get_city_id(position.getLat(), position.getLon());
@@ -133,19 +128,13 @@ public class MapEngine {
      */
     public int decompress(int cityId, String filepath) {
         synchronized (this) {
-        if (isClosed) {
-            return -1;
-        }
-        return Ca.tk_decompress(cityId, filepath);
+        	return Ca.tk_decompress(cityId, filepath);
         }
     }
     
     //根据城市联想词filepath和全国公共联想词filepath_common进行加载，建立索引，城市id改变时调用
     public void suggestwordInit(int cityId) {
         synchronized (this) {
-        if (isClosed) {
-            return;
-        }
         suggestwordDestroy();
         if (cityId <= 0) {
             return;
@@ -170,7 +159,7 @@ public class MapEngine {
     private byte[] getwordslist(String searchword, int type) {
         synchronized (this) {
         byte[] data = null;
-        if (isClosed || suggestCityId == CITY_ID_INVALID) {
+        if (suggestCityId == CITY_ID_INVALID) {
             return data;
         }
         try {
@@ -191,9 +180,6 @@ public class MapEngine {
     
     public void suggestwordDestroy() {
         synchronized (this) {
-        if (isClosed) {
-            return;
-        }
         if (suggestCityId != CITY_ID_INVALID) {
             suggestCityId = CITY_ID_INVALID;
             Ca.tk_suggestword_destroy();
@@ -204,7 +190,7 @@ public class MapEngine {
     //返回当前城市的联想词版本
     public int getrevision(int cityId) {
         synchronized (this) {
-        if (isClosed || suggestCityId == CITY_ID_INVALID) {
+        if (suggestCityId == CITY_ID_INVALID) {
             return -1;
         }
         String path = cityId2Floder(cityId);
@@ -216,9 +202,6 @@ public class MapEngine {
     }
 
     public void removeRegion(int rid) {
-        if (isClosed) {
-            return;
-        }
         Ca.tk_remove_region_data(rid); 
         int cityId = Ca.tk_get_cid_by_rid(rid);
         sendBroadcastForRemoveMapData(cityId);
@@ -226,9 +209,6 @@ public class MapEngine {
     
     void sendBroadcastForRemoveMapData(int cityId) {
         synchronized (this) {
-	        if (isClosed) {
-	            return;
-	        }
 	        if (context != null) {
 	            Intent intent = new Intent(ACTION_REMOVE_CITY_MAP_DATA);
 	            intent.putExtra(EXTRA_CITY_ID, cityId);
@@ -238,10 +218,6 @@ public class MapEngine {
     }
 
     public boolean initRegion(int rid) {
-        if (isClosed) {
-            return false;
-        }
-
         String path = mapPath + String.format(TKConfig.MAP_REGION_METAFILE, rid);
         int ret = Ca.tk_init_region(path, rid);
         
@@ -252,10 +228,7 @@ public class MapEngine {
         return ret == 0 ? true : false;
     }
     
-    public int writeRegion(int rid, int offset, byte[] buf, String version) {
-        if (isClosed) {
-            return -1;
-        }
+    public static int writeRegion(int rid, int offset, byte[] buf, String version) {
         if (buf == null || TextUtils.isEmpty(version)) {
             return -1;
         }
@@ -270,10 +243,7 @@ public class MapEngine {
         return Ca.tk_write_region(rid, offset, buf.length, buf);
     }
     
-    public LocalRegionDataInfo getLocalRegionDataInfo(int regionId) {
-        if (isClosed) {
-            return null;
-        }
+    public static LocalRegionDataInfo getLocalRegionDataInfo(int regionId) {
         int[] data = Ca.tk_get_region_stat(regionId);
         if (data == null || data.length < 1) {
             return null;
@@ -292,22 +262,16 @@ public class MapEngine {
         return mapPath;
     }
 
-    public int getMaxLabelPriority() {
+    public static int getMaxLabelPriority() {
     	return Ca.tk_get_max_label_priority();
     }
     
-    public int getRegionId(String regionName) {
-        if (isClosed) {
-            return -1;
-        }
+    public static int getRegionId(String regionName) {
         return Ca.tk_get_region_id(regionName);
     }
 
-    public List<String> getCitylist(String provinceName) {
+    public static List<String> getCitylist(String provinceName) {
         ArrayList<String> cityList = new ArrayList<String>();
-        if (isClosed) {
-            return cityList;
-        }
         if (TextUtils.isEmpty(provinceName)) {
             return cityList;
         }
@@ -320,20 +284,14 @@ public class MapEngine {
         return cityList;
     }
     
-    public int getCityid(String cityName) {
-        if (isClosed) {
-            return -1;
-        }
+    public static int getCityid(String cityName) {
         if (TextUtils.isEmpty(cityName)) {
             return -1;
         }
         return Ca.tk_get_cityid(cityName.trim());
     }
     
-    public RegionInfo getRegionInfo(int regionId) {
-        if (isClosed) {
-            return null;
-        }
+    public static RegionInfo getRegionInfo(int regionId) {
         String regionInfoStr = Ca.tk_get_region_info(regionId);
         if(regionInfoStr == null || regionInfoStr.length() == 0) {
         	return null;
@@ -347,11 +305,12 @@ public class MapEngine {
         return regionInfo;
     }
 
-    public CityInfo getCityInfo(int cityId) {
+    public static CityInfo getCityInfo(int cityId) {
+    	if(cityId == CITY_ID_INVALID) {
+    		LogWrapper.e("MapEngine", "get city info of invalid city id");
+    		return null;
+    	}
         CityInfo cityInfo = new CityInfo();
-        if (isClosed) {
-            return cityInfo;
-        }
         String cityInfoStr = Ca.tk_get_city_info(cityId);
         if(cityInfoStr == null || cityInfoStr.length() == 0) {
         	return cityInfo;
@@ -369,11 +328,8 @@ public class MapEngine {
     }
 
     // 得到所有省的中英文名字，去掉香港、澳门
-    public HashMap<String, String> getEprovincelist(Context context) {
+    public static HashMap<String, String> getEprovincelist(Context context) {
         HashMap<String, String> infoMap = new HashMap<String, String>();
-        if (isClosed) {
-            return infoMap;
-        }
         String allProvincesInfoStr = Ca.tk_get_eprovincelist();
         if(allProvincesInfoStr == null || allProvincesInfoStr.length() == 0)
         	return infoMap;
@@ -392,9 +348,6 @@ public class MapEngine {
     }
     
     public void removeCityData(String cityName) {
-        if (isClosed) {
-            return;
-        }
         if (TextUtils.isEmpty(cityName)) {
             return;
         }
@@ -402,10 +355,7 @@ public class MapEngine {
         sendBroadcastForRemoveMapData(getCityid(cityName));
     }
 
-    public RegionMetaVersion getRegionMetaVersion(int regionId) {
-        if (isClosed) {
-            return null;
-        }
+    public static RegionMetaVersion getRegionMetaVersion(int regionId) {
         byte[] data = Ca.tk_get_region_version(regionId);
         if (data == null || data.length < 1) {
             return null;
@@ -422,9 +372,6 @@ public class MapEngine {
      */
     public Position latlonTransform(Position position) {
         synchronized (this) {
-	        if (isClosed) {
-	            return null;
-	        }
 	        if (position == null) {
 	           return null;
 	        } 
@@ -442,11 +389,8 @@ public class MapEngine {
      * @param zoomLevel
      * @return
      */
-    public String getPositionName(Position position, int zoomLevel) {
+    public static String getPositionName(Position position, int zoomLevel) {
         String poiName = "";
-        if (isClosed) {
-            return poiName;
-        }
         if (position == null) {
         	return poiName;
         }
@@ -459,11 +403,8 @@ public class MapEngine {
      * @param position
      * @return
      */
-    public String getPositionName(Position position) {
+    public static String getPositionName(Position position) {
     	String poiName = "";
-        if (isClosed) {
-            return poiName;
-        }
         if (position == null) {
         	return poiName;
         }
@@ -488,11 +429,8 @@ public class MapEngine {
      * @param flag 1表示获取点的名字, 0表示获取线的名字
      * @return
      */
-    private String getPOIName(Position position, int zoomLevel, int flag) {
+    private static String getPOIName(Position position, int zoomLevel, int flag) {
             String poiName = null;
-            if (isClosed) {
-                return poiName;
-            }
             if (position == null) {
                 return poiName;
             }
@@ -540,7 +478,6 @@ public class MapEngine {
                 initEngine(context, appPath);
                 LogWrapper.i(TAG, "setupDataPath() app path:"+ appPath + " map path:"+ mapPath + ",exist:" + new File(appPath).exists());
             } catch (Exception e) {
-                isClosed = true;
                 mapPath = null;
                 throw new APIException("Can't write/read cache. Please Grand permission");
             }
@@ -571,11 +508,11 @@ public class MapEngine {
         }
     }
     
-    public TileDownload[] getLostData() {
+    public static TileDownload[] getLostData() {
     	return Ca.tk_get_lost_tile_info();
     }
 
-    public List<CityInfo> getAllProvinceCityList(Context context) {
+    public static List<CityInfo> getAllProvinceCityList(Context context) {
         List<CityInfo> allCityInfoList = new ArrayList<CityInfo>();
         HashMap<String,String> allProvincesInfo = getEprovincelist(context);
         Iterator<String> iterator = allProvincesInfo.keySet().iterator();
@@ -592,7 +529,9 @@ public class MapEngine {
             for (int i = cityNameList.size()-1; i >= 0; i--) {
                 String cityName = cityNameList.get(i);
                 CityInfo cityInfo = getCityInfo(getCityid(cityName));
-                if (i == cityNameList.size()-1) {
+                if(cityInfo == null)
+                	continue;
+                if (i == cityNameList.size() - 1) {
                     province.setId(cityInfo.getId());
                 }
                 province.getCityList().add(cityInfo);
@@ -604,9 +543,13 @@ public class MapEngine {
     }
 
     //得到一个城市的所有region id
-    public ArrayList<Integer> getRegionIdList(String cityName) {
+    public static ArrayList<Integer> getRegionIdList(String cityName) {
         int cityId = getCityid(cityName);
         ArrayList<Integer> regionIdList = new ArrayList<Integer>();
+        if(cityId == CITY_ID_INVALID) {
+        	LogWrapper.e("MapEngine", "got invalid city id, cityName: " + cityName);
+        	return regionIdList;
+        }
         int[] rids = Ca.tk_get_regionid_list(cityId);
         for (int rid : rids) {
             regionIdList.add(rid);
@@ -657,7 +600,7 @@ public class MapEngine {
     
     //根据用户输入的词searchword及type进行联想，返回前x()个联想词，联想词在源文件TKSuggestWords.c全局变量Suggest_Word suggestwords[10]中；type为poi或者位置--对应不同搜索框
     public List<String> getwordslistString(String searchword, int type) {
-        if (isClosed || suggestCityId == CITY_ID_INVALID) {
+        if (suggestCityId == CITY_ID_INVALID) {
             return new ArrayList<String>();
         }
         if (TextUtils.isEmpty(searchword)) {
@@ -672,7 +615,7 @@ public class MapEngine {
     
     public Position getwordslistStringWithPosition(String searchword, int type) {
         Position point = null;
-        if (isClosed || suggestCityId == CITY_ID_INVALID) {
+        if (suggestCityId == CITY_ID_INVALID) {
             return null;
         }
         byte[] data = getwordslist(searchword, type);

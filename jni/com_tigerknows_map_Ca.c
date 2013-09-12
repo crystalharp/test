@@ -624,6 +624,8 @@ JNIEXPORT jstring JNICALL Java_com_tigerknows_map_Ca_ab
   (JNIEnv *env, jclass this, jint rid) {
 //	char *tk_get_region_info_by_id(int rid);
 	char *info = tk_get_region_info_by_id(rid);
+	if(info == NULL)
+		return NULL;
 	return (*env)->NewStringUTF(env, info);
 }
 
@@ -651,6 +653,8 @@ JNIEXPORT jintArray JNICALL Java_com_tigerknows_map_Ca_ad
 	int region_num;
 	jintArray result;
 	region_id_list = tk_get_regionid_list_by_cityid(cid, &region_num);
+	if(region_id_list == NULL)
+		return NULL;
 	result = (*env)->NewIntArray(env, region_num);
 	(*env)->SetIntArrayRegion(env, result, 0, region_num, region_id_list);
 	free(region_id_list);
