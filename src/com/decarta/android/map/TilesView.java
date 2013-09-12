@@ -541,18 +541,6 @@ public class TilesView extends GLSurfaceView {
 		}
 
 		restart = false;
-		// if (mapTextThread.tilesView != this) {
-		// restart = true;
-		// }
-		//
-		// if (MapTextThread.isStop() || restart) {
-		// MapTextThread.startThread();
-		// mapTextThread = new MapTextThread(this);
-		// mapTextThread.start();
-		//
-		// result = true;
-		// }
-
 		return result;
 	}
 
@@ -562,7 +550,6 @@ public class TilesView extends GLSurfaceView {
 	 */
 	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
-		// TODO Auto-generated method stub
 		LogWrapper.i("Sequence", "TilesView.surfaceChanged w,h:" + w + "," + h);
 		configureTileGrid(w, h);
 
@@ -572,7 +559,6 @@ public class TilesView extends GLSurfaceView {
 
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
-		// TODO Auto-generated method stub
 		LogWrapper.i("Sequence", "TilesView.surfaceCreated");
 		if (CONFIG.DRAW_BY_OPENGL)
 			super.surfaceCreated(holder);
@@ -580,8 +566,7 @@ public class TilesView extends GLSurfaceView {
 
 	@Override
 	public void surfaceDestroyed(SurfaceHolder holder) {
-		// TODO Auto-generated method stub
-		// Log.i("Sequence","TilesView.surfaceDestroyed");
+		LogWrapper.i("Sequence","TilesView.surfaceDestroyed");
 		if (CONFIG.DRAW_BY_OPENGL)
 			super.surfaceDestroyed(holder);
 	}
@@ -612,6 +597,7 @@ public class TilesView extends GLSurfaceView {
 	public void clearTileTextures() {
 		this.queueEvent(new Runnable() {
 			public void run() {
+				LogWrapper.i("Sequence","TilesView run clearTileTextures");
 				mapRender.clearTileTextures();
 			}
 		});
@@ -621,10 +607,11 @@ public class TilesView extends GLSurfaceView {
 		paused = false;
 	}
 
-	public void clearAllTextures() {
+	public void pause() {
 		paused = true;
 		this.queueEvent(new Runnable() {
 			public void run() {
+				LogWrapper.i("Sequence","TilesView run clearAllTextures");
 				mapRender.clearAllTextures();
 			}
 		});
@@ -717,20 +704,14 @@ public class TilesView extends GLSurfaceView {
 
 	@Override
 	protected void onDetachedFromWindow() {
-		// TODO Auto-generated method stub
 		LogWrapper.i("Sequence", "TilesView.onDetachedFromWindow");
 		if (CONFIG.DRAW_BY_OPENGL)
 			super.onDetachedFromWindow();
 
-		// tigerknows modify begin
-		// tileThreadPool.stopAllThreads();
-		// tileCache.stopWritingAndRemoveOldTiles();
 		TileThread.stopAllThreads();
 		DownloadThread.stopAllThreads();
-		// MapTextThread.stopThread();
-		// tigerknows modify end
 		clearTilesWaitForLoading();
-
+		
 		resetLongTouchTimer();
 
 		overlays.clear();
@@ -743,7 +724,6 @@ public class TilesView extends GLSurfaceView {
 
 	@Override
 	protected void finalize() throws Throwable {
-		// TODO Auto-generated method stub
 		LogWrapper.i("Sequence", "TilesView.finalize");
 		super.finalize();
 	}
@@ -1640,7 +1620,7 @@ public class TilesView extends GLSurfaceView {
 			panDirection.x = numX >= 0 ? 1 : -1;
 			panDirection.y = numY >= 0 ? 1 : -1;
 		}
-		LogWrapper.i("center", centerXYZ.toString() + "......" + centerXY.toString() + "......" + centerDelta.toString());
+//		LogWrapper.i("center", centerXYZ.toString() + "......" + centerXY.toString() + "......" + centerDelta.toString());
 	}
 
 	public void zoomView(float newZoomLevel, XYFloat zoomCenterXY)
@@ -1648,13 +1628,6 @@ public class TilesView extends GLSurfaceView {
 		newZoomLevel = tkJumpZoomLevel(newZoomLevel);
 		if (zooming || newZoomLevel == zoomLevel)
 			return;
-//		if (newZoomLevel < CONFIG.ZOOM_LOWER_BOUND
-//				|| newZoomLevel > CONFIG.ZOOM_UPPER_BOUND) {
-//			LogWrapper.d("TilesView", "zoomTo invalid zoom level:"
-//					+ newZoomLevel + ", must between "
-//					+ CONFIG.ZOOM_LOWER_BOUND + "-" + CONFIG.ZOOM_UPPER_BOUND);
-//			return;
-//		}
 		if(newZoomLevel < CONFIG.ZOOM_LOWER_BOUND) {
 			newZoomLevel = CONFIG.ZOOM_LOWER_BOUND;
 		}
@@ -2231,7 +2204,7 @@ public class TilesView extends GLSurfaceView {
 				easingRecord.movedDistance += (float) distance;
 				status[0] = true;
 			}
-			LogWrapper.i("centerXY","centerXY"+centerXY.toString());
+//			LogWrapper.i("centerXY","centerXY"+centerXY.toString());
 			moveView((float) (distance) * easingRecord.direction.x,
 					(float) (distance) * easingRecord.direction.y);
 //			LogWrapper.i("centerXY","centerXY after move distance: " + distance + ", " + centerXY.toString());
@@ -2721,7 +2694,7 @@ public class TilesView extends GLSurfaceView {
 		}
 
 		public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-			LogWrapper.i("Sequence", "MapRender.onSurfaceCreated");
+			LogWrapper.i("Sequence", "MapRender.onSurfaceCreated begin");
 			gl.glClearColor(1f, 1f, 1f, 1);
 			gl.glDisable(GL_DITHER);
 			gl.glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
@@ -2742,8 +2715,6 @@ public class TilesView extends GLSurfaceView {
 			max_tile_texture_ref = (int) ((Math.ceil(displaySize.x
 					/ (float) CONFIG.TILE_SIZE) + 1)
 					* (Math.ceil(displaySize.y / (float) CONFIG.TILE_SIZE) + 1) * 4) + 1;
-			LogWrapper.i("TextureCount", "max tile texture count: "
-					+ max_tile_texture_ref);
 			texturePool = new TexturePool(max_tile_texture_ref
 					+ CONFIG.TILE_THREAD_COUNT);
 			if (tileInfos == null) {
@@ -2785,6 +2756,7 @@ public class TilesView extends GLSurfaceView {
 					tileRunners[i].start();
 			}
 			gl.glEnable(GL_TEXTURE_2D);
+			LogWrapper.i("Sequence", "MapRender.onSurfaceCreated end");
 		}
 
 		protected void clearAllTextures() {
@@ -2795,6 +2767,7 @@ public class TilesView extends GLSurfaceView {
 				SingleRectLabel.clearIcon();
 				scaleView.clearTexture();
 			}
+			LogWrapper.i("onStop", "clearAllTextures success");
 		}
 
 		protected void clearTileTextures() {
@@ -2824,18 +2797,21 @@ public class TilesView extends GLSurfaceView {
 				if (texturePool != null)
 					texturePool.clean();
 			}
+			LogWrapper.i("Sequence", "clearTileTextures end");
 		}
 
 		/**
 		 * the main method to draw all the map elements
 		 */
 		public void onDrawFrame(GL10 gl) {
-			if (paused)
+			if (paused) {
+				LogWrapper.i("Sequence", "onDrawFrame paused");
 				return;
+			}
+			LogWrapper.i("Sequence", "onDrawFrame begin");
 			if (centerXY == null) {
 				return;
 			}
-			LogWrapper.d("shake", "shake");
 			boolean movingL = false;
 			boolean movingJustDoneL = false;
 			MapView.MoveEndEventListener movingListener = easingRecord.listener;
@@ -3312,7 +3288,6 @@ public class TilesView extends GLSurfaceView {
 						gl.glScalef((float) zoomScale, (float) zoomScale, 1);
 						gl.glTranslatef(-displaySize.x / 2f,
 								-displaySize.y / 2f, 0);
-
 						for (int ii = 0; ii < willDrawTiles.size(); ii++) {
 							Tile requestTile = willDrawTiles.get(ii);
 							int textureRef = tileInfos.get(requestTile).tileTextureRef;
@@ -3719,21 +3694,21 @@ public class TilesView extends GLSurfaceView {
 					"TilesView",
 					"clean tilePool total texture and image num:"
 							+ tileInfos.size());
-			Iterator<TileInfo> iterator1 = tileInfos.values().iterator();
-			while (iterator1.hasNext()) {
-				TileInfo info = iterator1.next();
-				if (info.tileTextureRef != 0) {
-					if (!texturePool.returnTexture(info.tileTextureRef)) {
-						IntBuffer textureRefBuf = IntBuffer.allocate(1);
-						textureRefBuf.clear();
-						textureRefBuf.put(0, info.tileTextureRef);
-						textureRefBuf.position(0);
-						glDeleteTextures(1, textureRefBuf);
-					}
-				}
-			}
-			tileInfos.clear();
-			texturePool.clean();
+//			Iterator<TileInfo> iterator1 = tileInfos.values().iterator();
+//			while (iterator1.hasNext()) {
+//				TileInfo info = iterator1.next();
+//				if (info.tileTextureRef != 0) {
+//					if (!texturePool.returnTexture(info.tileTextureRef)) {
+//						IntBuffer textureRefBuf = IntBuffer.allocate(1);
+//						textureRefBuf.clear();
+//						textureRefBuf.put(0, info.tileTextureRef);
+//						textureRefBuf.position(0);
+//						glDeleteTextures(1, textureRefBuf);
+//					}
+//				}
+//			}
+//			tileInfos.clear();
+//			texturePool.clean();
 
 			LogWrapper.i("TilesView", "clean iconPool total texture num:"
 					+ iconPool.size());
@@ -3756,9 +3731,9 @@ public class TilesView extends GLSurfaceView {
 
 			infoWindow.clearTextureRef(gl);
 
-			SingleRectLabel.clearIcon();
-			Label.clearTextBitmap();
-			Label.clearTextTexture();
+//			SingleRectLabel.clearIcon();
+//			Label.clearTextBitmap();
+//			Label.clearTextTexture();
 
 			compass.clearTextureRef(gl);
 

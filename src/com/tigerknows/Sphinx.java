@@ -1768,6 +1768,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         mActionLog.onPause();
         mOnPause = true;
 
+        if(mMapView != null)
+        	mMapView.pause();
+        MapEngine.cleanEngineCache();
+        
         if (mSensorOrientation) {
             mSensorManager.unregisterListener(mSensorListener);
         }
@@ -1793,11 +1797,14 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 TKConfig.setPref(mContext, TKConfig.PREFS_LAST_ZOOM_LEVEL, String.valueOf(zoom));
             }
         }
-
+        
+        System.gc();
+        
         unregisterReceiver(mCountCurrentDownloadCityBroadcastReceiver);
         System.gc();
         Intent service = new Intent(Sphinx.this, SuggestLexiconService.class);
         stopService(service);
+        
         super.onPause();
     }
     
@@ -1806,11 +1813,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         super.onStop();
         BaseQuery.sClentStatus = BaseQuery.CLIENT_STATUS_STOP;
         LogWrapper.i(TAG, "onStop");
-        
-        if(mMapView != null)
-        	mMapView.clearAllTextures();
-        MapEngine.cleanEngineCache();
-        
         mActionLog.onStop();
         unregisterReceiver(mRemoveCityMapDataBroadcastReceiver);
     }

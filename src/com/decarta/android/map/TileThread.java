@@ -153,7 +153,7 @@ public class TileThread extends Thread {
 					requestTiles[sequence]=requestTile;
 										
 					synchronized(tilesView.getDrawingLock()){
-						if(tilesView.getTileInfos().containsKey(requestTile)){
+						if(tilesView.getTileInfos().containsKey(requestTile) || tilesView.isPaused()){
 							//Log.i("TileThread","check tileTextureRefs duplicate tile,hashCode:"+requestTile.toString()+","+requestTile.hashCode());
 							continue;
 						}

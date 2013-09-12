@@ -89,7 +89,7 @@ public class CONFIG {
     /**
      * number of messages should be saved in log
      */
-    public static int LOG_SIZE=200;
+    public static final int LOG_SIZE=200;
 		
 	/**
 	 * log easing DECELERATE_RATE means speed will become 0.8 times of the previous speed 
