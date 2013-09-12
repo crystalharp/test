@@ -70,7 +70,7 @@ public class LocationUpload extends LogUpload {
         this.wifiManager = (WifiManager)mContext.getSystemService(Context.WIFI_SERVICE);
         
         // 删除之前存储的定位信息，因为数据结构不同
-        SharedPreferences writesettings = context.getSharedPreferences("location", Context.MODE_WORLD_WRITEABLE);
+        SharedPreferences writesettings = context.getSharedPreferences("location", Context.MODE_PRIVATE);
         writesettings.edit().clear().commit();
 
     }
