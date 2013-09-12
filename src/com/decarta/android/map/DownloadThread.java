@@ -155,7 +155,7 @@ public class DownloadThread extends Thread implements MapTileDataDownload.ITileD
                                     if (downloadingTiles.get(0).getLength() == 0 && downloadingTiles.get(0).getOffset() == 0) {
                                         statusCode = downloadMetaData(downloadingTiles.get(0).getRid());
                                     } else if (downloadingTiles.get(0).getLength() > 0) {
-                                        statusCode = downloadTiles(downloadingTiles.toArray(new TileDownload[0]));
+                                        statusCode = downloadTiles(downloadingTiles);
                                         if (statusCode == BaseQuery.STATUS_CODE_NETWORK_OK) {
                                             result = true;
                                         }
@@ -207,12 +207,12 @@ public class DownloadThread extends Thread implements MapTileDataDownload.ITileD
         return statusCode;
     }
 
-    private int downloadTiles(TileDownload[] tileDownloads) {
+    private int downloadTiles(List<TileDownload> tileDownloads) {
         int statusCode = 0;
-        if (tileDownloads == null || tileDownloads.length == 0) {
+        if (tileDownloads == null || tileDownloads.size() == 0) {
             return statusCode;
         }
-        mapTileDataDownload.setup(tileDownloads, tileDownloads[0].getRid());
+        mapTileDataDownload.setup(tileDownloads.toArray(new TileDownload[tileDownloads.size()]), tileDownloads.get(0).getRid());
         mapTileDataDownload.query();
         statusCode = mapTileDataDownload.getStatusCode();
         return statusCode;
