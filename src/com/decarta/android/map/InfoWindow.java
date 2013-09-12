@@ -459,7 +459,7 @@ public class InfoWindow implements com.decarta.android.event.EventSource{
 			Bitmap.Config config = Bitmap.Config.ARGB_8888;
 			int width = (int)(infoWindowRect.width()-2*InfoWindow.INFO_BORDER_SIZE);
 			int height = (int)(infoWindowRect.height()-2*InfoWindow.INFO_BORDER_SIZE);
-			LogWrapper.i("infoWindowBug", "bgBitmap width: " + width + ", height: " + height);
+//			LogWrapper.i("infoWindowBug", "bgBitmap width: " + width + ", height: " + height);
 			Bitmap vgBitmap=Bitmap.createBitmap(width, height, config);
 			Canvas infoImageCanvas= new Canvas(vgBitmap);
 			
@@ -475,8 +475,8 @@ public class InfoWindow implements com.decarta.android.event.EventSource{
 			ivg.draw(infoImageCanvas);
 			Paint paint=new Paint();
 			paint.setAntiAlias(true);
-			LogWrapper.i("infoWindowBug", "drawBitmap left: " + (infoWindowRect.left+InfoWindow.INFO_BORDER_SIZE) + 
-					", top: " + (infoWindowRect.top+InfoWindow.INFO_BORDER_SIZE));
+//			LogWrapper.i("infoWindowBug", "drawBitmap left: " + (infoWindowRect.left+InfoWindow.INFO_BORDER_SIZE) + 
+//					", top: " + (infoWindowRect.top+InfoWindow.INFO_BORDER_SIZE));
 			canvas.drawBitmap(vgBitmap,infoWindowRect.left+InfoWindow.INFO_BORDER_SIZE,infoWindowRect.top+InfoWindow.INFO_BORDER_SIZE,paint);
 		}
 		else if(type.equals(InfoWindow.InfoWindowType.TEXT) && message!=null){
@@ -552,15 +552,15 @@ public class InfoWindow implements com.decarta.android.event.EventSource{
 			rect=getInfoWindowRecF();
 			isRectGot = true;
     	}
-		LogWrapper.i("infoWindowBug", "rect width: " + rect.width() + ", height: " + rect.height());
+//		LogWrapper.i("infoWindowBug", "rect width: " + rect.width() + ", height: " + rect.height());
 		int infoWindowCanvasSizeX=Util.getPower2(rect.width());
 		int infoWindowCanvasSizeY=Util.getPower2(rect.height()+InfoWindow.INFO_TRIANGLE_HEIGHT);
 		float originX=infoWindowCanvasSizeX/2f;
 		float originY=infoWindowCanvasSizeY;
 		float x=screenXY.x-infoWindowCanvasSizeX/2f;
 		float y=screenXY.y-infoWindowCanvasSizeY;
-		LogWrapper.i("infoWindowBug", "infoBitmap width: " + infoWindowCanvasSizeX + ", height: " + infoWindowCanvasSizeY + 
-				"originX: " + originX + ", originY: " + originY);
+//		LogWrapper.i("infoWindowBug", "infoBitmap width: " + infoWindowCanvasSizeX + ", height: " + infoWindowCanvasSizeY + 
+//				"originX: " + originX + ", originY: " + originY);
 		if(changed){
 			//Log.i("MapRender","infoWindow bind texture image start");
 			Bitmap.Config config = Bitmap.Config.ARGB_8888;
@@ -596,7 +596,7 @@ public class InfoWindow implements com.decarta.android.event.EventSource{
 		TEXTURE_COORDS.position(0);
 		
 		gl.glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-		LogWrapper.i("infoWindowBug", "texture width: " + infoWindowCanvasSizeX + ", height: " + infoWindowCanvasSizeY);
+//		LogWrapper.i("infoWindowBug", "texture width: " + infoWindowCanvasSizeX + ", height: " + infoWindowCanvasSizeY);
 		gl.glDisable(GL10.GL_BLEND);
 		isRectGot = false;
 	}
