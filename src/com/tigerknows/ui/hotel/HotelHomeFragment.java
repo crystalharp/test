@@ -159,6 +159,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         
         HotelOrderTable hotelOrderTable = new HotelOrderTable(mContext);
         int count = hotelOrderTable.count();
+        hotelOrderTable.close();
         if (count > 0) {
             mDingdanImv.setBackgroundResource(R.drawable.ic_order_hotel);
             mDingdanTxv.setTextColor(TKConfig.COLOR_BLACK_DARK);
