@@ -41,6 +41,10 @@ public class HistoryWordTable {
     public static final LinkedList<TKWord> History_Word_Traffic = new LinkedList<TKWord>();
     public static final LinkedList<TKWord> History_Word_Busline = new LinkedList<TKWord>();
     
+    public static long POI_CityId = MapEngine.CITY_ID_INVALID;
+    public static long Traffic_CityId = MapEngine.CITY_ID_INVALID;
+    public static long Busline_CityId = MapEngine.CITY_ID_INVALID;
+    
     static final String TAG = "HistoryWordTable";
     
 	// HELPERS
@@ -219,12 +223,24 @@ public class HistoryWordTable {
         if (TYPE_POI == type) {
             key = TKConfig.PREFS_HISTORY_WORD_POI;
             list = History_Word_POI;
+            if (POI_CityId == cityId) {
+                return;
+            }
+            POI_CityId = cityId;
         } else if (TYPE_TRAFFIC == type) {
             key = TKConfig.PREFS_HISTORY_WORD_TRAFFIC;
             list = History_Word_Traffic;
+            if (Traffic_CityId == cityId) {
+                return;
+            }
+            Traffic_CityId = cityId;
         } else {
             key = TKConfig.PREFS_HISTORY_WORD_BUSLINE;
             list = History_Word_Busline;
+            if (Busline_CityId == cityId) {
+                return;
+            }
+            Busline_CityId = cityId;
         }
         list.clear();
         List<String> listAtPrefTable = readHistoryWordV4(context, cityId, type);
@@ -403,5 +419,14 @@ public class HistoryWordTable {
         PrefTable prefTable = new PrefTable(context);
         prefTable.setPref(key, "");
         prefTable.close();
+    }
+    
+    public static void onDestroy() {
+        History_Word_POI.clear();
+        History_Word_Traffic.clear();
+        History_Word_Busline.clear();
+        POI_CityId = MapEngine.CITY_ID_INVALID;
+        Traffic_CityId = MapEngine.CITY_ID_INVALID;
+        Busline_CityId = MapEngine.CITY_ID_INVALID;
     }
 }

@@ -1180,6 +1180,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         mTKLocationManager.onDestroy();
         TKWeixin.getInstance(this).onDestory();
         Globals.getImageCache().stopWritingAndRemoveOldTiles();
+        HistoryWordTable.onDestroy();
 		LogWrapper.i("Sphinx","onDestroy()");
         if(DiscoverChildListFragment.viewQueueForChangciItems!=null){
         	DiscoverChildListFragment.viewQueueForChangciItems.clear();
