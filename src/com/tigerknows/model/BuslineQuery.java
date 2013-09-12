@@ -82,7 +82,9 @@ public final class BuslineQuery extends BaseQuery {
         
         addParameter(SERVER_PARAMETER_KEYWORD, keyword);
         addParameter(SERVER_PARAMETER_INDEX, String.valueOf(startPos));
-        addParameter(SERVER_PARAMETER_SIZE, String.valueOf(TKConfig.getPageSize()));
+        if (!hasParameter(SERVER_PARAMETER_SIZE)) {
+            addParameter(SERVER_PARAMETER_SIZE, String.valueOf(TKConfig.getPageSize()));
+        }
 
         if (isReturnTotal) {
             addParameter("w", "1");

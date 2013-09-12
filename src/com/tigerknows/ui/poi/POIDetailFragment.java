@@ -44,6 +44,7 @@ import android.widget.TextView;
 
 
 import com.decarta.Globals;
+import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
@@ -1084,9 +1085,9 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         //初始化动态POI在初始化ExtraView之前，就会导致动态POI在ExtraView的上面显示
         initDynamicPOIView(mPOI);
         initExtraView(mPOI);
-        loadExtraView(DynamicPOIView.FROM_ONRESUME);
         // 重置查询计数
         queryCount = 0;
+        loadExtraView(DynamicPOIView.FROM_ONRESUME);
         loadDynamicView(DynamicPOIView.FROM_ONRESUME);
         refreshNavigation();
         mDoingView.setVisibility(View.VISIBLE);

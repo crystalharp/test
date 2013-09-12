@@ -96,6 +96,8 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
             	onResume();           
             	if (highlightStation == null) {
             	    setSelectionFromTop(0, 0);
+            	} else {
+            	    highlightStation(highlightIndex);
             	}
             }
 
@@ -161,10 +163,12 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
 
         history();
 
-        if (highlightIndex != -1) {
-            highlightStation(highlightIndex);
-        } else if (mDismissed) {
-            setSelectionFromTop(0, 0);
+        if (mDismissed) {
+            if (highlightIndex != -1) {
+                highlightStation(highlightIndex);
+            } else {
+                setSelectionFromTop(0, 0);
+            }
         }
     }
     
@@ -467,6 +471,6 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
         if (highlightIndex > 1) {
             highlightIndex--;
         }
-        mResultLsv.setSelectionFromTop(highlightIndex, 0);
+        setSelectionFromTop(highlightIndex, 0);
     }
 }
