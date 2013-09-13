@@ -217,6 +217,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     
     private Button mWeixinBtn;
     
+    @Override
     public boolean isReLogin() {
         boolean isRelogin = this.isReLogin;
         this.isReLogin = false;

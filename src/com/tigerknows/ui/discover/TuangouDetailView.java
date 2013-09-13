@@ -348,15 +348,6 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
             if (mData != null && mParentFragment.position == position) {
                 if (mData.getUrl() != null) {
                     mParentFragment.mSphinx.getBrowserFragment().setData(mSphinx.getString(R.string.buy), mData.getUrl(), null);
-                } else {
-                    String sessionId = Globals.g_Session_Id;
-                    if (TextUtils.isEmpty(sessionId) == false) {
-                        if (mData.getDingdanCreateResponse() == null) {
-                            buy(true);
-                        } else {
-                            mParentFragment.mSphinx.getBrowserFragment().setData(mSphinx.getString(R.string.buy), mData.getDingdanCreateResponse().getUrl(), null);
-                        }
-                    }
                 }
             }
             return;
@@ -365,15 +356,6 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
         if (mParentFragment.position == position) {
             if (mData.getUrl() != null) {
                 mParentFragment.mSphinx.getBrowserFragment().setData(mSphinx.getString(R.string.buy), mData.getUrl(), null);
-            } else {
-                String sessionId = Globals.g_Session_Id;
-                if (TextUtils.isEmpty(sessionId) == false) {
-                    if (mData.getDingdanCreateResponse() == null) {
-                        buy(true);
-                    } else {
-                        mParentFragment.mSphinx.getBrowserFragment().setData(mSphinx.getString(R.string.buy), mData.getDingdanCreateResponse().getUrl(), null);
-                    }
-                }
             }
         }
 
@@ -867,17 +849,17 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
                 return true;
             }
             DingdanCreateResponse dingdanCreateResponse = (DingdanCreateResponse) response;
-            if (false) {
-            Intent intent = new Intent(); 
-            intent.putExtra(BrowserActivity.TITLE, mSphinx.getString(R.string.buy));
-            intent.putExtra(BrowserActivity.LEFT, mSphinx.getString(R.string.tuangou_detail));
-            intent.putExtra(BrowserActivity.URL, dingdanCreateResponse.getUrl());
-            Shangjia shangjia = Shangjia.getShangjiaById(mData.getSource(), mSphinx, mLoadedDrawableRun);
-            if (shangjia != null) {
-                intent.putExtra(BrowserActivity.TIP, shangjia.getName());
-            }
-            mSphinx.showView(R.id.activity_browser, intent);
-            return true;
+            if (mData.getUrl() == null) {
+                Intent intent = new Intent(); 
+                intent.putExtra(BrowserActivity.TITLE, mSphinx.getString(R.string.buy));
+                intent.putExtra(BrowserActivity.LEFT, mSphinx.getString(R.string.tuangou_detail));
+                intent.putExtra(BrowserActivity.URL, dingdanCreateResponse.getUrl());
+                Shangjia shangjia = Shangjia.getShangjiaById(mData.getSource(), mSphinx, mLoadedDrawableRun);
+                if (shangjia != null) {
+                    intent.putExtra(BrowserActivity.TIP, shangjia.getName());
+                }
+                mSphinx.showView(R.id.activity_browser, intent);
+                return true;
             }
             
             mData.setDingdanCreateResponse(dingdanCreateResponse);
