@@ -37,7 +37,7 @@ public class LocationTable {
     /**
      * 存储记录总数的最大值
      */
-    static final int COUNT_MAX = 512;
+    static final int COUNT_MAX = 256;
 
 	// HELPERS
 	private DatabaseHelper mDbHelper;

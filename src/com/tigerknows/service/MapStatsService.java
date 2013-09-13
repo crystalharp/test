@@ -167,7 +167,6 @@ public class MapStatsService extends Service {
      * 当serverRegionDataInfoMap为空且距上次查询时间超过15s才能查询，这样做是为了避免频繁网络查询
      */
     public static HashMap<Integer, ServerRegionDataInfo> queryServerRegionDataInfoMapInternally(Context context) {
-        MapEngine mapEngine = MapEngine.getInstance();
         long currentTime = System.currentTimeMillis();
         
         if (serverRegionDataInfoMap == null
@@ -175,7 +174,7 @@ public class MapStatsService extends Service {
             lastQueryServerRegionDataInfoTime = currentTime;
             
             // 遍历全国所有城市的所有Region
-            List<CityInfo> allCityInfoList = mapEngine.getAllProvinceCityList(context);
+            List<CityInfo> allCityInfoList = MapEngine.getAllProvinceCityList(context);
             List<Integer> allRegionIdList = new ArrayList<Integer>();
             for(int i = allCityInfoList.size()-1; i >= 0; i--) {
                 CityInfo cityInfo1 = allCityInfoList.get(i);
@@ -183,10 +182,10 @@ public class MapStatsService extends Service {
                 if (childCityInfoList.size() > 1) {
                     for(int ii = childCityInfoList.size()-1; ii >= 0; ii--) {
                         CityInfo cityInfo2 = childCityInfoList.get(ii);
-                        allRegionIdList.addAll(mapEngine.getRegionIdList(cityInfo2.getCName()));
+                        allRegionIdList.addAll(MapEngine.getRegionIdList(cityInfo2.getCName()));
                     }
                 } else {
-                    allRegionIdList.addAll(mapEngine.getRegionIdList(cityInfo1.getCName()));
+                    allRegionIdList.addAll(MapEngine.getRegionIdList(cityInfo1.getCName()));
                 }
             }
             
@@ -203,10 +202,8 @@ public class MapStatsService extends Service {
      * 查询指定城市的最新Region信息（大小、版本等等）
      */
     public static HashMap<Integer, ServerRegionDataInfo> queryServerRegionDataInfoMapInternally(Context context, CityInfo cityInfo) {
-        MapEngine mapEngine = MapEngine.getInstance();
-            
         List<Integer> allRegionIdList = new ArrayList<Integer>();
-        allRegionIdList.addAll(mapEngine.getRegionIdList(cityInfo.getCName()));
+        allRegionIdList.addAll(MapEngine.getRegionIdList(cityInfo.getCName()));
         
         // 查询服务器上最新的Region信息
         MapVersionQuery mapVersionQuery = new MapVersionQuery(context);
@@ -311,7 +308,6 @@ public class MapStatsService extends Service {
      * 统计出现在下载列表中的所有城市的地图信息及状态
      */
     private List<DownloadCity> statsDownloadCityList() {
-        MapEngine mapEngine = MapEngine.getInstance();
         List<DownloadCity> list = new ArrayList<DownloadCity>();
         
         String downloadCityStr = TKConfig.getPref(getBaseContext(), TKConfig.PREFS_MAP_DOWNLOAD_CITYS, "");
@@ -382,7 +378,7 @@ public class MapStatsService extends Service {
         CityInfo cityInfo = Globals.getCurrentCityInfo(false);
         if (cityInfo != null) {
             MapVersionQuery mapVersionQuery = new MapVersionQuery(getBaseContext());
-            mapVersionQuery.setup(MapEngine.getInstance().getRegionIdList(cityInfo.getCName()));
+            mapVersionQuery.setup(MapEngine.getRegionIdList(cityInfo.getCName()));
             mapVersionQuery.query();
             HashMap<Integer, ServerRegionDataInfo> regionVersionMap = mapVersionQuery.getServerRegionDataInfoMap();
             DownloadCity downloadCity = new DownloadCity(cityInfo);
@@ -424,8 +420,8 @@ public class MapStatsService extends Service {
                         }
                         
                         String regionName = regionFileName.replace(".dat", "");
-                        int regionId = mapEngine.getRegionId(regionName);
-                        RegionInfo regionInfo = mapEngine.getRegionInfo(regionId);
+                        int regionId = MapEngine.getRegionId(regionName);
+                        RegionInfo regionInfo = MapEngine.getRegionInfo(regionId);
                         if (null != regionInfo) {
                             String cName = regionInfo.getCCityName();
                             DownloadCity exist = null;
@@ -477,15 +473,14 @@ public class MapStatsService extends Service {
      * @serverRegionDataInfoMap 服务器端Region的地图信息
      */
     public static void statsDownloadCity(DownloadCity downloadCity, HashMap<Integer, ServerRegionDataInfo> serverRegionDataInfoMap) {
-        MapEngine mapEngine = MapEngine.getInstance();
-        List<Integer> list = mapEngine.getRegionIdList(downloadCity.cityInfo.getCName());
+        List<Integer> list = MapEngine.getRegionIdList(downloadCity.cityInfo.getCName());
         int totalSize = 0;
         int downloadedSize = 0;
         boolean maybeUpgrade = false;
         
         for (int j = list.size()-1; j >= 0; j--) {
             int id = list.get(j);
-            LocalRegionDataInfo regionMapInfo = mapEngine.getLocalRegionDataInfo(id);
+            LocalRegionDataInfo regionMapInfo = MapEngine.getLocalRegionDataInfo(id);
             if (regionMapInfo != null) {
                 totalSize += regionMapInfo.getTotalSize();
                 downloadedSize += regionMapInfo.getDownloadedSize();
@@ -493,7 +488,7 @@ public class MapStatsService extends Service {
             
             // 检查是否可升级
             if (serverRegionDataInfoMap != null && serverRegionDataInfoMap.containsKey(id)) {
-                RegionMetaVersion regionMetaVersion = mapEngine.getRegionMetaVersion(id);
+                RegionMetaVersion regionMetaVersion = MapEngine.getRegionMetaVersion(id);
                 ServerRegionDataInfo serverRegionDataInfo = serverRegionDataInfoMap.get(id); 
                 if (regionMetaVersion != null && serverRegionDataInfo != null) {
                     String localVersion = regionMetaVersion.toString();
@@ -505,6 +500,9 @@ public class MapStatsService extends Service {
                             && serverVersion.equalsIgnoreCase(localVersion) == false) {
                     	maybeUpgrade = true;
                     }
+                }
+                if(regionMapInfo == null && serverRegionDataInfo != null) {
+                	totalSize += serverRegionDataInfo.getTotalSize();
                 }
             }
         }
