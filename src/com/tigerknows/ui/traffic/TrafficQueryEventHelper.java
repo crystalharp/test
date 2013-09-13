@@ -31,6 +31,7 @@ import com.tigerknows.R;
 import android.widget.Toast;
 
 import com.tigerknows.Sphinx.TouchMode;
+import com.tigerknows.android.app.TKActivity;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.PinOverlayHelper;
 import com.tigerknows.model.POI;
@@ -527,6 +528,8 @@ public class TrafficQueryEventHelper {
             final Dialog dialog = Utility.showNormalDialog(mQueryFragment.mSphinx,
                     title,
                     listView);
+
+            ((TKActivity) activity).setShowingDialog(dialog);
             
             dialog.setCancelable(true);
             listView.setOnItemClickListener(new OnItemClickListener() {

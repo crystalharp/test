@@ -983,6 +983,7 @@ public class MapDownloadActivity extends BaseActivity implements View.OnClickLis
         final Dialog dialog = Utility.showNormalDialog(this,
                 getString(R.string.select_action),
                 listView);
+        mShowingDialog = dialog;
         
         listView.setOnItemClickListener(new OnItemClickListener() {
 
@@ -1015,7 +1016,7 @@ public class MapDownloadActivity extends BaseActivity implements View.OnClickLis
                     }
                 } else if (str.equals(mThis.getString(R.string.delete_map))) {
                     mActionLog.addAction(mActionTag +  ActionLog.MapDownloadOpertorDelete);
-                    Utility.showNormalDialog(mThis,
+                    mShowingDialog = Utility.showNormalDialog(mThis,
                             mThis.getString(R.string.prompt),
                             mThis.getString(R.string.delete_city_map_tip),
                             new DialogInterface.OnClickListener() {
