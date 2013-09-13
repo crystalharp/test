@@ -41,6 +41,7 @@ public class TuangouDetailFragment extends BaseDetailFragment
     
     private List<Tuangou> mDataList = null;
     
+    @Override
     public boolean isReLogin() {
         boolean isRelogin = this.isReLogin;
         this.isReLogin = false;

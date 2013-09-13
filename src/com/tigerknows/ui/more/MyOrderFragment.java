@@ -90,13 +90,18 @@ public class MyOrderFragment extends BaseFragment{
 	public void onResume() {
 		super.onResume();
 		mTitleBtn.setText(mSphinx.getString(R.string.wodedingdan));
+		
+        if (isReLogin()) {
+            return;
+        }
+        
 		List<Shangjia> list = Shangjia.getShangjiaList();
 		if (list.size() != mResultList.size()) {
 		    mResultList.clear();
 		    mResultList.addAll(list);
 		    createShangjiaListView();
 		}
-		
+
 		if (mRequestLogin != null) {
 		    if (Globals.g_User != null) {
 		        requestUrl(mRequestLogin);
@@ -169,6 +174,15 @@ public class MyOrderFragment extends BaseFragment{
     		mTuangouDingdanLly.addView(btn);
     	}
     }
+    
+    @Override
+    public boolean isReLogin(){
+        if (Globals.g_User == null) {
+            mBaseQuerying = null;
+        }
+        return super.isReLogin();
+    }
+    
     private void startShangjia(Shangjia shangjia){
     	
         Intent intent = new Intent();
