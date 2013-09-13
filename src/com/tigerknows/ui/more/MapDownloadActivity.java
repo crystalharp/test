@@ -515,7 +515,7 @@ public class MapDownloadActivity extends BaseActivity implements View.OnClickLis
         
         if (sAllAddCityInfoList == null) {
             sAllAddCityInfoList = new ArrayList<CityInfo>();
-            List<CityInfo> allCityInfoList = mMapEngine.getAllProvinceCityList(mThis);  
+            List<CityInfo> allCityInfoList = MapEngine.getAllProvinceCityList(mThis);  
             for(int i = allCityInfoList.size()-1; i >= 0; i--) {
                 CityInfo cityInfo1 = allCityInfoList.get(i).clone();
                 cityInfo1.order = cityInfo1.getId();
@@ -696,7 +696,7 @@ public class MapDownloadActivity extends BaseActivity implements View.OnClickLis
                     }
                     // 如果已经在下载城市列表中，则不用重复添加，免得引起下载城市的状态被改变
                     if (exist == false) {
-                        CityInfo cityInfo = mMapEngine.getCityInfo(cityId);
+                        CityInfo cityInfo = MapEngine.getCityInfo(cityId);
                         addDownloadCityInternal(cityInfo, false, DownloadCity.STATE_STOPPED);
                         notifyDataSetChanged();
                     }
