@@ -265,7 +265,7 @@ public class BuslineModel extends XMapData {
          * 
          * @param id
          */
-        public static List<Line> readFormDatabases(Context context, long parentId, int storeType) {
+        public static List<Line> readFromDatabases(Context context, long parentId, int storeType) {
             List<Line> lineList = new ArrayList<Line>();
             Cursor c = SqliteWrapper.query(context, context.getContentResolver(),
                     Tigerknows.Busline.CONTENT_URI, null, "(" + Tigerknows.Busline.PARENT_ID + "="
@@ -275,7 +275,7 @@ public class BuslineModel extends XMapData {
                 if (c.getCount() > 0) {
                     c.moveToFirst();
                     for (int i = 0; i < c.getCount(); i++) {
-                        lineList.add(readFormCursor(context, c));
+                        lineList.add(readFromCursor(context, c));
                         c.moveToNext();
                     }
                 }
@@ -284,7 +284,7 @@ public class BuslineModel extends XMapData {
             return lineList;
         }
 
-        public static Line readFormCursor(Context context, Cursor c) {
+        public static Line readFromCursor(Context context, Cursor c) {
             Line line = new Line();
             String str;
             if (c != null) {
@@ -344,7 +344,7 @@ public class BuslineModel extends XMapData {
                 if (count > 0) {
                     c.moveToFirst();
                     for(int i = 0; i < count; i++) {
-                        Line other = readFormCursor(context, c);
+                        Line other = readFromCursor(context, c);
                         if((null != other && !other.equals(this)) || (null == other && other != this)) {
                         } else {
                             line = other;
@@ -396,7 +396,7 @@ public class BuslineModel extends XMapData {
         public void updateHistory(Context context) {
             BaseData baseData = checkStore(context, Tigerknows.STORE_TYPE_HISTORY);
             if (baseData != null) {
-                com.tigerknows.model.History history = com.tigerknows.model.History.readFormDatabases(context, baseData.parentId);
+                com.tigerknows.model.History history = com.tigerknows.model.History.readFromDatabases(context, baseData.parentId);
                 if (history != null) {
                     history.updateHistory(context);
                 }

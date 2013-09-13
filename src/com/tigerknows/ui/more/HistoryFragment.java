@@ -517,7 +517,7 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
                 c.moveToFirst();
                 maxId = 0;
                 for(int i = 0; i<count; i++) {
-                    poi = POI.readFormCursor(mContext, c);
+                    poi = POI.readFromCursor(mContext, c);
                     if (list.contains(poi)) {
                         list.remove(poi);
                     }
@@ -551,7 +551,7 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
                 c.moveToFirst();
                 maxId = 0;
                 for(int i = 0; i<count; i++) {
-                    traffic = History.readFormCursor(mContext, c);
+                    traffic = History.readFromCursor(mContext, c);
                     if (traffic != null) {
                         if (list.contains(traffic)) {
                             list.remove(traffic);
