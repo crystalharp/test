@@ -120,7 +120,7 @@ public class TuangouDetailFragment extends BaseDetailFragment
         // 	(This happends when user is not logged in and pressed the buy button, logged in and come back)
         // and the current user is not null
         if (isRequsetBuy() && Globals.g_User != null) {
-            ((TuangouDetailView) mCyclePagerAdapter.viewList.get(mViewPager.getCurrentItem()%mCyclePagerAdapter.viewList.size())).buy(true);
+            ((TuangouDetailView) mCyclePagerAdapter.viewList.get(mViewPager.getCurrentItem()%mCyclePagerAdapter.viewList.size())).buy(false);
             return;
         }
     }
