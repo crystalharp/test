@@ -79,7 +79,7 @@ public class TKActivity extends Activity implements TKAsyncTask.EventListener {
     
     static final String TAG = "TKActivity";
     
-    protected Activity mThis = null;
+    protected TKActivity mThis = null;
     
     protected LayoutInflater mLayoutInflater;
     
@@ -100,6 +100,11 @@ public class TKActivity extends Activity implements TKAsyncTask.EventListener {
     protected MapEngine mMapEngine;
     
     protected Handler mHandler;
+    
+    /**
+     * 当前显示的对话框
+     */
+    protected Dialog mShowingDialog;
     
     /**
      * 当前的查询
@@ -493,6 +498,12 @@ public class TKActivity extends Activity implements TKAsyncTask.EventListener {
         unregisterReceiver(mConnectivityReceiver);
         
         super.onPause();
+        
+        if (mShowingDialog != null && mShowingDialog.isShowing()) {
+            mShowingDialog.dismiss();
+        }
+        mShowingDialog = null;
+        
         if (TKConfig.ENABLE_TALKINGDATA) {
             TCAgent.onPause(this);
         }
@@ -966,5 +977,9 @@ public class TKActivity extends Activity implements TKAsyncTask.EventListener {
     @Override
     public void startActivity(Intent intent) {
         super.startActivity(intent);
+    }
+    
+    public void setShowingDialog(Dialog dialog) {
+        mShowingDialog = dialog;
     }
 }
