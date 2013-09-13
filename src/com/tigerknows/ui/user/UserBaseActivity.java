@@ -162,7 +162,7 @@ public abstract class UserBaseActivity extends BaseActivity {
 	protected void sendRequest(AccountManage accountManage) {
 		hideSoftInput();
 		accountManage.setup(getCityParameter());
-		accountManage.setTipText(getString(R.string.query_loading_tip));
+		accountManage.setTipText(getString(R.string.doing_and_wait));
 		queryStart(accountManage, false);
 	}
 

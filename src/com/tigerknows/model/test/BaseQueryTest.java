@@ -572,7 +572,7 @@ public class BaseQueryTest {
                 accountManage.addParameter(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, "du");
                 accountManage.addParameter(BaseQuery.SERVER_PARAMETER_TELEPHONE, phone);
                 accountManage.setup(Globals.getCurrentCityInfo().getId());
-                accountManage.setTipText(activity.getString(R.string.query_loading_tip));
+                accountManage.setTipText(activity.getString(R.string.doing_and_wait));
                 if (activity instanceof BaseActivity) {
                     ((BaseActivity)(activity)).queryStart(accountManage, false);
                 } else if (activity instanceof Sphinx) {
