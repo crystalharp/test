@@ -243,7 +243,7 @@ public class ChangeCityActivity extends BaseActivity {
             @Override
             public boolean onTouch(View view, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    hideSoftInput();
+                    hideSoftInput(false);
                 }
                 return false;
             }

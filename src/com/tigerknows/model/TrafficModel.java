@@ -935,7 +935,7 @@ public class TrafficModel extends XMapData {
             return uri;
         }
         
-        public static Plan readFormCursor(Context context, Cursor c) {
+        public static Plan readFromCursor(Context context, Cursor c) {
             Plan plan = new Plan();
             if (c != null) {
                 if (c.getCount() > 0) {
@@ -943,8 +943,8 @@ public class TrafficModel extends XMapData {
                     plan.parentId = c.getLong(c.getColumnIndex(Tigerknows.TransitPlan.PARENT_ID));
                     plan.storeType = c.getInt(c.getColumnIndex(Tigerknows.TransitPlan.STORE_TYPE));
                     plan.length = c.getInt(c.getColumnIndex(Tigerknows.TransitPlan.TOTAL_LENGTH));
-                    POI start = POI.readFormDatabases(context, c.getInt(c.getColumnIndex(Tigerknows.TransitPlan.START)));
-                    POI end = POI.readFormDatabases(context, c.getInt(c.getColumnIndex(Tigerknows.TransitPlan.END)));
+                    POI start = POI.readFromDatabases(context, c.getInt(c.getColumnIndex(Tigerknows.TransitPlan.START)));
+                    POI end = POI.readFromDatabases(context, c.getInt(c.getColumnIndex(Tigerknows.TransitPlan.END)));
                     byte[] data = c.getBlob(c.getColumnIndex(Tigerknows.TransitPlan.DATA));
                     try {
                         XMap xmap = (XMap) ByteUtil.byteToXObject(data);
@@ -964,7 +964,7 @@ public class TrafficModel extends XMapData {
             return plan;
         }
         
-        public static List<Plan> readFormDatabases(Context context, long parentId, int storeType) {
+        public static List<Plan> readFromDatabases(Context context, long parentId, int storeType) {
             List<Plan> planList = new ArrayList<Plan>();
             Cursor c = SqliteWrapper.query(context,
                     context.getContentResolver(), 
@@ -977,7 +977,7 @@ public class TrafficModel extends XMapData {
                 if (c.getCount() > 0) {
                     c.moveToFirst();
                     for(int i =0; i < c.getCount(); i++) {
-                        planList.add(readFormCursor(context, c));
+                        planList.add(readFromCursor(context, c));
                         c.moveToNext();
                     }
                 }
@@ -1018,7 +1018,7 @@ public class TrafficModel extends XMapData {
                 if (count > 0) {
                     c.moveToFirst();
                     for(int i = 0; i < count; i++) {
-                        Plan other = readFormCursor(context, c);
+                        Plan other = readFromCursor(context, c);
                         if((null != other && !other.equals(this)) || (null == other && other != this)) {
                         } else {
                             path = other;
@@ -1131,7 +1131,7 @@ public class TrafficModel extends XMapData {
         public void updateHistory(Context context) {
             BaseData baseData = checkStore(context, Tigerknows.STORE_TYPE_HISTORY);
             if (baseData != null) {
-                com.tigerknows.model.History history = com.tigerknows.model.History.readFormDatabases(context, baseData.parentId);
+                com.tigerknows.model.History history = com.tigerknows.model.History.readFromDatabases(context, baseData.parentId);
                 if (history != null) {
                     history.updateHistory(context);
                 }

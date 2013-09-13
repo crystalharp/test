@@ -81,7 +81,7 @@ public class History extends BaseData{
         if (historyType == Tigerknows.History.HISTORY_BUSLINE) {
         	buslineQuery = new BuslineQuery(context);
             BuslineModel buslineModel = new BuslineModel();
-            List<Line> lineList = Line.readFormDatabases(context, id, Tigerknows.STORE_TYPE_HISTORY);
+            List<Line> lineList = Line.readFromDatabases(context, id, Tigerknows.STORE_TYPE_HISTORY);
             buslineModel.setLineList(lineList);
             buslineQuery.setup(-1, lineList.get(0).getName(), 0, true, -1, null);
             buslineModel.setTotal(1);
@@ -91,7 +91,7 @@ public class History extends BaseData{
             return lineList.isEmpty() == false;
         } else {
             TrafficModel trafficModel = new TrafficModel();
-            List<Plan> planList = Plan.readFormDatabases(context, id, Tigerknows.STORE_TYPE_HISTORY);
+            List<Plan> planList = Plan.readFromDatabases(context, id, Tigerknows.STORE_TYPE_HISTORY);
             trafficModel.setPlanList(planList);
             trafficModel.setStart(planList.get(0).getStart());
             trafficModel.setEnd(planList.get(0).getEnd());
@@ -120,20 +120,20 @@ public class History extends BaseData{
      * 从数据库中读取History
      * @param id
      */
-    public static History readFormDatabases(Context context, long id) {
+    public static History readFromDatabases(Context context, long id) {
         History history = null;
         Cursor c = SqliteWrapper.query(context, context.getContentResolver(), ContentUris.withAppendedId(Tigerknows.History.CONTENT_URI, id), null, null, null, null);
         if (c != null) {
             if (c.getCount() > 0) {
                 c.moveToFirst();
-                history = readFormCursor(context, c);
+                history = readFromCursor(context, c);
             }
             c.close();
         }
         return history;
     }
 
-    public static History readFormCursor(Context context, Cursor cursor) {
+    public static History readFromCursor(Context context, Cursor cursor) {
         History history = null;
         if (cursor != null) {
             if (cursor.getCount() > 0) {

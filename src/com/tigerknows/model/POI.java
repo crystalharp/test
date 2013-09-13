@@ -1202,21 +1202,21 @@ public class POI extends BaseData {
      * 
      * @param id
      */
-    public static POI readFormDatabases(Context context, long id) {
+    public static POI readFromDatabases(Context context, long id) {
         POI poi = null;
         Cursor c = SqliteWrapper.query(context, context.getContentResolver(), ContentUris
                 .withAppendedId(Tigerknows.POI.CONTENT_URI, id), null, null, null, null);
         if (c != null) {
             if (c.getCount() > 0) {
                 c.moveToFirst();
-                poi = readFormCursor(context, c);
+                poi = readFromCursor(context, c);
             }
             c.close();
         }
         return poi;
     }
 
-    public static List<POI> readFormDatabases(Context context, long parentId, int storeType,
+    public static List<POI> readFromDatabases(Context context, long parentId, int storeType,
             String sortOrder) {
         List<POI> list = new ArrayList<POI>();
         Cursor c = SqliteWrapper.query(context, context.getContentResolver(),
@@ -1227,7 +1227,7 @@ public class POI extends BaseData {
             if (c.getCount() > 0) {
                 c.moveToFirst();
                 for (int i = 0; i < c.getCount(); i++) {
-                    list.add(readFormCursor(context, c));
+                    list.add(readFromCursor(context, c));
                     c.moveToNext();
                 }
             }
@@ -1236,7 +1236,7 @@ public class POI extends BaseData {
         return list;
     }
 
-    public static POI readFormCursor(Context context, Cursor cursor) {
+    public static POI readFromCursor(Context context, Cursor cursor) {
         POI poi = new POI();
         if (cursor != null) {
             if (cursor.getCount() > 0) {
@@ -1436,7 +1436,7 @@ public class POI extends BaseData {
             if (count > 0) {
                 c.moveToFirst();
                 for(int i = 0; i < count; i++) {
-                    POI other = readFormCursor(context, c);
+                    POI other = readFromCursor(context, c);
                     if((null != other && !other.equals(this)) || (null == other && other != this)) {
                     } else {
                         baseData = other;

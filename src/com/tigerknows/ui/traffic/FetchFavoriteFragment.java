@@ -231,7 +231,7 @@ public class FetchFavoriteFragment extends BaseFragment {
                 POI poi;
                 c.moveToFirst();
                 for(int i = 0; i<count; i++) {
-                    poi = POI.readFormCursor(mContext, c);
+                    poi = POI.readFromCursor(mContext, c);
                     
                     LogWrapper.d("eric", "readFavoritePOI poi's ID: " + poi.getId());
                     mTempFavoriteList.add(poi);

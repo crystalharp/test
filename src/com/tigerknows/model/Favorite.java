@@ -90,7 +90,7 @@ public class Favorite extends BaseData{
         if (favoriteType == Tigerknows.Favorite.FAVORITE_BUSLINE) {
         	buslineQuery = new BuslineQuery(context);
             BuslineModel buslineModel = new BuslineModel();
-            List<Line> lineList = Line.readFormDatabases(context, id, Tigerknows.STORE_TYPE_FAVORITE);
+            List<Line> lineList = Line.readFromDatabases(context, id, Tigerknows.STORE_TYPE_FAVORITE);
             buslineModel.setLineList(lineList);
             buslineQuery.setup(-1, lineList.get(0).getName(), 0, true, -1, null);
             buslineModel.setTotal(1);
@@ -100,7 +100,7 @@ public class Favorite extends BaseData{
             return lineList.isEmpty() == false;
         } else {
             TrafficModel trafficModel = new TrafficModel();
-            List<Plan> planList = Plan.readFormDatabases(context, id, Tigerknows.STORE_TYPE_FAVORITE);
+            List<Plan> planList = Plan.readFromDatabases(context, id, Tigerknows.STORE_TYPE_FAVORITE);
             trafficModel.setPlanList(planList);
             trafficModel.setStart(planList.get(0).getStart());
             trafficModel.setEnd(planList.get(0).getEnd());
@@ -129,20 +129,20 @@ public class Favorite extends BaseData{
      * 从数据库中读取Favorite
      * @param id
      */
-    public static Favorite readFormDatabases(Context context, long id) {
+    public static Favorite readFromDatabases(Context context, long id) {
         Favorite favorite = null;
         Cursor c = SqliteWrapper.query(context, context.getContentResolver(), ContentUris.withAppendedId(Tigerknows.Favorite.CONTENT_URI, id), null, null, null, null);
         if (c != null) {
             if (c.getCount() > 0) {
                 c.moveToFirst();
-                favorite = readFormCursor(context, c);
+                favorite = readFromCursor(context, c);
             }
             c.close();
         }
         return favorite;
     }
 
-    public static Favorite readFormCursor(Context context, Cursor cursor) {
+    public static Favorite readFromCursor(Context context, Cursor cursor) {
         Favorite favorite = null;
         if (cursor != null) {
             if (cursor.getCount() > 0) {

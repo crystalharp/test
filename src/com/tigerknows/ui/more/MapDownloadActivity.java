@@ -948,7 +948,7 @@ public class MapDownloadActivity extends BaseActivity implements View.OnClickLis
             @Override
             public boolean onTouch(View view, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    hideSoftInput();
+                    hideSoftInput(false);
                 }
                 return false;
             }

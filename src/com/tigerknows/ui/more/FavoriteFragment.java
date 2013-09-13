@@ -537,7 +537,7 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
                 c.moveToFirst();
                 maxId = 0;
                 for(int i = 0; i<count; i++) {
-                    poi = POI.readFormCursor(mContext, c);
+                    poi = POI.readFromCursor(mContext, c);
                     if (list.contains(poi)) {
                         list.remove(poi);
                     }
@@ -570,7 +570,7 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
                 c.moveToFirst();
                 maxId = 0;
                 for(int i = 0; i<count; i++) {
-                    traffic = Favorite.readFormCursor(mContext, c);
+                    traffic = Favorite.readFromCursor(mContext, c);
                     if (traffic != null) {
                         if (list.contains(traffic)) {
                             list.remove(traffic);

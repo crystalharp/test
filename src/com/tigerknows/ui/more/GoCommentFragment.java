@@ -191,7 +191,7 @@ public class GoCommentFragment extends BaseFragment implements View.OnClickListe
                 maxId = 0;
                 int add = 0;
                 for(int i = 0; i<count; i++) {
-                    poi = POI.readFormCursor(mContext, c);
+                    poi = POI.readFromCursor(mContext, c);
                     if (!mPOIList.contains(poi)) {
                         list.add(poi);
                         add++;
@@ -217,7 +217,7 @@ public class GoCommentFragment extends BaseFragment implements View.OnClickListe
                 maxId = 0;
                 int add = 0;
                 for(int i = 0; i<count; i++) {
-                    poi = POI.readFormCursor(mContext, c);
+                    poi = POI.readFromCursor(mContext, c);
                     if (!mPOIList.contains(poi)) {
                         list.add(poi);
                         add++;

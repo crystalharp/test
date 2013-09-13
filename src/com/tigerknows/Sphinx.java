@@ -378,7 +378,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     public static final int THIRD_PARTY_PULL = 8;
     
     // 老虎动画时间
-    private static final int LOGO_ANIMATION_TIME = 2000;
+    private static final int LOGO_ANIMATION_TIME = 1000;
 
     private Context mContext;
     
@@ -583,14 +583,17 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                             }
                         }
                     }
-                }, LOGO_ANIMATION_TIME);
+                }, (fristUse || upgrade) ? 0 : LOGO_ANIMATION_TIME);
             }
             
             new Thread(new Runnable() {
                 
                 @Override
                 public void run() {
-        
+                    // 初始化存储历史词的数据库表结构
+                    HistoryWordTable historyWordTable = new HistoryWordTable(mThis);
+                    historyWordTable.close();
+                    
                     CalendarUtil.initExactTime(mContext);
 
                     Shangjia.readShangjiaList(Sphinx.this);
@@ -1852,8 +1855,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             TKConfig.setPref(mContext, TKConfig.PREFS_LAST_LON, String.valueOf(position.getLon()));
             TKConfig.setPref(mContext, TKConfig.PREFS_LAST_LAT, String.valueOf(position.getLat()));
             TKConfig.setPref(mContext, TKConfig.PREFS_LAST_ZOOM_LEVEL, String.valueOf(cityInfo.getLevel()));
-            HistoryWordTable.readHistoryWord(mContext, cityId, HistoryWordTable.TYPE_POI);
-            TrafficQueryFragment.TrafficOnCityChanged(this, cityId);
+            if (mPOIHomeFragment != null) {
+                HistoryWordTable.readHistoryWord(mContext, cityId, HistoryWordTable.TYPE_POI);
+                TrafficQueryFragment.TrafficOnCityChanged(this, cityId);
+            }
             
             Intent service = new Intent(MapStatsService.ACTION_STATS_CURRENT_DOWNLOAD_CITY);
             service.setClass(mThis, MapStatsService.class);

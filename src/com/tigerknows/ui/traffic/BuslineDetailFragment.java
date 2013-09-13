@@ -447,12 +447,18 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
             }
         } 
         
-        key = key.replace("(", "");
-        key = key.replace("（", "");
-        key = key.replace(")", "");
-        key = key.replace("）", "");
-        key = key.replace("公交站", "");
-        key = key.replace("公车站", "");
+        String poiSuffix1 = "(公交站)";
+        String poiSuffix2 = "（公交站）";
+        
+        if (key.contains(poiSuffix1)) {
+            key = key.replace(poiSuffix1, "");
+        } else if (key.contains(poiSuffix2)) {
+            key = key.replace(poiSuffix2, "");
+        } else {
+            key = key.replace("公交站", "");
+            key = key.replace("公车站", "");
+        }
+        
         for (Station station : stations) {
             if (key.equals(station.getName())) {
                 return station.getIndex();
