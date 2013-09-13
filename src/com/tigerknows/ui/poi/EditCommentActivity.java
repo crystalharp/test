@@ -1035,6 +1035,7 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
                 if (response.getResponseCode() == 201) {
                     BaseActivity.showErrorDialog(mThis, mThis.getString(R.string.response_code_201), mThis, true);
                 } else if (response.getResponseCode() == 601 && response instanceof CommentCreateResponse) {
+                    mComment = mComment.clone();
                     mPOI.setMyComment(mComment);
                     mPOI.setAttribute(Globals.g_User != null ? POI.ATTRIBUTE_COMMENT_USER : POI.ATTRIBUTE_COMMENT_ANONYMOUS);
                     mStatus = STATUS_MODIFY;
@@ -1059,6 +1060,7 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
                         }
                     });
                 } else if (response.getResponseCode() == 602) {
+                    mComment = mComment.clone();
                     mStatus = STATUS_NEW;
                     mTitleBtn.setText(R.string.publish_comment);
                     DataOperation dataOperation = new DataOperation(commentOperation);
