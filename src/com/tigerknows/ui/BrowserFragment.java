@@ -56,6 +56,7 @@ public class BrowserFragment extends BaseFragment implements View.OnClickListene
     private String mURL;
     private String mTitle;
     private String mFinishedUrl;
+    private String mLastUrl;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -89,7 +90,7 @@ public class BrowserFragment extends BaseFragment implements View.OnClickListene
     }
     
     public void setData(String title, String url, String tip){
-        if (url == null || url.equals(mURL)) {
+        if (url == null || (url.equals(mURL) && url.equals(mLastUrl))) {
             return;
         }
 
@@ -102,6 +103,7 @@ public class BrowserFragment extends BaseFragment implements View.OnClickListene
         mTitle = title;
         mURL = url;
         mFinishedUrl = null;
+        mLastUrl = null;
 
         LogWrapper.d(TAG, "mURL="+mURL);
         
@@ -149,6 +151,9 @@ public class BrowserFragment extends BaseFragment implements View.OnClickListene
                 super.onPageFinished(view, url);
                 if (mFinishedUrl == null || mFinishedUrl.equals(url)) {
                     view.clearHistory();
+                    mLastUrl = mURL;
+                } else {
+                    mLastUrl = url;
                 }
                 mFinishedUrl = url;
                 mProgressBar.setVisibility(View.GONE);
