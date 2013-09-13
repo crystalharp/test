@@ -810,11 +810,6 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
             }
         }
         
-        if (imageUploadSuccess) {
-            mUploadUri = null;
-            mPhotoMD5 = null;
-        }
-        
         if (textUploadSuccess && imageUploadSuccess) {
             Toast.makeText(mThis, R.string.add_merchant_success, Toast.LENGTH_LONG).show();
             finish();
