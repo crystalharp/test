@@ -265,6 +265,7 @@
                             android:textColor="@color/black_dark"
                             android:drawableRight="@drawable/ic_goto_here"
                             android:textSize="14sp"
+					        android:lineSpacingMultiplier="1.2"
                             android:autoLink="none"
                             />
                     </RelativeLayout>

@@ -36,6 +36,7 @@ public class UserLoginRegistActivity extends UserBaseActivity implements View.On
 	public static final int REQUEST_CODE_REGIST = 1;
 	private ExtValidationEditText registPhoneEdt;
 	private ExtValidationEditText registPasswordEdt;
+	private ExtValidationEditText rePasswordEdt;
 	private TextView forgetPasswordTxt;
 	private Button loginBtn;
 	private Button registBtn;
@@ -72,6 +73,7 @@ public class UserLoginRegistActivity extends UserBaseActivity implements View.On
 		valiNumEdt = (EditText)findViewById(R.id.vali_num_edt);
 		valiNumBtn = (CountDownButton)findViewById(R.id.vali_num_btn);
 		registPasswordEdt = (ExtValidationEditText)findViewById(R.id.regist_password_edt);
+		rePasswordEdt = (ExtValidationEditText)findViewById(R.id.re_password_edt);
 		registBtn = (Button)findViewById(R.id.regist_btn);
 		loginPhoneEdt = (ExtValidationEditText)findViewById(R.id.login_phone_edt);
 		loginPasswordEdt = (ExtValidationEditText)findViewById(R.id.login_password_edt);
@@ -109,6 +111,18 @@ public class UserLoginRegistActivity extends UserBaseActivity implements View.On
             titleRegistBtn.setBackgroundResource(R.drawable.btn_hot_comment_focused);
         }
         hideSoftInput();
+    }
+    
+    private void cleanAll(boolean isLeft) {
+    	if (isLeft){
+    		loginPhoneEdt.setText("");
+    		loginPasswordEdt.setText("");
+    	}else{
+    		registPhoneEdt.setText("");
+    		registPasswordEdt.setText("");
+    		valiNumEdt.setText("");
+    		rePasswordEdt.setText("");
+    	}
     }
     
     @Override
@@ -279,6 +293,7 @@ public class UserLoginRegistActivity extends UserBaseActivity implements View.On
 				if (which == DialogInterface.BUTTON_POSITIVE) {
 					String phoneNum = loginPhoneEdt.getText().toString().trim();
 					if (!TextUtils.isEmpty(phoneNum)) {
+						cleanAll(false);
 						registPhoneEdt.setText(phoneNum);
 						registPhoneEdt.setSelection(phoneNum.length());
 			        }
@@ -480,6 +495,7 @@ public class UserLoginRegistActivity extends UserBaseActivity implements View.On
 			public void onClick(DialogInterface dialog,
 					int which) {
 				if (which == DialogInterface.BUTTON_POSITIVE) {
+					cleanAll(true);
 					setPrefsPhoneNum(registPhoneEdt.getText().toString().trim());
 					changeMode(true);
 				} 
