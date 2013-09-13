@@ -172,6 +172,9 @@ public class TrafficQueryMapAndLocationHelper {
         	if (cityInfo != null && !TextUtils.isEmpty(cityInfo.getCName())) {
         		mQueryFragment.setCurrentCity(cityInfo.getCName());	
         	}
+        	else {
+        		mQueryFragment.setCurrentCity(mQueryFragment.mSphinx.getString(R.string.location_unknown));
+        	}
     	}
 
     }
