@@ -123,6 +123,8 @@ public class LocationQuery extends BaseQuery {
      * 清除所有缓存的定位信息
      */
     public void clearCache() {
+        checkLocationTable();
+        locationTable.clear();
         onlineLocationCache.clear();
         offlineLocationCache.clear();
     }
@@ -398,6 +400,8 @@ public class LocationQuery extends BaseQuery {
      * 释放资源
      */
     public void onDestory() {
+        onlineLocationCache.clear();
+        offlineLocationCache.clear();
         if (locationTable != null && locationTable.isOpen()) {
             locationTable.optimize(LocationTable.Provider_List_Cache);
             locationTable.close();
