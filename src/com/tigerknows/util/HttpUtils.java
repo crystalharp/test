@@ -71,6 +71,8 @@ public class HttpUtils {
     
     public static class TKHttpClient {
         private static int BUFFER_SIZE = 1024*5;
+        
+        public static boolean ProxyIsAvailable = true;
     
         public interface RealTimeRecive {
             public void reciveData(byte[] data);    
@@ -291,27 +293,54 @@ public class HttpUtils {
                 reqTime = System.currentTimeMillis();
                 
                 String proxyHost = android.net.Proxy.getDefaultHost();
-                if (proxyHost != null) {
-                    if (Utility.checkMobileNetwork(context)) {
-                        LogWrapper.i("HttpUtils", "TKHttpClient->sendAndRecive():apiType="+apiType+", proxyHost="+proxyHost);
-                        HttpHost proxy = new HttpHost(android.net.Proxy.getDefaultHost(), android.net.Proxy.getDefaultPort(), "http");
-                        String domain = url.replace("http://", "");
-                        domain = domain.substring(0, domain.indexOf("/"));
-                        HttpHost target = new HttpHost(domain, 80, "http");
-                        client.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
+                int proxyPort = android.net.Proxy.getDefaultPort();
+                boolean isMobile = Utility.checkMobileNetwork(context);
+                if (isMobile && proxyHost != null && ProxyIsAvailable) {
+                    LogWrapper.i("HttpUtils", "TKHttpClient->sendAndRecive():apiType="+apiType+", proxyHost="+proxyHost);
+                    HttpHost proxy = new HttpHost(proxyHost, proxyPort, "http");
+                    String domain = url.replace("http://", "");
+                    domain = domain.substring(0, domain.indexOf("/"));
+                    HttpHost target = new HttpHost(domain, 80, "http");
+                    client.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
+                    try {
                         response = client.execute(target, post);
-                    } else {
+                        ProxyIsAvailable = true;
+                    } catch (Exception e) {
+                        client.close();
+                        client = createHttpClient(context);
+                        LogWrapper.i("HttpUtils", "TKHttpClient->sendAndRecive():apiType="+apiType+", proxyHost="+null);
                         response = client.execute(post);
+                        ProxyIsAvailable = false;
                     }
                 } else {
-                    response = client.execute(post);
+                    try {
+                        LogWrapper.i("HttpUtils", "TKHttpClient->sendAndRecive():apiType="+apiType+", proxyHost="+null);
+                        response = client.execute(post);
+                        ProxyIsAvailable = false;
+                    } catch (IOException e) {
+                        if (isMobile && proxyHost != null) {
+                            client.close();
+                            client = createHttpClient(context);
+                            LogWrapper.i("HttpUtils", "TKHttpClient->sendAndRecive():apiType="+apiType+", proxyHost="+proxyHost);
+                            HttpHost proxy = new HttpHost(proxyHost, proxyPort, "http");
+                            String domain = url.replace("http://", "");
+                            domain = domain.substring(0, domain.indexOf("/"));
+                            HttpHost target = new HttpHost(domain, 80, "http");
+                            client.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
+                            
+                            response = client.execute(target, post);
+                            ProxyIsAvailable = true;
+                        } else {
+                            throw e;
+                        }
+                    }
                 }
                 
                 StatusLine status = response.getStatusLine();
                 HttpEntity entity = response.getEntity();
                 
                 statusCode = status.getStatusCode();
-                LogWrapper.i("HttpUtils", "TKHttpClient->sendAndRecive():apiType="+apiType+", statusCode="+statusCode +", entity="+entity.getContentLength());
+                LogWrapper.i("HttpUtils", "TKHttpClient->sendAndRecive():apiType="+apiType+", statusCode="+statusCode +", entity="+entity.getContentLength()+",ProxyIsAvailable="+ProxyIsAvailable);
                 if (status.getStatusCode() != 200) { // HTTP 200 is success.
                     throw new IOException("HTTP error: " + status.getStatusCode());
                 }
