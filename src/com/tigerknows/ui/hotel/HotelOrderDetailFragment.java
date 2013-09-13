@@ -214,7 +214,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
     	hotelOrderOperation.addParameter(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, HotelOrderOperation.OPERATION_CODE_UPDATE);
     	hotelOrderOperation.addParameter(HotelOrderOperation.SERVER_PARAMETER_ORDER_ID, mOrder.getId());
     	hotelOrderOperation.addParameter(HotelOrderOperation.SERVER_PARAMETER_UPDATE_ACTION, HotelOrderOperation.ORDER_UPDATE_ACTION_CANCEL);
-    	hotelOrderOperation.setup(Globals.getCurrentCityInfo().getId(), getId(), getId(), mContext.getString(R.string.query_loading_tip));
+    	hotelOrderOperation.setup(Globals.getCurrentCityInfo().getId(), getId(), getId(), mContext.getString(R.string.doing_and_wait));
     	mTkAsyncTasking = mSphinx.queryStart(hotelOrderOperation);
     	mBaseQuerying = mTkAsyncTasking.getBaseQueryList();
 
@@ -227,7 +227,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
         commentQuery.addParameter(DataQuery.SERVER_PARAMETER_POI_ID, mOrder.getHotelPoiUUID());
         commentQuery.addParameter(DataQuery.SERVER_PARAMETER_REFER, DataQuery.REFER_POI);
         commentQuery.addParameter(DataQuery.SERVER_PARAMETER_SIZE, "1");
-        commentQuery.setup(Globals.getCurrentCityInfo().getId(), getId(), getId(), mContext.getString(R.string.query_loading_tip), false);
+        commentQuery.setup(Globals.getCurrentCityInfo().getId(), getId(), getId(), mContext.getString(R.string.doing_and_wait), false);
         
 		return commentQuery;
         
@@ -631,7 +631,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
         poiQuery.addParameter(DataQuery.SERVER_PARAMETER_CHECKOUT, SIMPLE_DATE_FORMAT.format(tomorrow.getTime()));
         
         int cityId= MapEngine.getInstance().getCityId(mOrder.getPosition());
-        poiQuery.setup(cityId, getId(), getId(), mContext.getString(R.string.query_loading_tip));
+        poiQuery.setup(cityId, getId(), getId(), mContext.getString(R.string.doing_and_wait));
         return poiQuery;
     }
     
