@@ -228,6 +228,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 	public static final String REFRESH_POI_DETAIL = "refresh_poi_detail";
 
 	private MapView mMapView;
+	private CityInfo mInitCityInfo;
     private TextView mDownloadView;
     private View mCompassView;
 	private LinearLayout mZoomView;
@@ -501,12 +502,11 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             if(lastCityInfo != null && lastCityInfo.isAvailably()){
                 cityInfo = lastCityInfo;
             }
-            changeCity(cityInfo);
             if (Globals.g_User != null) {
                 mActionLog.addAction(ActionLog.LifecycleUserReadSuccess);
             }
             mActionLog.addAction(ActionLog.LifecycleSelectCity, cityInfo.getCName());
-            
+            mInitCityInfo = cityInfo;
             ArrayList<Integer> uiStack = null;
             if (savedInstanceState != null) {
                 uiStack = savedInstanceState.getIntegerArrayList("uistack");
@@ -669,6 +669,20 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             });
             
             // examples of adding Events through the API
+            EventRegistry.addEventListener(mMapView, MapView.EventType.SURFACECREATED, new MapView.SurfaceCreatedEventListener(){
+                @Override
+                public void onSurfaceCreatedEvent() {
+                	runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                        	if(mInitCityInfo != null) {
+                        		changeCity(mInitCityInfo);
+                        		mInitCityInfo = null;
+                        	}
+                        }
+                    });
+                }
+            });
             
             EventRegistry.addEventListener(mMapView, MapView.EventType.MOVEEND, new MapView.MoveEndEventListener(){
                 @Override
