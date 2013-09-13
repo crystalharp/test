@@ -69,21 +69,17 @@ public class Util {
     }
 	
 	public static double mercXMod(double x,int z){
-//		long mod = MERC_X_MODS[z];
-//		long mod2 = mod/2;
-//		if(x < mod2 && x >= -mod2) return x;
-//		return (((long)x + mod2)%mod + mod)%mod - mod2 + (x - (long)x);
-		long mod=MERC_X_MODS[z];
-		long mod2=mod/2;
-		if(x<mod2 && x>=-mod2) return x;
-		return ((x + mod2)%mod + mod)%mod - mod2 + (x - (long)x);
+		long mod = MERC_X_MODS[z];
+		long mod2 = mod >> 1;
+		if(x < mod2 && x >= -mod2) return x;
+		return (((long)x + mod2) % mod + mod) % mod - mod2 + (x - (long)x);
 	}
 	
 	public static int indexXMod(int x,int z){
-		int mod=INDEX_X_MODS[z];
-		int mod2=mod/2;
-		if(x<mod2 && x>=-mod2) return x;
-		return ((x+mod2)%mod+mod)%mod-mod2;
+		int mod = INDEX_X_MODS[z];
+		int mod2 = mod >> 1;
+		if(x < mod2 && x >= -mod2) return x;
+		return ((x + mod2) % mod + mod) % mod - mod2;
 	}
 
 	public static final double EARTH_RADIUS_METERS = 6371000.000000;
@@ -241,9 +237,9 @@ public class Util {
 	public static double lat2pix(double lat, double scale) throws APIException{
 		if(lat==90 || lat==-90) throw APIException.INVALID_LATITUDE_90;
 		double radLat = (lat * Math.PI) / 180;
-		double ecc = 0.08181919084262157;
+//		double ecc = 0.08181919084262157;
 		double sinPhi = Math.sin(radLat);
-		double eSinPhi = ecc * sinPhi;
+//		double eSinPhi = ecc * sinPhi;
 		double retVal = Math.log(((1.0 + sinPhi) / (1.0 - sinPhi))) / 2.0;
 		if(Double.isInfinite(retVal) || Double.isInfinite(retVal/scale)){
 			throw APIException.INVALID_MERCATOR_Y_INFINITY;
