@@ -668,4 +668,15 @@ public class Comment extends BaseData {
             return json.toString();
         }
     }
+    
+    public Comment clone() {
+        Comment other = null;
+        try {
+            other = new Comment(getData());
+        } catch (APIException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return other;
+    }
 }

@@ -130,7 +130,7 @@ public abstract class UserBaseFragment extends BaseFragment {
 	 * 提供公共参数支持
 	 */
 	protected void sendRequest(AccountManage accountManage) {
-		accountManage.setup(getCityParameter(), getId(), getId(), mContext.getString(R.string.query_loading_tip));
+		accountManage.setup(getCityParameter(), getId(), getId(), mContext.getString(R.string.doing_and_wait));
 		mSphinx.queryStart(accountManage, false);
 	}
 

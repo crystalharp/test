@@ -321,7 +321,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             }
         }
         
-        if (mTitleBtn != null) {
+        if (mTitleBtn != null && getId() == mSphinx.uiStackPeek()) {
             mTitleBtn.setText(mTitleText);
         }
 

@@ -289,11 +289,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     private ViewGroup mInfoWindowHotel = null;
     private ViewGroup mInfoWindowMessage = null;
     
-    private Dialog mDialog = null;
-    public void setDialog(Dialog dialog) {
-        mDialog = dialog;
-    }
-    
     View.OnTouchListener mInfoWindowBodyViewListener = new View.OnTouchListener() {
         @Override
         public boolean onTouch(View v, android.view.MotionEvent ev) {
@@ -969,6 +964,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 	@Override
     protected void onPrepareDialog(int id, Dialog dialog) {
 	    super.onPrepareDialog(id, dialog);
+	    mShowingDialog = dialog;
 	    if (id == R.id.dialog_prompt_change_to_my_location_city) {
 	        TextView messageTxv =(TextView)dialog.findViewById(R.id.message);
 	        String currentCityName = Globals.getCurrentCityInfo(false).getCName();
@@ -2625,6 +2621,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     
     int dialogId = -1;
     public boolean showLocationDialog(int id) {
+        if (mShowingDialog != null && mShowingDialog.isShowing()) {
+            return false;
+        }
+        
         if (mFromThirdParty > 0 && mFromThirdParty != THIRD_PARTY_WENXIN_REQUET) {
             return false;
         }
@@ -3191,10 +3191,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                                         case DialogInterface.BUTTON_POSITIVE:
                                             CityInfo locationCity = Globals.g_My_Location_City_Info;
                                             if (locationCity != null && locationCity.isAvailably()) {
-                                                Dialog dialg = mDialog;
-                                                if (dialg != null && dialg.isShowing()) {
-                                                    dialg.dismiss();
-                                                }
                                                 getTitleFragment().dismissPopupWindow();
                                                 BaseFragment baseFragment = getFragment(uiStackPeek());
                                                 if (baseFragment != null) {

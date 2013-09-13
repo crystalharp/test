@@ -638,7 +638,6 @@
     <string name="please_input_password">请输入密码</string>
     <string name="forget_password"><u>忘记密码?</u></string>
     <string name="title_error_tip">提示</string>
-    <string name="query_loading_tip">请求中, 请稍候</string>
     <string name="coundown_valinum">%1$s秒后重新获取</string>
 	<!-- User Common End -->
 	

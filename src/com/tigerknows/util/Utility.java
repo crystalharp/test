@@ -846,13 +846,6 @@ public class Utility {
             bottonView.setVisibility(View.GONE);
         }
         
-        // 下面这个判断，是为了避免点击切换城市对话框中的确认按钮结果仍然有其它对话框在显示的问题
-        if (activity instanceof Sphinx
-                && (message == null
-                        || message.startsWith(activity.getString(R.string.are_your_change_to_location_city).substring(0, 4)) == false)) {
-            ((Sphinx)activity).setDialog(dialog);
-        }
-        
         dialog.setOnDismissListener(new OnDismissListener() {
             
             @Override
@@ -860,6 +853,10 @@ public class Utility {
                 ActionLog.getInstance(activity).addAction(ActionLog.Dialog + ActionLog.Dismiss);
             }
         });
+        
+        if (activity instanceof TKActivity) {
+            ((TKActivity) activity).setShowingDialog(dialog);
+        }
         
         return dialog;
     }
