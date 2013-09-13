@@ -297,13 +297,17 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
             
             @Override
             public void run() {
-                Drawable drawable = mData.getPicturesDetail().loadDrawable(mSphinx, mLoadedDrawableRun, mParentFragment.toString());
+                Tuangou data = mData;
+                if (data == null) {
+                    return;
+                }
+                Drawable drawable = data.getPicturesDetail().loadDrawable(mSphinx, mLoadedDrawableRun, mParentFragment.toString());
                 if(drawable != null) {
                     mPictureImv.setBackgroundDrawable(drawable);
                 }else{
                     mPictureImv.setBackgroundResource(R.drawable.bg_picture_detail);
                 }
-                TKDrawable tkDrawable = mData.getContentPic();
+                TKDrawable tkDrawable = data.getContentPic();
                 if (tkDrawable != null) {
                     drawable = tkDrawable.loadDrawable(mSphinx, mLoadedDrawableRun, mParentFragment.toString());
                     if(drawable != null) {
@@ -314,7 +318,7 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
                         layoutParams.height = (int) (mPictureDetailWidth*((float)drawable.getIntrinsicHeight()/drawable.getIntrinsicWidth()));
                     }
                 }
-                Shangjia shangjia = Shangjia.getShangjiaById(mData.getSource(), mSphinx, mLoadedDrawableRun);
+                Shangjia shangjia = Shangjia.getShangjiaById(data.getSource(), mSphinx, mLoadedDrawableRun);
                 if (shangjia != null) {
                     mShangjiaMarkerImv.setImageDrawable(shangjia.getMarker());
                 } else {

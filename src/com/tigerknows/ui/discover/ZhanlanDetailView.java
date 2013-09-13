@@ -13,7 +13,6 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
 
 import com.decarta.Globals;
@@ -84,7 +83,11 @@ public class ZhanlanDetailView extends BaseDetailView implements View.OnClickLis
             
             @Override
             public void run() {
-                Drawable drawable = mData.getPicturesDetail().loadDrawable(mSphinx, mLoadedDrawableRun, mParentFragment.toString());
+                Zhanlan data = mData;
+                if (data == null) {
+                    return;
+                }
+                Drawable drawable = data.getPicturesDetail().loadDrawable(mSphinx, mLoadedDrawableRun, mParentFragment.toString());
                 if(drawable != null) {
                     mPictureImv.setImageDrawable(drawable);
                 }
