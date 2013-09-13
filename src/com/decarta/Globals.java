@@ -363,8 +363,8 @@ public class Globals {
                 MapEngine mapEngine = MapEngine.getInstance();
                 try {
                     mapEngine.initMapDataPath(context);
-                    int cityId = mapEngine.getCityId(lastPosition);
-                    cityInfo = mapEngine.getCityInfo(cityId);
+                    int cityId = MapEngine.getCityId(lastPosition);
+                    cityInfo = MapEngine.getCityInfo(cityId);
                     cityInfo.setPosition(lastPosition);
                     cityInfo.setLevel(lastZoomLevel);
                 } catch (APIException e) {

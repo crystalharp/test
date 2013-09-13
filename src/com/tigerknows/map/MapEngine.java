@@ -14,15 +14,12 @@ import java.util.List;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
-import android.graphics.Bitmap;
-import android.graphics.Bitmap.Config;
 import android.os.Environment;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
 
 import com.decarta.CONFIG;
-import com.decarta.Profile;
 import com.decarta.android.exception.APIException;
 import com.decarta.android.location.Position;
 import com.decarta.android.util.LogWrapper;
@@ -33,8 +30,6 @@ import com.tigerknows.model.TKWord;
 import com.tigerknows.service.SuggestLexiconService;
 import com.tigerknows.util.ByteUtil;
 import com.tigerknows.util.Utility;
-import com.tigerknows.map.TileResponse;
-import com.tigerknows.map.label.Label;
 
 public class MapEngine {
 
@@ -1013,7 +1008,7 @@ public class MapEngine {
             return null;
         }
         filePath.append(mapPath);
-        CityInfo cityInfo = mapEngine.getCityInfo(cityId);
+        CityInfo cityInfo = MapEngine.getCityInfo(cityId);
         if (null != cityInfo) {
             filePath.append(cityInfo.getEProvinceName());
             // 创建文件夹

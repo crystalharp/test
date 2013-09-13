@@ -213,6 +213,7 @@ public class MapView extends RelativeLayout implements
 	 * 
 	 */
 	public static class EventType extends com.decarta.android.event.EventType {
+		public static int SURFACECREATED = 2;
 		public static int MOVEEND = 3;
 		public static int ZOOMEND = 4;
 		public static int DOUBLECLICK = 5;
@@ -224,6 +225,13 @@ public class MapView extends RelativeLayout implements
 
         public static int TOUCHDOWN = 11;
         public static int MULTITOUCHZOOM = 12;
+	}
+	
+	/**
+	 * listener for touchdown event
+	 */
+	public interface SurfaceCreatedEventListener extends EventListener{
+		public void onSurfaceCreatedEvent();
 	}
 	
 	/**
@@ -345,6 +353,8 @@ public class MapView extends RelativeLayout implements
 				&& (listener instanceof TouchDownEventListener)
                 || eventType == EventType.MULTITOUCHZOOM
                 && (listener instanceof MultiTouchZoomEventListener)
+                || eventType == EventType.SURFACECREATED
+                && (listener instanceof SurfaceCreatedEventListener)
 				)
 			return true;
 		else
@@ -369,7 +379,17 @@ public class MapView extends RelativeLayout implements
 			eventListeners.get(eventType).remove(listener);
 		}
 	}
-
+	
+	public void executeSurfaceCreatedListeners() {
+		if (eventListeners.containsKey(MapView.EventType.SURFACECREATED)) {
+			ArrayList<EventListener> listeners = eventListeners
+					.get(MapView.EventType.SURFACECREATED);
+			for (int i = 0; i < listeners.size(); i++) {
+				((SurfaceCreatedEventListener) (listeners.get(i))).onSurfaceCreatedEvent();
+			}
+		}
+	}
+    
 	/**
 	 * provide a simple way to call all the moveend listeners together
 	 * 

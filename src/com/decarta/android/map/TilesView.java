@@ -2293,7 +2293,7 @@ public class TilesView extends GLSurfaceView {
 	 * @param resp
 	 */
 	private void renderMap(TileGridResponse resp) throws APIException {
-		// Log.i("Sequence","TilesView renderMap start");
+		LogWrapper.d("Sequence","TilesView renderMap start");
 		try {
 			easingRecord.reset();
 
@@ -2764,6 +2764,7 @@ public class TilesView extends GLSurfaceView {
 					tileRunners[i].start();
 			}
 			gl.glEnable(GL_TEXTURE_2D);
+			mParentMapView.executeSurfaceCreatedListeners();
 			LogWrapper.i("Sequence", "MapRender.onSurfaceCreated end");
 		}
 
