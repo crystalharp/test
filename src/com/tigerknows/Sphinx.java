@@ -388,34 +388,13 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     	return mBundle;
     }
 
-	private static class ContextFactory implements
-			GLSurfaceView.EGLContextFactory {
-
-		private static int EGL_CONTEXT_CLIENT_VERSION = 0x3098;
-
-		public EGLContext createContext(EGL10 egl, EGLDisplay display,
-				EGLConfig eglConfig) {
-
-			int[] attrib_list = { EGL_CONTEXT_CLIENT_VERSION, 1,
-					EGL10.EGL_NONE };
-			// attempt to create a OpenGL ES 3.0 context
-			EGLContext context = egl.eglCreateContext(display, eglConfig,
-					EGL10.EGL_NO_CONTEXT, attrib_list);
-			return context; // returns null if 3.0 is not supported;
-		}
-
-		@Override
-		public void destroyContext(EGL10 arg0, EGLDisplay arg1, EGLContext arg2) {
-			
-		}
-	}
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         BaseQuery.sClentStatus = BaseQuery.CLIENT_STATUS_START;
 //        Debug.startMethodTracing("spinxTracing");
         
-        mHandler=new Handler(){
+        mHandler = new Handler(){
             @Override
             public void handleMessage(Message msg) {
                 if (mMapView == null) {
@@ -487,7 +466,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             return;
         }
         
-        CityInfo cityInfo = mMapEngine.getCityInfo(MapEngine.CITY_ID_BEIJING);
+        CityInfo cityInfo = MapEngine.getCityInfo(MapEngine.CITY_ID_BEIJING);
         if (cityInfo.isAvailably() == false) {
             Utility.showDialogAcitvity(mThis, getString(R.string.not_enough_space_and_please_clear));
             finish();
@@ -779,7 +758,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                             || touchMode.equals(TouchMode.CHOOSE_ROUTING_START_POINT)){
                         LogWrapper.i(TAG,"CHOOSE_ROUTING_END_POINT || CHOOSE_ROUTING_START_POINT position:"+position.toString());
 
-                        String positionName = mMapEngine.getPositionName(position, (int)mMapView.getZoomLevel());
+                        String positionName = MapEngine.getPositionName(position, (int)mMapView.getZoomLevel());
                         if (TextUtils.isEmpty(positionName)) {
                             positionName = mContext.getString(R.string.select_has_point);
                         }
@@ -822,7 +801,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 @Override
                 public void onLongClickEvent(MapView mapView, Position position) {
                     if (touchMode.equals(TouchMode.CHOOSE_ROUTING_START_POINT) || touchMode.equals(TouchMode.CHOOSE_ROUTING_END_POINT)) {
-                        String positionName = mMapEngine.getPositionName(position, (int)mMapView.getZoomLevel());
+                        String positionName = MapEngine.getPositionName(position, (int)mMapView.getZoomLevel());
                         if (TextUtils.isEmpty(positionName)) {
                             positionName = mContext.getString(R.string.select_has_point);
                         }
@@ -834,7 +813,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     }
                     mActionLog.addAction(ActionLog.MapLongClick);
                     LogWrapper.i(TAG,"MapView.onLongClickEvent position:"+position.toString());
-                    String positionName = mMapEngine.getPositionName(position, (int)mMapView.getZoomLevel());
+                    String positionName = MapEngine.getPositionName(position, (int)mMapView.getZoomLevel());
                     if (TextUtils.isEmpty(positionName)) {
                         positionName = mContext.getString(R.string.select_has_point);
                     }
@@ -1404,7 +1383,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     mMapView.setZoomLevel(TKConfig.ZOOM_LEVEL_LOCATION);
                     mMapView.panToPosition(position);
                     poi.setPosition(position);
-                    String name = mMapEngine.getPositionName(poi.getPosition(), (int)mMapView.getZoomLevel());
+                    String name = MapEngine.getPositionName(poi.getPosition(), (int)mMapView.getZoomLevel());
                     if (!TextUtils.isEmpty(name)) {
                         poi.setName(name);
                     } else {
@@ -1501,7 +1480,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     mMapView.centerOnPosition(new Position(lat, lon), TKConfig.ZOOM_LEVEL_LOCATION, false);
                 }
                 if (query == false && Util.inChina(poi.getPosition())) {
-                    String name = mMapEngine.getPositionName(poi.getPosition(), (int)mMapView.getZoomLevel());
+                    String name = MapEngine.getPositionName(poi.getPosition(), (int)mMapView.getZoomLevel());
                     if (!TextUtils.isEmpty(name)) {
                         poi.setName(name);
                     } else {
@@ -1527,7 +1506,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             showView(R.id.view_poi_home);
             POI poi = getPOI(true);
             if (poi.getSourceType() == POI.SOURCE_TYPE_MY_LOCATION) {
-                poi.setName(mMapEngine.getPositionName(poi.getPosition(), (int)mMapView.getZoomLevel()));
+                poi.setName(MapEngine.getPositionName(poi.getPosition(), (int)mMapView.getZoomLevel()));
                 List<POI> list = new ArrayList<POI>();
                 list.add(poi);
                 showPOI(list, 0);
@@ -1794,7 +1773,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             // 地图显示的位置在当前城市范围内才更新最后一次位置信息
             CityInfo cityInfo = Globals.getCurrentCityInfo(false);
             if (cityInfo != null
-                    && mMapEngine.getCityId(position) == cityInfo.getId()) {
+                    && MapEngine.getCityId(position) == cityInfo.getId()) {
                 int zoom = (int)mMapView.getZoomLevel();
                 TKConfig.setPref(mContext, TKConfig.PREFS_LAST_LON, String.valueOf(position.getLon()));
                 TKConfig.setPref(mContext, TKConfig.PREFS_LAST_LAT, String.valueOf(position.getLat()));
@@ -1827,8 +1806,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     
     public void changeCity(long cityId) {
         int id = (int)cityId;
-        CityInfo cityInfo = getMapEngine().getCityInfo(id);
-        changeCity(cityInfo);
+        CityInfo cityInfo = MapEngine.getCityInfo(id);
+        if(cityInfo != null)
+        	changeCity(cityInfo);
     }
     
     public void changeCity(CityInfo cityInfo) {
@@ -1909,7 +1889,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     }
     
     public void onMapCenterChanged() {
-        CityInfo cityInfo = mMapEngine.getCityInfo(mMapView.getCenterCityId());
+        CityInfo cityInfo = MapEngine.getCityInfo(mMapView.getCenterCityId());
         if (cityInfo != null) {
             if (!mViewedCityInfoList.contains(cityInfo)) {
                 mViewedCityInfoList.add(cityInfo);
@@ -2583,11 +2563,13 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         final Position myPosition = myLocationPosition;
 
         if (myPosition != null) {
-            int cityId = mMapEngine.getCityId(myPosition);
-            CityInfo cityInfo = mMapEngine.getCityInfo(cityId);
-            cityInfo.setPosition(myPosition);
-            cityInfo.setLevel(TKConfig.ZOOM_LEVEL_LOCATION);
-            changeCity(cityInfo);
+            int cityId = MapEngine.getCityId(myPosition);
+            CityInfo cityInfo = MapEngine.getCityInfo(cityId);
+            if(cityInfo != null) {
+	            cityInfo.setPosition(myPosition);
+	            cityInfo.setLevel(TKConfig.ZOOM_LEVEL_LOCATION);
+	            changeCity(cityInfo);
+            }
         } else {
             final boolean gps = Utility.checkGpsStatus(mContext);
             if (gps) {
@@ -4056,7 +4038,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 myLocationPosition = myLocationCityInfo.getPosition();
             }
             final Position myPosition = myLocationPosition;
-            updateMyLocationOverlay(myPosition);  
             if (uiStackPeek() == R.id.view_poi_home || uiStackPeek() == R.id.view_discover_home) {
                 getPOIHomeFragment().refreshLocationView();
             }
@@ -4069,10 +4050,11 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     resetShowInPreferZoom();
                 } else if (MyLocation.MODE_NAVIGATION == mMyLocation.mode || MyLocation.MODE_ROTATION == mMyLocation.mode) {
                     mMapView.panToPosition(myPosition);
-                }
+                } 
             } else {
                 resetLoactionButtonState();
             }
+            updateMyLocationOverlay(myPosition); 
             
             if (Globals.g_My_Location_State == Globals.LOCATION_STATE_FIRST_SUCCESS
                     && myLocationCityInfo != null) {
@@ -4152,7 +4134,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 e.printStackTrace();
             }
             String msg=getString(R.string.my_location);
-            String positionName = mMapEngine.getPositionName(myLocation);
+            String positionName = MapEngine.getPositionName(myLocation);
             if (positionName != null && positionName.length() > 0) {
                 msg += "\n" + positionName;
             }

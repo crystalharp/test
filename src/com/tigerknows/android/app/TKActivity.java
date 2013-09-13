@@ -148,7 +148,7 @@ public class TKActivity extends Activity implements TKAsyncTask.EventListener {
                 } else {
                     myLocationPosition.setAccuracy(location.getAccuracy());
                     myLocationPosition.setProvider(location.getProvider());
-                    int cityId = mapEngine.getCityId(myLocationPosition);
+                    int cityId = MapEngine.getCityId(myLocationPosition);
                     CityInfo myLocationCityInfo = Globals.g_My_Location_City_Info;
                     
                     // 判断最新的定位是否在定位城市范围内，否则更新定位城市
@@ -156,7 +156,7 @@ public class TKActivity extends Activity implements TKAsyncTask.EventListener {
                         myLocationCityInfo.setPosition(myLocationPosition);
                         Globals.g_My_Location = location;
                     } else {
-                        CityInfo cityInfo = mapEngine.getCityInfo(cityId);
+                        CityInfo cityInfo = MapEngine.getCityInfo(cityId);
                         cityInfo.setPosition(myLocationPosition);
                         cityInfo.setLevel(TKConfig.ZOOM_LEVEL_LOCATION);
                         if (cityInfo.isAvailably()) {
