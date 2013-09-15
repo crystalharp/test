@@ -1630,10 +1630,23 @@ public class TilesView extends GLSurfaceView {
 		}
 //		LogWrapper.i("center", centerXYZ.toString() + "......" + centerXY.toString() + "......" + centerDelta.toString());
 	}
-
+	private int getTKZoomLevelByDecartaLevel(int decartaZoomLevel) {
+	    int ret;
+	    if (decartaZoomLevel == 9) {
+	        if (decartaZoomLevel < zoomLevel) {
+	            ret = 8;
+	        } else {
+	            ret = 10;
+	        }
+	    } else {
+	        ret = decartaZoomLevel;
+	    }
+	    return ret;
+	}
+	
 	public void zoomView(float newZoomLevel, XYFloat zoomCenterXY)
 			throws APIException {
-		newZoomLevel = tkJumpZoomLevel(newZoomLevel);
+//		newZoomLevel = tkJumpZoomLevel(newZoomLevel);
 		if (zooming || newZoomLevel == zoomLevel)
 			return;
 		if(newZoomLevel < CONFIG.ZOOM_LOWER_BOUND) {
@@ -1685,7 +1698,7 @@ public class TilesView extends GLSurfaceView {
 			}
 			zoomLevel = newZoomLevel;
 			if (zoomLevel > centerXYZ.z + 0.5 || zoomLevel < centerXYZ.z - 0.5) {
-				int roundLevel = Math.round(zoomLevel);
+				int roundLevel = getTKZoomLevelByDecartaLevel(Math.round(zoomLevel));
 				if (roundLevel > CONFIG.ZOOM_UPPER_BOUND
 						|| roundLevel < CONFIG.ZOOM_LOWER_BOUND)
 					return;
@@ -2249,7 +2262,6 @@ public class TilesView extends GLSurfaceView {
 
 	private void zoomTo(int newZoomLevel, XYFloat zoomCenterXYConv,
 			long duration, MapView.ZoomEndEventListener listener) {
-		newZoomLevel = (int) tkJumpZoomLevel(newZoomLevel);
 		synchronized (drawingLock) {
 			float zDif = newZoomLevel - zoomLevel;
 			if (zDif != 0 && duration == 0) {
@@ -2260,7 +2272,7 @@ public class TilesView extends GLSurfaceView {
 			zoomingRecord.digitalZooming = true;
 			zoomingRecord.digitalZoomEndTime = System.nanoTime() + duration;
 			zoomingRecord.speed = (duration == 0) ? 0 : zDif / duration;
-			zoomingRecord.zoomToLevel = newZoomLevel;
+			zoomingRecord.zoomToLevel = getTKZoomLevelByDecartaLevel(newZoomLevel);
 			zoomingRecord.zoomCenterXY = zoomCenterXYConv;
 
 			zoomingRecord.listener = listener;
