@@ -33,6 +33,7 @@ import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BuslineModel;
 import com.tigerknows.model.BuslineModel.Station;
 import com.tigerknows.model.BuslineQuery;
+import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.widget.SpringbackListView;
 import com.tigerknows.widget.SpringbackListView.OnRefreshListener;
@@ -403,8 +404,8 @@ public class BuslineResultStationFragment extends BaseFragment {
         }
         
         if (buslineModel == null) {
-        	mSphinx.showTip(R.string.busline_non_tip, Toast.LENGTH_SHORT);
-        } if (buslineModel.getType() == BuslineModel.TYPE_BUSLINE 
+        	mSphinx.showTip(R.string.network_failed, Toast.LENGTH_SHORT);
+        } else if (buslineModel.getType() == BuslineModel.TYPE_BUSLINE 
         		|| buslineModel.getType() == BuslineModel.TYPE_STATION){
         	if (((buslineModel.getLineList() == null || buslineModel.getLineList().size() <= 0) && 
             (buslineModel.getStationList() == null || buslineModel.getStationList().size() <= 0))) {
