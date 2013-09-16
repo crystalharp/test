@@ -47,7 +47,7 @@ typedef enum _tk_rect_relation {
 
 tk_rect_relation_t tk_geo_get_rect_relation(tk_envelope_t rect1, tk_envelope_t rect2);
 
-void tk_get_mercator_tile_box(int tile_size_bit, int tile_x, int tile_y, int zoom, tk_envelope_t *tile_mercator_box);
+void tk_get_mercator_tile_box(int tile_size_bit, int tile_x, int tile_y, int zoom, int diff, tk_envelope_t *tile_mercator_box);
 
 tk_bool_t tk_is_tile_adjacent(tk_base_tile_data_t *tile1, tk_base_tile_data_t *tile2);
 

@@ -580,7 +580,7 @@ tk_status_t tk_load_tile_data(tk_context_t *context, int tile_x, int tile_y, int
     }
     // 缓存中没有，要去region中加载
     // 获取tile的mercator包围盒, 用于寻找相关region
-    tk_get_mercator_tile_box(context->tile_size_bit, tile_x, tile_y, zoom, &tile_mercator_box);
+    tk_get_mercator_tile_box(context->tile_size_bit, tile_x, tile_y, zoom, context->base_level_diff, &tile_mercator_box);
     result = _tk_get_related_regions(context, &tile_mercator_box);
     if (result != TK_STATUS_SUCCESS) {
         tk_lru_cache_unlock(&_tk_tile_data_pool);
