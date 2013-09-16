@@ -218,7 +218,6 @@ public class HistoryWordTable {
     
     public static void readHistoryWord(Context context, int cityId, int type) {
         List<TKWord> list;
-        HistoryWordTable historyWordTable = new HistoryWordTable(context);
         String key;
         if (TYPE_POI == type) {
             key = TKConfig.PREFS_HISTORY_WORD_POI;
@@ -243,6 +242,7 @@ public class HistoryWordTable {
             Busline_CityId = cityId;
         }
         list.clear();
+        HistoryWordTable historyWordTable = new HistoryWordTable(context);
         List<String> listAtPrefTable = readHistoryWordV4(context, cityId, type);
         if (listAtPrefTable.size() > 0) {
             for(int i = 0, size = listAtPrefTable.size(); i < size; i++) {
