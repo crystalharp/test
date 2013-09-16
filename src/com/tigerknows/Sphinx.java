@@ -507,6 +507,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             }
             mActionLog.addAction(ActionLog.LifecycleSelectCity, cityInfo.getCName());
             mInitCityInfo = cityInfo;
+            initCity(cityInfo);
             ArrayList<Integer> uiStack = null;
             if (savedInstanceState != null) {
                 uiStack = savedInstanceState.getIntegerArrayList("uistack");
@@ -676,7 +677,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                         @Override
                         public void run() {
                         	if(mInitCityInfo != null) {
-                        		changeCity(mInitCityInfo);
+                        		initPosition(mInitCityInfo);
                         		mInitCityInfo = null;
                         	}
                         }
@@ -1823,6 +1824,60 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         CityInfo cityInfo = MapEngine.getCityInfo(id);
         if(cityInfo != null)
         	changeCity(cityInfo);
+    }
+    
+    public void initCity(CityInfo cityInfo) {
+        if (cityInfo.isAvailably()) {
+//            CityInfo currentCityInfo = Globals.getCurrentCityInfo();
+            Globals.setCurrentCityInfo(cityInfo);
+            Globals.setHotelCityInfo(null);
+            
+            int cityId = cityInfo.getId();
+//            if (currentCityInfo != null
+//                    && currentCityInfo.isAvailably()
+//                    && cityId == currentCityInfo.getId()) {
+//                mMapView.centerOnPosition(cityInfo.getPosition(), cityInfo.getLevel());
+//            } else {
+//                mMapView.centerOnPosition(cityInfo.getPosition(), cityInfo.getLevel(), true);
+//            }
+            updateCityInfo(cityInfo);
+            checkCitySupportDiscover(cityId);
+            if (!mViewedCityInfoList.contains(cityInfo)) {
+                mViewedCityInfoList.add(cityInfo);
+            }
+            mActionLog.addAction(ActionLog.LifecycleSelectCity, cityInfo.getCName());
+            Position position = cityInfo.getPosition();
+            TKConfig.setPref(mContext, TKConfig.PREFS_LAST_LON, String.valueOf(position.getLon()));
+            TKConfig.setPref(mContext, TKConfig.PREFS_LAST_LAT, String.valueOf(position.getLat()));
+            TKConfig.setPref(mContext, TKConfig.PREFS_LAST_ZOOM_LEVEL, String.valueOf(cityInfo.getLevel()));
+            if (mPOIHomeFragment != null) {
+                HistoryWordTable.readHistoryWord(mContext, cityId, HistoryWordTable.TYPE_POI);
+                TrafficQueryFragment.TrafficOnCityChanged(this, cityId);
+            }
+            
+            Intent service = new Intent(MapStatsService.ACTION_STATS_CURRENT_DOWNLOAD_CITY);
+            service.setClass(mThis, MapStatsService.class);
+            startService(service);
+        }    
+    }
+    
+    private void initPosition(CityInfo cityInfo) {
+    	if(cityInfo == null)
+    		return;
+    	if (cityInfo.isAvailably()) {
+	    	CityInfo currentCityInfo = Globals.getCurrentCityInfo();
+	        Globals.setCurrentCityInfo(cityInfo);
+	        Globals.setHotelCityInfo(null);
+	        
+	        int cityId = cityInfo.getId();
+	        if (currentCityInfo != null
+	                && currentCityInfo.isAvailably()
+	                && cityId == currentCityInfo.getId()) {
+	            mMapView.centerOnPosition(cityInfo.getPosition(), cityInfo.getLevel());
+	        } else {
+	            mMapView.centerOnPosition(cityInfo.getPosition(), cityInfo.getLevel(), true);
+	        }
+    	}
     }
     
     public void changeCity(CityInfo cityInfo) {

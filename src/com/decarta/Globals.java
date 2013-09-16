@@ -84,8 +84,8 @@ public class Globals {
         } else {
             // "北京,beijing,39.90415599,116.397772995,11, 北京,beijing"
             cityInfo = new CityInfo();
-            cityInfo.setCName("beijing");
-            cityInfo.setCProvinceName("beijing");
+            cityInfo.setCName("北京");
+            cityInfo.setCProvinceName("北京");
             cityInfo.setEName("beijing");
             cityInfo.setEProvinceName("beijing");
             cityInfo.setId(1);
