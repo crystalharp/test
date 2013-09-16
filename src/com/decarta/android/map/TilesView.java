@@ -3397,19 +3397,7 @@ public class TilesView extends GLSurfaceView {
 							++movingFrameCount;
 						}
 					}
-					
-					//draw scale view
-					gl.glPushMatrix();
-					gl.glTranslatef(displaySize.x/2.0f, displaySize.y/2.0f, 0);//中心点移到屏幕中心点
-					gl.glRotatef(-mapMode.getxRotation(), 1, 0, 0);
-					gl.glRotatef(-mapMode.getzRotation(), 0, 0, 1);
-					gl.glTranslatef(-displaySize.x/2.0f, -displaySize.y/2.0f, 0);//中心点移到屏幕中心点
-					gl.glVertexPointer(2, GL_FLOAT, 0, mVertexBuffer);
-					float density = Globals.g_metrics.density;
-			        Position centerPos = getCenterPosition();
-			        XYFloat leftTop = new XYFloat(10 * density, displaySize.y - 50 * density);
-					scaleView.renderGL(leftTop, zoomLevel, (float)centerPos.getLat(), centerXYZ.z, TEXTURE_COORDS);
-					gl.glPopMatrix();
+				
 					// draw the shapes
 					gl.glEnable(GL10.GL_BLEND);
 					gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
@@ -3583,7 +3571,23 @@ public class TilesView extends GLSurfaceView {
 						infoWindow.drawInfoWindowOpenGL(gl, new XYFloat(0, 0));
 						gl.glPopMatrix();
 					}
-
+					
+					//draw scale view
+					gl.glPushMatrix();
+					gl.glTranslatef(displaySize.x/2.0f, displaySize.y/2.0f, 0);//中心点移到屏幕中心点
+					gl.glRotatef(-mapMode.getxRotation(), 1, 0, 0);
+					gl.glRotatef(-mapMode.getzRotation(), 0, 0, 1);
+					gl.glTranslatef(-displaySize.x/2.0f, -displaySize.y/2.0f, 0);//中心点移到屏幕中心点
+					gl.glVertexPointer(2, GL_FLOAT, 0, mVertexBuffer);
+					float density = Globals.g_metrics.density;
+			        Position centerPos = getCenterPosition();
+			        XYFloat leftTop = new XYFloat(10 * density, displaySize.y - 50 * density);
+					scaleView.renderGL(leftTop, zoomLevel, (float)centerPos.getLat(), centerXYZ.z, TEXTURE_COORDS);
+					gl.glPopMatrix();
+					
+					gl.glColor4f(1, 1, 1, 1);
+					gl.glDisable(GL_BLEND);
+					gl.glEnable(GL_TEXTURE_2D);
 					// draw the compass
 					if (compass != null && compass.isVisible()) {
 						XYInteger screenXY = compass.getScreenXY(displaySize);
@@ -3610,7 +3614,6 @@ public class TilesView extends GLSurfaceView {
 						compass.drawCompassOpenGL(gl);
 						// compass.renderGL(gl);
 					}
-				    
 					// end of draw
 
 					// if(visibleLayerNum>1 && requestTiles.size()>0){
