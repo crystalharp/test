@@ -28,6 +28,7 @@
                 android:inputType="phone"
                 android:singleLine="true"
                 android:maxLength="11"
+                android:digits="0123456789"
                 android:ellipsize="end"
                 android:textSize="18sp"
                 android:hint="@string/please_input_11_new_phone"
