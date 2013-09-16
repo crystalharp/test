@@ -747,7 +747,7 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
             ImageView commendImv = (ImageView) v.getTag(R.id.commend_imv);
             TextView commendTxv = (TextView) v.getTag(R.id.commend_txv);
             if (comment.isCommend() == false) {
-                comment.setCommend(true);
+                comment.addCommend(true);
                 final String uuid = comment.getUid();
                 new Thread(new Runnable() {
                     
@@ -757,7 +757,7 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
                             Comment c = mCommentArrayList.get(i);
                             if (uuid != null && uuid.equals(c.getUid())) {
                                 if (c.isCommend() == false) {
-                                    c.setCommend(true);
+                                    c.addCommend(true);
                                 }
                                 break;
                             }
@@ -766,7 +766,7 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
                             Comment c = mHotCommentArrayList.get(i);
                             if (uuid != null && uuid.equals(c.getUid())) {
                                 if (c.isCommend() == false) {
-                                    c.setCommend(true);
+                                    c.addCommend(true);
                                 }
                                 break;
                             }

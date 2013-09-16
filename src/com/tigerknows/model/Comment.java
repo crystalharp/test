@@ -130,10 +130,14 @@ public class Comment extends BaseData {
         return isCommend;
     }
 
-    public void setCommend(boolean isCommend) {
+    public void addCommend(boolean isCommend) {
         if (this.isCommend == false && isCommend) {
             likes += 1;
         }
+        this.isCommend = isCommend;
+    }
+
+    public void setCommend(boolean isCommend) {
         this.isCommend = isCommend;
     }
 
@@ -177,7 +181,7 @@ public class Comment extends BaseData {
         
         boolean draft = findCommend(TKApplication.getInstance(), this.uid, false);
         if (draft) {
-            setCommend(draft);
+            addCommend(draft);
         } else {
             isCommend = findCommend(TKApplication.getInstance(), this.uid, true);
         }
