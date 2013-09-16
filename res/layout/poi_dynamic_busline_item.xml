@@ -12,6 +12,8 @@
         android:gravity="left|center_vertical"
         android:textSize="14sp"
         android:id="@+id/busline_name"
+        android:singleLine="true"
+        android:ellipsize="end"
         android:text="test"
         android:drawableRight="@drawable/icon_arrow_right" 
         />
