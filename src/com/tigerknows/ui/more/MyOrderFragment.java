@@ -156,7 +156,7 @@ public class MyOrderFragment extends BaseFragment{
 				@Override
 				public void onClick(View v) {
 					mActionLog.addAction(mActionTag + ActionLog.MyAllOrderTuangou, shangjia.getName());
-	                if (shangjia.getUrl()!= null && !TextUtils.isEmpty(shangjia.getUrl())) {
+	                if (!TextUtils.isEmpty(shangjia.getUrl()) && shangjia.getFastPurchase() == 1) {
 	                	startShangjia(shangjia);
 	                } else if (shangjia.getFastPurchase() == 1 || (Globals.g_User != null)) {
 	                    requestUrl(shangjia);
