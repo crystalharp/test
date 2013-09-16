@@ -1186,6 +1186,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         	DiscoverChildListFragment.viewQueueForChangciRows.clear();
         }
         mActionLog.onDestroy();
+        Shangjia.shangjiaList.clear();
         Intent service = new Intent(Sphinx.this, MapStatsService.class);
         stopService(service);
         service = new Intent(Sphinx.this, MapDownloadService.class);
