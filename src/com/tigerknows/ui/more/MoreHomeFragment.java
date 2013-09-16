@@ -447,7 +447,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     
     public void refreshGoCommentData() {
     	Calendar cal = Calendar.getInstance();
-    	cal.set(2013, 9, 1, 0, 0, 0);
+    	cal.set(2013, 10, 1, 0, 0, 0);
     	Calendar now = Calendar.getInstance();
     	if(now.before(cal)){
     		Drawable[] drawables = mGoCommentBtn.getCompoundDrawables();

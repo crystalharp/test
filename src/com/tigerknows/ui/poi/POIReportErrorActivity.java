@@ -491,6 +491,7 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
         	break;
         case OTHER_ERR:
         	mActionTag = ActionLog.POIOtherError;
+        	break;
         }
         if(mMainLly.getVisibility() == View.VISIBLE){
             mMainEdt.setText(mOrigin);
@@ -504,6 +505,7 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
             }
         }
         if(mDescriptionLly.getVisibility() == View.VISIBLE){
+        	mMainEdt.requestFocus();
             mDescriptionEdt.requestFocus();
             showSoftInput();
         }
