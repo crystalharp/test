@@ -364,6 +364,8 @@ public final class DataQuery extends BaseQuery {
                     if (TextUtils.isEmpty(Discover_Database_Version)) {
                         Discover_Database_Version = Utility.readFile(new FileInputStream(TKConfig.getDataPath(true) + "discoverDatabaseVersion"));
                     }
+                } else {
+                    return;
                 }
                 
                 if (filterDataCategoryOrder == null) {
