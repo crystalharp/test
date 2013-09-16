@@ -349,7 +349,7 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
             if (!TextUtils.isEmpty(avg)) {
                 mComment.setAvg(Long.parseLong(avg));
             } else {
-                mComment.setAvg(-1);
+                mComment.setAvg(0);
             }
             mComment.setTaste((int) mTasteRtb.getRating());
             mComment.setEnvironment((int)mFoodEnvironmentRtb.getRating());
@@ -373,7 +373,7 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
             if (!TextUtils.isEmpty(avg)) {
                 mComment.setAvg(Long.parseLong(avg));
             } else {
-                mComment.setAvg(-1);
+                mComment.setAvg(0);
             }
             mComment.setQos((int)mHotelQosRtb.getRating());
             mComment.setEnvironment((int)mHotelEnvironmentRtb.getRating());
@@ -381,6 +381,8 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
             String avg = mCinemaAvgEdt.getEditableText().toString().trim();
             if (!TextUtils.isEmpty(avg)) {
                 mComment.setAvg(Long.parseLong(avg));
+            } else {
+                mComment.setAvg(0);
             }
             mComment.setEffect((int)mEffectRtb.getRating());
             mComment.setQos((int)mCinemaQosRtb.getRating());
@@ -389,7 +391,7 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
             if (!TextUtils.isEmpty(avg)) {
                 mComment.setAvg(Long.parseLong(avg));
             } else {
-                mComment.setAvg(-1);
+                mComment.setAvg(0);
             }
             mComment.setQos((int)mHospitalQosRtb.getRating());
             mComment.setLevel((int)mLevelRtb.getRating());
@@ -398,7 +400,7 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
             if (!TextUtils.isEmpty(avg)) {
                 mComment.setAvg(Long.parseLong(avg));
             } else {
-                mComment.setAvg(-1);
+                mComment.setAvg(0);
             }
         }
         
