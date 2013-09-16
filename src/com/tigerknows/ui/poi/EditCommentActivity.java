@@ -1043,6 +1043,7 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
                     CommentCreateResponse commentCreateResponse = (CommentCreateResponse)response;
                     mComment.setUid(commentCreateResponse.getUid());
                     mComment.setLikes(commentCreateResponse.getLikes());
+                    mComment.setCommend(commentCreateResponse.isCommend());
                     Utility.showNormalDialog(mThis, 
                             mThis.getString(R.string.prompt), 
                             mThis.getString(R.string.response_code_601), 

@@ -10,6 +10,7 @@ package com.tigerknows.model;
 
 import com.decarta.android.exception.APIException;
 import com.tigerknows.TKConfig;
+import com.tigerknows.android.app.TKApplication;
 import com.tigerknows.model.test.BaseQueryTest;
 import com.tigerknows.model.test.DataOperationTest;
 import com.tigerknows.model.xobject.XMap;
@@ -226,6 +227,8 @@ public class DataOperation extends BaseQuery {
         private String uid;
         
         private long likes;
+        
+        private boolean isCommend;
 
         public CommentCreateResponse(XMap data) throws APIException {
             super(data);
@@ -233,6 +236,13 @@ public class DataOperation extends BaseQuery {
             timeStamp = getStringFromData(FIELD_TIME_STAMP);
             uid = getStringFromData(FIELD_UID);
             likes = getLongFromData(FIELD_LIKES);
+            
+            boolean draft = Comment.findCommend(TKApplication.getInstance(), this.uid, false);
+            if (draft) {
+                isCommend = true;;
+            } else {
+                isCommend = Comment.findCommend(TKApplication.getInstance(), this.uid, true);
+            }
         }
 
         public String getTimeStamp() {
@@ -253,6 +263,10 @@ public class DataOperation extends BaseQuery {
         
         public long getLikes() {
             return likes;
+        }
+        
+        public boolean isCommend() {
+            return isCommend;
         }
     }
 
