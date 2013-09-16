@@ -1234,7 +1234,7 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
         long commentPattern = mPOI.getCommentPattern();
         if (POI.COMMENT_PATTERN_FOOD == commentPattern) {
             String avg = mFoodAvgEdt.getEditableText().toString().trim();
-            long avgLong = -1;
+            long avgLong = 0;
             if (TextUtils.isEmpty(avg) == false) {
                 avgLong = Long.parseLong(avg);
             }
@@ -1270,7 +1270,7 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
             }
         } else if (POI.COMMENT_PATTERN_HOTEL == commentPattern) {
             String avg = mHotelAvgEdt.getEditableText().toString().trim();
-            long avgLong = -1;
+            long avgLong = 0;
             if (TextUtils.isEmpty(avg) == false) {
                 avgLong = Long.parseLong(avg);
             }
@@ -1285,7 +1285,7 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
             }
         } else if (POI.COMMENT_PATTERN_CINEMA == commentPattern) {
             String avg = mCinemaAvgEdt.getEditableText().toString().trim();
-            long avgLong = -1;
+            long avgLong = 0;
             if (TextUtils.isEmpty(avg) == false) {
                 avgLong = Long.parseLong(avg);
             }
@@ -1300,7 +1300,7 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
             }
         } else if (POI.COMMENT_PATTERN_HOSPITAL == commentPattern) {
             String avg = mHospitalAvgEdt.getEditableText().toString().trim();
-            long avgLong = -1;
+            long avgLong = 0;
             if (TextUtils.isEmpty(avg) == false) {
                 avgLong = Long.parseLong(avg);
             }
@@ -1315,7 +1315,7 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
             }
         } else if (POI.COMMENT_PATTERN_BUY == commentPattern) {
             String avg = mBuyAvgEdt.getEditableText().toString().trim();
-            long avgLong = -1;
+            long avgLong = 0;
             if (TextUtils.isEmpty(avg) == false) {
                 avgLong = Long.parseLong(avg);
             }

@@ -4194,7 +4194,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         
     public void requestLocation() {
         CityInfo myLocationCityInfo = Globals.g_My_Location_City_Info;
-        if (myLocationCityInfo == null) {
+        if (myLocationCityInfo == null || mMyLocation.getPosition() == null) {
             updateLoactionButtonState(MyLocation.MODE_NONE);
             showTip(R.string.location_waiting, 3000);
             mHandler.removeCallbacks(mLocationResponseRun);
