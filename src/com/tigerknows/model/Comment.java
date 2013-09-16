@@ -131,8 +131,10 @@ public class Comment extends BaseData {
     }
 
     public void setCommend(boolean isCommend) {
+        if (this.isCommend == false && isCommend) {
+            likes += 1;
+        }
         this.isCommend = isCommend;
-        likes += 1;
     }
 
     public Comment() {
