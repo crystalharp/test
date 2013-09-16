@@ -1765,10 +1765,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         LogWrapper.i(TAG, "onPause");
         mActionLog.onPause();
         mOnPause = true;
-
-        if(mMapView != null)
-        	mMapView.pause();
-        MapEngine.cleanEngineCache();
         
         if (mSensorOrientation) {
             mSensorManager.unregisterListener(mSensorListener);
@@ -1796,8 +1792,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             }
         }
         
-        System.gc();
-        
         unregisterReceiver(mCountCurrentDownloadCityBroadcastReceiver);
         System.gc();
         Intent service = new Intent(Sphinx.this, SuggestLexiconService.class);
@@ -1811,6 +1805,12 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         super.onStop();
         BaseQuery.sClentStatus = BaseQuery.CLIENT_STATUS_STOP;
         LogWrapper.i(TAG, "onStop");
+
+        if(mMapView != null)
+        	mMapView.pause();
+        MapEngine.cleanEngineCache();
+        System.gc();
+        
         mActionLog.onStop();
         unregisterReceiver(mRemoveCityMapDataBroadcastReceiver);
     }

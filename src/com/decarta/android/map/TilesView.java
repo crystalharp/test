@@ -616,7 +616,7 @@ public class TilesView extends GLSurfaceView {
 			}
 		});
 	}
-
+	
 	public void changeMapType(MapType mapType) {
 		if (this.mapType.equals(mapType))
 			return;
@@ -3625,14 +3625,6 @@ public class TilesView extends GLSurfaceView {
 							tilesWaitForLoading.notifyAll();
 						}
 					}
-					// if (mapText.screenTextGetting &&
-					// Math.abs(System.currentTimeMillis()-MapTextThread.time) >
-					// 512 &&
-					// refreshText) {
-					// synchronized (mapText) {
-					// mapText.notifyAll();
-					// }
-					// }
 
 					if (zoomingL || isLastLabelFading || isWating
 							|| isLabelFading || fading || movingL || rotatingX
