@@ -5,6 +5,7 @@ import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
+import android.app.Dialog;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -611,7 +612,8 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
                             mClickedRoomType.setCanReserve(0);
                             refreshBookBtn(mClickedBookBtn, 0);
                             mClickedChild.setClickable(false);
-                            Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.hotel_no_room_left));
+                            Dialog dialog = Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.hotel_no_room_left));
+                            mSphinx.setShowingDialog(dialog);
                         }
                     }
                     return;
@@ -626,7 +628,8 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
                     mClickedRoomType.setCanReserve(0);
                     refreshBookBtn(mClickedBookBtn, 0);
                     mClickedChild.setClickable(false);
-                    Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.hotel_no_room_left));
+                    Dialog dialog = Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.hotel_no_room_left));
+                    mSphinx.setShowingDialog(dialog);
                 }
             }
         }
