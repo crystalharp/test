@@ -285,6 +285,7 @@ public class TKActivity extends Activity implements TKAsyncTask.EventListener {
         
         try {
             mMapEngine.initMapDataPath(getApplicationContext());
+            Globals.getImageCache().init(mThis);
         } catch (APIException e) {
             e.printStackTrace();
             Utility.showDialogAcitvity(mThis, getString(R.string.not_enough_space_and_please_clear));
