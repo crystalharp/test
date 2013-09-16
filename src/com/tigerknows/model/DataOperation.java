@@ -239,7 +239,8 @@ public class DataOperation extends BaseQuery {
             
             boolean draft = Comment.findCommend(TKApplication.getInstance(), this.uid, false);
             if (draft) {
-                isCommend = true;;
+                isCommend = true;
+                likes++;
             } else {
                 isCommend = Comment.findCommend(TKApplication.getInstance(), this.uid, true);
             }

@@ -218,7 +218,10 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         @Override
         public void run() {
             if (mSphinx.uiStackPeek() == getId() && mSphinx.isFinishing() == false) {
-                getAdapter().notifyDataSetChanged();
+                ArrayAdapter adapter = getAdapter();
+                if (adapter != null) {
+                    adapter.notifyDataSetChanged();
+                }
             }
         }
     };
@@ -1182,7 +1185,10 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
 
         refreshResultText(dataQuery);
         updateView();
-        getAdapter().notifyDataSetChanged();
+        ArrayAdapter adapter = getAdapter();
+        if (adapter != null) {
+            adapter.notifyDataSetChanged();
+        }
         
         if (mResultLsv.isFooterSpringback()) {
             mSphinx.getHandler().postDelayed(mTurnPageRun, 1000);
@@ -1218,7 +1224,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         } else if (BaseQuery.DATA_TYPE_ZHANLAN.equals(mDataType)) {
             return mZhanlanList;
         }
-        return null;
+        return new ArrayList<Tuangou>();
     }
     
     @SuppressWarnings("rawtypes")
