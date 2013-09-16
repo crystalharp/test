@@ -698,7 +698,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         	String description = response.getDescription().split("!")[0].split("！")[0];
         	switch(analysisDescription(description)){
         	case 1:
-        		Utility.showNormalDialog(mSphinx, 
+        		Dialog dialog = Utility.showNormalDialog(mSphinx, 
         				mSphinx.getString(R.string.prompt), 
         				description, 
         				mSphinx.getString(R.string.view_order), 
@@ -718,9 +718,11 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
                                 }
                             }								
 						});
+        		mSphinx.setShowingDialog(dialog);
         		break;
         	default:
-        		Utility.showNormalDialog(mSphinx, description);
+        	    Dialog dialog1 = Utility.showNormalDialog(mSphinx, description);
+                mSphinx.setShowingDialog(dialog1);
         	}
             break;
         }

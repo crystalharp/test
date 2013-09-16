@@ -1067,6 +1067,9 @@ public class Utility {
             final Dialog dialog = showNormalDialog(activity,
                     activity.getString(R.string.call_telephone),
                     listView);
+            if (activity instanceof TKActivity) {
+                ((TKActivity) activity).setShowingDialog(dialog);
+            }
             
             listView.setOnItemClickListener(new OnItemClickListener() {
 
@@ -1097,6 +1100,7 @@ public class Utility {
         final Dialog dialog = Utility.showNormalDialog(sphinx, 
                 sphinx.getString(R.string.come_here), 
                 listView);
+        sphinx.setShowingDialog(dialog);
         
         ActionLog.getInstance(sphinx).addAction(actionTag + ActionLog.GotoHere);
         listView.setOnItemClickListener(new OnItemClickListener() {
