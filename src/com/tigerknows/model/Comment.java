@@ -105,7 +105,7 @@ public class Comment extends BaseData {
     private String time; // 0x03    x_string    time    点评日期    否
     private long grade = 6; // 0x04    x_int   grade   点评星级    是
     private String puid; // 0x06    x_string    puid    对应poi的uid   是
-    private long avg = -1; // 0x07    x_int   avg 人均价格    否
+    private long avg = 0; // 0x07    x_int   avg 人均价格    否
     private long taste = 3; // 0x08    x_int   taste   口味  否
     private long qos = 3; // 0x09    x_int   qos 服务  否
     private long environment = 3; // 0x0a    x_int   environment 环境  否
@@ -157,7 +157,7 @@ public class Comment extends BaseData {
         this.time = getStringFromData(FIELD_TIME, reset ? null : this.time);
         this.grade = getLongFromData(FIELD_GRADE, reset ? 6 : this.grade);
         this.puid = getStringFromData(FIELD_PUID, reset ? null : this.puid);
-        this.avg = getLongFromData(FIELD_AVG, reset ? -1 : this.avg);
+        this.avg = getLongFromData(FIELD_AVG, reset ? 0 : this.avg);
         this.taste = getLongFromData(FIELD_TASTE, reset ? 3 : this.taste);
         this.qos = getLongFromData(FIELD_QOS, reset ? 3 : this.qos);
         this.environment = getLongFromData(FIELD_ENVIRONMENT, reset ? 3 : this.environment);
