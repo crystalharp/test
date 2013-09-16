@@ -299,13 +299,22 @@ tk_rect_relation_t tk_geo_get_rect_relation(tk_envelope_t rect1, tk_envelope_t r
 //    tile_mercator_box->top = tile_y << (24 - zoom);
 //    tile_mercator_box->bottom = (tile_y + 1) << (24 - zoom);
 //}
-void tk_get_mercator_tile_box(int tile_size_bit, int tile_x, int tile_y, int zoom, tk_envelope_t *tile_mercator_box) {
+void tk_get_mercator_tile_box(int tile_size_bit, int tile_x, int tile_y, int zoom, int diff, tk_envelope_t *tile_mercator_box) {
     int d = tile_size_bit - 8;
-    tile_mercator_box->left = tile_x << (24 - zoom + d);
-    tile_mercator_box->right = (tile_x + 1) << (24 - zoom + d);
-    tile_mercator_box->top = tile_y << (24 - zoom + d);
-    tile_mercator_box->bottom = (tile_y + 1) << (24 - zoom + d);
+    if(diff > 0) {
+        tile_mercator_box->left = tile_x << (24 - zoom + d);
+        tile_mercator_box->right = (tile_x + 1) << (24 - zoom + d);
+        tile_mercator_box->top = tile_y << (24 - zoom + d);
+        tile_mercator_box->bottom = (tile_y + 1) << (24 - zoom + d);
+    }
+    else {
+        tile_mercator_box->left = (tile_x >> (-diff)) << (24 - zoom + d - diff);
+        tile_mercator_box->right = ((tile_x >> (-diff)) + 1) << (24 - zoom + d - diff);
+        tile_mercator_box->top = (tile_y >> (-diff)) << (24 - zoom + d - diff);
+        tile_mercator_box->bottom = ((tile_y >> (-diff)) + 1) << (24 - zoom + d - diff);
+    }
 }
+
 tk_bool_t tk_is_tile_adjacent(tk_base_tile_data_t *tile1, tk_base_tile_data_t *tile2) {
     unsigned int tile1_right = tile1->merged_tile_x + (1 << tile1->merged_level);
     unsigned int tile1_bottom = tile1->merged_tile_y + (1 << tile1->merged_level);
