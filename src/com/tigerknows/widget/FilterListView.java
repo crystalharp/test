@@ -149,7 +149,13 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
                 List<Filter> childFilterList2 = tempParentFilter.getChidrenFilterList();
                 if (tempParentFilter.isSelected()) {
                     selectedParentPosition = i;
-                    selectedChildPosition = -1;
+                    
+                    // 若父项是全部区域，则将子选项选为第一个(即全部区域)
+                    if (tempParentFilter.getFilterOption().getId() == 0) {
+                        selectedChildPosition = 0;
+                    } else {
+                        selectedChildPosition = -1;
+                    }
                     this.childFilterList.addAll(childFilterList2);
                 } else {
                 	
