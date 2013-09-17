@@ -122,6 +122,9 @@ public abstract class BaseQuery {
     // 图片上传
     public static final String API_TYPE_FILE_UPLOAD = "fileUpload";
     
+    // 文件下载
+    public static final String API_TYPE_FILE_DOWNLOAD = "fileDownload";
+    
     // 帮助
     public static final String API_TYPE_HELP = "help";
     

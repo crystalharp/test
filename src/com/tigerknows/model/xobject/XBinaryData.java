@@ -7,7 +7,7 @@ import java.io.IOException;
  * @author duliang
  * 
  */
-class XBinaryData extends XObject {
+public class XBinaryData extends XObject {
     private byte[] value;
 
     protected XBinaryData(byte[] bytes) {
@@ -27,7 +27,7 @@ class XBinaryData extends XObject {
         return new XBinaryData(reader.readBytes(length));
     }
 
-    protected byte[] getValue() {
+    public byte[] getValue() {
         return value;
     }
     
