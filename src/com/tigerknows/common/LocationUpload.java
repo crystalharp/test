@@ -15,6 +15,11 @@ import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.telephony.NeighboringCellInfo;
 
+/**
+ * 定位日志记录上传类
+ * @author pengwenyue
+ *
+ */
 public class LocationUpload extends LogUpload {
     
     /**
@@ -190,14 +195,16 @@ public class LocationUpload extends LogUpload {
                 
         }
     }
-    
+
+    @Override
     public void onCreate() {
         synchronized (mLock) {
             super.onCreate();
             reset();
         }
     }
-    
+
+    @Override
     protected void onLogOut() {
         synchronized (mLock) {
             super.onLogOut();
@@ -213,7 +220,8 @@ public class LocationUpload extends LogUpload {
             mStringBuilder.append(s);
         }
     }
-    
+
+    @Override
     protected void write() {
         synchronized (mLock) {
             super.write();

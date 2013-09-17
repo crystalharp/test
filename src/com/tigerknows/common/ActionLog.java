@@ -27,7 +27,6 @@ public class ActionLog extends LogUpload {
     
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
     
-    private Context context;
     private static ActionLog sActionLog;
     public static ActionLog getInstance(Context context) {
         if (sActionLog == null) {
@@ -699,9 +698,13 @@ public class ActionLog extends LogUpload {
     
     private ActionLog(Context context, String logFileName, String serverParameterKey) {
         super(context, logFileName, serverParameterKey);
-        this.context = context;
     }
     
+    /**
+     * 记录行为日志
+     * @param actionLog
+     * @param args
+     */
     public void addAction(String actionLog, Object... args) {
         synchronized (mLock) {
         try {
@@ -757,15 +760,18 @@ public class ActionLog extends LogUpload {
             }
         }
     }
-    
+
+    @Override
     protected boolean canUpload() {
         return TKConfig.getUserActionTrack().equals("on");
     }
-    
+
+    @Override
     protected String getLogOutToken() {
-        return SEPARATOR_STAET+(simpleDateFormat.format(CalendarUtil.getExactTime(context)))+SEPARATOR_MIDDLE+LogOut;
+        return SEPARATOR_STAET+(simpleDateFormat.format(CalendarUtil.getExactTime(mContext)))+SEPARATOR_MIDDLE+LogOut;
     }
-    
+
+    @Override
     protected void onLogOut() {
         super.onLogOut();
         synchronized (mLock) {
@@ -780,6 +786,21 @@ public class ActionLog extends LogUpload {
         }
     }
     
+    /**
+     * 记录网络行为日志
+     * @param apiType
+     * @param reqTime
+     * @param revTime
+     * @param resTime
+     * @param fail
+     * @param detail
+     * @param signal
+     * @param radioType
+     * @param isStop
+     * @param uuid
+     * @param reqSize
+     * @param revSize
+     */
     public void addNetworkAction(String apiType, long reqTime, long revTime, long resTime, String fail, String detail, int signal, String radioType, boolean isStop, String uuid, long reqSize, long revSize) {
         try {
             addAction(NetworkAction, apiType, String.valueOf(reqTime - mStartMillis), String.valueOf(revTime - mStartMillis), String.valueOf(resTime-mStartMillis), fail, detail, signal, radioType, isStop, uuid, reqSize, revSize);
@@ -788,7 +809,8 @@ public class ActionLog extends LogUpload {
             e.printStackTrace();
         }
     }
-    
+
+    @Override
     public void onCreate() {
         super.onCreate();
         synchronized (mLock) {
@@ -796,21 +818,31 @@ public class ActionLog extends LogUpload {
             addAction(SEPARATOR_STAET+simpleDateFormat.format(CalendarUtil.getExactTime(mContext))+SEPARATOR_MIDDLE+LifecycleCreate+SEPARATOR_MIDDLE+TKConfig.getClientSoftVersion(), false);
         }
     }
-    
+
+    /**
+     * 在主Acitivty执行onResume()时调用
+     */
     public void onResume() {
         addAction(LifecycleResume);
     }
-    
+
+    /**
+     * 在主Acitivty执行onPause()时调用
+     */
     public void onPause() {
         addAction(LifecyclePause);
     }
-    
+
+    /**
+     * 在主Acitivty执行onStop()时调用
+     */
     public void onStop() {
         addAction(LifecycleStop);
     }
     
+    @Override
     public void onDestroy() {
-        addAction(SEPARATOR_STAET+simpleDateFormat.format(CalendarUtil.getExactTime(context))+SEPARATOR_MIDDLE+LifecycleDestroy, false);
+        addAction(SEPARATOR_STAET+simpleDateFormat.format(CalendarUtil.getExactTime(mContext))+SEPARATOR_MIDDLE+LifecycleDestroy, false);
         super.onDestroy();
     }
 }

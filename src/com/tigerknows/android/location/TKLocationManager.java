@@ -55,6 +55,14 @@ public class TKLocationManager {
     private ArrayList<TKLocationListener> locationListenerList = new ArrayList<TKLocationListener>();
     private Object locationChangeLock = new Object();
     
+    public LocationUpload getGPSLocationUpload() {
+        return gpsLocationUpload;
+    }
+    
+    public LocationUpload getNetworkLocationUpload() {
+        return networkLocationUpload;
+    }
+    
     public TKLocationManager(Context context) {
         gpsLocationUpload = LocationUpload.getGpsInstance(context);
         networkLocationUpload = LocationUpload.getNetworkInstance(context);
