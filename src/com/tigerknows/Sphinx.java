@@ -956,6 +956,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         mTitleView.setVisibility(View.VISIBLE);
         mBodyView.setVisibility(View.VISIBLE);
         mMenuView.setVisibility(View.VISIBLE);
+        mCompassView.setVisibility(View.VISIBLE);
         mControlView.setVisibility(View.VISIBLE);
         Sphinx.this.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         
