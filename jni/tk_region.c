@@ -762,13 +762,14 @@ tk_status_t tk_region_get_state(int rid, int *ptotal_size, int *pdownloaded_size
 }
 
 #define MAX_LINE_LEN 1024
+#define MAX_META_FILE_SIZE (1024*1024*50)
 /* Generate the empty map data file according to the metadata */
 tk_status_t tk_region_init_file(const char *metafile, int rid)
 {
     int i, size, metasize, tile_num, coder_length=0, index_length=0;
     int map_data_bias, pos, A_num, B_num, C_num, res, pre_pos;
     short int byte_num = 0;
-    char buf[MAX_LINE_LEN], rname[TK_MAX_PATH], tmp_path[TK_MAX_PATH];
+    char buf[MAX_LINE_LEN], rname[TK_MAX_PATH], region_tmp_path[TK_MAX_PATH];
     const char *ename, *pname;
     unsigned char tail, *coder_code = NULL, *tk_buffer_tile_index = NULL, *cur_pointer = NULL, *data = NULL, *index = NULL;
 	FILE *meta_data_fp = NULL, *region_data_fp = NULL, *chk_fp = NULL;
@@ -789,11 +790,11 @@ tk_status_t tk_region_init_file(const char *metafile, int rid)
     strcat(rname, ename);
     strcat(rname, ".dat");
     LOG_DBG("data file name: %s", rname);
-    sprintf(tmp_path, "%s.tmp", rname);
+    sprintf(region_tmp_path, "%s.tmp", rname);
     
     tk_lru_cache_lock(&tk_region_data_pool);
     
-    if ((region_data_fp = fopen(tmp_path, "w+b")) == NULL) {
+    if ((region_data_fp = fopen(region_tmp_path, "w+b")) == NULL) {
         result = TK_STATUS_FILE_OPEN_FAILED;
         goto err;
     }
@@ -813,7 +814,10 @@ tk_status_t tk_region_init_file(const char *metafile, int rid)
     
     fread(buff, 1, 4, meta_data_fp);
     size = (buff[0] << 24) + (buff[1] << 16) + (buff[2] << 8) + buff[3];
-    
+    if(size < metasize || size > MAX_META_FILE_SIZE) {
+        result = TK_STATUS_META_DATA_ERROR;
+        goto err;
+    }
     fseek(region_data_fp, size - 1, SEEK_SET);
     fwrite("\0", 1, 1, region_data_fp);
     rewind(region_data_fp);
@@ -822,6 +826,11 @@ tk_status_t tk_region_init_file(const char *metafile, int rid)
     coder_length = (buff[0]<<16) + (buff[1]<<8) + (buff[2]);
     index_length = (buff[3]<<16) + (buff[4]<<8) + (buff[5]);
     
+    if((coder_length + index_length + 6) > metasize) {
+        result = TK_STATUS_META_DATA_ERROR;
+        goto err;
+    }
+
     map_data_bias = coder_length + index_length + 6;
     
     index = malloc(coder_length + index_length);    /* free in the end of function */
@@ -842,18 +851,29 @@ tk_status_t tk_region_init_file(const char *metafile, int rid)
     cur_pointer = tk_buffer_tile_index;
     A_num = (cur_pointer[9] << 16) | (cur_pointer[10] << 8) | cur_pointer[11];
     res = A_num + 2;
+    if(res * 6 > index_length) {
+        result = TK_STATUS_META_DATA_ERROR;
+        goto err;
+    }
     cur_pointer = tk_buffer_tile_index + res * 6;
     B_num = (cur_pointer[9] << 16) | (cur_pointer[10] << 8) | cur_pointer[11];
     res += B_num + 2;
-    if (res < index_length/6) { /* if the C_level tiles exist */
+    if(res * 6 > index_length) {
+        result = TK_STATUS_META_DATA_ERROR;
+        goto err;
+    }
+    if (res * 6 < index_length) { /* if the C_level tiles exist */
         cur_pointer = tk_buffer_tile_index + res * 6;
         C_num = (cur_pointer[9] << 16) | (cur_pointer[10] << 8) | cur_pointer[11];
     }
     
     tile_num = A_num + B_num + C_num;   /* tiles' total num */
-    byte_num = (tile_num + 6 + 7)/8;    /* more 6 bit added */
+    byte_num = (tile_num + 6 + 7)>>3;    /* more 6 bit added */
     
-    assert((map_data_bias + byte_num + 4) == metasize);
+    if((map_data_bias + byte_num + 4) != metasize) {
+        result = TK_STATUS_META_DATA_ERROR;
+        goto err;
+    }
     
     data = malloc(byte_num); /* read the check sum data */
     if (data == NULL) {
@@ -867,7 +887,10 @@ tk_status_t tk_region_init_file(const char *metafile, int rid)
     cur_pointer = tk_buffer_tile_index + 6 * 2 + 3;
     pos = (cur_pointer[0] << 16) | (cur_pointer[1] << 8) | cur_pointer[2];
     pre_pos = pos;
-    assert(pos == 0);
+    if(pos != 0) {
+        result = TK_STATUS_META_DATA_ERROR;
+        goto err;
+    }
     
     /* the codes below use i as index，remain 2 bits at the start*/
     for (i = 1; i < A_num; i++) {
@@ -919,7 +942,10 @@ tk_status_t tk_region_init_file(const char *metafile, int rid)
         fseek(region_data_fp, size - 1, SEEK_SET);
         tail = data[(i+4-1)/8] & (1<<(i+4-1)%8);    //get the related bits
         tail = tail >> (i+4-1)%8;
-        assert((i+4-1)/8 == byte_num-1);
+        if((i+4-1)/8 != byte_num-1) {
+            result = TK_STATUS_META_DATA_ERROR;
+            goto err;
+        }
         fwrite(&tail, 1, 1, region_data_fp);
     }
     
@@ -932,8 +958,11 @@ tk_status_t tk_region_init_file(const char *metafile, int rid)
     fwrite(&byte_num, 1, 2, chk_fp);
     fwrite(data, 1, byte_num, chk_fp);
     fclose(chk_fp);
-    /* end of writing tempory check file */
-    rename(tmp_path, rname);
+    fclose(region_data_fp);
+    region_data_fp = NULL;
+	/* end of writing tempory check file */
+	rename(region_tmp_path, rname);
+	LOG_INFO("init region: %i success!", rid);
 err:
     if (index != NULL) {
         free(index);
@@ -946,8 +975,12 @@ err:
     }
     if (region_data_fp != NULL) {
         fclose(region_data_fp);
+        remove(region_tmp_path);
     }
     tk_lru_cache_unlock(&tk_region_data_pool);
+    if(result != TK_STATUS_SUCCESS) {
+    	LOG_ERR("init region: %i failed!", rid);
+    }
     return result;
 }
 
