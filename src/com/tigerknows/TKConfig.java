@@ -379,7 +379,7 @@ public class TKConfig {
     /**
      * 默认帮助服务的Host
      */
-    private static String sHELP_HOST = "help.laohubaodian.net ";
+    private static String sHELP_HOST = "help.laohubaodian.net";
 
     /**
      * 软件登录服务推送用于动态负载均衡的下载服务器Host
