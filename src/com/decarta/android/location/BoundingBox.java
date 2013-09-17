@@ -54,10 +54,8 @@ public class BoundingBox implements Serializable{
 	 * @return Position calculated center point of the BoundingBox
 	 */
 	public Position getCenterPosition() {
-		double centerLat = this.maxPosition.getLat() - 
-			((this.maxPosition.getLat() - this.minPosition.getLat()) / 2);
-		double centerLon = this.maxPosition.getLon() - 
-			((this.maxPosition.getLon() - this.minPosition.getLon()) / 2);
+		double centerLat = (maxPosition.getLat() + minPosition.getLat()) / 2;
+		double centerLon = (maxPosition.getLon() + minPosition.getLon()) / 2;
 		return new Position(centerLat, centerLon);
 	}
 

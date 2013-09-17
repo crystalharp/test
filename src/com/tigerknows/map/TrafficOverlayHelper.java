@@ -205,10 +205,7 @@ public class TrafficOverlayHelper {
 		 */
 		try {
 		    Icon start = Icon.getIcon(activity.getResources(), R.drawable.icon_start_pin, Icon.OFFSET_LOCATION_CENTER_BOTTOM);
-//			int fitZoom = Util.getZoomLevelToFitBoundingBox(screenX, screenY, getStartIcon(activity).getSize().x/2, boundingBox);
-			int fitZoom = Util.getZoomLevelToFitBoundingBox(screenX, screenY, 
-			        TKConfig.sMap_Padding, boundingBox);
-
+		    int fitZoom = Util.getZoomLevelToFitBoundingBox(screenX, screenY, start.getSize().y, boundingBox);
 			LogWrapper.d(TAG, "get fitZoom: " + fitZoom);
 			Position centerPosition = boundingBox.getCenterPosition();
 			LogWrapper.d(TAG, "get centerPosition: " + centerPosition.getLon() + " " + centerPosition.getLat());

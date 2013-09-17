@@ -424,39 +424,24 @@ public class Util {
         if (positions == null || positions.isEmpty()) {
             throw new APIException("positions is null");
         }
-        BoundingBox boundingBox = getBoundingBoxToFitPositions(positions);
+		BoundingBox boundingBox = null;
         if (screenCenter != null) {
-            Position centerPosition = boundingBox.getCenterPosition();
-            Position min = boundingBox.getMinPosition();
-            Position max = boundingBox.getMaxPosition();
-            double latOffset = 0;
-            double lonOffset = 0;
-            if (screenCenter.getLat()>centerPosition.getLat()) {
-                latOffset = (max.getLat()-centerPosition.getLat())+(screenCenter.getLat()-centerPosition.getLat());
-            } else {
-                latOffset = -((max.getLat()-centerPosition.getLat())+(centerPosition.getLat()-screenCenter.getLat()));
-            }
-            if (screenCenter.getLon()>centerPosition.getLon()) {
-                lonOffset = (max.getLon()-centerPosition.getLon())+(screenCenter.getLon()-centerPosition.getLon());
-            } else {
-                lonOffset = -((max.getLon()-centerPosition.getLon())+(centerPosition.getLon()-screenCenter.getLon()));
-            }
-            
-            if (latOffset > 0) {
-                if (lonOffset > 0) {
-                    positions.add(new Position(max.getLat()+latOffset, max.getLon()+lonOffset));
-                } else {
-                    positions.add(new Position(max.getLat()+latOffset, min.getLon()+lonOffset));
-                }
-            } else {
-                if (lonOffset > 0) {
-                    positions.add(new Position(min.getLat()+latOffset, max.getLon()+lonOffset));
-                } else {
-                    positions.add(new Position(min.getLat()+latOffset, min.getLon()+lonOffset));
-                }
-            }
-            
-            boundingBox = Util.getBoundingBoxToFitPositions(positions);
+            double maxLatDelta = 0;
+            double maxLonDelta = 0;
+    		for (Position position: positions) {
+    			if (Math.abs(position.lat - screenCenter.lat) > maxLatDelta) {
+    				maxLatDelta = Math.abs(position.lat - screenCenter.lat);
+    			} 
+    			if(Math.abs(position.lon - screenCenter.lon) > maxLonDelta) {
+    				maxLonDelta = Math.abs(position.lon - screenCenter.lon);
+    			}
+    		}
+            Position max = new Position(screenCenter.lat + maxLatDelta, screenCenter.lon + maxLonDelta);
+            Position min = new Position(screenCenter.lat - maxLatDelta, screenCenter.lon - maxLonDelta);
+            boundingBox = new BoundingBox(max, min);
+        }
+        else {
+            boundingBox = getBoundingBoxToFitPositions(positions);
         }
         
         if (boundingBox != null) {
@@ -482,22 +467,26 @@ public class Util {
      * 
      */
     public static int getZoomLevelToFitBoundingBox(int screenX, int screenY, int padding, BoundingBox boundingBox) throws APIException {
-        screenX = Math.abs(screenX / 2);
-        screenY = Math.abs(screenY / 2);
+    	LogWrapper.d("centerdebug", "fit box sx: " + screenX + ", sy: " + screenY);
         int fitZoom = CONFIG.ZOOM_LOWER_BOUND;
         for (int gxZoom = CONFIG.ZOOM_UPPER_BOUND; gxZoom >= CONFIG.ZOOM_LOWER_BOUND; --gxZoom) {
 
             double scale = Util.radsPerPixelAtZoom(CONFIG.TILE_SIZE, gxZoom);
+            double maxPixelY = Util.lat2pix(boundingBox.getMaxPosition().getLat(), scale);
+            double maxPixelX = Util.lon2pix(boundingBox.getMaxPosition().getLon(), scale);
+            double minPixelX = Util.lon2pix(boundingBox.getMinPosition().getLon(), scale);
+            boundingBox.setMaxPosition(
+            		new Position(Util.pix2lat(maxPixelY + padding, scale), Util.pix2lon(maxPixelX + (padding>>1), scale)));
+            boundingBox.setMinPosition(
+            		new Position(boundingBox.getMinPosition().getLat(), Util.pix2lon(minPixelX - (padding>>1), scale)));
 
-            double pixelsY = Util.lat2pix(boundingBox.getCenterPosition().getLat(), scale);
-            double pixelsX = Util.lon2pix(boundingBox.getCenterPosition().getLon(), scale);
-
-            double maxlat = Util.pix2lat((int) pixelsY + (screenY - padding), scale);
-            double maxlon = Util.pix2lon((int) pixelsX + (screenX), scale);
-
-            double minlat = Util.pix2lat((int) pixelsY - (screenY), scale);
-            double minlon = Util.pix2lon((int) pixelsX - (screenX), scale);
-
+            Position centerPosition = boundingBox.getCenterPosition();
+            double pixelsY = Util.lat2pix(centerPosition.getLat(), scale);
+            double pixelsX = Util.lon2pix(centerPosition.getLon(), scale);
+            double maxlat = Util.pix2lat(pixelsY + (screenY>>1), scale);
+            double maxlon = Util.pix2lon(pixelsX + (screenX>>1), scale);
+            double minlat = Util.pix2lat(pixelsY - (screenY>>1), scale);
+            double minlon = Util.pix2lon(pixelsX - (screenX>>1), scale);
             BoundingBox gxbbox = new BoundingBox(new Position(minlat, minlon),new Position(maxlat, maxlon));
 
             if (gxbbox.contains(boundingBox.getMinPosition()) && gxbbox.contains(boundingBox.getMaxPosition())) {

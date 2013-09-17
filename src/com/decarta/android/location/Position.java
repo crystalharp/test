@@ -21,9 +21,9 @@ import java.io.Serializable;
 public class Position implements Serializable, Parcelable{
 
 	private static final long serialVersionUID = 1L;
-	private double lat;
-	private double lon;
-    private float accuracy=0;
+	public double lat;
+	public double lon;
+    public float accuracy=0;
     private int type = 2; //0代表来源GPS，1代表来源基站或wifi，2代表不知道来源 
 	public Position(double lat, double lon){
 		this(lat, lon, 0);
