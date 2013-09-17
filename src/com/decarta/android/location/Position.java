@@ -52,11 +52,11 @@ public class Position implements Serializable, Parcelable{
 		this.lon = (this.lon + 180 + 360) % 360 - 180;	
 	}
 
-	public double getLat() {
+	public final double getLat() {
 		return lat;
 	}
 
-	public double getLon() {
+	public final double getLon() {
 		return lon;
 	}
 	
