@@ -47,7 +47,9 @@ import org.apache.http.protocol.HTTP;
 
 import android.text.TextUtils;
 
+import com.tigerknows.android.app.TKApplication;
 import com.tigerknows.model.test.BaseQueryTest;
+import com.tigerknows.util.HttpUtils;
 import com.weibo.sdk.android.WeiboException;
 import com.weibo.sdk.android.WeiboParameters;
 import com.weibo.sdk.android.util.Utility;
@@ -84,7 +86,7 @@ public class HttpManager {
 			HttpClient client = getNewHttpClient();
 			HttpUriRequest request = null;
 			ByteArrayOutputStream bos = null;
-			client.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, NetStateManager.getAPN());
+//			client.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, NetStateManager.getAPN());
 			if (method.equals(HTTPMETHOD_GET)) {
 				url = url + "?" + Utility.encodeUrl(params);
 				HttpGet get = new HttpGet(url);
@@ -130,7 +132,7 @@ public class HttpManager {
                 }
                 throw new IOException("Unallowed access network");
             }
-			HttpResponse response = client.execute(request);
+			HttpResponse response = HttpUtils.execute(TKApplication.getInstance(), client, request, url, "weibo");
 			StatusLine status = response.getStatusLine();
 			int statusCode = status.getStatusCode();
 

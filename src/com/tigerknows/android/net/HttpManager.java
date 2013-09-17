@@ -129,7 +129,7 @@ public class HttpManager {
 		try {
 			HttpUriRequest request = null;
 			ByteArrayOutputStream bos = null;
-			client.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, NetStateManager.getAPN());
+//			client.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, NetStateManager.getAPN());
 			if (method.equals(HTTPMETHOD_GET)) {
 				url = url + "?" + Utility.encodeUrl(params);
 				HttpGet get = new HttpGet(url);
@@ -179,7 +179,7 @@ public class HttpManager {
                 throw new IOException("Unallowed access network");
             }
 			reqTime = System.currentTimeMillis();
-			HttpResponse response = client.execute(request);
+            HttpResponse response = HttpUtils.execute(context, client, request, url, apiType);
 			StatusLine status = response.getStatusLine();
 			int statusCode = status.getStatusCode();
 	        revTime = System.currentTimeMillis();

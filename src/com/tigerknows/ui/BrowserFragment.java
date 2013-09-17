@@ -217,4 +217,10 @@ public class BrowserFragment extends BaseFragment implements View.OnClickListene
 
         return super.onKeyDown(keyCode, event);
     }
+    
+    @Override
+    public void dismiss() {
+        super.dismiss();
+        mURL = null;
+    }
 }

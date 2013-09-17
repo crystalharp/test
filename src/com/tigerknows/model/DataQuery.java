@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Hashtable;
 import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -20,7 +19,6 @@ import javax.xml.parsers.SAXParserFactory;
 
 import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
-import com.decarta.android.location.Position;
 import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.tigerknows.R;
@@ -37,7 +35,6 @@ import com.tigerknows.model.xobject.XMap;
 import com.tigerknows.util.ByteUtil;
 import com.tigerknows.util.PinyinUtil;
 import com.tigerknows.util.Utility;
-import com.weibo.sdk.android.WeiboParameters;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
