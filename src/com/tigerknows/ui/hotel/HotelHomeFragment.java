@@ -26,6 +26,7 @@ import com.tigerknows.provider.HistoryWordTable;
 import com.tigerknows.provider.HotelOrderTable;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
+import com.tigerknows.ui.TitleFragment;
 import com.tigerknows.ui.more.ChangeCityActivity;
 import com.tigerknows.ui.poi.POIResultFragment;
 import com.tigerknows.util.Utility;
@@ -135,14 +136,21 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         findViews();
         setListener();
         
+        TitleFragment titleFragment = mSphinx.getTitleFragment();
+        titleFragment.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        int titleHeight = titleFragment.getMeasuredHeight();
         View v = mRootView.findViewById(R.id.query_view);
         v.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-        int h = v.getMeasuredHeight();
+        int queryHeight = v.getMeasuredHeight();
         mQueryBtn.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-        h += mQueryBtn.getMeasuredHeight()+Utility.dip2px(mSphinx, 8);
+        int queryBtnHeight = mQueryBtn.getMeasuredHeight();
+        int padding = 2*Utility.dip2px(mSphinx, 8);
+        v = mRootView.findViewById(R.id.navigation_widget);
+        v.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        int navigationHeight = v.getMeasuredHeight();
         
         LayoutParams l = (LayoutParams) mDingdanView.getLayoutParams();
-        int top = Globals.g_metrics.heightPixels-h-(Utility.dip2px(mSphinx, 160));
+        int top = Globals.g_metrics.heightPixels-queryHeight-titleHeight-padding-queryBtnHeight*3-navigationHeight;
         if (top > Utility.dip2px(mSphinx, 8)) {
             l.topMargin = top;
         }
