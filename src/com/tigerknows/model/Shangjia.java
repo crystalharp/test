@@ -218,9 +218,6 @@ public class Shangjia extends BaseData implements Parcelable {
     @SuppressWarnings("unchecked")
     public static void readShangjiaList(Context context) {
         synchronized (shangjiaList) {
-            if (shangjiaList.size() > 0) {
-                return;
-            }
             sLoad.clear();
             String path = TKConfig.getDataPath(false) + "ShangjiaList";
             File file = new File(path);

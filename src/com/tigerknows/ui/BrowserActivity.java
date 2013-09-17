@@ -12,6 +12,8 @@ import android.graphics.Bitmap;
 import android.graphics.Paint;
 import android.net.http.SslError;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
@@ -104,6 +106,25 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
     
     private String mFinishedUrl;
     
+    private static Activity mActivity;
+    private static String mPayInfo;
+    private static Handler mHandler = new Handler();
+    
+    private static Runnable pay_alipay = new Runnable(){
+
+    	@Override
+    	public void run(){
+    		if(mActivity == null || TextUtils.isEmpty(mPayInfo)){
+    			return;
+    		}
+    		synchronized (mPayInfo) {
+    			synchronized (mActivity) {
+    				new MobileSecurePayer().pay(mPayInfo, null, 1, mActivity);
+				}
+			}
+    	}
+    };
+    
     /**
      * 检测url，满足特殊条件时调用支付宝快捷支付
      * @param activity
@@ -111,6 +132,7 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
      */
     public static void checkFastAlipay(Activity activity, String url) {
         String info = URLDecoder.decode(url);
+        LogWrapper.d("Trap", info);
         String clientGoAlipay = TKConfig.getPref(activity, TKConfig.PREFS_CLIENT_GO_ALIPAY, "on");
         if(info.contains("wappaygw") && info.contains("authAndExecute") && "on".equalsIgnoreCase(clientGoAlipay)){
             int c = "<request_token>".length();
@@ -127,7 +149,23 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
             if (!mspHelper.isMobile_spExist()) {
                 return;
             }
-            msp.pay(sb.toString(), null, 1, activity);
+            if(mActivity != null){
+            	synchronized (mActivity) {
+            		mActivity = activity;
+            	}
+            }else{
+            	mActivity = activity;
+            }
+            if(!TextUtils.isEmpty(mPayInfo)){
+            	synchronized (mPayInfo) {
+            		mPayInfo = sb.toString();
+            	}
+            }else{
+            	mPayInfo = sb.toString();
+            }
+            mHandler.postDelayed(pay_alipay, 1000);
+        }else if (info.contains("wapcashier.alipay")){
+        	mHandler.removeCallbacks(pay_alipay);
         }
     }
    
