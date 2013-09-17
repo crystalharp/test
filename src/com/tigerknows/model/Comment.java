@@ -10,6 +10,7 @@ package com.tigerknows.model;
 
 import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
+import com.tigerknows.TKConfig;
 import com.tigerknows.android.app.TKApplication;
 import com.tigerknows.model.xobject.XMap;
 import com.tigerknows.util.Utility;
@@ -25,6 +26,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Comparator;
 import java.util.Hashtable;
+import java.util.LinkedList;
+import java.util.List;
 
 public class Comment extends BaseData {
     
@@ -126,6 +129,12 @@ public class Comment extends BaseData {
     private POI poi;
     private boolean isCommend = false;
     
+    private static List<String> sCommendList = null;
+    private static List<String> sDraftCommendList = null;
+    private static Object writeLock = new Object();
+    private static File sDraftFile = null;
+    private static File sCommendFile = null;
+    
     public boolean isCommend() {
         return isCommend;
     }
@@ -146,6 +155,7 @@ public class Comment extends BaseData {
 
     public Comment (XMap data) throws APIException {
         super(data);
+        initCommendList(TKApplication.getInstance());
         init(data, true);
     }
     
@@ -576,21 +586,31 @@ public class Comment extends BaseData {
     };
     
     private static File getFile(Context context, boolean sent) {
+        if (sent && sCommendFile != null) {
+            return sCommendFile;
+        } else if (!sent && sDraftFile != null) {
+            return sDraftFile;
+        }
         File file = new File(context.getFilesDir().getAbsolutePath() + "/commend"+(sent ? "sent" : "draft"));
+//        File file = new File(TKConfig.getDataPath(true) + "/commend"+(sent ? "sent" : "draft"));
         if (!file.exists()) {
             try {
                 file.createNewFile();
             } catch (IOException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
         return file;
     }
     
+    //对于已经赞过的commend列表并不会再去删除，数据量会变大，所以写入策略选用追加
     public static void addCommend(Context context, String uuid, boolean sent) {
         File file = getFile(context, sent);
-        Utility.writeFile(file.getAbsolutePath(), (uuid + "\n").getBytes(), false);
+        List<String> list = getCommendList(sent);
+        list.add(uuid);
+        synchronized(writeLock) {
+            Utility.writeFile(file.getAbsolutePath(), (uuid + "\n").getBytes(), false);
+        }
     }
     
     public static boolean findCommend(Context context, String uuid, boolean sent) {
@@ -598,34 +618,68 @@ public class Comment extends BaseData {
         if (uuid == null) {
             return result;
         }
-        File file = getFile(context, sent);
-        try {
-            BufferedReader br=new BufferedReader(new InputStreamReader(new FileInputStream(file)));
-            String line = null;
-            while((line = br.readLine()) != null) {
-                if (uuid.equals(line.trim())) {
-                    result = true;
-                    break;
-                }
-            }
-            br.close();
-        } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        List<String> list = getCommendList(sent);
+        if (list.contains(uuid)) {
+            result = true;
         }
-        
         return result;
     }
     
-    public static boolean deleteCommend(Context context, String uuids[], boolean sent) {
-        boolean result = false;
+    //因为只会删除draft中的id，所以它的写入策略是删掉原文件，然后整个list写进去。
+    public static void deleteCommend(Context context, String uuids[], boolean sent) {
         File file = getFile(context, sent);
-        Utility.removeLineFromFile(file.getAbsolutePath(), uuids);
+        List<String> list = getCommendList(sent);
+        for (String uuid : uuids) {
+            list.remove(uuid);
+        }
+        writeCommendList(file, list);
         
-        return result;
+        return;
+    }
+    
+    private final static List<String> getCommendList(boolean sent) {
+        if (sent) {
+            return sCommendList;
+        } else {
+            return sDraftCommendList;
+        }
+    }
+    
+    private final static void initCommendList(Context context) {
+        if (sDraftCommendList == null || sCommendList == null) {
+            sDraftCommendList = new LinkedList<String>();
+            sCommendList = new LinkedList<String>();
+            try {
+                sCommendFile = getFile(context, true);
+                sDraftFile = getFile(context, false);
+                String line = null;
+                BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(sCommendFile)));
+                while((line = br.readLine()) != null) {
+                    sCommendList.add(line);
+                }
+                br.close();
+                br = new BufferedReader(new InputStreamReader(new FileInputStream(sDraftFile)));
+                while ((line = br.readLine()) != null) {
+                    sDraftCommendList.add(line);
+                }
+                br.close();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    
+    private static void writeCommendList(File file, List<String> list) {
+        synchronized(writeLock) {
+            StringBuilder sb = new StringBuilder();
+            for (String s : list) {
+                sb.append(s);
+                sb.append('\n');
+            }
+            Utility.writeFile(file.getAbsolutePath(), sb.toString().getBytes(), true);
+        }
     }
     
     public static final String JsonHeader = "json{\"up\":[";
