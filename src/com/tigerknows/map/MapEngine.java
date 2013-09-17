@@ -220,6 +220,7 @@ public class MapEngine {
         if (metaFile.exists()) {
             metaFile.delete();
         }
+        LogWrapper.d("MapEngine", "init region status: " + ret);
         return ret == 0 ? true : false;
     }
     
