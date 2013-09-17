@@ -4114,6 +4114,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             }
             
             if (myPosition != null) {
+            	updateMyLocation(myPosition);
                 if (MyLocation.MODE_NONE == mMyLocation.mode) {
                     updateLoactionButtonState(MyLocation.MODE_NAVIGATION);
                     mMapView.setZoomLevel(TKConfig.ZOOM_LEVEL_LOCATION);
@@ -4181,6 +4182,29 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         return circle;
     }
     
+    private boolean updateMyLocation(Position myPosition) {
+    	if(myPosition == null) {
+    		return false;
+    	}
+    	else {
+    		if(!myPosition.equals(mMyLocation.getPosition())){
+                try{
+                    mMyLocation.setPosition(myPosition);
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+                String msg=getString(R.string.my_location);
+                String positionName = MapEngine.getPositionName(myPosition);
+                if (positionName != null && positionName.length() > 0) {
+                    msg += "\n" + positionName;
+                }
+                LogWrapper.d("positionbug", positionName);
+                mMyLocation.setMessage(msg);
+    		}
+            return true;
+    	}
+    }
+    
     private boolean updateMyLocationOverlay(Position myLocation){
         if(myLocation==null) {
             mMapView.deleteOverlaysByName(ItemizedOverlay.MY_LOCATION_OVERLAY);
@@ -4197,9 +4221,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         }
         if(!myLocation.equals(mMyLocation.getPosition())){
             try{
-//              RotationTilt rt=myLocationPin.getRotationTilt();
-//              float rotation=AppUtil.getMovingDirection(myLocationPin.getPosition(), myLocation);
-//              rt.setRotation(rotation);
                 mMyLocation.setPosition(myLocation);
             }catch(Exception e){
                 e.printStackTrace();

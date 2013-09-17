@@ -212,7 +212,7 @@ public class Util {
      * @param pos
      * 
      */
-    public static XYDouble posToMercPix ( Position pos, float zoomLevel ) throws APIException{
+    public static XYDouble posToMercPix ( final Position pos, float zoomLevel ) throws APIException{
         double scale =  Util.radsPerPixelAtZoom(CONFIG.TILE_SIZE, zoomLevel);
         double y = Util.lat2pix(pos.getLat(), scale);
         double x = Util.lon2pix(pos.getLon(), scale);
