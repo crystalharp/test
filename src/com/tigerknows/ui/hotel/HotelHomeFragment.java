@@ -135,18 +135,6 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         findViews();
         setListener();
         
-        View v = mRootView.findViewById(R.id.query_view);
-        v.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-        int h = v.getMeasuredHeight();
-        mQueryBtn.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-        h += mQueryBtn.getMeasuredHeight()+Utility.dip2px(mSphinx, 8);
-        
-        LayoutParams l = (LayoutParams) mDingdanView.getLayoutParams();
-        int top = Globals.g_metrics.heightPixels-h-(Utility.dip2px(mSphinx, 160));
-        if (top > Utility.dip2px(mSphinx, 8)) {
-            l.topMargin = top;
-        }
-        
         DataQuery.initStaticField(BaseQuery.DATA_TYPE_POI, BaseQuery.SUB_DATA_TYPE_HOTEL, MapEngine.SW_ID_QUANGUO, mSphinx);
         return mRootView;
     }

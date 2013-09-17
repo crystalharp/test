@@ -7,8 +7,6 @@ package com.tigerknows;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.microedition.khronos.egl.*;
-
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
@@ -18,7 +16,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Animatable;
@@ -56,7 +53,6 @@ import android.widget.TextView;
 
 import com.tigerknows.R;
 
-import com.decarta.CONFIG;
 import com.decarta.Globals;
 import com.decarta.android.event.EventRegistry;
 import com.decarta.android.event.EventSource;
@@ -185,7 +181,6 @@ import com.tigerknows.ui.user.UserUpdatePhoneActivity;
 import com.tigerknows.util.CalendarUtil;
 import com.tigerknows.util.Utility;
 import com.tigerknows.widget.ZoomControls;
-import android.opengl.GLSurfaceView;
 /**
  * 此类是应用程序的主类
  * 
@@ -3218,6 +3213,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     
     public Dialog getDialog(int id) {
         Dialog dialog = null;
+        CheckBox checkChb;
         switch (id) {       
             case R.id.dialog_share_doing:
                 dialog = new ProgressDialog(this);
@@ -3296,7 +3292,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                         });
 
                 
-                final CheckBox checkChb = (CheckBox) dialog.findViewById(R.id.check_chb);
+                checkChb = (CheckBox) dialog.findViewById(R.id.check_chb);
                 checkChb.setOnCheckedChangeListener(new OnCheckedChangeListener() {
                     
                     @Override
@@ -3333,8 +3329,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                         });
 
                 
-                final CheckBox checkChb1 = (CheckBox) dialog.findViewById(R.id.check_chb);
-                checkChb1.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+                checkChb = (CheckBox) dialog.findViewById(R.id.check_chb);
+                checkChb.setOnCheckedChangeListener(new OnCheckedChangeListener() {
                     
                     @Override
                     public void onCheckedChanged(CompoundButton arg0, boolean checked) {
