@@ -7,7 +7,6 @@ package com.tigerknows.ui.poi;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Hashtable;
 import java.util.List;
 
 import android.content.Context;
@@ -410,11 +409,14 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
                         } else {
                             mCommentArrayList.addAll(list);
                         }
-                        ((CommentResponse)mCommentQuery.getResponse()).getList().getList().addAll(list);
+                        commentResponse = (CommentResponse)mCommentQuery.getResponse(); 
+                        commentResponse.getList().getList().addAll(list);
                         Collections.sort(mCommentArrayList, Comment.COMPARATOR);
                         mCommentAdapter.notifyDataSetChanged();
-                        if (list.size()+commentList.getTotal() >= TKConfig.getPageSize()) {
+                        if (commentResponse.canTurnPage() && list.size() >= TKConfig.getPageSize()) {
                             mCommentLsv.setFooterSpringback(true);
+                        } else {
+                            commentResponse.setCanTurnPage(false);
                         }
                     }
                 }
@@ -456,8 +458,10 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
                         } else {
                             mCommentLsv.setVisibility(View.VISIBLE);
                         }
-                        if (commentArrayList.size()+commentList.getTotal() >= TKConfig.getPageSize()) {
+                        if (commentResponse.canTurnPage() && commentArrayList.size() >= TKConfig.getPageSize()) {
                             mCommentLsv.setFooterSpringback(true);
+                        } else {
+                            commentResponse.setCanTurnPage(false);
                         }
                     }
                 }

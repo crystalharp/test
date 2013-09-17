@@ -1935,6 +1935,19 @@ public final class DataQuery extends BaseQuery {
         public static final byte FIELD_COMMENT_LIST = 0x02;
 
         private CommentList list;
+        
+        /**
+         * 是否可以加载更多
+         */
+        private boolean canTurnPage = true;
+        
+        public boolean canTurnPage() {
+            return canTurnPage;
+        }
+        
+        public void setCanTurnPage(boolean canTurnPage) {
+            this.canTurnPage = canTurnPage;
+        }
 
         public CommentResponse(XMap data) throws APIException {
             super(data);
