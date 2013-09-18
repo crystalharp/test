@@ -120,8 +120,10 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
     		synchronized (mPayInfo) {
     			synchronized (mActivity) {
     				new MobileSecurePayer().pay(mPayInfo, null, 1, mActivity);
-				}
+    	        }
 			}
+    		mPayInfo = null;
+    		mActivity = null;
     	}
     };
     
@@ -134,7 +136,7 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
         String info = URLDecoder.decode(url);
         LogWrapper.d("Trap", info);
         String clientGoAlipay = TKConfig.getPref(activity, TKConfig.PREFS_CLIENT_GO_ALIPAY, "on");
-        if(info.contains("wappaygw") && info.contains("authAndExecute") && "on".equalsIgnoreCase(clientGoAlipay)){
+        if(info.contains("wappaygw.alipay") && info.contains("authAndExecute") && "on".equalsIgnoreCase(clientGoAlipay)){
             int c = "<request_token>".length();
             int i = info.indexOf("<request_token>");
             int j = info.indexOf("</request_token>");
@@ -144,7 +146,6 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
                 sb.append(info.substring(i+c, j));
             }else return;
             sb.append("\"");
-            MobileSecurePayer msp = new MobileSecurePayer();
             MobileSecurePayHelper mspHelper = new MobileSecurePayHelper(activity);
             if (!mspHelper.isMobile_spExist()) {
                 return;
@@ -163,9 +164,13 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
             }else{
             	mPayInfo = sb.toString();
             }
-            mHandler.postDelayed(pay_alipay, 1000);
-        }else if (info.contains("wapcashier.alipay")){
+        }else if (info.contains("wappaygw.alipay") && info.contains("wapcashier_confirm_login")){
+        	mHandler.postDelayed(pay_alipay, 100);
+
+        }else if (info.contains("wappaygw.alipay") && info.contains("cashier_gateway_pay")){
         	mHandler.removeCallbacks(pay_alipay);
+        	mPayInfo = null;
+        	mActivity = null;
         }
     }
    
