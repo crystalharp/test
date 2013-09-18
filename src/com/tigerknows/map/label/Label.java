@@ -76,6 +76,10 @@ public abstract class Label {
     
     protected static Paint tilePText;
     
+    public Label() {
+        super();
+    }
+    
     public static void init() {
     	Label.TK_LABEL_BOUND_SIZE = (int) (8 * Globals.g_metrics.density);
         if(Label.TK_LABEL_BOUND_SIZE > 8) 

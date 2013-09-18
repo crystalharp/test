@@ -159,6 +159,13 @@ public class SingleRectLabel extends Label {
     public XYInteger point;
     public RectInteger rect;
     public XYInteger iconSize;
+    
+    /**
+     * 此static的代码仅是为了避免其构造函数被优化
+     */
+    static {
+        new SingleRectLabel("", 0, 0, 0, 0, 0, 0, null, 0, 0, 0);
+    }
 
     public SingleRectLabel(
     		String name, 
@@ -173,6 +180,7 @@ public class SingleRectLabel extends Label {
     		int tileY,
     		int zoom
     		) {
+        super();
     	this.name = name;
     	this.color = color;
     	this.bgColor = bgColor;
@@ -688,5 +696,9 @@ public class SingleRectLabel extends Label {
             this.drawOnlyIcon(sx, sy, rect, rotation, scale, grid, TEXTURE_COORDS, vertexBuffer);
         }
         return state;
+    }
+    
+    public SingleRectLabel clone() {
+        return new SingleRectLabel(name, MAX_WORD_SIZE, style, iconId, iconId, STYLE_NO_ICON_WITH_BACKGROUND, STYLE_NO_ICON_WITHOUT_BACKGROUND, point, x, y, z);
     }
 }

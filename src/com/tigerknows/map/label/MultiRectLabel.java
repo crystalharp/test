@@ -40,6 +40,14 @@ public class MultiRectLabel extends Label {
     public float halfCharWidth;
     private Texture[] textTextures;
     public static float SQRT2 = (float) Math.sqrt(2d);
+    
+    /**
+     * 此static的代码仅是为了避免其构造函数被优化
+     */
+    static {
+        new MultiRectLabel("", 0, 0, 0, 0, 0, 0, null, 0, 0, 0);
+    }
+    
     public MultiRectLabel(
     		String name, 
     		int pointNum,
@@ -53,6 +61,7 @@ public class MultiRectLabel extends Label {
     		int tileY,
     		int zoom
     		) {
+        super();
     	this.name = name;
     	this.pointNum = pointNum;
     	this.color = color;
@@ -406,5 +415,9 @@ public class MultiRectLabel extends Label {
 					charSize.x, charSize.y, textTextures[texRefIdx], TEXTURE_COORDS, vertexBuffer);
 		}
 		return state;
+    }
+    
+    public MultiRectLabel clone() {
+        return new MultiRectLabel(name, startIndex, startIndex, startIndex, startIndex, startIndex, startIndex, points, x, y, z);
     }
 }

@@ -218,9 +218,7 @@ public class Shangjia extends BaseData implements Parcelable {
     @SuppressWarnings("unchecked")
     public static void readShangjiaList(Context context) {
         synchronized (shangjiaList) {
-            if (shangjiaList.size() > 0) {
-                return;
-            }
+            shangjiaList.clear();
             sLoad.clear();
             String path = TKConfig.getDataPath(false) + "ShangjiaList";
             File file = new File(path);
@@ -338,8 +336,6 @@ public class Shangjia extends BaseData implements Parcelable {
             try {
                 XArray<XMap> xarray = new XArray<XMap>();
                 for(Shangjia shangjia : shangjiaList) {
-                    shangjia.data.remove(FIELD_MESSAGE);
-                    shangjia.data.remove(FIELD_LOGO);
                     if (shangjia.fastPurchase != 1) {
                         shangjia.data.remove(FIELD_URL);
                     }
