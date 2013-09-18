@@ -136,7 +136,10 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
         String info = URLDecoder.decode(url);
         LogWrapper.d("Trap", info);
         String clientGoAlipay = TKConfig.getPref(activity, TKConfig.PREFS_CLIENT_GO_ALIPAY, "on");
-        if(info.contains("wappaygw.alipay") && info.contains("authAndExecute") && "on".equalsIgnoreCase(clientGoAlipay)){
+        if(! "on".equalsIgnoreCase(clientGoAlipay)){
+        	return;
+        }
+        if(info.contains("wappaygw.alipay") && info.contains("authAndExecute")){
             int c = "<request_token>".length();
             int i = info.indexOf("<request_token>");
             int j = info.indexOf("</request_token>");
