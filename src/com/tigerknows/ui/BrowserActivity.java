@@ -164,13 +164,9 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
             }else{
             	mPayInfo = sb.toString();
             }
-        }else if (info.contains("wappaygw.alipay") && info.contains("wapcashier_confirm_login")){
+        }else if (info.contains("wappaygw.alipay") && (info.contains("wapcashier_confirm_login") || info.contains("wapcashier_login"))){
         	mHandler.postDelayed(pay_alipay, 100);
 
-        }else if (info.contains("wappaygw.alipay") && info.contains("cashier_gateway_pay")){
-        	mHandler.removeCallbacks(pay_alipay);
-        	mPayInfo = null;
-        	mActivity = null;
         }
     }
    
