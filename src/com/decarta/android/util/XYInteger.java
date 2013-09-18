@@ -13,6 +13,7 @@ public class XYInteger {
 	public int x;
 	public int y;
 	public XYInteger(int x, int y){
+	    super();
 		this.x=x;
 		this.y=y;
 	}
