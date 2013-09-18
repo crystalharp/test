@@ -236,7 +236,7 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
 
                 Tuangou tuangou = sTuangou;
-                if (mFinishedUrl != null && tuangou != null && mTitleBtn.getText().toString().equals(mThis.getString(R.string.tuanguo_picture_text_detail))) {
+                if (tuangou != null && mTitleBtn.getText().toString().equals(mThis.getString(R.string.tuanguo_picture_text_detail))) {
                     return true;
                 } else {
                     view.loadUrl(url);
