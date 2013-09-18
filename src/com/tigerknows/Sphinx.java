@@ -4195,6 +4195,14 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 }
                 LogWrapper.d("positionbug", positionName);
                 mMyLocation.setMessage(msg);
+             // 定位图层显示InfoWindow时, 若定位点变化, InfoWindow也会变化
+                InfoWindow infoWindow = mMapView.getInfoWindow();
+                OverlayItem overlayItem = infoWindow.getAssociatedOverlayItem();
+                if (infoWindow.isVisible() && overlayItem != null) {
+                    if (ItemizedOverlay.MY_LOCATION_OVERLAY.equals(overlayItem.getOwnerOverlay().getName())) {
+                        showInfoWindow(mMyLocation);
+                    }
+                }
     		}
             return true;
     	}
