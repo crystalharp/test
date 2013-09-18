@@ -42,7 +42,7 @@ public class MultiRectLabel extends Label {
     public static float SQRT2 = (float) Math.sqrt(2d);
     
     /**
-     * 此static的代码
+     * 此static的代码仅是为了避免其构造函数被优化
      */
     static {
         new MultiRectLabel("", 0, 0, 0, 0, 0, 0, null, 0, 0, 0);
