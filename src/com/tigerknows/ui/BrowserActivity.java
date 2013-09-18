@@ -330,7 +330,6 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
         } else if (id == R.id.stop_btn) {
             mWebWbv.stopLoading();
         } else if (id == R.id.buy_btn) {
-            mTitleBtn.setText(R.string.buy);
             mActionLog.addAction(mActionTag +  ActionLog.BrowserBuy);
             buy(true);
         }
@@ -424,5 +423,6 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
         mWebWbv.loadUrl(url);
         mButtonView.setVisibility(View.VISIBLE);
         mBarView.setVisibility(View.GONE);
+        mTitleBtn.setText(R.string.buy);
     }
 }
