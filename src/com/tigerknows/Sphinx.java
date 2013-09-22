@@ -565,9 +565,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 
                 @Override
                 public void run() {
-                    // 初始化存储历史词的数据库表结构
-                    HistoryWordTable historyWordTable = new HistoryWordTable(mThis);
-                    historyWordTable.close();
+                    // 初始化存储历史词的数据库表结构，读取历史词数据
+                    int cityId = Globals.getCurrentCityInfo().getId();
+                    HistoryWordTable.readHistoryWord(mContext, cityId, HistoryWordTable.TYPE_POI);
+                    TrafficQueryFragment.TrafficOnCityChanged(Sphinx.this, cityId);
                     
                     CalendarUtil.initExactTime(mContext);
 
