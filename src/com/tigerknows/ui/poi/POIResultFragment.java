@@ -981,6 +981,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 if (mATotal == 0 && TextUtils.isEmpty(poi.getAddress()) == false) { // 若POI存在地址且搜索结果的子类型为普通POI则将其列为A类POI
                     mATotal = 1;
                     poi.setResultType(POIResponse.FIELD_A_POI_LIST);
+                    poi.setToCenterDistance(null);
                     aPOIList = new ArrayList<POI>();
                     aPOIList.add(poi);
                 }
