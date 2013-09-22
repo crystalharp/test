@@ -240,7 +240,7 @@ public class MultiRectLabel extends Label {
 				cosAlpha = dx * invLength;
 				sinAlpha = dy * invLength;
 				float cosAngle = sinAlpha * sinBeta + cosAlpha * cosBeta;
-				if (i > 0 && cosAngle < 0) {// 夹角太小, 若设为0，则表示文字拐角不能小于90°
+				if (cosAngle < 0) {// 夹角太小, 若设为0，则表示文字拐角不能小于90°
 					i = 0;
 					isNewStart = true;
 					tempStartPoint.x = endPoint.x;
