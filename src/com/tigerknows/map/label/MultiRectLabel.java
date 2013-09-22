@@ -16,6 +16,7 @@ import android.opengl.GLUtils;
 import com.decarta.CONFIG;
 import com.decarta.Globals;
 import com.decarta.android.map.TilesView.Texture;
+import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.decarta.android.util.XYFloat;
 import com.decarta.android.util.XYInteger;
@@ -170,6 +171,9 @@ public class MultiRectLabel extends Label {
     public int draw(XYInteger center, XYZ centerXYZ, XYFloat centerDelta, 
     		float rotation, float sinRot, float cosRot, float scale, Grid grid, 
     		ByteBuffer TEXTURE_COORDS, FloatBuffer vertexBuffer, boolean needGenTexture, IntegerRef leftCountToDraw) {
+//    	if(this.name.equals("文慧园路")) {
+//    		LogWrapper.d("labeldebug", "init opacity: " + opacity + this.toString());
+//    	}
         int tileSize = CONFIG.TILE_SIZE;
         int cx = center.x;
         int cy = center.y;
@@ -241,8 +245,8 @@ public class MultiRectLabel extends Label {
 					isNewStart = true;
 					tempStartPoint.x = endPoint.x;
 					tempStartPoint.y = endPoint.y;
-					startPoint.x = (int) tempStartPoint.x;
-					startPoint.y = (int) tempStartPoint.y;
+					startPoint.x = tempStartPoint.x;
+					startPoint.y = tempStartPoint.y;
 					startIndex = nextEndPointIndex;
 					continue;
 				}
@@ -301,8 +305,8 @@ public class MultiRectLabel extends Label {
 							break;
 						}
 					}
-					startPoint.x = (int) tempStartPoint.x;
-					startPoint.y = (int) tempStartPoint.y;
+					startPoint.x = tempStartPoint.x;
+					startPoint.y = tempStartPoint.y;
 					startIndex = nextEndPointIndex;
 					continue;
 				}
@@ -334,8 +338,14 @@ public class MultiRectLabel extends Label {
 		}
 		if (i < num || isTotalOutBound) {
 			state = LABEL_STATE_CANT_BE_SHOWN;
+//			if(this.name.equals("文慧园路")) {
+//	    		LogWrapper.d("labeldebug", "can not be shown opacity: " + opacity + this.toString());
+//	    	}
 			return LABEL_STATE_CANT_BE_SHOWN;
 		}
+//		if(this.name.equals("文慧园路")) {
+//    		LogWrapper.d("labeldebug", "can shown opacity: " + opacity + this.toString());
+//    	}
 		//draw
 //		LogWrapper.i("MultiRectLabel", "draw label: " + name + "at: " + startPoint.x + ", " + startPoint.y);
 		for (RectInteger rect : rectArray) {
