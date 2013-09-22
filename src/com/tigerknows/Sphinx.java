@@ -2005,7 +2005,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     Globals.g_Bootstrap_Model = bootstrapModel;
                 }
                 if (uiStackPeek() == R.id.view_more_home) {
-                    getMoreFragment().refreshBootStrapData();
+                    getMoreFragment().refreshBootStrapData(true);
+                }else{
+                	getMoreFragment().refreshBootStrapData(false);
                 }
             } else if (baseQuery instanceof NoticeQuery) {
             	Response response = baseQuery.getResponse();
