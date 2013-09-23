@@ -1680,10 +1680,11 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 } else if (message.getType() == PullMessage.Message.TYPE_ACTIVITY &&
                         productMessage != null) {
                     uiStackClose(new int[]{R.id.view_more_home});
+                    showView(R.id.view_more_home);
                     Intent intent = new Intent();
                     intent.putExtra(BrowserActivity.TITLE, productMessage.getTitle());
                     intent.putExtra(BrowserActivity.URL, productMessage.getDownloadUrl());
-                    startActivity(intent);
+                    showView(R.id.activity_browser, intent);
                 } else {
                     uiStackClose(new int[]{R.id.view_poi_home});
                     showView(R.id.view_poi_home);
@@ -1814,13 +1815,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         
     public void snapMapView(SnapMap snapMap, Position position, MapScene mapScene) {
         mMapView.snapMapView(this, snapMap, position, mapScene);
-    }
-    
-    public void changeCity(long cityId) {
-        int id = (int)cityId;
-        CityInfo cityInfo = MapEngine.getCityInfo(id);
-        if(cityInfo != null)
-        	changeCity(cityInfo);
     }
     
     public void initCity(CityInfo cityInfo) {
