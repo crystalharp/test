@@ -311,7 +311,7 @@
         <!--老虎宝典测试 68DDE7CB7E1AC79BA446D291FFAB79B0 -->
         <!--老虎宝典 01311C44FE74E468F73E72C43CD1B60D -->
         <meta-data android:name="TD_CHANNEL_ID" android:value="TigerMapTest"/>
-        <!-- TigerMapTest tieshusai jiangzhenzhen lidaobei edeni dongjuan peiguojuan liujiahe baoyinjuan -->
+        <!-- TigerMapTest tieshusai jiangzhenzhen lidaobei edeni dongjuan peiguojuan liujiahe liuhaijing zhaihuihui -->
     </application>
     <supports-screens android:anyDensity="true" android:resizeable="true" android:largeScreens="true" android:smallScreens="true"></supports-screens>
     <uses-sdk android:minSdkVersion="5" />
