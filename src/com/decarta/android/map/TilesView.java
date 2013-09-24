@@ -2742,6 +2742,9 @@ public class TilesView extends GLSurfaceView {
 					}
 				};
 			}
+			else {
+				clearTileTextures();
+			}
 			TileThread.startAllThreads();
 			for (int i = 0; i < tileRunners.length; i++) {
 				if (!tileRunners[i].isAlive())
