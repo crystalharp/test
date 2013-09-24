@@ -6,11 +6,13 @@ import com.tigerknows.R;
 import com.tigerknows.android.net.HttpManager;
 import com.tigerknows.map.MapEngine;
 import com.tigerknows.model.test.BaseQueryTest;
+import com.tigerknows.util.HttpUtils;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpUriRequest;
 
 import android.app.IntentService;
 import android.app.Notification;
@@ -153,7 +155,7 @@ public class DownloadService extends IntentService {
         views.setTextViewText(R.id.name_txv, tickerText);
 	    notification.contentView = views;
 	
-	    PendingIntent contentIntent = PendingIntent.getActivity(this, 0, null, 0);
+	    PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(), 0);
 	    notification.setLatestEventInfo(this, tickerText, "已下载" + 0 + "%", contentIntent);
 	
 	    // 将下载任务添加到任务栏中
@@ -167,15 +169,25 @@ public class DownloadService extends IntentService {
                 Thread.sleep(5000);
                 throw new IOException("Unallowed access network");
             }
+            File tempFile = createFileByUrl(url);
+            long fileSize = tempFile.length();
             HttpClient client = HttpManager.getNewHttpClient();
-            HttpResponse response = client.execute(new HttpGet(url));
+            HttpUriRequest request = new HttpGet(url);
+            
+            // Range:(unit=first byte pos)-[last byte pos] 
+            // 指定第一个字节的位置和最后一个字节的位置
+            // 在http请求头加入RANGE指定第一个字节的位置
+            if (fileSize > 0) {
+                request.addHeader("RANGE", "bytes="+fileSize+"-");
+            }
+//            HttpResponse response = client.execute(new HttpGet(url));
+            HttpResponse response = HttpUtils.execute(getApplicationContext(), client, request, url, "apkDownload");
             HttpEntity entity = response.getEntity();
-            long length = entity.getContentLength();
+            long length = entity.getContentLength()+fileSize;
             InputStream is = entity.getContent();
             if(is != null) {
-	            File tempFile = createFileByUrl(url);
 	            BufferedInputStream bis = new BufferedInputStream(is);
-	            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(tempFile));
+	            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(tempFile, true));
 	            int read = 0;
 	            long count = 0;
 	            int percent = 0;
@@ -228,9 +240,9 @@ public class DownloadService extends IntentService {
         if (!rootFile.exists() && !rootFile.isDirectory())
             rootFile.mkdir();
         tempFile = new File(path, url.substring(url.lastIndexOf("/") + 1).replaceAll("[?]", "@"));
-        if (tempFile.exists())
-            tempFile.delete();
-        tempFile.createNewFile();
+        if (tempFile.exists() == false) {
+            tempFile.createNewFile();
+        }
         return tempFile;
     }
     
