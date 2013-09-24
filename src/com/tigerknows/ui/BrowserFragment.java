@@ -165,7 +165,7 @@ public class BrowserFragment extends BaseFragment implements View.OnClickListene
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
             	mProgressBar.setVisibility(View.VISIBLE);
-                BrowserActivity.checkFastAlipay(mSphinx, url);
+                BrowserActivity.checkFastAlipay(mSphinx, url, mActionLog, mActionTag);
             }
 
             @Override

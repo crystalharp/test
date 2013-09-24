@@ -108,31 +108,14 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
     
     private static Activity mActivity;
     private static String mPayInfo;
-    private static Handler mHandler = new Handler();
-    
-    private static Runnable pay_alipay = new Runnable(){
-
-    	@Override
-    	public void run(){
-    		if(mActivity == null || TextUtils.isEmpty(mPayInfo)){
-    			return;
-    		}
-    		synchronized (mPayInfo) {
-    			synchronized (mActivity) {
-    				new MobileSecurePayer().pay(mPayInfo, null, 1, mActivity);
-    	        }
-			}
-    		mPayInfo = null;
-    		mActivity = null;
-    	}
-    };
+    private static String mAlipayActionLog;
     
     /**
      * 检测url，满足特殊条件时调用支付宝快捷支付
      * @param activity
      * @param url
      */
-    public static void checkFastAlipay(Activity activity, String url) {
+    public static void checkFastAlipay(Activity activity, String url, ActionLog actionLog, String actionTag) {
         String info = URLDecoder.decode(url);
         LogWrapper.d("Trap", info);
         String clientGoAlipay = TKConfig.getPref(activity, TKConfig.PREFS_CLIENT_GO_ALIPAY, "on");
@@ -150,6 +133,7 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
             }else return;
             sb.append("\"");
             MobileSecurePayHelper mspHelper = new MobileSecurePayHelper(activity);
+            mAlipayActionLog = actionTag + ActionLog.BrowserReadyAlipay;
             if (!mspHelper.isMobile_spExist()) {
                 return;
             }
@@ -168,8 +152,21 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
             	mPayInfo = sb.toString();
             }
         }else if (info.contains("wappaygw.alipay") && (info.contains("wapcashier_confirm_login") || info.contains("wapcashier_login"))){
-        	mHandler.postDelayed(pay_alipay, 100);
-
+        	if(!TextUtils.isEmpty(mAlipayActionLog)){
+        		actionLog.addAction(mAlipayActionLog);
+        		mAlipayActionLog = null;
+        	}
+    		if(mActivity == null || TextUtils.isEmpty(mPayInfo)){
+    			return;
+    		}
+    		synchronized (mPayInfo) {
+    			synchronized (mActivity) {
+    				actionLog.addAction(actionTag + ActionLog.BrowserLaunchAlipay);
+    				new MobileSecurePayer().pay(mPayInfo, null, 1, mActivity);
+    	        }
+			}
+    		mPayInfo = null;
+    		mActivity = null;
         }
     }
    
@@ -261,7 +258,7 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
             	mProgressBar.setVisibility(View.VISIBLE);
-            	checkFastAlipay(mThis, url);
+            	checkFastAlipay(mThis, url, mActionLog, mActionTag);
             }
 
             @Override
