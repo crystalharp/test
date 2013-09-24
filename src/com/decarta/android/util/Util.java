@@ -467,7 +467,7 @@ public class Util {
      * 
      */
     public static int getZoomLevelToFitBoundingBox(int screenX, int screenY, int padding, BoundingBox boundingBox) throws APIException {
-    	LogWrapper.d("centerdebug", "fit box sx: " + screenX + ", sy: " + screenY);
+//    	LogWrapper.d("centerdebug", "fit box sx: " + screenX + ", sy: " + screenY);
         int fitZoom = CONFIG.ZOOM_LOWER_BOUND;
         for (int gxZoom = CONFIG.ZOOM_UPPER_BOUND; gxZoom >= CONFIG.ZOOM_LOWER_BOUND; --gxZoom) {
 

@@ -12,6 +12,8 @@ import android.graphics.Bitmap;
 import android.graphics.Paint;
 import android.net.http.SslError;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
@@ -104,6 +106,27 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
     
     private String mFinishedUrl;
     
+    private static Activity mActivity;
+    private static String mPayInfo;
+    private static Handler mHandler = new Handler();
+    
+    private static Runnable pay_alipay = new Runnable(){
+
+    	@Override
+    	public void run(){
+    		if(mActivity == null || TextUtils.isEmpty(mPayInfo)){
+    			return;
+    		}
+    		synchronized (mPayInfo) {
+    			synchronized (mActivity) {
+    				new MobileSecurePayer().pay(mPayInfo, null, 1, mActivity);
+    	        }
+			}
+    		mPayInfo = null;
+    		mActivity = null;
+    	}
+    };
+    
     /**
      * 检测url，满足特殊条件时调用支付宝快捷支付
      * @param activity
@@ -111,8 +134,12 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
      */
     public static void checkFastAlipay(Activity activity, String url) {
         String info = URLDecoder.decode(url);
+        LogWrapper.d("Trap", info);
         String clientGoAlipay = TKConfig.getPref(activity, TKConfig.PREFS_CLIENT_GO_ALIPAY, "on");
-        if(info.contains("wappaygw") && info.contains("authAndExecute") && "on".equalsIgnoreCase(clientGoAlipay)){
+        if(! "on".equalsIgnoreCase(clientGoAlipay)){
+        	return;
+        }
+        if(info.contains("wappaygw.alipay") && info.contains("authAndExecute")){
             int c = "<request_token>".length();
             int i = info.indexOf("<request_token>");
             int j = info.indexOf("</request_token>");
@@ -122,12 +149,27 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
                 sb.append(info.substring(i+c, j));
             }else return;
             sb.append("\"");
-            MobileSecurePayer msp = new MobileSecurePayer();
             MobileSecurePayHelper mspHelper = new MobileSecurePayHelper(activity);
             if (!mspHelper.isMobile_spExist()) {
                 return;
             }
-            msp.pay(sb.toString(), null, 1, activity);
+            if(mActivity != null){
+            	synchronized (mActivity) {
+            		mActivity = activity;
+            	}
+            }else{
+            	mActivity = activity;
+            }
+            if(!TextUtils.isEmpty(mPayInfo)){
+            	synchronized (mPayInfo) {
+            		mPayInfo = sb.toString();
+            	}
+            }else{
+            	mPayInfo = sb.toString();
+            }
+        }else if (info.contains("wappaygw.alipay") && (info.contains("wapcashier_confirm_login") || info.contains("wapcashier_login"))){
+        	mHandler.postDelayed(pay_alipay, 100);
+
         }
     }
    
@@ -194,7 +236,7 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
 
                 Tuangou tuangou = sTuangou;
-                if (mFinishedUrl != null && tuangou != null && mTitleBtn.getText().toString().equals(mThis.getString(R.string.tuanguo_picture_text_detail))) {
+                if (tuangou != null && mTitleBtn.getText().toString().equals(mThis.getString(R.string.tuanguo_picture_text_detail))) {
                     return true;
                 } else {
                     view.loadUrl(url);
@@ -287,7 +329,6 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
         } else if (id == R.id.stop_btn) {
             mWebWbv.stopLoading();
         } else if (id == R.id.buy_btn) {
-            mTitleBtn.setText(R.string.buy);
             mActionLog.addAction(mActionTag +  ActionLog.BrowserBuy);
             buy(true);
         }
@@ -381,5 +422,6 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
         mWebWbv.loadUrl(url);
         mButtonView.setVisibility(View.VISIBLE);
         mBarView.setVisibility(View.GONE);
+        mTitleBtn.setText(R.string.buy);
     }
 }

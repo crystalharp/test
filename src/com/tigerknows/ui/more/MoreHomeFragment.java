@@ -314,7 +314,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         	TKConfig.setPref(mContext, TKConfig.PREFS_MORE_OPENED, "yes");
         }
         refreshUserEntrance();
-        refreshBootStrapData();
+        refreshBootStrapData(true);
         refreshMoreData();
         refreshCity(Globals.getCurrentCityInfo().getCName());
         refreshGoCommentData();
@@ -530,7 +530,6 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         		
         		@Override
         		public void onPageSelected(int index) {
-        			LogWrapper.d("Trap", "Select:"+index);
         			refreshAllNoticeDrawable();
         			mHandler.removeCallbacks(mNoticeNextRun);
         			mHandler.postDelayed(mNoticeNextRun, 4000);
@@ -558,7 +557,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         }
     }
     
-    public void refreshBootStrapData(){
+    public void refreshBootStrapData(boolean retry){
     	BootstrapModel bootstrapModel = Globals.g_Bootstrap_Model;
         if (bootstrapModel != null) {
             setNoticeList();
@@ -571,7 +570,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
                 mRecommendAppList.addAll(recommend.getRecommendAppList());
                 refreshAppRecommendDrawable();
             }
-        }else{
+        }else if (retry == true){
         	mHandler.removeCallbacks(mReloadAppRecommend);
         	mHandler.postDelayed(mReloadAppRecommend, 12000);
         }

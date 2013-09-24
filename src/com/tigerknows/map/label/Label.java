@@ -76,8 +76,19 @@ public abstract class Label {
     
     protected static Paint tilePText;
     
-    public static void init() {
+    public Label() {
+        super();
+    }
+
+    private static final int MAX_TEXT_LENGTH = 32;
+    private static int MAX_WORD_SIZE = 512;
+    
+    public static void init(int x, int y) {
     	Label.TK_LABEL_BOUND_SIZE = (int) (8 * Globals.g_metrics.density);
+    	MAX_WORD_SIZE = x * y / 2048;
+    	if(MAX_WORD_SIZE > 512 || MAX_WORD_SIZE <= 0)
+    		MAX_WORD_SIZE = 512;
+    	LogWrapper.d("Label", "word count: " + MAX_WORD_SIZE);
         if(Label.TK_LABEL_BOUND_SIZE > 8) 
         	Label.TK_LABEL_BOUND_SIZE = 16;
         else
@@ -95,8 +106,6 @@ public abstract class Label {
 //    		strokeWidth = 2f;
     	tilePText.setStrokeWidth(strokeWidth); //设置描边的宽度
     }
-    private static final int MAX_TEXT_LENGTH = 32;
-    private static final int MAX_WORD_SIZE = 512;
     
     public static class IntegerRef {
     	public int value;

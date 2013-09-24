@@ -440,7 +440,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 //        	CONFIG.TILE_SIZE = 512;
 //        else 
 //        	CONFIG.TILE_SIZE = 256;
-        Label.init();
+        Label.init(display.getWidth(), display.getHeight());
         
         // 根据屏幕密度计算出地图上显示Shape和OverlayItem内容的Padding
         TKConfig.sMap_Padding = (int)(56*Globals.g_metrics.density);
@@ -565,9 +565,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 
                 @Override
                 public void run() {
-                    // 初始化存储历史词的数据库表结构
-                    HistoryWordTable historyWordTable = new HistoryWordTable(mThis);
-                    historyWordTable.close();
+                    // 初始化存储历史词的数据库表结构，读取历史词数据
+                    int cityId = Globals.getCurrentCityInfo().getId();
+                    HistoryWordTable.readHistoryWord(mContext, cityId, HistoryWordTable.TYPE_POI);
+                    TrafficQueryFragment.TrafficOnCityChanged(Sphinx.this, cityId);
                     
                     CalendarUtil.initExactTime(mContext);
 
@@ -1242,7 +1243,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 if (Globals.getCurrentCityInfo().getId()==cityId || mViewedCityInfoList.contains(cityId)) {
                     if (mMapView != null) {
                         mMapView.clearTileTextures();
-                        mMapView.refreshMap();
+//                        mMapView.refreshMap();
                     }
                 }
             }
@@ -1679,10 +1680,11 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 } else if (message.getType() == PullMessage.Message.TYPE_ACTIVITY &&
                         productMessage != null) {
                     uiStackClose(new int[]{R.id.view_more_home});
+                    showView(R.id.view_more_home);
                     Intent intent = new Intent();
                     intent.putExtra(BrowserActivity.TITLE, productMessage.getTitle());
                     intent.putExtra(BrowserActivity.URL, productMessage.getDownloadUrl());
-                    startActivity(intent);
+                    showView(R.id.activity_browser, intent);
                 } else {
                     uiStackClose(new int[]{R.id.view_poi_home});
                     showView(R.id.view_poi_home);
@@ -1815,13 +1817,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         
     public void snapMapView(SnapMap snapMap, Position position, MapScene mapScene) {
         mMapView.snapMapView(this, snapMap, position, mapScene);
-    }
-    
-    public void changeCity(long cityId) {
-        int id = (int)cityId;
-        CityInfo cityInfo = MapEngine.getCityInfo(id);
-        if(cityInfo != null)
-        	changeCity(cityInfo);
     }
     
     public void initCity(CityInfo cityInfo) {
@@ -2006,7 +2001,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     Globals.g_Bootstrap_Model = bootstrapModel;
                 }
                 if (uiStackPeek() == R.id.view_more_home) {
-                    getMoreFragment().refreshBootStrapData();
+                    getMoreFragment().refreshBootStrapData(true);
+                }else{
+                	getMoreFragment().refreshBootStrapData(false);
                 }
             } else if (baseQuery instanceof NoticeQuery) {
             	Response response = baseQuery.getResponse();
@@ -4197,6 +4194,14 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 }
                 LogWrapper.d("positionbug", positionName);
                 mMyLocation.setMessage(msg);
+             // 定位图层显示InfoWindow时, 若定位点变化, InfoWindow也会变化
+                InfoWindow infoWindow = mMapView.getInfoWindow();
+                OverlayItem overlayItem = infoWindow.getAssociatedOverlayItem();
+                if (infoWindow.isVisible() && overlayItem != null) {
+                    if (ItemizedOverlay.MY_LOCATION_OVERLAY.equals(overlayItem.getOwnerOverlay().getName())) {
+                        showInfoWindow(mMyLocation);
+                    }
+                }
     		}
             return true;
     	}

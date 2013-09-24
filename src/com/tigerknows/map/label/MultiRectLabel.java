@@ -16,6 +16,7 @@ import android.opengl.GLUtils;
 import com.decarta.CONFIG;
 import com.decarta.Globals;
 import com.decarta.android.map.TilesView.Texture;
+import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.decarta.android.util.XYFloat;
 import com.decarta.android.util.XYInteger;
@@ -40,6 +41,14 @@ public class MultiRectLabel extends Label {
     public float halfCharWidth;
     private Texture[] textTextures;
     public static float SQRT2 = (float) Math.sqrt(2d);
+    
+    /**
+     * 此static的代码仅是为了避免其构造函数被优化
+     */
+    static {
+        new MultiRectLabel("", 0, 0, 0, 0, 0, 0, null, 0, 0, 0);
+    }
+    
     public MultiRectLabel(
     		String name, 
     		int pointNum,
@@ -53,6 +62,7 @@ public class MultiRectLabel extends Label {
     		int tileY,
     		int zoom
     		) {
+        super();
     	this.name = name;
     	this.pointNum = pointNum;
     	this.color = color;
@@ -161,6 +171,9 @@ public class MultiRectLabel extends Label {
     public int draw(XYInteger center, XYZ centerXYZ, XYFloat centerDelta, 
     		float rotation, float sinRot, float cosRot, float scale, Grid grid, 
     		ByteBuffer TEXTURE_COORDS, FloatBuffer vertexBuffer, boolean needGenTexture, IntegerRef leftCountToDraw) {
+//    	if(this.name.equals("文慧园路")) {
+//    		LogWrapper.d("labeldebug", "init opacity: " + opacity + this.toString());
+//    	}
         int tileSize = CONFIG.TILE_SIZE;
         int cx = center.x;
         int cy = center.y;
@@ -227,13 +240,13 @@ public class MultiRectLabel extends Label {
 				cosAlpha = dx * invLength;
 				sinAlpha = dy * invLength;
 				float cosAngle = sinAlpha * sinBeta + cosAlpha * cosBeta;
-				if (i > 0 && cosAngle < 0) {// 夹角太小, 若设为0，则表示文字拐角不能小于90°
+				if (cosAngle < 0) {// 夹角太小, 若设为0，则表示文字拐角不能小于90°
 					i = 0;
 					isNewStart = true;
 					tempStartPoint.x = endPoint.x;
 					tempStartPoint.y = endPoint.y;
-					startPoint.x = (int) tempStartPoint.x;
-					startPoint.y = (int) tempStartPoint.y;
+					startPoint.x = tempStartPoint.x;
+					startPoint.y = tempStartPoint.y;
 					startIndex = nextEndPointIndex;
 					continue;
 				}
@@ -292,8 +305,8 @@ public class MultiRectLabel extends Label {
 							break;
 						}
 					}
-					startPoint.x = (int) tempStartPoint.x;
-					startPoint.y = (int) tempStartPoint.y;
+					startPoint.x = tempStartPoint.x;
+					startPoint.y = tempStartPoint.y;
 					startIndex = nextEndPointIndex;
 					continue;
 				}
@@ -325,8 +338,14 @@ public class MultiRectLabel extends Label {
 		}
 		if (i < num || isTotalOutBound) {
 			state = LABEL_STATE_CANT_BE_SHOWN;
+//			if(this.name.equals("文慧园路")) {
+//	    		LogWrapper.d("labeldebug", "can not be shown opacity: " + opacity + this.toString());
+//	    	}
 			return LABEL_STATE_CANT_BE_SHOWN;
 		}
+//		if(this.name.equals("文慧园路")) {
+//    		LogWrapper.d("labeldebug", "can shown opacity: " + opacity + this.toString());
+//    	}
 		//draw
 //		LogWrapper.i("MultiRectLabel", "draw label: " + name + "at: " + startPoint.x + ", " + startPoint.y);
 		for (RectInteger rect : rectArray) {
@@ -406,5 +425,9 @@ public class MultiRectLabel extends Label {
 					charSize.x, charSize.y, textTextures[texRefIdx], TEXTURE_COORDS, vertexBuffer);
 		}
 		return state;
+    }
+    
+    public MultiRectLabel clone() {
+        return new MultiRectLabel(name, startIndex, startIndex, startIndex, startIndex, startIndex, startIndex, points, x, y, z);
     }
 }
