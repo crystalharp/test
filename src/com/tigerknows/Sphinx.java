@@ -79,6 +79,7 @@ import com.tigerknows.android.app.TKActivity;
 import com.tigerknows.android.os.TKAsyncTask;
 import android.widget.Toast;
 import com.tigerknows.common.ActionLog;
+import com.tigerknows.common.LogUpload;
 import com.tigerknows.map.MapEngine;
 import com.tigerknows.map.MapView;
 import com.tigerknows.map.PinOverlayHelper;
