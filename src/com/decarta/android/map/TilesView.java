@@ -438,12 +438,7 @@ public class TilesView extends GLSurfaceView {
 				.getSystemService(Context.WINDOW_SERVICE);
 		Display display = winMan.getDefaultDisplay();
 		display.getMetrics(Globals.g_metrics);
-		LogWrapper.i("TilesView", "xdpi:" + Globals.g_metrics.xdpi + ",ydpi:"
-				+ Globals.g_metrics.ydpi + ",widthPixels:"
-				+ Globals.g_metrics.widthPixels + ",heightPixesl:"
-				+ Globals.g_metrics.heightPixels + ",density:"
-				+ Globals.g_metrics.density + ",densityDpi:"
-				+ Globals.g_metrics.densityDpi);
+		LogWrapper.i("TilesView", "xdpi:" + Globals.g_metrics.xdpi + ",ydpi:" + Globals.g_metrics.ydpi + ",widthPixels:" + Globals.g_metrics.widthPixels + ",heightPixesl:" + Globals.g_metrics.heightPixels + ",density:" + Globals.g_metrics.density + ",densityDpi:" + Globals.g_metrics.densityDpi);
 
 		for (int i = 0; i < MapLayerType.values().length; i++) {
 			MapLayerProperty mapLayerProperty = MapLayerProperty
@@ -455,8 +450,7 @@ public class TilesView extends GLSurfaceView {
 		configureMapLayer();
 		configureTileGrid(display.getWidth(), display.getHeight());
 
-		LogWrapper.i("TilesView", "displaySize:" + displaySize + ",gridSize:"
-				+ gridSize);
+		LogWrapper.i("TilesView", "displaySize:" + displaySize + ",gridSize:" + gridSize);
 		setFocusable(true);
 
 		if (CONFIG.DRAW_BY_OPENGL) {
@@ -634,8 +628,7 @@ public class TilesView extends GLSurfaceView {
 		if (!CONFIG.DRAW_BY_OPENGL)
 			return;
 		if (xRotation > 0 || xRotation < MapView.MAP_TILT_MIN) {
-			LogWrapper.e("TilesView", "x rotation must be between "
-					+ MapView.MAP_TILT_MIN + " to 0");
+			LogWrapper.e("TilesView", "x rotation must be between " + MapView.MAP_TILT_MIN + " to 0");
 			return;
 			// throw new
 			// APIException("x rotation must be between "+MapView.MAP_TILT_MIN+" to 0");
@@ -880,8 +873,7 @@ public class TilesView extends GLSurfaceView {
 				if (Math.abs(event.getX(0) - lastTouch.x)
 						+ Math.abs(event.getY(0) - lastTouch.y) > ABNORMAL_DRAGGING_DIST
 						* density) {
-					LogWrapper.e("Moving", "onTouchEvent dragging abruptly:"
-							+ draggingConv);
+					LogWrapper.e("Moving", "onTouchEvent dragging abruptly:" + draggingConv);
 				} else {
 					long time = System.nanoTime();
 					touchRecord1.push(time, xy0Conv.x, xy0Conv.y);
@@ -982,10 +974,7 @@ public class TilesView extends GLSurfaceView {
 						if ((centerDistXConv + centerDistYConv) > ABNORMAL_PINCH_CENTER_DIST
 								* density) {
 							lastDistConv = 0;
-							LogWrapper
-									.e("TilesView",
-											"onTouchEvent pinch abnormal center dist:"
-													+ (centerDistXConv + centerDistYConv));
+							LogWrapper.e("TilesView", "onTouchEvent pinch abnormal center dist:" + (centerDistXConv + centerDistYConv));
 						} else {
 							lastCenterConv.x = (xy0Conv.x + xy1Conv.x) / 2;
 							lastCenterConv.y = (xy0Conv.y + xy1Conv.y) / 2;
@@ -1160,8 +1149,7 @@ public class TilesView extends GLSurfaceView {
 					if (cluster != null) {
 						// Log.i("TilesView","onTouchEvent snap to:"+overlayItem.getPosition()+","+overlayItem.getMessage());
 						if (cluster.size() == 0) {
-							LogWrapper.e("TilesView",
-									"onTouchEvent touchUp cluster size is 0");
+							LogWrapper.e("TilesView", "onTouchEvent touchUp cluster size is 0");
 						}
 						ArrayList<OverlayItem> visiblePins = new ArrayList<OverlayItem>();
 						for (int ii = 0; ii < cluster.size(); ii++) {
@@ -1243,8 +1231,7 @@ public class TilesView extends GLSurfaceView {
 						synchronized (drawingLock) {
 							easingRecord.speed = s / timeInterval;
 							if (easingRecord.speed > easingRecord.MAXIMUM_SPEED) {
-								LogWrapper.d("Moving", "too high speed:"
-										+ easingRecord.speed);
+								LogWrapper.d("Moving", "too high speed:" + easingRecord.speed);
 								easingRecord.speed = easingRecord.MAXIMUM_SPEED;
 							}
 							easingRecord.startMoveTime = touchUpTime;
@@ -1341,17 +1328,13 @@ public class TilesView extends GLSurfaceView {
 		synchronized (drawingLock) {
 			try {
 				int z = Math.round(zoomLevel);
-				LogWrapper.i("TilesView", "centerOnPosition z:" + z
-						+ ",position:" + position);
+				LogWrapper.i("TilesView", "centerOnPosition z:" + z + ",position:" + position);
 				XYDouble centerXYL = Util.posToMercPix(position, z);
-				LogWrapper.i("TilesView", "centerOnPosition centerXYL:"
-						+ centerXYL);
+				LogWrapper.i("TilesView", "centerOnPosition centerXYL:" + centerXYL);
 
 				TileGridResponse resp = Util.handlePortrayMapRequest(centerXYL,
 						z);
-				LogWrapper.w("TilesView", "centerOnPosition(), centerXYL="
-						+ centerXYL + ", zoomLevel= " + zoomLevel + ", clear="
-						+ clear);
+				LogWrapper.w("TilesView", "centerOnPosition(), centerXYL=" + centerXYL + ", zoomLevel= " + zoomLevel + ", clear=" + clear);
 
 				this.zoomLevel = zoomLevel;
 				renderMap(resp);
@@ -1431,9 +1414,7 @@ public class TilesView extends GLSurfaceView {
 				easingRecord.speed = -s / easingRecord.TIME_SCALE
 						* Math.log(easingRecord.decelerate_rate);
 				easingRecord.listener = listener;
-				LogWrapper.d("Moving", "panToPosition speed,decelerate,s:"
-						+ easingRecord.speed + ","
-						+ easingRecord.decelerate_rate + "," + s);
+				LogWrapper.d("Moving", "panToPosition speed,decelerate,s:" + easingRecord.speed + "," + easingRecord.decelerate_rate + "," + s);
 
 				refreshMap();
 
@@ -1870,9 +1851,7 @@ public class TilesView extends GLSurfaceView {
 			}
 		}
 
-		LogWrapper.i("TilesView",
-				"configureMapLayer visible num,max image,image size,max texture ref:"
-						+ visibleLayerNum + ",");
+		LogWrapper.i("TilesView", "configureMapLayer visible num,max image,image size,max texture ref:" + visibleLayerNum + ",");
 	}
 
 	private XYFloat screenXYToScreenXYConv(float left, float top) {
@@ -1976,8 +1955,7 @@ public class TilesView extends GLSurfaceView {
 		for (int i = 0; i < size; i++) {
 			ArrayList<OverlayItem> cluster = clusters.get((i + start) % size);
 			if (cluster.size() == 0) {
-				LogWrapper
-						.e("ItemizedOverlay", "onSnapToItem cluster is empty");
+				LogWrapper.e("ItemizedOverlay", "onSnapToItem cluster is empty");
 			}
 			OverlayItem pin = null;
 			for (int ii = 0; ii < cluster.size(); ii++) {
@@ -2266,8 +2244,7 @@ public class TilesView extends GLSurfaceView {
 		synchronized (drawingLock) {
 			float zDif = newZoomLevel - zoomLevel;
 			if (zDif != 0 && duration == 0) {
-				LogWrapper.w("TilesView", "zoom from " + zoomLevel + " to "
-						+ newZoomLevel + " duration==0");
+				LogWrapper.w("TilesView", "zoom from " + zoomLevel + " to " + newZoomLevel + " duration==0");
 				return;
 			}
 			zoomingRecord.digitalZooming = true;
@@ -2525,9 +2502,7 @@ public class TilesView extends GLSurfaceView {
 						textureRefBuf.put(0, textureRef);
 						textureRefBuf.position(0);
 						glDeleteTextures(1, textureRefBuf);
-						LogWrapper.i("TilesView",
-								"iconPool removeEldestEntry texture:"
-										+ textureRef);
+						LogWrapper.i("TilesView", "iconPool removeEldestEntry texture:" + textureRef);
 					}
 					remove(eldest.getKey());
 				}
@@ -2551,9 +2526,7 @@ public class TilesView extends GLSurfaceView {
 						textureRefBuf.put(0, textureRef);
 						textureRefBuf.position(0);
 						glDeleteTextures(1, textureRefBuf);
-						LogWrapper.i("TilesView",
-								"clusterTextPool removeEldestEntry texture:"
-										+ textureRef);
+						LogWrapper.i("TilesView", "clusterTextPool removeEldestEntry texture:" + textureRef);
 					}
 					remove(eldest.getKey());
 				}
@@ -2596,9 +2569,7 @@ public class TilesView extends GLSurfaceView {
 			int num = labels.length;
 			for (int i = 0; i < num; ++i) {
 				if (labels[i].priority >= maxLabelPriority) {
-					LogWrapper.i("TilesViewException", "add label: "
-							+ labels[i].name + "priority: "
-							+ labels[i].priority);
+					LogWrapper.i("TilesViewException", "add label: " + labels[i].name + "priority: " + labels[i].priority);
 					continue;
 				}
 				ArrayList<Label> labelList = this.priorityLabels[labels[i].priority];
@@ -3315,9 +3286,7 @@ public class TilesView extends GLSurfaceView {
 							Tile requestTile = willDrawTiles.get(ii);
 							int textureRef = tileInfos.get(requestTile).tileTextureRef;
 							if (textureRef == 0) {
-								LogWrapper.e("TilesView",
-										"onDrawFrame tile texture 0: "
-												+ requestTile.toString());
+								LogWrapper.e("TilesView", "onDrawFrame tile texture 0: " + requestTile.toString());
 								continue;
 							}
 							gl.glBindTexture(GL_TEXTURE_2D, textureRef);
@@ -3694,8 +3663,7 @@ public class TilesView extends GLSurfaceView {
 		 * coordinate to coordinate system relative to screen center.
 		 */
 		public void onSurfaceChanged(GL10 gl, int w, int h) {
-			LogWrapper.i("Sequence", "MapRender.onSurfaceChanged " + "w:" + w
-					+ ",h:" + h + ",displaySize:" + displaySize);
+			LogWrapper.i("Sequence", "MapRender.onSurfaceChanged " + "w:" + w + ",h:" + h + ",displaySize:" + displaySize);
 
 			gl.glMatrixMode(GL_PROJECTION);
 			gl.glLoadIdentity();
@@ -3707,8 +3675,7 @@ public class TilesView extends GLSurfaceView {
 		}
 
 		private void clearIconPool() {
-			LogWrapper.i("TilesView", "clean iconPool total texture num:"
-					+ iconPool.size());
+			LogWrapper.i("TilesView", "clean iconPool total texture num:" + iconPool.size());
 			Iterator<Integer> iterator2 = iconPool.values().iterator();
 			while (iterator2.hasNext()) {
 				int textureRef = iterator2.next();
@@ -3718,9 +3685,7 @@ public class TilesView extends GLSurfaceView {
 		}
 		
 		private void clearClusterTextPool() {
-			LogWrapper.i("TilesView",
-					"clean clusterTextPool total texture num:"
-							+ clusterTextPool.size());
+			LogWrapper.i("TilesView", "clean clusterTextPool total texture num:" + clusterTextPool.size());
 			Iterator<Integer> iterator3 = clusterTextPool.values().iterator();
 			while (iterator3.hasNext()) {
 				int textureRef = iterator3.next();
@@ -3855,9 +3820,7 @@ public class TilesView extends GLSurfaceView {
 							GL_CLAMP_TO_EDGE);
 					GLUtils.texImage2D(GL_TEXTURE_2D, 0, bm, 0);
 					clusterTextPool.put(key, textureRef);
-					LogWrapper.d("TilesView",
-							"clusterTextPool put textureRef,key:" + textureRef
-									+ "," + key);
+					LogWrapper.d("TilesView", "clusterTextPool put textureRef,key:" + textureRef + "," + key);
 
 				} catch (Exception e) {
 					deleteTextureRef(gl, textureRef);

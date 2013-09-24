@@ -33,6 +33,14 @@ public class TKLocationManager {
     
     public static final String GPS_COLLECTION_PROVIDER = "tk_gps_collection";
     
+    /**
+     * 若GPS定位信息的精度大于此值则视为无效的定位信息
+     */
+    public static final int GPS_AVAILABLY_ACCURACY = 2 * 1000;
+    
+    /**
+     * 若最近一次有效地定位信息的时间截至今大于此值则视为过期
+     */
     public static final int GPS_TIME_OUT = 60000;
     public static final int REQUEST_MIN_TIME = 10;
     public static final int REQUEST_MIN_DISTANCE = 10;
@@ -178,7 +186,7 @@ public class TKLocationManager {
             TKCellLocation tkCellLocation = TKConfig.getCellLocation();
             int lac = tkCellLocation.lac;
             int cid = tkCellLocation.cid;
-            if (location.getProvider().equals(LocationManager.GPS_PROVIDER)) { 
+            if (location.getProvider().equals(LocationManager.GPS_PROVIDER) && location.getAccuracy() < GPS_AVAILABLY_ACCURACY) { 
                 lastGpsTKLocation = new TKLocation(location, lac, cid, System.currentTimeMillis());   
                 locationChanged(LOCATION_GPS);
                 gpsLocationUpload.recordLocation(location);
