@@ -460,6 +460,7 @@ public class TilesView extends GLSurfaceView {
 		setFocusable(true);
 
 		if (CONFIG.DRAW_BY_OPENGL) {
+//			setEGLConfigChooser(8, 8, 8, 8, 16, 0);
 			mapRender = new MapRender(context);
 			setRenderer(mapRender);
 			setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
@@ -820,7 +821,7 @@ public class TilesView extends GLSurfaceView {
 				multiTouch = true;
 			}
 			isTouchBegin = true;
-			LogWrapper.d("Label", "--------touch begin---------");
+//			LogWrapper.d("Label", "--------touch begin---------");
 		} else if (action == MotionEvent.ACTION_MOVE) {
 			if (pCount > 1) {
 				resetLongTouchTimer();
@@ -2305,7 +2306,7 @@ public class TilesView extends GLSurfaceView {
 	 * @param resp
 	 */
 	private void renderMap(TileGridResponse resp) throws APIException {
-		LogWrapper.d("Sequence","TilesView renderMap start");
+//		LogWrapper.d("Sequence","TilesView renderMap start");
 		try {
 			easingRecord.reset();
 
