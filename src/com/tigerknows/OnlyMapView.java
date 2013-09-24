@@ -9,8 +9,11 @@ import com.tigerknows.map.label.Label;
 import com.tigerknows.util.Utility;
 import com.tigerknows.widget.ZoomControls;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.view.Display;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.widget.LinearLayout;
 
@@ -37,10 +40,11 @@ public class OnlyMapView extends TKActivity {
             finish();
             return;
         }        
+        WindowManager winMan=(WindowManager)getSystemService(Context.WINDOW_SERVICE);
+        Display display=winMan.getDefaultDisplay();
+        Label.init(display.getWidth(), display.getHeight());
         
-        Label.init();
-        
-        CityInfo cityInfo = mMapEngine.getCityInfo(MapEngine.CITY_ID_BEIJING);
+        CityInfo cityInfo = MapEngine.getCityInfo(MapEngine.CITY_ID_BEIJING);
         if (cityInfo.isAvailably() == false) {
             Utility.showDialogAcitvity(mThis, getString(R.string.not_enough_space_and_please_clear));
             finish();

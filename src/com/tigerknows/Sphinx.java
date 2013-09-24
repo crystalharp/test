@@ -440,7 +440,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 //        	CONFIG.TILE_SIZE = 512;
 //        else 
 //        	CONFIG.TILE_SIZE = 256;
-        Label.init();
+        Label.init(display.getWidth(), display.getHeight());
         
         // 根据屏幕密度计算出地图上显示Shape和OverlayItem内容的Padding
         TKConfig.sMap_Padding = (int)(56*Globals.g_metrics.density);
