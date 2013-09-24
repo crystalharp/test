@@ -340,6 +340,11 @@ public class TKConfig {
      * 帮助服务访问URL路径
      */
     private static String sHELP_URL = "http://%s/help/13";
+
+    /**
+     * 文件下载服务访问URL路径
+     */
+    private static String sFILE_DOWNLOAD_URL = "http://%s/download/13";
     
     /**
      * 默认下载服务器Host
@@ -380,6 +385,11 @@ public class TKConfig {
      * 默认帮助服务的Host
      */
     private static String sHELP_HOST = "help.laohubaodian.net";
+    
+    /**
+     * 默认文件下载服务的Host
+     */
+    private static String sFILE_DOWNLOAD_HOST = "down.tigerknows.net";
 
     /**
      * 软件登录服务推送用于动态负载均衡的下载服务器Host
@@ -1081,6 +1091,22 @@ public class TKConfig {
     }
     
     /**
+     * 获取文件下载服务的URL
+     * @return
+     */
+    public static String getFileDownloadUrl() {
+        return sFILE_DOWNLOAD_URL;
+    }
+    
+    /**
+     * 获取文件下载服务的Host
+     * @return
+     */
+    public static String getFileDownloadHost() {
+        return sFILE_DOWNLOAD_HOST;
+    }
+    
+    /**
      * 获取引导服务器Host列表
      * @return
      */
@@ -1642,6 +1668,18 @@ public class TKConfig {
                 if (start > -1 && end > -1) {
                     start += "helpHost=".length();
                     TKConfig.sHELP_HOST = text.substring(start, end);
+                }
+                start = text.indexOf("fileDownloadUrl=");
+                end = text.indexOf(";", start);
+                if (start > -1 && end > -1) {
+                    start += "fileDownloadUrl=".length();
+                    TKConfig.sFILE_DOWNLOAD_URL = text.substring(start, end);
+                }
+                start = text.indexOf("fileDownloadHost=");
+                end = text.indexOf(";", start);
+                if (start > -1 && end > -1) {
+                    start += "fileDownloadHost=".length();
+                    TKConfig.sFILE_DOWNLOAD_HOST = text.substring(start, end);
                 }
                 BaseQuery.initCommonParameters();
             } catch (Exception e) {
