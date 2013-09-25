@@ -221,7 +221,6 @@ public class ShareAPI {
         final Dialog dialog = Utility.showNormalDialog(activity, 
                 activity.getString(R.string.share), 
                 listView);
-        sphinx.setShowingDialog(dialog);
         
         final ActionLog actionLog = ActionLog.getInstance(activity);
         actionLog.addAction(actionTag + ActionLog.Share);

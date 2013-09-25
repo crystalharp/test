@@ -5,7 +5,6 @@ import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
-import android.app.Dialog;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -490,7 +489,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     }
 
     private BaseQuery buildHotelQuery(Calendar checkin, Calendar checkout, POI poi, String needFiled){
-        mHotelCityId = MapEngine.getInstance().getCityId(mPOI.getPosition());
+        mHotelCityId = MapEngine.getCityId(mPOI.getPosition());
         String checkinTime = HotelHomeFragment.SIMPLE_DATE_FORMAT.format(checkin.getTime());
         String checkoutTime = HotelHomeFragment.SIMPLE_DATE_FORMAT.format(checkout.getTime());
         DataOperation dataOperation = new DataOperation(mSphinx);
@@ -506,7 +505,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     }
     
     private BaseQuery buildRoomTypeDynamicQuery(String hotelId, String roomId, String pkgId, Calendar checkin, Calendar checkout){
-        mHotelCityId = MapEngine.getInstance().getCityId(mPOI.getPosition());
+        mHotelCityId = MapEngine.getCityId(mPOI.getPosition());
         ProxyQuery query = new ProxyQuery(mSphinx);
         query.addParameter(ProxyQuery.SERVER_PARAMETER_CHECKIN_DATE, HotelHomeFragment.SIMPLE_DATE_FORMAT.format(checkin.getTime()));
         query.addParameter(ProxyQuery.SERVER_PARAMETER_CHECKOUT_DATE, HotelHomeFragment.SIMPLE_DATE_FORMAT.format(checkout.getTime()));
@@ -612,8 +611,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
                             mClickedRoomType.setCanReserve(0);
                             refreshBookBtn(mClickedBookBtn, 0);
                             mClickedChild.setClickable(false);
-                            Dialog dialog = Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.hotel_no_room_left));
-                            mSphinx.setShowingDialog(dialog);
+                            Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.hotel_no_room_left));
                         }
                     }
                     return;
@@ -628,8 +626,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
                     mClickedRoomType.setCanReserve(0);
                     refreshBookBtn(mClickedBookBtn, 0);
                     mClickedChild.setClickable(false);
-                    Dialog dialog = Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.hotel_no_room_left));
-                    mSphinx.setShowingDialog(dialog);
+                    Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.hotel_no_room_left));
                 }
             }
         }

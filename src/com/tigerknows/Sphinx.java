@@ -2714,6 +2714,18 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     }
     
     private boolean showPromptChangeToMyLocationCityDialog(final CityInfo locationCity) {
+        
+        // 仅在频道首页时才提示切换城市的对话框
+        int viewId = uiStackPeek();
+        int size = uiStackSize();
+        if (!(size == 1 &&
+                (viewId == R.id.view_poi_home ||
+                 viewId == R.id.view_discover_home ||
+                 viewId == R.id.view_traffic_home ||
+                 viewId == R.id.view_more_home))) {
+            return false;
+        }
+        
         if (mPreventShowChangeMyLocationDialog) {
             return false;
         }

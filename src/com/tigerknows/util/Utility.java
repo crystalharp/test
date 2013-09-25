@@ -1067,9 +1067,6 @@ public class Utility {
             final Dialog dialog = showNormalDialog(activity,
                     activity.getString(R.string.call_telephone),
                     listView);
-            if (activity instanceof TKActivity) {
-                ((TKActivity) activity).setShowingDialog(dialog);
-            }
             
             listView.setOnItemClickListener(new OnItemClickListener() {
 
@@ -1100,7 +1097,6 @@ public class Utility {
         final Dialog dialog = Utility.showNormalDialog(sphinx, 
                 sphinx.getString(R.string.come_here), 
                 listView);
-        sphinx.setShowingDialog(dialog);
         
         ActionLog.getInstance(sphinx).addAction(actionTag + ActionLog.GotoHere);
         listView.setOnItemClickListener(new OnItemClickListener() {
@@ -1129,10 +1125,9 @@ public class Utility {
                 
                 CityInfo locationCityInfo = Globals.g_My_Location_City_Info;
                 TrafficQueryFragment trafficQueryFragment = sphinx.getTrafficQueryFragment();
-                MapEngine mapEngine = MapEngine.getInstance();
                 if (queryType != -1
                         && locationCityInfo != null
-                        && mapEngine.getCityId(poi.getPosition()) == mapEngine.getCityId(locationCityInfo.getPosition())) {
+                        && MapEngine.getCityId(poi.getPosition()) == MapEngine.getCityId(locationCityInfo.getPosition())) {
                     POI locationPOI = new POI();
                     locationPOI.setSourceType(POI.SOURCE_TYPE_MY_LOCATION);
                     locationPOI.setPosition(locationCityInfo.getPosition());

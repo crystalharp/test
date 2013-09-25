@@ -48,7 +48,6 @@ import com.tigerknows.TKConfig;
 import android.widget.TextView.OnEditorActionListener;
 
 import com.decarta.Globals;
-import com.decarta.android.util.LogWrapper;
 import com.tigerknows.android.widget.TKEditText;
 import android.widget.Toast;
 import com.tigerknows.common.ActionLog;
@@ -989,7 +988,7 @@ public class MapDownloadActivity extends BaseActivity implements View.OnClickLis
         final Dialog dialog = Utility.showNormalDialog(this,
                 getString(R.string.select_action),
                 listView);
-        mShowingDialog = dialog;
+        setShowingDialog(dialog);
         
         listView.setOnItemClickListener(new OnItemClickListener() {
 
@@ -1022,7 +1021,7 @@ public class MapDownloadActivity extends BaseActivity implements View.OnClickLis
                     }
                 } else if (str.equals(mThis.getString(R.string.delete_map))) {
                     mActionLog.addAction(mActionTag +  ActionLog.MapDownloadOpertorDelete);
-                    mShowingDialog = Utility.showNormalDialog(mThis,
+                    Dialog dialog = Utility.showNormalDialog(mThis,
                             mThis.getString(R.string.prompt),
                             mThis.getString(R.string.delete_city_map_tip),
                             new DialogInterface.OnClickListener() {
@@ -1045,6 +1044,7 @@ public class MapDownloadActivity extends BaseActivity implements View.OnClickLis
                                     }
                                 }
                             });
+                    setShowingDialog(dialog);
                 }
                 dialog.dismiss();
             }
