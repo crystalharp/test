@@ -156,7 +156,7 @@ public class DownloadService extends IntentService {
 	    notification.contentView = views;
 	
 	    PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(), 0);
-	    notification.setLatestEventInfo(this, tickerText, "已下载" + 0 + "%", contentIntent);
+	    notification.setLatestEventInfo(this, tickerText, getString(R.string.downloaded_percent, 0), contentIntent);
 	
 	    // 将下载任务添加到任务栏中
 	    nm.notify(notificationId, notification);
@@ -183,7 +183,10 @@ public class DownloadService extends IntentService {
 //            HttpResponse response = client.execute(new HttpGet(url));
             HttpResponse response = HttpUtils.execute(getApplicationContext(), client, request, url, "apkDownload");
             HttpEntity entity = response.getEntity();
-            long length = entity.getContentLength()+fileSize;
+            long length = entity.getContentLength();
+            if(length == fileSize) {
+                return tempFile;
+            }
             InputStream is = entity.getContent();
             if(is != null) {
 	            BufferedInputStream bis = new BufferedInputStream(is);
@@ -247,7 +250,7 @@ public class DownloadService extends IntentService {
     }
     
     private void notifyPercent(int percent) {
-        views.setTextViewText(R.id.process_txv, "已下载" + percent + "%");
+        views.setTextViewText(R.id.process_txv, getString(R.string.downloaded_percent, percent));
         views.setProgressBar(R.id.process_prb, 100, percent, false);
         notification.contentView = views;
         nm.notify(notificationId, notification);
