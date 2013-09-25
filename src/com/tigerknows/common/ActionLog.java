@@ -592,6 +592,8 @@ public class ActionLog extends LogUpload {
     public static final String BrowserBack = "BB";
     public static final String BrowserRefresh = "BC";
     public static final String BrowserBuy = "BD";
+    public static final String BrowserReadyAlipay = "BE";
+    public static final String BrowserLaunchAlipay = "BF";
     
     // 展览结果列表页
     public static final String YanchuList = "DJ";

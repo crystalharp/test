@@ -95,9 +95,9 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
      * 分类图标资源Id列表
      */
     private final int[] mCategoryResIds = {R.drawable.ic_food_search_near,
+        R.drawable.ic_hotel_search_near,
         R.drawable.ic_amusement_search_near,
         R.drawable.ic_buy_search_near,
-        R.drawable.ic_hotel_search_near,
         R.drawable.ic_tour_search_near,
         R.drawable.ic_beautiful_search_near,
         R.drawable.ic_sport_search_near,
