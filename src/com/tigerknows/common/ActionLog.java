@@ -431,6 +431,10 @@ public class ActionLog extends LogUpload {
     public static final String MapInfoWindowStart = Map + "BK";
     public static final String MapInfoWindowEnd = Map + "BL";
     public static final String MapMultiTouchZoom = Map + "BM";
+    public static final String MapMore = Map + "BN";
+    public static final String MapTakeScreenshot = Map + "BO";
+    public static final String MapDistance = Map + "BP";
+    public static final String MapCompass = Map + "BQ";
     
     // 微博发送界面    
     public static final String WeiboSend = "FC";
@@ -694,6 +698,10 @@ public class ActionLog extends LogUpload {
     public static final String HotelOrderDetailDeleteDialogNo = "BH";
     public static final String HotelOrderDetailIssueComment = "BI";
     public static final String HotelOrderDetailOrderAgain= "BJ";
+    
+    public static final String TakeScreenshot = "FG";
+    public static final String TakeScreenshotShare = "BA";
+    public static final String TakeScreenshotSave = "BB";
     
     private long mStartMillis = 0;
     private String lastAction = null;

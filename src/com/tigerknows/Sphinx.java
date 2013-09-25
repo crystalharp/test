@@ -238,6 +238,26 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     private int mMenuViewHeiht;
     private int mCityViewHeight;
     
+    private View mMoreView;
+    private ImageButton mTakeScreenshotBtn;
+    private ImageButton mDistanceBtn;
+    private ImageButton mCompassBtn;
+    private ImageButton mMoreBtn;
+    private boolean mTakeScreenshot;
+    private boolean mDistance;
+    
+    public boolean isTakeScreenshot() {
+        return mTakeScreenshot;
+    }
+    
+    public void setTakeScreenshot(boolean takeScreenshot) {
+        mTakeScreenshot = takeScreenshot;
+    }
+    
+    public boolean isDistance() {
+        return mDistance;
+    }
+    
 	private ViewGroup mDragHintView;
 	
 	private TouchMode touchMode=TouchMode.NORMAL;
@@ -1338,6 +1358,12 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         mCompassView = findViewById(R.id.compass_imv);
         mDisableTouchView = (ViewGroup) findViewById(R.id.disable_touch_view);
         mDragHintView = (ViewGroup) findViewById(R.id.hint_root_view);
+        
+        mMoreView = (ViewGroup)findViewById(R.id.more_view);
+        mMoreBtn = (ImageButton)findViewById(R.id.more_btn);
+        mTakeScreenshotBtn = (ImageButton)findViewById(R.id.take_screenshot_btn);
+        mDistanceBtn = (ImageButton)findViewById(R.id.distance_btn);
+        mCompassBtn = (ImageButton)findViewById(R.id.compass_btn);
     }
 
     private void setListener() {
@@ -1361,6 +1387,50 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 			}
 		});
     	
+    	mMoreBtn.setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                mActionLog.addAction(ActionLog.MapMore);
+                if (mMoreView.getVisibility() == View.VISIBLE) {
+                    mMoreView.setVisibility(View.GONE);
+                } else {
+                    mMoreView.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+        
+        mTakeScreenshotBtn.setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                mActionLog.addAction(ActionLog.MapTakeScreenshot);
+                mMoreView.setVisibility(View.GONE);
+                mTakeScreenshot = !mTakeScreenshot;
+                if (mTakeScreenshot) {
+                    getResultMapFragment().setData(mContext.getString(R.string.take_screenshot), ActionLog.TakeScreenshot);
+                    showView(R.id.view_result_map);
+                }
+            }
+        });
+        
+        mDistanceBtn.setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                mActionLog.addAction(ActionLog.MapDistance);
+                mMoreView.setVisibility(View.GONE);
+            }
+        });
+        
+        mCompassBtn.setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                mActionLog.addAction(ActionLog.MapCompass);
+                mMoreView.setVisibility(View.GONE);
+            }
+        });
     }
     
     boolean checkFromThirdParty(boolean onlyCheck) {

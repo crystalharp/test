@@ -42,4 +42,31 @@
 	           android:text="@string/confirm"
 	           android:gravity="center"/>
 	</RelativeLayout>
+	<RelativeLayout android:id="@+id/take_screenshot_view"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content" 
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:background="@color/black_transparent_half"
+	    android:paddingLeft="10dp"
+	    android:paddingRight="10dp">
+	        
+	       <Button android:id="@+id/share_btn" 
+	           android:layout_width="wrap_content" 
+	           android:layout_height="wrap_content"
+	           android:layout_alignParentLeft="true"
+	           android:layout_centerVertical="true"
+	           android:textSize="14sp"
+	           android:text="@string/share"
+	           android:gravity="center"/>
+	       
+	       <Button android:id="@+id/save_btn" 
+	           android:layout_width="wrap_content" 
+	           android:layout_height="wrap_content"
+	           android:layout_alignParentRight="true"
+	           android:layout_centerVertical="true"
+	           android:textSize="14sp"
+	           android:text="@string/save"
+	           android:gravity="center"/>
+	</RelativeLayout>
 </RelativeLayout>
