@@ -450,6 +450,7 @@
     <string name="hongkong">香港</string>
     <string name="macao">澳门</string>
     <string name="quanguo">全国</string>
+    <string name="quanguo_map">全国概要地图</string>
     
     <string name="feedback_text1">感谢你使用老虎宝典，你的建议会帮助我们做得更好！</string>
     <string name="feedback_text2">欢迎关注@老虎宝典官方微博，获得产品最新动态！</string>

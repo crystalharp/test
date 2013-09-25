@@ -881,8 +881,8 @@ public class MapEngine {
                 CityInfo other = (CityInfo) object;
                 if (this.id != other.id) {
                     return false;
-                } else if((null != this.cName && !this.cName.equals(other.cName)) || (null == this.cName && this.cName != other.cName)) {
-                    return false;
+//                } else if((null != this.cName && !this.cName.equals(other.cName)) || (null == this.cName && this.cName != other.cName)) {
+//                    return false;
 //                } else if((null != this.cProvinceName && !this.cProvinceName.equals(other.cProvinceName)) || (null == this.cProvinceName && this.cProvinceName != other.cProvinceName)) {
 //                    return false;
 //                } else if((null != this.eName && !this.eName.equals(other)) || (null == this.eName && this.eName != other.eName)) {

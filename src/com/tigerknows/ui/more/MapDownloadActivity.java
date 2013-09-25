@@ -560,12 +560,22 @@ public class MapDownloadActivity extends BaseActivity implements View.OnClickLis
             sAllAddCityInfoList.add(2, cityTitle);
             sAllAddCityInfoList.add(7, provinceTitle);
             
-            // 加入全国概要
+            // 全国
             CityInfo quanguo = MapEngine.getCityInfo(MapEngine.CITY_ID_QUANGUO);
+            
+            // 生成全国标题
+            CityInfo quanguoTitle = quanguo.clone();
+            quanguoTitle.setId(ORDER_ID_TITLE_ONE);
+            
+            // 全国概要地图
+            quanguo.setCName(getString(R.string.quanguo_map));
             quanguo.setType(CityInfo.TYPE_CITY);
             CityInfo quanguoChild = quanguo.clone();
             quanguo.getCityList().add(quanguoChild);
             sAllAddCityInfoList.add(2, quanguo);
+
+            // 加入全国标题
+            sAllAddCityInfoList.add(2, quanguoTitle);
         }
         mAddCityExpandableListAdapter = new AddCityExpandableListAdapter();
         mAddCityElv.setAdapter(mAddCityExpandableListAdapter);
@@ -1295,7 +1305,11 @@ public class MapDownloadActivity extends BaseActivity implements View.OnClickLis
             TextView percentTxv = (TextView) cityView.findViewById(R.id.percent_txv);
             ProgressBar progressBar = (ProgressBar) cityView.findViewById(R.id.progress_prb);
             String size = (downloadCity.totalSize > 0 ? mThis.getString(R.string.brackets, mThis.getString(R.string._m, downloadCity.getTotalSizeTip())) : "");
-            nameTxv.setText(cityInfo.getCName()+size);
+            String name = cityInfo.getCName();
+            if (cityInfo.getId() == MapEngine.CITY_ID_QUANGUO) {
+                name = getString(R.string.quanguo_map);
+            }
+            nameTxv.setText(name+size);
             
             if (downloadCity.isStatsed == false) {
                 percentTxv.setText(mThis.getString(R.string.counting_tip));
