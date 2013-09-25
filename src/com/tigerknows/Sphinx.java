@@ -1227,10 +1227,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         
         @Override
         public void onReceive(Context context, Intent intent) { 
-            if (intent != null
-                    && intent.hasExtra(MapStatsService.EXTRA_DOWNLOAD_CITY)) {
-                getMoreFragment().refreshMapDownloadData();
-            }
+            MoreHomeFragment moreHomeFragment = getMoreFragment();
+            moreHomeFragment.refreshMapDownloadData();
         }
     };
     
