@@ -42,15 +42,16 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 >
-                <RelativeLayout
+                <LinearLayout
                     android:id="@+id/city_view"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/list_header"
                     android:gravity="left|center_vertical"
+                    android:orientation="horizontal"
                     >
                     <TextView
-                        android:layout_width="fill_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:drawablePadding="8dp"
@@ -76,22 +77,25 @@
                         android:textSize="16sp"
                         android:text="@string/app_name"
                         android:gravity="right|center_vertical"
+                        android:singleLine="true"
+                        android:ellipsize="end"
                         />
-                </RelativeLayout>
+                </LinearLayout>
                 <ImageView
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/bg_line_split"
                     />
-                <RelativeLayout
+                <LinearLayout
                     android:id="@+id/location_view"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/list_middle"
                     android:gravity="left|center_vertical"
+                    android:orientation="horizontal"
                     >
                     <TextView
-                        android:layout_width="fill_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:drawablePadding="8dp"
@@ -117,8 +121,10 @@
                         android:textSize="16sp"
                         android:text="@string/app_name"
                         android:gravity="right|center_vertical"
+                        android:singleLine="true"
+                        android:ellipsize="end"
                         />
-                </RelativeLayout>
+                </LinearLayout>
                 <ImageView
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
@@ -143,15 +149,16 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/bg_line_split"
                     />
-                <RelativeLayout
+                <LinearLayout
                     android:id="@+id/price_view"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/list_middle"
                     android:gravity="left|center_vertical"
+                    android:orientation="horizontal"
                     >
                     <TextView
-                        android:layout_width="fill_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:drawablePadding="8dp"
@@ -177,8 +184,10 @@
                         android:textSize="16sp"
                         android:text="@string/app_name"
                         android:gravity="right|center_vertical"
+                        android:singleLine="true"
+                        android:ellipsize="end"
                         />
-                </RelativeLayout>
+                </LinearLayout>
                 <ImageView
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
@@ -190,6 +199,7 @@
                     android:background="@drawable/list_footer"
                     android:gravity="left|center_vertical"
                     android:padding="8dp"
+                    android:orientation="horizontal"
                     >
                     <Button
                         android:id="@+id/query_btn"

@@ -55,7 +55,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="8dp"
-                android:background="@drawable/icon_arrow_down" />
+                android:background="@drawable/ic_arrow_down_hotel" />
 
         </LinearLayout>
         <LinearLayout android:id="@+id/dynamic_roomtype_retry_view"
