@@ -560,6 +560,13 @@ public class MapDownloadActivity extends BaseActivity implements View.OnClickLis
             sAllAddCityInfoList.add(1, cityTitle);
             sAllAddCityInfoList.add(2, cityTitle);
             sAllAddCityInfoList.add(7, provinceTitle);
+            
+            // 加入全国概要
+            CityInfo quanguo = MapEngine.getCityInfo(MapEngine.CITY_ID_QUANGUO);
+            quanguo.setType(CityInfo.TYPE_CITY);
+            CityInfo quanguoChild = quanguo.clone();
+            quanguo.getCityList().add(quanguoChild);
+            sAllAddCityInfoList.add(2, quanguo);
         }
         mAddCityExpandableListAdapter = new AddCityExpandableListAdapter();
         mAddCityElv.setAdapter(mAddCityExpandableListAdapter);
@@ -747,7 +754,6 @@ public class MapDownloadActivity extends BaseActivity implements View.OnClickLis
         CityInfo cityInfo = downloadCity.cityInfo;
         int id = cityInfo.getId();
         if (cityInfo.getType() == CityInfo.TYPE_CITY
-                && id > 0
                 && id != ORDER_ID_TITLE_ONE
                 && id != ORDER_ID_TITLE_TWO
                 && id != ORDER_ID_TITLE_THREE) {        
@@ -1759,7 +1765,6 @@ public class MapDownloadActivity extends BaseActivity implements View.OnClickLis
             CityInfo cityInfo = downloadCity.cityInfo;
             int id  = cityInfo.getId();
             if (cityInfo.getType() == CityInfo.TYPE_CITY
-                    && id > 0
                     && id != ORDER_ID_TITLE_ONE
                     && id != ORDER_ID_TITLE_TWO
                     && id != ORDER_ID_TITLE_THREE) {
@@ -1830,9 +1835,12 @@ public class MapDownloadActivity extends BaseActivity implements View.OnClickLis
         deleteDownloadCity(context, list, downloadCity);
         
         CityInfo cityInfo = downloadCity.cityInfo;
-        int cityId = cityInfo.getId();
+        
+        int cityId = cityInfo.getId(); // 此cityId仅用于排序
         if (cityId < 0) {
             cityId = 1;
+        } else {
+            cityId++;
         }
 
         String hongkong = context.getString(R.string.hongkong);
@@ -1895,7 +1903,7 @@ public class MapDownloadActivity extends BaseActivity implements View.OnClickLis
                 DownloadCity downloadCityUpdate = getCompleteTitle(context);
                 list.add(list.size(), downloadCityUpdate);
             }
-            if (MapEngine.hasMunicipality(cityId)) {
+            if (cityId == 1 || MapEngine.hasMunicipality(cityId-1)) {
                 list.add(list.size(), downloadCity);
             } else if (province == null) {
                 List<String> cityNameList = MapEngine.getCitylist(pName);

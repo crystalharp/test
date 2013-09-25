@@ -340,7 +340,7 @@ public class MapStatsService extends Service {
                         CityInfo cityInfo = MapEngine.getCityInfo(MapEngine.getCityid(cName));
                         if(cityInfo == null)
                         	continue;
-                        if (cityInfo.isAvailably() && cityInfo.getId() > 0) {   // && cityInfo.getId() > 0 是排除全国概要
+                        if (cityInfo.isAvailably()) {
                             downloadCity = new DownloadCity(cityInfo);
                             list.add(downloadCity);
                             downloadCity.totalSize = Integer.parseInt(downloadCityStrArr[1]);
@@ -453,7 +453,7 @@ public class MapStatsService extends Service {
                                 CityInfo cityInfo = MapEngine.getCityInfo(MapEngine.getCityid(cName));
                                 if(cityInfo == null)
                                 	continue;
-                                if (cityInfo.isAvailably() && cityInfo.getId() > 0) {   // && cityInfo.getId() > 0 是排除全国概要
+                                if (cityInfo.isAvailably()) {
                                     exist = new DownloadCity(cityInfo);
                                     statsDownloadCity(exist, queryServerRegionDataInfoMapInternally(context));
                                     list.add(exist);
