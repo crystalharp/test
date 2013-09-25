@@ -325,7 +325,7 @@
     <string name="length_str_title">全程\u0020:\u0020%1$s</string>
     <string name="time_str_title">时间\u0020:\u0020%1$s</string>
     <string name="length_str_m">%1$s米</string>
-    <string name="length_str_km">%1$.1f公里</string>
+    <string name="length_str_km">%1$.1f千米</string>
     <string name="traffic_forward">前</string>
     <string name="traffic_back">后</string>
     <string name="traffic_left">左</string>
