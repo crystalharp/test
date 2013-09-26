@@ -279,7 +279,7 @@ public class SettingActivity extends BaseActivity {
 	                Intent intent;
 	                switch (type) {
 	                    case DataBean.TYPE_GPS:
-	                        mActionLog.addAction(mActionTag + ActionLog.SettingGPS, String.valueOf(checkGPS()));
+	                        mActionLog.addAction(mActionTag + ActionLog.SettingGPS, String.valueOf(checkGPS(mThis)));
 	                        intent = new Intent("android.settings.LOCATION_SOURCE_SETTINGS");
 	                        startActivityForResult(intent, R.id.activity_setting_location);
 	                        break;
@@ -325,7 +325,7 @@ public class SettingActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        boolean enableGps = checkGPS();
+        boolean enableGps = checkGPS(mThis);
         DataBean dataBean = null;
         dataBean = getDataBeanByType(DataBean.TYPE_GPS);
         if (dataBean != null) {
@@ -393,9 +393,9 @@ public class SettingActivity extends BaseActivity {
     }
 
     
-    private boolean checkGPS() {
+    public static boolean checkGPS(Context context) {
         boolean enableGps = false;            
-        String locationProviders = Settings.Secure.getString(mThis.getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
+        String locationProviders = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
         if (!TextUtils.isEmpty(locationProviders)) {
             enableGps = locationProviders.contains(LocationManager.GPS_PROVIDER);
         }

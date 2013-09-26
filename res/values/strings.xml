@@ -197,6 +197,8 @@
     <string name="share_to_friend">发送给好友</string>
     
     <string name="compass">指南针</string>
+    <string name="compass_gps_open">GPS已开启</string>
+    <string name="compass_gps_close">GPS未开启</string>
     
     <string name="map_download">地图下载</string>
     <string name="change_city">切换城市</string>
