@@ -168,6 +168,7 @@ import com.tigerknows.ui.traffic.BuslineDetailFragment;
 import com.tigerknows.ui.traffic.BuslineResultLineFragment;
 import com.tigerknows.ui.traffic.BuslineResultStationFragment;
 import com.tigerknows.ui.traffic.FetchFavoriteFragment;
+import com.tigerknows.ui.traffic.TrafficCompassFragment;
 import com.tigerknows.ui.traffic.TrafficDetailFragment;
 import com.tigerknows.ui.traffic.TrafficQueryFragment;
 import com.tigerknows.ui.traffic.TrafficReportErrorActivity;
@@ -1429,6 +1430,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             public void onClick(View v) {
                 mActionLog.addAction(ActionLog.MapCompass);
                 mMoreView.setVisibility(View.GONE);
+                showView(R.id.view_traffic_compass);
             }
         });
     }
@@ -3472,6 +3474,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     private BuslineResultStationFragment mBuslineResultStationFragment = null;
     private BuslineDetailFragment mBuslineDetailFragment = null;
     private TrafficQueryFragment mTrafficQueryFragment = null;
+    private TrafficCompassFragment mTrafficCompassFragment = null;
     private FetchFavoriteFragment mFetchFavoriteFragment = null;
     private MyCommentListFragment mMyCommentListFragment;
     private UserHomeFragment mUserHomeFragment;
@@ -3576,6 +3579,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             case R.id.view_traffic_fetch_favorite_poi:
                 baseFragment = getFetchFavoriteFragment();
                 break;
+                
+            case R.id.view_traffic_compass:
+            	baseFragment = getTrafficCompassFragment();
+            	break;
                 
             case R.id.view_user_home:
                 baseFragment = getUserHomeFragment();
@@ -3902,6 +3909,17 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         }
     }
 
+    public TrafficCompassFragment getTrafficCompassFragment() {
+        synchronized (mUILock) {
+            if (mTrafficCompassFragment == null) {
+                TrafficCompassFragment trafficCompassFragment = new TrafficCompassFragment(Sphinx.this);
+                trafficCompassFragment.setId(R.id.view_traffic_compass);
+                trafficCompassFragment.onCreate(null);
+                mTrafficCompassFragment = trafficCompassFragment;
+            }
+            return mTrafficCompassFragment;
+        }
+    }    
     
     public FetchFavoriteFragment getFetchFavoriteFragment() {
         synchronized (mUILock) {

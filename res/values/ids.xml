@@ -65,6 +65,7 @@
     <item type="id" name="view_traffic_busline_station_result" />
     <item type="id" name="view_traffic_busline_detail" />
     <item type="id" name="activity_traffic_report_error" />
+    <item type="id" name="view_traffic_compass"/>
     
     <item type="id" name="view_user_home" />
     <item type="id" name="view_user_my_comment_list" />    
