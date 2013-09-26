@@ -568,7 +568,6 @@ public class MapDownloadActivity extends BaseActivity implements View.OnClickLis
             quanguoTitle.setId(ORDER_ID_TITLE_ONE);
             
             // 全国概要地图
-            quanguo.setCName(getString(R.string.quanguo_map));
             quanguo.setType(CityInfo.TYPE_CITY);
             CityInfo quanguoChild = quanguo.clone();
             quanguo.getCityList().add(quanguoChild);
@@ -1650,7 +1649,7 @@ public class MapDownloadActivity extends BaseActivity implements View.OnClickLis
         TextView statusTxv = (TextView)view.findViewById(R.id.status_txv);
         
         if (cityInfo.getType() == CityInfo.TYPE_CITY) {
-            textTxv.setText((appendSpace ? "    " : "")+cname);
+            textTxv.setText((appendSpace ? "    " : "")+(cityInfo.getId() == MapEngine.CITY_ID_QUANGUO ? getString(R.string.quanguo_map) : cname));
             DownloadCity downloadCity = getDownloadCity(mDownloadCityList, cityInfo);
             if (downloadCity != null) {
                 textTxv.setTextColor(mColorBlackLight);
