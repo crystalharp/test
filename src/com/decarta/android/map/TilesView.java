@@ -85,6 +85,7 @@ import com.decarta.android.util.XYDouble;
 import com.decarta.android.util.XYFloat;
 import com.decarta.android.util.XYInteger;
 import com.decarta.android.util.XYZ;
+import com.tigerknows.Sphinx.TouchMode;
 import com.tigerknows.map.Grid;
 import com.tigerknows.map.MapEngine;
 import com.tigerknows.map.MapView;
@@ -1146,7 +1147,7 @@ public class TilesView extends GLSurfaceView {
 						}
 					}
 
-					if (cluster != null) {
+					if (cluster != null && !mParentMapView.getSphinx().getTouchMode().equals(TouchMode.MEASURE_DISTANCE)) {
 						// Log.i("TilesView","onTouchEvent snap to:"+overlayItem.getPosition()+","+overlayItem.getMessage());
 						if (cluster.size() == 0) {
 							LogWrapper.e("TilesView", "onTouchEvent touchUp cluster size is 0");

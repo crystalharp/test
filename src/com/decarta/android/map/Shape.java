@@ -12,6 +12,7 @@ public abstract class Shape {
     public static final String TRAFFIC_SHAPE = "traffic";
     public static final String LINE_SHAPE = "line";
     public static final String HIGHLIGHT_SHAPE = "highlight";
+    public static final String MEASURE_DISTANCE = "measure_distance";
 	public static final int ZOOM_LEVEL=13;
 	
 	protected String name=null;

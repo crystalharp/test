@@ -46,6 +46,7 @@ import com.decarta.android.util.Util;
 import com.decarta.android.util.XYFloat;
 import com.decarta.android.util.XYInteger;
 import com.tigerknows.R;
+import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.util.Utility;
@@ -90,8 +91,18 @@ public class MapView extends RelativeLayout implements
 	private TilesView tilesView;
 	private Map<Integer, ArrayList<EventListener>> eventListeners = new HashMap<Integer, ArrayList<EventListener>>();
 	private float xRotation = 0;
+	
+	private Sphinx sphinx;
 
-	/**
+	public Sphinx getSphinx() {
+        return sphinx;
+    }
+
+    public void setSphinx(Sphinx sphinx) {
+        this.sphinx = sphinx;
+    }
+
+    /**
 	 * initialize zoom controls, register listener for zoom controls, initialize
 	 * tiles view
 	 * 

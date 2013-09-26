@@ -122,8 +122,10 @@ import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.ui.BrowserActivity;
 import com.tigerknows.ui.BrowserFragment;
 import com.tigerknows.ui.HintActivity;
+import com.tigerknows.ui.MeasureDistanceFragment;
 import com.tigerknows.ui.MenuFragment;
 import com.tigerknows.ui.ResultMapFragment;
+import com.tigerknows.ui.TakeScreenshotFragment;
 import com.tigerknows.ui.TitleFragment;
 import com.tigerknows.ui.discover.DianyingDetailFragment;
 import com.tigerknows.ui.discover.DiscoverChildListFragment;
@@ -241,29 +243,15 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     
     private View mMoreView;
     private ImageButton mTakeScreenshotBtn;
-    private ImageButton mDistanceBtn;
+    private ImageButton mMeasureDistanceBtn;
     private ImageButton mCompassBtn;
     private ImageButton mMoreBtn;
-    private boolean mTakeScreenshot;
-    private boolean mDistance;
-    
-    public boolean isTakeScreenshot() {
-        return mTakeScreenshot;
-    }
-    
-    public void setTakeScreenshot(boolean takeScreenshot) {
-        mTakeScreenshot = takeScreenshot;
-    }
-    
-    public boolean isDistance() {
-        return mDistance;
-    }
     
 	private ViewGroup mDragHintView;
 	
 	private TouchMode touchMode=TouchMode.NORMAL;
 	public enum TouchMode{
-		NORMAL, CHOOSE_ROUTING_START_POINT, CHOOSE_ROUTING_END_POINT, LONG_CLICK;
+		NORMAL, CHOOSE_ROUTING_START_POINT, CHOOSE_ROUTING_END_POINT, LONG_CLICK, MEASURE_DISTANCE;
 	}
 	
 	// Handler message code
@@ -498,6 +486,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             findViews();
             setListener();
 
+            mMapView.setSphinx(this);
             if (mSensor != null) {
                 mSensorOrientation = true;
             }
@@ -789,7 +778,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 //                  MapView mapView=(MapView)eventSource;
                     if(touchMode.equals(TouchMode.CHOOSE_ROUTING_END_POINT)
                             || touchMode.equals(TouchMode.CHOOSE_ROUTING_START_POINT)){
-                        LogWrapper.i(TAG,"CHOOSE_ROUTING_END_POINT || CHOOSE_ROUTING_START_POINT position:"+position.toString());
 
                         String positionName = MapEngine.getPositionName(position, (int)mMapView.getZoomLevel());
                         if (TextUtils.isEmpty(positionName)) {
@@ -797,6 +785,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                         }
                         clearMap();
                         PinOverlayHelper.drawSelectPointOverlay(Sphinx.this, mHandler, mMapView, touchMode.equals(TouchMode.CHOOSE_ROUTING_START_POINT), positionName, position);
+                    } else if(touchMode.equals(TouchMode.MEASURE_DISTANCE)) {
+                        getMeasureDistanceFragment().addPoint(position, false);
                     }
                 }
             });
@@ -841,11 +831,13 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                         clearMap();
                         PinOverlayHelper.drawSelectPointOverlay(Sphinx.this, mHandler, mMapView, touchMode.equals(TouchMode.CHOOSE_ROUTING_START_POINT), positionName, position);
                         return;
+                    } else if (touchMode.equals(TouchMode.MEASURE_DISTANCE)){
+                        getMeasureDistanceFragment().addPoint(position, false);
+                        return;
                     } else if (!touchMode.equals(TouchMode.LONG_CLICK)) {
                         return;
                     }
                     mActionLog.addAction(ActionLog.MapLongClick);
-                    LogWrapper.i(TAG,"MapView.onLongClickEvent position:"+position.toString());
                     String positionName = MapEngine.getPositionName(position, (int)mMapView.getZoomLevel());
                     if (TextUtils.isEmpty(positionName)) {
                         positionName = mContext.getString(R.string.select_has_point);
@@ -1363,7 +1355,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         mMoreView = (ViewGroup)findViewById(R.id.more_view);
         mMoreBtn = (ImageButton)findViewById(R.id.more_btn);
         mTakeScreenshotBtn = (ImageButton)findViewById(R.id.take_screenshot_btn);
-        mDistanceBtn = (ImageButton)findViewById(R.id.distance_btn);
+        mMeasureDistanceBtn = (ImageButton)findViewById(R.id.measure_distance_btn);
         mCompassBtn = (ImageButton)findViewById(R.id.compass_btn);
     }
 
@@ -1407,20 +1399,21 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             public void onClick(View v) {
                 mActionLog.addAction(ActionLog.MapTakeScreenshot);
                 mMoreView.setVisibility(View.GONE);
-                mTakeScreenshot = !mTakeScreenshot;
-                if (mTakeScreenshot) {
-                    getResultMapFragment().setData(mContext.getString(R.string.take_screenshot), ActionLog.TakeScreenshot);
-                    showView(R.id.view_result_map);
-                }
+                
+                showView(R.id.view_take_screenshot);
             }
         });
         
-        mDistanceBtn.setOnClickListener(new OnClickListener() {
+        mMeasureDistanceBtn.setOnClickListener(new OnClickListener() {
             
             @Override
             public void onClick(View v) {
                 mActionLog.addAction(ActionLog.MapDistance);
                 mMoreView.setVisibility(View.GONE);
+
+                getMeasureDistanceFragment().setIndex(0);
+                showView(R.id.view_measure_distance);
+                setTouchMode(TouchMode.MEASURE_DISTANCE);
             }
         });
         
@@ -2111,7 +2104,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         for(int i=0;i<dataList.size();i++){
             RotationTilt rt=new RotationTilt(RotateReference.SCREEN,TiltReference.SCREEN);
             Object data = dataList.get(i);
-            icon = icon.clone();
             OverlayItem overlayItem = null;
             if (data instanceof POI) {
                 POI target = (POI) data;
@@ -2264,6 +2256,12 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         
         if (overlayItem == null) {
         	return;
+        }
+        
+        if (touchMode.equals(TouchMode.MEASURE_DISTANCE)) {
+            if (!(overlayItem.getAssociatedObject().equals(TouchMode.MEASURE_DISTANCE))) {
+                return;
+            }
         }
         
         final InfoWindow infoWindow = mMapView.getInfoWindow();
@@ -2566,6 +2564,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     
     private void infoWindowClicked() {
         mActionLog.addAction(ActionLog.MapInfoWindowBody);
+        if (touchMode.equals(TouchMode.MEASURE_DISTANCE)) {
+            return;
+        }
         InfoWindow infoWindow=mMapView.getInfoWindow();
         OverlayItem overlayItem=infoWindow.getAssociatedOverlayItem();
         String overlayName = overlayItem.getOwnerOverlay().getName();
@@ -3499,6 +3500,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     
     private CouponListFragment mCouponListFragment;
     private CouponDetailFragment mCouponDetailFragment;
+
+    private TakeScreenshotFragment mTakeScreenshotFragment;
+    private MeasureDistanceFragment mMeasureDistanceFragment;
     
     public BaseFragment getFragment(int id) {
         BaseFragment baseFragment = null;
@@ -3659,6 +3663,14 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 
             case R.id.view_coupon_detail:
                 baseFragment = getCouponDetailFragment();
+                break;
+                
+            case R.id.view_take_screenshot:
+                baseFragment = getTakeScreenshotFragment();
+                break;
+                
+            case R.id.view_measure_distance:
+                baseFragment = getMeasureDistanceFragment();
                 break;
                 
             default:
@@ -4178,6 +4190,32 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             return mCouponDetailFragment;
         }
     }
+    
+    public TakeScreenshotFragment getTakeScreenshotFragment(){
+        
+        synchronized (mUILock) {
+            if (mTakeScreenshotFragment == null) {
+                TakeScreenshotFragment fragment = new TakeScreenshotFragment(Sphinx.this);
+                fragment.setId(R.id.view_take_screenshot);
+                fragment.onCreate(null);
+                mTakeScreenshotFragment = fragment;
+            }
+            return mTakeScreenshotFragment;
+        }
+    }
+    
+    public MeasureDistanceFragment getMeasureDistanceFragment(){
+        
+        synchronized (mUILock) {
+            if (mMeasureDistanceFragment == null) {
+                MeasureDistanceFragment fragment = new MeasureDistanceFragment(Sphinx.this);
+                fragment.setId(R.id.view_measure_distance);
+                fragment.onCreate(null);
+                mMeasureDistanceFragment = fragment;
+            }
+            return mMeasureDistanceFragment;
+        }
+    }
 
     // TODO: get fragment end
 
@@ -4583,4 +4621,23 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     	mPreviousNextView.setVisibility(View.VISIBLE);
     }
 
+    public View getPreviousNextView() {
+        return mPreviousNextView;
+    }
+
+    public View getLocationView() {
+        return mLocationView;
+    }
+
+    public View getZoomView() {
+        return mZoomView;
+    }
+
+    public View getMoreView() {
+        return mMoreView;
+    }
+
+    public View getMoreBtn() {
+        return mMoreBtn;
+    }
 }

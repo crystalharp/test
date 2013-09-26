@@ -1276,4 +1276,6 @@
     <string name="downloaded_percent">已下载%1$d%%</string>
     <string name="save">保存</string>
     <string name="take_screenshot">截图</string>
+    <string name="revocation">撤消</string>
+    <string name="measure">测距</string>
 </resources>
