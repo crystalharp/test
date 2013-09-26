@@ -703,6 +703,10 @@ public class ActionLog extends LogUpload {
     public static final String TakeScreenshotShare = "BA";
     public static final String TakeScreenshotSave = "BB";
     
+    public static final String MeasureDistance = "FH";
+    public static final String MeasureDistanceRevocation = "BA";
+    public static final String MeasureDistanceClear = "BB";
+    
     private long mStartMillis = 0;
     private String lastAction = null;
     

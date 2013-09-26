@@ -138,9 +138,13 @@ public class Utility {
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_SEND);
         intent.setType("image/png");
-        intent.putExtra(Intent.EXTRA_TITLE, title);
-        intent.putExtra(Intent.EXTRA_TEXT, body);
-        intent.putExtra("sms_body", body);
+        if (title != null) {
+            intent.putExtra(Intent.EXTRA_TITLE, title);
+        }
+        if (body != null) {
+            intent.putExtra(Intent.EXTRA_TEXT, body);
+            intent.putExtra("sms_body", body);
+        }
         if (uri != null) {
             intent.putExtra(Intent.EXTRA_STREAM, uri);
             intent.putExtra("file_name", uri.toString());

@@ -51,10 +51,6 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
     private Button mCancelBtn;
     private Button mConfirmBtn;
     
-    private View mTakeScreenshotView;
-    private Button mShareBtn;
-    private Button mSaveBtn;
-    
     private TitlePopupArrayAdapter mTitlePopupArrayAdapter;
     
     private List<String> mTitlePopupList = new ArrayList<String>();
@@ -140,13 +136,6 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
         } else {
             mSnapView.setVisibility(View.GONE);
         }
-        
-        if (mSphinx.isTakeScreenshot()) {
-            mTakeScreenshotView.setVisibility(View.VISIBLE);
-            mSphinx.getControlView().setPadding(0, 0, 0, mSphinx.getMenuViewHeiht());
-        } else {
-            mTakeScreenshotView.setVisibility(View.GONE);
-        }
         mSphinx.layoutTopViewPadding(0, Util.dip2px(Globals.g_metrics.density, 18), 0, 0);
         mSphinx.getMapView().getPadding().top = mSphinx.getTitleViewHeight() + Util.dip2px(Globals.g_metrics.density, 18);
         
@@ -219,20 +208,13 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
     
     protected void findViews() {
         mSnapView = mRootView.findViewById(R.id.snap_view);
-        mCancelBtn = (Button) mSnapView.findViewById(R.id.cancel_btn);
-        mConfirmBtn = (Button) mSnapView.findViewById(R.id.confirm_btn);
-        
-        mTakeScreenshotView = mRootView.findViewById(R.id.take_screenshot_view);
-        mShareBtn = (Button) mTakeScreenshotView.findViewById(R.id.share_btn);
-        mSaveBtn = (Button) mTakeScreenshotView.findViewById(R.id.save_btn);
+        mCancelBtn = (Button) mRootView.findViewById(R.id.cancel_btn);
+        mConfirmBtn = (Button) mRootView.findViewById(R.id.confirm_btn);
     }
     
     protected void setListener() {
         mCancelBtn.setOnClickListener(this);
         mConfirmBtn.setOnClickListener(this);
-        
-        mShareBtn.setOnClickListener(this);
-        mSaveBtn.setOnClickListener(this);
     }
 
     @Override
@@ -295,15 +277,6 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
             mActionLog.addAction(mActionTag + ActionLog.TitleRightButton);
         	mSphinx.showView(R.id.view_traffic_result_detail);
         	break;
-        	
-        case R.id.share_btn:
-            mActionLog.addAction(mActionTag + ActionLog.TakeScreenshotShare);
-            break;
-            
-        case R.id.save_btn:
-            mActionLog.addAction(mActionTag + ActionLog.TakeScreenshotSave);
-            break;
-            
     	default:
     		break;
         }
@@ -314,7 +287,6 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
     public void dismiss() {
         super.dismiss();
         mSphinx.clearMap();
-        mSphinx.setTakeScreenshot(false);
     }
     
     public static class TitlePopupArrayAdapter extends ArrayAdapter<String> {

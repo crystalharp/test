@@ -67,6 +67,8 @@ public class BaseFragment extends LinearLayout {
     
     public Button mRightBtn;
     
+    public Button mRight2Btn;
+    
     public boolean isReLogin = false;
     
     protected List<BaseQuery> mBaseQuerying;
@@ -270,6 +272,7 @@ public class BaseFragment extends LinearLayout {
             mTitleBtn = mTitleFragment.getTitleTxv();
             mLeftBtn = mTitleFragment.getLeftTxv();
             mRightBtn = mTitleFragment.getRightTxv();
+            mRight2Btn = mTitleFragment.getRight2Txv();
 
             mTitleBtn.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
             mTitleBtn.setText(null);
@@ -283,6 +286,11 @@ public class BaseFragment extends LinearLayout {
             mRightBtn.setBackgroundDrawable(null);
             mRightBtn.setText(null);
             mRightBtn.setEnabled(true);
+            mRight2Btn.setVisibility(View.GONE);
+            mRight2Btn.setBackgroundDrawable(null);
+            mRight2Btn.setText(null);
+            mRight2Btn.setEnabled(true);
+            mRight2Btn.setOnClickListener(null);
             
             mMenuFragment.hide();
         	mTitleFragment.display();

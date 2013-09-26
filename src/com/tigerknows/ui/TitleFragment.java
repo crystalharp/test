@@ -39,6 +39,8 @@ public class TitleFragment extends BaseFragment implements View.OnClickListener 
     
     protected Button rightBtn;
     
+    protected Button right2Btn;
+    
     protected ListView popupLsv;
     
     @Override
@@ -56,6 +58,7 @@ public class TitleFragment extends BaseFragment implements View.OnClickListener 
         titleBtn = (Button) mRootView.findViewById(R.id.title_btn);
         leftBtn = (Button) mRootView.findViewById(R.id.left_btn);
         rightBtn = (Button) mRootView.findViewById(R.id.right_btn);
+        right2Btn = (Button) mRootView.findViewById(R.id.right2_btn);
     }
 
     protected void setListener() {
@@ -84,6 +87,10 @@ public class TitleFragment extends BaseFragment implements View.OnClickListener 
 
     public Button getRightTxv() {
         return rightBtn;
+    }
+
+    public Button getRight2Txv() {
+        return right2Btn;
     }
     
     public void showPopupWindow(ListAdapter adapter, OnItemClickListener listener, String actionTag) {

@@ -63,12 +63,21 @@
         android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp">
         
+        <ImageButton
+            android:id="@+id/more_btn"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:background="@drawable/btn_location_map"
+            android:layout_alignParentRight="true"
+            android:scaleType="center"
+            android:clickable="false"/>
+        
         <LinearLayout
             android:id="@+id/more_view"
             android:orientation="horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
+            android:layout_toLeftOf="@id/more_btn"
             android:visibility="gone"
             >
         
@@ -81,7 +90,7 @@
                 android:clickable="false"/>
         
             <ImageButton
-                android:id="@+id/distance_btn"
+                android:id="@+id/measure_distance_btn"
                 android:layout_width="52dp"
                 android:layout_height="52dp"
                 android:background="@drawable/btn_location_map"
@@ -97,16 +106,6 @@
                 android:clickable="false"/>
             
         </LinearLayout>
-        
-        <ImageButton
-            android:id="@+id/more_btn"
-            android:layout_width="52dp"
-            android:layout_height="52dp"
-            android:background="@drawable/btn_location_map"
-            android:layout_alignParentRight="true"
-            android:layout_below="@id/more_view"
-            android:scaleType="center"
-            android:clickable="false"/>
         
         <LinearLayout
             android:orientation="vertical"

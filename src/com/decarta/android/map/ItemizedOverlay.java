@@ -31,6 +31,7 @@ public class ItemizedOverlay {
     public static String TRAFFIC_OVERLAY = "traffic";
     public static String LINE_OVERLAY = "line";
     public static String PIN_OVERLAY = "pin";
+    public static String MEASURE_DISTANCE_OVERLAY = "measure_distance";
     
 	public static final int ZOOM_LEVEL=13;
 	private static int GRANULARITY=20;
