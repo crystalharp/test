@@ -108,7 +108,7 @@ public class SingleRectLabel extends Label {
         return NinePatchDrawablePool[index];
     }
     
-    public static void clearIcon() {
+    public static synchronized void clearIcon() {
     	//清空纹理
         Iterator<Texture> iterator5 = mapWordIconPool.values().iterator();
         while(iterator5.hasNext()){

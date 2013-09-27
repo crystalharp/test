@@ -274,7 +274,7 @@ public abstract class Label {
         }
     }
     
-    public static void clearTextTexture() {
+    public static synchronized void clearTextTexture() {
         Iterator<Texture> iterator4=textTexturePool.values().iterator();
         while(iterator4.hasNext()){
             Texture texture = iterator4.next();
@@ -290,7 +290,7 @@ public abstract class Label {
         textTexturePool.clear();
     }
     
-    public static void clearTextBitmap() {
+    public static synchronized void clearTextBitmap() {
         Iterator<Bitmap> iterator6=textBitmapPool.values().iterator();
         while(iterator6.hasNext()){
             Bitmap bm = iterator6.next();
