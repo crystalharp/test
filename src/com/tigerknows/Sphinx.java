@@ -4243,7 +4243,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             if (uiStackPeek() == R.id.view_poi_home || uiStackPeek() == R.id.view_discover_home) {
                 getPOIHomeFragment().refreshLocationView();
             }
-            
+            if (uiStackPeek() == R.id.view_traffic_compass){
+            	getTrafficCompassFragment().refreshLocation(myPosition);
+            }
             if (myPosition != null) {
             	updateMyLocation(myPosition);
                 if (MyLocation.MODE_NONE == mMyLocation.mode) {

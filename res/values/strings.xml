@@ -199,7 +199,13 @@
     <string name="compass">指南针</string>
     <string name="compass_gps_open">GPS已开启</string>
     <string name="compass_gps_close">GPS未开启</string>
-    
+    <string name="compass_longitude">经度：%1$s</string>
+    <string name="compass_latitude">纬度：%1$s</string>
+    <string name="compass_altitude">海拔：%1$s</string>
+    <string name="compass_speed">速度：%1$s</string>
+    <string name="compass_satellite">卫星个数：%1$s</string>
+    <string name="compass_accuracy">精确度：%1$s</string>
+        
     <string name="map_download">地图下载</string>
     <string name="change_city">切换城市</string>
     <string name="check_update">检查更新</string>

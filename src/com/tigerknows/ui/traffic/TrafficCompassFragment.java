@@ -8,7 +8,9 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.location.Location;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +18,10 @@ import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.decarta.Globals;
+import com.decarta.android.location.Position;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.common.ActionLog;
@@ -33,6 +38,24 @@ public class TrafficCompassFragment extends BaseFragment implements SensorEventL
 	ImageView mCompassImv;
 	SensorManager mSensorManager;
 	Button mGPSBtn;
+	
+	TextView[] mLocationDetailTxv= new TextView[6];
+	int[] mLocationDetailID = new int[]{
+		R.string.compass_longitude,
+		R.string.compass_latitude,
+		R.string.compass_altitude,
+		R.string.compass_speed,
+		R.string.compass_satellite,
+		R.string.compass_accuracy
+	};
+	final String[] fUnit = new String[]{
+			"",
+			"",
+			"m",
+			"km/h",
+			"",
+			"m"
+	};
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -53,6 +76,12 @@ public class TrafficCompassFragment extends BaseFragment implements SensorEventL
     protected void findViews(){
     	mCompassImv = (ImageView)mRootView.findViewById(R.id.compass_imv);
     	mGPSBtn = (Button)mRootView.findViewById(R.id.gps_btn);
+    	mLocationDetailTxv[0] = (TextView)mRootView.findViewById(R.id.longitude_txv);
+    	mLocationDetailTxv[1] = (TextView)mRootView.findViewById(R.id.latitude_txv);
+    	mLocationDetailTxv[2] = (TextView)mRootView.findViewById(R.id.altitude_txv);
+    	mLocationDetailTxv[3] = (TextView)mRootView.findViewById(R.id.speed_txv);
+    	mLocationDetailTxv[4] = (TextView)mRootView.findViewById(R.id.satellite_txv);
+    	mLocationDetailTxv[5] = (TextView)mRootView.findViewById(R.id.accuracy_txv);
     }
     
     protected void setListener(){
@@ -88,7 +117,7 @@ public class TrafficCompassFragment extends BaseFragment implements SensorEventL
     	mTitleBtn.setText(mSphinx.getString(R.string.compass));
     	refreshCompass();
     	refreshGPS();
-
+    	refreshLocation(null);
     }
     
     public void refreshCompass(){
@@ -110,6 +139,41 @@ public class TrafficCompassFragment extends BaseFragment implements SensorEventL
     		mGPSBtn.setText(mSphinx.getString(R.string.compass_gps_open));
     	}else{
     		mGPSBtn.setText(mSphinx.getString(R.string.compass_gps_close));
+    	}
+    }
+    
+    public void refreshLocation(Position position){
+    	Location location = Globals.g_My_Location;
+    	final String EMPTY = "...";
+    	String locationDetail[] = new String[6];
+    	if(location == null){
+    		if(position != null){
+    			locationDetail[0] = String.valueOf(position.getLon());
+    			locationDetail[1] = String.valueOf(position.getLat());
+    		}else{
+    			locationDetail[0] = EMPTY;
+    			locationDetail[1] = EMPTY;
+    		}
+    		locationDetail[2] = EMPTY;
+    		locationDetail[3] = EMPTY;
+    		locationDetail[4] = EMPTY;
+    	}else{
+    		locationDetail[0] = String.valueOf(location.getLongitude());
+    		locationDetail[1] = String.valueOf(location.getLatitude());
+    		locationDetail[2] = location.hasAltitude() ? String.valueOf(location.getAltitude()) : EMPTY;
+    		locationDetail[3] = location.hasSpeed() ? String.valueOf(location.getSpeed()) : EMPTY;
+    		locationDetail[4] = EMPTY;
+    	}
+    	if(location == null || location.hasAccuracy() == false){
+    		locationDetail[5] = position == null ? EMPTY : String.valueOf(position.getAccuracy());
+    	}else{
+    		locationDetail[5] = String.valueOf(location.getAccuracy());
+    	}
+    	for(int i=0; i<6; i++){
+    		if(!TextUtils.equals(locationDetail[i], EMPTY)){
+    			locationDetail[i] += fUnit[i];
+    		}
+    		mLocationDetailTxv[i].setText(mSphinx.getString(mLocationDetailID[i], locationDetail[i]));
     	}
     }
 	

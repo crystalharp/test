@@ -9,10 +9,68 @@
         android:background="@drawable/ani_compass"
         android:layout_centerHorizontal="true"
         />
+
+    <LinearLayout android:id="@+id/compass_3_lly" 
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/list_footer"
+        >
+        <TextView android:id="@+id/satellite_txv"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/compass_satellite"
+            />
+        <TextView android:id="@+id/accuracy_txv"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/compass_accuracy"
+            />
+    </LinearLayout>
+    <LinearLayout android:id="@+id/compass_2_lly" 
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/compass_3_lly"
+        android:background="@drawable/list_middle"
+        >
+        <TextView android:id="@+id/altitude_txv"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/compass_altitude"
+            />
+        <TextView android:id="@+id/speed_txv"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/compass_speed"
+            />        
+    </LinearLayout>
+    <LinearLayout android:id="@+id/compass_1_lly" 
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/compass_2_lly"
+        android:background="@drawable/list_header"
+        >
+        <TextView android:id="@+id/longitude_txv"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/compass_longitude"
+            />
+        <TextView android:id="@+id/latitude_txv"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/compass_latitude"
+            />
+    </LinearLayout>
     <Button android:id="@+id/gps_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/compass_imv"
+        android:layout_above="@id/compass_1_lly"
         android:text="@string/app_name"
         android:drawableRight="@drawable/icon_arrow_right"
         android:background="@drawable/list_single"
@@ -20,6 +78,7 @@
         android:layout_centerHorizontal="true"
         android:textSize="16sp"
         android:padding="8dp"
+        android:layout_marginBottom="16dp"
         />
 
 </RelativeLayout>
