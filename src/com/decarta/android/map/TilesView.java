@@ -593,7 +593,7 @@ public class TilesView extends GLSurfaceView {
 		this.queueEvent(new Runnable() {
 			public void run() {
 				LogWrapper.i("Sequence","TilesView run clearTileTextures");
-				mapRender.clearTileTextures();
+				mapRender.clearAllTextures();
 			}
 		});
 	}
