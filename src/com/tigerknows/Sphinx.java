@@ -170,6 +170,7 @@ import com.tigerknows.ui.traffic.BuslineDetailFragment;
 import com.tigerknows.ui.traffic.BuslineResultLineFragment;
 import com.tigerknows.ui.traffic.BuslineResultStationFragment;
 import com.tigerknows.ui.traffic.FetchFavoriteFragment;
+import com.tigerknows.ui.traffic.SubwayMapFragment;
 import com.tigerknows.ui.traffic.TrafficCompassFragment;
 import com.tigerknows.ui.traffic.TrafficDetailFragment;
 import com.tigerknows.ui.traffic.TrafficQueryFragment;
@@ -3476,6 +3477,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     private BuslineDetailFragment mBuslineDetailFragment = null;
     private TrafficQueryFragment mTrafficQueryFragment = null;
     private TrafficCompassFragment mTrafficCompassFragment = null;
+    private SubwayMapFragment mSubwayMapFragment = null;
     private FetchFavoriteFragment mFetchFavoriteFragment = null;
     private MyCommentListFragment mMyCommentListFragment;
     private UserHomeFragment mUserHomeFragment;
@@ -3587,6 +3589,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             case R.id.view_traffic_compass:
             	baseFragment = getTrafficCompassFragment();
             	break;
+            	
+            case R.id.view_subway_map:
+                baseFragment = getSubwayMapFragment();
+                break;
                 
             case R.id.view_user_home:
                 baseFragment = getUserHomeFragment();
@@ -3932,6 +3938,18 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             return mTrafficCompassFragment;
         }
     }    
+    
+    public SubwayMapFragment getSubwayMapFragment() {
+        synchronized (mUILock) {
+            if (mSubwayMapFragment == null) {
+                SubwayMapFragment subwayMapFragment = new SubwayMapFragment(Sphinx.this);
+                subwayMapFragment.setId(R.id.view_subway_map);
+                subwayMapFragment.onCreate(null);
+                mSubwayMapFragment = subwayMapFragment;
+            }
+            return mSubwayMapFragment;
+        }
+    }
     
     public FetchFavoriteFragment getFetchFavoriteFragment() {
         synchronized (mUILock) {
