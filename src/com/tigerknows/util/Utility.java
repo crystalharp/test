@@ -354,7 +354,20 @@ public class Utility {
             
             saveFile(am.open(fileName), fileName, path);
             
-            ZipFile zipFile = new ZipFile(path + fileName);
+            unZipFile(path + fileName, specifyFileName, path);
+            
+            if (file.exists()) {
+                file.delete();
+            }
+        } catch (IOException e) {
+            LogWrapper.e(TAG, "IOException caught while unZipFile");
+        }
+    }
+    
+    public static void unZipFile(String file, String specifyFileName, String path) {
+
+        try {
+            ZipFile zipFile = new ZipFile(file);
             
             Enumeration<? extends ZipEntry> entries = zipFile.entries(); 
             while (entries.hasMoreElements()) 
@@ -374,9 +387,6 @@ public class Utility {
                      saveFile(zipFile.getInputStream(entry), entry.getName(), path);
                      break;
                  }
-            }
-            if (file.exists()) {
-                file.delete();
             }
             zipFile.close();
         } catch (IOException e) {

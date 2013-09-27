@@ -283,7 +283,6 @@ public class DownloadService extends IntentService {
                 if (!stop && !downloadItem.stop) {
                     return tempFile;
                 } else {
-                    tempFile.delete();
                     return null;
                 }
             } else {
@@ -307,7 +306,7 @@ public class DownloadService extends IntentService {
         return null;
     }
     
-    private File createFileByUrl(String url) throws IOException {
+    public static File createFileByUrl(String url) throws IOException {
         File tempFile = null;
         String path = TKConfig.getSavePath() + TKConfig.DOWNLOAD_FOLDER_NAME +"/";
         File rootFile = new File(path);
