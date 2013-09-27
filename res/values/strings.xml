@@ -1278,4 +1278,8 @@
     <string name="take_screenshot">截图</string>
     <string name="revocation">撤消</string>
     <string name="measure">测距</string>
+    
+    <string name="pause">暂停</string>
+    <string name="download_complete_and_install">下载已完成，点击安装</string>
+    <string name="install">安装</string>
 </resources>
