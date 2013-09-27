@@ -562,6 +562,13 @@ public class TilesView extends GLSurfaceView {
 	@Override
 	public void surfaceDestroyed(SurfaceHolder holder) {
 		LogWrapper.i("Sequence","TilesView.surfaceDestroyed");
+		paused = true;
+		this.queueEvent(new Runnable() {
+			public void run() {
+				LogWrapper.i("Sequence","TilesView run clearAllTextures");
+				mapRender.clearAllTextures();
+			}
+		});
 		if (CONFIG.DRAW_BY_OPENGL)
 			super.surfaceDestroyed(holder);
 	}
@@ -603,13 +610,15 @@ public class TilesView extends GLSurfaceView {
 	}
 
 	public void pause() {
-		paused = true;
-		this.queueEvent(new Runnable() {
-			public void run() {
-				LogWrapper.i("Sequence","TilesView run clearAllTextures");
-				mapRender.clearAllTextures();
-			}
-		});
+//		if(!paused) {
+//			paused = true;
+//			this.queueEvent(new Runnable() {
+//				public void run() {
+//					LogWrapper.i("Sequence","TilesView run clearAllTextures");
+//					mapRender.clearAllTextures();
+//				}
+//			});
+//		}
 	}
 	
 	public void changeMapType(MapType mapType) {
@@ -3676,7 +3685,7 @@ public class TilesView extends GLSurfaceView {
 
 //			clearTexRefs();
 		}
-
+		
 		private void clearIconPool() {
 			LogWrapper.i("TilesView", "clean iconPool total texture num:" + iconPool.size());
 			Iterator<Integer> iterator2 = iconPool.values().iterator();
