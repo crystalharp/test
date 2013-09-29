@@ -245,6 +245,7 @@ public class DownloadService extends IntentService {
             httpClient = HttpManager.getNewHttpClient();
             HttpUriRequest request = new HttpGet(url);
             
+            // 支持断点续传
             // Range:(unit=first byte pos)-[last byte pos] 
             // 指定第一个字节的位置和最后一个字节的位置
             // 在http请求头加入RANGE指定第一个字节的位置
@@ -254,7 +255,7 @@ public class DownloadService extends IntentService {
 //            HttpResponse response = client.execute(new HttpGet(url));
             HttpResponse response = HttpUtils.execute(getApplicationContext(), httpClient, request, url, "downloadService");
             HttpEntity entity = response.getEntity();
-            long length = entity.getContentLength();
+            long length = entity.getContentLength();   //TODO: getContentLength()某些服务器可能返回-1
             if(length == fileSize) {
                 return tempFile;
             }

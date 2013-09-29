@@ -5,6 +5,7 @@ import com.decarta.android.exception.APIException;
 import com.tigerknows.TKConfig;
 import com.tigerknows.android.net.HttpManager;
 import com.tigerknows.map.MapEngine;
+import com.tigerknows.map.MapEngine.CityInfo;
 import com.tigerknows.model.FileDownload.DataResponse.FileData;
 import com.tigerknows.model.test.BaseQueryTest;
 import com.tigerknows.model.xobject.XMap;
@@ -40,12 +41,6 @@ public final class FileDownload extends BaseQuery {
 
     // subway   地铁图
     public static final String FILE_TYPE_SUBWAY = "subway";
-    
-    private boolean complete = false;
-    
-    public boolean isComplete() {
-        return complete;
-    }
 
     public FileDownload(Context context) {
         super(context, API_TYPE_FILE_DOWNLOAD);
@@ -72,8 +67,6 @@ public final class FileDownload extends BaseQuery {
                     
                     if (file != null && !isStop) {
                         Utility.unZipFile(file.getAbsolutePath(), null, MapEngine.cityId2Floder(cityId));
-                        
-                        complete = true;
                     }
                 }
             }
@@ -149,6 +142,7 @@ public final class FileDownload extends BaseQuery {
             HttpClient httpClient = HttpManager.getNewHttpClient();
             HttpUriRequest request = new HttpGet(url);
             
+            // 支持断点续传
             // Range:(unit=first byte pos)-[last byte pos] 
             // 指定第一个字节的位置和最后一个字节的位置
             // 在http请求头加入RANGE指定第一个字节的位置
@@ -156,9 +150,9 @@ public final class FileDownload extends BaseQuery {
                 request.addHeader("RANGE", "bytes="+fileSize+"-");
             }
 //            HttpResponse response = client.execute(new HttpGet(url));
-            HttpResponse response = HttpUtils.execute(context, httpClient, request, url, "downloadService");
+            HttpResponse response = HttpUtils.execute(context, httpClient, request, url, "fileDownload");
             HttpEntity entity = response.getEntity();
-            long length = entity.getContentLength();
+            long length = entity.getContentLength();   //TODO: getContentLength()某些服务器可能返回-1
             if(length == fileSize) {
                 return tempFile;
             }
@@ -185,5 +179,29 @@ public final class FileDownload extends BaseQuery {
             e.printStackTrace();
         }
         return null;
+    }
+    
+    /**
+     * 检查城市地铁数据文件的是否完整
+     * @param cityId
+     * @return
+     */
+    public static boolean checkSubwayData(int cityId) {
+        boolean result = false;
+        
+        CityInfo cityInfo = MapEngine.getCityInfo(cityId);
+        if (cityInfo == null) {
+            return result;
+        }
+        
+        String path = MapEngine.cityId2Floder(cityId)+"sw_"+cityInfo.getEName()+"/";
+        String versionFilePath = path + "version.txt";
+        File verion = new File(versionFilePath);
+        if (verion.exists() && verion.isFile()) {
+            // TODO: 如何保证地铁数据的是否完整？目前是通过判断version.txt是否存在
+            result = true;
+        }
+        
+        return result;
     }
 }
