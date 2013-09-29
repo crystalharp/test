@@ -105,8 +105,8 @@
     <string name="cancel_all_select">取消全选</string>
     <string name="feature">特点：</string>
 
-    <string name="doing_and_wait">奋力请求中，请稍后</string>
-    <string name="network_failed">嘘，网络断了~请稍后重试</string>
+    <string name="doing_and_wait">奋力请求中，请稍候</string>
+    <string name="network_failed">嘘，网络断了~请稍候重试</string>
     <string name="no_network">无网络可用，请检查网络后重试！</string>
     <string name="network_error">网络错误！</string>
     
@@ -474,11 +474,11 @@
 <!--  =======================    Share Part    =========================== -->
 <!-- Share Module SinaWeibo Start -->
     <string name="weibo_same_content">你已经发过相同内容的微博啦。</string>
-    <string name="weibo_publish_failed_unknow">发布微博失败，请稍后再试。</string>
+    <string name="weibo_publish_failed_unknow">发布微博失败，请稍候再试。</string>
     <string name="weibo_max_char">微博文本内容限制在1至%1$s字数之间。</string>
     <string name="weibo_token_expire">微博访问口令已过期, 请重新登录</string>
     <string name="weibo_getprofile_failed">获取用户信息失败</string>
-    <string name="weibo_network_error">网络错误，请稍后再试。</string>
+    <string name="weibo_network_error">网络错误，请稍候再试。</string>
     <string name="weibo_loading">正在加载, 请稍候</string>
 <!-- Share Module SinaWeibo End -->
 
@@ -491,7 +491,7 @@
 <!-- Share Module Tencent End -->
 
 <!-- Share Module Common Start -->
-    <string name="operation_failed">操作失败，请稍后再试。</string>
+    <string name="operation_failed">操作失败，请稍候再试。</string>
     <string name="logout">注销</string>
     <string name="send">发送</string>
     <string name="attention">注意</string>
@@ -724,7 +724,7 @@
     
     <string name="weibo_logon_failed">登录失败</string>
     <string name="weibo_username_password_incorrect">用户名或密码不正确。</string>
-    <string name="weibo_logon_failed_unknow">登录微博失败，请稍后再试。</string>
+    <string name="weibo_logon_failed_unknow">登录微博失败，请稍候再试。</string>
 <!-- Discarded End -->    
 
     <string name="new_added_function">老虎宝典新增功能</string>
@@ -958,9 +958,9 @@
     <string name="response_code_404">密码输入有误，请重新输入。</string>
     <string name="response_code_405">原始密码有误，请重新输入。</string>
     <string name="response_code_406">手机号格式有误，请重新输入。</string>
-    <string name="response_code_407">数据异常，请稍后重试。</string>
+    <string name="response_code_407">数据异常，请稍候重试。</string>
     <string name="response_code_410">抱歉，该信息已过期。</string>
-    <string name="response_code_503">短信传输失败,请稍后重试。</string>
+    <string name="response_code_503">短信传输失败,请稍候重试。</string>
     <string name="response_code_601">确定覆盖你之前的点评吗？</string>
     <string name="response_code_602">抱歉，该点评不存在。</string>
     <string name="response_code_603">抱歉，该地址不存在或已失效。</string>
