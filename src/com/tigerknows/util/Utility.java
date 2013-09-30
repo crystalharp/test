@@ -790,7 +790,7 @@ public class Utility {
         View titleView = view.findViewById(R.id.titlePanel);
         View contentPanel = view.findViewById(R.id.contentPanel);
         ViewGroup customPanel = (ViewGroup) view.findViewById(R.id.customPanel);
-        View bottonView = view.findViewById(R.id.buttonPanel);
+        View buttonView = view.findViewById(R.id.buttonPanel);
         
         if (title != null) {
             titleView.setVisibility(View.VISIBLE);
@@ -814,10 +814,11 @@ public class Utility {
         }
         
         if (leftButtonText != null || rightButtonText != null) {
-            bottonView.setVisibility(View.VISIBLE);
-            View split = bottonView.findViewById(R.id.split_imv);
-            final Button leftBtn = (Button) bottonView.findViewById(R.id.button1);
-            final Button rightBtn = (Button) bottonView.findViewById(R.id.button2);
+            buttonView.setVisibility(View.VISIBLE);
+            final Button leftBtn = (Button) buttonView.findViewById(R.id.button1);
+            final Button rightBtn = (Button) buttonView.findViewById(R.id.button2);
+            View leftView = buttonView.findViewById(R.id.button1_view);
+            View rightView = buttonView.findViewById(R.id.button2_view);
             View.OnClickListener listener = new View.OnClickListener() {
                 
                 @Override
@@ -836,28 +837,25 @@ public class Utility {
                 }
             };
             if (leftButtonText == null) {
-                split.setVisibility(View.GONE);
-                leftBtn.setVisibility(View.GONE);
-                rightBtn.setVisibility(View.VISIBLE);
+                leftView.setVisibility(View.GONE);
+                rightView.setVisibility(View.VISIBLE);
                 rightBtn.setText(rightButtonText);
                 rightBtn.setOnClickListener(listener);
             } else if (rightButtonText == null) {
-                split.setVisibility(View.GONE);
-                leftBtn.setVisibility(View.VISIBLE);
-                rightBtn.setVisibility(View.GONE);
+                leftView.setVisibility(View.VISIBLE);
+                rightView.setVisibility(View.GONE);
                 leftBtn.setText(leftButtonText);
                 leftBtn.setOnClickListener(listener);
             } else {
-                split.setVisibility(View.VISIBLE);
-                leftBtn.setVisibility(View.VISIBLE);
-                rightBtn.setVisibility(View.VISIBLE);
+                leftView.setVisibility(View.VISIBLE);
+                rightView.setVisibility(View.VISIBLE);
                 leftBtn.setText(leftButtonText);
                 leftBtn.setOnClickListener(listener);
                 rightBtn.setText(rightButtonText);
                 rightBtn.setOnClickListener(listener);
             }
         } else {
-            bottonView.setVisibility(View.GONE);
+            buttonView.setVisibility(View.GONE);
         }
         
         // 下面这个判断，是为了避免点击切换城市对话框中的确认按钮结果仍然有其它对话框在显示的问题

@@ -14,15 +14,10 @@
      limitations under the License.
 -->
 
-<CheckedTextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/text1"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:background="@drawable/list_selector_background_dialog"
-    android:textColor="@color/black_dark"
-    android:gravity="center_vertical"
-    android:padding="8dip"
-    android:checkMark="@drawable/btn_check"
-    android:ellipsize="marquee"
-/>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <item android:state_window_focused="false" android:drawable="@drawable/list_selector_background_dialog_normal" />
+
+    <item android:state_focused="true" android:drawable="@drawable/list_selector_background_dialog_focused" />
+
+</selector>
