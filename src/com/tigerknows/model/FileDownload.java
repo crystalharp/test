@@ -186,8 +186,8 @@ public final class FileDownload extends BaseQuery {
      * @param cityId
      * @return
      */
-    public static boolean checkSubwayData(int cityId) {
-        boolean result = false;
+    public static String checkSubwayData(int cityId) {
+        String result = null;
         
         CityInfo cityInfo = MapEngine.getCityInfo(cityId);
         if (cityInfo == null) {
@@ -199,7 +199,7 @@ public final class FileDownload extends BaseQuery {
         File verion = new File(versionFilePath);
         if (verion.exists() && verion.isFile()) {
             // TODO: 如何保证地铁数据的是否完整？目前是通过判断version.txt是否存在
-            result = true;
+            result = path + "index.html";
         }
         
         return result;
