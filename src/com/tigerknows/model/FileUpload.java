@@ -53,7 +53,10 @@ public final class FileUpload extends BaseQuery {
         statusCode = STATUS_CODE_NONE;
 
         try {
+            addSessionId();
             addCommonParameters(Globals.getCurrentCityInfo().getId(), false);
+            
+            checkRequestParameters();
 
             HttpUtils.TKHttpClient.modifyRequestData(getParameters());
 
@@ -94,7 +97,9 @@ public final class FileUpload extends BaseQuery {
 
     @Override
     protected void checkRequestParameters() throws APIException {
-        // TODO Auto-generated method stub
+        String[] ekeys = new String[]{SERVER_PARAMETER_FILE_TYPE, SERVER_PARAMETER_REF_DATA_TYPE, SERVER_PARAMETER_CHECKSUM, SERVER_PARAMETER_FILENAME, SERVER_PARAMETER_UPFILE};
+        String[] okeys = new String[]{SERVER_PARAMETER_REF_ID};
+        debugCheckParameters(ekeys, okeys);
         
     }
 }

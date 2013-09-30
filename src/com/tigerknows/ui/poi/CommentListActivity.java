@@ -4,7 +4,6 @@
 
 package com.tigerknows.ui.poi;
 
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -153,9 +152,8 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
             finish();
         }
         
-        String json = Comment.draft2Json(mThis);
-        if (json != null) {
-            DataOperation dataOperation = makeCommendDataOperation(this, json);
+        DataOperation dataOperation = Comment.getLocalMark().makeCommendDataOperationByDraft(mThis);
+        if (dataOperation != null) {
             queryStart(dataOperation);
         }
     }
@@ -229,13 +227,6 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
                 return false;
             }
         });
-    }
-    
-    public static DataOperation makeCommendDataOperation(Context context, String json) {
-        DataOperation dataOperation = new DataOperation(context);
-        dataOperation.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_DIANPING);
-        dataOperation.addParameter(DataOperation.SERVER_PARAMETER_OPERATION_CODE, URLEncoder.encode(json));
-        return dataOperation;
     }
     
     protected void onResume() {
@@ -776,10 +767,12 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
                             }
                         }
                         
-                        Comment.addCommend(mThis, uuid, false);
-                        Comment.addCommend(mThis, uuid, true);
-                        DataOperation dataOperation = makeCommendDataOperation(mThis, Comment.uuid2Json(mThis, uuid));
-                        dataOperation.query();
+                        Comment.getLocalMark().addCommend(mThis, uuid, false);
+                        Comment.getLocalMark().addCommend(mThis, uuid, true);
+                        DataOperation dataOperation = Comment.getLocalMark().makeCommendDataOperationByUUID(mThis, uuid);
+                        if (dataOperation != null) {
+                            dataOperation.query();
+                        }
                     }
                 }).start();
                 

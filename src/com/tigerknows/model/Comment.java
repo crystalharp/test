@@ -10,7 +10,6 @@ package com.tigerknows.model;
 
 import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
-import com.tigerknows.TKConfig;
 import com.tigerknows.android.app.TKApplication;
 import com.tigerknows.model.xobject.XMap;
 import com.tigerknows.util.Utility;
@@ -24,8 +23,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URLEncoder;
 import java.util.Comparator;
-import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -128,12 +127,14 @@ public class Comment extends BaseData {
     
     private POI poi;
     private boolean isCommend = false;
+    private static LocalMark sLocalMark = null;
     
-    private static List<String> sCommendList = null;
-    private static List<String> sDraftCommendList = null;
-    private static Object writeLock = new Object();
-    private static File sDraftFile = null;
-    private static File sCommendFile = null;
+    public static LocalMark getLocalMark() {
+        if (sLocalMark == null) {
+            sLocalMark = new LocalMark("commend");
+        }
+        return sLocalMark;
+    }
     
     public boolean isCommend() {
         return isCommend;
@@ -155,7 +156,6 @@ public class Comment extends BaseData {
 
     public Comment (XMap data) throws APIException {
         super(data);
-        initCommendList(TKApplication.getInstance());
         init(data, true);
     }
     
@@ -189,11 +189,11 @@ public class Comment extends BaseData {
             this.data = null;
         }
         
-        boolean draft = findCommend(TKApplication.getInstance(), this.uid, false);
+        boolean draft = getLocalMark().findCommend(TKApplication.getInstance(), this.uid, false);
         if (draft) {
             addCommend(draft);
         } else {
-            isCommend = findCommend(TKApplication.getInstance(), this.uid, true);
+            isCommend = getLocalMark().findCommend(TKApplication.getInstance(), this.uid, true);
         }
     }
     
@@ -585,150 +585,6 @@ public class Comment extends BaseData {
         }
     };
     
-    private static File getFile(Context context, boolean sent) {
-        if (sent && sCommendFile != null) {
-            return sCommendFile;
-        } else if (!sent && sDraftFile != null) {
-            return sDraftFile;
-        }
-        File file = new File(context.getFilesDir().getAbsolutePath() + "/commend"+(sent ? "sent" : "draft"));
-//        File file = new File(TKConfig.getDataPath(true) + "/commend"+(sent ? "sent" : "draft"));
-        if (!file.exists()) {
-            try {
-                file.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return file;
-    }
-    
-    //对于已经赞过的commend列表并不会再去删除，数据量会变大，所以写入策略选用追加
-    public static void addCommend(Context context, String uuid, boolean sent) {
-        File file = getFile(context, sent);
-        List<String> list = getCommendList(sent);
-        list.add(uuid);
-        synchronized(writeLock) {
-            Utility.writeFile(file.getAbsolutePath(), (uuid + "\n").getBytes(), false);
-        }
-    }
-    
-    public static boolean findCommend(Context context, String uuid, boolean sent) {
-        boolean result = false;
-        if (uuid == null) {
-            return result;
-        }
-        List<String> list = getCommendList(sent);
-        if (list.contains(uuid)) {
-            result = true;
-        }
-        return result;
-    }
-    
-    //因为只会删除draft中的id，所以它的写入策略是删掉原文件，然后整个list写进去。
-    public static void deleteCommend(Context context, String uuids[], boolean sent) {
-        File file = getFile(context, sent);
-        List<String> list = getCommendList(sent);
-        for (String uuid : uuids) {
-            list.remove(uuid);
-        }
-        writeCommendList(file, list);
-        
-        return;
-    }
-    
-    private final static List<String> getCommendList(boolean sent) {
-        if (sent) {
-            return sCommendList;
-        } else {
-            return sDraftCommendList;
-        }
-    }
-    
-    private final static void initCommendList(Context context) {
-        if (sDraftCommendList == null || sCommendList == null) {
-            sDraftCommendList = new LinkedList<String>();
-            sCommendList = new LinkedList<String>();
-            try {
-                sCommendFile = getFile(context, true);
-                sDraftFile = getFile(context, false);
-                String line = null;
-                BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(sCommendFile)));
-                while((line = br.readLine()) != null) {
-                    sCommendList.add(line);
-                }
-                br.close();
-                br = new BufferedReader(new InputStreamReader(new FileInputStream(sDraftFile)));
-                while ((line = br.readLine()) != null) {
-                    sDraftCommendList.add(line);
-                }
-                br.close();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-    
-    private static void writeCommendList(File file, List<String> list) {
-        synchronized(writeLock) {
-            StringBuilder sb = new StringBuilder();
-            for (String s : list) {
-                sb.append(s);
-                sb.append('\n');
-            }
-            Utility.writeFile(file.getAbsolutePath(), sb.toString().getBytes(), true);
-        }
-    }
-    
-    public static final String JsonHeader = "json{\"up\":[";
-
-    public static String uuid2Json(Context context, String uuid) {
-        StringBuilder json = new StringBuilder();
-        json.append(JsonHeader);
-        json.append('"');
-        json.append(uuid);
-        json.append('"');
-        json.append("]}");
-        return json.toString();
-    }
-
-    public static String draft2Json(Context context) {
-        StringBuilder json = new StringBuilder();
-        json.append(JsonHeader);
-        File file = getFile(context, false);
-
-        int i = 0;
-        try {
-            BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
-            String line = null;
-            while((line = br.readLine()) != null) {
-                line = line.trim();
-                if (TextUtils.isEmpty(line) == false) {
-                    if (i > 0) {
-                        json.append(',');
-                    }
-                    json.append('"');
-                    json.append(line);
-                    json.append('"');
-                    i++;
-                }
-            }
-            json.append("]}");
-            br.close();
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        
-        if (i == 0) {
-            return null;
-        } else {
-            return json.toString();
-        }
-    }
-    
     public Comment clone() {
         Comment other = null;
         try {
@@ -738,5 +594,197 @@ public class Comment extends BaseData {
             e.printStackTrace();
         }
         return other;
+    }
+    
+    /**
+     * 对某一对象的是否标记状态存储在本地，其标记总数存储在服务器端
+     * 在合适的时机将存储在本地的标记状态信息上传到服务器
+     * @author pengwenyue
+     *
+     */
+    public static class LocalMark {
+        
+        private String fileName = null;
+        private List<String> sCommendList = null;
+        private List<String> sDraftCommendList = null;
+        private Object writeLock = new Object();
+        private File sDraftFile = null;
+        private File sCommendFile = null;
+        
+        public LocalMark(String fileName) {
+            this.fileName = fileName;
+            
+            initCommendList(TKApplication.getInstance());
+        }
+        
+        private File getFile(Context context, boolean sent) {
+            if (sent && sCommendFile != null) {
+                return sCommendFile;
+            } else if (!sent && sDraftFile != null) {
+                return sDraftFile;
+            }
+            File file = new File(context.getFilesDir().getAbsolutePath() + "/" + fileName +(sent ? "sent" : "draft"));
+//            File file = new File(TKConfig.getDataPath(true) + "/commend"+(sent ? "sent" : "draft"));
+            if (!file.exists()) {
+                try {
+                    file.createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            return file;
+        }
+        
+        //对于已经赞过的commend列表并不会再去删除，数据量会变大，所以写入策略选用追加
+        public void addCommend(Context context, String uuid, boolean sent) {
+            File file = getFile(context, sent);
+            List<String> list = getCommendList(sent);
+            if (list.contains(uuid)) {
+                return;
+            }
+            list.add(uuid);
+            synchronized(writeLock) {
+                Utility.writeFile(file.getAbsolutePath(), (uuid + "\n").getBytes(), false);
+            }
+        }
+        
+        public boolean findCommend(Context context, String uuid, boolean sent) {
+            boolean result = false;
+            if (uuid == null) {
+                return result;
+            }
+            List<String> list = getCommendList(sent);
+            if (list.contains(uuid)) {
+                result = true;
+            }
+            return result;
+        }
+        
+        //因为只会删除draft中的id，所以它的写入策略是删掉原文件，然后整个list写进去。
+        public void deleteCommend(Context context, String uuids[], boolean sent) {
+            File file = getFile(context, sent);
+            List<String> list = getCommendList(sent);
+            boolean deleted = false;
+            for (String uuid : uuids) {
+                deleted |= list.remove(uuid);
+            }
+            if (deleted) {
+                writeCommendList(file, list);
+            }
+            
+            return;
+        }
+        
+        private final List<String> getCommendList(boolean sent) {
+            if (sent) {
+                return sCommendList;
+            } else {
+                return sDraftCommendList;
+            }
+        }
+        
+        private final void initCommendList(Context context) {
+            if (sDraftCommendList == null || sCommendList == null) {
+                sDraftCommendList = new LinkedList<String>();
+                sCommendList = new LinkedList<String>();
+                try {
+                    sCommendFile = getFile(context, true);
+                    sDraftFile = getFile(context, false);
+                    String line = null;
+                    BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(sCommendFile)));
+                    while((line = br.readLine()) != null) {
+                        sCommendList.add(line);
+                    }
+                    br.close();
+                    br = new BufferedReader(new InputStreamReader(new FileInputStream(sDraftFile)));
+                    while ((line = br.readLine()) != null) {
+                        sDraftCommendList.add(line);
+                    }
+                    br.close();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        
+        private void writeCommendList(File file, List<String> list) {
+            synchronized(writeLock) {
+                StringBuilder sb = new StringBuilder();
+                for (String s : list) {
+                    sb.append(s);
+                    sb.append('\n');
+                }
+                Utility.writeFile(file.getAbsolutePath(), sb.toString().getBytes(), true);
+            }
+        }
+        
+        public static final String JsonHeader = "json{\"up\":[";
+
+        private static String uuid2Json(Context context, String uuid) {
+            StringBuilder json = new StringBuilder();
+            json.append(JsonHeader);
+            json.append('"');
+            json.append(uuid);
+            json.append('"');
+            json.append("]}");
+            return json.toString();
+        }
+
+        private String draft2Json(Context context) {
+            StringBuilder json = new StringBuilder();
+            json.append(JsonHeader);
+            File file = getFile(context, false);
+
+            int i = 0;
+            try {
+                BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+                String line = null;
+                while((line = br.readLine()) != null) {
+                    line = line.trim();
+                    if (TextUtils.isEmpty(line) == false) {
+                        if (i > 0) {
+                            json.append(',');
+                        }
+                        json.append('"');
+                        json.append(line);
+                        json.append('"');
+                        i++;
+                    }
+                }
+                json.append("]}");
+                br.close();
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            
+            if (i == 0) {
+                return null;
+            } else {
+                return json.toString();
+            }
+        }
+        
+        public DataOperation makeCommendDataOperationByUUID(Context context, String uuid) {
+            String json = uuid2Json(context, uuid);
+            return makeCommendDataOperation(context, json);
+        }
+        
+        public DataOperation makeCommendDataOperationByDraft(Context context) {
+            String json = draft2Json(context);
+            return makeCommendDataOperation(context, json);
+        }
+        
+        static DataOperation makeCommendDataOperation(Context context, String json) {
+            DataOperation dataOperation = null;
+            if (TextUtils.isEmpty(json) == false) {
+                dataOperation = new DataOperation(context);
+                dataOperation.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_DISH);
+                dataOperation.addParameter(DataOperation.SERVER_PARAMETER_OPERATION_CODE, URLEncoder.encode(json));
+            }
+            return dataOperation;
+        }
     }
 }

@@ -223,6 +223,12 @@ public abstract class BaseQuery {
     // uuid     string  true    用于唯一标识联网请求的uuid或uuid_offset 
     public static final String SERVER_PARAMETER_UUID = "uuid";
     
+    // refdty   true    相关数据的类型，现在支持1（poi）和24（菜品）
+    public static final String SERVER_PARAMETER_REF_DATA_TYPE = "refdty";
+    
+    // refid    false   数据的id
+    public static final String SERVER_PARAMETER_REF_ID = "refid";
+    
     /**
      * 检查是否为推送动态POI的查询
      * @return
@@ -295,6 +301,12 @@ public abstract class BaseQuery {
     
     // 默认筛选项等配置文件 23
     public static final String DATA_TYPE_FILTER = "23";
+    
+    // 菜品 24
+    public static final String DATA_TYPE_DISH = "24";
+    
+    // 图片 25
+    public static final String DATA_TYPE_PICTURE = "25";
 
     // 发现首页动态数据统计 100
     public static final String DATA_TYPE_DISCOVER = "100";

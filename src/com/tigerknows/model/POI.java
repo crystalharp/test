@@ -452,6 +452,10 @@ public class POI extends BaseData {
     
     private List<Dianying> dynamicDianyingList;
     
+    private DataQuery dishQuery = null;
+    
+    private DataQuery recommendDishQuery = null;
+    
     private DataQuery commentQuery = null;
     
     private DataQuery hotCommentQuery = null;
@@ -625,6 +629,22 @@ public class POI extends BaseData {
     
     public DataQuery getHotCommentQuery() {
         return this.hotCommentQuery;
+    }
+    
+    public void setDishQuery(DataQuery dishQuery) {
+        this.dishQuery = dishQuery;
+    }
+    
+    public DataQuery getDishQuery() {
+        return this.dishQuery;
+    }
+    
+    public void setRecommendDishQuery(DataQuery recommendDishQuery) {
+        this.recommendDishQuery = recommendDishQuery;
+    }
+    
+    public DataQuery getRecommendDishQuery() {
+        return this.recommendDishQuery;
     }
     
     public void setCouponQuery(DataQuery couponQuery) {

@@ -27,6 +27,7 @@ import com.tigerknows.map.MapEngine;
 import com.tigerknows.model.DataQuery.DiscoverResponse.DiscoverConfigList;
 import com.tigerknows.model.DataQuery.DiscoverResponse.DiscoverCategoryList.DiscoverCategory;
 import com.tigerknows.model.DataQuery.DiscoverResponse.DiscoverConfigList.DiscoverConfig;
+import com.tigerknows.model.Hotel.HotelTKDrawable;
 import com.tigerknows.model.test.DataQueryTest;
 import com.tigerknows.model.xobject.ByteReader;
 import com.tigerknows.model.xobject.XArray;
@@ -36,6 +37,9 @@ import com.tigerknows.util.ByteUtil;
 import com.tigerknows.util.PinyinUtil;
 import com.tigerknows.util.Utility;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.InputSource;
@@ -628,6 +632,10 @@ public final class DataQuery extends BaseQuery {
         } else if (DATA_TYPE_COUPON.equals(dataType)) {
             ekeys = Utility.mergeArray(ekeys, new String[] {SERVER_PARAMETER_POI_ID, SERVER_PARAMETER_NEED_FIELD});
             debugCheckParameters(ekeys, okeys);
+        } else if (DATA_TYPE_DISH.equals(dataType)) {
+            ekeys = Utility.mergeArray(ekeys, new String[] {SERVER_PARAMETER_POI_ID, SERVER_PARAMETER_NEED_FIELD});
+            okeys = Utility.mergeArray(okeys, new String[] {SERVER_PARAMETER_BIAS});
+            debugCheckParameters(ekeys, okeys);
         } else {
             throw APIException.wrapToMissingRequestParameterException("invalid data type.");
         }
@@ -812,7 +820,8 @@ public final class DataQuery extends BaseQuery {
                 nfv = Filter_Category_Order_POI.version;
             }
             addFilterParameters(cfv, nfv);
-
+        } else if (DATA_TYPE_DISH.equals(dataType)) {
+            addParameter(SERVER_PARAMETER_NEED_FIELD, Dish.NEED_FIELD);
         }
         
         addParameter(SERVER_PARAMETER_TIME_STAMP, TIME_STAMP_FORMAT.format(Calendar.getInstance().getTime()));
@@ -901,6 +910,9 @@ public final class DataQuery extends BaseQuery {
         } else if (DATA_TYPE_FILTER.equals(dataType)) {
             FilterConfigResponse response = new FilterConfigResponse(responseXMap);
             translateFilter(response.getFilterResponse(), dataType, subDataType, filterList);
+            this.response = response;
+        } else if (DATA_TYPE_DISH.equals(dataType)) {
+            DishResponse response = new DishResponse(responseXMap);
             this.response = response;
         }
     }
@@ -1778,6 +1790,160 @@ public final class DataQuery extends BaseQuery {
             }
         }
     }
+
+    public static class DishResponse extends Response {
+        // 0x02     x_map   菜品结果
+        public static final byte FIELD_LIST = 0x02;
+
+        private DishList list;
+
+        public DishResponse(XMap data) throws APIException {
+            super(data);
+
+            if (this.data.containsKey(FIELD_LIST)) {
+                this.list = new DishList(this.data.getXMap(FIELD_LIST));
+            }
+        }
+
+        public DishList getList() {
+            return list;
+        }
+
+        public static class DishList extends XMapData {
+            
+            // 0x01     x_array<x_map>  x_array<菜品> 
+            public static final byte FIELD_DISH_LIST = 0x01;
+
+            // 0x02     x_string    json格式，分类列表的顺序，暗含菜品从属类别
+            public static final byte FIELD_CATEGORY_LIST = 0x02;
+
+            private List<Dish> dishList;
+
+            private List<Category> categoryList;
+
+            public DishList(XMap data) throws APIException {
+                super(data);
+
+                this.dishList = getListFromData(FIELD_DISH_LIST, Dish.Initializer);
+                
+                String json = getStringFromData(FIELD_CATEGORY_LIST);
+                if (json != null) {
+                    categoryList = new ArrayList<DataQuery.DishResponse.Category>();
+                    try {
+                        JSONArray jsonArray = new JSONArray(json);
+                        for(int i = 0, length = jsonArray.length(); i < length; i++) {
+                            JSONObject sift = (JSONObject) jsonArray.get(i);
+                            Category category = new Category();
+                            category.id = sift.getInt("sift_id");
+                            category.name = sift.getString("sift_name");
+                            JSONArray classsfication_list = sift.getJSONArray("classsfication_list");
+                            List<Category> childCategoryList = new ArrayList<DataQuery.DishResponse.Category>();
+                            if (classsfication_list != null && classsfication_list.length() > 0) {
+                                for(int j = 0, size = classsfication_list.length(); j < size; j++) {
+                                    JSONObject classsfication = (JSONObject) classsfication_list.get(j);
+                                    Category childCategory = new Category();
+                                    childCategory.id = classsfication.getInt("classfication_id");
+                                    childCategory.name = classsfication.getString("classfication_name");
+                                    JSONArray dishes_list = classsfication.getJSONArray("dishes_list");
+                                    if (dishes_list != null && dishes_list.length() > 0) {
+                                        List<Long> dishList = new ArrayList<Long>();
+                                        for(int k = 0, count = dishes_list.length(); k < count; k++) {
+                                            dishList.add(dishes_list.getLong(k));
+                                        }
+                                        childCategory.dishList = dishList;
+                                    }
+                                    childCategoryList.add(childCategory);
+                                }
+                                category.childList = childCategoryList;
+                            }
+                            categoryList.add(category);
+                        }
+                    } catch (JSONException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            public List<Dish> getDishList() {
+                return dishList;
+            }
+
+            public List<Category> getCategoryList() {
+                return categoryList;
+            }
+        }
+        
+        public static class Category {
+            private int id;
+            private String name;
+            private List<Long> dishList;
+            private List<Category> childList;
+            
+            public int getId() {
+                return id;
+            }
+            
+            public String getName() {
+                return name;
+            }
+            
+            public List<Category> getChildList() {
+                return childList;
+            }
+            
+            public List<Long> getDishList() {
+                return dishList;
+            }
+        }
+    }
+
+    public static class PictureResponse extends Response {
+        // 0x02     x_map   图片结果
+        public static final byte FIELD_LIST = 0x02;
+
+        private PictureList list;
+
+        public PictureResponse(XMap data) throws APIException {
+            super(data);
+
+            if (this.data.containsKey(FIELD_LIST)) {
+                this.list = new PictureList(this.data.getXMap(FIELD_LIST));
+            }
+        }
+
+        public PictureList getList() {
+            return list;
+        }
+
+        public static class PictureList extends XMapData {
+            
+            // 0x00     x_int   图片总数 
+            public static final byte FIELD_TOTAL = 0x00;
+
+            // 0x01     x_array<x_map>  x_array<图片>
+            public static final byte FIELD_LIST = 0x01;
+
+            private long total;
+
+            private List<HotelTKDrawable> pictureList;
+
+            public PictureList(XMap data) throws APIException {
+                super(data);
+
+                this.total = getLongFromData(FIELD_TOTAL, 0);
+                this.pictureList = getListFromData(FIELD_LIST, HotelTKDrawable.Initializer, null);
+            }
+
+            public long getTotal() {
+                return total;
+            }
+
+            public List<HotelTKDrawable> getPictureList() {
+                return pictureList;
+            }
+        }
+    }
     
     public static class DianyingResponse extends DiscoverCategoreResponse {
         // 0x02    x_map   影片结果
@@ -2617,6 +2783,10 @@ public final class DataQuery extends BaseQuery {
         	responseXMap = DataQueryTest.launchCouponResponse(168, "launchCouponResponse");
         } else if (DATA_TYPE_FILTER.equals(dataType)){
             responseXMap = DataQueryTest.launchFilterConfigResponse();
+        } else if (DATA_TYPE_DISH.equals(dataType)){
+            responseXMap = DataQueryTest.launchDishResponse(168);
+        } else if (DATA_TYPE_PICTURE.equals(dataType)){
+            responseXMap = DataQueryTest.launchPictureResponse(168);
         }
     }
 }

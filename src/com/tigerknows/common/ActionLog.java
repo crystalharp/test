@@ -243,6 +243,12 @@ public class ActionLog extends LogUpload {
     public static final String POIDetailMap = "AL";
     public static final String POIHotelListMap = "AU";
     public static final String POIHotelDetailMap = "AV";
+
+    public static final String Dish = "AW";
+    public static final String DishRecomend = "BA";
+    public static final String DishAll = "BB";
+    public static final String DishMyLike = "BC";
+    public static final String DishTigerRecommend = "BD";
     
     // 优惠券列表页
     public static final String CouponList = "AM";

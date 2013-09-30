@@ -11,8 +11,12 @@ import com.tigerknows.model.DataQuery.AlternativeResponse;
 import com.tigerknows.model.DataQuery.CouponResponse;
 import com.tigerknows.model.DataQuery.CouponResponse.CouponList;
 import com.tigerknows.model.DataQuery.FilterConfigResponse;
+import com.tigerknows.model.DataQuery.DishResponse;
+import com.tigerknows.model.DataQuery.PictureResponse;
+import com.tigerknows.model.DataQuery.PictureResponse.PictureList;
 import com.tigerknows.model.Dianying;
 import com.tigerknows.model.Fendian;
+import com.tigerknows.model.Dish;
 import com.tigerknows.model.Hotel;
 import com.tigerknows.model.Hotel.HotelTKDrawable;
 import com.tigerknows.model.Hotel.RoomType;
@@ -45,6 +49,7 @@ import com.tigerknows.model.DataQuery.DianyingResponse.DianyingList;
 import com.tigerknows.model.DataQuery.DiscoverResponse.DiscoverCategoryList;
 import com.tigerknows.model.DataQuery.DiscoverResponse.DiscoverCategoryList.DiscoverCategory;
 import com.tigerknows.model.DataQuery.FendianResponse.FendianList;
+import com.tigerknows.model.DataQuery.DishResponse.DishList;
 import com.tigerknows.model.DataQuery.POIResponse.POIList;
 import com.tigerknows.model.DataQuery.ShangjiaResponse.ShangjiaList;
 import com.tigerknows.model.DataQuery.TuangouResponse.TuangouList;
@@ -137,8 +142,7 @@ public class DataQueryTest {
         data.put(DiscoverResponse.DiscoverConfigList.FIELD_VERSION, version);
         XArray<XMap> list = new XArray<XMap>();
         
-        MapEngine mapEngine = MapEngine.getInstance();
-        List<CityInfo> allCityInfoList = mapEngine.getAllProvinceCityList(context);  
+        List<CityInfo> allCityInfoList = MapEngine.getAllProvinceCityList(context);  
         for(CityInfo cityInfo : allCityInfoList) {
             List<CityInfo> cityInfoList = cityInfo.getCityList();
             for(CityInfo cityInfoChild : cityInfoList) {
@@ -890,6 +894,56 @@ public class DataQueryTest {
         data.put(Coupon.FIELD_LOGO, BaseQueryTest.PIC_URL);
         data.put(Coupon.FIELD_HINT_PIC, "FIELD_HINT_PIC");
         data.put(Coupon.FIELD_REMARK, "FIELD_REMARK");
+        return data;
+    }
+
+    public static XMap launchDishResponse(int total) {
+        XMap data = new XMap();
+        BaseQueryTest.launchResponse(data);
+        data.put(DishResponse.FIELD_LIST, launchDishList(total));
+        return data;
+    }
+
+    protected static XMap launchDishList(int total) {
+        XMap data = new XMap();
+        XArray<XMap> list = new XArray<XMap>();
+        for(int i = 0 ; i < total; i ++) {
+            list.add(launchDish(i));
+        }
+        data.put(DishList.FIELD_DISH_LIST, list);
+        data.put(DishList.FIELD_CATEGORY_LIST, "[{\"sift_id\":1, \"sift_name\":\"菜单项1\", \"classsfication_list\":[{\"classfication_id\":1, \"classfication_name\":\"特色烤鱼1\", \"dishes_list\":[1,2,3]}]},{\"sift_id\":1, \"sift_name\":\"菜单项2\", \"classsfication_list\":[{\"classfication_id\":1, \"classfication_name\":\"特色烤鱼2\", \"dishes_list\":[4,5,6]}]}]");
+        return data;
+    }
+
+    protected static XMap launchDish(int id) {
+        XMap data = new XMap();
+        data.put(Dish.FIELD_DISH_ID, id);
+        data.put(Dish.FIELD_LINK_UID, "FIELD_LINK_UID");
+        data.put(Dish.FIELD_CITY_ID, "1");
+        data.put(Dish.FIELD_FOOD_NAME, id+"FIELD_FOOD_NAME");
+        data.put(Dish.FIELD_PRICE, "FIELD_PRICE;FIELD_PRICE;FIELD_PRICE");
+        data.put(Dish.FIELD_PRICE_JSON, "[]");
+        data.put(Dish.FIELD_DEFAULT_PICTURE, launchHotelTKDrawable(1));
+        data.put(Dish.FIELD_FOOD_PICTURES, 1);
+        data.put(Dish.FIELD_HIT_COUNT, 1);
+        return data;
+    }
+
+    public static XMap launchPictureResponse(int total) {
+        XMap data = new XMap();
+        BaseQueryTest.launchResponse(data);
+        data.put(PictureResponse.FIELD_LIST, launchPictureList(total));
+        return data;
+    }
+
+    protected static XMap launchPictureList(int total) {
+        XMap data = new XMap();
+        data.put(PictureList.FIELD_TOTAL, total);
+        XArray<XMap> list = new XArray<XMap>();
+        for(int i = 0 ; i < total; i ++) {
+            list.add(launchHotelTKDrawable(i));
+        }
+        data.put(PictureList.FIELD_LIST, list);
         return data;
     }
 }

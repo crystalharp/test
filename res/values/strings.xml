@@ -1282,4 +1282,7 @@
     <string name="pause">暂停</string>
     <string name="download_complete_and_install">下载已完成，点击安装</string>
     <string name="install">安装</string>
+    
+    <string name="like_">喜欢%1$d</string>
+    <string name="cancel_like">取消喜欢</string>
 </resources>

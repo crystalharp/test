@@ -97,7 +97,7 @@ public class DataOperation extends BaseQuery {
             debugCheckParameters(Utility.mergeArray(ekeys,new String[] {SERVER_PARAMETER_DATA_UID, SERVER_PARAMETER_ENTITY}));
         } else if (OPERATION_CODE_DELETE.equals(operationCode)) {
             debugCheckParameters(Utility.mergeArray(ekeys,new String[] {SERVER_PARAMETER_DATA_UID}));
-        } else if (operationCode.startsWith(URLEncoder.encode(Comment.JsonHeader))) {
+        } else if (operationCode.startsWith(URLEncoder.encode(Comment.LocalMark.JsonHeader))) {
             
         } else {
             throw APIException.wrapToMissingRequestParameterException("operationCode invalid.");
@@ -156,14 +156,14 @@ public class DataOperation extends BaseQuery {
             if (DATA_TYPE_DIANPING.equals(dataType)) {
                 response = new CommentUpdateResponse(responseXMap);
             }
-        } else if (operationCode.startsWith(URLEncoder.encode(Comment.JsonHeader))) {
+        } else if (operationCode.startsWith(URLEncoder.encode(Comment.LocalMark.JsonHeader))) {
             if (DATA_TYPE_DIANPING.equals(dataType)) {
                 response = new Response(responseXMap);
                 if (response.getResponseCode() == Response.RESPONSE_CODE_OK) {
                     operationCode = URLDecoder.decode(operationCode);
-                    operationCode = operationCode.substring(Comment.JsonHeader.length()+1, operationCode.length()-3);
+                    operationCode = operationCode.substring(Comment.LocalMark.JsonHeader.length()+1, operationCode.length()-3);
                     String[] uuids = operationCode.split("\",\"");
-                    Comment.deleteCommend(context, uuids, false);
+                    Comment.getLocalMark().deleteCommend(context, uuids, false);
                 }
             }
         }
@@ -237,12 +237,12 @@ public class DataOperation extends BaseQuery {
             uid = getStringFromData(FIELD_UID);
             likes = getLongFromData(FIELD_LIKES);
             
-            boolean draft = Comment.findCommend(TKApplication.getInstance(), this.uid, false);
+            boolean draft = Comment.getLocalMark().findCommend(TKApplication.getInstance(), this.uid, false);
             if (draft) {
                 isCommend = true;
                 likes++;
             } else {
-                isCommend = Comment.findCommend(TKApplication.getInstance(), this.uid, true);
+                isCommend = Comment.getLocalMark().findCommend(TKApplication.getInstance(), this.uid, true);
             }
         }
 
@@ -503,7 +503,7 @@ public class DataOperation extends BaseQuery {
                 if (DATA_TYPE_DIANPING.equals(dataType)) {
                     responseXMap = DataOperationTest.launchDianpingUpdateResponse();
                 }
-            } else if (operationCode.startsWith(URLEncoder.encode(Comment.JsonHeader))) {
+            } else if (operationCode.startsWith(URLEncoder.encode(Comment.LocalMark.JsonHeader))) {
                 if (DATA_TYPE_DIANPING.equals(dataType)) {
                     responseXMap = BaseQueryTest.launchResponse(new XMap());
                 }

@@ -159,6 +159,7 @@ import com.tigerknows.ui.more.SettingActivity;
 import com.tigerknows.ui.poi.CommentListActivity;
 import com.tigerknows.ui.poi.CouponDetailFragment;
 import com.tigerknows.ui.poi.CouponListFragment;
+import com.tigerknows.ui.poi.DishActivity;
 import com.tigerknows.ui.poi.EditCommentActivity;
 import com.tigerknows.ui.poi.POIReportErrorActivity;
 import com.tigerknows.ui.poi.POIHomeFragment;
@@ -3244,6 +3245,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 intent.setAction("android.settings.LOCATION_SOURCE_SETTINGS");
                 intent.addCategory(Intent.CATEGORY_DEFAULT);
                 startActivityForResult(intent, R.id.activity_setting_location);
+                return true;
+            } else if (R.id.activity_poi_dish == viewId) {
+                intent.setClass(this, DishActivity.class);
+                startActivityForResult(intent, R.id.activity_poi_dish);
                 return true;
             }
             mUIProcessing = true;
