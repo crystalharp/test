@@ -41,6 +41,8 @@ public class TitleFragment extends BaseFragment implements View.OnClickListener 
     
     protected Button right2Btn;
     
+    protected View skylineView;
+    
     protected ListView popupLsv;
     
     @Override
@@ -59,6 +61,7 @@ public class TitleFragment extends BaseFragment implements View.OnClickListener 
         leftBtn = (Button) mRootView.findViewById(R.id.left_btn);
         rightBtn = (Button) mRootView.findViewById(R.id.right_btn);
         right2Btn = (Button) mRootView.findViewById(R.id.right2_btn);
+        skylineView = mRootView.findViewById(R.id.skyline_view);
     }
 
     protected void setListener() {
@@ -92,6 +95,10 @@ public class TitleFragment extends BaseFragment implements View.OnClickListener 
     public Button getRight2Txv() {
         return right2Btn;
     }
+
+    public View getSkylineView() {
+        return skylineView;
+    }
     
     public void showPopupWindow(ListAdapter adapter, OnItemClickListener listener, String actionTag) {
     	this.mActionTag = actionTag;
@@ -118,6 +125,8 @@ public class TitleFragment extends BaseFragment implements View.OnClickListener 
 
             // 这个是为了点击“返回Back”也能使其消失，并且并不会影响你的背景
             mPopupWindow.setBackgroundDrawable(new BitmapDrawable());
+            mPopupWindow.setAnimationStyle(R.style.AlterImageDialog);
+            mPopupWindow.update();
             mPopupWindow.setOnDismissListener(new OnDismissListener() {
                 
                 @Override

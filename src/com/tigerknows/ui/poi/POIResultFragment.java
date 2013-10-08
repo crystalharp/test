@@ -1065,6 +1065,8 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
 
             // 这个是为了点击“返回Back”也能使其消失，并且并不会影响你的背景
             mPopupWindow.setBackgroundDrawable(new BitmapDrawable());
+            mPopupWindow.setAnimationStyle(-1);
+            mPopupWindow.update();
             mPopupWindow.setOnDismissListener(new OnDismissListener() {
                 
                 @Override
