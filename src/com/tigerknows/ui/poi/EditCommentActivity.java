@@ -719,6 +719,8 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
             
             final MultichoiceArrayAdapter multichoiceArrayAdapter = new MultichoiceArrayAdapter(mThis, mRestairArray, mRestairChecked);
             ListView listView = Utility.makeListView(mThis);
+            listView.setDivider(null);
+            listView.setDividerHeight(0);
             listView.setAdapter(multichoiceArrayAdapter);
             listView.setOnItemClickListener(new OnItemClickListener() {
 

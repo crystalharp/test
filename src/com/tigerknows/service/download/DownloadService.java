@@ -3,8 +3,8 @@ package com.tigerknows.service.download;
 
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
+import com.tigerknows.TKConfig;
 import com.tigerknows.android.net.HttpManager;
-import com.tigerknows.map.MapEngine;
 import com.tigerknows.model.test.BaseQueryTest;
 import com.tigerknows.util.HttpUtils;
 
@@ -31,34 +31,71 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 public class DownloadService extends IntentService {
     
     static final String TAG = "DownloadService";
     
-    public static final String EXTRA_URL = "EXTRA_URL";
+    public static class DownloadItem {
+        int id;
+        String tickerText;
+        RemoteViews remoteViews;
+        Notification notification;
+        int percent = 0;
+        boolean stop = false;
+        
+        DownloadItem(int id, String tickerText, RemoteViews remoteViews, Notification notification, int percent) {
+            this.id = id;
+            this.tickerText = tickerText;
+            this.remoteViews = remoteViews;
+            this.notification = notification;
+            this.percent = percent;
+        }
+    }
     
-    public static final String EXTRA_TICKERTEXT = "EXTRA_TICKERTEXT";
+    public static final String EXTRA_URL = "extra_url";
     
-    public static final String EXTRA_IS_DOWNLOADING = "EXTRA_IS_DOWNLOADING";
+    public static final String EXTRA_TICKERTEXT = "extra_tickertext";
+    
+    public static final String EXTRA_PERCENT = "extra_percent";
+    
+    public static final String EXTRA_FILE = "extra_file";
+    
+    public static final String EXTRA_IS_DOWNLOADED = "extra_is_downloaded";
+    
+    public static final String EXTRA_OPERATION_CODE = "extra_operation_code";
+    
+    /**
+     * 添加
+     */
+    public static final String OPERATION_CODE_ADD = "add";
+    
+    /**
+     * 清空
+     */
+    public static final String OPERATION_CODE_CLEAR = "clear";
+    
+    /**
+     * 暂停
+     */
+    public static final String OPERATION_CODE_PAUSE = "pause";
     
     static final long RETRY_TIME = 6 *1000;
-	
-	private static Set<String> downloadingUrlSet = new HashSet<String>();
     
-	private static Map<String, DownloadedProcessor> processorMap = new HashMap<String, DownloadedProcessor>();
+    private static HashMap<String, DownloadItem> sDownloadList = new HashMap<String, DownloadItem>();
     
-	public static void download(Context context, String url, String tickerText, DownloadedProcessor processor) {
+    private static Map<String, DownloadedProcessor> processorMap = new HashMap<String, DownloadedProcessor>();
+    
+    public static void download(Context context, String url, String tickerText, DownloadedProcessor processor) {
         if (!TextUtils.isEmpty(url)) {
             Intent service = new Intent(context, DownloadService.class);
+            service.putExtra(EXTRA_OPERATION_CODE, OPERATION_CODE_ADD);
             service.putExtra(EXTRA_URL, url);
             service.putExtra(EXTRA_TICKERTEXT, tickerText);
-            if(!downloadingUrlSet.contains(url)) {// 若已正在下载，则必然已注册过，否则可新注册一个processor
-            	DownloadService.registerProcessor(url, processor);
-	            context.startService(service);
+            if(!sDownloadList.containsKey(url)) {// 若已正在下载，则必然已注册过，否则可新注册一个processor
+                DownloadService.registerProcessor(url, processor);
+                context.startService(service);
             }
             else {
                 Toast.makeText(context, R.string.file_downloading, Toast.LENGTH_SHORT).show();
@@ -66,114 +103,149 @@ public class DownloadService extends IntentService {
         }
     }
     
-	public static boolean registerProcessor(String url, DownloadedProcessor processor) {
-    	if(processorMap.get(url) != null) {
-    		return false;
-    	}
-    	else {
-    		processorMap.put(url, processor);
-    		return true;
-    	}
+    public static boolean registerProcessor(String url, DownloadedProcessor processor) {
+        if(processorMap.get(url) != null) {
+            return false;
+        }
+        else {
+            processorMap.put(url, processor);
+            return true;
+        }
     }
     
     public static void unRegisterProcessor(String url) {
-    	processorMap.remove(url);
+        processorMap.remove(url);
     }
     
-	private NotificationManager nm = null;
+    private NotificationManager nm = null;
 
-    private Notification notification = null;
-
-    private boolean cancelUpdate = false; // 目前不可取消，因此没有设置取消接口
-
-    private RemoteViews views = null;
-
-    private int notificationId = R.string.download_service;
+    private boolean stop = false; // 目前不可取消，因此没有设置取消接口
     
+    private HttpClient httpClient;
+    
+    private DownloadItem currentDownloadItem;
     
     public DownloadService() {
-		super(TAG);
-	}
+        super(TAG);
+    }
     
     @Override
+    public void onCreate() {
+        super.onCreate();
+        nm = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+    }
+
+    @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-    	String url = intent.getStringExtra(EXTRA_URL);
-    	// 由于外部可不掉用download静态方法来下载而直接调用startService来启动服务，因此这里仍需判断重复
-    	if(downloadingUrlSet.contains(url)) {
-    		intent.putExtra(EXTRA_IS_DOWNLOADING, true);
-    		Toast.makeText(this, R.string.file_downloading, Toast.LENGTH_SHORT).show();
-    	}
-    	else {
-        	downloadingUrlSet.add(url);
-        	Toast.makeText(this, R.string.add_to_download_list, Toast.LENGTH_SHORT).show();
-    	}
+        String operationCode = intent.getStringExtra(EXTRA_OPERATION_CODE);
+        String url = intent.getStringExtra(EXTRA_URL);
+        if (OPERATION_CODE_PAUSE.equals(operationCode)) {
+            DownloadItem downloadItem = sDownloadList.get(url);
+            if (downloadItem != null) {
+                if (currentDownloadItem != null && currentDownloadItem.id == downloadItem.id) {
+                    if (httpClient != null) {
+                        httpClient.getConnectionManager().shutdown();
+                    }
+                }
+                downloadItem.stop = true;
+                sDownloadList.remove(url);
+                nm.cancel(downloadItem.id);
+                notifyPause(url, downloadItem);
+            }
+            
+            intent.putExtra(EXTRA_IS_DOWNLOADED, true);
+        } else if (OPERATION_CODE_ADD.equals(operationCode)) {
+            // 由于外部可不掉用download静态方法来下载而直接调用startService来启动服务，因此这里仍需判断重复
+            if(sDownloadList.containsKey(url)) {
+                intent.putExtra(EXTRA_IS_DOWNLOADED, true);
+                Toast.makeText(this, R.string.file_downloading, Toast.LENGTH_SHORT).show();
+            } else {
+                String tickerText = intent.getStringExtra(EXTRA_TICKERTEXT);
+                int percent = intent.getIntExtra(EXTRA_PERCENT, 0);
+                DownloadItem downloadItem = notifyOnGoing(url, tickerText, percent);
+                sDownloadList.put(url, downloadItem);
+                Toast.makeText(this, R.string.add_to_download_list, Toast.LENGTH_SHORT).show();
+                
+                nm.cancel(tickerText.hashCode());
+            }
+        }
         return super.onStartCommand(intent, flags, startId);
     }
     
-	@Override
-	protected void onHandleIntent(Intent intent) {
-		// 当时正在下载的，此时已下载完成。
-		boolean isDownloaded = intent.getBooleanExtra(EXTRA_IS_DOWNLOADING, false);
-		if(isDownloaded) {
-			return;
-		}
-		String url = intent.getStringExtra(EXTRA_URL);
-		String tickerText = intent.getStringExtra(EXTRA_TICKERTEXT);
-		if (TextUtils.isEmpty(url) == false) {
-		    notify(tickerText);
-            notifyPercent(0);
-		    File tempFile = null;
-		    do {
-		        tempFile = downFile(url);
-		        // TODO 何时结束重试？
-		        if (cancelUpdate) {
-		            break;
-		        }
-		    } while (tempFile == null);
-	        nm.cancel(notificationId);
-		    if(tempFile != null) {
-			    DownloadedProcessor processor = processorMap.get(url);
-			    if(processor != null)
-			    	processor.process(this, tempFile, tickerText);
-		    }
-		}
-		downloadingUrlSet.remove(url);
-	}
+    @Override
+    protected void onHandleIntent(Intent intent) {
+        // 当时正在下载的，此时已下载完成。
+        boolean isDownloaded = intent.getBooleanExtra(EXTRA_IS_DOWNLOADED, false);
+        if(isDownloaded) {
+            return;
+        }
+        String url = intent.getStringExtra(EXTRA_URL);
+        String tickerText = intent.getStringExtra(EXTRA_TICKERTEXT);
+        if (sDownloadList.containsKey(url)) {
+            currentDownloadItem = sDownloadList.get(url);
+            File tempFile = null;
+            do {
+                tempFile = downFile(currentDownloadItem, url);
+            } while (tempFile == null && !stop && !currentDownloadItem.stop);
+            nm.cancel(currentDownloadItem.id);
+            if(tempFile != null) {
+                DownloadedProcessor processor = processorMap.get(url);
+                if(processor != null) {
+                    processor.process(this, tempFile, tickerText);
+                }
+            }
+        }
+        sDownloadList.remove(url);
+    }
     
-	// 在状态栏添加下载进度条
-    private void notify(String tickerText) {
-    	nm = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
-	    notification = new Notification();
-	    notification.icon = R.drawable.icon;
-	    notification.tickerText = tickerText;
-	    notification.when = System.currentTimeMillis();
-	    notification.defaults = Notification.DEFAULT_LIGHTS;
-	    notification.flags = Notification.FLAG_ONGOING_EVENT;
-	
-	    // 设置任务栏中下载进程显示的views
-	    views = new RemoteViews(getPackageName(), R.layout.download_progress);
-        views.setTextViewText(R.id.name_txv, tickerText);
-	    notification.contentView = views;
-	
-	    PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(), 0);
-	    notification.setLatestEventInfo(this, tickerText, getString(R.string.downloaded_percent, 0), contentIntent);
-	
-	    // 将下载任务添加到任务栏中
-	    nm.notify(notificationId, notification);
+    // 在状态栏添加下载进度条
+    private DownloadItem notifyOnGoing(String url, String tickerText, int percent) {
+        LogWrapper.d(TAG, "notifyOnGoing:"+url);
+        
+        Notification notification = new Notification();
+        notification.icon = R.drawable.icon;
+        notification.tickerText = tickerText;
+        notification.when = System.currentTimeMillis();
+        notification.flags = Notification.FLAG_ONGOING_EVENT;
+    
+        // 设置任务栏中下载进程显示的views
+        Context context = getApplication();
+        RemoteViews remoteViews = new RemoteViews(getPackageName(), R.layout.notification_progress);
+        remoteViews.setTextViewText(R.id.name_txv, tickerText);
+        Intent service = new Intent(context, DownloadService.class);
+        service.putExtra(EXTRA_OPERATION_CODE, OPERATION_CODE_PAUSE);
+        service.putExtra(EXTRA_URL, url);
+        int id = url.hashCode();
+        PendingIntent pausePendingIntent = PendingIntent.getService(context, id, service, 0);
+        remoteViews.setOnClickPendingIntent(R.id.control_btn, pausePendingIntent);
+        remoteViews.setTextViewText(R.id.control_btn, context.getString(R.string.pause));
+        remoteViews.setTextViewText(R.id.process_txv, getString(R.string.downloaded_percent, percent));
+        remoteViews.setProgressBar(R.id.process_prb, 100, percent, false);
+        remoteViews.setImageViewResource(R.id.icon_imv, R.drawable.btn_play_normal);
+        notification.contentView = remoteViews;
+    
+        // 将下载任务添加到任务栏中
+        nm.notify(id, notification);
+        
+        return new DownloadItem(id, tickerText, remoteViews, notification, percent);
     }
     
     // 下载更新文件，成功返回File对象，否则返回null
-    private File downFile(final String url) {
+    private File downFile(DownloadItem downloadItem, String url) {
         try {
             if (BaseQueryTest.UnallowedAccessNetwork) {
                 Thread.sleep(5000);
                 throw new IOException("Unallowed access network");
             }
+            if (downloadItem == null) {
+                return null;
+            }
             File tempFile = createFileByUrl(url);
             long fileSize = tempFile.length();
-            HttpClient client = HttpManager.getNewHttpClient();
+            httpClient = HttpManager.getNewHttpClient();
             HttpUriRequest request = new HttpGet(url);
             
+            // 支持断点续传
             // Range:(unit=first byte pos)-[last byte pos] 
             // 指定第一个字节的位置和最后一个字节的位置
             // 在http请求头加入RANGE指定第一个字节的位置
@@ -181,40 +253,39 @@ public class DownloadService extends IntentService {
                 request.addHeader("RANGE", "bytes="+fileSize+"-");
             }
 //            HttpResponse response = client.execute(new HttpGet(url));
-            HttpResponse response = HttpUtils.execute(getApplicationContext(), client, request, url, "apkDownload");
+            HttpResponse response = HttpUtils.execute(getApplicationContext(), httpClient, request, url, "downloadService");
             HttpEntity entity = response.getEntity();
-            long length = entity.getContentLength();
+            long length = entity.getContentLength();   //TODO: getContentLength()某些服务器可能返回-1
             if(length == fileSize) {
                 return tempFile;
             }
             InputStream is = entity.getContent();
             if(is != null) {
-	            BufferedInputStream bis = new BufferedInputStream(is);
-	            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(tempFile, true));
-	            int read = 0;
-	            long count = 0;
-	            int percent = 0;
-	            int counted_percent = 0;
-	            byte[] buffer = new byte[1024];
-	            while ((read = bis.read(buffer)) != -1 && !cancelUpdate) {
-	                bos.write(buffer, 0, read);
-	                count += read;
-	                percent = (int)(((double)count / length) * 100);
-	                if(percent - counted_percent >= 1) {
-	                	notifyPercent(percent);
-	                	counted_percent = percent;
-	                }
-	            }
-	            bos.flush();
-	            bos.close();
-	            is.close();
-	            bis.close();
-	            if (!cancelUpdate) {
-	                return tempFile;
-	            } else {
-	                tempFile.delete();
-	                return null;
-	            }
+                BufferedInputStream bis = new BufferedInputStream(is);
+                BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(tempFile, true));
+                int read = 0;
+                long count = fileSize;
+                int percent = 0;
+                int counted_percent = 0;
+                byte[] buffer = new byte[1024];
+                while (!stop && !downloadItem.stop && (read = bis.read(buffer)) != -1) {
+                    bos.write(buffer, 0, read);
+                    count += read;
+                    percent = (int)(((double)count / length) * 100);
+                    if(percent - counted_percent >= 1) {
+                        notifyPercent(downloadItem, percent);
+                        counted_percent = percent;
+                    }
+                }
+                bos.flush();
+                bos.close();
+                is.close();
+                bis.close();
+                if (!stop && !downloadItem.stop) {
+                    return tempFile;
+                } else {
+                    return null;
+                }
             } else {
                 LogWrapper.d(TAG, "downFile() entity.getContent() is null");
                 try {
@@ -236,9 +307,9 @@ public class DownloadService extends IntentService {
         return null;
     }
     
-    private File createFileByUrl(String url) throws IOException {
-    	File tempFile = null;
-    	String path = MapEngine.getInstance().getMapPath();
+    public static File createFileByUrl(String url) throws IOException {
+        File tempFile = null;
+        String path = TKConfig.getSavePath() + TKConfig.DOWNLOAD_FOLDER_NAME +"/";
         File rootFile = new File(path);
         if (!rootFile.exists() && !rootFile.isDirectory())
             rootFile.mkdir();
@@ -249,15 +320,50 @@ public class DownloadService extends IntentService {
         return tempFile;
     }
     
-    private void notifyPercent(int percent) {
-        views.setTextViewText(R.id.process_txv, getString(R.string.downloaded_percent, percent));
-        views.setProgressBar(R.id.process_prb, 100, percent, false);
-        notification.contentView = views;
-        nm.notify(notificationId, notification);
+    private void notifyPercent(DownloadItem downloadItem, int percent) {
+        downloadItem.percent = percent;
+        if (downloadItem.stop) {
+            return;
+        }
+        downloadItem.remoteViews.setTextViewText(R.id.process_txv, getString(R.string.downloaded_percent, percent));
+        downloadItem.remoteViews.setProgressBar(R.id.process_prb, 100, percent, false);
+        downloadItem.notification.contentView = downloadItem.remoteViews;
+        nm.notify(downloadItem.id, downloadItem.notification);
+    }
+    
+    private void notifyPause(String url, DownloadItem downloadItem) {
+        Notification notification = new Notification();
+        notification.icon = R.drawable.icon;
+        notification.tickerText = downloadItem.tickerText;
+        notification.when = System.currentTimeMillis();
+        notification.flags = Notification.FLAG_AUTO_CANCEL;
+    
+        // 设置任务栏中下载进程显示的views
+        Context context = getApplication();
+        RemoteViews remoteViews = new RemoteViews(getPackageName(), R.layout.notification_progress);
+        remoteViews.setTextViewText(R.id.name_txv, downloadItem.tickerText);
+        Intent service = new Intent(context, DownloadService.class);
+        service.putExtra(EXTRA_OPERATION_CODE, OPERATION_CODE_ADD);
+        service.putExtra(EXTRA_URL, url);
+        service.putExtra(EXTRA_TICKERTEXT, downloadItem.tickerText);
+        service.putExtra(EXTRA_PERCENT, downloadItem.percent);
+        LogWrapper.d(TAG, "notifyPause:"+url);
+        int id = downloadItem.tickerText.hashCode();
+        PendingIntent pausePendingIntent = PendingIntent.getService(context, id, service, 0);
+        remoteViews.setOnClickPendingIntent(R.id.control_btn, pausePendingIntent);
+        remoteViews.setTextViewText(R.id.control_btn, context.getString(R.string.download));
+        remoteViews.setTextViewText(R.id.process_txv, getString(R.string.downloaded_percent, downloadItem.percent));
+        remoteViews.setProgressBar(R.id.process_prb, 100, downloadItem.percent, false);
+        remoteViews.setImageViewResource(R.id.icon_imv, R.drawable.btn_pause_normal);
+        notification.contentView = remoteViews;
+        
+        // 将下载任务添加到任务栏中
+        nm.notify(id, notification);
     }
     
     @Override
     public void onDestroy() {
+        stop = true;
         super.onDestroy();
     }
 }

@@ -541,6 +541,8 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
                 if (mPickDateView == null) {
                     mPickDateArrayAdapter = new MultichoiceArrayAdapter(mThis, mWeekDays, mDateChecked);
                     mPickDateView = Utility.makeListView(mThis);
+                    mPickDateView.setDivider(null);
+                    mPickDateView.setDividerHeight(0);
                     mPickDateView.setAdapter(mPickDateArrayAdapter);
                     mPickDateView.setOnItemClickListener(new OnItemClickListener() {
                         

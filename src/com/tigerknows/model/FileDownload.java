@@ -3,11 +3,30 @@ package com.tigerknows.model;
 
 import com.decarta.android.exception.APIException;
 import com.tigerknows.TKConfig;
-import com.tigerknows.model.xobject.XBinaryData;
+import com.tigerknows.android.net.HttpManager;
+import com.tigerknows.map.MapEngine;
+import com.tigerknows.map.MapEngine.CityInfo;
+import com.tigerknows.model.FileDownload.DataResponse.FileData;
+import com.tigerknows.model.test.BaseQueryTest;
 import com.tigerknows.model.xobject.XMap;
-import com.tigerknows.model.xobject.XObject;
+import com.tigerknows.service.download.DownloadService;
+import com.tigerknows.util.HttpUtils;
+import com.tigerknows.util.Utility;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpUriRequest;
 
 import android.content.Context;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * 文件下载服务类
@@ -39,6 +58,19 @@ public final class FileDownload extends BaseQuery {
         super.translateResponse(data);
         DataResponse dataResponse = new DataResponse(responseXMap);
         this.response = dataResponse;
+        
+        if (FILE_TYPE_SUBWAY.equals(getParameter(SERVER_PARAMETER_FILE_TYPE))) {
+            if (dataResponse != null) {
+                FileData fileData = dataResponse.getFileData();
+                if (fileData != null && fileData.url != null) {
+                    File file = downFile(fileData.url);
+                    
+                    if (file != null && !isStop) {
+                        Utility.unZipFile(file.getAbsolutePath(), null, MapEngine.cityId2Floder(cityId));
+                    }
+                }
+            }
+        }
     }
 
     @Override
@@ -95,5 +127,81 @@ public final class FileDownload extends BaseQuery {
             }
         }
         
+    }
+    
+
+    
+    private File downFile(String url) {
+        try {
+            if (BaseQueryTest.UnallowedAccessNetwork) {
+                Thread.sleep(5000);
+                throw new IOException("Unallowed access network");
+            }
+            File tempFile = DownloadService.createFileByUrl(url);
+            long fileSize = tempFile.length();
+            HttpClient httpClient = HttpManager.getNewHttpClient();
+            HttpUriRequest request = new HttpGet(url);
+            
+            // 支持断点续传
+            // Range:(unit=first byte pos)-[last byte pos] 
+            // 指定第一个字节的位置和最后一个字节的位置
+            // 在http请求头加入RANGE指定第一个字节的位置
+            if (fileSize > 0) {
+                request.addHeader("RANGE", "bytes="+fileSize+"-");
+            }
+//            HttpResponse response = client.execute(new HttpGet(url));
+            HttpResponse response = HttpUtils.execute(context, httpClient, request, url, "fileDownload");
+            HttpEntity entity = response.getEntity();
+            long length = entity.getContentLength();   //TODO: getContentLength()某些服务器可能返回-1
+            if(length == fileSize) {
+                return tempFile;
+            }
+            InputStream is = entity.getContent();
+            if(is != null) {
+                BufferedInputStream bis = new BufferedInputStream(is);
+                BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(tempFile, true));
+                int read = 0;
+                byte[] buffer = new byte[1024];
+                while (!isStop && (read = bis.read(buffer)) != -1) {
+                    bos.write(buffer, 0, read);
+                }
+                bos.flush();
+                bos.close();
+                is.close();
+                bis.close();
+                if (!isStop) {
+                    return tempFile;
+                } else {
+                    return null;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
+    /**
+     * 检查城市地铁数据文件的是否完整
+     * @param cityId
+     * @return
+     */
+    public static String checkSubwayData(int cityId) {
+        String result = null;
+        
+        CityInfo cityInfo = MapEngine.getCityInfo(cityId);
+        if (cityInfo == null) {
+            return result;
+        }
+        
+        String path = MapEngine.cityId2Floder(cityId)+"sw_"+cityInfo.getEName()+"/";
+        String versionFilePath = path + "version.txt";
+        File verion = new File(versionFilePath);
+        if (verion.exists() && verion.isFile()) {
+            // TODO: 如何保证地铁数据的是否完整？目前是通过判断version.txt是否存在
+            result = path + "index.html";
+        }
+        
+        return result;
     }
 }

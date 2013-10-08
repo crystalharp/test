@@ -99,6 +99,11 @@ public class TKConfig {
     private static final String RESOURCES_DATA_FOLDER_NAME = "res"; 
 
     /**
+     * 下载文件夹名称
+     */
+    public static final String DOWNLOAD_FOLDER_NAME = "download"; 
+
+    /**
      * 筛选项数据文件名格式
      * %s 数据类型，1为poi；2为团购==
      * %d 城市Id
@@ -1012,32 +1017,48 @@ public class TKConfig {
     public static String getDataPath(boolean isMapData) {
         String path = null;
         if (isMapData) {
-            // 检查扩展存储卡
-            String status = Environment.getExternalStorageState();
-            if (status.equals(Environment.MEDIA_MOUNTED)) {
-                File externalStorageDirectory = Environment.getExternalStorageDirectory();
-                path = externalStorageDirectory.getAbsolutePath() + "/tigermap/" +MAP_DATA_FOLDER_NAME + "/";
-                File file = new File(path);
-                if (!file.exists()) {
-                    if (!file.mkdirs()) {
-                        LogWrapper.e(TAG, "getDataPath() Unable to create new folder: " + path);
-                        path = null;
-                    }
-                }
-            }
-            
-            // 使用应用程序数据空间
-            if (path == null) {
-                path = TKApplication.getInstance().getCacheDir().getAbsolutePath()+"/"+MAP_DATA_FOLDER_NAME+ "/";
-                File file = new File(path);
-                if (!file.exists()) {
-                    if (!file.mkdirs()) {
-                        LogWrapper.e(TAG, "getDataPath() Unable to create new folder: " + path);
-                    }
+            path = getSavePath()+MAP_DATA_FOLDER_NAME+ "/";
+            File file = new File(path);
+            if (!file.exists()) {
+                if (!file.mkdirs()) {
+                    LogWrapper.e(TAG, "getDataPath() Unable to create new folder: " + path);
                 }
             }
         } else {
             path = TKApplication.getInstance().getDir(RESOURCES_DATA_FOLDER_NAME, Context.MODE_PRIVATE).toString()+"/";
+        }
+        return path;
+    }
+
+    /**
+     * 获取存储数据的文件夹路径
+     * @return
+     */
+    public static String getSavePath() {
+        String path = null;
+        // 检查扩展存储卡
+        String status = Environment.getExternalStorageState();
+        if (status.equals(Environment.MEDIA_MOUNTED)) {
+            File externalStorageDirectory = Environment.getExternalStorageDirectory();
+            path = externalStorageDirectory.getAbsolutePath() + "/tigermap/";
+            File file = new File(path);
+            if (!file.exists()) {
+                if (!file.mkdirs()) {
+                    LogWrapper.e(TAG, "getSavePath() Unable to create new folder: " + path);
+                    path = null;
+                }
+            }
+        }
+        
+        // 使用应用程序数据空间
+        if (path == null) {
+            path = TKApplication.getInstance().getCacheDir().getAbsolutePath()+"/";
+            File file = new File(path);
+            if (!file.exists()) {
+                if (!file.mkdirs()) {
+                    LogWrapper.e(TAG, "getSavePath() Unable to create new folder: " + path);
+                }
+            }
         }
         return path;
     }
