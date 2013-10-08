@@ -566,7 +566,7 @@ public class TilesView extends GLSurfaceView {
 		this.queueEvent(new Runnable() {
 			public void run() {
 				LogWrapper.i("Sequence","TilesView run clearAllTextures");
-				mapRender.clearAllTextures();
+				mapRender.clearMap();
 			}
 		});
 		if (CONFIG.DRAW_BY_OPENGL)
@@ -600,7 +600,7 @@ public class TilesView extends GLSurfaceView {
 		this.queueEvent(new Runnable() {
 			public void run() {
 				LogWrapper.i("Sequence","TilesView run clearTileTextures");
-				mapRender.clearAllTextures();
+				mapRender.clearMap();
 			}
 		});
 	}
@@ -681,15 +681,12 @@ public class TilesView extends GLSurfaceView {
 	 * @throws APIException
 	 */
 	public void clearMap() throws APIException {
-		// tigerknows overlays.clear();
-		// tigerknows add begin
 		for (int i = overlays.size() - 1; i >= 0; i--) {
 			if (!overlays.get(i).getName()
 					.equals(ItemizedOverlay.MY_LOCATION_OVERLAY)) {
 				overlays.remove(i);
 			}
 		}
-		// tigerknows add end
 		shapes.clear();
 
 		infoWindow.setAssociatedOverlayItem(null);
@@ -697,12 +694,8 @@ public class TilesView extends GLSurfaceView {
 
 		if (mapPreference.getRouteId() != null) {
 			mapPreference.setRouteId(null);
-			// tigerknows
-			// if(!MapLayerProperty.getInstance(MapLayerType.STREET).sessionId.equals(""+CONFIG.STATELESS_SESSION_ID))
-			// tigerknows centerOnPosition(getCenterPosition());
 		}
 		refreshMap();
-
 	}
 
 	@Override
@@ -2279,12 +2272,6 @@ public class TilesView extends GLSurfaceView {
 		}
 	}
 
-//-(void)zoomInAtPosition:(deCartaPosition *)zoomCenter{
-//	double duration=DIGITAL_ZOOMING_TIME_PER_LEVEL*ABS(roundf(_zoomLevel)+1-_zoomLevel);
-//    
-//    deCartaXYFloat * c=[self positionToScreenXYConv:zoomCenter];
-//	[self zoomTo:roundf(_zoomLevel)+1 center:c duration:duration listener:nil];
-//}
 	/**
 	 * initilize/reset tiles, set coordinate for each tile, put tiles for
 	 * loading queue
@@ -2490,8 +2477,6 @@ public class TilesView extends GLSurfaceView {
 		 * store vertexes of the tile
 		 */
 		private FloatBuffer mVertexBuffer;
-
-		// private int EMPTY_TILE_REF=0;
 		private int MAX_ICON_SIZE = 20;
 		private int MAX_CLUSTER_TEXT_SIZE = 30;
 
@@ -2502,7 +2487,6 @@ public class TilesView extends GLSurfaceView {
 			@Override
 			protected boolean removeEldestEntry(
 					java.util.Map.Entry<Icon, Integer> eldest) {
-				// TODO Auto-generated method stub
 				if (size() > MAX_ICON_SIZE) {
 					int textureRef = eldest.getValue();
 					if (textureRef != 0) {
@@ -2725,7 +2709,6 @@ public class TilesView extends GLSurfaceView {
 					@Override
 					protected boolean removeEldestEntry(
 							java.util.Map.Entry<Tile, TileInfo> eldest) {
-						// TODO Auto-generated method stub
 						if (size() > max_tile_texture_ref) {
 							TileInfo info = eldest.getValue();
 							if (info != null) {
@@ -2751,9 +2734,7 @@ public class TilesView extends GLSurfaceView {
 					}
 				};
 			}
-			else {
-				clearTileTextures();
-			}
+			clearMap();
 			TileThread.startAllThreads();
 			for (int i = 0; i < tileRunners.length; i++) {
 				if (!tileRunners[i].isAlive())
@@ -2764,9 +2745,17 @@ public class TilesView extends GLSurfaceView {
 			LogWrapper.i("Sequence", "MapRender.onSurfaceCreated end");
 		}
 
-		protected void clearAllTextures() {
-			clearTileTextures();
+		protected void clearMap() {
+			clearTiles();
 			synchronized (drawingLock) {
+				for (int i = 0; i < maxLabelPriority; ++i) {
+					ArrayList<Label> priorityLabelList = priorityLabels[i];
+					priorityLabelList.clear();
+					ArrayList<Label> lastLabels = lastShownLabels[i];
+					lastLabels.clear();
+					ArrayList<Label> shownLabelList = shownLabels[i];
+					shownLabelList.clear();
+				}
 				Label.clearTextTexture();
 				Label.clearTextBitmap();
 				SingleRectLabel.clearIcon();
@@ -2776,7 +2765,7 @@ public class TilesView extends GLSurfaceView {
 			LogWrapper.i("onStop", "clearAllTextures success");
 		}
 
-		protected void clearTileTextures() {
+		protected void clearTiles() {
 			synchronized (drawingLock) {
 				if (tileInfos != null) {
 					Iterator<TileInfo> iterator1 = tileInfos.values()
