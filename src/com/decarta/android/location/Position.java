@@ -23,8 +23,12 @@ public class Position implements Serializable, Parcelable{
 	private static final long serialVersionUID = 1L;
 	public double lat;
 	public double lon;
+	private double altitude;
+	private boolean mHasAltitude;
+	private float speed;
+	private boolean mHasSpeed;
     public float accuracy=0;
-    private int type = 2; //0代表来源GPS，1代表来源基站或wifi，2代表不知道来源 
+    public int type = 2; //0代表来源GPS，1代表来源基站或wifi，2代表不知道来源 
 	public Position(double lat, double lon){
 		this(lat, lon, 0);
 	}
@@ -35,6 +39,8 @@ public class Position implements Serializable, Parcelable{
         this.lat=lat;
         this.lon=lon;
         this.accuracy = accuracy;
+        this.mHasAltitude = false;
+        this.mHasSpeed = false;
     }
     
 	public Position(String latlon){
@@ -99,6 +105,32 @@ public class Position implements Serializable, Parcelable{
     
     public void setAccuracy(float accuracy){
         this.accuracy = accuracy;
+    }
+    
+    public double getAltitude(){
+    	return altitude;
+    }
+    
+    public float getSpeed(){
+    	return speed;
+    }
+    
+    public boolean hasAltitude(){
+    	return mHasAltitude;
+    }
+    
+    public boolean hasSpeed(){
+    	return mHasSpeed;
+    }
+    
+    public void setAltitude(double altitude){
+    	this.altitude = altitude;
+    	this.mHasAltitude = true;
+    }
+    
+    public void setSpeed(float speed){
+    	this.speed = speed;
+    	this.mHasSpeed = true;
     }
     
     public void setProvider(String provider) {

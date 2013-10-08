@@ -19,6 +19,7 @@ import android.view.animation.RotateAnimation;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.decarta.Globals;
 import com.decarta.android.location.Position;
@@ -150,12 +151,12 @@ public class TrafficCompassFragment extends BaseFragment implements SensorEventL
     		if(position != null){
     			locationDetail[0] = String.valueOf(position.getLon());
     			locationDetail[1] = String.valueOf(position.getLat());
+        		locationDetail[2] = position.hasAltitude() ? String.valueOf(position.getAltitude()) : EMPTY;
+        		locationDetail[3] = position.hasSpeed() ? String.valueOf(position.getSpeed()) : EMPTY;
+        		//Toast.makeText(mContext, "PositionType:"+position.type, Toast.LENGTH_SHORT).show();
     		}else{
-    			locationDetail[0] = EMPTY;
-    			locationDetail[1] = EMPTY;
+    			for(int i=0; i<4; i++)locationDetail[i] = EMPTY;
     		}
-    		locationDetail[2] = EMPTY;
-    		locationDetail[3] = EMPTY;
     		locationDetail[4] = EMPTY;
     	}else{
     		locationDetail[0] = String.valueOf(location.getLongitude());
@@ -163,6 +164,7 @@ public class TrafficCompassFragment extends BaseFragment implements SensorEventL
     		locationDetail[2] = location.hasAltitude() ? String.valueOf(location.getAltitude()) : EMPTY;
     		locationDetail[3] = location.hasSpeed() ? String.valueOf(location.getSpeed()) : EMPTY;
     		locationDetail[4] = EMPTY;
+    		//Toast.makeText(mContext, location.getProvider(), Toast.LENGTH_SHORT).show();
     	}
     	if(location == null || location.hasAccuracy() == false){
     		locationDetail[5] = position == null ? EMPTY : String.valueOf(position.getAccuracy());

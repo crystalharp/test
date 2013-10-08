@@ -153,6 +153,8 @@ public class TKActivity extends Activity implements TKAsyncTask.EventListener {
                 } else {
                     myLocationPosition.setAccuracy(location.getAccuracy());
                     myLocationPosition.setProvider(location.getProvider());
+                    myLocationPosition.setAltitude(location.getAltitude());
+                    myLocationPosition.setSpeed(location.getSpeed());
                     int cityId = MapEngine.getCityId(myLocationPosition);
                     CityInfo myLocationCityInfo = Globals.g_My_Location_City_Info;
                     
