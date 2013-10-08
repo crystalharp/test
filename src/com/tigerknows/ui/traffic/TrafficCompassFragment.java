@@ -1,7 +1,5 @@
 package com.tigerknows.ui.traffic;
 
-import java.util.Currency;
-
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
@@ -126,12 +124,14 @@ public class TrafficCompassFragment extends BaseFragment implements SensorEventL
     		Sensor sensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
     		if(sensor != null){
     			mSensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_GAME);
-    			mCompassImv.setBackgroundResource(R.drawable.ani_compass);
+    			mCompassImv.setImageResource(R.drawable.ani_compass);
     		}else{
-    			mCompassImv.setBackgroundResource(R.drawable.ani_compass); // TODO: default image
+    			// TODO: default image
+    			mCompassImv.setImageResource(R.drawable.ani_compass);
     		}
     	}else{
-    		mCompassImv.setBackgroundResource(R.drawable.ani_compass); // TODO: default image
+    		// TODO: default image
+    		mCompassImv.setImageResource(R.drawable.ani_compass);
     	}
     }
     
