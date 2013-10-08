@@ -1414,7 +1414,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 
                 getMeasureDistanceFragment().setIndex(0);
                 showView(R.id.view_measure_distance);
-                setTouchMode(TouchMode.MEASURE_DISTANCE);
             }
         });
         
