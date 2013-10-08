@@ -489,6 +489,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             setListener();
 
             mMapView.setSphinx(this);
+            mMapView.setStopRefreshMyLocation(true);
             if (mSensor != null) {
                 mSensorOrientation = true;
             }
@@ -536,7 +537,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     
                     @Override
                     public void run() {
-                        mMapView.setStopRefreshMyLocation(true);
                         if (fristUse) {
                             sendFirstStartupBroadcast();
                             Intent intent = new Intent();
@@ -971,6 +971,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         mCompassView.setVisibility(View.VISIBLE);
         mControlView.setVisibility(View.VISIBLE);
         Sphinx.this.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        Sphinx.this.getWindow().setBackgroundDrawable(null);
         
         checkFromThirdParty(false);
     }
@@ -4322,7 +4323,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     private float rotateZ = 365;
     private SensorEventListener mSensorListener=new SensorEventListener() {
         public void onSensorChanged(SensorEvent event) {
-            if(mMapView!=null && Math.abs(rotateZ-event.values[0]) >= 3){
+            if(mMapView!=null
+                    && mMapView.isStopRefreshMyLocation() == false
+                    && Math.abs(rotateZ-event.values[0]) >= 3){
                 rotateZ = event.values[0];
                 mMapView.rotateLocationZToDegree(-rotateZ);
                 if (mMyLocation.mode == MyLocation.MODE_ROTATION) {
