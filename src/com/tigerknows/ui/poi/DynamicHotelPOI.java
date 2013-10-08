@@ -286,7 +286,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             @Override
             public void onClick(View v) {
                 mPOIDetailFragment.mActionLog.addAction(ActionLog.POIDetail + ActionLog.POIDetailHotelClickDate);
-                showDateListView(mPOIDetailFragment.mTitleFragment);
+                showDateListView(mPOIDetailFragment.mSkylineView);
             }
         };
         mCheckInTimeView.setOnClickListener(dateListener);

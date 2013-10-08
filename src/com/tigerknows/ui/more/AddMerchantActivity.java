@@ -1023,7 +1023,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
             mPopupWindow.update();
         }
         
-        mPopupWindow.showAsDropDown(mTitleView, 0, 0);
+        mPopupWindow.showAsDropDown(findViewById(R.id.skyline_view), 0, 0);
         
         mStartTimeListView.setData(mStartHourPosition, mStartMinutePosition);
         mEndTimeListView.setData(mEndHourPosition, mEndMinutePosition);

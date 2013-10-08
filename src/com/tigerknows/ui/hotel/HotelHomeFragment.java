@@ -262,12 +262,12 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                 
             case R.id.price_view:
                 mActionLog.addAction(mActionTag + ActionLog.HotelQueryCategory);
-                showFilterCategory(mTitleFragment);
+                showFilterCategory(mSkylineView);
                 break;
                 
             case R.id.check_in_time_view:
                 mActionLog.addAction(mActionTag + ActionLog.HotelQueryDate);
-                showDateListView(mTitleFragment);
+                showDateListView(mSkylineView);
                 break;
                 
             case R.id.query_btn:

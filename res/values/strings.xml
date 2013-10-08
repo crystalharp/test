@@ -22,6 +22,9 @@
     <string name="location_failed_and_jump_settings">为了更快更精确的获得您的位置，建议您：\n\n * 开启位置设置中GPS功能</string>
     <string name="location_failed_and_change_city">定位失败，无法找到所在城市，是否直接选择城市？</string>
     <string name="location_doing">正在定位…</string>
+    <string name="prompt_location">定位提示</string>
+    <string name="prompt_location_return_to_">回到%1$s</string>
+    <string name="prompt_location_stay_in_">留在%1$s</string>
     
     <string name="location_text">定位</string>
     <string name="location_text_doing">定位中</string>
@@ -90,7 +93,7 @@
     <string name="init_map_dir_message">程序异常退出可能是因为使用过程中地图数据文件损坏，建议你删除损坏的地图数据文件?</string>
     
     <string name="correct_to_how">精确到%1$s</string> 
-    <string name="are_your_change_to_location_city">上次设置为%1$s市，是否切换到你当前定位城市%2$s市？</string> 
+    <string name="are_your_change_to_location_city">定位显示您在%1$s，您是否需要</string> 
     <string name="are_your_change_to_map_center_city">你的地图已经切换到%1$s，是否切换？</string> 
     <string name="current_location">当前位置：%1$s附近</string> 
     <string name="find_poi">输入地点、商户名</string> 

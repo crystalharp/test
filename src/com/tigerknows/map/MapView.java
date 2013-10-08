@@ -1180,6 +1180,10 @@ public class MapView extends RelativeLayout implements
         tilesView.showOverlay(overlayName, top);
     }
     
+    public boolean isStopRefreshMyLocation() {
+        return tilesView.stopRefreshMyLocation;
+    }
+    
     public void setStopRefreshMyLocation(boolean stopRefreshMyLocation) {
         tilesView.stopRefreshMyLocation = stopRefreshMyLocation;
     }
