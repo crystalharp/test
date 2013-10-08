@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/* //device/apps/common/res/layout/alert_dialog.xml
+**
+** Copyright 2006, The Android Open Source Project
+**
+** Licensed under the Apache License, Version 2.0 (the "License");
+** you may not use this file except in compliance with the License.
+** You may obtain a copy of the License at
+**
+**     http://www.apache.org/licenses/LICENSE-2.0
+**
+** Unless required by applicable law or agreed to in writing, software
+** distributed under the License is distributed on an "AS IS" BASIS,
+** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+** See the License for the specific language governing permissions and
+** limitations under the License.
+*/
+-->
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:gravity="bottom"
+    >
+    
+    <LinearLayout android:id="@+id/buttonPanel"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal" 
+        android:background="@drawable/bg_dialog_footer"
+        android:gravity="center"
+        android:weightSum="3"
+        android:paddingLeft="24dp"
+        android:paddingRight="24dp"
+        >     
+            
+        <LinearLayout 
+            android:id="@+id/button1_view"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:background="@drawable/btn_dialog_map_tools_left"  >
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="24dp"
+                android:paddingTop="12dp"
+                android:paddingRight="24dp"
+                android:paddingBottom="12dp"
+                android:singleLine="true"
+                android:textSize="14sp"
+                android:textColor="@color/black_light"
+                android:gravity="center"
+                android:drawableTop="@drawable/ic_take_screenshot"
+                android:text="@string/take_screenshot"/>
+        </LinearLayout>
+            
+        <LinearLayout 
+            android:id="@+id/button2_view"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:background="@drawable/btn_dialog_map_tools_middle"  >
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="24dp"
+                android:paddingTop="12dp"
+                android:paddingRight="24dp"
+                android:paddingBottom="12dp"
+                android:singleLine="true"
+                android:textSize="14sp"
+                android:textColor="@color/black_light"
+                android:gravity="center"
+                android:drawableTop="@drawable/ic_measure_distance"
+                android:text="@string/measure"/>
+        </LinearLayout>
+            
+        <LinearLayout 
+            android:id="@+id/button3_view"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:background="@drawable/btn_dialog_map_tools_right"  >
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="24dp"
+                android:paddingTop="12dp"
+                android:paddingRight="24dp"
+                android:paddingBottom="12dp"
+                android:singleLine="true"
+                android:textSize="14sp"
+                android:textColor="@color/black_light"
+                android:gravity="center"
+                android:drawableTop="@drawable/ic_compass_map_tools"
+                android:text="@string/compass"/>
+        </LinearLayout>
+     </LinearLayout>
+     
+    <LinearLayout android:id="@+id/contentPanel"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/buttonPanel"
+        android:orientation="vertical"
+        android:gravity="center_vertical"
+        android:padding="16dp"
+        android:background="@drawable/bg_dialog_header">
+        <TextView android:id="@+id/title_txv"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black_dark"
+            android:paddingLeft="8dip" 
+            android:paddingTop="8dip" 
+            android:paddingRight="8dip" 
+            android:textSize="16sp"
+            android:text="@string/tools"
+            android:layout_gravity="center_vertical"
+            android:gravity="left"/>
+    </LinearLayout>
+     
+    <LinearLayout android:id="@+id/paddingPanel"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_above="@id/contentPanel"
+        android:orientation="vertical"
+        android:gravity="center_vertical">
+    </LinearLayout>
+</RelativeLayout>

@@ -875,6 +875,21 @@ public class Utility {
         
         return dialog;
     }
+    
+    public static Dialog getChoiceDialog(final Activity activity, View custom, int theme) {
+        
+        final Dialog dialog = new Dialog(activity, theme);
+        
+        dialog.setCancelable(true);
+        dialog.setCanceledOnTouchOutside(true);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(custom);
+        
+        Window dialogWindow = dialog.getWindow();
+        dialogWindow.setGravity(Gravity.CENTER);
+        
+        return dialog;
+    }
 
     public static ListView makeListView(Context context) {
     	return makeListView(context, R.drawable.bg_real_line);

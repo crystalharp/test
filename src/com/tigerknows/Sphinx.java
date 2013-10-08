@@ -243,10 +243,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     private int mMenuViewHeiht;
     private int mCityViewHeight;
     
-    private View mMoreView;
-    private ImageButton mTakeScreenshotBtn;
-    private ImageButton mMeasureDistanceBtn;
-    private ImageButton mCompassBtn;
     private ImageButton mMoreBtn;
     
 	private ViewGroup mDragHintView;
@@ -1365,11 +1361,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         mDisableTouchView = (ViewGroup) findViewById(R.id.disable_touch_view);
         mDragHintView = (ViewGroup) findViewById(R.id.hint_root_view);
         
-        mMoreView = (ViewGroup)findViewById(R.id.more_view);
         mMoreBtn = (ImageButton)findViewById(R.id.more_btn);
-        mTakeScreenshotBtn = (ImageButton)findViewById(R.id.take_screenshot_btn);
-        mMeasureDistanceBtn = (ImageButton)findViewById(R.id.measure_distance_btn);
-        mCompassBtn = (ImageButton)findViewById(R.id.compass_btn);
     }
 
     private void setListener() {
@@ -1398,44 +1390,52 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             @Override
             public void onClick(View v) {
                 mActionLog.addAction(ActionLog.MapMore);
-                if (mMoreView.getVisibility() == View.VISIBLE) {
-                    mMoreView.setVisibility(View.GONE);
-                } else {
-                    mMoreView.setVisibility(View.VISIBLE);
-                }
-            }
-        });
-        
-        mTakeScreenshotBtn.setOnClickListener(new OnClickListener() {
-            
-            @Override
-            public void onClick(View v) {
-                mActionLog.addAction(ActionLog.MapTakeScreenshot);
-                mMoreView.setVisibility(View.GONE);
-                
-                showView(R.id.view_take_screenshot);
-            }
-        });
-        
-        mMeasureDistanceBtn.setOnClickListener(new OnClickListener() {
-            
-            @Override
-            public void onClick(View v) {
-                mActionLog.addAction(ActionLog.MapDistance);
-                mMoreView.setVisibility(View.GONE);
 
-                getMeasureDistanceFragment().setIndex(0);
-                showView(R.id.view_measure_distance);
-            }
-        });
-        
-        mCompassBtn.setOnClickListener(new OnClickListener() {
-            
-            @Override
-            public void onClick(View v) {
-                mActionLog.addAction(ActionLog.MapCompass);
-                mMoreView.setVisibility(View.GONE);
-                showView(R.id.view_traffic_compass);
+                View view = mLayoutInflater.inflate(R.layout.alert_map_tools, null, false);
+                Dialog dialog = Utility.getChoiceDialog(mThis, view, R.style.AlterChoiceDialog);
+                
+                View button1 = view.findViewById(R.id.button1_view);
+                View button2 = view.findViewById(R.id.button2_view);
+                View button3 = view.findViewById(R.id.button3_view);
+                
+                final Dialog finalDialog = dialog;
+                View.OnClickListener onClickListener = new OnClickListener() {
+                    
+                    @Override
+                    public void onClick(View v) {
+                        int id = v.getId();
+                        if (id == R.id.button1_view) {
+                            mActionLog.addAction(ActionLog.MapTakeScreenshot);
+                            
+                            showView(R.id.view_take_screenshot);
+                        } else if (id == R.id.button2_view) {
+                            mActionLog.addAction(ActionLog.MapDistance);
+
+                            getMeasureDistanceFragment().setIndex(0);
+                            showView(R.id.view_measure_distance);
+                            showView(R.id.view_take_screenshot);
+                        } else if (id == R.id.button3_view) {
+                            mActionLog.addAction(ActionLog.MapCompass);
+                            
+                            showView(R.id.view_traffic_compass);
+                        }
+                        finalDialog.dismiss();
+                    }
+                };
+                button1.setOnClickListener(onClickListener);
+                button2.setOnClickListener(onClickListener);
+                button3.setOnClickListener(onClickListener);
+                
+                view.findViewById(R.id.paddingPanel).setOnTouchListener(new OnTouchListener() {
+                    
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        finalDialog.dismiss();
+                        return false;
+                    }
+                });
+                
+                dialog.show();
             }
         });
     }
@@ -4677,10 +4677,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 
     public View getZoomView() {
         return mZoomView;
-    }
-
-    public View getMoreView() {
-        return mMoreView;
     }
 
     public View getMoreBtn() {
