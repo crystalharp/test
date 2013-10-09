@@ -4,7 +4,7 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:padding="8dp"
-    android:background="@drawable/list_selector_background_gray_light">
+    android:background="@drawable/list_selector_background_white">
     
     <ImageView 
         android:id="@+id/icon_imv" 

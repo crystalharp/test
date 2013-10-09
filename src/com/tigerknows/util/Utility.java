@@ -64,9 +64,12 @@ import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
@@ -888,6 +891,15 @@ public class Utility {
         Window dialogWindow = dialog.getWindow();
         dialogWindow.setGravity(Gravity.CENTER);
         
+        custom.findViewById(R.id.paddingPanel).setOnTouchListener(new OnTouchListener() {
+            
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                dialog.dismiss();
+                return false;
+            }
+        });
+        
         return dialog;
     }
 
@@ -1114,41 +1126,44 @@ public class Utility {
     public static void queryTraffic(final Sphinx sphinx, final POI poi, final int location, final String actionTag) {
         
         final POI poiForTraffic = poi.clone();
-        final String[] list = sphinx.getResources().getStringArray(R.array.goto_here);
-        int[] leftCompoundResIdList = new int[] {R.drawable.ic_bus, R.drawable.ic_drive, R.drawable.ic_walk, R.drawable.ic_start};
-        final ArrayAdapter<String> adapter = new StringArrayAdapter(sphinx, list, leftCompoundResIdList);
-        
-        ListView listView = Utility.makeListView(sphinx);
-        listView.setAdapter(adapter);
-        
-        final Dialog dialog = Utility.showNormalDialog(sphinx, 
-                sphinx.getString(R.string.come_here), 
-                listView);
-        
-        ActionLog.getInstance(sphinx).addAction(actionTag + ActionLog.GotoHere);
-        listView.setOnItemClickListener(new OnItemClickListener() {
 
+        View view = sphinx.getLayoutInflater().inflate(R.layout.alert_go_to_here, null, false);
+        final Dialog dialog = Utility.getChoiceDialog(sphinx, view, R.style.AlterChoiceDialog);
+        
+        View button1 = view.findViewById(R.id.button1_view);
+        View button2 = view.findViewById(R.id.button2_view);
+        View button3 = view.findViewById(R.id.button3_view);
+        View button4 = view.findViewById(R.id.button4_view);
+        
+        View.OnClickListener onClickListener = new OnClickListener() {
+            
             @Override
-            public void onItemClick(AdapterView<?> arg0, View arg1, int index, long arg3) {
+            public void onClick(View v) {
+                int id = v.getId();
                 dialog.dismiss();
                 int queryType = -1;
-                ActionLog.getInstance(sphinx).addAction(actionTag + ActionLog.GotoHere + ActionLog.ListViewItem, index, list[index]);
-                switch (index) {
-                    case 0:
+                int index = 0;
+                switch (id) {
+                    case R.id.button1_view:
                         queryType = TrafficQuery.QUERY_TYPE_TRANSFER;
+                        index = 0;
                         break;
                         
-                    case 1:
+                    case R.id.button2_view:
                         queryType = TrafficQuery.QUERY_TYPE_DRIVE;
+                        index = 1;
                         break;
                         
-                    case 2:
+                    case R.id.button3_view:
                         queryType = TrafficQuery.QUERY_TYPE_WALK;
+                        index = 2;
                         break;
                         
-                    case 3:
+                    case R.id.button4_view:
+                        index = 3;
                         break;
                 }
+                ActionLog.getInstance(sphinx).addAction(actionTag + ActionLog.GotoHere + ActionLog.ListViewItem, index);
                 
                 CityInfo locationCityInfo = Globals.g_My_Location_City_Info;
                 TrafficQueryFragment trafficQueryFragment = sphinx.getTrafficQueryFragment();
@@ -1177,7 +1192,16 @@ public class Utility {
                     sphinx.showView(R.id.view_traffic_home);
                 }
             }
-        });
+        };
+        button1.setOnClickListener(onClickListener);
+        button2.setOnClickListener(onClickListener);
+        button3.setOnClickListener(onClickListener);
+        button4.setOnClickListener(onClickListener);
+        
+        dialog.show();
+        
+        ActionLog.getInstance(sphinx).addAction(actionTag + ActionLog.GotoHere);
+
         dialog.setOnDismissListener(new OnDismissListener() {
             
             @Override
@@ -1739,7 +1763,7 @@ public class Utility {
         return (tmp.toArray(new String[]{}));
     }
 
-    public void printStackTrace() {
+    public static void printStackTrace() {
         try {
             int a = 1 / 0;
         }

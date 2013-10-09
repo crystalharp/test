@@ -18,10 +18,10 @@
     android:id="@+id/text1"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/list_selector_background_dialog"
+    android:background="@drawable/list_selector_background_white"
     android:textColor="@color/black_dark"
     android:gravity="center_vertical"
-    android:padding="8dip"
+    android:padding="12dp"
     android:checkMark="@drawable/btn_check"
     android:ellipsize="marquee"
 />

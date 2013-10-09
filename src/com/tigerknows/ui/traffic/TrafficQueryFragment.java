@@ -1027,13 +1027,21 @@ public class TrafficQueryFragment extends BaseFragment {
 			}
     	}
 		final ArrayAdapter<String> adapter = new StringArrayAdapter(mSphinx, list);
-        ListView listView = Utility.makeListView(mSphinx);
-        listView.setAdapter(adapter);
         
         mActionLog.addAction(ActionLog.TrafficAlternative);
-        final Dialog dialog = Utility.showNormalDialog(mSphinx,
-                mSphinx.getString(start ? R.string.select_start_station : R.string.select_end_station),
-                listView);
+        
+        View alterListView = mSphinx.getLayoutInflater().inflate(R.layout.alert_listview, null, false);
+        
+        ListView listView = (ListView) alterListView.findViewById(R.id.listview);
+        listView.setAdapter(adapter);
+        
+        final Dialog dialog = Utility.getChoiceDialog(mSphinx, alterListView, R.style.AlterChoiceDialog);
+        
+        TextView titleTxv = (TextView)alterListView.findViewById(R.id.title_txv);
+        titleTxv.setText(start ? R.string.select_start_station : R.string.select_end_station);
+        
+        Button button = (Button)alterListView.findViewById(R.id.confirm_btn);
+        button.setVisibility(View.GONE);
         
         listView.setOnItemClickListener(new OnItemClickListener() {
 
@@ -1066,6 +1074,9 @@ public class TrafficQueryFragment extends BaseFragment {
                 mActionLog.addAction(ActionLog.TrafficAlternative + ActionLog.Dismiss);
             }
         });
+        
+        dialog.show();
+        mSphinx.setShowingDialog(dialog);
     }
     
     public void showTrafficErrorTip(TrafficQuery trafficQuery) {

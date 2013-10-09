@@ -18,6 +18,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -523,11 +524,20 @@ public class TrafficQueryEventHelper {
             }
             ArrayAdapter<String> adapter = new StringArrayAdapter(mQueryFragment.mContext, selectOptionList, resIdList);
             
-		    ListView listView = Utility.makeListView(activity);
-		    listView.setAdapter(adapter);
-            final Dialog dialog = Utility.showNormalDialog(mQueryFragment.mSphinx,
-                    title,
-                    listView);
+            View alterListView = activity.getLayoutInflater().inflate(R.layout.alert_listview, null, false);
+            
+            ListView listView = (ListView) alterListView.findViewById(R.id.listview);
+            listView.setAdapter(adapter);
+            
+            final Dialog dialog = Utility.getChoiceDialog(activity, alterListView, R.style.AlterChoiceDialog);
+            
+            TextView titleTxv = (TextView)alterListView.findViewById(R.id.title_txv);
+            titleTxv.setText(title);
+            
+            Button button = (Button)alterListView.findViewById(R.id.confirm_btn);
+            button.setVisibility(View.GONE);
+            
+            dialog.show();
 
             ((TKActivity) activity).setShowingDialog(dialog);
             

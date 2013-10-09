@@ -34,6 +34,7 @@ import com.tigerknows.util.Utility;
 import com.tigerknows.widget.MultichoiceArrayAdapter;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -718,10 +719,14 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
             }
             
             final MultichoiceArrayAdapter multichoiceArrayAdapter = new MultichoiceArrayAdapter(mThis, mRestairArray, mRestairChecked);
-            ListView listView = Utility.makeListView(mThis);
-            listView.setDivider(null);
-            listView.setDividerHeight(0);
+
+            View alterListView = mLayoutInflater.inflate(R.layout.alert_listview, null, false);
+            
+            ListView listView = (ListView) alterListView.findViewById(R.id.listview);
             listView.setAdapter(multichoiceArrayAdapter);
+            
+            final Dialog dialog = Utility.getChoiceDialog(mThis, alterListView, R.style.AlterChoiceDialog);
+            
             listView.setOnItemClickListener(new OnItemClickListener() {
 
                 @Override
@@ -731,28 +736,29 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
                 }
             });
             
-            Utility.showNormalDialog(mThis, 
-                    mThis.getString(R.string.comment_food_restair), 
-                    listView,
-                    new DialogInterface.OnClickListener() {
-                        
-                        @Override
-                        public void onClick(DialogInterface arg0, int id) {
-
-                            if (id == DialogInterface.BUTTON_POSITIVE) {
-                                StringBuilder s = new StringBuilder();
-                                for(int i = 0, length = mRestairChecked.length; i < length; i++) {
-                                    if (mRestairChecked[i]) {
-                                        if (s.length() > 0) {
-                                            s.append(',');
-                                        }
-                                        s.append(mRestairArray[i]);
-                                    }
-                                }
-                                mRestairBtn.setText(s.toString());
+            TextView titleTxv = (TextView)alterListView.findViewById(R.id.title_txv);
+            titleTxv.setText(R.string.restair_title);
+            
+            Button button = (Button)alterListView.findViewById(R.id.confirm_btn);
+            button.setOnClickListener(new View.OnClickListener() {
+                
+                @Override
+                public void onClick(View v) {
+                    StringBuilder s = new StringBuilder();
+                    for(int i = 0, length = mRestairChecked.length; i < length; i++) {
+                        if (mRestairChecked[i]) {
+                            if (s.length() > 0) {
+                                s.append(',');
                             }
+                            s.append(mRestairArray[i]);
                         }
-                    });
+                    }
+                    mRestairBtn.setText(s.toString());
+                    dialog.dismiss();
+                }
+            });
+            
+            dialog.show();
         } else if (viewId == R.id.left_btn) {
             mActionLog.addAction(mActionTag + ActionLog.TitleLeftButton);
             if (showDiscardDialog() == false) {

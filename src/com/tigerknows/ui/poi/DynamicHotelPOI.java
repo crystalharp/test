@@ -166,7 +166,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             v.setBackgroundResource(R.drawable.list_selector_background_gray_dark);
             v.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
             int h = v.getMeasuredHeight();
-            view.findViewById(R.id.body_view).getLayoutParams().height = h*6-(int)(Globals.g_metrics.density*8);
+            view.findViewById(R.id.body_view).getLayoutParams().height = h*6;
             ((ViewGroup) view.findViewById(R.id.selected_view)).setPadding(0, h, 0, 0);
             view.setData(this, mPOIDetailFragment.mActionTag);
             mDateListView = view;

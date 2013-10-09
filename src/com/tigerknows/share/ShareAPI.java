@@ -20,7 +20,9 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.decarta.android.location.Position;
@@ -215,12 +217,20 @@ public class ShareAPI {
         }
         final ArrayAdapter<String> adapter = new StringArrayAdapter(activity, textList, leftCompoundIconArray);
         
-        ListView listView = Utility.makeListView(activity);
+        View alterListView = activity.getLayoutInflater().inflate(R.layout.alert_listview, null, false);
+        
+        ListView listView = (ListView) alterListView.findViewById(R.id.listview);
         listView.setAdapter(adapter);
         
-        final Dialog dialog = Utility.showNormalDialog(activity, 
-                activity.getString(R.string.share), 
-                listView);
+        final Dialog dialog = Utility.getChoiceDialog(activity, alterListView, R.style.AlterChoiceDialog);
+        
+        TextView titleTxv = (TextView)alterListView.findViewById(R.id.title_txv);
+        titleTxv.setText(R.string.share);
+        
+        Button button = (Button)alterListView.findViewById(R.id.confirm_btn);
+        button.setVisibility(View.GONE);
+        
+        dialog.show();
         
         final ActionLog actionLog = ActionLog.getInstance(activity);
         actionLog.addAction(actionTag + ActionLog.Share);
