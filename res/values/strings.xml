@@ -147,8 +147,10 @@
     <string name="current_city">当前城市: %1$s</string>
     <string name="query">查找</string>
     <string name="bus_transfer">公交驾车</string>
+    <string name="public_traffic">公交</string>
     <string name="drive">驾车</string>
     <string name="walk">步行</string>
+    <string name="input_start_station">输入起点</string>
     <string name="transfer_drive">公交驾车</string>
     <string name="busline">交通线路</string>
     <string name="from">从</string>
@@ -756,6 +758,7 @@
     <string name="comment_environment">环境</string>
     <string name="comment_qos">服务</string>
     <string name="comment_food_restair">氛围</string>
+    <string name="restair_title">氛围（可多选）</string>
     <string name="comment_food_caipin">推荐菜品</string>
     <string name="comment_hospital_level">医疗水平</string>
     <string name="comment_cinema_effect">观影效果</string>

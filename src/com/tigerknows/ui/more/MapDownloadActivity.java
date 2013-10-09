@@ -991,13 +991,23 @@ public class MapDownloadActivity extends BaseActivity implements View.OnClickLis
         list.add(mThis.getString(R.string.delete_map));
         
         final ArrayAdapter<String> adapter = new StringArrayAdapter(mThis, list);
-        ListView listView = Utility.makeListView(mThis);
+        
+        View alterListView = getLayoutInflater().inflate(R.layout.alert_listview, null, false);
+        
+        ListView listView = (ListView) alterListView.findViewById(R.id.listview);
         listView.setAdapter(adapter);
         
-        final Dialog dialog = Utility.showNormalDialog(this,
-                getString(R.string.select_action),
-                listView);
+        final Dialog dialog = Utility.getChoiceDialog(mThis, alterListView, R.style.AlterChoiceDialog);
+        
+        TextView titleTxv = (TextView)alterListView.findViewById(R.id.title_txv);
+        titleTxv.setText(R.string.select_action);
+        
+        Button button = (Button)alterListView.findViewById(R.id.confirm_btn);
+        button.setVisibility(View.GONE);
+        
         setShowingDialog(dialog);
+        
+        dialog.show();
         
         listView.setOnItemClickListener(new OnItemClickListener() {
 

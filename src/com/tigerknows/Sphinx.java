@@ -1392,13 +1392,12 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 mActionLog.addAction(ActionLog.MapMore);
 
                 View view = mLayoutInflater.inflate(R.layout.alert_map_tools, null, false);
-                Dialog dialog = Utility.getChoiceDialog(mThis, view, R.style.AlterChoiceDialog);
+                final Dialog dialog = Utility.getChoiceDialog(mThis, view, R.style.AlterChoiceDialog);
                 
                 View button1 = view.findViewById(R.id.button1_view);
                 View button2 = view.findViewById(R.id.button2_view);
                 View button3 = view.findViewById(R.id.button3_view);
                 
-                final Dialog finalDialog = dialog;
                 View.OnClickListener onClickListener = new OnClickListener() {
                     
                     @Override
@@ -1419,21 +1418,12 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                             
                             showView(R.id.view_traffic_compass);
                         }
-                        finalDialog.dismiss();
+                        dialog.dismiss();
                     }
                 };
                 button1.setOnClickListener(onClickListener);
                 button2.setOnClickListener(onClickListener);
                 button3.setOnClickListener(onClickListener);
-                
-                view.findViewById(R.id.paddingPanel).setOnTouchListener(new OnTouchListener() {
-                    
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        finalDialog.dismiss();
-                        return false;
-                    }
-                });
                 
                 dialog.show();
                 setShowingDialog(dialog);
