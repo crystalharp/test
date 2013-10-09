@@ -4,8 +4,10 @@
 
 package com.tigerknows.map;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -1096,5 +1098,36 @@ public class MapEngine {
     public static void cleanEngineCache() {
     	Ca.tk_clean_engine_cache();
     	Ca.tk_clean_engine_label();
+    	subwayMap.clear();
+    }
+    
+    
+    private static HashMap<Integer, String> subwayMap = new HashMap<Integer, String>();
+    
+    /**
+     * 检查指定城市是否支持查看地铁图功能
+     * @param cityId
+     * @return
+     */
+    public static boolean checkSupportSubway(int cityId) {
+        boolean result = false;
+        if (subwayMap.size() == 0) {
+            File file = new File(TKConfig.getDataPath(false)+"sw_city.txt");
+            String line = null;
+            try {
+                BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+                while((line = br.readLine()) != null) {
+                    String[] strArr = line.split(",");
+                    subwayMap.put(Integer.parseInt(strArr[1]), strArr[0]);
+                }
+                br.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        
+        result = subwayMap.containsKey(cityId);
+        
+        return result;
     }
 }

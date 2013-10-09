@@ -10,9 +10,9 @@ import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
-import com.tigerknows.TKConfig;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
+import com.tigerknows.map.MapEngine;
 import com.tigerknows.map.MapEngine.CityInfo;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataQuery;
@@ -52,14 +52,12 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -92,6 +90,11 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
      * 酒店在列表中的下标
      */
     static final int HOTEL_INDEX = 1;
+    
+    /**
+     * 交通在列表中的下标
+     */
+    static final int TRAFFIC_INDEX = 8;
 
     private Button mCityBtn;
     private Button mInputBtn;
@@ -999,6 +1002,10 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
 		
 		mSubCategoryAdapter.clear();
 		ArrayList<String> subs = subCategories.get(position);
+		if (position == TRAFFIC_INDEX && MapEngine.checkSupportSubway(Globals.getCurrentCityInfo().getId())) {
+            mSubCategoryAdapter.add(mSphinx.getString(R.string.subway_map));
+            mSubCategoryAdapter.add("");
+		}
 		mSubCategoryAdapter.add(subs.get(0) + mContext.getString(R.string.all));
 		for(int i=1, size=subs.size(); i<size; i++){
 			mSubCategoryAdapter.add(subs.get(i));
@@ -1035,11 +1042,16 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
 			if(isDragStarts && System.currentTimeMillis() < lastTouchUpTimeMillis + 200){
 				return;
 			}
-			String keyWord=null;
+			String keyWord=mSubCategoryAdapter.getItem(position);
 			if(position==0){
+				if (keyWord.contains(mSphinx.getString(R.string.subway_map))) {
+
+                    mSphinx.getSubwayMapFragment().setData(Globals.getCurrentCityInfo());
+                    mSphinx.showView(R.id.view_subway_map);
+                    
+                    return;
+				}
 				keyWord = subCategories.get(mCurrentCategoryIndex).get(0);
-			}else{
-				keyWord = mSubCategoryAdapter.getItem(position);
 			}
 			mActionLog.addAction(mActionTag + ActionLog.POIHomeSubcategoryPressed, keyWord);
 			jumpToPOIResult(keyWord);
