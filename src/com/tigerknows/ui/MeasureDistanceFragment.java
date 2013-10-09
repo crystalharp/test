@@ -228,6 +228,11 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
         
         return mRootView;
     }
+    
+    public void setData() {
+        mVisibilityPreviousNext = mSphinx.getPreviousNextView().getVisibility();
+        mVisibilityLocation = mSphinx.getLocationView().getVisibility();
+    }
 
     @Override
     public void onResume() {
@@ -248,10 +253,8 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
         mSphinx.layoutTopViewPadding(0, Util.dip2px(Globals.g_metrics.density, 18), 0, 0);
         mSphinx.getMapView().getPadding().top = mSphinx.getTitleViewHeight() + Util.dip2px(Globals.g_metrics.density, 18);
 
-        mVisibilityPreviousNext = mSphinx.getPreviousNextView().getVisibility();
-        mVisibilityLocation = mSphinx.getLocationView().getVisibility();
-        mSphinx.getPreviousNextView().setVisibility(View.GONE);
-        mSphinx.getLocationView().setVisibility(View.GONE);
+        mSphinx.getPreviousNextView().setVisibility(View.INVISIBLE);
+        mSphinx.getLocationView().setVisibility(View.INVISIBLE);
         
         mSphinx.setTouchMode(TouchMode.MEASURE_DISTANCE);
     }

@@ -1411,6 +1411,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                         } else if (id == R.id.button2_view) {
                             mActionLog.addAction(ActionLog.MapDistance);
 
+                            getMeasureDistanceFragment().setData();
                             getMeasureDistanceFragment().setIndex(0);
                             showView(R.id.view_measure_distance);
                         } else if (id == R.id.button3_view) {
