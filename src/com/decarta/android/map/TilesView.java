@@ -313,8 +313,8 @@ public class TilesView extends GLSurfaceView {
         origBm.recycle();
 		
 		Canvas canvas = new Canvas(bm);
-		Bitmap watermark = BitmapFactory.decodeResource(context.getResources(), R.drawable.icon);
-		canvas.drawBitmap(watermark, 8, 8, new Paint());
+		Bitmap watermark = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_water_mark);
+		canvas.drawBitmap(watermark, w-watermark.getWidth()-8, h-watermark.getHeight()-8, new Paint());
 		watermark.recycle();
 		
 		return bm;

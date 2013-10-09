@@ -59,9 +59,11 @@ public class TakeScreenshotFragment extends BaseFragment implements View.OnClick
         mRight2Btn.setText(R.string.share);
         mRight2Btn.setVisibility(View.VISIBLE);
         mRight2Btn.setOnClickListener(this);
+        mRight2Btn.setBackgroundResource(R.drawable.btn_title);
         mRightBtn.setText(R.string.save);
         mRightBtn.setVisibility(View.VISIBLE);
         mRightBtn.setOnClickListener(this);
+        mRightBtn.setBackgroundResource(R.drawable.btn_title);
         
         mSphinx.layoutTopViewPadding(0, Util.dip2px(Globals.g_metrics.density, 18), 0, 0);
         mSphinx.getMapView().getPadding().top = mSphinx.getTitleViewHeight() + Util.dip2px(Globals.g_metrics.density, 18);

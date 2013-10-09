@@ -68,44 +68,11 @@
             android:layout_width="52dp"
             android:layout_height="52dp"
             android:background="@drawable/btn_location_map"
+            android:src="@drawable/ic_map_tools"
             android:layout_alignParentRight="true"
+            android:layout_marginBottom="4dp"
             android:scaleType="center"
             android:clickable="false"/>
-        
-        <LinearLayout
-            android:id="@+id/more_view"
-            android:orientation="horizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toLeftOf="@id/more_btn"
-            android:visibility="gone"
-            >
-        
-            <ImageButton
-                android:id="@+id/take_screenshot_btn"
-                android:layout_width="52dp"
-                android:layout_height="52dp"
-                android:background="@drawable/btn_location_map"
-                android:scaleType="center"
-                android:clickable="false"/>
-        
-            <ImageButton
-                android:id="@+id/measure_distance_btn"
-                android:layout_width="52dp"
-                android:layout_height="52dp"
-                android:background="@drawable/btn_location_map"
-                android:scaleType="center"
-                android:clickable="false"/>
-        
-            <ImageButton
-                android:id="@+id/compass_btn"
-                android:layout_width="52dp"
-                android:layout_height="52dp"
-                android:background="@drawable/btn_location_map"
-                android:scaleType="center"
-                android:clickable="false"/>
-            
-        </LinearLayout>
         
         <LinearLayout
             android:orientation="vertical"
