@@ -269,10 +269,24 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         }
         
         if (mValidityDialog == null) {
-            mValidityDialog = Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.choose_credit_validity), mValidityListView);
-            mValidityDialog.setCancelable(true);
-            mValidityDialog.setCanceledOnTouchOutside(true);
-        }else if(mValidityDialog.isShowing() == false){
+            ViewGroup alterListView = (ViewGroup) mSphinx.getLayoutInflater().inflate(R.layout.alert_listview, null, false);
+            
+            ListView listView = (ListView) alterListView.findViewById(R.id.listview);
+            
+            ViewGroup viewGroup = (ViewGroup) alterListView.findViewById(R.id.contentPanel);
+            viewGroup.removeView(listView);
+            viewGroup.addView(mValidityListView);
+            
+            mValidityDialog = Utility.getChoiceDialog(mSphinx, alterListView, R.style.AlterChoiceDialog);
+            
+            TextView titleTxv = (TextView)alterListView.findViewById(R.id.title_txv);
+            titleTxv.setText(R.string.choose_credit_validity);
+            
+            Button button = (Button)alterListView.findViewById(R.id.confirm_btn);
+            button.setVisibility(View.GONE);
+        }
+        
+        if(mValidityDialog.isShowing() == false){
             mValidityDialog.show();
         }
         
