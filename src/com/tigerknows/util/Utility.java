@@ -1100,12 +1100,21 @@ public class Utility {
             activity.startActivity(intent);
         } else {
             final ArrayAdapter<String> adapter = new StringArrayAdapter(activity, list, null);
-            ListView listView = Utility.makeListView(activity);
+            
+            View alterListView = activity.getLayoutInflater().inflate(R.layout.alert_listview, null, false);
+            
+            ListView listView = (ListView) alterListView.findViewById(R.id.listview);
             listView.setAdapter(adapter);
             
-            final Dialog dialog = showNormalDialog(activity,
-                    activity.getString(R.string.call_telephone),
-                    listView);
+            final Dialog dialog = Utility.getChoiceDialog(activity, alterListView, R.style.AlterChoiceDialog);
+            
+            TextView titleTxv = (TextView)alterListView.findViewById(R.id.title_txv);
+            titleTxv.setText(R.string.call_telephone);
+            
+            Button button = (Button)alterListView.findViewById(R.id.confirm_btn);
+            button.setVisibility(View.GONE);
+            
+            dialog.show();
             
             listView.setOnItemClickListener(new OnItemClickListener() {
 
@@ -1353,13 +1362,22 @@ public class Utility {
         textList.add(activity.getString(R.string.pick_photo));
         final ArrayAdapter<String> adapter = new StringArrayAdapter(activity, textList,
                 null);
-
-        ListView listView = Utility.makeListView(activity);
+        
+        View alterListView = activity.getLayoutInflater().inflate(R.layout.alert_listview, null, false);
+        
+        ListView listView = (ListView) alterListView.findViewById(R.id.listview);
         listView.setAdapter(adapter);
-
-        final Dialog dialog = Utility.showNormalDialog(activity,
-                activity.getString(R.string.storefront_photo), null, listView, null, null, null);
-
+        
+        final Dialog dialog = Utility.getChoiceDialog(activity, alterListView, R.style.AlterChoiceDialog);
+        
+        TextView titleTxv = (TextView)alterListView.findViewById(R.id.title_txv);
+        titleTxv.setText(R.string.storefront_photo);
+        
+        Button button = (Button)alterListView.findViewById(R.id.confirm_btn);
+        button.setVisibility(View.GONE);
+        
+        dialog.show();
+        
         listView.setOnItemClickListener(new OnItemClickListener() {
 
             @Override

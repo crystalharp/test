@@ -282,10 +282,23 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
     public void showCertTypeDialog(){
         final List<String> list = new ArrayList<String>(Arrays.asList(getResources().getStringArray(R.array.cert_type)));
         final ArrayAdapter<String> adapter = new CertTypeAdapter(mSphinx, list);
-        final ListView listView = Utility.makeListView(mSphinx);
-        listView.setAdapter(adapter);
         //TODO: ActionLog
-        final Dialog dialog = Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.choose_cert_type), listView);
+        
+        View alterListView = mSphinx.getLayoutInflater().inflate(R.layout.alert_listview, null, false);
+        
+        final ListView listView = (ListView) alterListView.findViewById(R.id.listview);
+        listView.setAdapter(adapter);
+        
+        final Dialog dialog = Utility.getChoiceDialog(mSphinx, alterListView, R.style.AlterChoiceDialog);
+        
+        TextView titleTxv = (TextView)alterListView.findViewById(R.id.title_txv);
+        titleTxv.setText(R.string.choose_cert_type);
+        
+        Button button = (Button)alterListView.findViewById(R.id.confirm_btn);
+        button.setVisibility(View.GONE);
+        
+        dialog.show();
+        
         listView.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int which, long arg3){
