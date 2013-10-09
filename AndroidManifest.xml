@@ -118,7 +118,13 @@
             android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
             android:windowSoftInputMode="adjustResize|stateHidden"
             android:screenOrientation="portrait" />
-        
+
+        <activity android:name="com.tigerknows.ui.traffic.TrafficCompassActivity"
+            android:theme="@style/Theme.NoTitleBar" 
+            android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
+            android:windowSoftInputMode="adjustResize|stateAlwaysHidden"
+            android:screenOrientation="portrait" />
+                
 		<!-- User Module -->
         <activity android:name="com.tigerknows.ui.user.UserHomeActivity"
             android:theme="@style/Theme.NoTitleBar" 

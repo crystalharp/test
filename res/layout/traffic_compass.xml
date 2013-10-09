@@ -4,7 +4,11 @@
     android:layout_height="match_parent"
     android:background="@color/normal_background">
 
-
+    <include android:id="@+id/title_view"
+        layout="@layout/title" 
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" 
+        />
     <LinearLayout android:id="@+id/compass_3_lly" 
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -90,6 +94,7 @@
         android:layout_height="fill_parent"
         android:src="@drawable/ani_compass"
         android:layout_above="@id/gps_btn"
+        android:layout_below="@id/title_view"
         android:layout_margin="16dp"
         android:scaleType="fitCenter"
         />
