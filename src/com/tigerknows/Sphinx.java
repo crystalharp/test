@@ -172,7 +172,7 @@ import com.tigerknows.ui.traffic.BuslineResultLineFragment;
 import com.tigerknows.ui.traffic.BuslineResultStationFragment;
 import com.tigerknows.ui.traffic.FetchFavoriteFragment;
 import com.tigerknows.ui.traffic.SubwayMapFragment;
-import com.tigerknows.ui.traffic.TrafficCompassFragment;
+import com.tigerknows.ui.traffic.TrafficCompassActivity;
 import com.tigerknows.ui.traffic.TrafficDetailFragment;
 import com.tigerknows.ui.traffic.TrafficQueryFragment;
 import com.tigerknows.ui.traffic.TrafficReportErrorActivity;
@@ -1417,7 +1417,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                         } else if (id == R.id.button3_view) {
                             mActionLog.addAction(ActionLog.MapCompass);
                             
-                            showView(R.id.view_traffic_compass);
+                            showView(R.id.activity_traffic_compass);
                         }
                         finalDialog.dismiss();
                     }
@@ -3193,6 +3193,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 intent.setClass(this, TrafficReportErrorActivity.class);
                 startActivityForResult(intent, R.id.activity_traffic_report_error);
                 return true;
+            } else if (R.id.activity_traffic_compass == viewId) {
+                intent.setClass(this, TrafficCompassActivity.class);
+                startActivityForResult(intent, R.id.activity_traffic_compass);
+                return true;
             } else if (R.id.activity_more_satisfy == viewId) {
                 intent.setClass(this, SatisfyRateActivity.class);
                 startActivityForResult(intent, R.id.activity_more_satisfy);
@@ -3501,7 +3505,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     private BuslineResultStationFragment mBuslineResultStationFragment = null;
     private BuslineDetailFragment mBuslineDetailFragment = null;
     private TrafficQueryFragment mTrafficQueryFragment = null;
-    private TrafficCompassFragment mTrafficCompassFragment = null;
     private SubwayMapFragment mSubwayMapFragment = null;
     private FetchFavoriteFragment mFetchFavoriteFragment = null;
     private MyCommentListFragment mMyCommentListFragment;
@@ -3610,10 +3613,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             case R.id.view_traffic_fetch_favorite_poi:
                 baseFragment = getFetchFavoriteFragment();
                 break;
-                
-            case R.id.view_traffic_compass:
-            	baseFragment = getTrafficCompassFragment();
-            	break;
             	
             case R.id.view_subway_map:
                 baseFragment = getSubwayMapFragment();
@@ -3951,19 +3950,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             return mTrafficQueryFragment;
         }
     }
-
-    public TrafficCompassFragment getTrafficCompassFragment() {
-        synchronized (mUILock) {
-            if (mTrafficCompassFragment == null) {
-                TrafficCompassFragment trafficCompassFragment = new TrafficCompassFragment(Sphinx.this);
-                trafficCompassFragment.setId(R.id.view_traffic_compass);
-                trafficCompassFragment.onCreate(null);
-                mTrafficCompassFragment = trafficCompassFragment;
-            }
-            return mTrafficCompassFragment;
-        }
-    }    
-    
+   
     public SubwayMapFragment getSubwayMapFragment() {
         synchronized (mUILock) {
             if (mSubwayMapFragment == null) {
@@ -4285,9 +4272,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             final Position myPosition = myLocationPosition;
             if (uiStackPeek() == R.id.view_poi_home || uiStackPeek() == R.id.view_discover_home) {
                 getPOIHomeFragment().refreshLocationView();
-            }
-            if (uiStackPeek() == R.id.view_traffic_compass){
-            	getTrafficCompassFragment().refreshLocation(myPosition);
             }
             if (myPosition != null) {
             	updateMyLocation(myPosition);

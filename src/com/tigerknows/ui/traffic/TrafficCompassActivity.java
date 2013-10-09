@@ -1,5 +1,7 @@
 package com.tigerknows.ui.traffic;
 
+import java.math.BigDecimal;
+
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
@@ -7,10 +9,12 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
@@ -24,14 +28,13 @@ import com.decarta.android.location.Position;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.common.ActionLog;
+import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.ui.more.SettingActivity;
+import com.tigerknows.util.Utility;
 
-public class TrafficCompassFragment extends BaseFragment implements SensorEventListener{
+public class TrafficCompassActivity extends BaseActivity implements SensorEventListener{
 	
-	public TrafficCompassFragment(Sphinx sphinx) {
-		super(sphinx);
-	}
 	
 	float mCurrentDegree = 0f;
 	ImageView mCompassImv;
@@ -60,36 +63,38 @@ public class TrafficCompassFragment extends BaseFragment implements SensorEventL
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // TODO: mActionTag = ActionLog.TrafficCompass;
-    }
-    
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
-    	mRootView = mLayoutInflater.inflate(R.layout.traffic_compass, container, false);
+        setContentView(R.layout.traffic_compass);
     	findViews();
     	setListener();
-    	mSensorManager = (SensorManager) mSphinx.getSystemService(Context.SENSOR_SERVICE);
-    	return mRootView;
+    	mSensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
+    	mLocationListener = new MyLocationListener(mThis, new Runnable(){
+			@Override
+			public void run() {
+				refreshLocation();
+			}
+    	});
     }
     
     protected void findViews(){
-    	mCompassImv = (ImageView)mRootView.findViewById(R.id.compass_imv);
-    	mGPSBtn = (Button)mRootView.findViewById(R.id.gps_btn);
-    	mLocationDetailTxv[0] = (TextView)mRootView.findViewById(R.id.longitude_txv);
-    	mLocationDetailTxv[1] = (TextView)mRootView.findViewById(R.id.latitude_txv);
-    	mLocationDetailTxv[2] = (TextView)mRootView.findViewById(R.id.altitude_txv);
-    	mLocationDetailTxv[3] = (TextView)mRootView.findViewById(R.id.speed_txv);
-    	mLocationDetailTxv[4] = (TextView)mRootView.findViewById(R.id.satellite_txv);
-    	mLocationDetailTxv[5] = (TextView)mRootView.findViewById(R.id.accuracy_txv);
+    	super.findViews();
+    	mCompassImv = (ImageView)findViewById(R.id.compass_imv);
+    	mGPSBtn = (Button)findViewById(R.id.gps_btn);
+    	mLocationDetailTxv[0] = (TextView)findViewById(R.id.longitude_txv);
+    	mLocationDetailTxv[1] = (TextView)findViewById(R.id.latitude_txv);
+    	mLocationDetailTxv[2] = (TextView)findViewById(R.id.altitude_txv);
+    	mLocationDetailTxv[3] = (TextView)findViewById(R.id.speed_txv);
+    	mLocationDetailTxv[4] = (TextView)findViewById(R.id.satellite_txv);
+    	mLocationDetailTxv[5] = (TextView)findViewById(R.id.accuracy_txv);
     }
     
     protected void setListener(){
+    	super.setListener();
     	mGPSBtn.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
 				// TODO: ActionLog
-				mSphinx.startActivityForResult(new Intent("android.settings.LOCATION_SOURCE_SETTINGS"), R.id.activity_setting_location);
+				startActivityForResult(new Intent("android.settings.LOCATION_SOURCE_SETTINGS"), R.id.activity_setting_location);
 			}
 		});
     }
@@ -113,10 +118,10 @@ public class TrafficCompassFragment extends BaseFragment implements SensorEventL
     @Override
     public void onResume(){
     	super.onResume();
-    	mTitleBtn.setText(mSphinx.getString(R.string.compass));
+    	mTitleBtn.setText(getString(R.string.compass));
     	refreshCompass();
     	refreshGPS();
-    	refreshLocation(null);
+    	refreshLocation();
     }
     
     public void refreshCompass(){
@@ -136,46 +141,36 @@ public class TrafficCompassFragment extends BaseFragment implements SensorEventL
     }
     
     public void refreshGPS(){
-    	if(SettingActivity.checkGPS(mContext) == true){
-    		mGPSBtn.setText(mSphinx.getString(R.string.compass_gps_open));
+    	if(SettingActivity.checkGPS(mThis) == true){
+    		mGPSBtn.setText(getString(R.string.compass_gps_open));
     	}else{
-    		mGPSBtn.setText(mSphinx.getString(R.string.compass_gps_close));
+    		mGPSBtn.setText(getString(R.string.compass_gps_close));
     	}
     }
     
-    public void refreshLocation(Position position){
+    public void refreshLocation(){
     	Location location = Globals.g_My_Location;
     	final String EMPTY = "...";
     	String locationDetail[] = new String[6];
     	if(location == null){
-    		if(position != null){
-    			locationDetail[0] = String.valueOf(position.getLon());
-    			locationDetail[1] = String.valueOf(position.getLat());
-        		locationDetail[2] = position.hasAltitude() ? String.valueOf(position.getAltitude()) : EMPTY;
-        		locationDetail[3] = position.hasSpeed() ? String.valueOf(position.getSpeed()*3.6) : EMPTY;
-        		//Toast.makeText(mContext, "PositionType:"+position.type, Toast.LENGTH_SHORT).show();
-    		}else{
-    			for(int i=0; i<4; i++)locationDetail[i] = EMPTY;
-    		}
-    		locationDetail[4] = EMPTY;
+			for(int i=0; i<6; i++){
+				locationDetail[i] = EMPTY;
+			}
     	}else{
-    		locationDetail[0] = String.valueOf(location.getLongitude());
-    		locationDetail[1] = String.valueOf(location.getLatitude());
-    		locationDetail[2] = location.hasAltitude() ? String.valueOf(location.getAltitude()) : EMPTY;
-    		locationDetail[3] = location.hasSpeed() ? String.valueOf(location.getSpeed()*3.6) : EMPTY;
-    		locationDetail[4] = EMPTY;
-    		//Toast.makeText(mContext, location.getProvider(), Toast.LENGTH_SHORT).show();
+    		locationDetail[0] = String.valueOf(Utility.doubleKeep(location.getLongitude(), 6));
+    		locationDetail[1] = String.valueOf(Utility.doubleKeep(location.getLatitude(), 6));
+    		locationDetail[2] = location.hasAltitude() ? String.valueOf(Utility.doubleKeep(location.getAltitude(), 1)) : EMPTY;
+    		locationDetail[3] = location.hasSpeed() ? String.valueOf(Utility.doubleKeep(location.getSpeed()*3.6, 1)) : EMPTY;
+    		locationDetail[4] = location.hasAltitude() ? String.valueOf(mTKLocationManager.getSatelliteSize()) : EMPTY;
+    		locationDetail[5] = location.hasAccuracy() ? String.valueOf(Utility.doubleKeep(location.getAccuracy(), 1)) : EMPTY;
+    		//Toast.makeText(mThis, location.getProvider(), Toast.LENGTH_SHORT).show();
     	}
-    	if(location == null || location.hasAccuracy() == false){
-    		locationDetail[5] = position == null ? EMPTY : String.valueOf(position.getAccuracy());
-    	}else{
-    		locationDetail[5] = String.valueOf(location.getAccuracy());
-    	}
+
     	for(int i=0; i<6; i++){
     		if(!TextUtils.equals(locationDetail[i], EMPTY)){
     			locationDetail[i] += fUnit[i];
     		}
-    		mLocationDetailTxv[i].setText(mSphinx.getString(mLocationDetailID[i], locationDetail[i]));
+    		mLocationDetailTxv[i].setText(getString(mLocationDetailID[i], locationDetail[i]));
     	}
     }
 	
