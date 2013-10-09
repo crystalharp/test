@@ -26,7 +26,7 @@ void tk_str_pool_init(tk_str_pool_t *str_buf) {
 }
 
 char *tk_str_pool_add_string(tk_str_pool_t *str_buf, const char *string, int len) {
-    assert(str_buf != NULL && string != NULL && len > 0);
+    assert(str_buf != NULL && string != NULL && len >= 0);
     if (str_buf->length + len < str_buf->size) {
         strncpy(str_buf->buf + str_buf->length, string, len);
         str_buf->length += (len + 1);

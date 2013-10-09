@@ -456,7 +456,7 @@ public class TilesView extends GLSurfaceView {
 		if (CONFIG.DRAW_BY_OPENGL) {
 //			setEGLConfigChooser(8, 8, 8, 8, 16, 0);
 			mapRender = new MapRender(context);
-			setRenderer(mapRender);
+			setRenderer(mapRender);//启动gl线程
 			setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 			requestFocus();
 			setFocusableInTouchMode(true);
@@ -2694,6 +2694,10 @@ public class TilesView extends GLSurfaceView {
 				else
 					CONFIG.TILE_SIZE = 256;
 			}
+			else {
+				CONFIG.TILE_SIZE = 256;
+			}
+			LogWrapper.i("Sequence", "tile size: " + CONFIG.TILE_SIZE);
 			Util.init();
 			MapEngine.getInstance().setTileSize(CONFIG.TILE_SIZE);
 
