@@ -1320,16 +1320,16 @@ public class TilesView extends GLSurfaceView {
 	 * @param position
 	 */
 	public void centerOnPosition(Position position) throws APIException {
-		centerOnPosition(position, zoomLevel, false);
+		centerOnPosition(position, zoomLevel);
 	}
 
 	public void centerOnPosition(Position position, float zoomLevel)
 			throws APIException {
-		centerOnPosition(position, zoomLevel, false);
+		centerOnPosition(position, zoomLevel, true);
 	}
 
 	public void centerOnPosition(Position position, float zoomLevel,
-			boolean clear) throws APIException {
+			boolean refreshMap) throws APIException {
 		if (zoomLevel < CONFIG.ZOOM_LOWER_BOUND
 				|| zoomLevel > CONFIG.ZOOM_UPPER_BOUND) {
 			throw new APIException("invalid zoom level: " + zoomLevel
@@ -1348,7 +1348,7 @@ public class TilesView extends GLSurfaceView {
 
 				TileGridResponse resp = Util.handlePortrayMapRequest(centerXYL,
 						z);
-				LogWrapper.w("TilesView", "centerOnPosition(), centerXYL=" + centerXYL + ", zoomLevel= " + zoomLevel + ", clear=" + clear);
+				LogWrapper.w("TilesView", "centerOnPosition(), centerXYL=" + centerXYL + ", zoomLevel= " + zoomLevel + ", refreshMap=" + refreshMap);
 
 				this.zoomLevel = zoomLevel;
 				renderMap(resp);
@@ -1364,7 +1364,10 @@ public class TilesView extends GLSurfaceView {
 				throw APIException.wrapToAPIException(e);
 			}
 		}
-		refreshMap();
+		
+		if (refreshMap) {
+    		refreshMap();
+		}
 		mParentMapView.executeMoveEndListeners(getCenterPosition());
 		mParentMapView.executeZoomEndListeners(Math.round(zoomLevel));
 	}

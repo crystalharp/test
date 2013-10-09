@@ -597,9 +597,9 @@ public class MapView extends RelativeLayout implements
 //	}
 
 	public void centerOnPosition(Position position, float zoomLevel,
-			boolean clear) {
+			boolean refreshMap) {
 	    try {
-	    	tilesView.centerOnPosition(position, zoomLevel, clear);
+	    	tilesView.centerOnPosition(position, zoomLevel, refreshMap);
 	    } catch (APIException e) {
             e.printStackTrace();
         }
@@ -1186,6 +1186,10 @@ public class MapView extends RelativeLayout implements
     
     public void setStopRefreshMyLocation(boolean stopRefreshMyLocation) {
         tilesView.stopRefreshMyLocation = stopRefreshMyLocation;
+        
+        if (stopRefreshMyLocation == false) {
+            sphinx.updateMyLocation();
+        }
     }
     
     public MapScene getCurrentMapScene() {
