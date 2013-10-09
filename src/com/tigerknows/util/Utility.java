@@ -70,6 +70,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
@@ -890,6 +891,9 @@ public class Utility {
         
         Window dialogWindow = dialog.getWindow();
         dialogWindow.setGravity(Gravity.CENTER);
+        WindowManager.LayoutParams lp = dialogWindow.getAttributes();
+        lp.width=Globals.g_metrics.widthPixels;
+        dialogWindow.setAttributes(lp);
         
         custom.findViewById(R.id.paddingPanel).setOnTouchListener(new OnTouchListener() {
             
