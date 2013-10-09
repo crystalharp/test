@@ -1408,6 +1408,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                             
                             getTakeScreenshotFragment().setData();
                             showView(R.id.view_take_screenshot);
+                            
+                            Toast.makeText(mThis, R.string.has_take_screenshot, Toast.LENGTH_LONG).show();
                         } else if (id == R.id.button2_view) {
                             mActionLog.addAction(ActionLog.MapDistance);
 

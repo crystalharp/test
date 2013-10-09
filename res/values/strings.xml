@@ -1295,4 +1295,7 @@
     <string name="pause">暂停</string>
     <string name="download_complete_and_install">下载已完成，点击安装</string>
     <string name="install">安装</string>
+    
+    <string name="subway_map">地铁图</string>
+    <string name="has_take_screenshot">已截取本屏地图</string>
 </resources>
