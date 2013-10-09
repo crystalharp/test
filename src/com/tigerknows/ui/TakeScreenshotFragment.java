@@ -65,11 +65,7 @@ public class TakeScreenshotFragment extends BaseFragment implements View.OnClick
         
         mSphinx.layoutTopViewPadding(0, Util.dip2px(Globals.g_metrics.density, 18), 0, 0);
         mSphinx.getMapView().getPadding().top = mSphinx.getTitleViewHeight() + Util.dip2px(Globals.g_metrics.density, 18);
-
-        mVisibilityPreviousNext = mSphinx.getPreviousNextView().getVisibility();
-        mVisibilityLocation = mSphinx.getLocationView().getVisibility();
-        mVisibilityZoom = mSphinx.getZoomView().getVisibility();
-        mVisibilityMore = mSphinx.getMoreBtn().getVisibility();
+        
         mSphinx.getPreviousNextView().setVisibility(View.GONE);
         mSphinx.getLocationView().setVisibility(View.GONE);
         mSphinx.getZoomView().setVisibility(View.GONE);
@@ -77,8 +73,8 @@ public class TakeScreenshotFragment extends BaseFragment implements View.OnClick
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
+    public void dismiss() {
+        super.dismiss();
         mSphinx.getMapView().getPadding().top = mSphinx.getTitleViewHeight() + mSphinx.getCityViewHeight() + Util.dip2px(Globals.g_metrics.density, 18);
         mSphinx.getPreviousNextView().setVisibility(mVisibilityPreviousNext);
         mSphinx.getLocationView().setVisibility(mVisibilityLocation);
@@ -91,6 +87,13 @@ public class TakeScreenshotFragment extends BaseFragment implements View.OnClick
     
     protected void setListener() {
     }
+    
+    public void setData() {
+        mVisibilityPreviousNext = mSphinx.getPreviousNextView().getVisibility();
+        mVisibilityLocation = mSphinx.getLocationView().getVisibility();
+        mVisibilityZoom = mSphinx.getZoomView().getVisibility();
+        mVisibilityMore = mSphinx.getMoreBtn().getVisibility();
+    }
 
     @Override
     public void onClick(View view) {
@@ -102,7 +105,9 @@ public class TakeScreenshotFragment extends BaseFragment implements View.OnClick
         	    
         	    @Override
         	    public void finish(Uri uri) {
-        	        Toast.makeText(mSphinx, uri.toString(), Toast.LENGTH_LONG).show();
+        	        if (uri != null) {
+        	            Toast.makeText(mSphinx, uri.toString(), Toast.LENGTH_LONG).show();
+        	        }
         	    }
         	}, mSphinx.getMapView().getCenterPosition(), null);
         	break;

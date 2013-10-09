@@ -52,6 +52,7 @@ import javax.microedition.khronos.opengles.GL10;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -85,6 +86,7 @@ import com.decarta.android.util.XYDouble;
 import com.decarta.android.util.XYFloat;
 import com.decarta.android.util.XYInteger;
 import com.decarta.android.util.XYZ;
+import com.tigerknows.R;
 import com.tigerknows.Sphinx.TouchMode;
 import com.tigerknows.map.Grid;
 import com.tigerknows.map.MapEngine;
@@ -283,7 +285,7 @@ public class TilesView extends GLSurfaceView {
 	 * @param gl
 	 * @return
 	 */
-	public static Bitmap savePixels(int x, int y, int w, int h, GL10 gl) {
+	public static Bitmap savePixels(Context context, int x, int y, int w, int h, GL10 gl) {
 		int b[] = new int[w * h];
 		int bt[] = new int[w * h];
 		IntBuffer ib = IntBuffer.wrap(b);
@@ -303,8 +305,19 @@ public class TilesView extends GLSurfaceView {
 				bt[(h - i - 1) * w + j] = pix1;
 			}
 		}
-		Bitmap sb = Bitmap.createBitmap(bt, w, h, Config.ARGB_4444);
-		return sb;
+		
+		Bitmap.Config config = Config.RGB_565;
+		Bitmap origBm = Bitmap.createBitmap(bt, w, h, config);
+		
+        Bitmap bm = origBm.copy(config, true);
+        origBm.recycle();
+		
+		Canvas canvas = new Canvas(bm);
+		Bitmap watermark = BitmapFactory.decodeResource(context.getResources(), R.drawable.icon);
+		canvas.drawBitmap(watermark, 8, 8, new Paint());
+		watermark.recycle();
+		
+		return bm;
 	}
 
 	// Tigerknows end
@@ -3610,7 +3623,7 @@ public class TilesView extends GLSurfaceView {
 						// 确保快照地图时，地图已经移动到指定的中心位置，误差为32像素?
 						if (Math.abs(xy.x - displaySize.x / 2) < 32
 								&& Math.abs(xy.y - displaySize.y / 2) < 32) {
-							snapBmp = savePixels(0, 0, displaySize.x,
+							snapBmp = savePixels(getContext(), 0, 0, displaySize.x,
 									displaySize.y, gl);
 							synchronized (snapCenterPos) {
 								snapCenterPos.notifyAll();

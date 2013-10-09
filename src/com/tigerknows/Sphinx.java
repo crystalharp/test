@@ -1407,13 +1407,13 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                         if (id == R.id.button1_view) {
                             mActionLog.addAction(ActionLog.MapTakeScreenshot);
                             
+                            getTakeScreenshotFragment().setData();
                             showView(R.id.view_take_screenshot);
                         } else if (id == R.id.button2_view) {
                             mActionLog.addAction(ActionLog.MapDistance);
 
                             getMeasureDistanceFragment().setIndex(0);
                             showView(R.id.view_measure_distance);
-                            showView(R.id.view_take_screenshot);
                         } else if (id == R.id.button3_view) {
                             mActionLog.addAction(ActionLog.MapCompass);
                             
@@ -1436,6 +1436,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 });
                 
                 dialog.show();
+                setShowingDialog(dialog);
             }
         });
     }
