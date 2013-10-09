@@ -152,7 +152,7 @@ public class TrafficCompassFragment extends BaseFragment implements SensorEventL
     			locationDetail[0] = String.valueOf(position.getLon());
     			locationDetail[1] = String.valueOf(position.getLat());
         		locationDetail[2] = position.hasAltitude() ? String.valueOf(position.getAltitude()) : EMPTY;
-        		locationDetail[3] = position.hasSpeed() ? String.valueOf(position.getSpeed()) : EMPTY;
+        		locationDetail[3] = position.hasSpeed() ? String.valueOf(position.getSpeed()*3.6) : EMPTY;
         		//Toast.makeText(mContext, "PositionType:"+position.type, Toast.LENGTH_SHORT).show();
     		}else{
     			for(int i=0; i<4; i++)locationDetail[i] = EMPTY;
@@ -162,7 +162,7 @@ public class TrafficCompassFragment extends BaseFragment implements SensorEventL
     		locationDetail[0] = String.valueOf(location.getLongitude());
     		locationDetail[1] = String.valueOf(location.getLatitude());
     		locationDetail[2] = location.hasAltitude() ? String.valueOf(location.getAltitude()) : EMPTY;
-    		locationDetail[3] = location.hasSpeed() ? String.valueOf(location.getSpeed()) : EMPTY;
+    		locationDetail[3] = location.hasSpeed() ? String.valueOf(location.getSpeed()*3.6) : EMPTY;
     		locationDetail[4] = EMPTY;
     		//Toast.makeText(mContext, location.getProvider(), Toast.LENGTH_SHORT).show();
     	}
