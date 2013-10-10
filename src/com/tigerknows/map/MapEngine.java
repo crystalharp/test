@@ -1054,6 +1054,30 @@ public class MapEngine {
         }
         return hasCorrect;
     }
+
+    /**
+     * 检查城市地铁数据文件的是否完整
+     * @param cityId
+     * @return
+     */
+    public static String getSubwayDataPath(int cityId) {
+        String result = null;
+        
+        CityInfo cityInfo = MapEngine.getCityInfo(cityId);
+        if (cityInfo == null) {
+            return result;
+        }
+        
+        String path = cityId2Floder(cityId)+"sw_"+cityInfo.getEName()+"/";
+        String versionFilePath = path + "version.txt";
+        File verion = new File(versionFilePath);
+        if (verion.exists() && verion.isFile()) {
+            // TODO: 如何保证地铁数据的是否完整？目前是通过判断version.txt是否存在
+            result = path + "index.html";
+        }
+        
+        return result;
+    }
     
     public static boolean hasMunicipality(int cityId) {
         if (cityId == -3 || cityId == 1 || cityId == 2 || cityId == 6 || cityId == 8) {

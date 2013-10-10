@@ -4,6 +4,7 @@ package com.tigerknows.model;
 import com.decarta.android.exception.APIException;
 import com.tigerknows.TKConfig;
 import com.tigerknows.android.net.HttpManager;
+import com.tigerknows.crypto.DataEncryptor;
 import com.tigerknows.map.MapEngine;
 import com.tigerknows.map.MapEngine.CityInfo;
 import com.tigerknows.model.FileDownload.DataResponse.FileData;
@@ -24,6 +25,8 @@ import android.content.Context;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -52,6 +55,12 @@ public final class FileDownload extends BaseQuery {
         String url = String.format(TKConfig.getFileDownloadUrl(), TKConfig.getFileDownloadHost());
         httpClient.setURL(url);
     }
+    
+    @Override
+    protected void addCommonParameters() {
+        super.addCommonParameters();
+        addSessionId();
+    }
 
     @Override
     protected void translateResponse(byte[] data) throws APIException {
@@ -66,7 +75,32 @@ public final class FileDownload extends BaseQuery {
                     File file = downFile(fileData.url);
                     
                     if (file != null && !isStop) {
-                        Utility.unZipFile(file.getAbsolutePath(), null, MapEngine.cityId2Floder(cityId));
+                        FileInputStream fis;
+                        FileOutputStream fos;
+                        String encFilePath = file.getAbsolutePath();
+                        String decFilePath = encFilePath + ".dec";
+                        try {
+                            //TODO:可能出现的问题
+                            DataEncryptor encryptor = DataEncryptor.getInstance();
+                            fis = new FileInputStream(encFilePath);
+                            fos = new FileOutputStream(decFilePath);
+                            byte[] filedata = new byte[4096];
+                            int n = 0;
+                            while ((n = fis.read(filedata)) != -1) {
+                                encryptor.decrypt(filedata);
+                                fos.write(filedata, 0, n);
+                            }
+                            Utility.unZipFile(decFilePath, null, MapEngine.cityId2Floder(cityId));
+                            fis.close();
+                            fos.close();
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } finally {
+                            file.delete();
+                            (new File(decFilePath)).delete();
+                        }
                     }
                 }
             }
@@ -181,27 +215,4 @@ public final class FileDownload extends BaseQuery {
         return null;
     }
     
-    /**
-     * 检查城市地铁数据文件的是否完整
-     * @param cityId
-     * @return
-     */
-    public static String checkSubwayData(int cityId) {
-        String result = null;
-        
-        CityInfo cityInfo = MapEngine.getCityInfo(cityId);
-        if (cityInfo == null) {
-            return result;
-        }
-        
-        String path = MapEngine.cityId2Floder(cityId)+"sw_"+cityInfo.getEName()+"/";
-        String versionFilePath = path + "version.txt";
-        File verion = new File(versionFilePath);
-        if (verion.exists() && verion.isFile()) {
-            // TODO: 如何保证地铁数据的是否完整？目前是通过判断version.txt是否存在
-            result = path + "index.html";
-        }
-        
-        return result;
-    }
 }
