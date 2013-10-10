@@ -125,7 +125,7 @@ public class TitleFragment extends BaseFragment implements View.OnClickListener 
 
             // 这个是为了点击“返回Back”也能使其消失，并且并不会影响你的背景
             mPopupWindow.setBackgroundDrawable(new BitmapDrawable());
-            mPopupWindow.setAnimationStyle(R.style.AlterImageDialog);
+            mPopupWindow.setAnimationStyle(-1);
             mPopupWindow.update();
             mPopupWindow.setOnDismissListener(new OnDismissListener() {
                 
