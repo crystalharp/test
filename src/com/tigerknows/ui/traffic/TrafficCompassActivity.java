@@ -87,7 +87,7 @@ public class TrafficCompassActivity extends BaseActivity implements SensorEventL
 			
 			@Override
 			public void onClick(View v) {
-				mActionLog.addAction(mActionTag + ActionLog.TrafficCompassGPS);
+				mActionLog.addAction(mActionTag + ActionLog.TrafficCompassGPS, String.valueOf(SettingActivity.checkGPS(mThis)));
 				startActivityForResult(new Intent("android.settings.LOCATION_SOURCE_SETTINGS"), R.id.activity_setting_location);
 			}
 		});
