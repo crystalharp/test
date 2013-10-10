@@ -8,6 +8,7 @@ import static android.opengl.GLES10.glDeleteTextures;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.LinkedHashMap;
 
 import android.graphics.Bitmap;
 import android.opengl.GLES10;
@@ -16,7 +17,6 @@ import android.opengl.GLUtils;
 import com.decarta.CONFIG;
 import com.decarta.Globals;
 import com.decarta.android.map.TilesView.Texture;
-import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.decarta.android.util.XYFloat;
 import com.decarta.android.util.XYInteger;
@@ -125,7 +125,7 @@ public class MultiRectLabel extends Label {
     	GLES10.glPopMatrix();
     }
     
-    private Texture genTextTextureRef(String subname, String key) {
+    private Texture genTextTextureRef(String subname, String key, LinkedHashMap<String, Texture> textTexturePool) {
     	IntBuffer textureRefBuf=IntBuffer.allocate(1);
         GLES10.glGenTextures(1, textureRefBuf);
         int textureRef = textureRefBuf.get(0);
@@ -170,7 +170,8 @@ public class MultiRectLabel extends Label {
     
     public int draw(XYInteger center, XYZ centerXYZ, XYFloat centerDelta, 
     		float rotation, float sinRot, float cosRot, float scale, Grid grid, 
-    		ByteBuffer TEXTURE_COORDS, FloatBuffer vertexBuffer, boolean needGenTexture, IntegerRef leftCountToDraw) {
+    		ByteBuffer TEXTURE_COORDS, FloatBuffer vertexBuffer, boolean needGenTexture, IntegerRef leftCountToDraw, 
+    		LinkedHashMap<String, Texture> textTexturePool, LinkedHashMap<Integer,Texture> mapWordIconPool) {
 //    	if(this.name.equals("文慧园路")) {
 //    		LogWrapper.d("labeldebug", "init opacity: " + opacity + this.toString());
 //    	}
@@ -388,7 +389,7 @@ public class MultiRectLabel extends Label {
 						opacity = 0;
 						return state;
 					}
-					textTextures[j] = this.genTextTextureRef(subLabelName, key);
+					textTextures[j] = this.genTextTextureRef(subLabelName, key, textTexturePool);
 					is_label_drawn = true;
 				} else {
 					textTextures[j] = textTexture;
