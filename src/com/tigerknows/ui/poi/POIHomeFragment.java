@@ -123,6 +123,9 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
     private int mMyLocationViewHeight;
     private int mCategoryPadding = 0;
 
+    private View mSubwayMapView;
+    private Button mSubwayMapBtn;
+
     private String[] mCategoryNameList;
     List<Category> mCategorylist = new ArrayList<Category>();
     private final int[] mCategoryResIdList = {
@@ -496,6 +499,9 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
         mDragView = mRootView.findViewById(R.id.drag_view);
         mDragViewParent = mRootView.findViewById(R.id.drag_view_parent);
         mCategoryTagImv = (ImageView) mRootView.findViewById(R.id.imv_category_tag);
+
+        mSubwayMapView = mRootView.findViewById(R.id.subway_map_view);
+        mSubwayMapBtn = (Button)mRootView.findViewById(R.id.subway_map_btn);
     }
 
     protected void setListener() {
@@ -510,6 +516,14 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
        
        mMyLoactionTxv.setOnClickListener(this);
        
+       mSubwayMapView.setOnTouchListener(new OnTouchListener() {
+            
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return true;
+            }
+        });
+       mSubwayMapBtn.setOnClickListener(this);
     }
     
     @Override
@@ -550,6 +564,9 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
                 mSphinx.getPickLocationFragment().setTitle(mSphinx.getString(R.string.poi_change_location));
                 mSphinx.showView(R.id.view_hotel_pick_location);
             }
+        } else if (id == R.id.subway_map_btn) {
+            mSphinx.getSubwayMapFragment().setData(Globals.getCurrentCityInfo());
+            mSphinx.showView(R.id.view_subway_map);
         }
     }
     
@@ -1003,8 +1020,9 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
 		mSubCategoryAdapter.clear();
 		ArrayList<String> subs = subCategories.get(position);
 		if (position == TRAFFIC_INDEX && MapEngine.checkSupportSubway(Globals.getCurrentCityInfo().getId())) {
-            mSubCategoryAdapter.add(mSphinx.getString(R.string.subway_map));
-            mSubCategoryAdapter.add("");
+            mSubwayMapView.setVisibility(View.VISIBLE);
+		} else {
+		    mSubwayMapView.setVisibility(View.GONE);
 		}
 		mSubCategoryAdapter.add(subs.get(0) + mContext.getString(R.string.all));
 		for(int i=1, size=subs.size(); i<size; i++){
@@ -1044,13 +1062,6 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
 			}
 			String keyWord=mSubCategoryAdapter.getItem(position);
 			if(position==0){
-				if (keyWord.contains(mSphinx.getString(R.string.subway_map))) {
-
-                    mSphinx.getSubwayMapFragment().setData(Globals.getCurrentCityInfo());
-                    mSphinx.showView(R.id.view_subway_map);
-                    
-                    return;
-				}
 				keyWord = subCategories.get(mCurrentCategoryIndex).get(0);
 			}
 			mActionLog.addAction(mActionTag + ActionLog.POIHomeSubcategoryPressed, keyWord);
