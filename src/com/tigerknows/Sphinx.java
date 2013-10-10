@@ -2750,9 +2750,17 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             if (dialog.isShowing()) {
                 return false;
             }     
+            dialog = getDialog(R.id.dialog_prompt_setting_location);
+            if (dialog.isShowing()) {
+                return false;
+            }    
         }
         
         if (id != R.id.dialog_prompt_setting_location) {
+            dialog = getDialog(R.id.dialog_prompt_setting_location_first);
+            if (dialog.isShowing()) {
+                return false;
+            }     
             dialog = getDialog(R.id.dialog_prompt_setting_location);
             if (dialog.isShowing()) {
                 return false;
