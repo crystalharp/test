@@ -1,7 +1,5 @@
 package com.tigerknows.ui.traffic;
 
-import java.math.BigDecimal;
-
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
@@ -9,13 +7,10 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.Button;
@@ -24,12 +19,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.decarta.Globals;
-import com.decarta.android.location.Position;
 import com.tigerknows.R;
-import com.tigerknows.Sphinx;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.ui.BaseActivity;
-import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.ui.more.SettingActivity;
 import com.tigerknows.util.Utility;
 
@@ -62,7 +54,7 @@ public class TrafficCompassActivity extends BaseActivity implements SensorEventL
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // TODO: mActionTag = ActionLog.TrafficCompass;
+        mActionTag = ActionLog.TrafficCompass;
         setContentView(R.layout.traffic_compass);
     	findViews();
     	setListener();
@@ -93,7 +85,7 @@ public class TrafficCompassActivity extends BaseActivity implements SensorEventL
 			
 			@Override
 			public void onClick(View v) {
-				// TODO: ActionLog
+				mActionLog.addAction(mActionTag + ActionLog.TrafficCompassGPS);
 				startActivityForResult(new Intent("android.settings.LOCATION_SOURCE_SETTINGS"), R.id.activity_setting_location);
 			}
 		});
