@@ -28,13 +28,14 @@ import com.tigerknows.util.Utility;
 public class TrafficCompassActivity extends BaseActivity implements SensorEventListener{
 	
 	
-	float mCurrentDegree = 0f;
-	ImageView mCompassImv;
-	SensorManager mSensorManager;
-	Button mGPSBtn;
+	private float mCurrentDegree = 0f;
+	private ImageView mCompassImv;
+	private ImageView mCompassBgImv;
+	private SensorManager mSensorManager;
+	private Button mGPSBtn;
 	
-	TextView[] mLocationDetailTxv= new TextView[6];
-	int[] mLocationDetailID = new int[]{
+	private TextView[] mLocationDetailTxv= new TextView[6];
+	private int[] mLocationDetailID = new int[]{
 		R.string.compass_longitude,
 		R.string.compass_latitude,
 		R.string.compass_altitude,
@@ -42,7 +43,7 @@ public class TrafficCompassActivity extends BaseActivity implements SensorEventL
 		R.string.compass_satellite,
 		R.string.compass_accuracy
 	};
-	final String[] fUnit = new String[]{
+	private final String[] fUnit = new String[]{
 			"",
 			"",
 			"m",
@@ -70,6 +71,7 @@ public class TrafficCompassActivity extends BaseActivity implements SensorEventL
     protected void findViews(){
     	super.findViews();
     	mCompassImv = (ImageView)findViewById(R.id.compass_imv);
+    	mCompassBgImv = (ImageView)findViewById(R.id.compass_bg_imv);
     	mGPSBtn = (Button)findViewById(R.id.gps_btn);
     	mLocationDetailTxv[0] = (TextView)findViewById(R.id.longitude_txv);
     	mLocationDetailTxv[1] = (TextView)findViewById(R.id.latitude_txv);
@@ -122,13 +124,16 @@ public class TrafficCompassActivity extends BaseActivity implements SensorEventL
     		if(sensor != null){
     			mSensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_GAME);
     			mCompassImv.setImageResource(R.drawable.ani_compass);
+    			mCompassBgImv.setImageResource(R.drawable.bg_compass);
     		}else{
     			// TODO: default image
-    			mCompassImv.setImageResource(R.drawable.ani_compass);
+    			mCompassImv.setImageResource(R.drawable.bg_query_fail);
+    			mCompassBgImv.setImageResource(R.drawable.transparent_bg);
     		}
     	}else{
     		// TODO: default image
-    		mCompassImv.setImageResource(R.drawable.ani_compass);
+    		mCompassImv.setImageResource(R.drawable.bg_query_fail);
+    		mCompassBgImv.setImageResource(R.drawable.transparent_bg);
     	}
     }
     

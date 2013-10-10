@@ -98,4 +98,13 @@
         android:layout_margin="16dp"
         android:scaleType="fitCenter"
         />
+    <ImageView android:id="@+id/compass_bg_imv"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:src="@drawable/bg_compass"
+        android:layout_above="@id/gps_btn"
+        android:layout_below="@id/title_view"
+        android:layout_margin="16dp"
+        android:scaleType="fitCenter"
+        />
 </RelativeLayout>
