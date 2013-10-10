@@ -131,7 +131,7 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
         };
     };
 
-    private int mSelectIndex;
+    private BaseData mSelectData;
     private OnCreateContextMenuListener mContextMenuListener = new OnCreateContextMenuListener() {
         
         @Override
@@ -140,7 +140,7 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
             AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
             if (info.position > -1 && info.position < (mLayerType.equals(ItemizedOverlay.POI_OVERLAY) ? mPOIAdapter.getCount() : mTrafficAdapter.getCount())) {
             	mActionLog.addAction(mActionTag + ActionLog.ListViewItemLong + getActionLogType(), String.valueOf(info.position));
-                mSelectIndex = info.position;
+                mSelectData = (mLayerType.equals(ItemizedOverlay.POI_OVERLAY) ? mPOIAdapter.getItem(info.position) : mTrafficAdapter.getItem(info.position));
                 menu.add(0, MENU_DELETE, 0, R.string.delete);
             }
         }
@@ -392,7 +392,7 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
     
     @Override
     public boolean onMenuItemSelected(int featureId, MenuItem item) {
-        if (mSelectIndex > -1) {
+        if (mSelectData != null) {
             switch (item.getItemId()) {
                 case MENU_DELETE:
                     mActionLog.addAction(mActionTag+ActionLog.HistoryMenuDelete + getActionLogType());
@@ -404,19 +404,21 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
                                 @Override
                                 public void onClick(DialogInterface arg0, int id) {
                                     if (id == DialogInterface.BUTTON_POSITIVE) {
-                                        if (mLayerType.equals(ItemizedOverlay.POI_OVERLAY)) {
-                                            POI poi = mPOIList.remove(mSelectIndex);
+                                        if (mSelectData instanceof POI) {
+                                            POI poi = (POI) mSelectData;
+                                            mPOIList.remove(poi);
                                             poi.deleteHistory(mSphinx);
                                         } else {
-                                            History traffic = mTrafficList.remove(mSelectIndex);
+                                            History traffic = (History)mSelectData;
+                                            mTrafficList.remove(traffic);
                                             SqliteWrapper.delete(mContext, mContext.getContentResolver(), Tigerknows.History.CONTENT_URI, "_id="+traffic.getId(), null);
                                         }
                                         refreshContent();
-                                        if (mLayerType.equals(ItemizedOverlay.POI_OVERLAY)) {
+                                        if (mSelectData instanceof POI && mLayerType.equals(ItemizedOverlay.POI_OVERLAY)) {
                                             if (mPOIList.isEmpty()) {
                                                 turnPagePOI();
                                             }
-                                        } else {
+                                        } else if (mSelectData instanceof History && mLayerType.equals(ItemizedOverlay.TRAFFIC_OVERLAY)){
                                             if (mTrafficList.isEmpty()) {
                                                 turnPageTraffic();
                                             }
@@ -427,6 +429,7 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
                     return true;
             }
         }
+        mSelectData = null;
         return super.onMenuItemSelected(featureId, item);
     }
 
