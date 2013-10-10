@@ -182,7 +182,7 @@ public class TrafficCompassActivity extends BaseActivity implements SensorEventL
 			float degree = event.values[0];
 			// 创建旋转动画（反向转过degree度）
 			RotateAnimation rotateAnimation = new RotateAnimation(mCurrentDegree, -degree, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-			rotateAnimation.setDuration(50);
+			rotateAnimation.setDuration(200);
 			mCompassImv.startAnimation(rotateAnimation);
 			mCurrentDegree = -degree;
 			break;
