@@ -25,6 +25,7 @@ public class DownloadThread extends Thread implements MapTileDataDownload.ITileD
 	//private final static int FAST_LOAD_THREAD_MAX=5;
 	
     private static final int NETWORK_ERROR_WAIT_TIME = 6*1000;
+    private static final int NETWORK_ERROR_TIP_TIME = 60*1000;
 	private static boolean stop=false;
 	private MapEngine mapEngine=null;
     private MapMetaFileDownload mapMetaFileDownload;
@@ -48,6 +49,7 @@ public class DownloadThread extends Thread implements MapTileDataDownload.ITileD
 	TilesView tilesView;
 	private boolean blocked=true;
 	private List<TileDownload> downloadingTiles = new ArrayList<TileDownload>();
+	private long lastErrorTime;
 	
 	public DownloadThread(int sequence,TilesView tilesView) {
 		this.sequence=sequence;
@@ -161,7 +163,11 @@ public class DownloadThread extends Thread implements MapTileDataDownload.ITileD
                                         }
                                     }
                                     if (statusCode != BaseQuery.STATUS_CODE_NETWORK_OK) {
-                                        tilesView.noticeDownload(DownloadEventListener.STATE_DOWNLOAD_ERROR);
+                                        long currentTime = System.currentTimeMillis();
+                                        if (currentTime - lastErrorTime > NETWORK_ERROR_TIP_TIME) {
+                                            lastErrorTime = currentTime;
+                                            tilesView.noticeDownload(DownloadEventListener.STATE_DOWNLOAD_ERROR);
+                                        }
                                         try {
                                             Thread.sleep(NETWORK_ERROR_WAIT_TIME);
                                         } catch (InterruptedException e) {
