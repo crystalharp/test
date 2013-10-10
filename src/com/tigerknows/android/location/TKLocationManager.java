@@ -66,6 +66,7 @@ public class TKLocationManager {
     private ArrayList<TKLocationListener> locationListenerList = new ArrayList<TKLocationListener>();
     private Object locationChangeLock = new Object();
     private List<GpsSatellite> mSatelliteList = new ArrayList<GpsSatellite>();
+    private Location lastLocation;
     
     public LocationUpload getGPSLocationUpload() {
         return gpsLocationUpload;
@@ -131,6 +132,7 @@ public class TKLocationManager {
     
     public void removeUpdates() {
         synchronized (locationChangeLock) {
+            lastLocation = null;
             locationListenerList.clear();
         }
         if (locationManager != null && locationListener != null) {
@@ -163,6 +165,9 @@ public class TKLocationManager {
             Location location = null;
             
             // 优先顺序：gps，tigerknows,network
+            TKLocation lastGpsTKLocation = this.lastGpsTKLocation;
+            TKLocation lastTigerknowsTKLocation = this.lastTigerknowsTKLocation;
+            TKLocation lastNetworkTKLocation = this.lastNetworkTKLocation;
             if (locationType == LOCATION_GPS) {
                 if (lastGpsTKLocation != null) {
                     location = lastGpsTKLocation.location;
@@ -194,14 +199,25 @@ public class TKLocationManager {
                 }
             }
 
-            for(TKLocationListener listener : locationListenerList) {
-                listener.onLocationChanged(location);
+            if (lastLocation != location ||
+                    lastLocation == null ||
+                    location == null ||
+                    !(Math.abs(lastLocation.getLatitude()-location.getLatitude()) < 0.00001d &&
+                            Math.abs(lastLocation.getLongitude()-location.getLongitude()) < 0.00001d &&
+                            Math.abs(lastLocation.getAccuracy()-location.getAccuracy()) < 0.00001f &&
+                            Math.abs(lastLocation.getSpeed()-location.getSpeed()) < 0.00001f &&
+                            Math.abs(lastLocation.getAltitude()-location.getAltitude()) < 0.00001d)) {
+                lastLocation = location;
+                for(TKLocationListener listener : locationListenerList) {
+                    listener.onLocationChanged(location);
+                }
             }
         }
     }
     
     public void addLocationListener(TKLocationListener listener) {
         synchronized (locationChangeLock) {
+            lastLocation = null;
             locationListenerList.add(listener);
         }
     }
@@ -223,6 +239,7 @@ public class TKLocationManager {
                 gpsLocationUpload.recordLocation(location);
             } else if (location.getProvider().equals(LocationManager.NETWORK_PROVIDER)) { 
                 lastNetworkTKLocation = new TKLocation(location, lac, cid, -1); 
+                TKLocation lastTigerknowsTKLocation = TKLocationManager.this.lastTigerknowsTKLocation;
                 if (lastTigerknowsTKLocation == null || lastTigerknowsTKLocation.location.getProvider().equals("error")) {
                     locationChanged(LOCATION_NETWORK);
                     networkLocationUpload.recordLocation(location);
