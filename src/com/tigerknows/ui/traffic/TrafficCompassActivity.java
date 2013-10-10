@@ -1,7 +1,5 @@
 package com.tigerknows.ui.traffic;
 
-import java.math.BigDecimal;
-
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
@@ -9,13 +7,10 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.Button;
@@ -24,25 +19,23 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.decarta.Globals;
-import com.decarta.android.location.Position;
 import com.tigerknows.R;
-import com.tigerknows.Sphinx;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.ui.BaseActivity;
-import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.ui.more.SettingActivity;
 import com.tigerknows.util.Utility;
 
 public class TrafficCompassActivity extends BaseActivity implements SensorEventListener{
 	
 	
-	float mCurrentDegree = 0f;
-	ImageView mCompassImv;
-	SensorManager mSensorManager;
-	Button mGPSBtn;
+	private float mCurrentDegree = 0f;
+	private ImageView mCompassImv;
+	private ImageView mCompassBgImv;
+	private SensorManager mSensorManager;
+	private Button mGPSBtn;
 	
-	TextView[] mLocationDetailTxv= new TextView[6];
-	int[] mLocationDetailID = new int[]{
+	private TextView[] mLocationDetailTxv= new TextView[6];
+	private int[] mLocationDetailID = new int[]{
 		R.string.compass_longitude,
 		R.string.compass_latitude,
 		R.string.compass_altitude,
@@ -50,7 +43,7 @@ public class TrafficCompassActivity extends BaseActivity implements SensorEventL
 		R.string.compass_satellite,
 		R.string.compass_accuracy
 	};
-	final String[] fUnit = new String[]{
+	private final String[] fUnit = new String[]{
 			"",
 			"",
 			"m",
@@ -62,7 +55,7 @@ public class TrafficCompassActivity extends BaseActivity implements SensorEventL
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // TODO: mActionTag = ActionLog.TrafficCompass;
+        mActionTag = ActionLog.TrafficCompass;
         setContentView(R.layout.traffic_compass);
     	findViews();
     	setListener();
@@ -78,6 +71,7 @@ public class TrafficCompassActivity extends BaseActivity implements SensorEventL
     protected void findViews(){
     	super.findViews();
     	mCompassImv = (ImageView)findViewById(R.id.compass_imv);
+    	mCompassBgImv = (ImageView)findViewById(R.id.compass_bg_imv);
     	mGPSBtn = (Button)findViewById(R.id.gps_btn);
     	mLocationDetailTxv[0] = (TextView)findViewById(R.id.longitude_txv);
     	mLocationDetailTxv[1] = (TextView)findViewById(R.id.latitude_txv);
@@ -93,7 +87,7 @@ public class TrafficCompassActivity extends BaseActivity implements SensorEventL
 			
 			@Override
 			public void onClick(View v) {
-				// TODO: ActionLog
+				mActionLog.addAction(mActionTag + ActionLog.TrafficCompassGPS, String.valueOf(SettingActivity.checkGPS(mThis)));
 				startActivityForResult(new Intent("android.settings.LOCATION_SOURCE_SETTINGS"), R.id.activity_setting_location);
 			}
 		});
@@ -130,13 +124,16 @@ public class TrafficCompassActivity extends BaseActivity implements SensorEventL
     		if(sensor != null){
     			mSensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_GAME);
     			mCompassImv.setImageResource(R.drawable.ani_compass);
+    			mCompassBgImv.setImageResource(R.drawable.bg_compass);
     		}else{
     			// TODO: default image
-    			mCompassImv.setImageResource(R.drawable.ani_compass);
+    			mCompassImv.setImageResource(R.drawable.bg_query_fail);
+    			mCompassBgImv.setImageResource(R.drawable.transparent_bg);
     		}
     	}else{
     		// TODO: default image
-    		mCompassImv.setImageResource(R.drawable.ani_compass);
+    		mCompassImv.setImageResource(R.drawable.bg_query_fail);
+    		mCompassBgImv.setImageResource(R.drawable.transparent_bg);
     	}
     }
     

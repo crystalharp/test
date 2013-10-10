@@ -513,6 +513,10 @@ public class ActionLog extends LogUpload {
     public static final String TrafficDriveMap = "BO";
     public static final String TrafficWalkMap = "BP";
     
+    // 交通指南针页
+    public static final String TrafficCompass = "BQ";
+    public static final String TrafficCompassGPS = "BA";
+    
     // == 用户模块通用 ==
     public static final String UserCommonLoginBtn = "AA";
     public static final String UserCommonRegisterBtn = "AB";
