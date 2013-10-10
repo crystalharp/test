@@ -110,17 +110,21 @@
                 android:layout_toRightOf="@id/trans_padding"
                 android:background="@color/gray_light"
                 android:gravity="center"
+                android:paddingTop="8dp"
                 >
                 <Button 
                     android:id="@+id/subway_map_btn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/subway_map"
-                    android:paddingLeft="16dp"
+                    android:paddingLeft="24dp"
                     android:paddingTop="8dp"
-                    android:paddingRight="16dp"
+                    android:paddingRight="24dp"
                     android:paddingBottom="8dp"
-                    android:background="@drawable/btn_subway_busstop"/>
+                    android:background="@drawable/btn_subway_busstop"
+                    android:drawableLeft="@drawable/ic_subway_map"
+                    android:drawablePadding="8dp"
+                    />
             </LinearLayout>
             
             <GridView
