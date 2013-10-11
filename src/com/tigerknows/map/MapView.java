@@ -1091,6 +1091,9 @@ public class MapView extends RelativeLayout implements
         if (activity == null || snapMap == null || position == null) {
             return;
         }
+        final boolean stopRefreshMyLocation = isStopRefreshMyLocation();
+        setStopRefreshMyLocation(false);
+        refreshMap();
         final Position centerPos = position.clone();
         View custom = activity.getLayoutInflater().inflate(R.layout.loading, null);
         TextView loadingTxv = (TextView)custom.findViewById(R.id.loading_txv);
@@ -1153,6 +1156,7 @@ public class MapView extends RelativeLayout implements
                             }
                             snapMap.finish(uri);
                         }
+                        setStopRefreshMyLocation(stopRefreshMyLocation);
                     }
                 });
             }
