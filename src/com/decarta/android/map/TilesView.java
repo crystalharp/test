@@ -2818,7 +2818,7 @@ public class TilesView extends GLSurfaceView {
 		 * the main method to draw all the map elements
 		 */
 		public void onDrawFrame(GL10 gl) {
-			if (paused) {
+			if (paused || stopRefreshMyLocation) {
 				LogWrapper.i("Sequence", "onDrawFrame paused");
 				return;
 			}
