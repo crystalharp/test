@@ -197,7 +197,7 @@ public abstract class Label {
 			NinePatchDrawable drawable = SingleRectLabel
 					.getNinePatchDrawable(backGroundIdx);
 			if (drawable != null) {
-				drawable.setBounds(0, 0, orgWidth + 2*padding, orgHeight + padding);
+				drawable.setBounds(0, 0, orgWidth, orgHeight);
 				drawable.draw(canvas);
 			}
 			x += padding;
