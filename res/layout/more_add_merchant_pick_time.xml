@@ -11,9 +11,11 @@
         android:id="@+id/body_view"
         android:layout_width="fill_parent"
         android:layout_height="204dp"
-        android:padding="8dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:paddingBottom="8dp"
         android:layout_alignParentBottom="true"
-        android:background="@drawable/list_selector_background_gray_light" >
+        android:background="@color/normal_background" >
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
@@ -68,35 +70,34 @@
     
     
     <RelativeLayout android:id="@+id/control_view"
-        android:padding="0dp"
         android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
         android:layout_above="@id/body_view"
-        android:layout_height="48dp"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp"
-        android:background="@color/white"
-        android:gravity="center"
-        android:orientation="horizontal"
-        >
-        <TextView
-            android:id="@+id/title_txv"
+        android:padding="8dp"
+        android:background="@color/normal_background">
+        <TextView android:id="@+id/title_txv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/select_business_hours_time"
-            android:layout_centerVertical="true"
             android:layout_alignParentLeft="true"
-            android:paddingLeft="12dp"
-            android:textSize="18sp"
-            />
+            android:layout_centerVertical="true"
+            android:padding="8dp"
+            android:textColor="@color/black_light"
+            android:textSize="16sp"
+            android:text="@string/select_business_hours_time"
+            android:gravity="left"/>
+        
         <Button
             android:id="@+id/time_confirm_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:layout_marginRight="4dp"
-            android:background="@drawable/btn_confirm_hotel_normal"
-            android:layout_centerVertical="true"
             android:layout_alignParentRight="true"
-            />
+            android:layout_centerVertical="true"
+            android:paddingLeft="12dp"
+            android:paddingTop="8dp"
+            android:paddingRight="12dp"
+            android:paddingBottom="8dp"
+            android:background="@drawable/btn_subway_busstop"
+            android:text="@string/confirm"
+            android:textColor="@color/orange"/>
     </RelativeLayout>
 </RelativeLayout>

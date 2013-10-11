@@ -2048,6 +2048,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     @SuppressWarnings("rawtypes")
     public void showPOI(List dataList, int index) {
         try {
+        mMapView.setStopRefreshMyLocation(false);
         clearMap();
         //add pins
         mMapView.deleteOverlaysByName(ItemizedOverlay.POI_OVERLAY);

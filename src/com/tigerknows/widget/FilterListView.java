@@ -24,6 +24,7 @@ import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.text.TextUtils.TruncateAt;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -103,6 +104,7 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
         bladeView.setActionTag(this.actionTag);
         isLastAreaFilter = isAreaFilter;
         isAreaFilter = false;
+        this.key = key;
         if (key == POIResponse.FIELD_FILTER_AREA_INDEX) {
             ActionLog.getInstance(getContext()).addAction(this.actionTag+ActionLog.FilterArea);
             isAreaFilter = true;
@@ -112,7 +114,7 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
             ActionLog.getInstance(getContext()).addAction(this.actionTag+ActionLog.FilterOrder);
         }
         if (showFilterButton) {
-            refreshFilterButton(controlView, filterList, getContext(), this);
+            refreshFilterButton(controlView, filterList, getContext(), this, this.key);
         }
         this.filterList = filterList;
         this.callBack = callBack;
@@ -125,18 +127,6 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
             Filter filter1 = this.filterList.get(i);
             if (filter1.getKey() == key) {
                 this.filter = filter1;
-            }
-        }
-        
-        for(int i = 0, size = controlView.getChildCount(); i < size; i++) {
-            View view = controlView.getChildAt(i);
-            if (view instanceof Button) {
-                Button button = (Button) view;
-                if (key == (Byte)button.getTag()) {
-                    button.setBackgroundResource(R.drawable.btn_tab_selected);
-                } else {
-                    button.setBackgroundResource(R.drawable.btn_tab);
-                }
             }
         }
 
@@ -479,8 +469,11 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
         }
     }
 
-    
     public static void refreshFilterButton(ViewGroup filterViewGroup, List<Filter> filterList, Context context, View.OnClickListener onClickListener) {
+        refreshFilterButton(filterViewGroup, filterList, context, onClickListener, Byte.MIN_VALUE);
+    }
+    
+    public static void refreshFilterButton(ViewGroup filterViewGroup, List<Filter> filterList, Context context, View.OnClickListener onClickListener, byte key) {
         if (filterList.isEmpty()) {
             filterViewGroup.setVisibility(View.GONE);
             return;
@@ -491,35 +484,41 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
         int count = filterViewGroup.getChildCount();
         int size = filterList.size();
         
-        for(int i = 0; i < count; i++) {
-            filterViewGroup.getChildAt(i).setVisibility(View.GONE);
+        for(int i = size; i < count; i++) {
+            button = (Button) filterViewGroup.getChildAt(i);
+            button.setVisibility(View.GONE);
         }
         
-        int j = 0;
         for(int i = 0; i < size; i++) {
             Filter filter = filterList.get(i);
-            if (j < count) {
-                if (i > 0) {
-                    filterViewGroup.getChildAt(j++).setVisibility(View.VISIBLE);
-                }
-                button = (Button) filterViewGroup.getChildAt(j++);
+            if (i < count) {
+                button = (Button) filterViewGroup.getChildAt(i);
                 button.setVisibility(View.VISIBLE);
             } else {
-                if (i > 0) {
-                    ImageView imageView = new ImageView(context);
-                    imageView.setImageResource(R.drawable.ic_split);
-                    filterViewGroup.addView(imageView);
-                }
                 button = makeFitlerButton(context);
                 filterViewGroup.addView(button);
             }
+            if (i == size -1) {
+                if (filter.getKey() == key) {
+                    button.setBackgroundResource(R.drawable.btn_filter2_focused);
+                } else {
+                    button.setBackgroundResource(R.drawable.btn_filter2);
+                }
+            } else {
+                if (filter.getKey() == key) {
+                    button.setBackgroundResource(R.drawable.btn_filter1_focused);
+                } else {
+                    button.setBackgroundResource(R.drawable.btn_filter1);
+                }
+            }
+            button.setPadding(0, Util.dip2px(Globals.g_metrics.density, 12), 0, Util.dip2px(Globals.g_metrics.density, 12));
             button.setTag(filter.getKey());
             button.setText(FilterListView.getFilterTitle(context, filter));
             button.setOnClickListener(onClickListener);            
         }
     }
 
-    public static Button makeFitlerButton(Context context) {
+    static Button makeFitlerButton(Context context) {
         
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);        
         layoutParams.weight = 1;
@@ -527,16 +526,12 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
         Resources resources = context.getResources();
         Button button = new Button(context);
         button.setLayoutParams(layoutParams);
-        button.setBackgroundResource(R.drawable.btn_tab);
         button.setTextColor(resources.getColor(R.color.black_dark));
-        Drawable right = resources.getDrawable(R.drawable.ic_small_triangle_down);
-        right.setBounds(0, 0, right.getIntrinsicWidth(), right.getIntrinsicWidth());
-        button.setCompoundDrawablesWithIntrinsicBounds(null, null, right, null);
 //        button.setPadding(Util.dip2px(Globals.g_metrics.density, 6), 0, Util.dip2px(Globals.g_metrics.density, 24), 0);
         button.setGravity(Gravity.CENTER);
         button.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
         button.setSingleLine(true);
-        button.setPadding(0, 0, Util.dip2px(Globals.g_metrics.density, 2), 0);
+        button.setEllipsize(TruncateAt.END);
         return button;
     }
     
@@ -581,6 +576,10 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
     @Override
     public void onClick(View view) {
         byte key = (Byte)view.getTag();
+        if (key == this.key) {
+            cancel();
+            return;
+        }
         setData(filterList, key, callBack, isTurnPaging, this.actionTag);
     }
     
