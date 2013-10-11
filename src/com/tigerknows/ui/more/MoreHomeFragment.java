@@ -715,6 +715,8 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 				public void onClick(View v) {
 					mActionLog.addAction(mActionTag + ActionLog.MoreNotice);
 					Notice notice = mNoticeList.get(fPosition % mPagecount);
+					TKConfig.setPref(mContext, TKConfig.PREFS_MORE_OPENED, "yes");
+					refreshMenuFragment();
 					switch((int)notice.getLocalType()){
 					case 0:
 						break;
@@ -731,8 +733,6 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 						mActionLog.addAction(mActionTag + ActionLog.MoreNotice, notice.getNoticeId());
 						String uri = notice.getUrl();
 						if (!TextUtils.isEmpty(uri)) {
-							TKConfig.setPref(mContext, TKConfig.PREFS_MORE_OPENED, "yes");
-							refreshMenuFragment();
 							Intent intent = new Intent();
 							intent.putExtra(BrowserActivity.TITLE, notice.getWebTitle());
 							intent.putExtra(BrowserActivity.URL, uri);
