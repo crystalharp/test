@@ -60,6 +60,17 @@ public class StringArrayAdapter extends ArrayAdapter<String> {
             }
         }
 
+        int count = getCount();
+        if (count == 1) {
+            view.setBackgroundResource(R.drawable.list_single);
+        } else if (position == 0) {
+            view.setBackgroundResource(R.drawable.list_header);
+        } else if (position == count-1) {
+            view.setBackgroundResource(R.drawable.list_footer);
+        } else {
+            view.setBackgroundResource(R.drawable.list_middle);
+        }
+
         return view;
     }
 }

@@ -14,15 +14,22 @@
      limitations under the License.
 -->
 
-<CheckedTextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/text1"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root_view"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="vertical"
     android:background="@drawable/list_selector_background_white"
-    android:textColor="@color/black_dark"
-    android:gravity="center_vertical"
-    android:padding="12dp"
-    android:checkMark="@drawable/btn_check"
-    android:ellipsize="marquee"
-/>
-
+    >
+	<CheckedTextView
+	    android:id="@+id/text1"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:textColor="@color/black_dark"
+	    android:gravity="center_vertical"
+	    android:padding="12dp"
+	    android:checkMark="@drawable/btn_check"
+	    android:ellipsize="marquee"
+	/>
+</LinearLayout>
