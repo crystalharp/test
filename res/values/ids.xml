@@ -83,7 +83,7 @@
     <item type="id" name="view_hotel_order_detail" />
     <item type="id" name="view_hotel_order_list"/>
     <item type="id" name="view_hotel_image_grid"/>
-    <item type="id" name="view_hotel_intro"/>
+    <item type="id" name="activity_hotel_intro"/>
     
     <item type="id" name="view_take_screenshot"/>
     <item type="id" name="view_measure_distance"/>

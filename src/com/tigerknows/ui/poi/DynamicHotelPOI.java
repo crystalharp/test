@@ -5,6 +5,7 @@ import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
+import android.content.Intent;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -47,7 +48,7 @@ import com.tigerknows.model.TKDrawable.LoadImageRunnable;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.hotel.DateListView;
 import com.tigerknows.ui.hotel.HotelHomeFragment;
-import com.tigerknows.ui.hotel.HotelIntroFragment;
+import com.tigerknows.ui.hotel.HotelIntroActivity;
 import com.tigerknows.ui.poi.POIDetailFragment.BlockRefresher;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIView;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIViewBlock;
@@ -310,9 +311,13 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             public void onClick(View v) {
                 if (mPOI.getHotel().getUuid() != null) {
                     mPOIDetailFragment.mActionLog.addAction(ActionLog.POIDetail + ActionLog.POIDetailHotelIntro);
-                    HotelIntroFragment hotelIntro = mSphinx.getHotelIntroFragment();
-                    hotelIntro.setData(mPOI);
-                    mSphinx.showView(R.id.view_hotel_intro);
+                    Intent intent = new Intent();
+                    intent.putExtra(HotelIntroActivity.EXTRA_NAME, mPOI.getName());
+                    Hotel hotel = mPOI.getHotel();
+                    intent.putExtra(HotelIntroActivity.EXTRA_LONG_DESCRIPTION, hotel.getLongDescription());
+                    intent.putExtra(HotelIntroActivity.EXTRA_ROOM_DESCRIPTION, hotel.getRoomDescription());
+                    intent.putExtra(HotelIntroActivity.EXTRA_SERVICE, hotel.getService());
+                    mSphinx.showView(R.id.activity_hotel_intro, intent);
                 }
             }
         });

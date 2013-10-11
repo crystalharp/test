@@ -137,7 +137,7 @@ import com.tigerknows.ui.discover.YanchuDetailFragment;
 import com.tigerknows.ui.discover.ZhanlanDetailFragment;
 import com.tigerknows.ui.hotel.HotelHomeFragment;
 import com.tigerknows.ui.hotel.HotelImageGridFragment;
-import com.tigerknows.ui.hotel.HotelIntroFragment;
+import com.tigerknows.ui.hotel.HotelIntroActivity;
 import com.tigerknows.ui.hotel.HotelOrderCreditFragment;
 import com.tigerknows.ui.hotel.HotelOrderDetailFragment;
 import com.tigerknows.ui.hotel.HotelOrderListFragment;
@@ -3220,7 +3220,12 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 intent.addCategory(Intent.CATEGORY_DEFAULT);
                 startActivityForResult(intent, R.id.activity_setting_location);
                 return true;
+            } else if (R.id.activity_hotel_intro == viewId) {
+                intent.setClass(this, HotelIntroActivity.class);
+                startActivityForResult(intent, R.id.activity_hotel_intro);
+                return true;
             }
+            
             mUIProcessing = true;
             boolean show = false;
             int currentId = uiStackPeek();
@@ -3484,7 +3489,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     
     private HotelOrderDetailFragment mHotelOrderDetailFragment;
     private HotelOrderListFragment mHotelOrderListFragment;
-    private HotelIntroFragment mHotelIntroFragment;
     private HotelImageGridFragment mHotelImageGridFragment;
     
     private CouponListFragment mCouponListFragment;
@@ -3636,10 +3640,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             	
             case R.id.view_hotel_order_detail:
             	baseFragment = getHotelOrderDetailFragment();
-            	break;
-            	
-            case R.id.view_hotel_intro:
-            	baseFragment = getHotelIntroFragment();
             	break;
             	
             case R.id.view_hotel_image_grid:
@@ -4140,20 +4140,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             return mHotelImageGridFragment;
         }
     }
-    
-    public HotelIntroFragment getHotelIntroFragment(){
-    	
-        synchronized (mUILock) {
-            if (mHotelIntroFragment == null) {
-            	HotelIntroFragment fragment = new HotelIntroFragment(Sphinx.this);
-                fragment.setId(R.id.view_hotel_intro);
-                fragment.onCreate(null);
-                mHotelIntroFragment = fragment;
-            }
-            return mHotelIntroFragment;
-        }
-    }
-    
     public CouponListFragment getCouponListFragment(){
         
         synchronized (mUILock) {
