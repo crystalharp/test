@@ -72,34 +72,9 @@ public final class FileDownload extends BaseQuery {
             if (dataResponse != null) {
                 FileData fileData = dataResponse.getFileData();
                 if (fileData != null && fileData.url != null) {
-                    File file = downFile(fileData.url);
-                    
-                    if (file != null && !isStop) {
-                        FileInputStream fis;
-                        FileOutputStream fos;
-                        String encFilePath = file.getAbsolutePath();
-                        String decFilePath = encFilePath + ".dec";
-                        try {
-                            DataEncryptor encryptor = DataEncryptor.getInstance();
-                            fis = new FileInputStream(encFilePath);
-                            fos = new FileOutputStream(decFilePath);
-                            byte[] filedata = new byte[4096];
-                            int n = 0;
-                            while ((n = fis.read(filedata)) != -1) {
-                                encryptor.decrypt(filedata);
-                                fos.write(filedata, 0, n);
-                            }
-                            Utility.unZipFile(decFilePath, null, MapEngine.cityId2Floder(cityId));
-                            fis.close();
-                            fos.close();
-                        } catch (FileNotFoundException e) {
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        } finally {
-                            file.delete();
-                            (new File(decFilePath)).delete();
-                        }
+                    SubwayMapDownloadManager manager = SubwayMapDownloadManager.getInstance();
+                    if (!manager.checkRunning(fileData.url)) {
+                        manager.download(context, fileData.url, isStop, cityId);
                     }
                 }
             }
@@ -164,7 +139,7 @@ public final class FileDownload extends BaseQuery {
     
 
     
-    private File downFile(String url) {
+    private static File downFile(Context context, HttpClient httpClient, String url, boolean isStop) {
         try {
             if (BaseQueryTest.UnallowedAccessNetwork) {
                 Thread.sleep(5000);
@@ -172,7 +147,6 @@ public final class FileDownload extends BaseQuery {
             }
             File tempFile = DownloadService.createFileByUrl(url);
             long fileSize = tempFile.length();
-            HttpClient httpClient = HttpManager.getNewHttpClient();
             HttpUriRequest request = new HttpGet(url);
             
             // 支持断点续传
@@ -214,4 +188,79 @@ public final class FileDownload extends BaseQuery {
         return null;
     }
     
+    static private class SubwayMapDownloadManager {
+        
+        static SubwayMapDownloadManager instance = null;
+        String url = null;
+        boolean downing = false;
+        HttpClient httpClient;
+        
+        private SubwayMapDownloadManager() {
+        }
+        
+        public static SubwayMapDownloadManager getInstance() {
+            if (instance == null) {
+                instance = new SubwayMapDownloadManager();
+            }
+            return instance;
+        }
+        
+        public boolean checkRunning(String downUrl) {
+            synchronized(this) { 
+                //url相同则是同城市的第二个请求,直接返回
+                if (downUrl.equals(url)) {
+                    return true;
+                }
+                //url不同,且正在下载,则取消现在正在下载的文件
+                if (downing) {
+                    httpClient.getConnectionManager().shutdown();
+                    url = null;
+                }
+            }
+            return false;
+        }
+        
+        public void download(Context context, String downUrl, boolean isStop, int cityId) {
+
+            synchronized (this) {
+                url = downUrl;
+                downing = true;
+                httpClient = HttpManager.getNewHttpClient();
+            }
+            File file = downFile(context, httpClient, downUrl, isStop);
+            synchronized (this) {
+                downing = false;
+            }
+            if (file != null && !isStop) {
+                FileInputStream fis;
+                FileOutputStream fos;
+                String encFilePath = file.getAbsolutePath();
+                String decFilePath = encFilePath + ".dec";
+                try {
+                    DataEncryptor encryptor = DataEncryptor.getInstance();
+                    fis = new FileInputStream(encFilePath);
+                    fos = new FileOutputStream(decFilePath);
+                    byte[] filedata = new byte[4096];
+                    int n = 0;
+                    while ((n = fis.read(filedata)) != -1) {
+                        encryptor.decrypt(filedata);
+                        fos.write(filedata, 0, n);
+                    }
+                    Utility.unZipFile(decFilePath, null, MapEngine.cityId2Floder(cityId));
+                    fis.close();
+                    fos.close();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    file.delete();
+                    (new File(decFilePath)).delete();
+                }
+            }
+            synchronized (this) {
+                url = null;
+            }
+        }
+    }
 }
