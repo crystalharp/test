@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import android.webkit.WebSettings.ZoomDensity;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.decarta.Globals;
 import com.decarta.android.location.Position;
@@ -177,7 +179,6 @@ public class SubwayMapFragment extends BaseFragment {
         needRefresh = true;
         mWebWbv.stopLoading();
         mWebWbv.clearView();
-        //TODO:del the char
         mTitle = mSphinx.getString(R.string.subway_map);
         mCityInfo = cityinfo;
         CityInfo locateCityInfo = Globals.g_My_Location_City_Info;
@@ -207,8 +208,13 @@ public class SubwayMapFragment extends BaseFragment {
         }
         
         public void search(final String poiid, final String x, final String y, final String name) {
-            //FIXME:检查参数
             LogWrapper.d(TAG, "x:" + x + " y:" + y);
+            if ((TextUtils.isEmpty(x) || x.length() < 1) ||
+                    (TextUtils.isEmpty(y) || y.length() < 1)) {
+                mSphinx.showTip(R.string.subway_location_error, Toast.LENGTH_SHORT);
+                return;
+            }
+            
             Runnable run = new Runnable() {
 
                 @Override
@@ -232,23 +238,21 @@ public class SubwayMapFragment extends BaseFragment {
         super.onPostExecute(tkAsyncTask);
         LogWrapper.d(TAG, "onPostExecute()");
         FileDownload fileDownload = (FileDownload) tkAsyncTask.getBaseQuery();
+        int stat = STAT_NODATA;
         if (BaseActivity.checkResponseCode(fileDownload, mSphinx, new int[]{953}, false, this, false) == false) {
             Response response = fileDownload.getResponse();
             if (response != null) {
                 if (response.getResponseCode() != 953) {
                     subwayPath = MapEngine.getSubwayDataPath(mCityInfo.getId());
                     if (subwayPath != null) {
-                        setStatus(STAT_MAP);
+                        stat = STAT_MAP;
                         mURL = Uri.fromFile(new File(subwayPath)).toString();
                         showSubwayMap(mURL);
-                    } else {
-                        setStatus(STAT_NODATA);
                     }
-                } else {
-                    setStatus(STAT_NODATA);
                 }
             }
         }
+        setStatus(stat);
     }
 
 }

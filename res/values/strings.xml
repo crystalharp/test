@@ -1298,6 +1298,7 @@
     
     <string name="subway_map">地铁图</string>
     <string name="no_subway_map">该城市暂未开通地铁</string>
+    <string name="subway_location_error">获取位置信息出错</string>
 	
     <string name="has_take_screenshot">已截取本屏地图</string>
     <string name="measure_distance_tip">点击地图进行测距</string>
