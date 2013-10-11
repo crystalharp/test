@@ -90,15 +90,15 @@ public class SubwayMapFragment extends BaseFragment {
         LogWrapper.d(TAG, "subway path:" + subwayPath);
         if (subwayPath == null) {
             setStatus(STAT_QUERY);
-            FileDownload fileDownload = new FileDownload(mSphinx);
-            fileDownload.addParameter(FileDownload.SERVER_PARAMETER_FILE_TYPE, FileDownload.FILE_TYPE_SUBWAY);
-            fileDownload.setup(mCityInfo.getId(), this.getId(), this.getId());
-            mSphinx.queryStart(fileDownload);
         } else {
             setStatus(STAT_MAP);
             mURL = Uri.fromFile(new File(subwayPath)).toString();
             showSubwayMap(mURL);
         }
+        FileDownload fileDownload = new FileDownload(mSphinx);
+        fileDownload.addParameter(FileDownload.SERVER_PARAMETER_FILE_TYPE, FileDownload.FILE_TYPE_SUBWAY);
+        fileDownload.setup(mCityInfo.getId(), this.getId(), this.getId());
+        mSphinx.queryStart(fileDownload);
     }
 
     public SubwayMapFragment(Sphinx sphinx) {
