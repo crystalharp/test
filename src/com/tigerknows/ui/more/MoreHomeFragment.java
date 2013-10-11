@@ -177,9 +177,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(!TextUtils.equals("yes", TKConfig.getPref(mContext, TKConfig.PREFS_MORE_OPENED, ""))){
-        	TKConfig.setPref(mContext, TKConfig.PREFS_MORE_OPENED, "hide");
-        }
+        TKConfig.setPref(mContext, TKConfig.PREFS_MORE_OPENED, "hide");
         GenerateNoticeView.pd8 = Utility.dip2px(mContext, 8);
         mActionTag = ActionLog.More;
     }
@@ -317,9 +315,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         		mSphinx.getString(R.string.order) + mSphinx.getString(R.string.order_hint), 
         		mSphinx.getString(R.string.order_hint)));
         mMenuFragment.display();
-        if(mSphinx.uiStackPeek() == R.id.view_more_home && TextUtils.equals(TKConfig.getPref(mContext, TKConfig.PREFS_MORE_OPENED, ""), "no")){
-        	TKConfig.setPref(mContext, TKConfig.PREFS_MORE_OPENED, "yes");
-        }
+
         refreshUserEntrance();
         refreshBootStrapData(true);
         refreshMoreData();
@@ -523,11 +519,8 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 			}
 		}
 		mPagecount = (int)mNoticeList.size();
-		if(!TextUtils.equals("yes", TKConfig.getPref(mContext, TKConfig.PREFS_MORE_OPENED, ""))){
-			TKConfig.setPref(mContext, TKConfig.PREFS_MORE_OPENED, (mPagecount==0) ? "hide" : 
-				(mSphinx.uiStackPeek() == R.id.view_more_home ? "yes" : "no"));
-			refreshMenuFragment();
-		}
+		TKConfig.setPref(mContext, TKConfig.PREFS_MORE_OPENED, (mPagecount==0) ? "hide" : "no");
+		refreshMenuFragment();
         if(mPagecount > 1){
         	Utility.pageIndicatorInit(mSphinx, mPageIndicatorView, mPagecount, 0, R.drawable.ic_notice_dot_normal, R.drawable.ic_notice_dot_selected);
         	mNoticeRly.setVisibility(View.VISIBLE);
@@ -722,6 +715,8 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 				public void onClick(View v) {
 					mActionLog.addAction(mActionTag + ActionLog.MoreNotice);
 					Notice notice = mNoticeList.get(fPosition % mPagecount);
+					TKConfig.setPref(mContext, TKConfig.PREFS_MORE_OPENED, "yes");
+					refreshMenuFragment();
 					switch((int)notice.getLocalType()){
 					case 0:
 						break;
@@ -786,7 +781,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
                             case DialogInterface.BUTTON_POSITIVE:
                                 String url = mSoftwareUpdate.getURL();
                                 if (url != null) {
-                                   DownloadService.download(mSphinx, url, mSphinx.getString(R.string.app_name), ApkDownloadedProcessor.getInstance());
+                                    DownloadService.download(mSphinx, url, mSphinx.getString(R.string.app_name), ApkDownloadedProcessor.getInstance());
                                 }
                                 break;
                             default:

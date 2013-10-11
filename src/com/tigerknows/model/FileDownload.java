@@ -80,7 +80,6 @@ public final class FileDownload extends BaseQuery {
                         String encFilePath = file.getAbsolutePath();
                         String decFilePath = encFilePath + ".dec";
                         try {
-                            //TODO:可能出现的问题
                             DataEncryptor encryptor = DataEncryptor.getInstance();
                             fis = new FileInputStream(encFilePath);
                             fos = new FileOutputStream(decFilePath);
