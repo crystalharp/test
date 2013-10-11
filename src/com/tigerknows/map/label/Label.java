@@ -159,27 +159,28 @@ public abstract class Label {
         names[0] = text;
         int nameLength = text.length();
         int seg = 1;
-        float width, height, orgWidth, orgHeight, lineHeight;
+        int orgWidth, orgHeight;
+        int padding = (int)Globals.g_metrics.scaledDensity * 2;
+        float width, height, lineHeight;
         if(nameLength >= 8) {
         	names[0] = text.substring(0, (nameLength + 1) >> 1);
         	names[1] = text.substring((nameLength + 1) >> 1);
         	seg = 2;
-        	width = Math.max(tilePText.measureText(names[0]), tilePText.measureText(names[1]));
+        	width = Math.max(tilePText.measureText(names[0]), tilePText.measureText(names[1])) + (backGroundIdx >= 0 ? padding : 0) * 2;
         	orgWidth = (int)width;
         	lineHeight = -tilePText.ascent()+tilePText.descent();
-        	height = 2 * lineHeight;
+        	height = 2 * lineHeight + (backGroundIdx >= 0 ? padding : 0);
         	orgHeight = (int)height;
         }
         else {
         	width = tilePText.measureText(text);
-        	orgWidth = (int)width;
-        	height = (-tilePText.ascent()+tilePText.descent());
-        	lineHeight = height;
+        	orgWidth = (int)width + (backGroundIdx >= 0 ? padding : 0) * 2;
+        	lineHeight = (-tilePText.ascent()+tilePText.descent());
+        	height = lineHeight + (backGroundIdx >= 0 ? padding : 0);
         	orgHeight = (int)height;
         }
         float x = 0;//todo: 寻找最优的缩进
         float y = fontSize;
-
         int pw2width = Util.getPower2(width);
         int pw2height = Util.getPower2(height);
         XYInteger size = new XYInteger(pw2width, pw2height);
@@ -193,17 +194,16 @@ public abstract class Label {
         }
         Canvas canvas = new Canvas(bitmap);
         if (backGroundIdx >= 0) {
-			float padding = Globals.g_metrics.scaledDensity * 2;
 			NinePatchDrawable drawable = SingleRectLabel
 					.getNinePatchDrawable(backGroundIdx);
 			if (drawable != null) {
-				drawable.setBounds((int) (x), (int) (y - orgHeight),
-						(int) (x + orgWidth), (int) (y + 2 * padding));
+				drawable.setBounds(0, 0, orgWidth + 2*padding, orgHeight + padding);
 				drawable.draw(canvas);
 			}
+			x += padding;
 		}
         else {
-        	tilePText.setColor(0xffffffff); //? ?RGB
+        	tilePText.setColor(0xffffffff); //白色描边
         	tilePText.setStyle(Style.STROKE);
             for (int i = 0; i < seg; ++i) {
             	canvas.drawText(names[i], x, y + lineHeight * i, tilePText);

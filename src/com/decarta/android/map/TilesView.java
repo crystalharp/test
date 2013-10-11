@@ -2753,8 +2753,10 @@ public class TilesView extends GLSurfaceView {
 			max_tile_texture_ref = (int) ((Math.ceil(displaySize.x
 					/ (float) CONFIG.TILE_SIZE) + 1)
 					* (Math.ceil(displaySize.y / (float) CONFIG.TILE_SIZE) + 1) * 4) + 1;
-			texturePool = new TexturePool(max_tile_texture_ref
-					+ CONFIG.TILE_THREAD_COUNT);
+			if(texturePool == null) {
+				texturePool = new TexturePool(max_tile_texture_ref
+						+ CONFIG.TILE_THREAD_COUNT);
+			}
 			if (tileInfos == null) {
 				tileInfos = new LinkedHashMap<Tile, TileInfo>(
 						max_tile_texture_ref * 2, 0.75f, true) {
