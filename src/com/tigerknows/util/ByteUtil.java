@@ -10,8 +10,8 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.decarta.android.location.Position;
 import com.tigerknows.TKConfig;
+import com.tigerknows.android.location.Position;
 import com.tigerknows.map.LocalRegionDataInfo;
 import com.tigerknows.map.MapEngine;
 import com.tigerknows.map.MapWord;

@@ -15,7 +15,7 @@ import com.decarta.android.exception.APIException;
 import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.decarta.android.util.XYDouble;
-import com.decarta.android.util.XYInteger;
+import com.tigerknows.util.XYInteger;
 
 public class ItemizedOverlay {
 	/**

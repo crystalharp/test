@@ -25,7 +25,6 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
 import com.decarta.Globals;
-import com.decarta.android.location.Position;
 import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.tigerknows.R;
@@ -33,6 +32,7 @@ import android.widget.Toast;
 
 import com.tigerknows.Sphinx.TouchMode;
 import com.tigerknows.android.app.TKActivity;
+import com.tigerknows.android.location.Position;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.PinOverlayHelper;
 import com.tigerknows.model.POI;

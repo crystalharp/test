@@ -43,12 +43,12 @@ import com.decarta.Globals;
 import com.decarta.android.event.EventListener;
 import com.decarta.android.event.EventSource;
 import com.decarta.android.exception.APIException;
-import com.decarta.android.location.Position;
 import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.decarta.android.util.XYDouble;
 import com.decarta.android.util.XYFloat;
 import com.tigerknows.R;
+import com.tigerknows.android.location.Position;
 
 /**
  * A Pin that gets attached to a Map object has a default, simple message for 

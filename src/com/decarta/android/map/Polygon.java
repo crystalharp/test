@@ -16,9 +16,9 @@ import android.graphics.Paint.Style;
 import android.graphics.Path;
 
 import com.decarta.android.exception.APIException;
-import com.decarta.android.location.Position;
 import com.decarta.android.util.Util;
 import com.decarta.android.util.XYDouble;
+import com.tigerknows.android.location.Position;
 
 /**
  * 多边形类

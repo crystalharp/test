@@ -13,9 +13,9 @@ import java.util.Map;
 import com.decarta.android.event.EventListener;
 import com.decarta.android.event.EventSource;
 import com.decarta.android.exception.APIException;
-import com.decarta.android.location.Position;
 import com.decarta.android.util.Util;
 import com.decarta.android.util.XYDouble;
+import com.tigerknows.android.location.Position;
 import com.tigerknows.model.POI;
 
 /**

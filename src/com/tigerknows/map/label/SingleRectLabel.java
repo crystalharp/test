@@ -24,12 +24,12 @@ import com.decarta.Globals;
 import com.decarta.android.map.TilesView.Texture;
 import com.decarta.android.util.Util;
 import com.decarta.android.util.XYFloat;
-import com.decarta.android.util.XYInteger;
 import com.decarta.android.util.XYZ;
 import com.tigerknows.R;
 import com.tigerknows.android.app.TKApplication;
 import com.tigerknows.map.Grid;
 import com.tigerknows.map.RectInteger;
+import com.tigerknows.util.XYInteger;
 
 /**
  * @author chenming

@@ -6,9 +6,9 @@ package com.tigerknows.service;
 
 import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
-import com.decarta.android.location.Position;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.TKConfig;
+import com.tigerknows.android.location.Position;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.MapEngine;
 import com.tigerknows.map.MapEngine.CityInfo;

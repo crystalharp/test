@@ -3,10 +3,10 @@ package com.tigerknows.ui.traffic;
 import android.text.TextUtils;
 
 import com.decarta.Globals;
-import com.decarta.android.location.Position;
 import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.tigerknows.R;
+import com.tigerknows.android.location.Position;
 import com.tigerknows.map.MapEngine;
 import com.tigerknows.map.MapEngine.CityInfo;
 import com.tigerknows.model.POI;

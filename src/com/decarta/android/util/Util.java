@@ -16,13 +16,14 @@ import java.util.List;
 import com.decarta.CONFIG;
 import com.decarta.android.exception.APIException;
 import com.decarta.android.location.BoundingBox;
-import com.decarta.android.location.Position;
 import com.decarta.android.map.MapLayer.MapLayerProperty;
 import com.decarta.android.map.MapLayer.MapLayerType;
 import com.decarta.android.map.Tile;
 import com.decarta.android.map.TileGridResponse;
 import com.decarta.android.scale.Length;
 import com.decarta.android.scale.Length.UOM;
+import com.tigerknows.android.location.Position;
+import com.tigerknows.util.XYInteger;
 
 import android.content.Context;
 import android.content.res.Resources;

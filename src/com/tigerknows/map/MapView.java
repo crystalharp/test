@@ -31,7 +31,6 @@ import com.decarta.android.event.EventListener;
 import com.decarta.android.event.EventSource;
 import com.decarta.android.exception.APIException;
 import com.decarta.android.location.BoundingBox;
-import com.decarta.android.location.Position;
 import com.decarta.android.map.Compass;
 import com.decarta.android.map.Icon;
 import com.decarta.android.map.InfoWindow;
@@ -44,12 +43,13 @@ import com.decarta.android.map.TilesView.MapPreference;
 import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.decarta.android.util.XYFloat;
-import com.decarta.android.util.XYInteger;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
+import com.tigerknows.android.location.Position;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.util.Utility;
+import com.tigerknows.util.XYInteger;
 import com.tigerknows.widget.ZoomControls;
 
 /**

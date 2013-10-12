@@ -25,13 +25,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.decarta.Globals;
-import com.decarta.android.location.Position;
 import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
 import com.tigerknows.Sphinx.TouchMode;
+import com.tigerknows.android.location.Position;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.android.widget.TKEditText;
 import android.widget.Toast;

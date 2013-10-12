@@ -225,8 +225,6 @@
         
 
 		<activity android:configChanges="orientation" android:name="com.decarta.example.ExceptionDialogActivity" />
-		<activity android:configChanges="orientation" android:name="com.decarta.example.ProfileResultActivity" />
-		<activity android:configChanges="orientation" android:name="com.decarta.example.ConfigActivity" />
 
         <receiver android:name="com.tigerknows.radar.AlarmInitReceiver">
             <intent-filter>

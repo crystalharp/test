@@ -6,11 +6,11 @@
 
 package com.decarta.android.map;
 
-import com.decarta.android.location.Position;
 import com.decarta.android.scale.Length;
 import com.decarta.android.util.XYDouble;
 import com.decarta.android.util.XYFloat;
 import com.decarta.android.util.XYZ;
+import com.tigerknows.android.location.Position;
  
 public class TileGridResponse {
 	private Length radiusY;

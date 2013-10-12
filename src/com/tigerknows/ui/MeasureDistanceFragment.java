@@ -5,7 +5,6 @@
 package com.tigerknows.ui;
 
 import com.decarta.Globals;
-import com.decarta.android.location.Position;
 import com.decarta.android.map.Icon;
 import com.decarta.android.map.ItemizedOverlay;
 import com.decarta.android.map.OverlayItem;
@@ -18,6 +17,7 @@ import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.Sphinx.TouchMode;
+import com.tigerknows.android.location.Position;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.MapView;
 import com.tigerknows.util.Utility;
