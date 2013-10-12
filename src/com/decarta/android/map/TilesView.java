@@ -74,7 +74,6 @@ import com.decarta.Globals;
 import com.decarta.Profile;
 import com.decarta.android.exception.APIException;
 import com.decarta.android.location.BoundingBox;
-import com.decarta.android.location.Position;
 import com.decarta.android.map.Compass.PlaceLocation;
 import com.decarta.android.map.MapLayer.MapLayerProperty;
 import com.decarta.android.map.MapLayer.MapLayerType;
@@ -84,10 +83,10 @@ import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.decarta.android.util.XYDouble;
 import com.decarta.android.util.XYFloat;
-import com.decarta.android.util.XYInteger;
 import com.decarta.android.util.XYZ;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx.TouchMode;
+import com.tigerknows.android.location.Position;
 import com.tigerknows.map.Grid;
 import com.tigerknows.map.MapEngine;
 import com.tigerknows.map.MapView;
@@ -100,6 +99,7 @@ import com.tigerknows.map.TileInfo;
 import com.tigerknows.map.label.Label;
 import com.tigerknows.map.label.SingleRectLabel;
 import com.tigerknows.util.Utility;
+import com.tigerknows.util.XYInteger;
 
 /**
  * This class provide all function implementation related to map. It's a child

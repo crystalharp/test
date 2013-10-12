@@ -5,13 +5,13 @@
 package com.tigerknows.ui;
 
 import com.decarta.Globals;
-import com.decarta.android.location.Position;
 import com.decarta.android.map.ItemizedOverlay;
 import com.decarta.android.map.OverlayItem;
 import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
+import com.tigerknows.android.location.Position;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.BuslineOverlayHelper;
 import com.tigerknows.map.TrafficOverlayHelper;
@@ -271,7 +271,7 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
 	        			mSphinx.finish();
 	        		}
 	        	}
-	        }, mSphinx.getMapView().getCenterPosition(), null);
+	        }, mSphinx.getMapView().getCenterPosition(), mSphinx.getMapView().getCurrentMapScene());
 	        break;
         case R.id.right_btn:
             mActionLog.addAction(mActionTag + ActionLog.TitleRightButton);

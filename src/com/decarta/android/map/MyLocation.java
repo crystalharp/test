@@ -1,7 +1,7 @@
 package com.decarta.android.map;
 
 import com.decarta.android.exception.APIException;
-import com.decarta.android.location.Position;
+import com.tigerknows.android.location.Position;
 
 public class MyLocation extends OverlayItem {
     public static final int MODE_NONE = 0;

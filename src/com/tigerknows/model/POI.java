@@ -10,9 +10,9 @@ package com.tigerknows.model;
 
 import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
-import com.decarta.android.location.Position;
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
+import com.tigerknows.android.location.Position;
 import com.tigerknows.model.DataQuery.CommentResponse;
 import com.tigerknows.model.xobject.XArray;
 import com.tigerknows.model.xobject.XMap;

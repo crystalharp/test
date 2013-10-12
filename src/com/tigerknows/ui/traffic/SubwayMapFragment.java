@@ -18,11 +18,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.decarta.Globals;
-import com.decarta.android.location.Position;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
+import com.tigerknows.android.location.Position;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.map.MapEngine;
 import com.tigerknows.map.MapEngine.CityInfo;
@@ -94,6 +94,12 @@ public class SubwayMapFragment extends BaseFragment {
             setStatus(STAT_MAP);
             mURL = Uri.fromFile(new File(subwayPath)).toString();
             showSubwayMap(mURL);
+            
+            String subwayUpdated = TKConfig.getPref(mSphinx, TKConfig.getSubwayMapUpdatedPrefs(mCityInfo.getId()), "");
+            if (!TextUtils.isEmpty(subwayUpdated)) {
+                mSphinx.showTip(R.string.subway_map_updated, Toast.LENGTH_SHORT);
+                TKConfig.setPref(mSphinx, TKConfig.getSubwayMapUpdatedPrefs(mCityInfo.getId()), "");
+            }
         }
         FileDownload fileDownload = new FileDownload(mSphinx);
         fileDownload.addParameter(FileDownload.SERVER_PARAMETER_FILE_TYPE, FileDownload.FILE_TYPE_SUBWAY);
@@ -112,6 +118,8 @@ public class SubwayMapFragment extends BaseFragment {
         mEmptyView = mRootView.findViewById(R.id.empty_view);
         mEmptyTxv = (TextView) mEmptyView.findViewById(R.id.empty_txv);
         mEmptyTxv.setText(mSphinx.getString(R.string.no_subway_map));
+        
+        mQueryingView.setText(R.string.loading_subway_map);
     }
     
     private void showSubwayMap(String url) {

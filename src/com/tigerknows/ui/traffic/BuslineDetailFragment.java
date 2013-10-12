@@ -27,12 +27,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
-import com.decarta.android.location.Position;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 
 import android.widget.Toast;
+
+import com.tigerknows.android.location.Position;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.BuslineOverlayHelper;
 import com.tigerknows.model.BaseData;

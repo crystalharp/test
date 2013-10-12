@@ -1772,4 +1772,14 @@ public class TKConfig {
         String cityEName = MapEngine.getCityInfo(cityId).getEName();
         return "prefs_subwaymap_size_" + cityEName;
     }
+    
+    /**
+     * 获取地铁数据是否是升级来的prefs标识
+     * @param cityId
+     * @return
+     */
+    public static String getSubwayMapUpdatedPrefs(int cityId) {
+        String cityEName = MapEngine.getCityInfo(cityId).getEName();
+        return "prefs_subwaymap_updated_" + cityEName;
+    }
 }

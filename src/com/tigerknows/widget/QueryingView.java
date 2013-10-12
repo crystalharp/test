@@ -48,7 +48,7 @@ public class QueryingView extends LinearLayout {
     }
 
     protected void findViews() {
-        mTextTxv = (TextView) findViewById(R.id.text_txv);
+        mTextTxv = (TextView) findViewById(R.id.loading_txv);
     }
     
     protected void setListener() {

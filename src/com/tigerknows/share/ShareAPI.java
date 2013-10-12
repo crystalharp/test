@@ -25,11 +25,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.decarta.android.location.Position;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
 import com.tigerknows.android.app.TKActivity;
+import com.tigerknows.android.location.Position;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.crypto.Base64;
 import com.tigerknows.map.MapView.MapScene;

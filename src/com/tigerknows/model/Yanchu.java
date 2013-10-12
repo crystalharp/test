@@ -12,7 +12,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.decarta.android.exception.APIException;
-import com.decarta.android.location.Position;
+import com.tigerknows.android.location.Position;
 import com.tigerknows.model.xobject.XMap;
 
 public class Yanchu extends BaseData implements Parcelable{

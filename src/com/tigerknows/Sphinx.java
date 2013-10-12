@@ -59,7 +59,6 @@ import com.decarta.android.event.EventRegistry;
 import com.decarta.android.event.EventSource;
 import com.decarta.android.event.EventType;
 import com.decarta.android.exception.APIException;
-import com.decarta.android.location.Position;
 import com.decarta.android.map.Circle;
 import com.decarta.android.map.Compass;
 import com.decarta.android.map.Icon;
@@ -77,6 +76,7 @@ import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.decarta.android.util.XYFloat;
 import com.tigerknows.android.app.TKActivity;
+import com.tigerknows.android.location.Position;
 import com.tigerknows.android.os.TKAsyncTask;
 import android.widget.Toast;
 import com.tigerknows.common.ActionLog;
@@ -424,7 +424,12 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 } else if (msg.what == DOWNLOAD_HIDE) {
                     mDownloadView.setVisibility(View.GONE);
                 } else if (msg.what == DOWNLOAD_ERROR) {
-                    Toast.makeText(Sphinx.this, R.string.network_failed, Toast.LENGTH_LONG).show(); 
+                    int id = Sphinx.this.uiStackPeek();
+                    if (id == R.id.view_traffic_home ||
+                            id == R.id.view_result_map ||
+                            id == R.id.view_measure_distance) {
+                        Toast.makeText(Sphinx.this, R.string.network_failed, Toast.LENGTH_LONG).show();
+                    }
                 } 
                 
                 if (msg.what == ROOT_VIEW_INVALIDATE) {
@@ -608,6 +613,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     }
                 }
             }).start();
+            
+            mHandler.postDelayed(new StartUpDelayRunnable(this), 20000);
 
             mTKLocationManager.onCreate();
             mLocationListener = new MyLocationListener(this, mLocationChangedRun);
@@ -1425,7 +1432,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                                     intent.setData(uri);
                                     showView(R.id.activity_take_screenshot, intent);
                                 }
-                            }, mMapView.getCenterPosition(), null);
+                            }, mMapView.getCenterPosition(), mMapView.getCurrentMapScene());
                             
                         } else if (id == R.id.button2_view) {
                             mActionLog.addAction(ActionLog.MapDistance);

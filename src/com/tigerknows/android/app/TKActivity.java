@@ -10,14 +10,13 @@ import java.util.List;
 
 import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
-import com.decarta.android.location.Position;
-import com.decarta.android.map.MapActivity;
 import com.decarta.android.util.LogWrapper;
 import com.tencent.tauth.TAuthView;
 import com.tendcloud.tenddata.TCAgent;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
+import com.tigerknows.android.location.Position;
 import com.tigerknows.android.location.TKLocationManager;
 import com.tigerknows.android.location.TKLocationListener;
 import com.tigerknows.android.os.TKAsyncTask;

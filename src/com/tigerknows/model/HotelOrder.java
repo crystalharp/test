@@ -2,7 +2,7 @@ package com.tigerknows.model;
 
 
 import com.decarta.android.exception.APIException;
-import com.decarta.android.location.Position;
+import com.tigerknows.android.location.Position;
 import com.tigerknows.model.xobject.XMap;
 
 /**

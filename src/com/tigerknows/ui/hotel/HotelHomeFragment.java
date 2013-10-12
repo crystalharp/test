@@ -5,10 +5,10 @@
 package com.tigerknows.ui.hotel;
 
 import com.decarta.Globals;
-import com.decarta.android.location.Position;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
+import com.tigerknows.android.location.Position;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.MapEngine;

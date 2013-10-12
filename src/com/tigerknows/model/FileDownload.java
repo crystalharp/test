@@ -7,7 +7,6 @@ import com.tigerknows.TKConfig;
 import com.tigerknows.android.net.HttpManager;
 import com.tigerknows.crypto.DataEncryptor;
 import com.tigerknows.map.MapEngine;
-import com.tigerknows.map.MapEngine.CityInfo;
 import com.tigerknows.model.FileDownload.DataResponse.FileData;
 import com.tigerknows.model.test.BaseQueryTest;
 import com.tigerknows.model.xobject.XMap;
@@ -22,6 +21,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -73,6 +73,9 @@ public final class FileDownload extends BaseQuery {
             if (dataResponse != null) {
                 FileData fileData = dataResponse.getFileData();
                 String ver = TKConfig.getPref(context, TKConfig.getSubwayMapVersionPrefs(cityId), "");
+                if (!TextUtils.isEmpty(ver) && !ver.equals(fileData.version)) {
+                     TKConfig.setPref(context, TKConfig.getSubwayMapUpdatedPrefs(cityId), "true");
+                }
                 if (fileData != null && fileData.url != null && !ver.equals(fileData.version)) {
                     SubwayMapDownloadManager manager = SubwayMapDownloadManager.getInstance();
                     if (!manager.checkRunning(fileData.url)) {

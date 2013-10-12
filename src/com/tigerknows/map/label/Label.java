@@ -21,6 +21,7 @@ import com.decarta.Globals;
 import com.decarta.android.map.TilesView.Texture;
 import com.decarta.android.util.*;
 import com.tigerknows.map.Grid;
+import com.tigerknows.util.XYInteger;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;

@@ -4,7 +4,7 @@
  * Copyright deCarta. All rights reserved.
  */
 
-package com.decarta.android.location;
+package com.tigerknows.android.location;
 
 import com.tigerknows.service.TigerknowsLocationManager;
 

@@ -4,7 +4,7 @@
  * Copyright deCarta. All rights reserved.
  */
 
-package com.decarta.android.util;
+package com.tigerknows.util;
 /**
  * Simple data structure for 2D X/Y coordinates.  Usually used to represent positions
  * on screen.
