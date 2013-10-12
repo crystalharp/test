@@ -221,7 +221,7 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         
-        mRootView = mLayoutInflater.inflate(R.layout.take_screenshot, container, false);
+        mRootView = mLayoutInflater.inflate(R.layout.result_map, container, false);
         
         findViews();
         setListener();
