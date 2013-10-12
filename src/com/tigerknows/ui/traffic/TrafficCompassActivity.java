@@ -127,12 +127,12 @@ public class TrafficCompassActivity extends BaseActivity implements SensorEventL
     			mCompassBgImv.setImageResource(R.drawable.bg_compass);
     		}else{
     			// TODO: default image
-    			mCompassImv.setImageResource(R.drawable.bg_query_fail);
+    			mCompassImv.setImageResource(R.drawable.ani_compass_notavailable);
     			mCompassBgImv.setImageResource(R.drawable.transparent_bg);
     		}
     	}else{
     		// TODO: default image
-    		mCompassImv.setImageResource(R.drawable.bg_query_fail);
+    		mCompassImv.setImageResource(R.drawable.ani_compass_notavailable);
     		mCompassBgImv.setImageResource(R.drawable.transparent_bg);
     	}
     }
