@@ -1294,6 +1294,7 @@
     
     <string name="pause">暂停</string>
     <string name="download_complete_and_install">下载已完成，点击安装</string>
+    <string name="paused">已暂停</string>
     <string name="install">安装</string>
     
     <string name="subway_map">地铁图</string>

@@ -383,7 +383,7 @@ public class DownloadService extends IntentService {
         LogWrapper.d(TAG, "notifyPause:"+url);
         remoteViews.setImageViewResource(R.id.icon_imv, R.drawable.ic_notification_pause);
         remoteViews.setTextViewText(R.id.name_txv, downloadItem.tickerText);
-        remoteViews.setTextViewText(R.id.process_txv, getString(R.string.downloaded_percent, downloadItem.percent));
+        remoteViews.setTextViewText(R.id.process_txv, getString(R.string.paused));
         remoteViews.setProgressBar(R.id.process_prb, 100, downloadItem.percent, false);
         notification.contentView = remoteViews;
         

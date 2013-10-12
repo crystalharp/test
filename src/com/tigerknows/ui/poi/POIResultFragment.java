@@ -454,6 +454,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 this.mLocationTxv.setText(this.mAPOI.getName());
             } else {
                 this.mResultLsv.changeHeaderViewByState(true, SpringbackListView.DONE);
+                this.mLocationTxv.setText(null);
             }
         }
         refreshResultTitleText(null);
