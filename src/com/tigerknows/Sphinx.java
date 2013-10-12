@@ -1264,7 +1264,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 if (Globals.getCurrentCityInfo().getId()==cityId || mViewedCityInfoList.contains(cityId)) {
                     if (mMapView != null) {
                         mMapView.clearTileTextures();
-//                        mMapView.refreshMap();
                     }
                 }
             }

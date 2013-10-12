@@ -802,7 +802,10 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     		}
             TextView titleTxv = new TextView(context);
             titleTxv.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-            titleTxv.setTextColor(context.getResources().getColor(R.color.black_dark));
+            titleTxv.setTextColor(context.getResources().getColor(notice.getLocalType() == 1 ? R.color.black_dark : R.color.red));
+            if(notice.getLocalType() != 1){
+            	titleTxv.getPaint().setFakeBoldText(true);
+            }
             titleTxv.setSingleLine(true);
             titleTxv.setText(title);
             titleTxv.setTextSize(textSize);
@@ -827,7 +830,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     		}
     		TextView descriptionTxv = new TextView(context);
     		descriptionTxv.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-    		descriptionTxv.setTextColor(context.getResources().getColor(R.color.black_light));
+    		descriptionTxv.setTextColor(context.getResources().getColor(R.color.red));
     		descriptionTxv.setSingleLine(true);
         	descriptionTxv.setText(description);
         	descriptionTxv.setTextSize(textSize);
