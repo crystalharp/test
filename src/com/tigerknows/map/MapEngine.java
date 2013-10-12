@@ -1060,7 +1060,7 @@ public class MapEngine {
      * @param cityId
      * @return
      */
-    public static String getSubwayDataPath(int cityId) {
+    public static String getSubwayDataPath(Context context, int cityId) {
         String result = null;
         
         CityInfo cityInfo = MapEngine.getCityInfo(cityId);
@@ -1068,15 +1068,51 @@ public class MapEngine {
             return result;
         }
         
-        String path = cityId2Floder(cityId)+"sw_"+cityInfo.getEName()+"/";
-        String versionFilePath = path + "version.txt";
-        File verion = new File(versionFilePath);
-        if (verion.exists() && verion.isFile()) {
-            // TODO: 如何保证地铁数据的是否完整？目前是通过判断version.txt是否存在
+        long size = calcSubwayDataSize(cityId);
+        String recordSize = TKConfig.getPref(context, TKConfig.getSubwayMapSizePrefs(cityId), null);
+        if (size != 0 && String.valueOf(size).equals(recordSize)) {
+            String path = getSubwayMapPath(cityId);
             result = path + "index.html";
         }
         
         return result;
+    }
+    
+    /**
+     * 获取某城市地铁图的路径,只做字符串拼接用途.使用时请检查目录内是否有文件.
+     * @param cityId
+     * @return
+     */
+    public final static String getSubwayMapPath(int cityId) {
+        CityInfo cityInfo = MapEngine.getCityInfo(cityId);
+        if (cityInfo == null) {
+            return null;
+        }
+        return cityId2Floder(cityId)+"sw_"+cityInfo.getEName()+"/";
+    }
+    
+    /**
+     * 获取某城市地铁数据的大小
+     * @param cityId
+     * @return
+     */
+    public static long calcSubwayDataSize(int cityId) {
+        String path = getSubwayMapPath(cityId);
+        if (path == null) {
+            return 0;
+        }
+        long size = 0;
+        File subwayDir = new File(path);
+        if (subwayDir.exists() && subwayDir.isDirectory()) {
+            File[] files = subwayDir.listFiles();
+            if (files.length != 0) {
+                for (File file : files) {
+                    size += file.length();
+                }
+            }
+        }
+        
+        return size;
     }
     
     public static boolean hasMunicipality(int cityId) {

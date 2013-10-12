@@ -1746,4 +1746,20 @@ public class TKConfig {
             sIMSI = sIMSI.replace(wifi, "");
         }
     }
+    
+    /**
+     * 获取记录地铁数据version的prefs标识
+     */
+    public static String getSubwayMapVersionPrefs(int cityId) {
+        String cityEName = MapEngine.getCityInfo(cityId).getEName();
+        return "prefs_subwaymap_version_" + cityEName;
+    }
+    
+    /**
+     * 获取记录地铁数据完整性验证码的prefs标识
+     */
+    public static String getSubwayMapSizePrefs(int cityId) {
+        String cityEName = MapEngine.getCityInfo(cityId).getEName();
+        return "prefs_subwaymap_size_" + cityEName;
+    }
 }

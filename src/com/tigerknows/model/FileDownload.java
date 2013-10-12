@@ -2,6 +2,7 @@
 package com.tigerknows.model;
 
 import com.decarta.android.exception.APIException;
+import com.decarta.android.util.LogWrapper;
 import com.tigerknows.TKConfig;
 import com.tigerknows.android.net.HttpManager;
 import com.tigerknows.crypto.DataEncryptor;
@@ -71,7 +72,8 @@ public final class FileDownload extends BaseQuery {
         if (FILE_TYPE_SUBWAY.equals(getParameter(SERVER_PARAMETER_FILE_TYPE))) {
             if (dataResponse != null) {
                 FileData fileData = dataResponse.getFileData();
-                if (fileData != null && fileData.url != null) {
+                String ver = TKConfig.getPref(context, TKConfig.getSubwayMapVersionPrefs(cityId), "");
+                if (fileData != null && fileData.url != null && !ver.equals(fileData.version)) {
                     SubwayMapDownloadManager manager = SubwayMapDownloadManager.getInstance();
                     if (!manager.checkRunning(fileData.url)) {
                         manager.download(context, fileData.url, isStop, cityId);
@@ -220,6 +222,31 @@ public final class FileDownload extends BaseQuery {
             return false;
         }
         
+        private void recordDataInfo(Context context, int cityId) {
+            String path = MapEngine.getSubwayMapPath(cityId);
+            if (path == null) {
+                return;
+            }
+            String versionFilePath = path + "version.txt";
+            String ver = "error";
+            long size = 0;
+            try {
+                FileInputStream fis = new FileInputStream(versionFilePath);
+                byte[] buff = new byte[fis.available()];
+                fis.read(buff);
+                ver = new String(buff);
+                size = MapEngine.calcSubwayDataSize(cityId);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            LogWrapper.d("conan", "subway map version:" + ver);
+            LogWrapper.d("conan", "subway map size:" + size);
+            TKConfig.setPref(context, TKConfig.getSubwayMapVersionPrefs(cityId), ver);
+            TKConfig.setPref(context, TKConfig.getSubwayMapSizePrefs(cityId), String.valueOf(size));
+        }
+        
         public void download(Context context, String downUrl, boolean isStop, int cityId) {
 
             synchronized (this) {
@@ -247,6 +274,7 @@ public final class FileDownload extends BaseQuery {
                         fos.write(filedata, 0, n);
                     }
                     Utility.unZipFile(decFilePath, null, MapEngine.cityId2Floder(cityId));
+                    recordDataInfo(context, cityId);
                     fis.close();
                     fos.close();
                 } catch (FileNotFoundException e) {

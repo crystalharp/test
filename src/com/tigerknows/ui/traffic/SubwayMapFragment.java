@@ -86,19 +86,19 @@ public class SubwayMapFragment extends BaseFragment {
         super.onResume();
         mTitleBtn.setText(mTitle);
         
-        subwayPath = MapEngine.getSubwayDataPath(mCityInfo.getId());
+        subwayPath = MapEngine.getSubwayDataPath(mSphinx, mCityInfo.getId());
         LogWrapper.d(TAG, "subway path:" + subwayPath);
         if (subwayPath == null) {
             setStatus(STAT_QUERY);
-            FileDownload fileDownload = new FileDownload(mSphinx);
-            fileDownload.addParameter(FileDownload.SERVER_PARAMETER_FILE_TYPE, FileDownload.FILE_TYPE_SUBWAY);
-            fileDownload.setup(mCityInfo.getId(), this.getId(), this.getId());
-            mSphinx.queryStart(fileDownload);
         } else {
             setStatus(STAT_MAP);
             mURL = Uri.fromFile(new File(subwayPath)).toString();
             showSubwayMap(mURL);
         }
+        FileDownload fileDownload = new FileDownload(mSphinx);
+        fileDownload.addParameter(FileDownload.SERVER_PARAMETER_FILE_TYPE, FileDownload.FILE_TYPE_SUBWAY);
+        fileDownload.setup(mCityInfo.getId(), this.getId(), this.getId());
+        mSphinx.queryStart(fileDownload);
     }
 
     public SubwayMapFragment(Sphinx sphinx) {
@@ -243,7 +243,7 @@ public class SubwayMapFragment extends BaseFragment {
             Response response = fileDownload.getResponse();
             if (response != null) {
                 if (response.getResponseCode() != 953) {
-                    subwayPath = MapEngine.getSubwayDataPath(mCityInfo.getId());
+                    subwayPath = MapEngine.getSubwayDataPath(mSphinx, mCityInfo.getId());
                     if (subwayPath != null) {
                         stat = STAT_MAP;
                         mURL = Uri.fromFile(new File(subwayPath)).toString();
