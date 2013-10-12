@@ -613,6 +613,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     }
                 }
             }).start();
+            
+            mHandler.postDelayed(new StartUpDelayRunnable(this), 20000);
 
             mTKLocationManager.onCreate();
             mLocationListener = new MyLocationListener(this, mLocationChangedRun);
