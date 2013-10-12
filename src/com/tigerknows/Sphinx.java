@@ -1425,7 +1425,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                                     intent.setData(uri);
                                     showView(R.id.activity_take_screenshot, intent);
                                 }
-                            }, mMapView.getCenterPosition(), null);
+                            }, mMapView.getCenterPosition(), mMapView.getCurrentMapScene());
                             
                         } else if (id == R.id.button2_view) {
                             mActionLog.addAction(ActionLog.MapDistance);

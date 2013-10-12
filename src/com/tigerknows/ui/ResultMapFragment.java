@@ -271,7 +271,7 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
 	        			mSphinx.finish();
 	        		}
 	        	}
-	        }, mSphinx.getMapView().getCenterPosition(), null);
+	        }, mSphinx.getMapView().getCenterPosition(), mSphinx.getMapView().getCurrentMapScene());
 	        break;
         case R.id.right_btn:
             mActionLog.addAction(mActionTag + ActionLog.TitleRightButton);
