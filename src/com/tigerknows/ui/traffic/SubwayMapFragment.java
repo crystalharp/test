@@ -112,6 +112,8 @@ public class SubwayMapFragment extends BaseFragment {
         mEmptyView = mRootView.findViewById(R.id.empty_view);
         mEmptyTxv = (TextView) mEmptyView.findViewById(R.id.empty_txv);
         mEmptyTxv.setText(mSphinx.getString(R.string.no_subway_map));
+        
+        mQueryingView.setText(R.string.loading_subway_map);
     }
     
     private void showSubwayMap(String url) {
