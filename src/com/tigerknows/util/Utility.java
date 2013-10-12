@@ -519,7 +519,7 @@ public class Utility {
                     }
                 }
                 fout = new FileOutputStream(file, true);
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 30, fout);
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 80, fout);
                 uri = Uri.fromFile(file);
             } catch (IOException e) {
                 e.printStackTrace();

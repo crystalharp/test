@@ -126,7 +126,7 @@ import com.tigerknows.ui.HintActivity;
 import com.tigerknows.ui.MeasureDistanceFragment;
 import com.tigerknows.ui.MenuFragment;
 import com.tigerknows.ui.ResultMapFragment;
-import com.tigerknows.ui.TakeScreenshotFragment;
+import com.tigerknows.ui.TakeScreenshotActivity;
 import com.tigerknows.ui.TitleFragment;
 import com.tigerknows.ui.discover.DianyingDetailFragment;
 import com.tigerknows.ui.discover.DiscoverChildListFragment;
@@ -1406,10 +1406,19 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                         if (id == R.id.button1_view) {
                             mActionLog.addAction(ActionLog.MapTakeScreenshot);
                             
-                            getTakeScreenshotFragment().setData();
-                            showView(R.id.view_take_screenshot);
+                            snapMapView(new SnapMap() {
+                                
+                                @Override
+                                public void finish(Uri uri) {
+                                    if (uri == null) {
+                                        return;
+                                    }
+                                    Intent intent = new Intent();
+                                    intent.setData(uri);
+                                    showView(R.id.activity_take_screenshot, intent);
+                                }
+                            }, mMapView.getCenterPosition(), null);
                             
-                            Toast.makeText(mThis, R.string.has_take_screenshot, Toast.LENGTH_LONG).show();
                         } else if (id == R.id.button2_view) {
                             mActionLog.addAction(ActionLog.MapDistance);
 
@@ -3225,6 +3234,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 intent.setClass(this, HotelIntroActivity.class);
                 startActivityForResult(intent, R.id.activity_hotel_intro);
                 return true;
+            } else if (R.id.activity_take_screenshot == viewId) {
+                intent.setClass(this, TakeScreenshotActivity.class);
+                startActivityForResult(intent, R.id.activity_take_screenshot);
+                return true;
             }
             
             mUIProcessing = true;
@@ -3495,7 +3508,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     private CouponListFragment mCouponListFragment;
     private CouponDetailFragment mCouponDetailFragment;
 
-    private TakeScreenshotFragment mTakeScreenshotFragment;
     private MeasureDistanceFragment mMeasureDistanceFragment;
     
     public BaseFragment getFragment(int id) {
@@ -3653,10 +3665,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 
             case R.id.view_coupon_detail:
                 baseFragment = getCouponDetailFragment();
-                break;
-                
-            case R.id.view_take_screenshot:
-                baseFragment = getTakeScreenshotFragment();
                 break;
                 
             case R.id.view_measure_distance:
@@ -4164,19 +4172,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 mCouponDetailFragment = fragment;
             }
             return mCouponDetailFragment;
-        }
-    }
-    
-    public TakeScreenshotFragment getTakeScreenshotFragment(){
-        
-        synchronized (mUILock) {
-            if (mTakeScreenshotFragment == null) {
-                TakeScreenshotFragment fragment = new TakeScreenshotFragment(Sphinx.this);
-                fragment.setId(R.id.view_take_screenshot);
-                fragment.onCreate(null);
-                mTakeScreenshotFragment = fragment;
-            }
-            return mTakeScreenshotFragment;
         }
     }
     

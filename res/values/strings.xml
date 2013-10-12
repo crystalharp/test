@@ -1302,4 +1302,5 @@
 	
     <string name="has_take_screenshot">已截取本屏地图</string>
     <string name="measure_distance_tip">点击地图进行测距</string>
+    <string name="save_falied_tip">保存失败</string>
 </resources>
