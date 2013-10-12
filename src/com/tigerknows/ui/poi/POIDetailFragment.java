@@ -1344,7 +1344,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             
             String body = comment.getContent();
             commentTxv.setText(body);
-            commentTxv.setMaxLines(2);
+            commentTxv.setMaxLines(5);
             commentTxv.setEllipsize(TruncateAt.END);
             
             final String url = comment.getUrl();
