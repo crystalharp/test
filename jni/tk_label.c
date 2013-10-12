@@ -26,7 +26,7 @@ void tk_str_pool_init(tk_str_pool_t *str_buf) {
 }
 
 char *tk_str_pool_add_string(tk_str_pool_t *str_buf, const char *string, int len) {
-    assert(str_buf != NULL && string != NULL && len > 0);
+    assert(str_buf != NULL && string != NULL && len >= 0);
     if (str_buf->length + len < str_buf->size) {
         strncpy(str_buf->buf + str_buf->length, string, len);
         str_buf->length += (len + 1);
@@ -452,7 +452,7 @@ tk_status_t tk_get_tile_labels (int tile_x, int tile_y, int zoom) {
     tk_layer_t *layer;
     int obj_type = 0;
     context->point_num = 0;
-    for(i = 0; i < context->cur_style_buf->layer_num - 3; ++ i){
+    for(i = 0; i < context->cur_style_buf->layer_num; ++ i){
         layer_idx = context->cur_style_buf->draw_order[i];
         if (layer_idx < 0) {
             continue;

@@ -21,7 +21,6 @@ import com.decarta.Globals;
 import com.decarta.android.map.TilesView.Texture;
 import com.decarta.android.util.*;
 import com.tigerknows.map.Grid;
-import com.tigerknows.map.MapWord;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
@@ -81,14 +80,9 @@ public abstract class Label {
     }
 
     private static final int MAX_TEXT_LENGTH = 32;
-    private static int MAX_WORD_SIZE = 512;
     
     public static void init(int x, int y) {
     	Label.TK_LABEL_BOUND_SIZE = (int) (8 * Globals.g_metrics.density);
-    	MAX_WORD_SIZE = x * y / 2048;
-    	if(MAX_WORD_SIZE > 512 || MAX_WORD_SIZE <= 0)
-    		MAX_WORD_SIZE = 512;
-    	LogWrapper.d("Label", "word count: " + MAX_WORD_SIZE);
         if(Label.TK_LABEL_BOUND_SIZE > 8) 
         	Label.TK_LABEL_BOUND_SIZE = 16;
         else
@@ -130,26 +124,6 @@ public abstract class Label {
         }
     };
     
-    protected static LinkedHashMap<String, Texture> textTexturePool = new LinkedHashMap<String, Texture>(MAX_TEXT_LENGTH * 2,0.75f,true) {
-        private static final long serialVersionUID = 1L;
-        @Override
-        protected boolean removeEldestEntry(
-                java.util.Map.Entry<String, Texture> eldest) {
-            if(size()>MAX_WORD_SIZE){
-                Texture texture=eldest.getValue();
-                if(texture != null && texture.textureRef!=0){
-                    IntBuffer textureRefBuf=IntBuffer.allocate(1);
-                    textureRefBuf.clear();
-                    textureRefBuf.put(0,texture.textureRef);
-                    textureRefBuf.position(0);
-                    glDeleteTextures(1, textureRefBuf);
-                }
-                remove(eldest.getKey());
-            }
-            return false;
-        }
-    };
-    
     public static XYFloat calcTextRectSize(String text, int fontSize) {
     	XYFloat size = new XYFloat(0, 0);
     	tilePText.setTextSize(fontSize);
@@ -178,34 +152,35 @@ public abstract class Label {
 //    	orgHeight = (int)height;
 //    }
     
-    public static Bitmap getTextBitmap(String text, int backGroundIdx, int fontSize, int color) {
+    public synchronized static Bitmap getTextBitmap(String text, int backGroundIdx, int fontSize, int color) {
 //    	LogWrapper.i("Label", "to generate text texture:" + text);
         tilePText.setTextSize(fontSize);
         String[] names = new String[2];
         names[0] = text;
         int nameLength = text.length();
         int seg = 1;
-        float width, height, orgWidth, orgHeight, lineHeight;
+        int orgWidth, orgHeight;
+        int padding = (int)Globals.g_metrics.scaledDensity * 2;
+        float width, height, lineHeight;
         if(nameLength >= 8) {
         	names[0] = text.substring(0, (nameLength + 1) >> 1);
         	names[1] = text.substring((nameLength + 1) >> 1);
         	seg = 2;
-        	width = Math.max(tilePText.measureText(names[0]), tilePText.measureText(names[1]));
+        	width = Math.max(tilePText.measureText(names[0]), tilePText.measureText(names[1])) + (backGroundIdx >= 0 ? padding : 0) * 2;
         	orgWidth = (int)width;
         	lineHeight = -tilePText.ascent()+tilePText.descent();
-        	height = 2 * lineHeight;
+        	height = 2 * lineHeight + (backGroundIdx >= 0 ? padding : 0);
         	orgHeight = (int)height;
         }
         else {
         	width = tilePText.measureText(text);
-        	orgWidth = (int)width;
-        	height = (-tilePText.ascent()+tilePText.descent());
-        	lineHeight = height;
+        	orgWidth = (int)width + (backGroundIdx >= 0 ? padding : 0) * 2;
+        	lineHeight = (-tilePText.ascent()+tilePText.descent());
+        	height = lineHeight + (backGroundIdx >= 0 ? padding : 0);
         	orgHeight = (int)height;
         }
         float x = 0;//todo: 寻找最优的缩进
         float y = fontSize;
-
         int pw2width = Util.getPower2(width);
         int pw2height = Util.getPower2(height);
         XYInteger size = new XYInteger(pw2width, pw2height);
@@ -219,17 +194,16 @@ public abstract class Label {
         }
         Canvas canvas = new Canvas(bitmap);
         if (backGroundIdx >= 0) {
-			float padding = Globals.g_metrics.scaledDensity * 2;
 			NinePatchDrawable drawable = SingleRectLabel
 					.getNinePatchDrawable(backGroundIdx);
 			if (drawable != null) {
-				drawable.setBounds((int) (x), (int) (y - orgHeight),
-						(int) (x + orgWidth), (int) (y + 2 * padding));
+				drawable.setBounds(0, 0, orgWidth, orgHeight);
 				drawable.draw(canvas);
 			}
+			x += padding;
 		}
         else {
-        	tilePText.setColor(0xffffffff); //? ?RGB
+        	tilePText.setColor(0xffffffff); //白色描边
         	tilePText.setStyle(Style.STROKE);
             for (int i = 0; i < seg; ++i) {
             	canvas.drawText(names[i], x, y + lineHeight * i, tilePText);
@@ -274,23 +248,7 @@ public abstract class Label {
         }
     }
     
-    public static void clearTextTexture() {
-        Iterator<Texture> iterator4=textTexturePool.values().iterator();
-        while(iterator4.hasNext()){
-            Texture texture = iterator4.next();
-            if (texture != null && texture.textureRef != 0) {
-                int textureRef=texture.textureRef;
-                IntBuffer textureRefBuf=IntBuffer.allocate(1);
-    			textureRefBuf.clear();
-    			textureRefBuf.put(0,textureRef);
-    			textureRefBuf.position(0);
-    			GLES10.glDeleteTextures(1, textureRefBuf);
-            }
-        }
-        textTexturePool.clear();
-    }
-    
-    public static void clearTextBitmap() {
+    public static synchronized void clearTextBitmap() {
         Iterator<Bitmap> iterator6=textBitmapPool.values().iterator();
         while(iterator6.hasNext()){
             Bitmap bm = iterator6.next();
@@ -303,6 +261,7 @@ public abstract class Label {
     
     public abstract int draw(XYInteger center, XYZ centerXYZ, XYFloat centerDelta, 
     		float rotation, float sinRot, float cosRot, float scale, Grid grid, 
-    		ByteBuffer TEXTURE_COORDS, FloatBuffer vertexBuffer, boolean needGenTexture, IntegerRef leftCountToDraw);
+    		ByteBuffer TEXTURE_COORDS, FloatBuffer vertexBuffer, boolean needGenTexture, 
+    		IntegerRef leftCountToDraw, LinkedHashMap<String, Texture> textTexturePool, LinkedHashMap<Integer,Texture> mapWordIconPool);
     
 }
