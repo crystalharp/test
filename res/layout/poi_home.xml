@@ -125,6 +125,14 @@
                     android:drawableLeft="@drawable/ic_subway_map"
                     android:drawablePadding="8dp"
                     />
+        
+                <ImageView
+                    android:id="@+id/subway_map_imv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top"
+                    android:background="@drawable/ic_satisfy_new"
+                    android:clickable="false"/>
             </LinearLayout>
             
             <GridView

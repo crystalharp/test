@@ -244,6 +244,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     private int mCityViewHeight;
     
     private ImageButton mMoreBtn;
+    private ImageView mMoreImv;
     
 	private ViewGroup mDragHintView;
 	
@@ -947,6 +948,11 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     
     private void initView() {
         mMapView.setVisibility(View.VISIBLE);
+        if (TKConfig.getPref(mThis, TKConfig.PREFS_MAP_TOOLS) == null) {
+            mMoreImv.setVisibility(View.VISIBLE);
+        } else {
+            mMoreImv.setVisibility(View.GONE);
+        }
         mUIStack.clear();
         getTitleFragment();
         getMenuFragment();
@@ -1361,6 +1367,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         mDragHintView = (ViewGroup) findViewById(R.id.hint_root_view);
         
         mMoreBtn = (ImageButton)findViewById(R.id.more_btn);
+        mMoreImv = (ImageView)findViewById(R.id.more_imv);
     }
 
     private void setListener() {
@@ -1389,6 +1396,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             @Override
             public void onClick(View v) {
                 mActionLog.addAction(ActionLog.MapMore);
+                TKConfig.setPref(mThis, TKConfig.PREFS_MAP_TOOLS, "1");
+                mMoreImv.setVisibility(View.GONE);
 
                 View view = mLayoutInflater.inflate(R.layout.alert_map_tools, null, false);
                 final Dialog dialog = Utility.getChoiceDialog(mThis, view, R.style.AlterChoiceDialog);

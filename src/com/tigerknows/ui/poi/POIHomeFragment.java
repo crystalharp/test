@@ -10,6 +10,7 @@ import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.TKConfig;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.MapEngine;
@@ -125,6 +126,7 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
 
     private View mSubwayMapView;
     private Button mSubwayMapBtn;
+    private ImageView mSubwayMapImv;
 
     private String[] mCategoryNameList;
     List<Category> mCategorylist = new ArrayList<Category>();
@@ -502,6 +504,7 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
 
         mSubwayMapView = mRootView.findViewById(R.id.subway_map_view);
         mSubwayMapBtn = (Button)mRootView.findViewById(R.id.subway_map_btn);
+        mSubwayMapImv = (ImageView)mRootView.findViewById(R.id.subway_map_imv);
     }
 
     protected void setListener() {
@@ -565,6 +568,8 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
                 mSphinx.showView(R.id.view_hotel_pick_location);
             }
         } else if (id == R.id.subway_map_btn) {
+            TKConfig.setPref(mSphinx, TKConfig.PREFS_SUBWAY_MAP, "1");
+            mSubwayMapImv.setVisibility(View.GONE);
             mSphinx.getSubwayMapFragment().setData(Globals.getCurrentCityInfo());
             mSphinx.showView(R.id.view_subway_map);
         }
@@ -1021,9 +1026,15 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
 		ArrayList<String> subs = subCategories.get(position);
 		if (position == TRAFFIC_INDEX && MapEngine.checkSupportSubway(Globals.getCurrentCityInfo().getId())) {
             mSubwayMapView.setVisibility(View.VISIBLE);
+            if (TKConfig.getPref(mSphinx, TKConfig.PREFS_SUBWAY_MAP) == null) {
+                mSubwayMapImv.setVisibility(View.VISIBLE);
+            } else {
+                mSubwayMapImv.setVisibility(View.GONE);
+            }
 		} else {
 		    mSubwayMapView.setVisibility(View.GONE);
 		}
+
 		mSubCategoryAdapter.add(subs.get(0) + mContext.getString(R.string.all));
 		for(int i=1, size=subs.size(); i<size; i++){
 			mSubCategoryAdapter.add(subs.get(i));

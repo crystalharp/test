@@ -693,6 +693,16 @@ public class TKConfig {
     public static final String PREFS_RECORDED_SYS_REL_TIME="prefs_recorded_sys_rel_time";
     
     /**
+     * 地图工具箱
+     */
+    public static final String PREFS_MAP_TOOLS = "prefs_map_tools";
+    
+    /**
+     * 地铁图
+     */
+    public static final String PREFS_SUBWAY_MAP = "prefs_subway_map";
+    
+    /**
      * 发现分类图片尺寸的Key
      */
     public static final int PICTURE_DISCOVER_HOME = 1;

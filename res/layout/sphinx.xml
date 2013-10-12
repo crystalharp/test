@@ -74,6 +74,15 @@
             android:scaleType="center"
             android:clickable="false"/>
         
+        <ImageView
+            android:id="@+id/more_imv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignRight="@id/more_btn"
+            android:layout_alignTop="@id/more_btn"
+            android:background="@drawable/menu_upgrade"
+            android:clickable="false"/>
+        
         <LinearLayout
             android:orientation="vertical"
             android:id="@+id/zoomview"
