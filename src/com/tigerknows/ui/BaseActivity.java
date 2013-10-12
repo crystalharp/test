@@ -42,6 +42,8 @@ public class BaseActivity extends TKActivity implements TKAsyncTask.EventListene
     
     protected Button mRightBtn;
     
+    protected Button mRight2Btn;
+    
     protected Intent mIntent;
     
     protected int mId;
@@ -85,6 +87,7 @@ public class BaseActivity extends TKActivity implements TKAsyncTask.EventListene
         mTitleBtn = (Button) findViewById(R.id.title_btn);
         mLeftBtn = (Button) findViewById(R.id.left_btn);
         mRightBtn = (Button) findViewById(R.id.right_btn);
+        mRight2Btn = (Button) findViewById(R.id.right2_btn);
     }
     
     protected void setListener() {
