@@ -424,7 +424,12 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 } else if (msg.what == DOWNLOAD_HIDE) {
                     mDownloadView.setVisibility(View.GONE);
                 } else if (msg.what == DOWNLOAD_ERROR) {
-                    Toast.makeText(Sphinx.this, R.string.network_failed, Toast.LENGTH_LONG).show(); 
+                    int id = Sphinx.this.uiStackPeek();
+                    if (id == R.id.view_traffic_home ||
+                            id == R.id.view_result_map ||
+                            id == R.id.view_measure_distance) {
+                        Toast.makeText(Sphinx.this, R.string.network_failed, Toast.LENGTH_LONG).show();
+                    }
                 } 
                 
                 if (msg.what == ROOT_VIEW_INVALIDATE) {
