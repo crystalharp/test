@@ -35,7 +35,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 添加的下载项显示在正在进行的通知栏，用tickerText的hashCode作为通知id
+ * 添加的下载项显示在正在进行的通知栏，用url的hashCode作为通知id
  * 暂停或完成的下载项显示在普通的通知栏，用tickerText的hashCode作为通知id
  * @author pengwenyue
  *
@@ -45,19 +45,21 @@ public class DownloadService extends IntentService {
     static final String TAG = "DownloadService";
     
     public static class DownloadItem {
-        int id;
+        String url;
         String tickerText;
         RemoteViews remoteViews;
         Notification notification;
         int percent = 0;
         boolean stop = false;
+        long timeMillis;
         
-        DownloadItem(int id, String tickerText, RemoteViews remoteViews, Notification notification, int percent) {
-            this.id = id;
+        DownloadItem(String url, String tickerText, RemoteViews remoteViews, Notification notification, int percent) {
+            this.url = url;
             this.tickerText = tickerText;
             this.remoteViews = remoteViews;
             this.notification = notification;
             this.percent = percent;
+            timeMillis = System.currentTimeMillis();
         }
     }
     
@@ -146,17 +148,16 @@ public class DownloadService extends IntentService {
     public int onStartCommand(Intent intent, int flags, int startId) {
         String operationCode = intent.getStringExtra(EXTRA_OPERATION_CODE);
         String url = intent.getStringExtra(EXTRA_URL);
+        LogWrapper.d(TAG, "onStartCommand() operationCode, url:" + operationCode + "," + url);
         if (OPERATION_CODE_PAUSE.equals(operationCode)) {
-            DownloadItem downloadItem = sDownloadList.get(url);
+            DownloadItem downloadItem = sDownloadList.remove(url);
             if (downloadItem != null) {
-                if (currentDownloadItem != null && currentDownloadItem.id == downloadItem.id) {
+                downloadItem.stop = true;
+                if (currentDownloadItem != null && currentDownloadItem.url.equals(downloadItem.url)) {
                     if (httpClient != null) {
                         httpClient.getConnectionManager().shutdown();
                     }
                 }
-                downloadItem.stop = true;
-                sDownloadList.remove(url);
-                nm.cancel(downloadItem.id);
                 notifyPause(url, downloadItem);
             }
             
@@ -167,13 +168,12 @@ public class DownloadService extends IntentService {
                 intent.putExtra(EXTRA_IS_DOWNLOADED, true);
                 Toast.makeText(this, R.string.file_downloading, Toast.LENGTH_SHORT).show();
             } else {
+                
                 String tickerText = intent.getStringExtra(EXTRA_TICKERTEXT);
                 int percent = intent.getIntExtra(EXTRA_PERCENT, 0);
                 DownloadItem downloadItem = notifyOnGoing(url, tickerText, percent);
                 sDownloadList.put(url, downloadItem);
                 Toast.makeText(this, R.string.add_to_download_list, Toast.LENGTH_SHORT).show();
-                
-                nm.cancel(downloadItem.id);
             }
         }
         return super.onStartCommand(intent, flags, startId);
@@ -193,8 +193,20 @@ public class DownloadService extends IntentService {
             File tempFile = null;
             do {
                 tempFile = downFile(currentDownloadItem, url);
+                if (!stop && !currentDownloadItem.stop) {
+                    try {
+                        Thread.sleep(RETRY_TIME);
+                    } catch (InterruptedException e1) {
+                        // TODO Auto-generated catch block
+                        e1.printStackTrace();
+                    }
+                }
             } while (tempFile == null && !stop && !currentDownloadItem.stop);
-            nm.cancel(currentDownloadItem.id);
+            DownloadItem downloadItem = sDownloadList.get(url);
+            if (downloadItem == null || downloadItem.timeMillis == currentDownloadItem.timeMillis) {
+                nm.cancel(currentDownloadItem.url.hashCode());
+                sDownloadList.remove(url);
+            }
             if(tempFile != null) {
                 DownloadedProcessor processor = processorMap.get(url);
                 if(processor != null) {
@@ -202,7 +214,6 @@ public class DownloadService extends IntentService {
                 }
             }
         }
-        sDownloadList.remove(url);
     }
     
     // 在状态栏添加下载进度条
@@ -210,7 +221,7 @@ public class DownloadService extends IntentService {
         LogWrapper.d(TAG, "notifyOnGoing:"+url);
         Context context = getApplication();
         
-        int id = tickerText.hashCode();
+        int id = url.hashCode();
         
         Intent service = new Intent(context, DownloadService.class);
         service.putExtra(EXTRA_OPERATION_CODE, OPERATION_CODE_PAUSE);
@@ -246,7 +257,7 @@ public class DownloadService extends IntentService {
         // 将下载任务添加到任务栏中
         nm.notify(id, notification);
         
-        return new DownloadItem(id, tickerText, remoteViews, notification, percent);
+        return new DownloadItem(url, tickerText, remoteViews, notification, percent);
     }
     
     // 下载更新文件，成功返回File对象，否则返回null
@@ -275,7 +286,8 @@ public class DownloadService extends IntentService {
             HttpResponse response = HttpUtils.execute(getApplicationContext(), httpClient, request, url, "downloadService");
             HttpEntity entity = response.getEntity();
             long length = entity.getContentLength();   //TODO: getContentLength()某些服务器可能返回-1
-            if(length == fileSize) {
+            LogWrapper.d(TAG, "length:"+length);
+            if(length <= fileSize) {
                 return tempFile;
             }
             InputStream is = entity.getContent();
@@ -284,6 +296,7 @@ public class DownloadService extends IntentService {
                 BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(tempFile, true));
                 int read = 0;
                 long count = fileSize;
+                length += fileSize;
                 int percent = 0;
                 int counted_percent = 0;
                 byte[] buffer = new byte[1024];
@@ -305,23 +318,9 @@ public class DownloadService extends IntentService {
                 } else {
                     return null;
                 }
-            } else {
-                LogWrapper.d(TAG, "downFile() entity.getContent() is null");
-                try {
-                    Thread.sleep(RETRY_TIME);
-                } catch (InterruptedException e1) {
-                    // TODO Auto-generated catch block
-                    e1.printStackTrace();
-                }
             }
         } catch (Exception e) {
             e.printStackTrace();
-            try {
-                Thread.sleep(RETRY_TIME);
-            } catch (InterruptedException e1) {
-                // TODO Auto-generated catch block
-                e1.printStackTrace();
-            }
         }
         return null;
     }
@@ -347,7 +346,7 @@ public class DownloadService extends IntentService {
         downloadItem.remoteViews.setTextViewText(R.id.process_txv, getString(R.string.downloaded_percent, percent));
         downloadItem.remoteViews.setProgressBar(R.id.process_prb, 100, percent, false);
         downloadItem.notification.contentView = downloadItem.remoteViews;
-        nm.notify(downloadItem.id, downloadItem.notification);
+        nm.notify(downloadItem.url.hashCode(), downloadItem.notification);
     }
     
     private void notifyPause(String url, DownloadItem downloadItem) {
@@ -359,7 +358,7 @@ public class DownloadService extends IntentService {
         service.putExtra(EXTRA_TICKERTEXT, downloadItem.tickerText);
         service.putExtra(EXTRA_PERCENT, downloadItem.percent);
         
-        int id = downloadItem.id;
+        int id = downloadItem.tickerText.hashCode();
         
         PendingIntent pendingIntent = PendingIntent.getService(context, id, service, 0);
         
@@ -378,7 +377,7 @@ public class DownloadService extends IntentService {
         } else {
             remoteViews = new RemoteViews(getPackageName(), R.layout.notification_progress);
             remoteViews.setOnClickPendingIntent(R.id.control_btn, pendingIntent);
-            remoteViews.setTextViewText(R.id.control_btn, context.getString(R.string.pause));
+            remoteViews.setTextViewText(R.id.control_btn, context.getString(R.string.download));
         }
     
         LogWrapper.d(TAG, "notifyPause:"+url);
@@ -388,7 +387,8 @@ public class DownloadService extends IntentService {
         remoteViews.setProgressBar(R.id.process_prb, 100, downloadItem.percent, false);
         notification.contentView = remoteViews;
         
-        // 取消此下载项可能存在的通知
+        // 取消正在下载的通知
+        nm.cancel(downloadItem.url.hashCode());
         nm.cancel(id);
         
         // 将下载任务添加到任务栏中
