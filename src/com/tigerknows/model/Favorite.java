@@ -75,8 +75,8 @@ public class Favorite extends BaseData{
         ContentValues values = new ContentValues();
         this.favoriteType = favoriteType;
         values.put(Tigerknows.Favorite.FAVORITE_TYPE, this.favoriteType);
-        this.dateTime = System.currentTimeMillis();
-        values.put(Tigerknows.Favorite.DATETIME, this.dateTime);
+        long dateTime = System.currentTimeMillis();
+        values.put(Tigerknows.Favorite.DATETIME, dateTime);
         Uri uri = SqliteWrapper.insert(context, context.getContentResolver(), Tigerknows.Favorite.CONTENT_URI, values);
         if (uri != null) {
             id = Integer.parseInt(uri.getPathSegments().get(1));
