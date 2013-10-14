@@ -84,7 +84,6 @@ public class SubwayMapFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        mTitleBtn.setText(mTitle);
         
         subwayPath = MapEngine.getSubwayDataPath(mSphinx, mCityInfo.getId());
         LogWrapper.d(TAG, "subway path:" + subwayPath);
@@ -145,16 +144,19 @@ public class SubwayMapFragment extends BaseFragment {
             mWebWbv.setVisibility(View.VISIBLE);
             mQueryingView.setVisibility(View.GONE);
             mEmptyView.setVisibility(View.GONE);
+            mTitleBtn.setText(mCityInfo.getCName() + mTitle);
             break;
         case STAT_QUERY:
             mWebWbv.setVisibility(View.GONE);
             mQueryingView.setVisibility(View.VISIBLE);
             mEmptyView.setVisibility(View.GONE);
+            mTitleBtn.setText(mTitle);
             break;
         case STAT_NODATA:
             mWebWbv.setVisibility(View.GONE);
             mQueryingView.setVisibility(View.GONE);
             mEmptyView.setVisibility(View.VISIBLE);
+            mTitleBtn.setText(mTitle);
             break;
         }
     }
