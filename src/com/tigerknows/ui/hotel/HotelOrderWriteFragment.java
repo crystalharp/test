@@ -526,6 +526,17 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
             }else{
                 roomHowmanyIconImv.setImageDrawable(getResources().getDrawable(R.drawable.rdb_recovery_default));
             }
+
+            int count = getCount();
+            if (count == 1) {
+                view.setBackgroundResource(R.drawable.list_single);
+            } else if (position == 0) {
+                view.setBackgroundResource(R.drawable.list_header);
+            } else if (position == count-1) {
+                view.setBackgroundResource(R.drawable.list_footer);
+            } else {
+                view.setBackgroundResource(R.drawable.list_middle);
+            }
             return view;
         }
         
@@ -540,11 +551,21 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
             list.add(listitem);
         }
         final ArrayAdapter<String> adapter = new HotelRoomHowmanyAdapter(mSphinx, list);
-        final ListView listView = Utility.makeListView(mSphinx);
+        View alterListView = mSphinx.getLayoutInflater().inflate(R.layout.alert_listview, null, false);
+        
+        final ListView listView = (ListView) alterListView.findViewById(R.id.listview);
         listView.setAdapter(adapter);
-        final Dialog dialog = Utility.showNormalDialog(mSphinx, 
-                mSphinx.getString(R.string.choose_room_howmany), 
-                listView);
+        
+        final Dialog dialog = Utility.getChoiceDialog(mSphinx, alterListView, R.style.AlterChoiceDialog);
+        
+        TextView titleTxv = (TextView)alterListView.findViewById(R.id.title_txv);
+        titleTxv.setText(R.string.choose_room_howmany);
+        
+        Button button = (Button)alterListView.findViewById(R.id.confirm_btn);
+        button.setVisibility(View.GONE);
+        
+        dialog.show();
+        
         listView.setOnItemClickListener(new OnItemClickListener(){
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int which, long arg3){
@@ -561,12 +582,22 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     private void showRoomReserveDialog(){
         final List<RetentionTime> rtList = findRTimeByRoomHowmany(mRoomHowmany);
         HotelReserveListAdapter hotelReserveListAdapter = new HotelReserveListAdapter(mContext, rtList);
-        ListView listView = Utility.makeListView(mSphinx);
-        listView.setAdapter(hotelReserveListAdapter);
 
-        final Dialog dialog = Utility.showNormalDialog(mSphinx, 
-                mSphinx.getString(R.string.choose_room_reserve), 
-                listView);
+        View alterListView = mSphinx.getLayoutInflater().inflate(R.layout.alert_listview, null, false);
+        
+        final ListView listView = (ListView) alterListView.findViewById(R.id.listview);
+        listView.setAdapter(hotelReserveListAdapter);
+        
+        final Dialog dialog = Utility.getChoiceDialog(mSphinx, alterListView, R.style.AlterChoiceDialog);
+        
+        TextView titleTxv = (TextView)alterListView.findViewById(R.id.title_txv);
+        titleTxv.setText(R.string.choose_room_reserve);
+        
+        Button button = (Button)alterListView.findViewById(R.id.confirm_btn);
+        button.setVisibility(View.GONE);
+        
+        dialog.show();
+
         listView.setOnItemClickListener(new OnItemClickListener(){
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int which, long arg3){

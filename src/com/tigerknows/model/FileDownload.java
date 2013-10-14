@@ -2,10 +2,11 @@
 package com.tigerknows.model;
 
 import com.decarta.android.exception.APIException;
+import com.decarta.android.util.LogWrapper;
 import com.tigerknows.TKConfig;
 import com.tigerknows.android.net.HttpManager;
+import com.tigerknows.crypto.DataEncryptor;
 import com.tigerknows.map.MapEngine;
-import com.tigerknows.map.MapEngine.CityInfo;
 import com.tigerknows.model.FileDownload.DataResponse.FileData;
 import com.tigerknows.model.test.BaseQueryTest;
 import com.tigerknows.model.xobject.XMap;
@@ -20,10 +21,13 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -52,6 +56,12 @@ public final class FileDownload extends BaseQuery {
         String url = String.format(TKConfig.getFileDownloadUrl(), TKConfig.getFileDownloadHost());
         httpClient.setURL(url);
     }
+    
+    @Override
+    protected void addCommonParameters() {
+        super.addCommonParameters();
+        addSessionId();
+    }
 
     @Override
     protected void translateResponse(byte[] data) throws APIException {
@@ -62,11 +72,14 @@ public final class FileDownload extends BaseQuery {
         if (FILE_TYPE_SUBWAY.equals(getParameter(SERVER_PARAMETER_FILE_TYPE))) {
             if (dataResponse != null) {
                 FileData fileData = dataResponse.getFileData();
-                if (fileData != null && fileData.url != null) {
-                    File file = downFile(fileData.url);
-                    
-                    if (file != null && !isStop) {
-                        Utility.unZipFile(file.getAbsolutePath(), null, MapEngine.cityId2Floder(cityId));
+                String ver = TKConfig.getPref(context, TKConfig.getSubwayMapVersionPrefs(cityId), "");
+                if (!TextUtils.isEmpty(ver) && !ver.equals(fileData.version)) {
+                     TKConfig.setPref(context, TKConfig.getSubwayMapUpdatedPrefs(cityId), "true");
+                }
+                if (fileData != null && fileData.url != null && !ver.equals(fileData.version)) {
+                    SubwayMapDownloadManager manager = SubwayMapDownloadManager.getInstance();
+                    if (!manager.checkRunning(fileData.url)) {
+                        manager.download(context, fileData.url, isStop, cityId);
                     }
                 }
             }
@@ -131,7 +144,7 @@ public final class FileDownload extends BaseQuery {
     
 
     
-    private File downFile(String url) {
+    private static File downFile(Context context, HttpClient httpClient, String url, boolean isStop) {
         try {
             if (BaseQueryTest.UnallowedAccessNetwork) {
                 Thread.sleep(5000);
@@ -139,7 +152,6 @@ public final class FileDownload extends BaseQuery {
             }
             File tempFile = DownloadService.createFileByUrl(url);
             long fileSize = tempFile.length();
-            HttpClient httpClient = HttpManager.getNewHttpClient();
             HttpUriRequest request = new HttpGet(url);
             
             // 支持断点续传
@@ -181,27 +193,105 @@ public final class FileDownload extends BaseQuery {
         return null;
     }
     
-    /**
-     * 检查城市地铁数据文件的是否完整
-     * @param cityId
-     * @return
-     */
-    public static boolean checkSubwayData(int cityId) {
-        boolean result = false;
+    static private class SubwayMapDownloadManager {
         
-        CityInfo cityInfo = MapEngine.getCityInfo(cityId);
-        if (cityInfo == null) {
-            return result;
+        static SubwayMapDownloadManager instance = null;
+        String url = null;
+        boolean downing = false;
+        HttpClient httpClient;
+        
+        private SubwayMapDownloadManager() {
         }
         
-        String path = MapEngine.cityId2Floder(cityId)+"sw_"+cityInfo.getEName()+"/";
-        String versionFilePath = path + "version.txt";
-        File verion = new File(versionFilePath);
-        if (verion.exists() && verion.isFile()) {
-            // TODO: 如何保证地铁数据的是否完整？目前是通过判断version.txt是否存在
-            result = true;
+        public static SubwayMapDownloadManager getInstance() {
+            if (instance == null) {
+                instance = new SubwayMapDownloadManager();
+            }
+            return instance;
         }
         
-        return result;
+        public boolean checkRunning(String downUrl) {
+            synchronized(this) { 
+                //url相同则是同城市的第二个请求,直接返回
+                if (downUrl.equals(url)) {
+                    return true;
+                }
+                //url不同,且正在下载,则取消现在正在下载的文件
+                if (downing) {
+                    httpClient.getConnectionManager().shutdown();
+                    url = null;
+                }
+            }
+            return false;
+        }
+        
+        private void recordDataInfo(Context context, int cityId) {
+            String path = MapEngine.getSubwayMapPath(cityId);
+            if (path == null) {
+                return;
+            }
+            String versionFilePath = path + "version.txt";
+            String ver = "error";
+            long size = 0;
+            try {
+                FileInputStream fis = new FileInputStream(versionFilePath);
+                byte[] buff = new byte[fis.available()];
+                fis.read(buff);
+                ver = new String(buff);
+                size = MapEngine.calcSubwayDataSize(cityId);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            LogWrapper.d("conan", "subway map version:" + ver);
+            LogWrapper.d("conan", "subway map size:" + size);
+            TKConfig.setPref(context, TKConfig.getSubwayMapVersionPrefs(cityId), ver);
+            TKConfig.setPref(context, TKConfig.getSubwayMapSizePrefs(cityId), String.valueOf(size));
+        }
+        
+        public void download(Context context, String downUrl, boolean isStop, int cityId) {
+
+            synchronized (this) {
+                url = downUrl;
+                downing = true;
+                httpClient = HttpManager.getNewHttpClient();
+            }
+            File file = downFile(context, httpClient, downUrl, isStop);
+            synchronized (this) {
+                downing = false;
+            }
+            if (file != null && !isStop) {
+                FileInputStream fis;
+                FileOutputStream fos;
+                String encFilePath = file.getAbsolutePath();
+                String decFilePath = encFilePath + ".dec";
+                try {
+                    DataEncryptor encryptor = DataEncryptor.getInstance();
+                    fis = new FileInputStream(encFilePath);
+                    fos = new FileOutputStream(decFilePath);
+                    byte[] filedata = new byte[4096];
+                    int n = 0;
+                    while ((n = fis.read(filedata)) != -1) {
+                        encryptor.decrypt(filedata);
+                        fos.write(filedata, 0, n);
+                    }
+                    Utility.unZipFile(decFilePath, null, MapEngine.cityId2Floder(cityId));
+                    recordDataInfo(context, cityId);
+                    fis.close();
+                    fos.close();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    file.delete();
+                    (new File(decFilePath)).delete();
+                }
+            }
+            synchronized (this) {
+                url = null;
+            }
+        }
     }
 }

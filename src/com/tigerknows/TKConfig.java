@@ -693,6 +693,16 @@ public class TKConfig {
     public static final String PREFS_RECORDED_SYS_REL_TIME="prefs_recorded_sys_rel_time";
     
     /**
+     * 地图工具箱
+     */
+    public static final String PREFS_MAP_TOOLS = "prefs_map_tools";
+    
+    /**
+     * 地铁图
+     */
+    public static final String PREFS_SUBWAY_MAP = "prefs_subway_map";
+    
+    /**
      * 发现分类图片尺寸的Key
      */
     public static final int PICTURE_DISCOVER_HOME = 1;
@@ -1745,5 +1755,31 @@ public class TKConfig {
                 && sIMSI.lastIndexOf(wifi)+5 == sIMSI.length()) {
             sIMSI = sIMSI.replace(wifi, "");
         }
+    }
+    
+    /**
+     * 获取记录地铁数据version的prefs标识
+     */
+    public static String getSubwayMapVersionPrefs(int cityId) {
+        String cityEName = MapEngine.getCityInfo(cityId).getEName();
+        return "prefs_subwaymap_version_" + cityEName;
+    }
+    
+    /**
+     * 获取记录地铁数据完整性验证码的prefs标识
+     */
+    public static String getSubwayMapSizePrefs(int cityId) {
+        String cityEName = MapEngine.getCityInfo(cityId).getEName();
+        return "prefs_subwaymap_size_" + cityEName;
+    }
+    
+    /**
+     * 获取地铁数据是否是升级来的prefs标识
+     * @param cityId
+     * @return
+     */
+    public static String getSubwayMapUpdatedPrefs(int cityId) {
+        String cityEName = MapEngine.getCityInfo(cityId).getEName();
+        return "prefs_subwaymap_updated_" + cityEName;
     }
 }

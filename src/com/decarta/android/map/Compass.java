@@ -32,7 +32,7 @@ import com.decarta.android.exception.APIException;
 import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.decarta.android.util.XYFloat;
-import com.decarta.android.util.XYInteger;
+import com.tigerknows.util.XYInteger;
 
 public class Compass implements EventSource{
 	public enum PlaceLocation{TOP_LEFT,TOP_RIGHT,BOTTOM_LEFT,BOTTOM_RIGHT,CENTER};

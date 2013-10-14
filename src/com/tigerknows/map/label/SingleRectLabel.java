@@ -8,7 +8,6 @@ import static android.opengl.GLES10.glDeleteTextures;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 
 import android.content.Context;
@@ -25,13 +24,12 @@ import com.decarta.Globals;
 import com.decarta.android.map.TilesView.Texture;
 import com.decarta.android.util.Util;
 import com.decarta.android.util.XYFloat;
-import com.decarta.android.util.XYInteger;
 import com.decarta.android.util.XYZ;
 import com.tigerknows.R;
 import com.tigerknows.android.app.TKApplication;
 import com.tigerknows.map.Grid;
-import com.tigerknows.map.MapWord;
 import com.tigerknows.map.RectInteger;
+import com.tigerknows.util.XYInteger;
 
 /**
  * @author chenming
@@ -108,21 +106,7 @@ public class SingleRectLabel extends Label {
         return NinePatchDrawablePool[index];
     }
     
-    public static void clearIcon() {
-    	//清空纹理
-        Iterator<Texture> iterator5 = mapWordIconPool.values().iterator();
-        while(iterator5.hasNext()){
-            Texture texture = iterator5.next();
-            if (texture != null && texture.textureRef != 0) {
-                int textureRef = texture.textureRef;
-                IntBuffer textureRefBuf=IntBuffer.allocate(1);
-    			textureRefBuf.clear();
-    			textureRefBuf.put(0,textureRef);
-    			textureRefBuf.position(0);
-    			GLES10.glDeleteTextures(1, textureRefBuf);
-            }
-        }
-        mapWordIconPool.clear();
+    public static synchronized void clearIcon() {
         //清空图片
         for(int i = 0, len = BitmapPool.length; i < len; ++i) {
         	if(BitmapPool[i] != null) {
@@ -132,27 +116,7 @@ public class SingleRectLabel extends Label {
         }
     }
 
-    private static final int MAX_WORD_SIZE=128; 
-    private static LinkedHashMap<Integer,Texture> mapWordIconPool=new LinkedHashMap<Integer,Texture>(MAX_WORD_SIZE*2,0.75f,true){
-        private static final long serialVersionUID = 1L;
 
-        @Override
-        protected boolean removeEldestEntry(
-                java.util.Map.Entry<Integer, Texture> eldest) {
-            if(size()>MAX_WORD_SIZE){
-                Texture texture=eldest.getValue();
-                if(texture != null && texture.textureRef!=0){
-                    IntBuffer textureRefBuf=IntBuffer.allocate(1);
-                    textureRefBuf.clear();
-                    textureRefBuf.put(0,texture.textureRef);
-                    textureRefBuf.position(0);
-                    glDeleteTextures(1, textureRefBuf);
-                }
-                remove(eldest.getKey());
-            }
-            return false;
-        }
-    };
     
 	public int iconId;
     public int style;
@@ -223,7 +187,7 @@ public class SingleRectLabel extends Label {
     	}
     }
     
-    private Texture getIconTexture() {
+    private Texture getIconTexture(LinkedHashMap<Integer,Texture> mapWordIconPool) {
     	Texture texture = mapWordIconPool.get(iconId);
     	if(texture != null)
     		return texture;
@@ -363,12 +327,13 @@ public class SingleRectLabel extends Label {
     	GLES10.glPopMatrix();
     }
     
-    private void drawOnlyIcon(float x, float y, RectInteger rect, float rot, float scale, Grid grid, ByteBuffer TEXTURE_COORDS, FloatBuffer vertexBuffer) {
+    private void drawOnlyIcon(float x, float y, RectInteger rect, float rot, float scale, Grid grid, 
+    		ByteBuffer TEXTURE_COORDS, FloatBuffer vertexBuffer, LinkedHashMap<Integer,Texture> mapWordIconPool) {
     	if(grid.isRectOutBound(rect) || grid.isInterSectRect(rect)) {
     		return;
     	}
     	grid.addRect(rect);
-    	Texture iconTexture = getIconTexture();
+    	Texture iconTexture = getIconTexture(mapWordIconPool);
     	GLES10.glPushMatrix();
     	GLES10.glTranslatef(x, y, 0);
     	if (scale != 1) {
@@ -394,7 +359,7 @@ public class SingleRectLabel extends Label {
     	state = LABEL_STATE_SHOW_ICON;
     }
     
-    private Texture genTextTextureRef(String key) {
+    private Texture genTextTextureRef(String key, LinkedHashMap<String, Texture> textTexturePool) {
     	IntBuffer textureRefBuf=IntBuffer.allocate(1);
         GLES10.glGenTextures(1, textureRefBuf);
         int textureRef = textureRefBuf.get(0);
@@ -425,7 +390,8 @@ public class SingleRectLabel extends Label {
     }
     
     private int drawLabelWithIcon(RectInteger rect, float x, float y, int width, int height, float rot, float scale, Grid grid, 
-    		boolean needDrawNew, IntegerRef maxLabelLeft, ByteBuffer TEXTURE_COORDS, FloatBuffer vertexBuffer) {
+    		boolean needDrawNew, IntegerRef maxLabelLeft, ByteBuffer TEXTURE_COORDS, FloatBuffer vertexBuffer, 
+    		LinkedHashMap<String, Texture> textTexturePool, LinkedHashMap<Integer,Texture> mapWordIconPool) {
     	Texture textTexture, iconTexture;
     	if(!grid.isInterSectRect(rect)) {
     		grid.addRect(rect);
@@ -452,7 +418,7 @@ public class SingleRectLabel extends Label {
     			}
     		}
     		String key = name + fontSize + color;
-    		iconTexture = getIconTexture();
+    		iconTexture = getIconTexture(mapWordIconPool);
     		textTexture = textTexturePool.get(key);
     		if(textTexture == null) {
     			if(needDrawNew) {
@@ -461,7 +427,7 @@ public class SingleRectLabel extends Label {
     					opacity = 0;
     					return state;
     				}
-    				textTexture = genTextTextureRef(key);
+    				textTexture = genTextTextureRef(key, textTexturePool);
     				--maxLabelLeft.value;
     			}
     		}
@@ -503,7 +469,7 @@ public class SingleRectLabel extends Label {
     		    }
     		}
     		String key = name + fontSize + color;
-    		iconTexture = this.getIconTexture();
+    		iconTexture = this.getIconTexture(mapWordIconPool);
     		if(textTexturePool.containsKey(key)) {
     			textTexture = textTexturePool.get(key);
     			this.draw(x, y, rot, scale, width, height, iconTexture, textTexture, TEXTURE_COORDS, vertexBuffer);
@@ -514,7 +480,8 @@ public class SingleRectLabel extends Label {
     
     public int draw(XYInteger center, XYZ centerXYZ, XYFloat centerDelta, 
     		float rotation, float sinRot, float cosRot, float scale, Grid grid, 
-    		ByteBuffer TEXTURE_COORDS, FloatBuffer vertexBuffer, boolean needGenTexture, IntegerRef leftCountToDraw) {
+    		ByteBuffer TEXTURE_COORDS, FloatBuffer vertexBuffer, boolean needGenTexture, IntegerRef leftCountToDraw, 
+    		LinkedHashMap<String, Texture> textTexturePool, LinkedHashMap<Integer,Texture> mapWordIconPool) {
     	int width, height;
         int tileSize = CONFIG.TILE_SIZE;
         int cx = center.x;
@@ -579,7 +546,7 @@ public class SingleRectLabel extends Label {
                         opacity = 0;
                         return state;
                     }
-                    textTexture = genTextTextureRef(key);
+                    textTexture = genTextTextureRef(key, textTexturePool);
                     --leftCountToDraw.value;
                 }
                 if (state == LABEL_STATE_WAITING) {
@@ -604,7 +571,7 @@ public class SingleRectLabel extends Label {
                         return LABEL_STATE_CANT_BE_SHOWN;
                     }
                     String key = name + fontSize + color;
-                    iconTexture = getIconTexture();
+                    iconTexture = getIconTexture(mapWordIconPool);
             		if(textTexturePool.containsKey(key)) {
             			textTexture = textTexturePool.get(key);
             			this.draw(sx, sy, rotation, scale, width, height, iconTexture, textTexture, TEXTURE_COORDS, vertexBuffer);
@@ -641,7 +608,7 @@ public class SingleRectLabel extends Label {
                 return LABEL_STATE_CANT_BE_SHOWN;
             }
             if (drawLabelWithIcon(rect, sx, sy, width, height, rotation, scale, grid, 
-            		needGenTexture, leftCountToDraw, TEXTURE_COORDS, vertexBuffer) == LABEL_STATE_CANT_BE_SHOWN) {//如果icon在左边画不了，试试把icon放右边
+            		needGenTexture, leftCountToDraw, TEXTURE_COORDS, vertexBuffer, textTexturePool, mapWordIconPool) == LABEL_STATE_CANT_BE_SHOWN) {//如果icon在左边画不了，试试把icon放右边
                 rect.left = (int) (x - (iconSize.x >> 1) - width - TK_LABEL_BOUND_SIZE);
                 rect.right = rect.left + width + iconSize.x + TK_LABEL_BOUND_SIZE;
                 rect.top = (int) (y - (Math.max(iconSize.y, height) >> 1) - TK_LABEL_BOUND_SIZE);
@@ -653,7 +620,7 @@ public class SingleRectLabel extends Label {
                 }
                 style = STYLE_ICON_ON_RIGHT;
                 if (drawLabelWithIcon(rect, sx, sy, width, height, rotation, scale, grid, 
-                		needGenTexture, leftCountToDraw, TEXTURE_COORDS, vertexBuffer) == LABEL_STATE_CANT_BE_SHOWN) {
+                		needGenTexture, leftCountToDraw, TEXTURE_COORDS, vertexBuffer, textTexturePool, mapWordIconPool) == LABEL_STATE_CANT_BE_SHOWN) {
                     style = STYLE_ICON_ON_LEFT;
                 }
             }
@@ -671,7 +638,7 @@ public class SingleRectLabel extends Label {
                 return LABEL_STATE_CANT_BE_SHOWN;
             }
             if (drawLabelWithIcon(rect, sx, sy, width, height, rotation, scale, grid, 
-            		needGenTexture, leftCountToDraw, TEXTURE_COORDS, vertexBuffer) == LABEL_STATE_CANT_BE_SHOWN) {//如果icon在右边画不了，试试把icon放左边
+            		needGenTexture, leftCountToDraw, TEXTURE_COORDS, vertexBuffer, textTexturePool, mapWordIconPool) == LABEL_STATE_CANT_BE_SHOWN) {//如果icon在右边画不了，试试把icon放左边
             	rect.left = (int) (x - (iconSize.x >> 1) - TK_LABEL_BOUND_SIZE);
                 rect.right = rect.left + width + iconSize.x + TK_LABEL_BOUND_SIZE;
                 rect.top = (int) (y - (Math.max(iconSize.y, height) >> 1) - TK_LABEL_BOUND_SIZE);
@@ -682,7 +649,7 @@ public class SingleRectLabel extends Label {
                 }
                 style = STYLE_ICON_ON_LEFT;
                 if (drawLabelWithIcon(rect, sx, sy, width, height, rotation, scale, grid, 
-                		needGenTexture, leftCountToDraw, TEXTURE_COORDS, vertexBuffer) == LABEL_STATE_CANT_BE_SHOWN) {
+                		needGenTexture, leftCountToDraw, TEXTURE_COORDS, vertexBuffer, textTexturePool, mapWordIconPool) == LABEL_STATE_CANT_BE_SHOWN) {
                     style = STYLE_ICON_ON_RIGHT;
                 }
             }
@@ -693,12 +660,12 @@ public class SingleRectLabel extends Label {
             bankrect.right = rect.left + iconSize.x + (TK_LABEL_BOUND_SIZE>>2);
             bankrect.top = (int) (y - (iconSize.y >> 1) - (TK_LABEL_BOUND_SIZE>>2));
             bankrect.bottom = rect.top + iconSize.y + (TK_LABEL_BOUND_SIZE>>2);
-            this.drawOnlyIcon(sx, sy, rect, rotation, scale, grid, TEXTURE_COORDS, vertexBuffer);
+            this.drawOnlyIcon(sx, sy, rect, rotation, scale, grid, TEXTURE_COORDS, vertexBuffer, mapWordIconPool);
         }
         return state;
     }
     
     public SingleRectLabel clone() {
-        return new SingleRectLabel(name, MAX_WORD_SIZE, style, iconId, iconId, STYLE_NO_ICON_WITH_BACKGROUND, STYLE_NO_ICON_WITHOUT_BACKGROUND, point, x, y, z);
+        return new SingleRectLabel(name, color, style, iconId, iconId, STYLE_NO_ICON_WITH_BACKGROUND, STYLE_NO_ICON_WITHOUT_BACKGROUND, point, x, y, z);
     }
 }

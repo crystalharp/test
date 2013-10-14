@@ -4,7 +4,6 @@ import android.os.Handler;
 
 import com.decarta.android.event.EventSource;
 import com.decarta.android.event.EventType;
-import com.decarta.android.location.Position;
 import com.decarta.android.map.Icon;
 import com.decarta.android.map.InfoWindow;
 import com.decarta.android.map.ItemizedOverlay;
@@ -15,6 +14,7 @@ import com.decarta.android.map.RotationTilt.TiltReference;
 import com.decarta.android.util.XYFloat;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.android.location.Position;
 import com.tigerknows.model.POI;
 
 public class PinOverlayHelper {

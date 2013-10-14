@@ -131,7 +131,7 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
         };
     };
 
-    private int mSelectIndex;
+    private BaseData mSelectData;
     private OnCreateContextMenuListener mContextMenuListener = new OnCreateContextMenuListener() {
         
         @Override
@@ -140,7 +140,7 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
             AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
             if (info.position > -1 && info.position < (mLayerType.equals(ItemizedOverlay.POI_OVERLAY) ? mPOIAdapter.getCount() : mTrafficAdapter.getCount())) {
             	mActionLog.addAction(mActionTag + ActionLog.ListViewItemLong + getActionLogType(), String.valueOf(info.position));
-                mSelectIndex = info.position;
+                mSelectData = (mLayerType.equals(ItemizedOverlay.POI_OVERLAY) ? mPOIAdapter.getItem(info.position) : mTrafficAdapter.getItem(info.position));
                 menu.add(0, MENU_DELETE, 0, R.string.delete);
             }
         }
@@ -215,18 +215,18 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
                 mLayerType = ItemizedOverlay.TRAFFIC_OVERLAY;
             }
         } else {
-            long min = 0;
-            if (mPOIList.size() > 0) {
-                min = mPOIList.get(0).getDateTime();
-            }
-            readPOI(mPOIList, Long.MAX_VALUE, min, true);
-            checkData(ItemizedOverlay.POI_OVERLAY);
-            
-            if (mTrafficList.size() > 0) {
-                min = mTrafficList.get(0).getDateTime();
-            }
-            readTraffic(mTrafficList, Long.MAX_VALUE, min, true);
-            checkData(ItemizedOverlay.TRAFFIC_OVERLAY);
+//            long min = 0;
+//            if (mPOIList.size() > 0) {
+//                min = mPOIList.get(0).getDateTime();
+//            }
+//            readPOI(mPOIList, Long.MAX_VALUE, min, true);
+//            checkData(ItemizedOverlay.POI_OVERLAY);
+//            
+//            if (mTrafficList.size() > 0) {
+//                min = mTrafficList.get(0).getDateTime();
+//            }
+//            readTraffic(mTrafficList, Long.MAX_VALUE, min, true);
+//            checkData(ItemizedOverlay.TRAFFIC_OVERLAY);
         }
         
         if (mLayerType.equals(ItemizedOverlay.POI_OVERLAY)) {
@@ -392,7 +392,7 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
     
     @Override
     public boolean onMenuItemSelected(int featureId, MenuItem item) {
-        if (mSelectIndex > -1) {
+        if (mSelectData != null) {
             switch (item.getItemId()) {
                 case MENU_DELETE:
                     mActionLog.addAction(mActionTag+ActionLog.HistoryMenuDelete + getActionLogType());
@@ -404,19 +404,21 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
                                 @Override
                                 public void onClick(DialogInterface arg0, int id) {
                                     if (id == DialogInterface.BUTTON_POSITIVE) {
-                                        if (mLayerType.equals(ItemizedOverlay.POI_OVERLAY)) {
-                                            POI poi = mPOIList.remove(mSelectIndex);
+                                        if (mSelectData instanceof POI) {
+                                            POI poi = (POI) mSelectData;
+                                            mPOIList.remove(poi);
                                             poi.deleteHistory(mSphinx);
                                         } else {
-                                            History traffic = mTrafficList.remove(mSelectIndex);
+                                            History traffic = (History)mSelectData;
+                                            mTrafficList.remove(traffic);
                                             SqliteWrapper.delete(mContext, mContext.getContentResolver(), Tigerknows.History.CONTENT_URI, "_id="+traffic.getId(), null);
                                         }
                                         refreshContent();
-                                        if (mLayerType.equals(ItemizedOverlay.POI_OVERLAY)) {
+                                        if (mSelectData instanceof POI && mLayerType.equals(ItemizedOverlay.POI_OVERLAY)) {
                                             if (mPOIList.isEmpty()) {
                                                 turnPagePOI();
                                             }
-                                        } else {
+                                        } else if (mSelectData instanceof History && mLayerType.equals(ItemizedOverlay.TRAFFIC_OVERLAY)){
                                             if (mTrafficList.isEmpty()) {
                                                 turnPageTraffic();
                                             }
@@ -427,6 +429,7 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
                     return true;
             }
         }
+        mSelectData = null;
         return super.onMenuItemSelected(featureId, item);
     }
 
@@ -674,7 +677,7 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
                         }
                         mPOIList.add(poi);
                     }
-                    Collections.sort(mPOIList, mComparator);
+//                    Collections.sort(mPOIList, mComparator);
                     mPOIAdapter.notifyDataSetChanged();
                     mPOILsv.setFooterSpringback(msg.arg1 > mPOIList.size());
                     if (mPOILsv.isFooterSpringback()) {
@@ -695,7 +698,7 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
                         }
                         mTrafficList.add(traffic);
                     }
-                    Collections.sort(mTrafficList, mComparator);
+//                    Collections.sort(mTrafficList, mComparator);
                     mTrafficAdapter.notifyDataSetChanged();
                     mTrafficLsv.setFooterSpringback(msg.arg1 > mTrafficList.size());
                     if (mTrafficLsv.isFooterSpringback()) {
@@ -745,7 +748,7 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
                     mPOIList.remove(i);
                 }
             }
-            Collections.sort(mPOIList, mComparator);
+//            Collections.sort(mPOIList, mComparator);
             mPOIAdapter.notifyDataSetChanged();
         } else {
             for(int i = mTrafficList.size() - 1; i >= 0; i--) {
@@ -753,7 +756,7 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
                     mTrafficList.remove(i);
                 }
             }
-            Collections.sort(mTrafficList, mComparator);
+//            Collections.sort(mTrafficList, mComparator);
             mTrafficAdapter.notifyDataSetChanged();
         }
     }
@@ -794,12 +797,12 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
             mTrafficBtn.setTextColor(mColorNormal);
 
             if (mPOIList.size() > 0) {
-                readPOI(mPOIList, Long.MAX_VALUE, mPOIList.get(0).getDateTime(), true);
+//                readPOI(mPOIList, Long.MAX_VALUE, mPOIList.get(0).getDateTime(), true);
             } else {
                 int total = readPOI(mPOIList, Long.MAX_VALUE, 0, false);
                 mPOILsv.setFooterSpringback(total > mPOIList.size());
             }
-            Collections.sort(mPOIList, mComparator);
+//            Collections.sort(mPOIList, mComparator);
             mPOIAdapter.notifyDataSetChanged();
         } else {
             mPOIBtn.setBackgroundResource(R.drawable.btn_tab);
@@ -808,12 +811,12 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
             mTrafficBtn.setTextColor(mColorSelect);
             
             if (mTrafficList.size() > 0) {
-                readTraffic(mTrafficList, Long.MAX_VALUE, mTrafficList.get(0).getDateTime(), true);
+//                readTraffic(mTrafficList, Long.MAX_VALUE, mTrafficList.get(0).getDateTime(), true);
             } else {
                 int total = readTraffic(mTrafficList, Long.MAX_VALUE, 0, false);
                 mTrafficLsv.setFooterSpringback(total > mTrafficList.size());
             }
-            Collections.sort(mTrafficList, mComparator);
+//            Collections.sort(mTrafficList, mComparator);
             mTrafficAdapter.notifyDataSetChanged();
         }
         refreshContent();

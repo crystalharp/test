@@ -126,7 +126,7 @@
 		<sub word="兴业银行" />
 		<sub word="华夏银行" />
   	</category>
-  	<category word="交通" highLight="公交站 / 加油站 / 机场">
+  	<category word="交通" highLight="地铁图 / 公交站 / 加油站">
 		<sub word="公交站" />
 		<sub word="地铁站" />
 		<sub word="火车站" />

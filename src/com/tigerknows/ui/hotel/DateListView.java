@@ -476,24 +476,24 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
             
             if (isParent) {
                 if (position == 0 || (beforeDawn == false && position == 1) || (position > CHECKIN_MAX+1)) {
-                    view.setBackgroundResource(R.color.gray_dark);
+                    view.setBackgroundResource(R.color.white);
                     textTxv.setTextColor(TKConfig.COLOR_BLACK_LIGHT);
                 } else if (position == checkinPosition) {
-                    view.setBackgroundResource(R.drawable.list_selector_background_gray_dark);
+                    view.setBackgroundResource(R.drawable.list_selector_background_white);
                     textTxv.setTextColor(TKConfig.COLOR_ORANGE);
                 } else {
-                    view.setBackgroundResource(R.drawable.list_selector_background_gray_dark);
+                    view.setBackgroundResource(R.drawable.list_selector_background_white);
                     textTxv.setTextColor(TKConfig.COLOR_BLACK_DARK);
                 }
             } else {
                 if (position == 0 || position > CHECKOUT_MAX) {
-                    view.setBackgroundResource(R.color.gray_dark);
+                    view.setBackgroundResource(R.color.white);
                 } else if (position == checkoutPosition) {
                     textTxv.setTextColor(TKConfig.COLOR_ORANGE);
-                    view.setBackgroundResource(R.drawable.list_selector_background_gray_dark);
+                    view.setBackgroundResource(R.drawable.list_selector_background_white);
                 } else {
                     textTxv.setTextColor(TKConfig.COLOR_BLACK_DARK);
-                    view.setBackgroundResource(R.drawable.list_selector_background_gray_dark);
+                    view.setBackgroundResource(R.drawable.list_selector_background_white);
                 }
             }
             

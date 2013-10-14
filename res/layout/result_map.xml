@@ -9,7 +9,8 @@
         android:layout_alignParentBottom="true"
 	    android:paddingLeft="10dp"
 	    android:paddingRight="10dp"
-	    android:background="@drawable/bg_menu_bar">
+	    android:background="@drawable/bg_menu_bar"
+	    android:visibility="gone">
 	        
 	       <TextView
 	           android:layout_width="fill_parent" 

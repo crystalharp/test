@@ -149,6 +149,7 @@ public class ActionLog extends LogUpload {
     public static final String POIHomeDynamicButtonClick = "BJ";
     public static final String POIHomeMyLocation = "BK";
     public static final String POIHomeAppointedArea = "BL";
+    public static final String POIHomeSubwayMap = "BM";
     
     // POI输入查询页
     public static final String POIHomeInputQuery = "AB";
@@ -518,6 +519,13 @@ public class ActionLog extends LogUpload {
     public static final String TrafficTransferMap = "BN";
     public static final String TrafficDriveMap = "BO";
     public static final String TrafficWalkMap = "BP";
+    
+    // 交通指南针页
+    public static final String TrafficCompass = "BQ";
+    public static final String TrafficCompassGPS = "BA";
+    
+    // 地铁图页
+    public static final String TrafficSubwayMap = "BR";
     
     // == 用户模块通用 ==
     public static final String UserCommonLoginBtn = "AA";

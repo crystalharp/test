@@ -16,10 +16,10 @@ import android.graphics.Paint.Style;
 
 import com.decarta.CONFIG;
 import com.decarta.android.exception.APIException;
-import com.decarta.android.location.Position;
 import com.decarta.android.scale.Length;
 import com.decarta.android.util.Util;
 import com.decarta.android.util.XYDouble;
+import com.tigerknows.android.location.Position;
 
 /**
  * Circle to be shown on the map.

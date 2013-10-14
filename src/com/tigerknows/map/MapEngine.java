@@ -4,8 +4,10 @@
 
 package com.tigerknows.map;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -21,11 +23,11 @@ import android.text.TextUtils;
 
 import com.decarta.CONFIG;
 import com.decarta.android.exception.APIException;
-import com.decarta.android.location.Position;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
+import com.tigerknows.android.location.Position;
 import com.tigerknows.model.TKWord;
 import com.tigerknows.service.SuggestLexiconService;
 import com.tigerknows.util.ByteUtil;
@@ -1052,6 +1054,66 @@ public class MapEngine {
         }
         return hasCorrect;
     }
+
+    /**
+     * 检查城市地铁数据文件的是否完整
+     * @param cityId
+     * @return
+     */
+    public static String getSubwayDataPath(Context context, int cityId) {
+        String result = null;
+        
+        CityInfo cityInfo = MapEngine.getCityInfo(cityId);
+        if (cityInfo == null) {
+            return result;
+        }
+        
+        long size = calcSubwayDataSize(cityId);
+        String recordSize = TKConfig.getPref(context, TKConfig.getSubwayMapSizePrefs(cityId), null);
+        if (size != 0 && String.valueOf(size).equals(recordSize)) {
+            String path = getSubwayMapPath(cityId);
+            result = path + "index.html";
+        }
+        
+        return result;
+    }
+    
+    /**
+     * 获取某城市地铁图的路径,只做字符串拼接用途.使用时请检查目录内是否有文件.
+     * @param cityId
+     * @return
+     */
+    public final static String getSubwayMapPath(int cityId) {
+        CityInfo cityInfo = MapEngine.getCityInfo(cityId);
+        if (cityInfo == null) {
+            return null;
+        }
+        return cityId2Floder(cityId)+"sw_"+cityInfo.getEName()+"/";
+    }
+    
+    /**
+     * 获取某城市地铁数据的大小
+     * @param cityId
+     * @return
+     */
+    public static long calcSubwayDataSize(int cityId) {
+        String path = getSubwayMapPath(cityId);
+        if (path == null) {
+            return 0;
+        }
+        long size = 0;
+        File subwayDir = new File(path);
+        if (subwayDir.exists() && subwayDir.isDirectory()) {
+            File[] files = subwayDir.listFiles();
+            if (files.length != 0) {
+                for (File file : files) {
+                    size += file.length();
+                }
+            }
+        }
+        
+        return size;
+    }
     
     public static boolean hasMunicipality(int cityId) {
         if (cityId == -3 || cityId == 1 || cityId == 2 || cityId == 6 || cityId == 8) {
@@ -1096,5 +1158,36 @@ public class MapEngine {
     public static void cleanEngineCache() {
     	Ca.tk_clean_engine_cache();
     	Ca.tk_clean_engine_label();
+    	subwayMap.clear();
+    }
+    
+    
+    private static HashMap<Integer, String> subwayMap = new HashMap<Integer, String>();
+    
+    /**
+     * 检查指定城市是否支持查看地铁图功能
+     * @param cityId
+     * @return
+     */
+    public static boolean checkSupportSubway(int cityId) {
+        boolean result = false;
+        if (subwayMap.size() == 0) {
+            File file = new File(TKConfig.getDataPath(false)+"sw_city.txt");
+            String line = null;
+            try {
+                BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+                while((line = br.readLine()) != null) {
+                    String[] strArr = line.split(",");
+                    subwayMap.put(Integer.parseInt(strArr[1]), strArr[0]);
+                }
+                br.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        
+        result = subwayMap.containsKey(cityId);
+        
+        return result;
     }
 }

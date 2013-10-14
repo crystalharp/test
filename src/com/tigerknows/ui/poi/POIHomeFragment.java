@@ -5,14 +5,15 @@
 package com.tigerknows.ui.poi;
 
 import com.decarta.Globals;
-import com.decarta.android.location.Position;
 import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
+import com.tigerknows.android.location.Position;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
+import com.tigerknows.map.MapEngine;
 import com.tigerknows.map.MapEngine.CityInfo;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataQuery;
@@ -52,14 +53,12 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -92,6 +91,11 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
      * 酒店在列表中的下标
      */
     static final int HOTEL_INDEX = 1;
+    
+    /**
+     * 交通在列表中的下标
+     */
+    static final int TRAFFIC_INDEX = 8;
 
     private Button mCityBtn;
     private Button mInputBtn;
@@ -119,6 +123,10 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
     private int mCategoryTop;
     private int mMyLocationViewHeight;
     private int mCategoryPadding = 0;
+
+    private View mSubwayMapView;
+    private Button mSubwayMapBtn;
+    private ImageView mSubwayMapImv;
 
     private String[] mCategoryNameList;
     List<Category> mCategorylist = new ArrayList<Category>();
@@ -493,6 +501,10 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
         mDragView = mRootView.findViewById(R.id.drag_view);
         mDragViewParent = mRootView.findViewById(R.id.drag_view_parent);
         mCategoryTagImv = (ImageView) mRootView.findViewById(R.id.imv_category_tag);
+
+        mSubwayMapView = mRootView.findViewById(R.id.subway_map_view);
+        mSubwayMapBtn = (Button)mRootView.findViewById(R.id.subway_map_btn);
+        mSubwayMapImv = (ImageView)mRootView.findViewById(R.id.subway_map_imv);
     }
 
     protected void setListener() {
@@ -507,6 +519,14 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
        
        mMyLoactionTxv.setOnClickListener(this);
        
+       mSubwayMapView.setOnTouchListener(new OnTouchListener() {
+            
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return true;
+            }
+        });
+       mSubwayMapBtn.setOnClickListener(this);
     }
     
     @Override
@@ -547,6 +567,12 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
                 mSphinx.getPickLocationFragment().setTitle(mSphinx.getString(R.string.poi_change_location));
                 mSphinx.showView(R.id.view_hotel_pick_location);
             }
+        } else if (id == R.id.subway_map_btn) {
+            mActionLog.addAction(mActionTag + ActionLog.POIHomeSubwayMap);
+            TKConfig.setPref(mSphinx, TKConfig.PREFS_SUBWAY_MAP, "1");
+            mSubwayMapImv.setVisibility(View.GONE);
+            mSphinx.getSubwayMapFragment().setData(Globals.getCurrentCityInfo());
+            mSphinx.showView(R.id.view_subway_map);
         }
     }
     
@@ -999,6 +1025,17 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
 		
 		mSubCategoryAdapter.clear();
 		ArrayList<String> subs = subCategories.get(position);
+		if (position == TRAFFIC_INDEX && MapEngine.checkSupportSubway(Globals.getCurrentCityInfo().getId())) {
+            mSubwayMapView.setVisibility(View.VISIBLE);
+            if (TKConfig.getPref(mSphinx, TKConfig.PREFS_SUBWAY_MAP) == null) {
+                mSubwayMapImv.setVisibility(View.VISIBLE);
+            } else {
+                mSubwayMapImv.setVisibility(View.GONE);
+            }
+		} else {
+		    mSubwayMapView.setVisibility(View.GONE);
+		}
+
 		mSubCategoryAdapter.add(subs.get(0) + mContext.getString(R.string.all));
 		for(int i=1, size=subs.size(); i<size; i++){
 			mSubCategoryAdapter.add(subs.get(i));
@@ -1035,11 +1072,9 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
 			if(isDragStarts && System.currentTimeMillis() < lastTouchUpTimeMillis + 200){
 				return;
 			}
-			String keyWord=null;
+			String keyWord=mSubCategoryAdapter.getItem(position);
 			if(position==0){
 				keyWord = subCategories.get(mCurrentCategoryIndex).get(0);
-			}else{
-				keyWord = mSubCategoryAdapter.getItem(position);
 			}
 			mActionLog.addAction(mActionTag + ActionLog.POIHomeSubcategoryPressed, keyWord);
 			jumpToPOIResult(keyWord);

@@ -320,10 +320,15 @@ static tk_base_tile_data_t *_tk_create_base_tile(int feature_num, int point_num,
     tk_status_t result = TK_STATUS_SUCCESS;
     if ((feature_num <= 0 || feature_num > max_length / 2) ||
         (point_num < 0 || point_num > max_length / 2) ||
-        (name_length < 0 || name_length > max_length)){
+        (name_length < 0)){
         tk_set_result(TK_STATUS_TILE_DATA_ERROR);
         return NULL;
     }
+
+    if (name_length > max_length) {
+    	name_length = max_length;
+    }
+
     base_tile = malloc(sizeof(tk_base_tile_data_t));
     if (!base_tile) {
         tk_set_result(TK_STATUS_NO_MEMORY);

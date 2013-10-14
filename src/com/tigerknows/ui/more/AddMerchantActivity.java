@@ -5,7 +5,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
 
 import android.app.Dialog;
@@ -103,7 +102,6 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
     public static final int DATE_WEEKEND = 96;
     
     private Button mDateBtn;
-    private ListView mPickDateView;
     private MultichoiceArrayAdapter mPickDateArrayAdapter;
     private String[] mWeekDays;
     private boolean[] mDateChecked;
@@ -537,15 +535,20 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
                     mWeekDays[length-1] = sunday;
                     mDateChecked = new boolean[mWeekDays.length];
                 }
-                
-                if (mPickDateView == null) {
+
+                if (mPickDateDialog == null) {
+                    
                     mPickDateArrayAdapter = new MultichoiceArrayAdapter(mThis, mWeekDays, mDateChecked);
-                    mPickDateView = Utility.makeListView(mThis);
-                    mPickDateView.setDivider(null);
-                    mPickDateView.setDividerHeight(0);
-                    mPickDateView.setAdapter(mPickDateArrayAdapter);
-                    mPickDateView.setOnItemClickListener(new OnItemClickListener() {
-                        
+                    
+                    View alterListView = mLayoutInflater.inflate(R.layout.alert_listview, null, false);
+                    
+                    ListView listView = (ListView) alterListView.findViewById(R.id.listview);
+                    listView.setAdapter(mPickDateArrayAdapter);
+                    
+                    mPickDateDialog = Utility.getChoiceDialog(mThis, alterListView, R.style.AlterChoiceDialog);
+                    
+                    listView.setOnItemClickListener(new OnItemClickListener() {
+
                         @Override
                         public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
                             mDateChecked[position] = !mDateChecked[position];
@@ -553,46 +556,45 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
                         }
                     });
                     
-                    mPickDateDialog = Utility.showNormalDialog(mThis, 
-                            mThis.getString(R.string.select_business_hours_day), 
-                            mPickDateView,
-                            new DialogInterface.OnClickListener() {
+                    TextView titleTxv = (TextView)alterListView.findViewById(R.id.title_txv);
+                    titleTxv.setText(R.string.select_business_hours_day);
+                    
+                    Button button = (Button)alterListView.findViewById(R.id.confirm_btn);
+                    button.setOnClickListener(new View.OnClickListener() {
                         
                         @Override
-                        public void onClick(DialogInterface arg0, int id) {
-                            
-                            if (id == DialogInterface.BUTTON_POSITIVE) {
-
-                                int dateSelected = 0;
-                                for(int i = mDateChecked.length-1; i >= 0; i--) {
-                                    dateSelected = (dateSelected << 1) + (mDateChecked[i] ? 1 : 0);
-                                }
-                                
-                                mDateSelected = dateSelected;
-                                if (mDateSelected == 0) {
-                                    mDateBtn.setText(null);
-                                } else if (mDateSelected == DATE_EVERY_DAY) {
-                                    mDateBtn.setText(R.string.every_day);
-                                } else if (mDateSelected == DATE_WORKING_DAYS) {
-                                    mDateBtn.setText(R.string.working_days);
-                                } else if (mDateSelected == DATE_WEEKEND) {
-                                    mDateBtn.setText(R.string.weekend);
-                                } else {
-                                    StringBuilder s = new StringBuilder();
-                                    for(int i = 0, length = mDateChecked.length; i < length; i++) {
-                                        if (mDateChecked[i]) {
-                                            if (s.length() > 0) {
-                                                s.append(',');
-                                            }
-                                            s.append(mWeekDays[i]);
-                                        }
-                                    }
-                                    mDateBtn.setText(s.toString());
-                                }
+                        public void onClick(View v) {
+                            int dateSelected = 0;
+                            for(int i = mDateChecked.length-1; i >= 0; i--) {
+                                dateSelected = (dateSelected << 1) + (mDateChecked[i] ? 1 : 0);
                             }
+                            
+                            mDateSelected = dateSelected;
+                            if (mDateSelected == 0) {
+                                mDateBtn.setText(null);
+                            } else if (mDateSelected == DATE_EVERY_DAY) {
+                                mDateBtn.setText(R.string.every_day);
+                            } else if (mDateSelected == DATE_WORKING_DAYS) {
+                                mDateBtn.setText(R.string.working_days);
+                            } else if (mDateSelected == DATE_WEEKEND) {
+                                mDateBtn.setText(R.string.weekend);
+                            } else {
+                                StringBuilder s = new StringBuilder();
+                                for(int i = 0, length = mDateChecked.length; i < length; i++) {
+                                    if (mDateChecked[i]) {
+                                        if (s.length() > 0) {
+                                            s.append(',');
+                                        }
+                                        s.append(mWeekDays[i]);
+                                    }
+                                }
+                                mDateBtn.setText(s.toString());
+                            }
+                            mPickDateDialog.dismiss();
                         }
                     });
-                } else {
+                }
+                if (mPickDateDialog.isShowing() == false) {
                     mPickDateDialog.show();
                 }
 
@@ -1024,7 +1026,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
             mPopupWindow.update();
         }
         
-        mPopupWindow.showAsDropDown(mTitleView, 0, 0);
+        mPopupWindow.showAsDropDown(findViewById(R.id.skyline_view), 0, 0);
         
         mStartTimeListView.setData(mStartHourPosition, mStartMinutePosition);
         mEndTimeListView.setData(mEndHourPosition, mEndMinutePosition);

@@ -18,13 +18,13 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
 import com.decarta.Globals;
-import com.decarta.android.location.Position;
 import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.tigerknows.R;
@@ -32,6 +32,7 @@ import android.widget.Toast;
 
 import com.tigerknows.Sphinx.TouchMode;
 import com.tigerknows.android.app.TKActivity;
+import com.tigerknows.android.location.Position;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.PinOverlayHelper;
 import com.tigerknows.model.POI;
@@ -523,11 +524,20 @@ public class TrafficQueryEventHelper {
             }
             ArrayAdapter<String> adapter = new StringArrayAdapter(mQueryFragment.mContext, selectOptionList, resIdList);
             
-		    ListView listView = Utility.makeListView(activity);
-		    listView.setAdapter(adapter);
-            final Dialog dialog = Utility.showNormalDialog(mQueryFragment.mSphinx,
-                    title,
-                    listView);
+            View alterListView = activity.getLayoutInflater().inflate(R.layout.alert_listview, null, false);
+            
+            ListView listView = (ListView) alterListView.findViewById(R.id.listview);
+            listView.setAdapter(adapter);
+            
+            final Dialog dialog = Utility.getChoiceDialog(activity, alterListView, R.style.AlterChoiceDialog);
+            
+            TextView titleTxv = (TextView)alterListView.findViewById(R.id.title_txv);
+            titleTxv.setText(title);
+            
+            Button button = (Button)alterListView.findViewById(R.id.confirm_btn);
+            button.setVisibility(View.GONE);
+            
+            dialog.show();
 
             ((TKActivity) activity).setShowingDialog(dialog);
             

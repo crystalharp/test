@@ -5,7 +5,6 @@
 package com.tigerknows.ui;
 
 import com.decarta.Globals;
-import com.decarta.android.location.Position;
 import com.decarta.android.map.Icon;
 import com.decarta.android.map.ItemizedOverlay;
 import com.decarta.android.map.OverlayItem;
@@ -18,6 +17,7 @@ import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.Sphinx.TouchMode;
+import com.tigerknows.android.location.Position;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.MapView;
 import com.tigerknows.util.Utility;
@@ -221,12 +221,17 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         
-        mRootView = mLayoutInflater.inflate(R.layout.take_screenshot, container, false);
+        mRootView = mLayoutInflater.inflate(R.layout.result_map, container, false);
         
         findViews();
         setListener();
         
         return mRootView;
+    }
+    
+    public void setData() {
+        mVisibilityPreviousNext = mSphinx.getPreviousNextView().getVisibility();
+        mVisibilityLocation = mSphinx.getLocationView().getVisibility();
     }
 
     @Override
@@ -239,17 +244,19 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
         mRight2Btn.setText(R.string.revocation);
         mRight2Btn.setVisibility(View.VISIBLE);
         mRight2Btn.setOnClickListener(this);
+        mRight2Btn.setBackgroundResource(R.drawable.btn_title);
         mRightBtn.setText(R.string.clear);
         mRightBtn.setVisibility(View.VISIBLE);
         mRightBtn.setOnClickListener(this);
+        mRightBtn.setBackgroundResource(R.drawable.btn_title);
         
         mSphinx.layoutTopViewPadding(0, Util.dip2px(Globals.g_metrics.density, 18), 0, 0);
         mSphinx.getMapView().getPadding().top = mSphinx.getTitleViewHeight() + Util.dip2px(Globals.g_metrics.density, 18);
 
-        mVisibilityPreviousNext = mSphinx.getPreviousNextView().getVisibility();
-        mVisibilityLocation = mSphinx.getLocationView().getVisibility();
-        mSphinx.getPreviousNextView().setVisibility(View.GONE);
-        mSphinx.getLocationView().setVisibility(View.GONE);
+        mSphinx.getPreviousNextView().setVisibility(View.INVISIBLE);
+        mSphinx.getLocationView().setVisibility(View.INVISIBLE);
+        
+        mSphinx.setTouchMode(TouchMode.MEASURE_DISTANCE);
     }
 
     @Override

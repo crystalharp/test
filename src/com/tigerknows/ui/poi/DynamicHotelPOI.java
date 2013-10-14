@@ -5,6 +5,7 @@ import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
+import android.content.Intent;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -47,7 +48,7 @@ import com.tigerknows.model.TKDrawable.LoadImageRunnable;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.hotel.DateListView;
 import com.tigerknows.ui.hotel.HotelHomeFragment;
-import com.tigerknows.ui.hotel.HotelIntroFragment;
+import com.tigerknows.ui.hotel.HotelIntroActivity;
 import com.tigerknows.ui.poi.POIDetailFragment.BlockRefresher;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIView;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIViewBlock;
@@ -166,7 +167,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             v.setBackgroundResource(R.drawable.list_selector_background_gray_dark);
             v.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
             int h = v.getMeasuredHeight();
-            view.findViewById(R.id.body_view).getLayoutParams().height = h*6-(int)(Globals.g_metrics.density*8);
+            view.findViewById(R.id.body_view).getLayoutParams().height = h*6;
             ((ViewGroup) view.findViewById(R.id.selected_view)).setPadding(0, h, 0, 0);
             view.setData(this, mPOIDetailFragment.mActionTag);
             mDateListView = view;
@@ -286,7 +287,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             @Override
             public void onClick(View v) {
                 mPOIDetailFragment.mActionLog.addAction(ActionLog.POIDetail + ActionLog.POIDetailHotelClickDate);
-                showDateListView(mPOIDetailFragment.mTitleFragment);
+                showDateListView(mPOIDetailFragment.mSkylineView);
             }
         };
         mCheckInTimeView.setOnClickListener(dateListener);
@@ -310,9 +311,13 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             public void onClick(View v) {
                 if (mPOI.getHotel().getUuid() != null) {
                     mPOIDetailFragment.mActionLog.addAction(ActionLog.POIDetail + ActionLog.POIDetailHotelIntro);
-                    HotelIntroFragment hotelIntro = mSphinx.getHotelIntroFragment();
-                    hotelIntro.setData(mPOI);
-                    mSphinx.showView(R.id.view_hotel_intro);
+                    Intent intent = new Intent();
+                    intent.putExtra(HotelIntroActivity.EXTRA_NAME, mPOI.getName());
+                    Hotel hotel = mPOI.getHotel();
+                    intent.putExtra(HotelIntroActivity.EXTRA_LONG_DESCRIPTION, hotel.getLongDescription());
+                    intent.putExtra(HotelIntroActivity.EXTRA_ROOM_DESCRIPTION, hotel.getRoomDescription());
+                    intent.putExtra(HotelIntroActivity.EXTRA_SERVICE, hotel.getService());
+                    mSphinx.showView(R.id.activity_hotel_intro, intent);
                 }
             }
         });

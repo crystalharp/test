@@ -10,14 +10,13 @@ import java.util.List;
 
 import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
-import com.decarta.android.location.Position;
-import com.decarta.android.map.MapActivity;
 import com.decarta.android.util.LogWrapper;
 import com.tencent.tauth.TAuthView;
 import com.tendcloud.tenddata.TCAgent;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
+import com.tigerknows.android.location.Position;
 import com.tigerknows.android.location.TKLocationManager;
 import com.tigerknows.android.location.TKLocationListener;
 import com.tigerknows.android.os.TKAsyncTask;
@@ -153,6 +152,8 @@ public class TKActivity extends Activity implements TKAsyncTask.EventListener {
                 } else {
                     myLocationPosition.setAccuracy(location.getAccuracy());
                     myLocationPosition.setProvider(location.getProvider());
+                    myLocationPosition.setAltitude(location.getAltitude());
+                    myLocationPosition.setSpeed(location.getSpeed());
                     int cityId = MapEngine.getCityId(myLocationPosition);
                     CityInfo myLocationCityInfo = Globals.g_My_Location_City_Info;
                     

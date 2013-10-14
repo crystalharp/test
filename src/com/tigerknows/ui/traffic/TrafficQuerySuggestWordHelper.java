@@ -4,8 +4,8 @@ package com.tigerknows.ui.traffic;
 import android.content.Context;
 import android.widget.ListView;
 
-import com.decarta.android.location.Position;
 import com.decarta.android.util.Util;
+import com.tigerknows.android.location.Position;
 import com.tigerknows.android.widget.TKEditText;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.POI;

@@ -1,6 +1,7 @@
 package com.tigerknows.widget;
 
 import com.tigerknows.R;
+import com.tigerknows.util.Utility;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -35,6 +36,17 @@ public class MultichoiceArrayAdapter extends ArrayAdapter<String> {
         CheckedTextView textView = (CheckedTextView)view.findViewById(R.id.text1);
         textView.setText(getItem(position));
         textView.setChecked(mStatuses[position]);
+        
+        int count = getCount();
+        if (count == 1) {
+            view.setBackgroundResource(R.drawable.list_single);
+        } else if (position == 0) {
+            view.setBackgroundResource(R.drawable.list_header);
+        } else if (position == count-1) {
+            view.setBackgroundResource(R.drawable.list_footer);
+        } else {
+            view.setBackgroundResource(R.drawable.list_middle);
+        }
 
         return view;
     }

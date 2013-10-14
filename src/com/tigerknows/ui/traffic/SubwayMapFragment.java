@@ -1,41 +1,69 @@
 package com.tigerknows.ui.traffic;
 
+import java.io.File;
+
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebSettings.ZoomDensity;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.decarta.Globals;
-import com.decarta.android.location.Position;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
+import com.tigerknows.android.location.Position;
+import com.tigerknows.android.os.TKAsyncTask;
+import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.MapEngine;
 import com.tigerknows.map.MapEngine.CityInfo;
+import com.tigerknows.model.BaseQuery;
+import com.tigerknows.model.DataQuery;
+import com.tigerknows.model.FileDownload;
 import com.tigerknows.model.LocationQuery;
 import com.tigerknows.model.POI;
+import com.tigerknows.model.Response;
+import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.util.Utility;
+import com.tigerknows.widget.QueryingView;
+import com.tigerknows.widget.RetryView;
 
 public class SubwayMapFragment extends BaseFragment {
 
     WebView mWebWbv;
     String mTitle;
     String mURL;
-    String mBaseURL;
+    String subwayPath;
+    CityInfo mCityInfo;
+    Position mPos;
+    boolean needRefresh;
+    
+    RetryView mRetryView;
+    QueryingView mQueryingView;
+    View mEmptyView;
+    TextView mEmptyTxv;
     
     static final String TAG = "SubwayMapFragment";
+    
+    static final int STAT_MAP = 0;
+    static final int STAT_QUERY = 1;
+    static final int STAT_NODATA = 2;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mActionTag = ActionLog.TrafficSubwayMap;
     }
 
     @Override
@@ -58,25 +86,26 @@ public class SubwayMapFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        LogWrapper.d(TAG, "mURL="+mURL);
-        //FIXME:临时用来解压的，需要加各种判断
-//        AssetManager am = mSphinx.getAssets();
-//        Utility.unZipFile(am, "beijing-sw.zip", TKConfig.getDataPath(false));
-        mTitleBtn.setText(mTitle);
         
-        LocationQuery locationQuery = LocationQuery.getInstance(mSphinx);
-        Location location = locationQuery.getLocation();
-        String s_pos = "";
-        if (location != null) {
-            MapEngine mapEngine = MapEngine.getInstance();
-            Position pos = mapEngine.latlonTransform(new Position(location.getLatitude(), location.getLongitude()));
-            double lx = pos.getLon();
-            double ly = pos.getLat();
-            s_pos = "lx=" + lx + "&ly=" + ly;
+        subwayPath = MapEngine.getSubwayDataPath(mSphinx, mCityInfo.getId());
+        LogWrapper.d(TAG, "subway path:" + subwayPath);
+        if (subwayPath == null) {
+            setStatus(STAT_QUERY);
+        } else {
+            setStatus(STAT_MAP);
+            mURL = Uri.fromFile(new File(subwayPath)).toString();
+            showSubwayMap(mURL);
+            
+            String subwayUpdated = TKConfig.getPref(mSphinx, TKConfig.getSubwayMapUpdatedPrefs(mCityInfo.getId()), "");
+            if (!TextUtils.isEmpty(subwayUpdated)) {
+                mSphinx.showTip(R.string.subway_map_updated, Toast.LENGTH_SHORT);
+                TKConfig.setPref(mSphinx, TKConfig.getSubwayMapUpdatedPrefs(mCityInfo.getId()), "");
+            }
         }
-        mURL += s_pos;
-        
-        mWebWbv.loadUrl(mURL);
+        FileDownload fileDownload = new FileDownload(mSphinx);
+        fileDownload.addParameter(FileDownload.SERVER_PARAMETER_FILE_TYPE, FileDownload.FILE_TYPE_SUBWAY);
+        fileDownload.setup(mCityInfo.getId(), this.getId(), this.getId());
+        mSphinx.queryStart(fileDownload);
     }
 
     public SubwayMapFragment(Sphinx sphinx) {
@@ -85,7 +114,53 @@ public class SubwayMapFragment extends BaseFragment {
 
     private void findViews() {
         mWebWbv = (WebView)mRootView.findViewById(R.id.web_wbv);
-        //TODO:还有其他的各种转圈的view
+        mRetryView = (RetryView) mRootView.findViewById(R.id.retry_view);
+        mQueryingView = (QueryingView)mRootView.findViewById(R.id.querying_view);
+        mEmptyView = mRootView.findViewById(R.id.empty_view);
+        mEmptyTxv = (TextView) mEmptyView.findViewById(R.id.empty_txv);
+        mEmptyTxv.setText(mSphinx.getString(R.string.no_subway_map));
+        
+        mQueryingView.setText(R.string.loading_subway_map);
+    }
+    
+    private void showSubwayMap(String url) {
+        if (mPos != null) {
+            String s_params = "?";
+            double lx = mPos.getLon();
+            double ly = mPos.getLat();
+            s_params += "lx=" + lx + "&ly=" + ly;
+            url += s_params;
+            mPos = null;
+        }
+        LogWrapper.d(TAG, "subway path="+url);
+
+        if (needRefresh) {
+            mWebWbv.loadUrl(url);
+            needRefresh = false;
+        }
+    }
+    
+    private void setStatus(int stat) {
+        switch (stat) {
+        case STAT_MAP:
+            mWebWbv.setVisibility(View.VISIBLE);
+            mQueryingView.setVisibility(View.GONE);
+            mEmptyView.setVisibility(View.GONE);
+            mTitleBtn.setText(mCityInfo.getCName() + mTitle);
+            break;
+        case STAT_QUERY:
+            mWebWbv.setVisibility(View.GONE);
+            mQueryingView.setVisibility(View.VISIBLE);
+            mEmptyView.setVisibility(View.GONE);
+            mTitleBtn.setText(mTitle);
+            break;
+        case STAT_NODATA:
+            mWebWbv.setVisibility(View.GONE);
+            mQueryingView.setVisibility(View.GONE);
+            mEmptyView.setVisibility(View.VISIBLE);
+            mTitleBtn.setText(mTitle);
+            break;
+        }
     }
     
     private void setListener() {
@@ -113,14 +188,17 @@ public class SubwayMapFragment extends BaseFragment {
     }
     
     public void setData(CityInfo cityinfo) {
-        //TODO:获取url 
+        needRefresh = true;
         mWebWbv.stopLoading();
         mWebWbv.clearView();
-        mTitle = "地铁图";
-//        mURL = "file:///sdcard/" + cityinfo.getEName() + "-sw/index.html?";
-        mURL = "file://" + TKConfig.getDataPath(false) + cityinfo.getEName() + "-sw/index.html?";
-//        mFinishedUrl = null;
-//        mLastUrl = null;
+        mTitle = mSphinx.getString(R.string.subway_map);
+        mCityInfo = cityinfo;
+        CityInfo locateCityInfo = Globals.g_My_Location_City_Info;
+        if (locateCityInfo != null && locateCityInfo.getId() == mCityInfo.getId()) {
+            mPos = locateCityInfo.getPosition();
+        } else {
+            mPos = null;
+        }
         LogWrapper.d(TAG, "city:" + cityinfo.getEName());
 
     }
@@ -142,8 +220,13 @@ public class SubwayMapFragment extends BaseFragment {
         }
         
         public void search(final String poiid, final String x, final String y, final String name) {
-            //FIXME:检查参数
             LogWrapper.d(TAG, "x:" + x + " y:" + y);
+            if ((TextUtils.isEmpty(x) || x.length() < 1) ||
+                    (TextUtils.isEmpty(y) || y.length() < 1)) {
+                mSphinx.showTip(R.string.subway_location_error, Toast.LENGTH_SHORT);
+                return;
+            }
+            
             Runnable run = new Runnable() {
 
                 @Override
@@ -161,4 +244,27 @@ public class SubwayMapFragment extends BaseFragment {
             mSphinx.runOnUiThread(run);
         }
     }
+
+    @Override
+    public void onPostExecute(TKAsyncTask tkAsyncTask) {
+        super.onPostExecute(tkAsyncTask);
+        LogWrapper.d(TAG, "onPostExecute()");
+        FileDownload fileDownload = (FileDownload) tkAsyncTask.getBaseQuery();
+        int stat = STAT_NODATA;
+        if (BaseActivity.checkResponseCode(fileDownload, mSphinx, new int[]{953}, false, this, false) == false) {
+            Response response = fileDownload.getResponse();
+            if (response != null) {
+                if (response.getResponseCode() != 953) {
+                    subwayPath = MapEngine.getSubwayDataPath(mSphinx, mCityInfo.getId());
+                    if (subwayPath != null) {
+                        stat = STAT_MAP;
+                        mURL = Uri.fromFile(new File(subwayPath)).toString();
+                        showSubwayMap(mURL);
+                    }
+                }
+            }
+        }
+        setStatus(stat);
+    }
+
 }

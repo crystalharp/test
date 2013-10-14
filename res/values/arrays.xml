@@ -47,13 +47,6 @@
         <item>交换起终点</item>
     </string-array>
     
-    <string-array name="goto_here">
-        <item>公交</item>
-        <item>驾车</item>
-        <item>步行</item>
-        <item>自定义起点</item>
-    </string-array>
-    
     <string-array name="home_category">
         <item>美食</item>
         <item>酒店</item>

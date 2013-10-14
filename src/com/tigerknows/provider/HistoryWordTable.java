@@ -6,9 +6,9 @@
 package com.tigerknows.provider;
 
 import com.decarta.android.db.PrefTable;
-import com.decarta.android.location.Position;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
+import com.tigerknows.android.location.Position;
 import com.tigerknows.map.MapEngine;
 import com.tigerknows.model.TKWord;
 

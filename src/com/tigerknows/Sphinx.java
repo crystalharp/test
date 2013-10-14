@@ -45,6 +45,7 @@ import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -58,7 +59,6 @@ import com.decarta.android.event.EventRegistry;
 import com.decarta.android.event.EventSource;
 import com.decarta.android.event.EventType;
 import com.decarta.android.exception.APIException;
-import com.decarta.android.location.Position;
 import com.decarta.android.map.Circle;
 import com.decarta.android.map.Compass;
 import com.decarta.android.map.Icon;
@@ -76,6 +76,7 @@ import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.decarta.android.util.XYFloat;
 import com.tigerknows.android.app.TKActivity;
+import com.tigerknows.android.location.Position;
 import com.tigerknows.android.os.TKAsyncTask;
 import android.widget.Toast;
 import com.tigerknows.common.ActionLog;
@@ -125,7 +126,7 @@ import com.tigerknows.ui.HintActivity;
 import com.tigerknows.ui.MeasureDistanceFragment;
 import com.tigerknows.ui.MenuFragment;
 import com.tigerknows.ui.ResultMapFragment;
-import com.tigerknows.ui.TakeScreenshotFragment;
+import com.tigerknows.ui.TakeScreenshotActivity;
 import com.tigerknows.ui.TitleFragment;
 import com.tigerknows.ui.discover.DianyingDetailFragment;
 import com.tigerknows.ui.discover.DiscoverChildListFragment;
@@ -136,7 +137,7 @@ import com.tigerknows.ui.discover.YanchuDetailFragment;
 import com.tigerknows.ui.discover.ZhanlanDetailFragment;
 import com.tigerknows.ui.hotel.HotelHomeFragment;
 import com.tigerknows.ui.hotel.HotelImageGridFragment;
-import com.tigerknows.ui.hotel.HotelIntroFragment;
+import com.tigerknows.ui.hotel.HotelIntroActivity;
 import com.tigerknows.ui.hotel.HotelOrderCreditFragment;
 import com.tigerknows.ui.hotel.HotelOrderDetailFragment;
 import com.tigerknows.ui.hotel.HotelOrderListFragment;
@@ -172,7 +173,7 @@ import com.tigerknows.ui.traffic.BuslineResultLineFragment;
 import com.tigerknows.ui.traffic.BuslineResultStationFragment;
 import com.tigerknows.ui.traffic.FetchFavoriteFragment;
 import com.tigerknows.ui.traffic.SubwayMapFragment;
-import com.tigerknows.ui.traffic.TrafficCompassFragment;
+import com.tigerknows.ui.traffic.TrafficCompassActivity;
 import com.tigerknows.ui.traffic.TrafficDetailFragment;
 import com.tigerknows.ui.traffic.TrafficQueryFragment;
 import com.tigerknows.ui.traffic.TrafficReportErrorActivity;
@@ -243,11 +244,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     private int mMenuViewHeiht;
     private int mCityViewHeight;
     
-    private View mMoreView;
-    private ImageButton mTakeScreenshotBtn;
-    private ImageButton mMeasureDistanceBtn;
-    private ImageButton mCompassBtn;
     private ImageButton mMoreBtn;
+    private ImageView mMoreImv;
     
 	private ViewGroup mDragHintView;
 	
@@ -427,7 +425,12 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 } else if (msg.what == DOWNLOAD_HIDE) {
                     mDownloadView.setVisibility(View.GONE);
                 } else if (msg.what == DOWNLOAD_ERROR) {
-                    Toast.makeText(Sphinx.this, R.string.network_failed, Toast.LENGTH_LONG).show(); 
+                    int id = Sphinx.this.uiStackPeek();
+                    if (id == R.id.view_traffic_home ||
+                            id == R.id.view_result_map ||
+                            id == R.id.view_measure_distance) {
+                        Toast.makeText(Sphinx.this, R.string.network_failed, Toast.LENGTH_LONG).show();
+                    }
                 } 
                 
                 if (msg.what == ROOT_VIEW_INVALIDATE) {
@@ -489,6 +492,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             setListener();
 
             mMapView.setSphinx(this);
+            mMapView.setStopRefreshMyLocation(true);
             if (mSensor != null) {
                 mSensorOrientation = true;
             }
@@ -515,7 +519,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             }
             mActionLog.addAction(ActionLog.LifecycleSelectCity, cityInfo.getCName());
             mInitCityInfo = cityInfo;
-            initCity(cityInfo);
+            changeCity(cityInfo, false);
             ArrayList<Integer> uiStack = null;
             if (savedInstanceState != null) {
                 uiStack = savedInstanceState.getIntegerArrayList("uistack");
@@ -536,7 +540,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     
                     @Override
                     public void run() {
-                        mMapView.setStopRefreshMyLocation(true);
                         if (fristUse) {
                             sendFirstStartupBroadcast();
                             Intent intent = new Intent();
@@ -611,6 +614,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     }
                 }
             }).start();
+            
+            mHandler.postDelayed(new StartUpDelayRunnable(this), 20000);
 
             mTKLocationManager.onCreate();
             mLocationListener = new MyLocationListener(this, mLocationChangedRun);
@@ -951,6 +956,11 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     
     private void initView() {
         mMapView.setVisibility(View.VISIBLE);
+        if (TKConfig.getPref(mThis, TKConfig.PREFS_MAP_TOOLS) == null) {
+            mMoreImv.setVisibility(View.VISIBLE);
+        } else {
+            mMoreImv.setVisibility(View.GONE);
+        }
         mUIStack.clear();
         getTitleFragment();
         getMenuFragment();
@@ -971,6 +981,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         mCompassView.setVisibility(View.VISIBLE);
         mControlView.setVisibility(View.VISIBLE);
         Sphinx.this.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        Sphinx.this.getWindow().setBackgroundDrawable(null);
         
         checkFromThirdParty(false);
     }
@@ -984,7 +995,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     protected void onPrepareDialog(int id, Dialog dialog) {
 	    super.onPrepareDialog(id, dialog);
 	    if (id == R.id.dialog_prompt_change_to_my_location_city) {
-	        TextView messageTxv =(TextView)dialog.findViewById(R.id.message);
 	        String currentCityName = Globals.getCurrentCityInfo(false).getCName();
 	        String locationCityName;
 	        CityInfo myLocationCityInfo = Globals.g_My_Location_City_Info;
@@ -993,8 +1003,19 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 	        } else {
 	            locationCityName = currentCityName;
 	        }
-	        messageTxv.setText(getString(R.string.are_your_change_to_location_city, currentCityName, locationCityName));
-            mActionLog.addAction(ActionLog.Dialog, messageTxv.getText());
+	        
+	        View view = dialog.findViewById(R.id.alter_change_city_view);
+	        
+            TextView messageTxv =(TextView)view.findViewById(R.id.message);
+            messageTxv.setText(getString(R.string.are_your_change_to_location_city, locationCityName));
+
+            Button button1 = (Button) view.findViewById(R.id.button1);
+            Button button2 = (Button) view.findViewById(R.id.button2);
+
+            button1.setText(getString(R.string.prompt_location_return_to_, locationCityName));
+            button2.setText(getString(R.string.prompt_location_stay_in_, currentCityName));
+            
+            mActionLog.addAction(ActionLog.Dialog, getString(R.string.prompt_location));
 	    } else if (id == R.id.dialog_prompt_choose_city
 	            || id == R.id.dialog_prompt_setting_location_first) {
             TextView messageTxv =(TextView)dialog.findViewById(R.id.message);
@@ -1112,7 +1133,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 		LogWrapper.i(TAG,"onResume()");
 		mActionLog.onResume();
 		mMapView.resume();
-		if (uiStackSize() > 0) {
+		if (mPOIHomeFragment != null && mMapView.isStopRefreshMyLocation() == false) {
 		    mMapView.refreshMap();
 		}
 		interceptTouchEnd();
@@ -1257,7 +1278,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 if (Globals.getCurrentCityInfo().getId()==cityId || mViewedCityInfoList.contains(cityId)) {
                     if (mMapView != null) {
                         mMapView.clearTileTextures();
-//                        mMapView.refreshMap();
                     }
                 }
             }
@@ -1354,11 +1374,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         mDisableTouchView = (ViewGroup) findViewById(R.id.disable_touch_view);
         mDragHintView = (ViewGroup) findViewById(R.id.hint_root_view);
         
-        mMoreView = (ViewGroup)findViewById(R.id.more_view);
         mMoreBtn = (ImageButton)findViewById(R.id.more_btn);
-        mTakeScreenshotBtn = (ImageButton)findViewById(R.id.take_screenshot_btn);
-        mMeasureDistanceBtn = (ImageButton)findViewById(R.id.measure_distance_btn);
-        mCompassBtn = (ImageButton)findViewById(R.id.compass_btn);
+        mMoreImv = (ImageView)findViewById(R.id.more_imv);
     }
 
     private void setListener() {
@@ -1387,45 +1404,59 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             @Override
             public void onClick(View v) {
                 mActionLog.addAction(ActionLog.MapMore);
-                if (mMoreView.getVisibility() == View.VISIBLE) {
-                    mMoreView.setVisibility(View.GONE);
-                } else {
-                    mMoreView.setVisibility(View.VISIBLE);
-                }
-            }
-        });
-        
-        mTakeScreenshotBtn.setOnClickListener(new OnClickListener() {
-            
-            @Override
-            public void onClick(View v) {
-                mActionLog.addAction(ActionLog.MapTakeScreenshot);
-                mMoreView.setVisibility(View.GONE);
-                
-                showView(R.id.view_take_screenshot);
-            }
-        });
-        
-        mMeasureDistanceBtn.setOnClickListener(new OnClickListener() {
-            
-            @Override
-            public void onClick(View v) {
-                mActionLog.addAction(ActionLog.MapDistance);
-                mMoreView.setVisibility(View.GONE);
+                TKConfig.setPref(mThis, TKConfig.PREFS_MAP_TOOLS, "1");
+                mMoreImv.setVisibility(View.GONE);
 
-                getMeasureDistanceFragment().setIndex(0);
-                showView(R.id.view_measure_distance);
-                setTouchMode(TouchMode.MEASURE_DISTANCE);
-            }
-        });
-        
-        mCompassBtn.setOnClickListener(new OnClickListener() {
-            
-            @Override
-            public void onClick(View v) {
-                mActionLog.addAction(ActionLog.MapCompass);
-                mMoreView.setVisibility(View.GONE);
-                showView(R.id.view_traffic_compass);
+                View view = mLayoutInflater.inflate(R.layout.alert_map_tools, null, false);
+                final Dialog dialog = Utility.getChoiceDialog(mThis, view, R.style.AlterChoiceDialog);
+                
+                View button1 = view.findViewById(R.id.button1_view);
+                View button2 = view.findViewById(R.id.button2_view);
+                View button3 = view.findViewById(R.id.button3_view);
+                
+                View.OnClickListener onClickListener = new OnClickListener() {
+                    
+                    @Override
+                    public void onClick(View v) {
+                        int id = v.getId();
+                        if (id == R.id.button1_view) {
+                            mActionLog.addAction(ActionLog.MapTakeScreenshot);
+                            
+                            snapMapView(new SnapMap() {
+                                
+                                @Override
+                                public void finish(Uri uri) {
+                                    if (uri == null) {
+                                        return;
+                                    }
+                                    Intent intent = new Intent();
+                                    intent.setData(uri);
+                                    showView(R.id.activity_take_screenshot, intent);
+                                }
+                            }, mMapView.getCenterPosition(), mMapView.getCurrentMapScene());
+                            
+                        } else if (id == R.id.button2_view) {
+                            mActionLog.addAction(ActionLog.MapDistance);
+
+                            getMeasureDistanceFragment().setData();
+                            getMeasureDistanceFragment().setIndex(0);
+                            showView(R.id.view_measure_distance);
+                            
+                            Toast.makeText(mThis, R.string.measure_distance_tip, Toast.LENGTH_LONG).show();
+                        } else if (id == R.id.button3_view) {
+                            mActionLog.addAction(ActionLog.MapCompass);
+                            
+                            showView(R.id.activity_traffic_compass);
+                        }
+                        dialog.dismiss();
+                    }
+                };
+                button1.setOnClickListener(onClickListener);
+                button2.setOnClickListener(onClickListener);
+                button3.setOnClickListener(onClickListener);
+                
+                dialog.show();
+                setShowingDialog(dialog);
             }
         });
     }
@@ -1536,7 +1567,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 if (uriStr.indexOf("?") > -1) {
                     lon = Double.parseDouble(uriStr.substring(0, uriStr.indexOf("?")));
                     LogWrapper.d("Sphinx", "initIntent() lon="+lon);
-                    mMapView.centerOnPosition(new Position(lat, lon), TKConfig.ZOOM_LEVEL_LOCATION, false);
+                    mMapView.centerOnPosition(new Position(lat, lon), TKConfig.ZOOM_LEVEL_LOCATION);
                     poi.setPosition(new Position(lat, lon));
                     uriStr = uriStr.substring(uriStr.indexOf("?")+1);
                     String[] parm = uriStr.split("=");
@@ -1555,7 +1586,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 } else {
                     lon = Double.parseDouble(uriStr);
                     poi.setPosition(new Position(lat, lon));
-                    mMapView.centerOnPosition(new Position(lat, lon), TKConfig.ZOOM_LEVEL_LOCATION, false);
+                    mMapView.centerOnPosition(new Position(lat, lon), TKConfig.ZOOM_LEVEL_LOCATION);
                 }
                 if (query == false && Util.inChina(poi.getPosition())) {
                     String name = MapEngine.getPositionName(poi.getPosition(), (int)mMapView.getZoomLevel());
@@ -1885,73 +1916,29 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         mMapView.snapMapView(this, snapMap, position, mapScene);
     }
     
-    public void initCity(CityInfo cityInfo) {
-        if (cityInfo.isAvailably()) {
-//            CityInfo currentCityInfo = Globals.getCurrentCityInfo();
-            Globals.setCurrentCityInfo(cityInfo);
-            Globals.setHotelCityInfo(null);
-            
-            int cityId = cityInfo.getId();
-//            if (currentCityInfo != null
-//                    && currentCityInfo.isAvailably()
-//                    && cityId == currentCityInfo.getId()) {
-//                mMapView.centerOnPosition(cityInfo.getPosition(), cityInfo.getLevel());
-//            } else {
-//                mMapView.centerOnPosition(cityInfo.getPosition(), cityInfo.getLevel(), true);
-//            }
-            updateCityInfo(cityInfo);
-            checkCitySupportDiscover(cityId);
-            if (!mViewedCityInfoList.contains(cityInfo)) {
-                mViewedCityInfoList.add(cityInfo);
-            }
-            mActionLog.addAction(ActionLog.LifecycleSelectCity, cityInfo.getCName());
-            Position position = cityInfo.getPosition();
-            TKConfig.setPref(mContext, TKConfig.PREFS_LAST_LON, String.valueOf(position.getLon()));
-            TKConfig.setPref(mContext, TKConfig.PREFS_LAST_LAT, String.valueOf(position.getLat()));
-            TKConfig.setPref(mContext, TKConfig.PREFS_LAST_ZOOM_LEVEL, String.valueOf(cityInfo.getLevel()));
-            if (mPOIHomeFragment != null) {
-                HistoryWordTable.readHistoryWord(mContext, cityId, HistoryWordTable.TYPE_POI);
-                TrafficQueryFragment.TrafficOnCityChanged(this, cityId);
-            }
-            
-            Intent service = new Intent(MapStatsService.ACTION_STATS_CURRENT_DOWNLOAD_CITY);
-            service.setClass(mThis, MapStatsService.class);
-            startService(service);
-        }    
-    }
-    
     private void initPosition(CityInfo cityInfo) {
     	if(cityInfo == null)
     		return;
     	if (cityInfo.isAvailably()) {
-	    	CityInfo currentCityInfo = Globals.getCurrentCityInfo();
 	        Globals.setCurrentCityInfo(cityInfo);
 	        Globals.setHotelCityInfo(null);
 	        
-	        int cityId = cityInfo.getId();
-	        if (currentCityInfo != null
-	                && currentCityInfo.isAvailably()
-	                && cityId == currentCityInfo.getId()) {
-	            mMapView.centerOnPosition(cityInfo.getPosition(), cityInfo.getLevel());
-	        } else {
-	            mMapView.centerOnPosition(cityInfo.getPosition(), cityInfo.getLevel(), true);
-	        }
+	        mMapView.centerOnPosition(cityInfo.getPosition(), cityInfo.getLevel(), false);
     	}
     }
     
     public void changeCity(CityInfo cityInfo) {
+        changeCity(cityInfo, true);
+    }
+    
+    public void changeCity(CityInfo cityInfo, boolean centerOnPosition) {
         if (cityInfo.isAvailably()) {
-            CityInfo currentCityInfo = Globals.getCurrentCityInfo();
             Globals.setCurrentCityInfo(cityInfo);
             Globals.setHotelCityInfo(null);
             
             int cityId = cityInfo.getId();
-            if (currentCityInfo != null
-                    && currentCityInfo.isAvailably()
-                    && cityId == currentCityInfo.getId()) {
-                mMapView.centerOnPosition(cityInfo.getPosition(), cityInfo.getLevel());
-            } else {
-                mMapView.centerOnPosition(cityInfo.getPosition(), cityInfo.getLevel(), true);
+            if (centerOnPosition) {
+                mMapView.centerOnPosition(cityInfo.getPosition(), cityInfo.getLevel(), false);
             }
             updateCityInfo(cityInfo);
             checkCitySupportDiscover(cityId);
@@ -2086,6 +2073,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     @SuppressWarnings("rawtypes")
     public void showPOI(List dataList, int index) {
         try {
+        mMapView.setStopRefreshMyLocation(false);
         clearMap();
         //add pins
         mMapView.deleteOverlaysByName(ItemizedOverlay.POI_OVERLAY);
@@ -2788,9 +2776,17 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             if (dialog.isShowing()) {
                 return false;
             }     
+            dialog = getDialog(R.id.dialog_prompt_setting_location);
+            if (dialog.isShowing()) {
+                return false;
+            }    
         }
         
         if (id != R.id.dialog_prompt_setting_location) {
+            dialog = getDialog(R.id.dialog_prompt_setting_location_first);
+            if (dialog.isShowing()) {
+                return false;
+            }     
             dialog = getDialog(R.id.dialog_prompt_setting_location);
             if (dialog.isShowing()) {
                 return false;
@@ -3182,6 +3178,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 intent.setClass(this, TrafficReportErrorActivity.class);
                 startActivityForResult(intent, R.id.activity_traffic_report_error);
                 return true;
+            } else if (R.id.activity_traffic_compass == viewId) {
+                intent.setClass(this, TrafficCompassActivity.class);
+                startActivityForResult(intent, R.id.activity_traffic_compass);
+                return true;
             } else if (R.id.activity_more_satisfy == viewId) {
                 intent.setClass(this, SatisfyRateActivity.class);
                 startActivityForResult(intent, R.id.activity_more_satisfy);
@@ -3246,11 +3246,20 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 intent.addCategory(Intent.CATEGORY_DEFAULT);
                 startActivityForResult(intent, R.id.activity_setting_location);
                 return true;
+            } else if (R.id.activity_hotel_intro == viewId) {
+                intent.setClass(this, HotelIntroActivity.class);
+                startActivityForResult(intent, R.id.activity_hotel_intro);
+                return true;
+            } else if (R.id.activity_take_screenshot == viewId) {
+                intent.setClass(this, TakeScreenshotActivity.class);
+                startActivityForResult(intent, R.id.activity_take_screenshot);
+                return true;
             } else if (R.id.activity_poi_dish == viewId) {
                 intent.setClass(this, DishActivity.class);
                 startActivityForResult(intent, R.id.activity_poi_dish);
                 return true;
             }
+            
             mUIProcessing = true;
             boolean show = false;
             int currentId = uiStackPeek();
@@ -3318,48 +3327,61 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 });
                 break;
             case R.id.dialog_prompt_change_to_my_location_city:
-                dialog = Utility.getDialog(mThis,
-                            getString(R.string.prompt),
-                            getString(R.string.are_your_change_to_location_city),
-                            null,
-                            getString(R.string.yes),
-                            getString(R.string.no),
-                            new DialogInterface.OnClickListener() {
-                                
-                                @Override
-                                public void onClick(DialogInterface dialog, int id) {
-                                    switch (id) {                                            
-                                        case DialogInterface.BUTTON_POSITIVE:
-                                            CityInfo locationCity = Globals.g_My_Location_City_Info;
-                                            if (locationCity != null && locationCity.isAvailably()) {
-                                                Dialog dialg = mDialog;
-                                                if (dialg != null && dialg.isShowing()) {
-                                                    dialg.dismiss();
-                                                }
-                                                getTitleFragment().dismissPopupWindow();
-                                                BaseFragment baseFragment = getFragment(uiStackPeek());
-                                                if (baseFragment != null) {
-                                                    baseFragment.dismissPopupWindow();
-                                                }
-                                                uiStackClose(null);
-                                                showView(R.id.view_poi_home);
-                                                changeCity(locationCity);
-                                                mHandler.post(new Runnable() {
-                                                    
-                                                    @Override
-                                                    public void run() {
-                                                        getPOIHomeFragment().getCategoryLsv().setSelectionFromTop(0, 0);
-                                                    }
-                                                });
-                                                mActionLog.addAction(ActionLog.LifecycleSelectCity, Globals.getCurrentCityInfo(false).getCName());
-                                            }
-                                            break;
-                                            
-                                        default:
-                                            break;
-                                    }
+
+                View changeCityView = mLayoutInflater.inflate(R.layout.alert_change_city, null, false);
+                dialog = Utility.getDialog(Sphinx.this,
+                        getString(R.string.prompt_location),
+                        null,
+                        changeCityView,
+                        null,
+                        null,
+                        null);
+                
+                View customPanel = dialog.findViewById(R.id.customPanel);
+                customPanel.setBackgroundDrawable(null);
+                customPanel.setPadding(0, 0, 0, 0);
+                
+                Button button1 = (Button) changeCityView.findViewById(R.id.button1);
+                Button button2 = (Button) changeCityView.findViewById(R.id.button2);
+                
+                final Dialog finalDialog = dialog;
+                View.OnClickListener onClickListener = new OnClickListener() {
+                    
+                    @Override
+                    public void onClick(View v) {
+                        int id = v.getId();
+                        if (id == R.id.button1) {
+
+                            CityInfo locationCity = Globals.g_My_Location_City_Info;
+                            if (locationCity != null && locationCity.isAvailably()) {
+                                Dialog dialg = mDialog;
+                                if (dialg != null && dialg.isShowing()) {
+                                    dialg.dismiss();
                                 }
-                            });
+                                getTitleFragment().dismissPopupWindow();
+                                BaseFragment baseFragment = getFragment(uiStackPeek());
+                                if (baseFragment != null) {
+                                    baseFragment.dismissPopupWindow();
+                                }
+                                uiStackClose(null);
+                                showView(R.id.view_poi_home);
+                                changeCity(locationCity);
+                                mHandler.post(new Runnable() {
+                                    
+                                    @Override
+                                    public void run() {
+                                        getPOIHomeFragment().getCategoryLsv().setSelectionFromTop(0, 0);
+                                    }
+                                });
+                                mActionLog.addAction(ActionLog.LifecycleSelectCity, Globals.getCurrentCityInfo(false).getCName());
+                            }
+                        }
+                        finalDialog.dismiss();
+                    }
+                };
+                button1.setOnClickListener(onClickListener);
+                button2.setOnClickListener(onClickListener);
+                
                 break;
                 
             case R.id.dialog_prompt_setting_location:
@@ -3481,7 +3503,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     private BuslineResultStationFragment mBuslineResultStationFragment = null;
     private BuslineDetailFragment mBuslineDetailFragment = null;
     private TrafficQueryFragment mTrafficQueryFragment = null;
-    private TrafficCompassFragment mTrafficCompassFragment = null;
     private SubwayMapFragment mSubwayMapFragment = null;
     private FetchFavoriteFragment mFetchFavoriteFragment = null;
     private MyCommentListFragment mMyCommentListFragment;
@@ -3502,13 +3523,11 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     
     private HotelOrderDetailFragment mHotelOrderDetailFragment;
     private HotelOrderListFragment mHotelOrderListFragment;
-    private HotelIntroFragment mHotelIntroFragment;
     private HotelImageGridFragment mHotelImageGridFragment;
     
     private CouponListFragment mCouponListFragment;
     private CouponDetailFragment mCouponDetailFragment;
 
-    private TakeScreenshotFragment mTakeScreenshotFragment;
     private MeasureDistanceFragment mMeasureDistanceFragment;
     
     public BaseFragment getFragment(int id) {
@@ -3590,10 +3609,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             case R.id.view_traffic_fetch_favorite_poi:
                 baseFragment = getFetchFavoriteFragment();
                 break;
-                
-            case R.id.view_traffic_compass:
-            	baseFragment = getTrafficCompassFragment();
-            	break;
             	
             case R.id.view_subway_map:
                 baseFragment = getSubwayMapFragment();
@@ -3660,10 +3675,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             	baseFragment = getHotelOrderDetailFragment();
             	break;
             	
-            case R.id.view_hotel_intro:
-            	baseFragment = getHotelIntroFragment();
-            	break;
-            	
             case R.id.view_hotel_image_grid:
             	baseFragment = getHotelImageGridFragment();
             	break;
@@ -3674,10 +3685,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 
             case R.id.view_coupon_detail:
                 baseFragment = getCouponDetailFragment();
-                break;
-                
-            case R.id.view_take_screenshot:
-                baseFragment = getTakeScreenshotFragment();
                 break;
                 
             case R.id.view_measure_distance:
@@ -3931,19 +3938,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             return mTrafficQueryFragment;
         }
     }
-
-    public TrafficCompassFragment getTrafficCompassFragment() {
-        synchronized (mUILock) {
-            if (mTrafficCompassFragment == null) {
-                TrafficCompassFragment trafficCompassFragment = new TrafficCompassFragment(Sphinx.this);
-                trafficCompassFragment.setId(R.id.view_traffic_compass);
-                trafficCompassFragment.onCreate(null);
-                mTrafficCompassFragment = trafficCompassFragment;
-            }
-            return mTrafficCompassFragment;
-        }
-    }    
-    
+   
     public SubwayMapFragment getSubwayMapFragment() {
         synchronized (mUILock) {
             if (mSubwayMapFragment == null) {
@@ -4174,20 +4169,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             return mHotelImageGridFragment;
         }
     }
-    
-    public HotelIntroFragment getHotelIntroFragment(){
-    	
-        synchronized (mUILock) {
-            if (mHotelIntroFragment == null) {
-            	HotelIntroFragment fragment = new HotelIntroFragment(Sphinx.this);
-                fragment.setId(R.id.view_hotel_intro);
-                fragment.onCreate(null);
-                mHotelIntroFragment = fragment;
-            }
-            return mHotelIntroFragment;
-        }
-    }
-    
     public CouponListFragment getCouponListFragment(){
         
         synchronized (mUILock) {
@@ -4211,19 +4192,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 mCouponDetailFragment = fragment;
             }
             return mCouponDetailFragment;
-        }
-    }
-    
-    public TakeScreenshotFragment getTakeScreenshotFragment(){
-        
-        synchronized (mUILock) {
-            if (mTakeScreenshotFragment == null) {
-                TakeScreenshotFragment fragment = new TakeScreenshotFragment(Sphinx.this);
-                fragment.setId(R.id.view_take_screenshot);
-                fragment.onCreate(null);
-                mTakeScreenshotFragment = fragment;
-            }
-            return mTakeScreenshotFragment;
         }
     }
     
@@ -4253,34 +4221,23 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             checkLocationCity(true);
         }
     };
+    private Position myPosition;
     private Runnable mLocationChangedRun = new Runnable() {
         
         @Override
         public void run() {
-            Position myLocationPosition = null;
+            LogWrapper.d(TAG, "mLocationChangedRun");
+            
             CityInfo myLocationCityInfo = Globals.g_My_Location_City_Info;
-            if (myLocationCityInfo != null) {
-                myLocationPosition = myLocationCityInfo.getPosition();
+            
+            if (myPosition == null || (myLocationCityInfo != null && myPosition.equals(myLocationCityInfo.getPosition()))) {
+                return;
             }
-            final Position myPosition = myLocationPosition;
+
+            LogWrapper.d(TAG, "mLocationChangedRun refresh");
             if (uiStackPeek() == R.id.view_poi_home || uiStackPeek() == R.id.view_discover_home) {
                 getPOIHomeFragment().refreshLocationView();
             }
-            
-            if (myPosition != null) {
-            	updateMyLocation(myPosition);
-                if (MyLocation.MODE_NONE == mMyLocation.mode) {
-                    updateLoactionButtonState(MyLocation.MODE_NAVIGATION);
-                    mMapView.setZoomLevel(TKConfig.ZOOM_LEVEL_LOCATION);
-                    mMapView.panToPosition(myPosition);
-                    resetShowInPreferZoom();
-                } else if (MyLocation.MODE_NAVIGATION == mMyLocation.mode || MyLocation.MODE_ROTATION == mMyLocation.mode) {
-                    mMapView.panToPosition(myPosition);
-                } 
-            } else {
-                resetLoactionButtonState();
-            }
-            updateMyLocationOverlay(myPosition); 
             
             if (Globals.g_My_Location_State == Globals.LOCATION_STATE_FIRST_SUCCESS
                     && myLocationCityInfo != null) {
@@ -4289,8 +4246,38 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     showPromptChangeToMyLocationCityDialog(myLocationCityInfo);
                 }
             }
+            
+            if (mPOIHomeFragment == null || mMapView.isStopRefreshMyLocation()) {
+                return;
+            }
+            
+            updateMyLocation();
         }
     };
+    
+    public void updateMyLocation() {
+        LogWrapper.d(TAG, "updateMyLocation");
+        Position myLocationPosition = null;
+        CityInfo myLocationCityInfo = Globals.g_My_Location_City_Info;
+        if (myLocationCityInfo != null) {
+            myLocationPosition = myLocationCityInfo.getPosition();
+        }
+        final Position myPosition = myLocationPosition;
+        if (myPosition != null) {
+            updateMyLocation(myPosition);
+            if (MyLocation.MODE_NONE == mMyLocation.mode) {
+                updateLoactionButtonState(MyLocation.MODE_NAVIGATION);
+                mMapView.setZoomLevel(TKConfig.ZOOM_LEVEL_LOCATION);
+                mMapView.panToPosition(myPosition);
+                resetShowInPreferZoom();
+            } else if (MyLocation.MODE_NAVIGATION == mMyLocation.mode || MyLocation.MODE_ROTATION == mMyLocation.mode) {
+                mMapView.panToPosition(myPosition);
+            } 
+        } else {
+            resetLoactionButtonState();
+        }
+        updateMyLocationOverlay(myPosition); 
+    }
     
     private boolean mActivityResult = false;
     private boolean mOnPause = true;
@@ -4304,7 +4291,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     private float rotateZ = 365;
     private SensorEventListener mSensorListener=new SensorEventListener() {
         public void onSensorChanged(SensorEvent event) {
-            if(mMapView!=null && Math.abs(rotateZ-event.values[0]) >= 3){
+            if(mMapView!=null
+                    && mPOIHomeFragment != null
+                    && mMapView.isStopRefreshMyLocation() == false
+                    && Math.abs(rotateZ-event.values[0]) >= 3){
                 rotateZ = event.values[0];
                 mMapView.rotateLocationZToDegree(-rotateZ);
                 if (mMyLocation.mode == MyLocation.MODE_ROTATION) {
@@ -4654,10 +4644,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 
     public View getZoomView() {
         return mZoomView;
-    }
-
-    public View getMoreView() {
-        return mMoreView;
     }
 
     public View getMoreBtn() {

@@ -66,8 +66,8 @@ public class History extends BaseData{
         ContentValues values = new ContentValues();
         this.historyType = historyType;
         values.put(Tigerknows.History.HISTORY_TYPE, historyType);
-        this.dateTime = System.currentTimeMillis();
-        values.put(Tigerknows.History.DATETIME, this.dateTime);
+        long dateTime = System.currentTimeMillis();
+        values.put(Tigerknows.History.DATETIME, dateTime);
         Uri uri = SqliteWrapper.insert(context, context.getContentResolver(), Tigerknows.History.CONTENT_URI, values);
         if (uri != null) {
             this.id = Integer.parseInt(uri.getPathSegments().get(1));
@@ -187,8 +187,8 @@ public class History extends BaseData{
     public int updateHistory(Context context) {
         int count = 0;
         ContentValues values = new ContentValues();
-        this.dateTime = System.currentTimeMillis();
-        values.put(Tigerknows.History.DATETIME, this.dateTime);
+        long dateTime = System.currentTimeMillis();
+        values.put(Tigerknows.History.DATETIME, dateTime);
         count = SqliteWrapper.update(context, context.getContentResolver(), ContentUris.withAppendedId(Tigerknows.History.CONTENT_URI, id), values, null, null);
         return count;
     }

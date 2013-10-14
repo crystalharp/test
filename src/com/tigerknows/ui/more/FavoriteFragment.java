@@ -140,7 +140,7 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
         };
     };
 
-    private int mSelectIndex;
+    private BaseData mSelectData;
     private OnCreateContextMenuListener mContextMenuListener = new OnCreateContextMenuListener() {
         
         @Override
@@ -149,7 +149,7 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
             AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
             if (info.position > -1 && info.position < (mLayerType.equals(ItemizedOverlay.POI_OVERLAY) ? mPOIAdapter.getCount() : mTrafficAdapter.getCount())) {
             	mActionLog.addAction(mActionTag + ActionLog.ListViewItemLong + getActionLogType(), String.valueOf(info.position));
-                mSelectIndex = info.position;
+                mSelectData = (mLayerType.equals(ItemizedOverlay.POI_OVERLAY) ? mPOIAdapter.getItem(info.position) : mTrafficAdapter.getItem(info.position));
                 menu.add(0, MENU_DELETE, 0, R.string.delete);
                 menu.add(0, MENU_RENAME, 0, R.string.rename);
             }
@@ -406,7 +406,7 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
     
     @Override
     public boolean onMenuItemSelected(int featureId, MenuItem item) {
-        if (mSelectIndex > -1) {
+        if (mSelectData != null) {
             switch (item.getItemId()) {
                 case MENU_DELETE:
                     mActionLog.addAction(mActionTag +  ActionLog.FavoriteMenuDelete + getActionLogType());
@@ -418,19 +418,21 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
                                 @Override
                                 public void onClick(DialogInterface arg0, int id) {
                                     if (id == DialogInterface.BUTTON_POSITIVE) {
-                                        if (mLayerType.equals(ItemizedOverlay.POI_OVERLAY)) {
-                                            POI poi = mPOIList.remove(mSelectIndex);
+                                        if (mSelectData instanceof POI) {
+                                            POI poi = (POI) mSelectData;
+                                            mPOIList.remove(poi);
                                             poi.deleteFavorite(mSphinx);
                                         } else {
-                                            Favorite traffic = mTrafficList.remove(mSelectIndex);
+                                            Favorite traffic = (Favorite) mSelectData;
+                                            mTrafficList.remove(traffic);
                                             SqliteWrapper.delete(mContext, mContext.getContentResolver(), Tigerknows.Favorite.CONTENT_URI, "_id="+traffic.getId(), null);
                                         }
                                         refreshContent();
-                                        if (mLayerType.equals(ItemizedOverlay.POI_OVERLAY)) {
+                                        if (mSelectData instanceof POI && mLayerType.equals(ItemizedOverlay.POI_OVERLAY)) {
                                             if (mPOIList.isEmpty()) {
                                                 turnPagePOI();
                                             }
-                                        } else {
+                                        } else if (mSelectData instanceof Favorite && mLayerType.equals(ItemizedOverlay.TRAFFIC_OVERLAY)) {
                                             if (mTrafficList.isEmpty()) {
                                                 turnPageTraffic();
                                             }
@@ -441,10 +443,11 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
                     return true;
                 case MENU_RENAME:
                     mActionLog.addAction(mActionTag +  ActionLog.FavoriteMenuRename + getActionLogType());
-                    showRenameDialog(mSelectIndex);
+                    showRenameDialog(mSelectData);
                     return true;
             }
         }
+        mSelectData = null;
         return super.onMenuItemSelected(featureId, item);
     }
 
@@ -851,12 +854,12 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
 //        mTrafficLsv.changeHeaderViewByState(false, SpringbackListView.DONE);
     }
     
-    private void showRenameDialog(final int position) {
+    private void showRenameDialog(final BaseData baseData) {
         View textEntryView = mLayoutInflater.inflate(R.layout.alert_favorite_rename, null);
         final EditText nameEdt = (EditText) textEntryView.findViewById(R.id.name_edt);
         String name;
-        if (mLayerType.equals(ItemizedOverlay.POI_OVERLAY)) {
-            POI poi = mPOIList.get(position);
+        if (baseData instanceof POI) {
+            POI poi = (POI)baseData;
             String aliseName = poi.getAlise();
             if (TextUtils.isEmpty(aliseName)) {
                 name = poi.getName();
@@ -864,7 +867,7 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
                 name = aliseName;
             }
         } else {
-            Favorite traffic = mTrafficList.get(position);
+            Favorite traffic = (Favorite)baseData;
             String aliseName = traffic.getAlise();
             if (TextUtils.isEmpty(aliseName)) {
                 name = getTrafficName(traffic);
@@ -886,13 +889,13 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
                                 Toast.makeText(mSphinx, R.string.favorite_rename_empty_tip, Toast.LENGTH_SHORT).show();
                             } else {
                                 dialog.dismiss();
-                                if (mLayerType.equals(ItemizedOverlay.POI_OVERLAY)) {
-                                    POI poi = mPOIList.get(position);
+                                if (baseData instanceof POI) {
+                                    POI poi = (POI)baseData;
                                     poi.setAlise(nameEdt.getEditableText().toString());
                                     poi.updateAlias(mContext);
                                     mPOIAdapter.notifyDataSetChanged();
                                 } else {
-                                    Favorite traffic = mTrafficList.get(position);
+                                    Favorite traffic = (Favorite)baseData;
                                     traffic.setAlise(nameEdt.getEditableText().toString());
                                     traffic.updateAlias(mContext);
                                     mTrafficAdapter.notifyDataSetChanged();

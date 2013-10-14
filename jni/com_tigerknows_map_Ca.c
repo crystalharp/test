@@ -95,18 +95,18 @@ JNIEXPORT void JNICALL Java_com_tigerknows_map_Ca_cai
 	}
 
 	single_label_cid = (*env)->GetMethodID(env, single_label_cls, "<init>",
-				"(Ljava/lang/String;IIIIIILcom/decarta/android/util/XYInteger;III)V");
+				"(Ljava/lang/String;IIIIIILcom/tigerknows/util/XYInteger;III)V");
 	if(single_label_cid == NULL) {
 
 	}
 
 	multi_label_cid = (*env)->GetMethodID(env, multi_label_cls, "<init>",
-			"(Ljava/lang/String;IIIIII[Lcom/decarta/android/util/XYInteger;III)V");
+			"(Ljava/lang/String;IIIIII[Lcom/tigerknows/util/XYInteger;III)V");
 	if(multi_label_cid == NULL) {
 
 	}
 
-	jclass xy_cls_local = (*env)->FindClass(env, "com/decarta/android/util/XYInteger");
+	jclass xy_cls_local = (*env)->FindClass(env, "com/tigerknows/util/XYInteger");
 	if(xy_cls_local != NULL) {
 		xy_cls = (*env)->NewGlobalRef(env, xy_cls_local);
 //		(*env)->DeleteLocalRef(env, xy_cls_local);

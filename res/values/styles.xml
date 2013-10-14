@@ -24,6 +24,10 @@
         <item name="android:windowEnterAnimation">@anim/slide_in_up</item>
         <item name="android:windowExitAnimation">@anim/slide_out_down</item>
     </style>
+
+    <style name="AlterChoiceDialog" parent="AlertDialog">
+        <item name="android:windowAnimationStyle">@style/AlterImageDialog</item>
+    </style>
 	
 	<style name="WeiboDialog" parent="android:style/Theme.Dialog">
 		<item name="android:windowNoTitle">true</item>

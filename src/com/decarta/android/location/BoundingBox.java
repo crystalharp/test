@@ -6,6 +6,8 @@
 
 package com.decarta.android.location;
 
+import com.tigerknows.android.location.Position;
+
 import java.io.Serializable;
 
 /**

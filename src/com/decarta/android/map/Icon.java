@@ -11,7 +11,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapFactory.Options;
 
-import com.decarta.android.util.XYInteger;
+import com.tigerknows.util.XYInteger;
 
 /**
  * The Icon class is used to create custom icon objects that can be overlaid

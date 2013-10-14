@@ -342,7 +342,7 @@ static tk_status_t _tk_draw_subways(tk_context_t *context, tk_layer_t *subway_la
         cairo_set_line_cap(cr, CAIRO_LINE_CAP_ROUND);
         cairo_set_source_rgb(cr, 1, 1, 1);
         cairo_stroke_preserve(cr);//每条不同的地铁线路都要独立绘制
-        
+
         cairo_set_line_width(cr, gdi->pen_size);
         cairo_set_line_cap(cr, CAIRO_LINE_CAP_ROUND);
         cairo_set_source_rgb(cr, (double)(GET_RED(gdi->color ))/(double)256,
@@ -600,7 +600,7 @@ tk_status_t tk_render_tile_default (int tile_x, int tile_y, int zoom) {
     else {
         _tk_clean_tile_with_color(context, TK_GDI_COLOR_WATER);
     }
-    for(i = 0; i < context->cur_style_buf->layer_num - 3; ++ i){
+    for(i = 0; i < context->cur_style_buf->layer_num; ++ i){
         layer_idx = context->cur_style_buf->draw_order[i];
         if (layer_idx < 0) {
             continue;

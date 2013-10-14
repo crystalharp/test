@@ -69,6 +69,8 @@ public class BaseFragment extends LinearLayout {
     
     public Button mRight2Btn;
     
+    public View mSkylineView;
+    
     public boolean isReLogin = false;
     
     protected List<BaseQuery> mBaseQuerying;
@@ -273,6 +275,7 @@ public class BaseFragment extends LinearLayout {
             mLeftBtn = mTitleFragment.getLeftTxv();
             mRightBtn = mTitleFragment.getRightTxv();
             mRight2Btn = mTitleFragment.getRight2Txv();
+            mSkylineView = mTitleFragment.getSkylineView();
 
             mTitleBtn.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
             mTitleBtn.setText(null);

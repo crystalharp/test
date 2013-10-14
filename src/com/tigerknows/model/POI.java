@@ -10,9 +10,9 @@ package com.tigerknows.model;
 
 import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
-import com.decarta.android.location.Position;
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
+import com.tigerknows.android.location.Position;
 import com.tigerknows.model.DataQuery.CommentResponse;
 import com.tigerknows.model.xobject.XArray;
 import com.tigerknows.model.xobject.XMap;
@@ -519,8 +519,8 @@ public class POI extends BaseData {
                 try {
                     ContentValues values = new ContentValues();
                     values.put(Tigerknows.POI.DATA, ByteUtil.xobjectToByte(data));
-                    this.dateTime = System.currentTimeMillis();
-                    values.put(Tigerknows.POI.DATETIME, this.dateTime);
+                    long dateTime = System.currentTimeMillis();
+                    values.put(Tigerknows.POI.DATETIME, dateTime);
                     SqliteWrapper.update(context, context.getContentResolver(), ContentUris.withAppendedId(Tigerknows.POI.CONTENT_URI, baseData.id), values, null, null);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -546,8 +546,8 @@ public class POI extends BaseData {
                     try {
                         ContentValues values = new ContentValues();
                         values.put(Tigerknows.POI.COMMENT_DATA, ByteUtil.xobjectToByte(xmap));
-                        this.dateTime = System.currentTimeMillis();
-                        values.put(Tigerknows.POI.DATETIME, this.dateTime);
+                        long dateTime = System.currentTimeMillis();
+                        values.put(Tigerknows.POI.DATETIME, dateTime);
                         SqliteWrapper.update(context, context.getContentResolver(), ContentUris.withAppendedId(Tigerknows.POI.CONTENT_URI, baseData.id), values, null, null);
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -1373,8 +1373,8 @@ public class POI extends BaseData {
         BaseData baseData = checkStore(context, Tigerknows.STORE_TYPE_HISTORY, -1, -1);
         if (baseData != null) {
             ContentValues values = new ContentValues();
-            this.dateTime = System.currentTimeMillis();
-            values.put(Tigerknows.POI.DATETIME, this.dateTime);
+            long dateTime = System.currentTimeMillis();
+            values.put(Tigerknows.POI.DATETIME, dateTime);
             count = SqliteWrapper.update(context, context.getContentResolver(), ContentUris.withAppendedId(Tigerknows.POI.CONTENT_URI, baseData.id), values, null, null);
         } else {
             try {

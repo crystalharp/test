@@ -7,6 +7,11 @@
     android:paddingRight="8dp"
     android:background="@drawable/bg_title"
     >
+    <View
+        android:id="@+id/skyline_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        />
     <RelativeLayout
         android:id="@+id/left_view"
         android:layout_width="wrap_content"
@@ -49,6 +54,7 @@
         <Button android:id="@+id/right2_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginRight="8dp"
             android:layout_centerVertical="true"
             android:layout_toLeftOf="@id/right_btn"
             android:background="@color/transparent"

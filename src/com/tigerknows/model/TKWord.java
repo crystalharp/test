@@ -4,8 +4,8 @@
 
 package com.tigerknows.model;
 
-import com.decarta.android.location.Position;
 import com.tigerknows.R;
+import com.tigerknows.android.location.Position;
 
 import android.content.Context;
 

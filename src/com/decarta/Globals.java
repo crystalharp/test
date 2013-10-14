@@ -12,12 +12,11 @@ import java.util.HashMap;
 import java.util.regex.Pattern;
 
 import com.decarta.android.exception.APIException;
-import com.decarta.android.location.Position;
 import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
-import com.decarta.android.util.XYInteger;
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
+import com.tigerknows.android.location.Position;
 import com.tigerknows.common.AsyncImageLoader;
 import com.tigerknows.common.ImageCache;
 import com.tigerknows.map.MapEngine;
@@ -27,6 +26,7 @@ import com.tigerknows.model.Session;
 import com.tigerknows.model.User;
 import com.tigerknows.model.AccountManage.UserRespnose;
 import com.tigerknows.util.Utility;
+import com.tigerknows.util.XYInteger;
 
 public class Globals {
     

@@ -5,10 +5,10 @@
 package com.tigerknows.ui.hotel;
 
 import com.decarta.Globals;
-import com.decarta.android.location.Position;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
+import com.tigerknows.android.location.Position;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.MapEngine;
@@ -262,12 +262,12 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                 
             case R.id.price_view:
                 mActionLog.addAction(mActionTag + ActionLog.HotelQueryCategory);
-                showFilterCategory(mTitleFragment);
+                showFilterCategory(mSkylineView);
                 break;
                 
             case R.id.check_in_time_view:
                 mActionLog.addAction(mActionTag + ActionLog.HotelQueryDate);
-                showDateListView(mTitleFragment);
+                showDateListView(mSkylineView);
                 break;
                 
             case R.id.query_btn:
@@ -727,7 +727,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
             v.setBackgroundResource(R.drawable.list_selector_background_gray_dark);
             v.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
             int h = v.getMeasuredHeight();
-            view.findViewById(R.id.body_view).getLayoutParams().height = h*6-(int)(Globals.g_metrics.density*8);
+            view.findViewById(R.id.body_view).getLayoutParams().height = h*6;
             ((ViewGroup) view.findViewById(R.id.selected_view)).setPadding(0, h, 0, 0);
             view.setData(this, mActionTag);
             mDateListView = view;

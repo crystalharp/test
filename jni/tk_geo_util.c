@@ -106,9 +106,9 @@ tk_bool_t tk_is_point_in_region(int rid, const tk_point_t *point) {
         p2.y = (buf[buf_idx + 4] << 24) + (buf[buf_idx + 5] << 16) + (buf[buf_idx + 6] << 8) + buf[buf_idx + 7];
         buf_idx += 8;
         if (p2.level_code) {
-            if (inside) {
-                return inside;
-            }
+//            if (inside) {
+//                return inside;
+//            }
             p1 = p2;
             continue;
         }

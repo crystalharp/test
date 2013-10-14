@@ -4,6 +4,7 @@
 package com.tigerknows.map;
 
 import com.decarta.android.util.*;
+import com.tigerknows.util.XYInteger;
 
 /**
  * @author chenming

@@ -454,6 +454,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 this.mLocationTxv.setText(this.mAPOI.getName());
             } else {
                 this.mResultLsv.changeHeaderViewByState(true, SpringbackListView.DONE);
+                this.mLocationTxv.setText(null);
             }
         }
         refreshResultTitleText(null);
@@ -980,7 +981,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 }
                 
                 POI poi = dataQuery.getPOI();
-                if (mATotal == 0 && TextUtils.isEmpty(poi.getAddress()) == false) { // 若POI存在地址且搜索结果的子类型为普通POI则将其列为A类POI
+                if (mATotal == 0 && TextUtils.isEmpty(poi.getUUID()) == false) { // 若POI存在地址且搜索结果的子类型为普通POI则将其列为A类POI
                     mATotal = 1;
                     poi.setResultType(POIResponse.FIELD_A_POI_LIST);
                     poi.setToCenterDistance(null);
@@ -1067,6 +1068,8 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
 
             // 这个是为了点击“返回Back”也能使其消失，并且并不会影响你的背景
             mPopupWindow.setBackgroundDrawable(new BitmapDrawable());
+            mPopupWindow.setAnimationStyle(-1);
+            mPopupWindow.update();
             mPopupWindow.setOnDismissListener(new OnDismissListener() {
                 
                 @Override
