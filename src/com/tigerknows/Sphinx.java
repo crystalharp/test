@@ -2248,7 +2248,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         }
         
         if (touchMode.equals(TouchMode.MEASURE_DISTANCE)) {
-            if (!(overlayItem.getAssociatedObject().equals(TouchMode.MEASURE_DISTANCE))) {
+            if (!(TouchMode.MEASURE_DISTANCE.equals(overlayItem.getAssociatedObject()))) {
                 return;
             }
         }
@@ -2648,7 +2648,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         setTouchMode(TouchMode.NORMAL);
     }
     
-    private void hideInfoWindow(String overlayName) {
+    public void hideInfoWindow(String overlayName) {
         OverlayItem overlayItem = mMapView.getInfoWindow().getAssociatedOverlayItem();
         if (mMapView.getInfoWindow().isVisible() && 
                 overlayItem != null && 
