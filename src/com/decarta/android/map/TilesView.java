@@ -2585,7 +2585,7 @@ public class TilesView extends GLSurfaceView {
 			ArrayList<Label> shownlabelList = shownLabels[label.priority];
 			if (shownlabelList == null
 					|| shownlabelList.size() == 0
-					|| (label.pointNum == 1 && label.type != 0 && label.type != 1)) {
+					|| (label.pointNum == 1 && label.type != 0 && label.type != 1 && label.type != 2)) {//城市的绿地0水域1，以及全国的水域2
 				return false;
 			}
 			for (int i = 0, shownNum = shownlabelList.size(); i < shownNum; ++i) {
