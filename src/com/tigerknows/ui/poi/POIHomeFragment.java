@@ -568,6 +568,7 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
                 mSphinx.showView(R.id.view_hotel_pick_location);
             }
         } else if (id == R.id.subway_map_btn) {
+            mActionLog.addAction(mActionTag + ActionLog.POIHomeSubwayMap);
             TKConfig.setPref(mSphinx, TKConfig.PREFS_SUBWAY_MAP, "1");
             mSubwayMapImv.setVisibility(View.GONE);
             mSphinx.getSubwayMapFragment().setData(Globals.getCurrentCityInfo());

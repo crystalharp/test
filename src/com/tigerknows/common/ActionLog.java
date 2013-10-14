@@ -149,6 +149,7 @@ public class ActionLog extends LogUpload {
     public static final String POIHomeDynamicButtonClick = "BJ";
     public static final String POIHomeMyLocation = "BK";
     public static final String POIHomeAppointedArea = "BL";
+    public static final String POIHomeSubwayMap = "BM";
     
     // POI输入查询页
     public static final String POIHomeInputQuery = "AB";
