@@ -2713,7 +2713,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         if (!(size == 1 &&
                 (viewId == R.id.view_poi_home ||
                  viewId == R.id.view_discover_home ||
-                 viewId == R.id.view_traffic_home ||
+                 (viewId == R.id.view_traffic_home && getTrafficQueryFragment().isSelectPointState() == false) ||
                  viewId == R.id.view_more_home))) {
             return false;
         }

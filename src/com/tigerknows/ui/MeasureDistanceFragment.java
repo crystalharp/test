@@ -42,6 +42,7 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
     private int mVisibilityPreviousNext;
     private OverlayItem mOtherOverlayItem;
     private OverlayItem mLastOverlayItem;
+    private TouchMode mTouchMode;
     
     public int getIndex() {
         return mIndex;
@@ -240,6 +241,7 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
         mVisibilityLocation = mSphinx.getLocationView().getVisibility();
         mOtherOverlayItem = mSphinx.getMapView().getInfoWindow().getAssociatedOverlayItem();
         mLastOverlayItem = null;
+        mTouchMode = mSphinx.getTouchMode();
     }
 
     @Override
@@ -305,7 +307,7 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
     public void dismiss() {
         super.dismiss();
         clearLine();
-        mSphinx.setTouchMode(TouchMode.NORMAL);
+        mSphinx.setTouchMode(mTouchMode);
         
         mSphinx.getPreviousNextView().setVisibility(mVisibilityPreviousNext);
         mSphinx.getLocationView().setVisibility(mVisibilityLocation);
