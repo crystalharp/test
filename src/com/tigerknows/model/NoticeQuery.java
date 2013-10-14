@@ -135,6 +135,8 @@ public class NoticeQuery extends BaseQuery {
 				
 				private TKDrawable picTKDrawable;
 				
+				public static final int INVALID = -1;
+				
 				public long getNoticeId() {
 					return noticeId;
 				}
@@ -214,6 +216,16 @@ public class NoticeQuery extends BaseQuery {
 						if(this.noticeDescription != null && !TextUtils.isEmpty(this.noticeDescription)){
 							this.localLayoutType += 4;
 						}
+					}
+					switch(this.localLayoutType){
+					case 1:
+					case 3:
+					case 2:
+					case 5:
+					case 7:
+						break;
+					default:
+						this.localLayoutType = INVALID;
 					}
 			    }
 				

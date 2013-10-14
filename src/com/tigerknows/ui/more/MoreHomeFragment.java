@@ -512,7 +512,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 			if(noticeList != null){
 				for(int i=0; i<noticeList.size(); i++){
 					Notice notice = noticeList.get(i);
-					if(notice.getOperationType() <= NOTICE_VERSION){
+					if(notice.getOperationType() <= NOTICE_VERSION && notice.getLocalLayoutType() != Notice.INVALID){
 						mNoticeList.add(notice);
 					}
 				}
