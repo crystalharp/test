@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:paddingLeft="8dp"
-    android:paddingRight="8dp">
+    android:paddingRight="8dp" >
     
     <LinearLayout
         android:id="@+id/name_view"
@@ -103,8 +103,6 @@
 		        android:layout_height="wrap_content"
 		        
 		        android:layout_alignParentLeft="true"
-		        android:drawablePadding="4dp"
-		        
 		        android:focusable="false"
 		        android:singleLine="true"
 		        android:text="@string/hotel_checkin"
@@ -117,11 +115,10 @@
 		        android:layout_height="wrap_content"
 		        
 		        android:layout_toRightOf="@id/checkin_txv"
-		        android:drawablePadding="4dp"
-		        
+		        android:layout_marginLeft="-4dp"
 		        android:focusable="false"
 		        android:singleLine="true"
-		        android:text="3.13"
+		        android:text="10月12日"
 		        android:textColor="@color/black_light"
 		        android:textSize="16sp" />
 		
@@ -131,9 +128,7 @@
 		        android:layout_height="wrap_content"
 		        
 		        android:layout_toRightOf="@id/checkin_date_txv"
-		        android:layout_marginLeft="16dp"
-		        android:drawablePadding="4dp"
-		        
+		        android:layout_marginLeft="8dp"
 		        android:focusable="false"
 		        android:singleLine="true"
 		        android:text="@string/hotel_checkout"
@@ -146,11 +141,10 @@
 		        android:layout_height="wrap_content"
 		        
 		        android:layout_toRightOf="@id/checkout_txv"
-		        android:drawablePadding="4dp"
-		        
+		        android:layout_marginLeft="-4dp"
 		        android:focusable="false"
 		        android:singleLine="true"
-		        android:text="3.33"
+		        android:text="10月22日"
 		        android:textColor="@color/black_light"
 		        android:textSize="16sp" />
 		
@@ -158,13 +152,11 @@
 		        android:id="@+id/day_count_txv"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
-		        
 		        android:layout_alignParentRight="true"
 		        android:layout_marginRight="4dp"
-		        
 		        android:focusable="false"
 		        android:singleLine="true"
-		        android:text="共住2晚"
+		        android:text="共10晚"
 		        android:textColor="@color/black_light"
 		        android:textSize="16sp" />
 	
