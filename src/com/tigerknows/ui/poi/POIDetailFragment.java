@@ -44,7 +44,6 @@ import android.widget.TextView;
 
 
 import com.decarta.Globals;
-import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
@@ -70,7 +69,6 @@ import com.tigerknows.share.ShareAPI;
 import com.tigerknows.share.TKWeixin;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
-import com.tigerknows.ui.hotel.HotelHomeFragment;
 import com.tigerknows.util.Utility;
 
 /**
@@ -1135,26 +1133,19 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         refreshDetail();
         refreshComment();
 
-        FeedbackUpload feedbackUpload = new FeedbackUpload(mSphinx);
-        feedbackUpload.addParameter(FeedbackUpload.SERVER_PARAMETER_POI_RANK, String.valueOf(position));
-        feedbackUpload.addParameter(DataQuery.SERVER_PARAMETER_POI_ID, poi.getUUID());
-        feedbackUpload.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_POI);
-        feedbackUpload.addParameter(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, mDynamicHotelPOI.isExist() ? BaseQuery.SUB_DATA_TYPE_HOTEL : BaseQuery.SUB_DATA_TYPE_POI);
-        feedbackUpload.addParameter(DataQuery.SERVER_PARAMETER_REQUSET_SOURCE_TYPE, mActionTag);
-        feedbackUpload.setup(MapEngine.getInstance().getCityId(poi.getPosition()));
+        FeedbackUpload.logEnterPOIDetailUI(mSphinx,
+            DataQuery.DATA_TYPE_POI,
+            mDynamicHotelPOI.isExist() ? BaseQuery.SUB_DATA_TYPE_HOTEL : BaseQuery.SUB_DATA_TYPE_POI,
+            mActionTag,
+            position,
+            poi.getUUID(),
+            MapEngine.getCityId(poi.getPosition()));
+        
         
         if (baseQueryList.isEmpty() == false) {
-            if (position >= 0) {
-                baseQueryList.add(feedbackUpload);
-            }
             mTkAsyncTasking = mSphinx.queryStart(baseQueryList);
             mBaseQuerying = baseQueryList;
             addLoadingView();
-        } else {
-            if (position >= 0) {
-                mSphinx.queryStart(feedbackUpload);
-            }
-            resetLoadingView();
         }
         
         String category = poi.getCategory().trim();

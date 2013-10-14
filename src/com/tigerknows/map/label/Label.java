@@ -52,7 +52,7 @@ public abstract class Label {
 	public static final int LABEL_STATE_OUT_BOUND = 5;
 	public static final int LABEL_STATE_WAITING = 6;
 	public static final int LABEL_STATE_SHOW_ICON = 7;
-	public static final float LABEL_FADING_DURATION = 200;
+	public static final float LABEL_FADING_DURATION = 300;
 	public static final int INDEX_AREA = 35;
 	public static int TK_LABEL_BOUND_SIZE = 8;// in fact 8 * density
 	
