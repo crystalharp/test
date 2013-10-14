@@ -38,8 +38,9 @@ import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.util.Utility;
 import com.tigerknows.widget.QueryingView;
 import com.tigerknows.widget.RetryView;
+import com.tigerknows.widget.RetryView.CallBack;
 
-public class SubwayMapFragment extends BaseFragment {
+public class SubwayMapFragment extends BaseFragment implements RetryView.CallBack {
 
     WebView mWebWbv;
     String mTitle;
@@ -48,6 +49,7 @@ public class SubwayMapFragment extends BaseFragment {
     CityInfo mCityInfo;
     Position mPos;
     boolean needRefresh;
+    int mOriginStat;
     
     RetryView mRetryView;
     QueryingView mQueryingView;
@@ -59,6 +61,7 @@ public class SubwayMapFragment extends BaseFragment {
     static final int STAT_MAP = 0;
     static final int STAT_QUERY = 1;
     static final int STAT_NODATA = 2;
+    static final int STAT_QUERY_FAILED = 3;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -121,6 +124,7 @@ public class SubwayMapFragment extends BaseFragment {
         mEmptyTxv.setText(mSphinx.getString(R.string.no_subway_map));
         
         mQueryingView.setText(R.string.loading_subway_map);
+        mRetryView.setCallBack(this, mActionTag);
     }
     
     private void showSubwayMap(String url) {
@@ -141,24 +145,35 @@ public class SubwayMapFragment extends BaseFragment {
     }
     
     private void setStatus(int stat) {
+        mOriginStat = stat;
         switch (stat) {
         case STAT_MAP:
             mWebWbv.setVisibility(View.VISIBLE);
             mQueryingView.setVisibility(View.GONE);
             mEmptyView.setVisibility(View.GONE);
             mTitleBtn.setText(mCityInfo.getCName() + mTitle);
+            mRetryView.setVisibility(View.GONE);
             break;
         case STAT_QUERY:
             mWebWbv.setVisibility(View.GONE);
             mQueryingView.setVisibility(View.VISIBLE);
             mEmptyView.setVisibility(View.GONE);
             mTitleBtn.setText(mTitle);
+            mRetryView.setVisibility(View.GONE);
             break;
         case STAT_NODATA:
             mWebWbv.setVisibility(View.GONE);
             mQueryingView.setVisibility(View.GONE);
             mEmptyView.setVisibility(View.VISIBLE);
             mTitleBtn.setText(mTitle);
+            mRetryView.setVisibility(View.GONE);
+            break;
+        case STAT_QUERY_FAILED:
+            mWebWbv.setVisibility(View.GONE);
+            mQueryingView.setVisibility(View.GONE);
+            mEmptyView.setVisibility(View.GONE);
+            mTitleBtn.setText(mTitle);
+            mRetryView.setVisibility(View.VISIBLE);
             break;
         }
     }
@@ -251,9 +266,9 @@ public class SubwayMapFragment extends BaseFragment {
         LogWrapper.d(TAG, "onPostExecute()");
         FileDownload fileDownload = (FileDownload) tkAsyncTask.getBaseQuery();
         int stat = STAT_NODATA;
-        if (BaseActivity.checkResponseCode(fileDownload, mSphinx, new int[]{953}, false, this, false) == false) {
-            Response response = fileDownload.getResponse();
-            if (response != null) {
+        Response response = fileDownload.getResponse();
+        if (response != null) {
+            if (BaseActivity.checkResponseCode(fileDownload, mSphinx, new int[]{953}, false, this, false) == false) {
                 if (response.getResponseCode() != 953) {
                     subwayPath = MapEngine.getSubwayDataPath(mSphinx, mCityInfo.getId());
                     if (subwayPath != null) {
@@ -263,8 +278,24 @@ public class SubwayMapFragment extends BaseFragment {
                     }
                 }
             }
+        } else {
+            stat = STAT_QUERY_FAILED;
         }
-        setStatus(stat);
+        if (mOriginStat != STAT_MAP) {
+            setStatus(stat);
+        }
+    }
+
+    @Override
+    public void retry() {
+        if (mBaseQuerying != null) {
+            for(int i = 0, size = mBaseQuerying.size(); i < size; i++) {
+                mBaseQuerying.get(i).setResponse(null);
+            }
+            mSphinx.queryStart(mBaseQuerying);
+        }
+        setStatus(STAT_QUERY);
+
     }
 
 }
