@@ -24,6 +24,7 @@ import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
 import com.tigerknows.android.location.Position;
 import com.tigerknows.android.os.TKAsyncTask;
+import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.MapEngine;
 import com.tigerknows.map.MapEngine.CityInfo;
 import com.tigerknows.model.BaseQuery;
@@ -62,6 +63,7 @@ public class SubwayMapFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mActionTag = ActionLog.TrafficSubwayMap;
     }
 
     @Override
