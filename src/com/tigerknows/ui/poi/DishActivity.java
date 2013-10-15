@@ -11,11 +11,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -24,6 +24,7 @@ import android.widget.ArrayAdapter;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.ExpandableListView;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -86,7 +87,7 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
     private CategoryListAdapter mCategoryAdapter;
     private DishAdapter mSelectedAdapter;
     private DishAdapter mMyLikeAdapter;
-    private DishAdapter mRecommedAdapter;
+    private DishAdapter mRecommendAdapter;
     
     private View mRecommedView;
     private View mAllView;
@@ -98,7 +99,7 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
     private ListView mAllLsv = null;
     private ViewPager mRecommendVpg = null;
     private ListView mMyLikeLsv = null;
-    private ListView mRecommendLsv = null;
+    private GridView mRecommendGdv = null;
 
     private QueryingView mQueryingView = null;
     
@@ -129,15 +130,15 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
         mCategoryAdapter = new CategoryListAdapter();
         mCategoryElv.setAdapter(mCategoryAdapter);
         
-        mSelectedAdapter = new DishAdapter(mThis, mSelectedList);
+        mSelectedAdapter = new DishAdapter(mThis, DishAdapter.TextView_Resource_ID, mSelectedList);
         mAllLsv.setAdapter(mSelectedAdapter);
         
-        mMyLikeAdapter = new DishAdapter(mThis, mMyLikeList);
+        mMyLikeAdapter = new DishAdapter(mThis, DishAdapter.TextView_Resource_ID, mMyLikeList);
         mMyLikeAdapter.myLike = true;
         mMyLikeLsv.setAdapter(mMyLikeAdapter);
 
-        mRecommedAdapter = new DishAdapter(mThis, mRecommedList);
-        mRecommendLsv.setAdapter(mRecommedAdapter);
+        mRecommendAdapter = new DishAdapter(mThis, DishAdapter.Recommend_TextView_Resource_ID, mRecommedList);
+        mRecommendGdv.setAdapter(mRecommendAdapter);
         
         mTitleBtn.setText(R.string.all_comment);
         mTitleBtn.setBackgroundResource(R.drawable.btn_all_comment_focused);
@@ -176,12 +177,20 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
         
         mRecommendVpg = (ViewPager)findViewById(R.id.view_pager);
         
-        mRecommendLsv = Utility.makeListView(mThis);
+        mRecommendGdv = new GridView(mThis);
+        mRecommendGdv.setNumColumns(GridView.AUTO_FIT);
+        int spacing = Utility.dip2px(mThis, 8);
+        mRecommendGdv.setHorizontalSpacing(spacing);
+        mRecommendGdv.setVerticalSpacing(spacing);
+        mRecommendGdv.setColumnWidth(Utility.dip2px(mThis, 120));
+        mRecommendGdv.setStretchMode(GridView.STRETCH_COLUMN_WIDTH);
+        mRecommendGdv.setGravity(Gravity.CENTER);
+        
         mMyLikeLsv = Utility.makeListView(mThis);
         
         List<View> viewList = new ArrayList<View>();
         viewList.add(mMyLikeLsv);
-        viewList.add(mRecommendLsv);
+        viewList.add(mRecommendGdv);
         mRecommendVpg.setOnPageChangeListener(new MyPageChangeListener());
         mRecommendVpg.setAdapter(new MyAdapter(viewList));
         
@@ -265,19 +274,23 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
     }
     
     private class DishAdapter extends ArrayAdapter<Dish> {
-        private static final int TextView_Resource_ID = R.layout.poi_dish_list_item;
+        static final int TextView_Resource_ID = R.layout.poi_dish_list_item;
+        
+        static final int Recommend_TextView_Resource_ID = R.layout.poi_dish_recommend_list_item;
         
         boolean myLike = false;
+        int textViewResourceId;
 
-        public DishAdapter(Context context, List<Dish> dishList) {
-            super(context, TextView_Resource_ID, dishList);
+        public DishAdapter(Context context, int textViewResourceId, List<Dish> dishList) {
+            super(context, textViewResourceId, dishList);
+            this.textViewResourceId = textViewResourceId;
         }
 
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
             View view;
             if (convertView == null) {
-                view = mLayoutInflater.inflate(TextView_Resource_ID, parent, false);
+                view = mLayoutInflater.inflate(this.textViewResourceId, parent, false);
             } else {
                 view = convertView;
             }
@@ -318,6 +331,12 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
             pictureCountTxv.setText(getString(R.string.pictures, data.getPictureCount()));
             nameTxv.setText(data.getName());
             priceTxv.setText(data.getPrice());
+            
+            if (Recommend_TextView_Resource_ID == textViewResourceId) {
+                int newWidth = (int) (Globals.g_metrics.density*120);
+                ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
+                layoutParams.width = newWidth;
+            }
         
             return view;
         }
@@ -516,7 +535,7 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
                     mPOI.setRecommendDishQuery(dataQuery);
                     
                     mRecommedList.addAll(dishes);
-                    mRecommedAdapter.notifyDataSetChanged();
+                    mRecommendAdapter.notifyDataSetChanged();
                     return;
                 }
 
@@ -569,6 +588,9 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
             mRecommendBtn.setBackgroundResource(R.drawable.btn_tab_selected);
             mRecommendBtn.setTextColor(mColorSelect);
         }
+        mRetryView.setVisibility(View.GONE);
+        mEmptyView.setVisibility(View.GONE);
+        mQueryingView.setVisibility(View.GONE);
         setData(mMode, mTab);
     }
 

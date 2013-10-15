@@ -46,6 +46,7 @@ import com.tigerknows.model.Hotel.RoomType;
 import com.tigerknows.model.TKDrawable;
 import com.tigerknows.model.TKDrawable.LoadImageRunnable;
 import com.tigerknows.ui.BaseActivity;
+import com.tigerknows.ui.ViewImageActivity;
 import com.tigerknows.ui.hotel.DateListView;
 import com.tigerknows.ui.hotel.HotelHomeFragment;
 import com.tigerknows.ui.hotel.HotelIntroActivity;
@@ -328,8 +329,12 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
                 Hotel hotel = mPOI.getHotel();
                 if (hotel.getUuid() != null && hotel.getHotelTKDrawableList() != null && hotel.getHotelTKDrawableList().size() > 0) {
                     mPOIDetailFragment.mActionLog.addAction(ActionLog.POIDetail + ActionLog.POIDetailHotelImage);
-                    mSphinx.getHotelImageGridFragment().setData(hotel);
-                    mSphinx.showView(R.id.view_hotel_image_grid);
+                    Intent intent = new Intent();
+                    ArrayList<HotelTKDrawable> list = (ArrayList<HotelTKDrawable>)hotel.getHotelTKDrawableList();
+                    intent.putExtra(ViewImageActivity.EXTRA_TITLE, mSphinx.getString(R.string.hotel_picture_title, list.size()));
+                    intent.putParcelableArrayListExtra(ViewImageActivity.EXTRA_IMAGE_LIST, list);
+                    intent.putParcelableArrayListExtra(ViewImageActivity.EXTRA_ORIGINAL_IMAGE_LIST, (ArrayList<HotelTKDrawable>)hotel.getOriginalHotelTKDrawableList());
+                    mSphinx.showView(R.id.activity_view_image, intent);
                 }
             }
         });

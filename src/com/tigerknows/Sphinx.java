@@ -123,6 +123,7 @@ import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.ui.BrowserActivity;
 import com.tigerknows.ui.BrowserFragment;
 import com.tigerknows.ui.HintActivity;
+import com.tigerknows.ui.ViewImageActivity;
 import com.tigerknows.ui.MeasureDistanceFragment;
 import com.tigerknows.ui.MenuFragment;
 import com.tigerknows.ui.ResultMapFragment;
@@ -136,7 +137,6 @@ import com.tigerknows.ui.discover.TuangouDetailFragment;
 import com.tigerknows.ui.discover.YanchuDetailFragment;
 import com.tigerknows.ui.discover.ZhanlanDetailFragment;
 import com.tigerknows.ui.hotel.HotelHomeFragment;
-import com.tigerknows.ui.hotel.HotelImageGridFragment;
 import com.tigerknows.ui.hotel.HotelIntroActivity;
 import com.tigerknows.ui.hotel.HotelOrderCreditFragment;
 import com.tigerknows.ui.hotel.HotelOrderDetailFragment;
@@ -3258,6 +3258,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 intent.setClass(this, DishActivity.class);
                 startActivityForResult(intent, R.id.activity_poi_dish);
                 return true;
+            } else if (R.id.activity_view_image == viewId) {
+                intent.setClass(this, ViewImageActivity.class);
+                startActivityForResult(intent, R.id.activity_view_image);
+                return true;
             }
             
             mUIProcessing = true;
@@ -3523,7 +3527,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     
     private HotelOrderDetailFragment mHotelOrderDetailFragment;
     private HotelOrderListFragment mHotelOrderListFragment;
-    private HotelImageGridFragment mHotelImageGridFragment;
     
     private CouponListFragment mCouponListFragment;
     private CouponDetailFragment mCouponDetailFragment;
@@ -3675,10 +3678,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             	baseFragment = getHotelOrderDetailFragment();
             	break;
             	
-            case R.id.view_hotel_image_grid:
-            	baseFragment = getHotelImageGridFragment();
-            	break;
-                
             case R.id.view_coupon_list:
                 baseFragment = getCouponListFragment();
                 break;
@@ -4157,18 +4156,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         }
     }
     
-    public HotelImageGridFragment getHotelImageGridFragment(){
-    	
-        synchronized (mUILock) {
-            if (mHotelImageGridFragment == null) {
-            	HotelImageGridFragment fragment = new HotelImageGridFragment(Sphinx.this);
-                fragment.setId(R.id.view_hotel_image_grid);
-                fragment.onCreate(null);
-                mHotelImageGridFragment = fragment;
-            }
-            return mHotelImageGridFragment;
-        }
-    }
     public CouponListFragment getCouponListFragment(){
         
         synchronized (mUILock) {
