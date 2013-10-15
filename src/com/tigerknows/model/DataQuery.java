@@ -171,6 +171,9 @@ public final class DataQuery extends BaseQuery {
     // bias="hot"表示获取热门点评 
     public static final String BIAS_HOT = "hot";
     
+    // bias string 获取推荐菜，在获取菜品请求中bias=1
+    public static final String BIAS_RECOMMEND_DISH = "1";
+    
     private boolean isTurnPage = false;
     
     // POI Request Begin
