@@ -16,6 +16,8 @@ import com.tigerknows.model.xobject.XMap;
 import com.tigerknows.util.Utility;
 
 import android.graphics.drawable.Drawable;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -251,7 +253,7 @@ public class Hotel extends XMapData {
         return longDescription;
     }
 
-    public static class HotelTKDrawable extends XMapData {
+    public static class HotelTKDrawable extends XMapData implements Parcelable {
 
         // 0x01 x_string 图片名
         public static final byte FIELD_NAME = 0x01;
@@ -317,6 +319,33 @@ public class Hotel extends XMapData {
             }
         };
 
+        public static final Parcelable.Creator<HotelTKDrawable> CREATOR
+                = new Parcelable.Creator<HotelTKDrawable>() {
+            public HotelTKDrawable createFromParcel(Parcel in) {
+                return new HotelTKDrawable(in);
+            }
+
+            public HotelTKDrawable[] newArray(int size) {
+                return new HotelTKDrawable[size];
+            }
+        };
+        
+        private HotelTKDrawable(Parcel in) {
+            name = in.readString();
+            tkDrawable = in.readParcelable(TKDrawable.class.getClassLoader());
+        }
+        
+        @Override
+        public int describeContents() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel out, int flags) {
+            out.writeString(name);
+            out.writeParcelable(tkDrawable, flags);
+        }
     }
 
     public static class RoomType extends XMapData {

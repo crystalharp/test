@@ -914,6 +914,9 @@ public final class DataQuery extends BaseQuery {
         } else if (DATA_TYPE_DISH.equals(dataType)) {
             DishResponse response = new DishResponse(responseXMap);
             this.response = response;
+        } else if (DATA_TYPE_PICTURE.equals(dataType)) {
+            PictureResponse response = new PictureResponse(responseXMap);
+            this.response = response;
         }
     }
     

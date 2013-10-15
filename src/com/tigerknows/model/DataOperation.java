@@ -502,6 +502,8 @@ public class DataOperation extends BaseQuery {
             } if (OPERATION_CODE_UPDATE.equals(operationCode)) {
                 if (DATA_TYPE_DIANPING.equals(dataType)) {
                     responseXMap = DataOperationTest.launchDianpingUpdateResponse();
+                } else if (DATA_TYPE_DISH.equals(dataType)) {
+                    responseXMap = DataOperationTest.launchDianpingUpdateResponse();
                 }
             } else if (operationCode.startsWith(URLEncoder.encode(Comment.LocalMark.JsonHeader))) {
                 if (DATA_TYPE_DIANPING.equals(dataType)) {
