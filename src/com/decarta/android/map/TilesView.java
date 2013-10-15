@@ -1209,7 +1209,7 @@ public class TilesView extends GLSurfaceView {
 						if (infoWindow.isVisible()) {
 							infoWindow.setVisible(false);
 						} else if (mParentMapView.getCurrentOverlay() == mParentMapView
-								.getOverlaysByName(ItemizedOverlay.PIN_OVERLAY)) {
+								.getOverlaysByName(ItemizedOverlay.PIN_OVERLAY) && !mParentMapView.getSphinx().getTouchMode().equals(TouchMode.MEASURE_DISTANCE)) {
 							mParentMapView
 									.deleteOverlaysByName(ItemizedOverlay.PIN_OVERLAY);
 						}
