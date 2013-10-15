@@ -3706,7 +3706,7 @@ public class TilesView extends GLSurfaceView {
 							|| isLabelFading || fading || movingL || rotatingX
 							|| rotatingZ) {
 						requestRender();
-					} else if (isCancelSnap == false && snapCenterPos != null) {
+					} else if (requestTiles.size() == 0 && isCancelSnap == false && snapCenterPos != null) {
 						XYFloat xy = mercXYToScreenXYConv(Util.posToMercPix(
 								snapCenterPos, getZoomLevel()), getZoomLevel());
 						// 确保快照地图时，地图已经移动到指定的中心位置，误差为32像素?
