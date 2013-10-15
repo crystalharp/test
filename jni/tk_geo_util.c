@@ -146,6 +146,12 @@ tk_bool_t tk_is_point_in_region(int rid, const tk_point_t *point) {
         else if (p1.y != p2.y) {
             if( (pt.y == p1.y && pt.x > p1.x)){   // 交点在顶点上
                 inside = !inside;
+                if (pt.y > p2.y) {
+                    --pt.y;
+                }
+                else {
+                    ++pt.y;
+                }
             }
         }
         p1 = p2;
