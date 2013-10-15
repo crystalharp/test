@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.webkit.WebSettings.ZoomDensity;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,6 +55,7 @@ public class SubwayMapFragment extends BaseFragment implements RetryView.CallBac
     RetryView mRetryView;
     QueryingView mQueryingView;
     View mEmptyView;
+    ImageView mEmptyImg;
     TextView mEmptyTxv;
     
     static final String TAG = "SubwayMapFragment";
@@ -121,10 +123,12 @@ public class SubwayMapFragment extends BaseFragment implements RetryView.CallBac
         mQueryingView = (QueryingView)mRootView.findViewById(R.id.querying_view);
         mEmptyView = mRootView.findViewById(R.id.empty_view);
         mEmptyTxv = (TextView) mEmptyView.findViewById(R.id.empty_txv);
+        mEmptyImg = (ImageView) mEmptyView.findViewById(R.id.icon_imv);
         mEmptyTxv.setText(mSphinx.getString(R.string.no_subway_map));
         
         mQueryingView.setText(R.string.loading_subway_map);
         mRetryView.setCallBack(this, mActionTag);
+        mEmptyImg.setBackgroundResource(R.drawable.bg_no_subway);
     }
     
     private void showSubwayMap(String url) {
