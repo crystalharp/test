@@ -517,6 +517,7 @@ public class ActionLog extends LogUpload {
     // 交通指南针页
     public static final String TrafficCompass = "BQ";
     public static final String TrafficCompassGPS = "BA";
+    public static final String TrafficCompassShare = "BB";
     
     // 地铁图页
     public static final String TrafficSubwayMap = "BR";
@@ -693,6 +694,7 @@ public class ActionLog extends LogUpload {
     public static final String HotelOrderListGoThere = "BA";
     // BB-%d 被点击的订单的 index
     public static final String HotelOrderListItemClick = "BB";
+    public static final String HotelOrderListServiceTel = "BK";
 
     // 订单详情页
     public static final String HotelOrderDetail = "GI";
@@ -706,6 +708,7 @@ public class ActionLog extends LogUpload {
     public static final String HotelOrderDetailDeleteDialogNo = "BH";
     public static final String HotelOrderDetailIssueComment = "BI";
     public static final String HotelOrderDetailOrderAgain= "BJ";
+    public static final String HotelOrderDetailServiceTel = "BK";
     
     public static final String TakeScreenshot = "FG";
     public static final String TakeScreenshotShare = "BA";
