@@ -146,4 +146,12 @@ public class TitleFragment extends BaseFragment implements View.OnClickListener 
             mPopupWindow.dismiss();
         }
     }
+    
+    @Override
+    public void onResume() {
+    }
+    
+    @Override
+    public void onPause() {
+    }
 }
