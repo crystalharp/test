@@ -33,7 +33,7 @@ public class ApkDownloadedProcessor implements DownloadedProcessor {
     }
 
 	@Override
-	public void process(Context context, File file, String tickerText) {
+	public void process(Context context, File file, String url, String tickerText) {
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setAction(android.content.Intent.ACTION_VIEW);
         intent.setDataAndType(Uri.fromFile(file), "application/vnd.android.package-archive");
@@ -66,6 +66,7 @@ public class ApkDownloadedProcessor implements DownloadedProcessor {
         notification.contentIntent = pausePendingIntent;
         
         // 取消此下载项可能存在的通知
+        nm.cancel(url.hashCode());
         nm.cancel(id);
 
         // 将下载任务添加到任务栏中

@@ -210,7 +210,7 @@ public class DownloadService extends IntentService {
             if(tempFile != null) {
                 DownloadedProcessor processor = processorMap.get(url);
                 if(processor != null) {
-                    processor.process(this, tempFile, tickerText);
+                    processor.process(this, tempFile, url, tickerText);
                 }
             }
         }
@@ -252,6 +252,7 @@ public class DownloadService extends IntentService {
         notification.contentView = remoteViews;
         
         // 取消此下载项可能存在的通知
+        nm.cancel(tickerText.hashCode());
         nm.cancel(id);
     
         // 将下载任务添加到任务栏中
@@ -377,7 +378,7 @@ public class DownloadService extends IntentService {
         } else {
             remoteViews = new RemoteViews(getPackageName(), R.layout.notification_progress);
             remoteViews.setOnClickPendingIntent(R.id.control_btn, pendingIntent);
-            remoteViews.setTextViewText(R.id.control_btn, context.getString(R.string.download));
+            remoteViews.setTextViewText(R.id.control_btn, context.getString(R.string.go_on));
         }
     
         LogWrapper.d(TAG, "notifyPause:"+url);
