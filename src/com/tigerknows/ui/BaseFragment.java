@@ -267,11 +267,11 @@ public class BaseFragment extends LinearLayout {
             mTitleFragment = mSphinx.getTitleFragment();
             mMenuFragment = mSphinx.getMenuFragment();
 
-            mTitleBtn = mTitleFragment.getTitleTxv();
-            mLeftBtn = mTitleFragment.getLeftTxv();
-            mRightBtn = mTitleFragment.getRightTxv();
-            mRight2Btn = mTitleFragment.getRight2Txv();
-            mSkylineView = mTitleFragment.getSkylineView();
+            mTitleBtn = mTitleFragment.mTitleBtn;
+            mLeftBtn = mTitleFragment.mLeftBtn;
+            mRightBtn = mTitleFragment.mRightBtn;
+            mRight2Btn = mTitleFragment.mRight2Btn;
+            mSkylineView = mTitleFragment.mSkylineView;
 
             mTitleBtn.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
             mTitleBtn.setText(null);
