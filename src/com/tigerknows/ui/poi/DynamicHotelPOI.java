@@ -390,6 +390,10 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         mInitDatePOIid = (mPOI != null ? mPOI.getUUID() : null);
         checkin = Calendar.getInstance();
         checkin.setTimeInMillis(CalendarUtil.getExactTime(mSphinx));
+        int hour = checkin.get(Calendar.HOUR_OF_DAY);
+        if (hour >= 0 && hour <= 4) {
+            checkin.add(Calendar.DAY_OF_YEAR, -1);
+        }
         checkout = (Calendar) checkin.clone();
         checkout.add(Calendar.DAY_OF_YEAR, 1);
         refreshDate();
