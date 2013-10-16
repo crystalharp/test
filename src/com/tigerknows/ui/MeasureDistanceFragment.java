@@ -290,10 +290,12 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
         int id = view.getId();
         switch (id) {
         case R.id.right_btn:
+            mActionLog.addAction(mActionTag + ActionLog.MeasureDistanceClear);
             clearLine();
         	break;
 
         case R.id.right2_btn:
+            mActionLog.addAction(mActionTag + ActionLog.MeasureDistanceRevocation);
             removeLastPoint();
             break;
             
