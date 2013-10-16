@@ -474,47 +474,49 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
     }
     
     public static void refreshFilterButton(ViewGroup filterViewGroup, List<Filter> filterList, Context context, View.OnClickListener onClickListener, byte key) {
-        if (filterList.isEmpty()) {
-            filterViewGroup.setVisibility(View.GONE);
-            return;
-        }
-        filterViewGroup.setVisibility(View.VISIBLE);
-        
-        Button button;
-        int count = filterViewGroup.getChildCount();
-        int size = filterList.size();
-        
-        for(int i = size; i < count; i++) {
-            button = (Button) filterViewGroup.getChildAt(i);
-            button.setVisibility(View.GONE);
-        }
-        
-        for(int i = 0; i < size; i++) {
-            Filter filter = filterList.get(i);
-            if (i < count) {
+        synchronized (filterViewGroup) {
+            if (filterList.isEmpty()) {
+                filterViewGroup.setVisibility(View.GONE);
+                return;
+            }
+            filterViewGroup.setVisibility(View.VISIBLE);
+            
+            Button button;
+            int count = filterViewGroup.getChildCount();
+            int size = filterList.size();
+            
+            for(int i = size; i < count; i++) {
                 button = (Button) filterViewGroup.getChildAt(i);
-                button.setVisibility(View.VISIBLE);
-            } else {
-                button = makeFitlerButton(context);
-                filterViewGroup.addView(button);
+                button.setVisibility(View.GONE);
             }
-            if (i == size -1) {
-                if (filter.getKey() == key) {
-                    button.setBackgroundResource(R.drawable.btn_filter2_focused);
+            
+            for(int i = 0; i < size; i++) {
+                Filter filter = filterList.get(i);
+                if (i < count) {
+                    button = (Button) filterViewGroup.getChildAt(i);
+                    button.setVisibility(View.VISIBLE);
                 } else {
-                    button.setBackgroundResource(R.drawable.btn_filter2);
+                    button = makeFitlerButton(context);
+                    filterViewGroup.addView(button);
                 }
-            } else {
-                if (filter.getKey() == key) {
-                    button.setBackgroundResource(R.drawable.btn_filter1_focused);
+                if (i == size -1) {
+                    if (filter.getKey() == key) {
+                        button.setBackgroundResource(R.drawable.btn_filter2_focused);
+                    } else {
+                        button.setBackgroundResource(R.drawable.btn_filter2);
+                    }
                 } else {
-                    button.setBackgroundResource(R.drawable.btn_filter1);
+                    if (filter.getKey() == key) {
+                        button.setBackgroundResource(R.drawable.btn_filter1_focused);
+                    } else {
+                        button.setBackgroundResource(R.drawable.btn_filter1);
+                    }
                 }
+                button.setPadding(0, Util.dip2px(Globals.g_metrics.density, 12), 0, Util.dip2px(Globals.g_metrics.density, 12));
+                button.setTag(filter.getKey());
+                button.setText(FilterListView.getFilterTitle(context, filter));
+                button.setOnClickListener(onClickListener);            
             }
-            button.setPadding(0, Util.dip2px(Globals.g_metrics.density, 12), 0, Util.dip2px(Globals.g_metrics.density, 12));
-            button.setTag(filter.getKey());
-            button.setText(FilterListView.getFilterTitle(context, filter));
-            button.setOnClickListener(onClickListener);            
         }
     }
 
