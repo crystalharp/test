@@ -1922,7 +1922,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 	        Globals.setCurrentCityInfo(cityInfo);
 	        Globals.setHotelCityInfo(null);
 	        
-	        mMapView.centerOnPosition(cityInfo.getPosition(), cityInfo.getLevel(), false);
+	        mMapView.centerOnPosition(cityInfo.getPosition(), cityInfo.getLevel(), true);
     	}
     }
     
