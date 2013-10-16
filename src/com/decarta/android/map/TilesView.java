@@ -2904,10 +2904,6 @@ public class TilesView extends GLSurfaceView {
 		 * the main method to draw all the map elements
 		 */
 		public void onDrawFrame(GL10 gl) {
-			if (paused || stopRefreshMyLocation) {
-				LogWrapper.i("Sequence", "onDrawFrame paused");
-				return;
-			}
 //			LogWrapper.i("Sequence", "onDrawFrame begin");
 			if (centerXY == null) {
 				return;
@@ -2978,6 +2974,11 @@ public class TilesView extends GLSurfaceView {
 					float bgg = ((CONFIG.BACKGROUND_COLOR_OPENGL & 0x0000ff00) >> 8) / 255.0f;
 					float bgb = (CONFIG.BACKGROUND_COLOR_OPENGL & 0x000000ff) / 255.0f;
 					gl.glClearColor(bgr, bgg, bgb, 1);
+					
+					if (paused || stopRefreshMyLocation) {
+		                LogWrapper.i("Sequence", "onDrawFrame paused");
+					    return;
+					}
 
 					gl.glEnable(GL_TEXTURE_2D);
 					gl.glEnableClientState(GL_TEXTURE_COORD_ARRAY);
