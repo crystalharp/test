@@ -316,6 +316,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     public void onClick(final View view) {
         switch (view.getId()) {
             case R.id.service_hotline_view:
+            	mActionLog.addAction(mActionTag + ActionLog.HotelOrderListServiceTel);
                 Utility.telephone(mSphinx, mServiceHotlineTxv);
                 break;
                 

@@ -381,6 +381,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
             	break;
             	
             case R.id.service_hotline_view:
+            	mActionLog.addAction(mActionTag + ActionLog.HotelOrderDetailServiceTel);
                 Utility.telephone(mSphinx, mServiceHotlineTxv);
                 break;
             	
