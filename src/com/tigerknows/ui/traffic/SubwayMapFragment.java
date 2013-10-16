@@ -210,6 +210,7 @@ public class SubwayMapFragment extends BaseFragment implements RetryView.CallBac
         needRefresh = true;
         mWebWbv.stopLoading();
         mWebWbv.clearView();
+        mWebWbv.clearCache(true);
         mTitle = mSphinx.getString(R.string.subway_map);
         mCityInfo = cityinfo;
         CityInfo locateCityInfo = Globals.g_My_Location_City_Info;
