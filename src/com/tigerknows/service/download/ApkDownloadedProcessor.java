@@ -59,7 +59,7 @@ public class ApkDownloadedProcessor implements DownloadedProcessor {
         remoteViews.setImageViewResource(R.id.icon_imv, R.drawable.ic_notification_complete);
         remoteViews.setTextViewText(R.id.name_txv, tickerText);
         remoteViews.setTextViewText(R.id.process_txv, context.getString(R.string.download_complete_and_install));
-        remoteViews.setProgressBar(R.id.process_prb, 100, 100, false);
+        remoteViews.setProgressBar(R.id.progress_prb, 100, 100, false);
         notification.contentView = remoteViews;
 
         PendingIntent pausePendingIntent = PendingIntent.getActivity(context, id, intent, 0);

@@ -248,7 +248,7 @@ public class DownloadService extends IntentService {
         remoteViews.setImageViewResource(R.id.icon_imv, R.drawable.ic_notification_downloading);
         remoteViews.setTextViewText(R.id.name_txv, tickerText);
         remoteViews.setTextViewText(R.id.process_txv, getString(R.string.downloaded_percent, percent));
-        remoteViews.setProgressBar(R.id.process_prb, 100, percent, false);
+        remoteViews.setProgressBar(R.id.progress_prb, 100, percent, false);
         notification.contentView = remoteViews;
         
         // 取消此下载项可能存在的通知
@@ -345,7 +345,7 @@ public class DownloadService extends IntentService {
             return;
         }
         downloadItem.remoteViews.setTextViewText(R.id.process_txv, getString(R.string.downloaded_percent, percent));
-        downloadItem.remoteViews.setProgressBar(R.id.process_prb, 100, percent, false);
+        downloadItem.remoteViews.setProgressBar(R.id.progress_prb, 100, percent, false);
         downloadItem.notification.contentView = downloadItem.remoteViews;
         nm.notify(downloadItem.url.hashCode(), downloadItem.notification);
     }
@@ -385,7 +385,7 @@ public class DownloadService extends IntentService {
         remoteViews.setImageViewResource(R.id.icon_imv, R.drawable.ic_notification_pause);
         remoteViews.setTextViewText(R.id.name_txv, downloadItem.tickerText);
         remoteViews.setTextViewText(R.id.process_txv, getString(R.string.paused));
-        remoteViews.setProgressBar(R.id.process_prb, 100, downloadItem.percent, false);
+        remoteViews.setProgressBar(R.id.progress_prb, 100, downloadItem.percent, false);
         notification.contentView = remoteViews;
         
         // 取消正在下载的通知

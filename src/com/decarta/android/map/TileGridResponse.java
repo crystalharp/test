@@ -18,8 +18,7 @@ public class TileGridResponse {
 	private Position tileGridCenterPosition;
 	private XYFloat fixedGridPixelOffset=new XYFloat(0f,0f);
 	private String seedTileURL=null;
-
-    public XYZ centerXYZTK=null;
+	
 	public XYZ centerXYZ=null;
 	public XYDouble centerXY=null;
 	
