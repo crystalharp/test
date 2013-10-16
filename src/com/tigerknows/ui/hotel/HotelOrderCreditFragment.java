@@ -346,8 +346,10 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         }
         mGetBankPosition = -1;
         mCertTypeList = new ArrayList<String>(Arrays.asList(getResources().getStringArray(R.array.cert_type)));
-        mCreditCertTypeBtn.setText(mCertTypeList.get(0));
-        mGetCreditCertPosition = 0;
+        if(TextUtils.equals(mCreditCertTypeBtn.getText().toString(), mSphinx.getString(R.string.credit_cert_code))){
+        	mCreditCertTypeBtn.setText(mCertTypeList.get(0));
+        	mGetCreditCertPosition = 0;
+        }
         mCreditAssurePriceTxv.setText(mSphinx.getString(R.string.credit_assure_price, (assureType == 2 ) ? mSumPrice : oneNightPrice));
         Calendar cancelDeadline = Calendar.getInstance();
         try {
