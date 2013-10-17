@@ -35,6 +35,7 @@ import com.decarta.android.map.Compass;
 import com.decarta.android.map.Icon;
 import com.decarta.android.map.InfoWindow;
 import com.decarta.android.map.ItemizedOverlay;
+import com.decarta.android.map.OverlayItem;
 import com.decarta.android.map.Shape;
 import com.decarta.android.map.TilesView;
 import com.decarta.android.map.Compass.PlaceLocation;
@@ -1202,6 +1203,7 @@ public class MapView extends RelativeLayout implements
         mapScene.zoomLevel = (int) getZoomLevel();
         mapScene.itemizedOverlay = getCurrentOverlay();
         mapScene.shape = getCurrentShape();
+        mapScene.overlayItem = tilesView.getInfoWindow().getAssociatedOverlayItem();
         return mapScene;
     }
     
@@ -1225,6 +1227,7 @@ public class MapView extends RelativeLayout implements
             if (mapScene.position != null) {
                 centerOnPosition(mapScene.position, mapScene.zoomLevel);
             }
+            sphinx.showInfoWindow(mapScene.overlayItem);
         } catch (APIException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -1236,6 +1239,7 @@ public class MapView extends RelativeLayout implements
         public int zoomLevel;
         public ItemizedOverlay itemizedOverlay;
         public Shape shape;
+        public OverlayItem overlayItem;
     }
     
     public boolean ensureThreadRunning() {

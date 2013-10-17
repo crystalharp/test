@@ -274,7 +274,7 @@ public class TrafficQueryFragment extends BaseFragment {
     		 * 此时交通输入页已经从栈中清除, 也由于地图中心点变化通知延时性,
     		 * 此处主动更新当前城市文本
     		 */
-    		CityInfo currentCity = mSphinx.getMapEngine().getCityInfo(mSphinx.getMapView().getCenterCityId());
+    		CityInfo currentCity = MapEngine.getCityInfo(mSphinx.getMapView().getCenterCityId());
         	if (currentCity != null) {
         		setCurrentCity(currentCity.getCName());
         	}
@@ -401,6 +401,10 @@ public class TrafficQueryFragment extends BaseFragment {
 		mStateHelper.applyInnateProperty(mStateTransitionTable.getCurrentState());
 		checkQueryState();
 //		mStateTransitionTable.clearTransitionStack();
+	}
+	
+	public boolean isSelectPointState() {
+	    return TrafficViewSTT.State.SelectPoint.equals(mStateTransitionTable.getCurrentState());
 	}
 	
 	public void postTask(Runnable r) {
@@ -705,7 +709,7 @@ public class TrafficQueryFragment extends BaseFragment {
     }
 	
 	public static String getMyLocationName(Sphinx mSphinx, Position position) {
-		String mLocationName = mSphinx.getMapEngine().getPositionName(position);
+		String mLocationName = MapEngine.getPositionName(position);
 		return mLocationName;
 	}
 	
@@ -810,8 +814,7 @@ public class TrafficQueryFragment extends BaseFragment {
             return;
 
         if (poi.getPosition() != null) {
-            MapEngine mapEngine = MapEngine.getInstance();
-            mMapLocationHelper.mTargetCityInfo = mapEngine.getCityInfo(mapEngine.getCityId(poi.getPosition()));
+            mMapLocationHelper.mTargetCityInfo = MapEngine.getCityInfo(MapEngine.getCityId(poi.getPosition()));
         }
         
         changeToMode(TRAFFIC_MODE);
@@ -1095,8 +1098,8 @@ public class TrafficQueryFragment extends BaseFragment {
             
             boolean isSameCity = true;
             if (Util.inChina(start) && Util.inChina(end)) {
-                int cityId = mSphinx.getMapEngine().getCityId(start);
-                isSameCity &= (cityId == mSphinx.getMapEngine().getCityId(end));
+                int cityId = MapEngine.getCityId(start);
+                isSameCity &= (cityId == MapEngine.getCityId(end));
             }
             if (!isSameCity) {
                 if (trafficQuery.getQueryType() == TrafficQuery.QUERY_TYPE_TRANSFER) {

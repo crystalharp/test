@@ -29,13 +29,21 @@
               android:text="@string/app_name"
               android:textSize="18sp"
               android:textStyle="bold"/>
-          <ProgressBar 
-              android:id="@+id/process_prb"
-              android:layout_width="fill_parent"
-              android:layout_height="12dip"
+	    
+	      <ProgressBar android:id="@+id/progress_prb"
+	          android:layout_width="fill_parent"
+	          android:layout_height="4dp"
+	          android:layout_below="@id/text_txv"
+	          android:layout_alignParentBottom="true"
+	          android:layout_marginBottom="4dp"
               android:progress="0"
-              android:max="100"
-              style="?android:attr/progressBarStyleHorizontal" />
+	          android:max="100"
+	          android:indeterminateOnly="false"
+	          android:progressDrawable="@drawable/progress_horizontal"
+	          android:indeterminateDrawable="@drawable/progress_indeterminate_horizontal"
+	          android:minHeight="10dp"
+	          android:maxHeight="10dp"
+	          />
           <TextView 
               android:id="@+id/process_txv"
               android:layout_width="wrap_content"

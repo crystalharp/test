@@ -2,18 +2,18 @@ package com.tigerknows.ui.traffic;
 
 import java.io.File;
 
-import android.content.res.AssetManager;
 import android.graphics.Bitmap;
-import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebSettings;
 import android.webkit.WebSettings.ZoomDensity;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,18 +27,13 @@ import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.MapEngine;
 import com.tigerknows.map.MapEngine.CityInfo;
-import com.tigerknows.model.BaseQuery;
-import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.FileDownload;
-import com.tigerknows.model.LocationQuery;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.Response;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
-import com.tigerknows.util.Utility;
 import com.tigerknows.widget.QueryingView;
 import com.tigerknows.widget.RetryView;
-import com.tigerknows.widget.RetryView.CallBack;
 
 public class SubwayMapFragment extends BaseFragment implements RetryView.CallBack {
 
@@ -54,6 +49,7 @@ public class SubwayMapFragment extends BaseFragment implements RetryView.CallBac
     RetryView mRetryView;
     QueryingView mQueryingView;
     View mEmptyView;
+    ImageView mEmptyImg;
     TextView mEmptyTxv;
     
     static final String TAG = "SubwayMapFragment";
@@ -77,6 +73,7 @@ public class SubwayMapFragment extends BaseFragment implements RetryView.CallBac
         findViews();
         setListener();
         
+        mWebWbv.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
         return mRootView;
 
     }
@@ -121,10 +118,12 @@ public class SubwayMapFragment extends BaseFragment implements RetryView.CallBac
         mQueryingView = (QueryingView)mRootView.findViewById(R.id.querying_view);
         mEmptyView = mRootView.findViewById(R.id.empty_view);
         mEmptyTxv = (TextView) mEmptyView.findViewById(R.id.empty_txv);
+        mEmptyImg = (ImageView) mEmptyView.findViewById(R.id.icon_imv);
         mEmptyTxv.setText(mSphinx.getString(R.string.no_subway_map));
         
         mQueryingView.setText(R.string.loading_subway_map);
         mRetryView.setCallBack(this, mActionTag);
+        mEmptyImg.setBackgroundResource(R.drawable.bg_no_subway);
     }
     
     private void showSubwayMap(String url) {

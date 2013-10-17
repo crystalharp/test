@@ -166,6 +166,7 @@ public class TrafficQueryStateHelper {
             mQueryFragment.hideCommonTitle();
             mQueryFragment.mTitle.setVisibility(View.VISIBLE);
             mQueryFragment.mMapLocationHelper.checkMapCenterInCity();
+            mQueryFragment.mSphinx.getMoreBtn().setVisibility(View.VISIBLE);
         }
 
         @Override
@@ -175,6 +176,7 @@ public class TrafficQueryStateHelper {
             mQueryFragment.mRightBtn.setVisibility(View.GONE);
             mQueryFragment.mTitleBtn.setText(R.string.title_click_map);
             mQueryFragment.mTitle.setVisibility(View.GONE);
+            mQueryFragment.mSphinx.getMoreBtn().setVisibility(View.INVISIBLE);
             
             applyInnateProperty(TrafficViewSTT.State.SelectPoint);
         }

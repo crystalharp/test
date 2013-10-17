@@ -242,9 +242,7 @@ public class BaseFragment extends LinearLayout {
     public void onPause() {
         LogWrapper.d(TAG, "onPause()"+mActionTag);
         int id = getId();
-        if (id != R.id.view_invalid
-                && id != R.id.view_title
-                && id != R.id.view_menu) {
+        if (id != R.id.view_invalid) {
             dismissPopupWindow();
             mSphinx.hideSoftInput();
             if (!TextUtils.isEmpty(mActionTag)) {
@@ -260,9 +258,7 @@ public class BaseFragment extends LinearLayout {
     public void onResume() {
         LogWrapper.d(TAG, "onResume()"+mActionTag);
         int id = getId();
-        if (id != R.id.view_invalid
-                && id != R.id.view_title
-                && id != R.id.view_menu) { 
+        if (id != R.id.view_invalid) { 
             if (!TextUtils.isEmpty(mActionTag)) {
                 mActionLog.addAction(mActionTag);
             }
@@ -271,11 +267,11 @@ public class BaseFragment extends LinearLayout {
             mTitleFragment = mSphinx.getTitleFragment();
             mMenuFragment = mSphinx.getMenuFragment();
 
-            mTitleBtn = mTitleFragment.getTitleTxv();
-            mLeftBtn = mTitleFragment.getLeftTxv();
-            mRightBtn = mTitleFragment.getRightTxv();
-            mRight2Btn = mTitleFragment.getRight2Txv();
-            mSkylineView = mTitleFragment.getSkylineView();
+            mTitleBtn = mTitleFragment.mTitleBtn;
+            mLeftBtn = mTitleFragment.mLeftBtn;
+            mRightBtn = mTitleFragment.mRightBtn;
+            mRight2Btn = mTitleFragment.mRight2Btn;
+            mSkylineView = mTitleFragment.mSkylineView;
 
             mTitleBtn.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
             mTitleBtn.setText(null);

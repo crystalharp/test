@@ -2,11 +2,16 @@ package com.tigerknows.ui.traffic;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -15,11 +20,13 @@ import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.decarta.Globals;
 import com.tigerknows.R;
+import com.tigerknows.TKConfig;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.more.SettingActivity;
@@ -33,8 +40,9 @@ public class TrafficCompassActivity extends BaseActivity implements SensorEventL
 	private ImageView mCompassBgImv;
 	private SensorManager mSensorManager;
 	private Button mGPSBtn;
+	private RelativeLayout mBodyRly;
 	
-	private TextView[] mLocationDetailTxv= new TextView[6];
+	private TextView[] mLocationDetailTxv = new TextView[6];
 	private int[] mLocationDetailID = new int[]{
 		R.string.compass_longitude,
 		R.string.compass_latitude,
@@ -59,6 +67,19 @@ public class TrafficCompassActivity extends BaseActivity implements SensorEventL
         setContentView(R.layout.traffic_compass);
     	findViews();
     	setListener();
+        mRightBtn.setText(R.string.share);
+        mRightBtn.setVisibility(View.VISIBLE);
+        mRightBtn.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				mActionLog.addAction(mActionTag + ActionLog.TrafficCompassShare);
+				Bitmap bm = Utility.viewToBitmap(mBodyRly);
+				Uri uri = Utility.bitmap2Png(bm, "compasssnap.png", TKConfig.getDataPath(true));
+				Utility.share(mThis, getString(R.string.share), null, uri);
+			}
+		});
+        mRightBtn.setBackgroundResource(R.drawable.btn_title);
     	mSensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
     	mLocationListener = new MyLocationListener(mThis, new Runnable(){
 			@Override
@@ -70,6 +91,7 @@ public class TrafficCompassActivity extends BaseActivity implements SensorEventL
     
     protected void findViews(){
     	super.findViews();
+    	mBodyRly = (RelativeLayout)findViewById(R.id.body_rly);
     	mCompassImv = (ImageView)findViewById(R.id.compass_imv);
     	mCompassBgImv = (ImageView)findViewById(R.id.compass_bg_imv);
     	mGPSBtn = (Button)findViewById(R.id.gps_btn);

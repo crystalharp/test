@@ -1230,7 +1230,7 @@ public class TilesView extends GLSurfaceView {
 						if (infoWindow.isVisible()) {
 							infoWindow.setVisible(false);
 						} else if (mParentMapView.getCurrentOverlay() == mParentMapView
-								.getOverlaysByName(ItemizedOverlay.PIN_OVERLAY)) {
+								.getOverlaysByName(ItemizedOverlay.PIN_OVERLAY) && !mParentMapView.getSphinx().getTouchMode().equals(TouchMode.MEASURE_DISTANCE)) {
 							mParentMapView
 									.deleteOverlaysByName(ItemizedOverlay.PIN_OVERLAY);
 						}
@@ -3023,6 +3023,11 @@ public class TilesView extends GLSurfaceView {
 					float bgg = ((CONFIG.BACKGROUND_COLOR_OPENGL & 0x0000ff00) >> 8) / 255.0f;
 					float bgb = (CONFIG.BACKGROUND_COLOR_OPENGL & 0x000000ff) / 255.0f;
 					gl.glClearColor(bgr, bgg, bgb, 1);
+					
+					if (paused || stopRefreshMyLocation) {
+		                LogWrapper.i("Sequence", "onDrawFrame paused");
+					    return;
+					}
 
 					gl.glEnable(GL_TEXTURE_2D);
 					gl.glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -3762,7 +3767,7 @@ public class TilesView extends GLSurfaceView {
 							|| isLabelFading || fading || movingL || rotatingX
 							|| rotatingZ) {
 						requestRender();
-					} else if (isCancelSnap == false && snapCenterPos != null) {
+					} else if (requestTiles.size() == 0 && isCancelSnap == false && snapCenterPos != null) {
 						XYFloat xy = mercXYToScreenXYConv(Util.posToMercPix(
 								snapCenterPos, getZoomLevel()), getZoomLevel());
 						// 确保快照地图时，地图已经移动到指定的中心位置，误差为32像素?

@@ -187,7 +187,6 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
             Bundle savedInstanceState) {
         
         mRootView = mLayoutInflater.inflate(R.layout.more_home, container, false);
-    	mRightBtn = mSphinx.getTitleFragment().getRightTxv();
         findViews();
 
         setListener();
@@ -248,7 +247,6 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     }
     
     protected void setListener() {
-    	mRightBtn.setOnClickListener(this);
         mUserBtn.setOnClickListener(this);
         mMyOrderBtn.setOnClickListener(this);
         mChangeCityBtn.setOnClickListener(this);
@@ -298,7 +296,6 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         mMenuFragment.updateMenuStatus(R.id.more_btn);
         mLeftBtn.setVisibility(View.INVISIBLE);
         mTitleBtn.setText(R.string.more);
-        mRightBtn = mSphinx.getTitleFragment().getRightTxv();
         mRightBtn.setOnClickListener(this);
         mRightBtn.setVisibility(View.VISIBLE);
         mRightBtn.setEnabled(true);

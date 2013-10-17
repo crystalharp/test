@@ -13,6 +13,6 @@ import android.content.Context;
  */
 public interface DownloadedProcessor {
 	// 处理用DownloadService下载的文件
-	public void process(Context context, File file, String ticket);
+	public void process(Context context, File file, String url, String ticket);
 	
 }

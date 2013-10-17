@@ -475,7 +475,7 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
         }
         mResultAdapter.setHighlight(highlightIndex);
         mResultAdapter.notifyDataSetChanged();
-        if (highlightIndex > 1) {
+        if (highlightIndex >= 1) {
             highlightIndex--;
         }
         setSelectionFromTop(highlightIndex, 0);

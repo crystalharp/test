@@ -175,7 +175,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
         v.setBackgroundResource(R.drawable.list_selector_background_gray_dark);
         v.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
         int h = v.getMeasuredHeight();
-        mPickTimeView.findViewById(R.id.body_view).getLayoutParams().height = h*5+(int)(Globals.g_metrics.density*8);
+        mPickTimeView.findViewById(R.id.body_view).getLayoutParams().height = h*5;
         mStartTimeListView = (TimeListView) mPickTimeView.findViewById(R.id.start_tlv);
         mEndTimeListView = (TimeListView) mPickTimeView.findViewById(R.id.end_tlv);
         mTimeConfirmBtn = (Button) mPickTimeView.findViewById(R.id.time_confirm_btn);

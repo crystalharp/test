@@ -1922,7 +1922,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 	        Globals.setCurrentCityInfo(cityInfo);
 	        Globals.setHotelCityInfo(null);
 	        
-	        mMapView.centerOnPosition(cityInfo.getPosition(), cityInfo.getLevel(), false);
+	        mMapView.centerOnPosition(cityInfo.getPosition(), cityInfo.getLevel(), true);
     	}
     }
     
@@ -2248,7 +2248,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         }
         
         if (touchMode.equals(TouchMode.MEASURE_DISTANCE)) {
-            if (!(overlayItem.getAssociatedObject().equals(TouchMode.MEASURE_DISTANCE))) {
+            if (!(TouchMode.MEASURE_DISTANCE.equals(overlayItem.getAssociatedObject()))) {
                 return;
             }
         }
@@ -2648,7 +2648,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         setTouchMode(TouchMode.NORMAL);
     }
     
-    private void hideInfoWindow(String overlayName) {
+    public void hideInfoWindow(String overlayName) {
         OverlayItem overlayItem = mMapView.getInfoWindow().getAssociatedOverlayItem();
         if (mMapView.getInfoWindow().isVisible() && 
                 overlayItem != null && 
@@ -2713,7 +2713,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         if (!(size == 1 &&
                 (viewId == R.id.view_poi_home ||
                  viewId == R.id.view_discover_home ||
-                 viewId == R.id.view_traffic_home ||
+                 (viewId == R.id.view_traffic_home && getTrafficQueryFragment().isSelectPointState() == false) ||
                  viewId == R.id.view_more_home))) {
             return false;
         }

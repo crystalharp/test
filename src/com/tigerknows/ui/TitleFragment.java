@@ -19,31 +19,18 @@ import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.PopupWindow;
-import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.PopupWindow.OnDismissListener;
 
 /**
  * @author Peng Wenyue
  */
-public class TitleFragment extends BaseFragment implements View.OnClickListener {
+public class TitleFragment extends BaseFragment {
     
     public TitleFragment(Sphinx sphinx) {
         super(sphinx);
         // TODO Auto-generated constructor stub
     }
-
-    protected Button titleBtn;
-    
-    protected Button leftBtn;
-    
-    protected Button rightBtn;
-    
-    protected Button right2Btn;
-    
-    protected View skylineView;
-    
-    protected ListView popupLsv;
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -57,55 +44,23 @@ public class TitleFragment extends BaseFragment implements View.OnClickListener 
     }
     
     protected void findViews() {
-        titleBtn = (Button) mRootView.findViewById(R.id.title_btn);
-        leftBtn = (Button) mRootView.findViewById(R.id.left_btn);
-        rightBtn = (Button) mRootView.findViewById(R.id.right_btn);
-        right2Btn = (Button) mRootView.findViewById(R.id.right2_btn);
-        skylineView = mRootView.findViewById(R.id.skyline_view);
+        mTitleBtn = (Button) mRootView.findViewById(R.id.title_btn);
+        mLeftBtn = (Button) mRootView.findViewById(R.id.left_btn);
+        mRightBtn = (Button) mRootView.findViewById(R.id.right_btn);
+        mRight2Btn = (Button) mRootView.findViewById(R.id.right2_btn);
+        mSkylineView = mRootView.findViewById(R.id.skyline_view);
     }
 
     protected void setListener() {
-        leftBtn.setOnClickListener(this);
-    }
-    
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.left_btn:
-                // 关闭顶部的Fragment，显示第二个Fragment
-                break;
-
-            default:
-                break;
-        }
-    }
-
-    public TextView getTitleTxv() {
-        return titleBtn;
-    }
-
-    public Button getLeftTxv() {
-        return leftBtn;
-    }
-
-    public Button getRightTxv() {
-        return rightBtn;
-    }
-
-    public Button getRight2Txv() {
-        return right2Btn;
-    }
-
-    public View getSkylineView() {
-        return skylineView;
     }
     
     public void showPopupWindow(ListAdapter adapter, OnItemClickListener listener, String actionTag) {
     	this.mActionTag = actionTag;
         mActionLog.addAction(this.mActionTag + ActionLog.PopupWindowTitle);
+        ListView listView = null;
         if (mPopupWindow == null) {
             View view  = mLayoutInflater.inflate(R.layout.title_popup_list, this, false);
-            popupLsv = (ListView) view.findViewById(R.id.listview);
+            listView = (ListView) view.findViewById(R.id.listview);
             //在padding区域点击关掉窗口
             View titlePopupView = view.findViewById(R.id.title_popup_view);
             titlePopupView.setOnTouchListener(new View.OnTouchListener() {
@@ -135,8 +90,8 @@ public class TitleFragment extends BaseFragment implements View.OnClickListener 
                 }
             });
         }
-        popupLsv.setOnItemClickListener(listener);
-        popupLsv.setAdapter(adapter);
+        listView.setOnItemClickListener(listener);
+        listView.setAdapter(adapter);
         
         mPopupWindow.showAsDropDown(this, 0, 0);
     }
@@ -145,5 +100,13 @@ public class TitleFragment extends BaseFragment implements View.OnClickListener 
         if (mPopupWindow != null && mPopupWindow.isShowing()) {
             mPopupWindow.dismiss();
         }
+    }
+    
+    @Override
+    public void onResume() {
+    }
+    
+    @Override
+    public void onPause() {
     }
 }
