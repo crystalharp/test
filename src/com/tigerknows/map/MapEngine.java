@@ -891,8 +891,8 @@ public class MapEngine {
 //                    return false;
 //                } else if((null != this.eProvinceName && !this.eProvinceName.equals(other.eProvinceName)) || (null == this.eProvinceName && this.eProvinceName != other.eProvinceName)) {
 //                    return false;
-//                } else if (this.type != other.type) {
-//                    return false;
+                } else if (this.type != other.type) {
+                    return false;
 //                } else if((null != this.position && !this.position.equals(other.position)) || (null == this.position && this.position != other.position)) {
 //                    return false;
 //                } else if (this.level != other.level) {
@@ -1056,7 +1056,7 @@ public class MapEngine {
     }
 
     /**
-     * 检查城市地铁数据文件的是否完整
+     * 获取地铁图数据文件路径，数据不可用则返回null
      * @param cityId
      * @return
      */
@@ -1068,9 +1068,7 @@ public class MapEngine {
             return result;
         }
         
-        long size = calcSubwayDataSize(cityId);
-        String recordSize = TKConfig.getPref(context, TKConfig.getSubwayMapSizePrefs(cityId), null);
-        if (size != 0 && String.valueOf(size).equals(recordSize)) {
+        if (checkSubwayMapValidity(context, cityId)) {
             String path = getSubwayMapPath(cityId);
             result = path + "index.html";
         }
@@ -1079,7 +1077,8 @@ public class MapEngine {
     }
     
     /**
-     * 获取某城市地铁图的路径,只做字符串拼接用途.使用时请检查目录内是否有文件.
+     * 获取某城市地铁图的路径.
+     * 只做字符串拼接用途,使用时请检查目录内是否有文件.
      * @param cityId
      * @return
      */
@@ -1093,6 +1092,7 @@ public class MapEngine {
     
     /**
      * 获取某城市地铁数据的大小
+     * 无数据返回0
      * @param cityId
      * @return
      */
@@ -1113,6 +1113,18 @@ public class MapEngine {
         }
         
         return size;
+    }
+    
+    /**
+     * 检测地铁图数据的完整性
+     */
+    public static boolean checkSubwayMapValidity(Context context, int cityId) {
+        long size = calcSubwayDataSize(cityId);
+        String recordSize = TKConfig.getPref(context, TKConfig.getSubwayMapSizePrefs(cityId), null);
+        if (size != 0 && String.valueOf(size).equals(recordSize)) {
+            return true;
+        }
+        return false;
     }
     
     public static boolean hasMunicipality(int cityId) {

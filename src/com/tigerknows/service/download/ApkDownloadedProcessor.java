@@ -33,7 +33,7 @@ public class ApkDownloadedProcessor implements DownloadedProcessor {
     }
 
 	@Override
-	public void process(Context context, File file, String tickerText) {
+	public void process(Context context, File file, String url, String tickerText) {
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setAction(android.content.Intent.ACTION_VIEW);
         intent.setDataAndType(Uri.fromFile(file), "application/vnd.android.package-archive");
@@ -59,13 +59,14 @@ public class ApkDownloadedProcessor implements DownloadedProcessor {
         remoteViews.setImageViewResource(R.id.icon_imv, R.drawable.ic_notification_complete);
         remoteViews.setTextViewText(R.id.name_txv, tickerText);
         remoteViews.setTextViewText(R.id.process_txv, context.getString(R.string.download_complete_and_install));
-        remoteViews.setProgressBar(R.id.process_prb, 100, 100, false);
+        remoteViews.setProgressBar(R.id.progress_prb, 100, 100, false);
         notification.contentView = remoteViews;
 
         PendingIntent pausePendingIntent = PendingIntent.getActivity(context, id, intent, 0);
         notification.contentIntent = pausePendingIntent;
         
         // 取消此下载项可能存在的通知
+        nm.cancel(url.hashCode());
         nm.cancel(id);
 
         // 将下载任务添加到任务栏中

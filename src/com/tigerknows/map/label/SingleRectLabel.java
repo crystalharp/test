@@ -236,7 +236,7 @@ public class SingleRectLabel extends Label {
     private void draw(float x, float y, float rot, float scale, int width, int height, Texture iconTexture, Texture textTexture,
     		ByteBuffer TEXTURE_COORDS, FloatBuffer vertexBuffer) {
     	GLES10.glPushMatrix();
-    	GLES10.glTranslatef(x, y, 0);
+    	GLES10.glTranslatef(Math.round(x), Math.round(y), 0);
     	if (scale != 1) {
     		GLES10.glScalef(1/scale, 1/scale, 1);
     	}
@@ -335,7 +335,7 @@ public class SingleRectLabel extends Label {
     	grid.addRect(rect);
     	Texture iconTexture = getIconTexture(mapWordIconPool);
     	GLES10.glPushMatrix();
-    	GLES10.glTranslatef(x, y, 0);
+    	GLES10.glTranslatef(Math.round(x), Math.round(y), 0);
     	if (scale != 1) {
     		GLES10.glScalef(1/scale, 1/scale, 1);
     	}

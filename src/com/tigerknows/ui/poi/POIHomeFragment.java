@@ -123,6 +123,7 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
     private int mCategoryTop;
     private int mMyLocationViewHeight;
     private int mCategoryPadding = 0;
+    private int mCityId = MapEngine.CITY_ID_INVALID;
 
     private View mSubwayMapView;
     private Button mSubwayMapBtn;
@@ -467,6 +468,16 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
         }
         mSphinx.showHomeDragHint();
 
+        int cityId = Globals.getCurrentCityInfo().getId();
+        if (mCityId != cityId) {
+            mCityId = cityId;
+            if (MapEngine.checkSupportSubway(Globals.getCurrentCityInfo().getId())) {
+                mHighLightedSubs[TRAFFIC_INDEX] = mSphinx.getString(R.string.traffic_highLight_subwaymap);
+            } else {
+                mHighLightedSubs[TRAFFIC_INDEX] = mSphinx.getString(R.string.traffic_highLight_normal);
+            }
+            mCategoryAdapter.notifyDataSetChanged();
+        }
         refreshSubCategoryListView();
 		mDragView.setVisibility(View.INVISIBLE);
 		mIsSubCategoryExpanded = false;

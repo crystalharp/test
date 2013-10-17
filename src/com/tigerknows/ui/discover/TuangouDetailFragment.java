@@ -11,15 +11,17 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
 
 import com.decarta.Globals;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.common.ActionLog;
+import com.tigerknows.map.MapEngine;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataOperation;
+import com.tigerknows.model.DataQuery;
+import com.tigerknows.model.FeedbackUpload;
 import com.tigerknows.model.Fendian;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.Tuangou;
@@ -186,6 +188,14 @@ public class TuangouDetailFragment extends BaseDetailFragment
     public void refreshViews(int position) {
         super.refreshViews(position);
         TuangouDetailView view;
+        
+        FeedbackUpload.logEnterPOIDetailUI(mSphinx,
+            DataQuery.DATA_TYPE_TUANGOU,
+            null,
+            mActionTag,
+            position,
+            mDataList.get(position).getUid(),
+            MapEngine.getCityId(mDataList.get(position).getFendian().getPosition()));
 
         view = (TuangouDetailView) mCyclePagerAdapter.viewList.get((position) % mCyclePagerAdapter.viewList.size());
         view.setData(mDataList.get(position), position);

@@ -75,9 +75,11 @@ public class ExtraSubwayPOI extends DynamicPOIView {
             
             String timeDetail = "";
             for (PresetTime ptime : time.getPresetTimes()) {
-                timeDetail += ptime.getDirection();
-                timeDetail += "  ";
-                if (ptime.getStartTime() != null || ptime.getEndTime() != null) {
+                if (!TextUtils.isEmpty(ptime.getDirection())) {
+                    timeDetail += ptime.getDirection();
+                    timeDetail += "  ";
+                }
+                if (!TextUtils.isEmpty(ptime.getStartTime()) && !TextUtils.isEmpty(ptime.getEndTime())) {
                     timeDetail += ptime.getStartTime();
                     timeDetail += "-";
                     timeDetail += ptime.getEndTime();

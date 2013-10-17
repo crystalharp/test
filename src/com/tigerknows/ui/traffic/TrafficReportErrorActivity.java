@@ -66,7 +66,7 @@ public class TrafficReportErrorActivity extends BaseActivity {
 		setListener();
 		
 		mRightBtn.setBackgroundResource(R.drawable.btn_submit_comment);
-        mTitleBtn.setText(getString(R.string.error_recovery));
+        mTitleBtn.setText(getString(R.string.erreport_title));
 		
 		synchronized (sTargetList) {
             int size = sTargetList.size();

@@ -210,7 +210,7 @@ public class DownloadService extends IntentService {
             if(tempFile != null) {
                 DownloadedProcessor processor = processorMap.get(url);
                 if(processor != null) {
-                    processor.process(this, tempFile, tickerText);
+                    processor.process(this, tempFile, url, tickerText);
                 }
             }
         }
@@ -248,10 +248,11 @@ public class DownloadService extends IntentService {
         remoteViews.setImageViewResource(R.id.icon_imv, R.drawable.ic_notification_downloading);
         remoteViews.setTextViewText(R.id.name_txv, tickerText);
         remoteViews.setTextViewText(R.id.process_txv, getString(R.string.downloaded_percent, percent));
-        remoteViews.setProgressBar(R.id.process_prb, 100, percent, false);
+        remoteViews.setProgressBar(R.id.progress_prb, 100, percent, false);
         notification.contentView = remoteViews;
         
         // 取消此下载项可能存在的通知
+        nm.cancel(tickerText.hashCode());
         nm.cancel(id);
     
         // 将下载任务添加到任务栏中
@@ -344,7 +345,7 @@ public class DownloadService extends IntentService {
             return;
         }
         downloadItem.remoteViews.setTextViewText(R.id.process_txv, getString(R.string.downloaded_percent, percent));
-        downloadItem.remoteViews.setProgressBar(R.id.process_prb, 100, percent, false);
+        downloadItem.remoteViews.setProgressBar(R.id.progress_prb, 100, percent, false);
         downloadItem.notification.contentView = downloadItem.remoteViews;
         nm.notify(downloadItem.url.hashCode(), downloadItem.notification);
     }
@@ -377,14 +378,14 @@ public class DownloadService extends IntentService {
         } else {
             remoteViews = new RemoteViews(getPackageName(), R.layout.notification_progress);
             remoteViews.setOnClickPendingIntent(R.id.control_btn, pendingIntent);
-            remoteViews.setTextViewText(R.id.control_btn, context.getString(R.string.download));
+            remoteViews.setTextViewText(R.id.control_btn, context.getString(R.string.go_on));
         }
     
         LogWrapper.d(TAG, "notifyPause:"+url);
         remoteViews.setImageViewResource(R.id.icon_imv, R.drawable.ic_notification_pause);
         remoteViews.setTextViewText(R.id.name_txv, downloadItem.tickerText);
         remoteViews.setTextViewText(R.id.process_txv, getString(R.string.paused));
-        remoteViews.setProgressBar(R.id.process_prb, 100, downloadItem.percent, false);
+        remoteViews.setProgressBar(R.id.progress_prb, 100, downloadItem.percent, false);
         notification.contentView = remoteViews;
         
         // 取消正在下载的通知
