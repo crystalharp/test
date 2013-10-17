@@ -237,11 +237,14 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
     }
     
     public void setData() {
-        mVisibilityPreviousNext = mSphinx.getPreviousNextView().getVisibility();
-        mVisibilityLocation = mSphinx.getLocationView().getVisibility();
-        mOtherOverlayItem = mSphinx.getMapView().getInfoWindow().getAssociatedOverlayItem();
-        mLastOverlayItem = null;
-        mTouchMode = mSphinx.getTouchMode();
+        Sphinx.TouchMode touchMode = mSphinx.getTouchMode();
+        if (touchMode != Sphinx.TouchMode.MEASURE_DISTANCE) {
+            mVisibilityPreviousNext = mSphinx.getPreviousNextView().getVisibility();
+            mVisibilityLocation = mSphinx.getLocationView().getVisibility();
+            mOtherOverlayItem = mSphinx.getMapView().getInfoWindow().getAssociatedOverlayItem();
+            mLastOverlayItem = null;
+            mTouchMode = touchMode;
+        }
     }
 
     @Override

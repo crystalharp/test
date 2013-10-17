@@ -1201,8 +1201,12 @@ public class MapView extends RelativeLayout implements
         MapScene mapScene = new MapScene();
         mapScene.position = getCenterPosition();
         mapScene.zoomLevel = (int) getZoomLevel();
-        mapScene.itemizedOverlay = getCurrentOverlay();
-        mapScene.shape = getCurrentShape();
+        List<ItemizedOverlay> itemizedOverlay = new ArrayList<ItemizedOverlay>();
+        itemizedOverlay.addAll(tilesView.getOverlays());
+        mapScene.itemizedOverlay = itemizedOverlay;
+        List<Shape> shape = new ArrayList<Shape>();
+        shape.addAll(tilesView.getShapes());
+        mapScene.shape = shape;
         mapScene.overlayItem = tilesView.getInfoWindow().getAssociatedOverlayItem();
         return mapScene;
     }
@@ -1213,15 +1217,16 @@ public class MapView extends RelativeLayout implements
      */
     public void restoreScene(MapScene mapScene) {
         try {
-            clearMap();
             if (mapScene == null) {
                 return;
             }
+            
+            clearMap();
             if (mapScene.shape != null) {
-                addShape(mapScene.shape);
+                tilesView.getShapes().addAll(mapScene.shape);
             }
             if (mapScene.itemizedOverlay != null) {
-                addOverlay(mapScene.itemizedOverlay);
+                tilesView.getOverlays().addAll(mapScene.itemizedOverlay);
             }
             showOverlay(ItemizedOverlay.MY_LOCATION_OVERLAY, false);
             if (mapScene.position != null) {
@@ -1237,8 +1242,8 @@ public class MapView extends RelativeLayout implements
     public static class MapScene {
         public Position position;
         public int zoomLevel;
-        public ItemizedOverlay itemizedOverlay;
-        public Shape shape;
+        public List<ItemizedOverlay> itemizedOverlay;
+        public List<Shape> shape;
         public OverlayItem overlayItem;
     }
     
