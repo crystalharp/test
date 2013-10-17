@@ -473,8 +473,8 @@ public class TilesView extends GLSurfaceView {
 		}
 
 		MAX_WORD_SIZE = (display.getWidth() * display.getHeight()) / 2048;
-		if (MAX_WORD_SIZE > 768 || MAX_WORD_SIZE <= 0)
-			MAX_WORD_SIZE = 768;
+		if (MAX_WORD_SIZE > 512 || MAX_WORD_SIZE <= 0)
+			MAX_WORD_SIZE = 512;
 		LogWrapper.d("Label", "word count: " + MAX_WORD_SIZE);
 		configureMapLayer();
 		configureTileGrid(display.getWidth(), display.getHeight());

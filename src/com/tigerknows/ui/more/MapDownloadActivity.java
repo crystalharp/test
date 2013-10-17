@@ -743,8 +743,7 @@ public class MapDownloadActivity extends BaseActivity implements View.OnClickLis
             mLoadData = false;
             StringBuilder s = new StringBuilder();
             List<DownloadCity> list = getDownloadCityList();
-            for (int i = 0, size = list.size(); i < size; i++) {
-                DownloadCity downloadCity = list.get(i);
+            for (DownloadCity downloadCity: list) {
                 recordDownloadCity(downloadCity, s);
             }
             TKConfig.setPref(mThis, TKConfig.PREFS_MAP_DOWNLOAD_CITYS, s.toString());

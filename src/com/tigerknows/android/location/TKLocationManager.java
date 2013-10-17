@@ -94,7 +94,6 @@ public class TKLocationManager {
             locationManager.addGpsStatusListener(new GpsStatus.Listener() {
 				@Override
 				public void onGpsStatusChanged(int event) {
-					// TODO Auto-generated method stub
 					if (event == GpsStatus.GPS_EVENT_SATELLITE_STATUS){
 						GpsStatus status = locationManager.getGpsStatus(null);
 						if(status != null){

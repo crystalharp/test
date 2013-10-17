@@ -76,7 +76,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     RoomType mClickedRoomType;
     List<RoomType> mShowingRoomList = new ArrayList<RoomType>();
     List<RoomType> mAllRoomList = new ArrayList<RoomType>();
-    final int SHOW_DYNAMIC_HOTEL_MAX = 3;
+    final int SHOW_DYNAMIC_HOTEL_MAX = 6;
     MoreRoomTypeClickListener moreRoomTypeClickListener;
     roomTypeClickListener mItemClickListener = new roomTypeClickListener();
     
