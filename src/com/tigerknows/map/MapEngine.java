@@ -891,8 +891,8 @@ public class MapEngine {
 //                    return false;
 //                } else if((null != this.eProvinceName && !this.eProvinceName.equals(other.eProvinceName)) || (null == this.eProvinceName && this.eProvinceName != other.eProvinceName)) {
 //                    return false;
-//                } else if (this.type != other.type) {
-//                    return false;
+                } else if (this.type != other.type) {
+                    return false;
 //                } else if((null != this.position && !this.position.equals(other.position)) || (null == this.position && this.position != other.position)) {
 //                    return false;
 //                } else if (this.level != other.level) {
