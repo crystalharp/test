@@ -385,6 +385,12 @@ public class Hotel extends XMapData {
         
         // 0x11 x_string 房型套餐的特殊说明
         public static final byte FIELD_SUBTITLE = 0x11;
+        
+        // 0x12 x_int 第三方商家来源ID
+        public static final byte FIELD_VENDOR_ID = 0x12;
+        
+        // 0x13 x_string 第三方商家来源名字
+        public static final byte FIELD_VENDOR_NAME = 0x13;
 
         // 0x00 x_string 房型id room_id
         private String roomId;
@@ -421,6 +427,12 @@ public class Hotel extends XMapData {
         
         // 0x11 x_string 房型套餐的特殊说明
         private String subtitle;
+        
+        // 0x12 x_int 第三方商家来源ID
+        private long vendorId;
+        
+        // 0x13 x_string 第三方商家来源名字
+        private String vendorName;
 
         public RoomType(XMap data) throws APIException {
             super(data);
@@ -436,6 +448,8 @@ public class Hotel extends XMapData {
             this.canReserve = getLongFromData(FIELD_CAN_RESERVE);
             this.needGuarantee = getLongFromData(FIELD_NEED_GUARANTEE);
             this.subtitle = getStringFromData(FIELD_SUBTITLE);
+            this.vendorId = getLongFromData(FIELD_VENDOR_ID);
+            this.vendorName = getStringFromData(FIELD_VENDOR_NAME);
         }
 
         public String getRoomId() {
@@ -488,6 +502,14 @@ public class Hotel extends XMapData {
         
         public String getSubtitle() {
             return subtitle;
+        }
+        
+        public long getVendorID(){
+        	return vendorId;
+        }
+        
+        public String getVendorName(){
+        	return vendorName;
         }
 
         public static XMapInitializer<RoomType> Initializer = new XMapInitializer<RoomType>() {

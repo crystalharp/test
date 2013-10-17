@@ -23,7 +23,10 @@ public class HotelOrder extends XMapData{
 	public static final int STATE_POST_DUE = 4;
 	public static final int STATE_CHECKED_IN = 5;
 	
-	public static final String NEED_FIELDS = "0102030405060708090A0B0C0E0F101112131420";
+	// 假的艺龙ID，仅供测试用
+	public static final long FAKE_ELONG_ID = 9999;
+	
+	public static final String NEED_FIELDS = "0102030405060708090A0B0C0D0E0F101112131420";
 	
 	// identification info
 	/**
@@ -84,6 +87,11 @@ public class HotelOrder extends XMapData{
 	 * 总价
 	 */
 	private double totalFee = -1;
+	
+	/**
+	 * 第三方商家id
+	 */
+	private long vendorID = FAKE_ELONG_ID;
 
 	// time info
 	/**
@@ -130,6 +138,7 @@ public class HotelOrder extends XMapData{
 	public static final byte FIELD_ROOM_TYPE = 0x0A;
 	public static final byte FIELD_ROOM_NUM = 0x0B;
 	public static final byte FIELD_TOTAL_FEE = 0x0C;
+	public static final byte FIELD_VENDOR_ID = 0x0D;
 	public static final byte FIELD_RETENTION_TIME = 0x0E;
 	public static final byte FIELD_CHECKIN_TIME = 0x0F;
 	public static final byte FIELD_CHECKOUT_TIME = 0x10;
@@ -186,6 +195,10 @@ public class HotelOrder extends XMapData{
 			cancelDeadline = data.getInt(FIELD_CANCEL_DEADLINE);
 		}
 		else cancelDeadline = data.getInt(FIELD_CHECKOUT_TIME);
+		if(data.containsKey(FIELD_VENDOR_ID)){
+			vendorID = data.getInt(FIELD_VENDOR_ID);
+		}
+		else vendorID = FAKE_ELONG_ID;
 	}
 	
 	public HotelOrder() {
@@ -195,7 +208,7 @@ public class HotelOrder extends XMapData{
 	public HotelOrder(String id, long createTime, int state,
 			String hotelPoiUUID, String hotelName, String hotelAddress,
 			Position position, String hotelTel, String roomType,
-			long roomNum, double totalFee,
+			long roomNum, double totalFee, 
 			long retentionTime, long checkinTime, long checkoutTime, int dayCount,
 			String guestName, String mobileNum, long cancelDeadline) {
 		super();
@@ -210,6 +223,7 @@ public class HotelOrder extends XMapData{
 		this.roomType = roomType;
 		this.roomNum = roomNum;
 		this.totalFee = totalFee;
+		this.vendorID = FAKE_ELONG_ID;
 		this.retentionTime = retentionTime;
 		this.checkinTime = checkinTime;
 		this.checkoutTime = checkoutTime;

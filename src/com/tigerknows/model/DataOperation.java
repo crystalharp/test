@@ -83,7 +83,7 @@ public class DataOperation extends BaseQuery {
                 String subDataType = getParameter(SERVER_PARAMETER_SUB_DATA_TYPE);
                 if (SUB_DATA_TYPE_HOTEL.equals(subDataType)) {
                     debugCheckParameters(Utility.mergeArray(ekeys, poiEkeys, 
-                            new String[] {SERVER_PARAMETER_CHECKIN, SERVER_PARAMETER_CHECKOUT}));
+                            new String[] {SERVER_PARAMETER_CHECKIN, SERVER_PARAMETER_CHECKOUT, SERVER_PARAMETER_HOTEL_SOURCE}));
                 } else {
                     debugCheckParameters(Utility.mergeArray(ekeys, poiEkeys),
                             new String[] {SERVER_PARAMETER_PICTURE});

@@ -220,6 +220,9 @@ public abstract class BaseQuery {
     // checkout    String  true    离开酒店时间，格式"yyyy-MM-dd" 
     public static final String SERVER_PARAMETER_CHECKOUT = "checkout";
     
+    // hs  string  false   表示支持的酒店第三方商家，取值范围{elong, all}，默认elong，all表示支持所有的
+    public static final String SERVER_PARAMETER_HOTEL_SOURCE = "hs";
+    
     // uuid     string  true    用于唯一标识联网请求的uuid或uuid_offset 
     public static final String SERVER_PARAMETER_UUID = "uuid";
     

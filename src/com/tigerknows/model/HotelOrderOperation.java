@@ -70,6 +70,9 @@ public class HotelOrderOperation extends BaseQuery {
     // 宾客类型代码
     public static final String SERVER_PARAMETER_GUESTTYPE = "guesttype";
     
+    // 第三方商家id，若不提交则默认为艺龙
+    public static final String SERVER_PARAMETER_VENDORID = "vendorid";
+    
     // 信用卡号
     public static final String SERVER_PARAMETER_CREDIT_CARD_NO = "creditcardno";
 
@@ -129,7 +132,7 @@ public class HotelOrderOperation extends BaseQuery {
                 SERVER_PARAMETER_RESERVE_TIME, SERVER_PARAMETER_NUMROOMS,
                 SERVER_PARAMETER_TOTAL_PRICE, SERVER_PARAMETER_USERNAME,
                 SERVER_PARAMETER_MOBILE, SERVER_PARAMETER_GUESTS,
-                SERVER_PARAMETER_GUESTTYPE, SERVER_PARAMETER_HOTEL_ID};
+                SERVER_PARAMETER_GUESTTYPE, SERVER_PARAMETER_HOTEL_ID, SERVER_PARAMETER_VENDORID};
             String[] okeys = new String[] {SERVER_PARAMETER_BRAND};
             String[] ekeys_with_ccard = new String[]{SERVER_PARAMETER_CREDIT_CARD_NO,
                     SERVER_PARAMETER_VERIFY_CODE, SERVER_PARAMETER_VALID_YEAR,

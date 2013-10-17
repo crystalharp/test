@@ -19,8 +19,11 @@ public class ProxyQuery extends BaseQuery {
     // task int true 参见task
     public static final String SERVER_PARAMETER_TASK = "task";
 
-    // 1 获取艺龙酒店房型动态信息
+    // 1 获取酒店房型动态信息
     public static final String TASK_ROOM_TYPE_DYNAMIC = "1";
+    
+    // vendorid string false 第三方商家id (实际情况5.9版本之后为必传)
+    public static final String SERVER_PARAMETER_VENDORID = "vendorid";
 
     // hotelid string true 酒店ID
     public static final String SERVER_PARAMETER_HOTELID = "hotelid";
@@ -39,7 +42,7 @@ public class ProxyQuery extends BaseQuery {
 
     //动态房型信息查询必选参数key
     private static final String[] ROOM_TYPE_DYNAMIC_EKEYS = new String[] {
-        SERVER_PARAMETER_HOTELID, SERVER_PARAMETER_ROOMID,
+        SERVER_PARAMETER_VENDORID, SERVER_PARAMETER_HOTELID, SERVER_PARAMETER_ROOMID,
         SERVER_PARAMETER_ROOM_TYPE_TAOCANID,
         SERVER_PARAMETER_CHECKIN_DATE,
         SERVER_PARAMETER_CHECKOUT_DATE, SERVER_PARAMETER_TASK};
@@ -100,7 +103,7 @@ public class ProxyQuery extends BaseQuery {
         // 0x02 x_double 房型套餐单价
         public static final byte FIELD_PRICE = 0x02;
 
-        // 0x03 x_int 可预订数量
+        // 0x03 x_int 可预订数量上限
         public static final byte FIELD_NUM = 0x03;
 
         // 0x04 xmap 参见担保规则
@@ -111,6 +114,9 @@ public class ProxyQuery extends BaseQuery {
         
         // 0x06 x_double 1间房首晚价格
         public static final byte FIELD_FIRST_NIGHT_PRICE = 0x06;
+        
+        // 0x07 x_int 可预订数量下限
+        public static final byte FIELD_MINIMUM = 0x07;
 
         private double price;
 
@@ -121,6 +127,8 @@ public class ProxyQuery extends BaseQuery {
         private String guestType;
         
         private double firstNightPrice;
+        
+        private long minimum;
 
         public double getPrice() {
             return price;
@@ -141,6 +149,10 @@ public class ProxyQuery extends BaseQuery {
         public double getFirstNightPrice() {
         	return firstNightPrice;
         }
+        
+        public long getMinimum() {
+        	return minimum;
+        }
 
         public RoomTypeDynamic(XMap data) throws APIException {
             super(data);
@@ -150,6 +162,7 @@ public class ProxyQuery extends BaseQuery {
             this.danbaoGuize = getObjectFromData(FIELD_DANBAO_GUIZE, DanbaoGuize.Initializer);
             this.guestType = getStringFromData(FIELD_GUEST_TYPE);
             this.firstNightPrice = getDoubleFromData(FIELD_FIRST_NIGHT_PRICE);
+            this.minimum = getLongFromData(FIELD_MINIMUM);
         }
 
         public static class DanbaoGuize extends XMapData {

@@ -765,6 +765,10 @@ public class DataQueryTest {
         data.put(RoomType.FIELD_BREAKFAST, "FIELD_BREAKFAST");
         data.put(RoomType.FIELD_PRICE, 168+order*100+"");
         data.put(RoomType.FIELD_CAN_RESERVE, 1);
+        data.put(RoomType.FIELD_NEED_GUARANTEE, order%2);
+        data.put(RoomType.FIELD_SUBTITLE, "FIELD_SUBTITLE");
+        data.put(RoomType.FIELD_VENDOR_ID, order%3 + 2000);
+        data.put(RoomType.FIELD_VENDOR_NAME, "FIELD_VENDOR_" + order%3);
         return data;
     }
 
