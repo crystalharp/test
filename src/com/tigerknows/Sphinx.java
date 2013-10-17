@@ -4644,4 +4644,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     public View getMoreBtn() {
         return mMoreBtn;
     }
+
+    public View getMoreImv() {
+        return mMoreImv;
+    }
 }
