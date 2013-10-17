@@ -6,6 +6,7 @@ package com.tigerknows.ui;
 
 import com.decarta.Globals;
 import com.decarta.android.map.Icon;
+import com.decarta.android.map.InfoWindow;
 import com.decarta.android.map.ItemizedOverlay;
 import com.decarta.android.map.OverlayItem;
 import com.decarta.android.map.Polyline;
@@ -241,9 +242,13 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
         if (touchMode != Sphinx.TouchMode.MEASURE_DISTANCE) {
             mVisibilityPreviousNext = mSphinx.getPreviousNextView().getVisibility();
             mVisibilityLocation = mSphinx.getLocationView().getVisibility();
-            mOtherOverlayItem = mSphinx.getMapView().getInfoWindow().getAssociatedOverlayItem();
+            MapView mapView = mSphinx.getMapView();
+            InfoWindow infoWindow = mapView.getInfoWindow();
+            mOtherOverlayItem = infoWindow.getAssociatedOverlayItem();
             mLastOverlayItem = null;
             mTouchMode = touchMode;
+            infoWindow.setVisible(false);
+            mapView.refreshMap();
         }
     }
 
