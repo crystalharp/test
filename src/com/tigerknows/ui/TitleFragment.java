@@ -90,8 +90,10 @@ public class TitleFragment extends BaseFragment {
                 }
             });
         }
-        listView.setOnItemClickListener(listener);
-        listView.setAdapter(adapter);
+        if (listView != null) {
+            listView.setOnItemClickListener(listener);
+            listView.setAdapter(adapter);
+        }
         
         mPopupWindow.showAsDropDown(this, 0, 0);
     }
