@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.decarta.Globals;
 import com.tigerknows.R;
@@ -96,11 +97,35 @@ public class MyOrderFragment extends BaseFragment{
         }
         
 		List<Shangjia> list = Shangjia.getShangjiaList();
-		if (list.size() != mResultList.size()) {
-		    mResultList.clear();
-		    mResultList.addAll(list);
-		    createShangjiaListView();
+		synchronized (MyOrderFragment.this) {
+			if (list.size() != mResultList.size()) {
+				mResultList.clear();
+				mResultList.addAll(list);
+				createShangjiaListView();
+			}
 		}
+		new Thread(new Runnable(){
+
+			@Override
+			public void run() {
+				Shangjia.readShangjiaList(mContext);
+				mSphinx.getHandler().post(new Runnable(){
+
+					@Override
+					public void run() {
+						synchronized (MyOrderFragment.this) {
+							List<Shangjia> newList = Shangjia.getShangjiaList();
+							if (true || newList.size() != mResultList.size()) {
+								mResultList.clear();
+								mResultList.addAll(newList);
+								createShangjiaListView();
+							}
+						}
+					}
+					
+				});
+			}
+		}).start();
 
 		if (mRequestLogin != null) {
 		    if (Globals.g_User != null) {
@@ -158,7 +183,7 @@ public class MyOrderFragment extends BaseFragment{
 					mActionLog.addAction(mActionTag + ActionLog.MyAllOrderTuangou, shangjia.getName());
 	                if (!TextUtils.isEmpty(shangjia.getUrl()) && shangjia.getFastPurchase() == 1) {
 	                	startShangjia(shangjia);
-	                } else if (shangjia.getFastPurchase() == 1 || (Globals.g_User != null)) {
+	                } else if (shangjia.getFastPurchase() == 1 || Globals.g_User != null) {
 	                    requestUrl(shangjia);
 	                } else {
 	                    mRequestLogin = shangjia;
