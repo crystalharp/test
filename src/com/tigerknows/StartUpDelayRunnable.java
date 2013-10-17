@@ -17,7 +17,7 @@ public class StartUpDelayRunnable implements Runnable{
         
         if (MapEngine.checkSupportSubway(Globals.getCurrentCityInfo().getId()) &&
                 "WIFI".equals(TKConfig.getConnectivityType(mSphinx)) &&
-                MapEngine.getSubwayDataPath(mSphinx, Globals.getCurrentCityInfo().getId()) != null) {
+                !MapEngine.checkSubwayMapValidity(mSphinx, Globals.getCurrentCityInfo().getId())) {
             FileDownload fileDownload = new FileDownload(mSphinx);
             fileDownload.addParameter(FileDownload.SERVER_PARAMETER_FILE_TYPE, FileDownload.FILE_TYPE_SUBWAY);
             fileDownload.setup(Globals.getCurrentCityInfo().getId());
