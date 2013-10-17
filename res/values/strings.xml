@@ -1307,8 +1307,11 @@
     <string name="has_take_screenshot">已截取本屏地图</string>
     <string name="measure_distance_tip">点击地图进行测距</string>
     <string name="save_falied_tip">保存失败</string>
-    <string name="traffic_highLight_normal">公交站 / 加油站 / 机场</string>    <string name="traffic_highLight_subwaymap">地铁图 / 公交站 / 加油站</string>
+    <string name="traffic_highLight_normal">公交站 / 加油站 / 机场</string>
+    <string name="traffic_highLight_subwaymap">地铁图 / 公交站 / 加油站</string>
     
     <string name="like_">喜欢%1$d</string>
     <string name="cancel_like">取消喜欢</string>
+    <string name="like_empty_tip">Yummy，yummy~做个有态度的吃货~</string>
+    <string name="recommend_dish">推荐菜</string>
 </resources>
