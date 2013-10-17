@@ -242,7 +242,7 @@ public class DownloadThread extends Thread implements MapTileDataDownload.ITileD
             if (tileLen <= remainDataLenth) {
                 byte[] dest = new byte[tileLen];
                 System.arraycopy(data, start, dest, 0, tileLen);
-                int ret = mapEngine.writeRegion(tileInfo.getRid(), tileInfo.getOffset(), dest, tileInfo.getVersion());
+                int ret = MapEngine.writeRegion(tileInfo.getRid(), tileInfo.getOffset(), dest, tileInfo.getVersion());
                     // let the tile be empty
                 if (ret != 0) {
                     return -1;
@@ -253,7 +253,7 @@ public class DownloadThread extends Thread implements MapTileDataDownload.ITileD
             } else {
                 byte[] dest = new byte[remainDataLenth];
                 System.arraycopy(data, start, dest, 0, remainDataLenth);
-                int ret = mapEngine.writeRegion(tileInfo.getRid(), tileInfo.getOffset(), dest, tileInfo.getVersion());
+                int ret = MapEngine.writeRegion(tileInfo.getRid(), tileInfo.getOffset(), dest, tileInfo.getVersion());
                 if (ret != 0) {
                     return -1;
                 }
