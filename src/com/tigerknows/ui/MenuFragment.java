@@ -60,15 +60,12 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
     
     @Override
     public void onResume() {
-        super.onResume();
-        
         mRootView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
         mSphinx.getControlView().setPadding(0, 0, 0, getMeasuredHeight());
     }
     
     @Override
     public void onPause() {
-        super.onPause();
         mSphinx.getControlView().setPadding(0, 0, 0, 0);
     }
 

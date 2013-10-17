@@ -76,7 +76,8 @@ public final class FileDownload extends BaseQuery {
                 if (!TextUtils.isEmpty(ver) && !ver.equals(fileData.version)) {
                      TKConfig.setPref(context, TKConfig.getSubwayMapUpdatedPrefs(cityId), "true");
                 }
-                if (fileData != null && fileData.url != null && !ver.equals(fileData.version)) {
+                if (fileData != null && fileData.url != null && 
+                        (!ver.equals(fileData.version) || !MapEngine.checkSubwayMapValidity(context, cityId))) {
                     SubwayMapDownloadManager manager = SubwayMapDownloadManager.getInstance();
                     if (!manager.checkRunning(fileData.url)) {
                         manager.download(context, fileData.url, isStop, cityId);

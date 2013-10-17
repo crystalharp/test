@@ -16,6 +16,9 @@ import java.util.List;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.common.ActionLog;
+import com.tigerknows.map.MapEngine;
+import com.tigerknows.model.DataQuery;
+import com.tigerknows.model.FeedbackUpload;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.Yanchu;
 import com.tigerknows.model.PullMessage.Message.PulledDynamicPOI;
@@ -108,6 +111,14 @@ public class YanchuDetailFragment extends BaseDetailFragment
     public void refreshViews(int position) {
         super.refreshViews(position);
         YanchuDetailView view;
+
+        FeedbackUpload.logEnterPOIDetailUI(mSphinx,
+            DataQuery.DATA_TYPE_TUANGOU,
+            null,
+            mActionTag,
+            position,
+            mDataList.get(position).getUid(),
+            MapEngine.getCityId(mDataList.get(position).getPosition()));
         
         view = (YanchuDetailView) mCyclePagerAdapter.viewList.get((position) % mCyclePagerAdapter.viewList.size());
         view.setData(mDataList.get(position), position);

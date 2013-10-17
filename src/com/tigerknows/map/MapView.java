@@ -35,6 +35,7 @@ import com.decarta.android.map.Compass;
 import com.decarta.android.map.Icon;
 import com.decarta.android.map.InfoWindow;
 import com.decarta.android.map.ItemizedOverlay;
+import com.decarta.android.map.OverlayItem;
 import com.decarta.android.map.Shape;
 import com.decarta.android.map.TilesView;
 import com.decarta.android.map.Compass.PlaceLocation;
@@ -1200,8 +1201,13 @@ public class MapView extends RelativeLayout implements
         MapScene mapScene = new MapScene();
         mapScene.position = getCenterPosition();
         mapScene.zoomLevel = (int) getZoomLevel();
-        mapScene.itemizedOverlay = getCurrentOverlay();
-        mapScene.shape = getCurrentShape();
+        List<ItemizedOverlay> itemizedOverlay = new ArrayList<ItemizedOverlay>();
+        itemizedOverlay.addAll(tilesView.getOverlays());
+        mapScene.itemizedOverlay = itemizedOverlay;
+        List<Shape> shape = new ArrayList<Shape>();
+        shape.addAll(tilesView.getShapes());
+        mapScene.shape = shape;
+        mapScene.overlayItem = tilesView.getInfoWindow().getAssociatedOverlayItem();
         return mapScene;
     }
     
@@ -1211,20 +1217,22 @@ public class MapView extends RelativeLayout implements
      */
     public void restoreScene(MapScene mapScene) {
         try {
-            clearMap();
             if (mapScene == null) {
                 return;
             }
+            
+            clearMap();
             if (mapScene.shape != null) {
-                addShape(mapScene.shape);
+                tilesView.getShapes().addAll(mapScene.shape);
             }
             if (mapScene.itemizedOverlay != null) {
-                addOverlay(mapScene.itemizedOverlay);
+                tilesView.getOverlays().addAll(mapScene.itemizedOverlay);
             }
             showOverlay(ItemizedOverlay.MY_LOCATION_OVERLAY, false);
             if (mapScene.position != null) {
                 centerOnPosition(mapScene.position, mapScene.zoomLevel);
             }
+            sphinx.showInfoWindow(mapScene.overlayItem);
         } catch (APIException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -1234,8 +1242,9 @@ public class MapView extends RelativeLayout implements
     public static class MapScene {
         public Position position;
         public int zoomLevel;
-        public ItemizedOverlay itemizedOverlay;
-        public Shape shape;
+        public List<ItemizedOverlay> itemizedOverlay;
+        public List<Shape> shape;
+        public OverlayItem overlayItem;
     }
     
     public boolean ensureThreadRunning() {

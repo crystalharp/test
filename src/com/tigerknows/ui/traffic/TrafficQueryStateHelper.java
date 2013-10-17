@@ -6,6 +6,7 @@ import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.tigerknows.R;
+import com.tigerknows.TKConfig;
 import com.tigerknows.Sphinx.TouchMode;
 import com.tigerknows.ui.traffic.TrafficViewSTT.State;
 import com.tigerknows.common.ActionLog;
@@ -166,6 +167,10 @@ public class TrafficQueryStateHelper {
             mQueryFragment.hideCommonTitle();
             mQueryFragment.mTitle.setVisibility(View.VISIBLE);
             mQueryFragment.mMapLocationHelper.checkMapCenterInCity();
+            mQueryFragment.mSphinx.getMoreBtn().setVisibility(View.VISIBLE);
+            if (TKConfig.getPref(mQueryFragment.mSphinx, TKConfig.PREFS_MAP_TOOLS) == null) {
+                mQueryFragment.mSphinx.getMoreImv().setVisibility(View.VISIBLE);
+            }
         }
 
         @Override
@@ -175,6 +180,8 @@ public class TrafficQueryStateHelper {
             mQueryFragment.mRightBtn.setVisibility(View.GONE);
             mQueryFragment.mTitleBtn.setText(R.string.title_click_map);
             mQueryFragment.mTitle.setVisibility(View.GONE);
+            mQueryFragment.mSphinx.getMoreBtn().setVisibility(View.INVISIBLE);
+            mQueryFragment.mSphinx.getMoreImv().setVisibility(View.INVISIBLE);
             
             applyInnateProperty(TrafficViewSTT.State.SelectPoint);
         }

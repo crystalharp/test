@@ -2,18 +2,18 @@ package com.tigerknows.ui.traffic;
 
 import java.io.File;
 
-import android.content.res.AssetManager;
 import android.graphics.Bitmap;
-import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebSettings;
 import android.webkit.WebSettings.ZoomDensity;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,19 +27,15 @@ import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.MapEngine;
 import com.tigerknows.map.MapEngine.CityInfo;
-import com.tigerknows.model.BaseQuery;
-import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.FileDownload;
-import com.tigerknows.model.LocationQuery;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.Response;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
-import com.tigerknows.util.Utility;
 import com.tigerknows.widget.QueryingView;
 import com.tigerknows.widget.RetryView;
 
-public class SubwayMapFragment extends BaseFragment {
+public class SubwayMapFragment extends BaseFragment implements RetryView.CallBack {
 
     WebView mWebWbv;
     String mTitle;
@@ -48,10 +44,12 @@ public class SubwayMapFragment extends BaseFragment {
     CityInfo mCityInfo;
     Position mPos;
     boolean needRefresh;
+    int mOriginStat;
     
     RetryView mRetryView;
     QueryingView mQueryingView;
     View mEmptyView;
+    ImageView mEmptyImg;
     TextView mEmptyTxv;
     
     static final String TAG = "SubwayMapFragment";
@@ -59,6 +57,7 @@ public class SubwayMapFragment extends BaseFragment {
     static final int STAT_MAP = 0;
     static final int STAT_QUERY = 1;
     static final int STAT_NODATA = 2;
+    static final int STAT_QUERY_FAILED = 3;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -74,6 +73,7 @@ public class SubwayMapFragment extends BaseFragment {
         findViews();
         setListener();
         
+        mWebWbv.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
         return mRootView;
 
     }
@@ -118,9 +118,12 @@ public class SubwayMapFragment extends BaseFragment {
         mQueryingView = (QueryingView)mRootView.findViewById(R.id.querying_view);
         mEmptyView = mRootView.findViewById(R.id.empty_view);
         mEmptyTxv = (TextView) mEmptyView.findViewById(R.id.empty_txv);
+        mEmptyImg = (ImageView) mEmptyView.findViewById(R.id.icon_imv);
         mEmptyTxv.setText(mSphinx.getString(R.string.no_subway_map));
         
         mQueryingView.setText(R.string.loading_subway_map);
+        mRetryView.setCallBack(this, mActionTag);
+        mEmptyImg.setBackgroundResource(R.drawable.bg_no_subway);
     }
     
     private void showSubwayMap(String url) {
@@ -141,24 +144,35 @@ public class SubwayMapFragment extends BaseFragment {
     }
     
     private void setStatus(int stat) {
+        mOriginStat = stat;
         switch (stat) {
         case STAT_MAP:
             mWebWbv.setVisibility(View.VISIBLE);
             mQueryingView.setVisibility(View.GONE);
             mEmptyView.setVisibility(View.GONE);
             mTitleBtn.setText(mCityInfo.getCName() + mTitle);
+            mRetryView.setVisibility(View.GONE);
             break;
         case STAT_QUERY:
             mWebWbv.setVisibility(View.GONE);
             mQueryingView.setVisibility(View.VISIBLE);
             mEmptyView.setVisibility(View.GONE);
             mTitleBtn.setText(mTitle);
+            mRetryView.setVisibility(View.GONE);
             break;
         case STAT_NODATA:
             mWebWbv.setVisibility(View.GONE);
             mQueryingView.setVisibility(View.GONE);
             mEmptyView.setVisibility(View.VISIBLE);
             mTitleBtn.setText(mTitle);
+            mRetryView.setVisibility(View.GONE);
+            break;
+        case STAT_QUERY_FAILED:
+            mWebWbv.setVisibility(View.GONE);
+            mQueryingView.setVisibility(View.GONE);
+            mEmptyView.setVisibility(View.GONE);
+            mTitleBtn.setText(mTitle);
+            mRetryView.setVisibility(View.VISIBLE);
             break;
         }
     }
@@ -251,9 +265,9 @@ public class SubwayMapFragment extends BaseFragment {
         LogWrapper.d(TAG, "onPostExecute()");
         FileDownload fileDownload = (FileDownload) tkAsyncTask.getBaseQuery();
         int stat = STAT_NODATA;
-        if (BaseActivity.checkResponseCode(fileDownload, mSphinx, new int[]{953}, false, this, false) == false) {
-            Response response = fileDownload.getResponse();
-            if (response != null) {
+        Response response = fileDownload.getResponse();
+        if (response != null) {
+            if (BaseActivity.checkResponseCode(fileDownload, mSphinx, new int[]{953}, false, this, false) == false) {
                 if (response.getResponseCode() != 953) {
                     subwayPath = MapEngine.getSubwayDataPath(mSphinx, mCityInfo.getId());
                     if (subwayPath != null) {
@@ -263,8 +277,24 @@ public class SubwayMapFragment extends BaseFragment {
                     }
                 }
             }
+        } else {
+            stat = STAT_QUERY_FAILED;
         }
-        setStatus(stat);
+        if (mOriginStat != STAT_MAP) {
+            setStatus(stat);
+        }
+    }
+
+    @Override
+    public void retry() {
+        if (mBaseQuerying != null) {
+            for(int i = 0, size = mBaseQuerying.size(); i < size; i++) {
+                mBaseQuerying.get(i).setResponse(null);
+            }
+            mSphinx.queryStart(mBaseQuerying);
+        }
+        setStatus(STAT_QUERY);
+
     }
 
 }

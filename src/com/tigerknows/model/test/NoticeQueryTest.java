@@ -37,7 +37,7 @@ public class NoticeQueryTest {
 		XMap xmap = new XMap();
 		xmap.put(Notice.FIELD_NOTICE_ID, (long)op);
 		xmap.put(Notice.FIELD_OPERATION_TYPE, (op == 0)? 2 : 0);
-		if( (op & 1)!=0 || (op & 4)!=0 ){
+		if( (op & 1)!=0){
 			xmap.put(Notice.FIELD_NOTICE_TITLE, "FIELD_NOTICE_TITLE");
 		}else if(op ==0){
 			xmap.put(Notice.FIELD_NOTICE_TITLE, context.getString(R.string.message_tip_user_survey));
