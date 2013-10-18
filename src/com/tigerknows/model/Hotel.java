@@ -460,6 +460,10 @@ public class Hotel extends XMapData {
         public String getSubtitle() {
             return subtitle;
         }
+        
+        public String genDescription() {
+            return Utility.joinFields(" ", bedType, breakfast, netService, floor, area);
+        }
 
         public static XMapInitializer<RoomType> Initializer = new XMapInitializer<RoomType>() {
 

@@ -1119,6 +1119,9 @@ public class MapEngine {
      * 检测地铁图数据的完整性
      */
     public static boolean checkSubwayMapValidity(Context context, int cityId) {
+        if (TKConfig.CloseSubwayDataCheck) {
+            return true;
+        }
         long size = calcSubwayDataSize(cityId);
         String recordSize = TKConfig.getPref(context, TKConfig.getSubwayMapSizePrefs(cityId), null);
         if (size != 0 && String.valueOf(size).equals(recordSize)) {
