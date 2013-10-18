@@ -100,6 +100,7 @@ public class SubwayMapFragment extends BaseFragment implements RetryView.CallBac
             if (!TextUtils.isEmpty(subwayUpdated)) {
                 mSphinx.showTip(R.string.subway_map_updated, Toast.LENGTH_SHORT);
                 TKConfig.setPref(mSphinx, TKConfig.getSubwayMapUpdatedPrefs(mCityInfo.getId()), "");
+                mWebWbv.clearCache(false);
             }
         }
         FileDownload fileDownload = new FileDownload(mSphinx);
