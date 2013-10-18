@@ -703,6 +703,11 @@ public class TKConfig {
     public static final String PREFS_SUBWAY_MAP = "prefs_subway_map";
     
     /**
+     * 菜单
+     */
+    public static final String PREFS_DISH = "prefs_dish";
+    
+    /**
      * 发现分类图片尺寸的Key
      */
     public static final int PICTURE_DISCOVER_HOME = 1;

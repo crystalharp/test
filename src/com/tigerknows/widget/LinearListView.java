@@ -71,6 +71,12 @@ public class LinearListView {
     
 	public void refreshList(List list, int columnNum) {
         int dataSize = (list != null ? list.size() : 0);
+        boolean twoColumn = (columnNum == 2);
+        if (twoColumn) {
+            for(int i = 0, count = parentLayout.getChildCount(); i < count; i++) {
+                ((LinearLayout) parentLayout.getChildAt(i)).removeAllViews();
+            }
+        }
         parentLayout.removeAllViews();
 //        List<View> tmp = new LinkedList<View>();
 //        tmp.clear();
@@ -80,7 +86,6 @@ public class LinearListView {
         if(dataSize == 0){
             return;
         }else{
-            boolean twoColumn = (columnNum == 2);
             for(int i = 0; i < dataSize; i++) {
                 Object data = list.get(i);
                 View child;
