@@ -806,6 +806,11 @@ public class TKConfig {
      * 推送在网络触发模式下检测到网络变化所设置定时器的延迟时间(单位:分钟)
      */
     public static int PullServiceNetTriggerDelayTime = 5;
+    
+    /**
+     * 是否关闭地铁图数据有效性检测
+     */
+    public static boolean CloseSubwayDataCheck = false;
 
     /**
      * 初始化ClientUid、共用的网络请求参数（imsi、imsi、mcc、mnc）

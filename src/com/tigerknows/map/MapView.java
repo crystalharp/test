@@ -1194,6 +1194,7 @@ public class MapView extends RelativeLayout implements
         
         if (stopRefreshMyLocation == false) {
             sphinx.updateMyLocation();
+            tilesView.refreshMap();
         }
     }
     
@@ -1207,7 +1208,12 @@ public class MapView extends RelativeLayout implements
         List<Shape> shape = new ArrayList<Shape>();
         shape.addAll(tilesView.getShapes());
         mapScene.shape = shape;
-        mapScene.overlayItem = tilesView.getInfoWindow().getAssociatedOverlayItem();
+        InfoWindow infoWindow = tilesView.getInfoWindow();
+        if (infoWindow.isVisible()) {
+            mapScene.overlayItem = infoWindow.getAssociatedOverlayItem();
+        } else {
+            mapScene.overlayItem = null;
+        }
         return mapScene;
     }
     

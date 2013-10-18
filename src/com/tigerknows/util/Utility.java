@@ -1806,4 +1806,27 @@ public class Utility {
             e.printStackTrace();
         }
     }
+    
+    /**
+     * 把若干字段用一种分隔符合并成一个字符串
+     * @param sep
+     * @param fields
+     * @return
+     */
+    public static String joinFields(String sep, String ...fields) {
+        String s = "";
+        if (sep == null) {
+            return s;
+        }
+        
+        for (String field : fields) {
+            s += (!TextUtils.isEmpty(field)?(field + sep):"");
+        }
+        
+        if (s.length() == 0) {
+            return s;
+        } else {
+            return s.substring(0, s.length() - sep.length()).trim();
+        }
+    }
 }

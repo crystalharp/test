@@ -1299,7 +1299,7 @@
     <string name="install">安装</string>
     
     <string name="subway_map">地铁图</string>
-    <string name="no_subway_map">当前城市暂无地铁图</string>
+    <string name="no_subway_map">地铁正在修建中...</string>
     <string name="subway_location_error">获取位置信息出错</string>
     <string name="loading_subway_map">首次加载地铁图，请耐心等待...</string>
     <string name="subway_map_updated">地铁图已更新</string>
