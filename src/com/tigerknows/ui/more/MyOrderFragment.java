@@ -221,7 +221,7 @@ public class MyOrderFragment extends BaseFragment{
     private void requestUrl(Shangjia shangjia) {
         DataQuery dataQuery = new DataQuery(mSphinx);
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_SHANGJIA);
-        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_SHANGJIA_IDS, String.valueOf(shangjia.getSource()));
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_IDS, String.valueOf(shangjia.getSource()));
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_NEED_FIELD, Shangjia.NEED_FIELD);
         dataQuery.addParameter(BaseQuery.SERVER_PARAMETER_SESSION_ID, Globals.g_Session_Id);
         dataQuery.setup(Globals.getCurrentCityInfo().getId(), getId(), getId(), mSphinx.getString(R.string.doing_and_wait));

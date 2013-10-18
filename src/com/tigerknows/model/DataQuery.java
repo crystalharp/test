@@ -123,8 +123,8 @@ public final class DataQuery extends BaseQuery {
     // cdv string true 当前客户端缓存的所有城市能够支持的动态poi类型的数据的版本 
     public static final String SERVER_PARAMETER_DISCOVER_POI_VERSION = "cdv";
     
-    // ids string false 团购商家id列表  
-    public static final String SERVER_PARAMETER_SHANGJIA_IDS = "ids";
+    // ids string false 团购、酒店商家id列表  
+    public static final String SERVER_PARAMETER_IDS = "ids";
     
     // lastsuc String false 上次接收到消息的时间,客户端首次请求时此项为空
     public static final String SERVER_PARAMETER_LAST_PULL_DATE = "lastsuc";
@@ -606,7 +606,7 @@ public final class DataQuery extends BaseQuery {
             debugCheckParameters(ekeys, okeys);
         } else if (DATA_TYPE_SHANGJIA.equals(dataType)) { 
             ekeys = Utility.mergeArray(ekeys, new String[] {SERVER_PARAMETER_NEED_FIELD});
-            okeys = Utility.mergeArray(okeys, positionKeys, new String[]{SERVER_PARAMETER_SHANGJIA_IDS});
+            okeys = Utility.mergeArray(okeys, positionKeys, new String[]{SERVER_PARAMETER_IDS});
             debugCheckParameters(ekeys, okeys);
         } else if (DATA_TYPE_ZHANLAN.equals(dataType)) { 
             ekeys = Utility.mergeArray(ekeys, new String[]{SERVER_PARAMETER_NEED_FIELD, 
@@ -2312,7 +2312,6 @@ public final class DataQuery extends BaseQuery {
 
             public ShangjiaList(XMap data) throws APIException {
                 super(data);
-                
                 list = getListFromData(FIELD_LIST, Shangjia.Initializer);
             }
             
@@ -2751,6 +2750,43 @@ public final class DataQuery extends BaseQuery {
             };
         }
     }
+
+    public static class HotelVendorResponse extends Response {
+        // 0x02 x_map   酒店商家结果
+        public static final byte FIELD_LIST = 0x02;
+
+        private HotelVendorList list;
+
+        public HotelVendorResponse(XMap data) throws APIException {
+            super(data);
+            
+            if (this.data.containsKey(FIELD_LIST)) {
+                this.list = new HotelVendorList(this.data.getXMap(FIELD_LIST));
+            }
+        }
+        
+        public HotelVendorList getList() {
+            return list;
+        }
+        
+        public static class HotelVendorList extends BaseList {
+            
+            // 0x02 x_array<x_map>  酒店商家列表 
+            public static final byte FIELD_LIST = 0x02;
+            
+            private List<HotelVendor> list;
+
+            public HotelVendorList(XMap data) throws APIException {
+                super(data);
+                
+                list = getListFromData(FIELD_LIST, HotelVendor.Initializer);
+            }
+            
+            public List<HotelVendor> getList() {
+                return list;
+            }
+        }
+    }    
     
     protected void launchTest() {
         super.launchTest();

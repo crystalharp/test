@@ -361,7 +361,7 @@ public class Shangjia extends BaseData implements Parcelable {
                 final DataQuery dataQuery = new DataQuery(activity);
                 dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_SHANGJIA);
                 dataQuery.addParameter(DataQuery.SERVER_PARAMETER_NEED_FIELD, Globals.g_Session_Id != null ? NEED_FIELD : NEED_FIELD_NO_LOGON);
-                dataQuery.addParameter(DataQuery.SERVER_PARAMETER_SHANGJIA_IDS, String.valueOf(source));
+                dataQuery.addParameter(DataQuery.SERVER_PARAMETER_IDS, String.valueOf(source));
                 dataQuery.setup(Globals.getCurrentCityInfo().getId(), -1, -1, null, false, false, null);
                 new Thread(new Runnable() {
                     

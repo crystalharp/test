@@ -310,6 +310,9 @@ public abstract class BaseQuery {
     
     // 图片 25
     public static final String DATA_TYPE_PICTURE = "25";
+    
+    // 酒店商家 26
+    public static final String DATA_TYPE_HOTELVENDOR = "26";
 
     // 发现首页动态数据统计 100
     public static final String DATA_TYPE_DISCOVER = "100";
