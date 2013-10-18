@@ -403,8 +403,8 @@ public class TrafficQueryFragment extends BaseFragment {
 //		mStateTransitionTable.clearTransitionStack();
 	}
 	
-	public boolean isSelectPointState() {
-	    return TrafficViewSTT.State.SelectPoint.equals(mStateTransitionTable.getCurrentState());
+	public boolean isNormalState() {
+	    return TrafficViewSTT.State.Normal.equals(mStateTransitionTable.getCurrentState());
 	}
 	
 	public void postTask(Runnable r) {

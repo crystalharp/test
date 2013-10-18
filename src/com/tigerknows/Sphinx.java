@@ -2710,10 +2710,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         // 仅在频道首页时才提示切换城市的对话框
         int viewId = uiStackPeek();
         int size = uiStackSize();
-        if (!(size == 1 &&
+        if (size != 0 && !(size == 1 &&
                 (viewId == R.id.view_poi_home ||
                  viewId == R.id.view_discover_home ||
-                 (viewId == R.id.view_traffic_home && getTrafficQueryFragment().isSelectPointState() == false) ||
+                 (viewId == R.id.view_traffic_home && getTrafficQueryFragment().isNormalState() == false) ||
                  viewId == R.id.view_more_home))) {
             return false;
         }
