@@ -461,7 +461,7 @@ public class Hotel extends XMapData {
             return subtitle;
         }
         
-        public String genDescription() {
+        public String generateDescription() {
             return Utility.joinFields(" ", bedType, breakfast, netService, floor, area);
         }
 
