@@ -244,11 +244,15 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
             mVisibilityLocation = mSphinx.getLocationView().getVisibility();
             MapView mapView = mSphinx.getMapView();
             InfoWindow infoWindow = mapView.getInfoWindow();
-            mOtherOverlayItem = infoWindow.getAssociatedOverlayItem();
+            if (infoWindow.isVisible()) {
+                mOtherOverlayItem = infoWindow.getAssociatedOverlayItem();
+                mapView.refreshMap();
+                infoWindow.setVisible(false);
+            } else {
+                mOtherOverlayItem = null;
+            }
             mLastOverlayItem = null;
             mTouchMode = touchMode;
-            infoWindow.setVisible(false);
-            mapView.refreshMap();
         }
     }
 
