@@ -27,6 +27,8 @@ import android.widget.PopupWindow.OnDismissListener;
  */
 public class TitleFragment extends BaseFragment {
     
+    ListView mListView = null;
+    
     public TitleFragment(Sphinx sphinx) {
         super(sphinx);
         // TODO Auto-generated constructor stub
@@ -57,10 +59,9 @@ public class TitleFragment extends BaseFragment {
     public void showPopupWindow(ListAdapter adapter, OnItemClickListener listener, String actionTag) {
     	this.mActionTag = actionTag;
         mActionLog.addAction(this.mActionTag + ActionLog.PopupWindowTitle);
-        ListView listView = null;
         if (mPopupWindow == null) {
             View view  = mLayoutInflater.inflate(R.layout.title_popup_list, this, false);
-            listView = (ListView) view.findViewById(R.id.listview);
+            mListView = (ListView) view.findViewById(R.id.listview);
             //在padding区域点击关掉窗口
             View titlePopupView = view.findViewById(R.id.title_popup_view);
             titlePopupView.setOnTouchListener(new View.OnTouchListener() {
@@ -90,9 +91,9 @@ public class TitleFragment extends BaseFragment {
                 }
             });
         }
-        if (listView != null) {
-            listView.setOnItemClickListener(listener);
-            listView.setAdapter(adapter);
+        if (mListView != null) {
+            mListView.setOnItemClickListener(listener);
+            mListView.setAdapter(adapter);
         }
         
         mPopupWindow.showAsDropDown(this, 0, 0);
