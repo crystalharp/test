@@ -132,7 +132,7 @@ public class DataQueryTest {
     
     protected static XMap launchTKDrawable(Context context) {
         XMap data = new XMap();
-        data.put(TKDrawable.FIELD_URL, "http://wm2e16.263.net/resource/images/58/226/tigerknows.com/domain_logo.gif");
+        data.put(TKDrawable.FIELD_URL, BaseQueryTest.PIC_URL);
 //        data.put(TKDrawable.FIELD_DATA, launchDrawable(context, R.drawable.icon));
         return data;
     }
@@ -631,7 +631,7 @@ public class DataQueryTest {
         data.put(POI.FIELD_STATUS, 1);
         data.put(POI.FIELD_LAST_COMMENT, launchDianping("FIELD_LAST_COMMENT"));
         XArray<XMap> xarray = new XArray<XMap>();
-        for(int i = 0; i < 16; i ++) {
+        for(int i = 0; i < 128; i ++) {
             xarray.add(launchDynamicPOI(i));
         }
         xarray.add(launchDynamicPOI(Integer.parseInt(BaseQuery.DATA_TYPE_COUPON)));
@@ -915,7 +915,7 @@ public class DataQueryTest {
             list.add(launchDish(i));
         }
         data.put(DishList.FIELD_DISH_LIST, list);
-        data.put(DishList.FIELD_CATEGORY_LIST, "[{\"sift_id\":1, \"sift_name\":\"菜单项1\", \"classsfication_list\":[{\"classfication_id\":1, \"classfication_name\":\"特色烤鱼1\", \"dishes_list\":[1,2,3]}]},{\"sift_id\":1, \"sift_name\":\"菜单项2\", \"classsfication_list\":[{\"classfication_id\":1, \"classfication_name\":\"特色烤鱼2\", \"dishes_list\":[4,5,6]}]}]");
+        data.put(DishList.FIELD_CATEGORY_LIST, "[{\"sift_id\":1, \"sift_name\":\"菜单项1\", \"classsfication_list\":[{\"classfication_id\":1, \"classfication_name\":\"子项1\", \"dishes_list\":[10,11,12,13,14,15,16,17,18,19]}, {\"classfication_id\":12, \"classfication_name\":\"子项12\", \"dishes_list\":[120,121,122,123,124,125,126,127,128]}]},{\"sift_id\":1, \"sift_name\":\"菜单项2\", \"classsfication_list\":[{\"classfication_id\":2, \"classfication_name\":\"子项2\", \"dishes_list\":[20,21,22,23,24,25,26,27,28,29]},{\"classfication_id\":22, \"classfication_name\":\"子项22\", \"dishes_list\":[220,221,222,223,224,225,226,227,228,229]}]}]");
         return data;
     }
 
@@ -927,7 +927,9 @@ public class DataQueryTest {
         data.put(Dish.FIELD_FOOD_NAME, id+"FIELD_FOOD_NAME");
         data.put(Dish.FIELD_PRICE, "FIELD_PRICE;FIELD_PRICE;FIELD_PRICE");
         data.put(Dish.FIELD_PRICE_JSON, "[]");
-        data.put(Dish.FIELD_DEFAULT_PICTURE, launchHotelTKDrawable(1));
+        if (id%2 == 0) {
+            data.put(Dish.FIELD_DEFAULT_PICTURE, launchHotelTKDrawable(1));
+        }
         data.put(Dish.FIELD_FOOD_PICTURES, 1);
         data.put(Dish.FIELD_HIT_COUNT, 1);
         return data;

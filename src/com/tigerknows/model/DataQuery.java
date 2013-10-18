@@ -639,6 +639,9 @@ public final class DataQuery extends BaseQuery {
             ekeys = Utility.mergeArray(ekeys, new String[] {SERVER_PARAMETER_POI_ID, SERVER_PARAMETER_NEED_FIELD});
             okeys = Utility.mergeArray(okeys, new String[] {SERVER_PARAMETER_BIAS});
             debugCheckParameters(ekeys, okeys);
+        } else if (DATA_TYPE_PICTURE.equals(dataType)) {
+            ekeys = Utility.mergeArray(ekeys, new String[] {SERVER_PARAMETER_REF_DATA_TYPE, SERVER_PARAMETER_REF_ID});
+            debugCheckParameters(ekeys, okeys);
         } else {
             throw APIException.wrapToMissingRequestParameterException("invalid data type.");
         }
@@ -2826,7 +2829,7 @@ public final class DataQuery extends BaseQuery {
         } else if (DATA_TYPE_FILTER.equals(dataType)){
             responseXMap = DataQueryTest.launchFilterConfigResponse();
         } else if (DATA_TYPE_DISH.equals(dataType)){
-            responseXMap = DataQueryTest.launchDishResponse(168);
+            responseXMap = DataQueryTest.launchDishResponse(256);
         } else if (DATA_TYPE_PICTURE.equals(dataType)){
             responseXMap = DataQueryTest.launchPictureResponse(168);
         }

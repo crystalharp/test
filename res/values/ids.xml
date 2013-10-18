@@ -83,11 +83,12 @@
     <item type="id" name="view_hotel_credit_assure" />
     <item type="id" name="view_hotel_order_detail" />
     <item type="id" name="view_hotel_order_list"/>
-    <item type="id" name="activity_view_image"/>
     <item type="id" name="activity_hotel_intro"/>
     
     <item type="id" name="activity_take_screenshot"/>
     <item type="id" name="view_measure_distance"/>
+    <item type="id" name="activity_common_add_picture"/>
+    <item type="id" name="activity_common_view_image"/>
     
     <item type="id" name="tag_hotel_room_child_view" />
     <item type="id" name="tag_hotel_room_type_data" />

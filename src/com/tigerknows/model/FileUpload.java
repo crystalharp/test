@@ -7,6 +7,7 @@ import com.decarta.android.util.LogWrapper;
 import com.tigerknows.TKConfig;
 import com.tigerknows.android.net.HttpManager;
 import com.tigerknows.crypto.DataEncryptor;
+import com.tigerknows.util.ByteUtil;
 import com.tigerknows.util.HttpUtils;
 import com.tigerknows.util.Utility;
 import com.tigerknows.util.ZLibUtils;
@@ -79,9 +80,19 @@ public final class FileUpload extends BaseQuery {
             LogWrapper.i("HttpUtils", "TKHttpClient->sendAndRecive():apiType="+apiType+", url="+url);
             LogWrapper.i("HttpUtils", "TKHttpClient->sendAndRecive():apiType="+apiType+", parameters="+postParam+", TKConfig.getEncoding()="+TKConfig.getEncoding());
 
-            byte result[] = HttpManager.openUrl(context, client, url,
-                    HttpManager.HTTPMETHOD_POST, parameters, getActionTag(), getParameter(SERVER_PARAMETER_UUID));
-            statusCode = STATUS_CODE_NETWORK_OK;
+            byte result[] = null;
+            try {
+                result = HttpManager.openUrl(context, client, url,
+                        HttpManager.HTTPMETHOD_POST, parameters, getActionTag(), getParameter(SERVER_PARAMETER_UUID));
+                statusCode = STATUS_CODE_NETWORK_OK;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (TKConfig.LaunchTest) {
+                launchTest();
+                result = ByteUtil.xobjectToByte(responseXMap);
+                statusCode = STATUS_CODE_NETWORK_OK;
+            }
 
             translate(result);
         } catch (Exception e) {

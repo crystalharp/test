@@ -46,7 +46,7 @@ import com.tigerknows.model.Hotel.RoomType;
 import com.tigerknows.model.TKDrawable;
 import com.tigerknows.model.TKDrawable.LoadImageRunnable;
 import com.tigerknows.ui.BaseActivity;
-import com.tigerknows.ui.ViewImageActivity;
+import com.tigerknows.ui.common.ViewImageActivity;
 import com.tigerknows.ui.hotel.DateListView;
 import com.tigerknows.ui.hotel.HotelHomeFragment;
 import com.tigerknows.ui.hotel.HotelIntroActivity;
@@ -241,8 +241,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             Button bookBtn = (Button) v.findViewById(R.id.book_btn);
             priceTxv.setText(roomType.getPrice());
             roomTypeTxv.setText(roomType.getRoomType());
-            roomDetailTxv.setText(roomType.getBedType() + " " + roomType.getBreakfast() + " " + roomType.getNetService()
-                    + " " + roomType.getFloor() + " " + roomType.getArea());
+            roomDetailTxv.setText(roomType.genDescription());
             roomGuaranteeTxv.setVisibility(roomType.getNeedGuarantee() == 0 ? View.GONE : View.VISIBLE);
             if (roomType.getSubtitle() != null) {
                 roomSubtitle.setVisibility(View.VISIBLE);
@@ -334,7 +333,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
                     intent.putExtra(ViewImageActivity.EXTRA_TITLE, mSphinx.getString(R.string.hotel_picture_title, list.size()));
                     intent.putParcelableArrayListExtra(ViewImageActivity.EXTRA_IMAGE_LIST, list);
                     intent.putParcelableArrayListExtra(ViewImageActivity.EXTRA_ORIGINAL_IMAGE_LIST, (ArrayList<HotelTKDrawable>)hotel.getOriginalHotelTKDrawableList());
-                    mSphinx.showView(R.id.activity_view_image, intent);
+                    mSphinx.showView(R.id.activity_common_view_image, intent);
                 }
             }
         });

@@ -150,6 +150,7 @@ public class ActionLog extends LogUpload {
     public static final String POIHomeMyLocation = "BK";
     public static final String POIHomeAppointedArea = "BL";
     public static final String POIHomeSubwayMap = "BM";
+    public static final String POIHomeDish = "BN";
     
     // POI输入查询页
     public static final String POIHomeInputQuery = "AB";
@@ -187,6 +188,8 @@ public class ActionLog extends LogUpload {
     public static final String POIDetailBusstop = "CD";
     public static final String POIDetailMoreSameCategory = "CE";
     public static final String POIDetailSameCategory = "CF";
+    public static final String POIDetailDish = "CG";
+    public static final String POIDetailShopkeeper = "CH";
 
     // POI点评列表页
     public static final String POICommentList = "AE";
@@ -399,6 +402,11 @@ public class ActionLog extends LogUpload {
     public static final String AddMerchantConfirmTime = "BM";
     public static final String AddMerchantCity = "BN";
     public static final String AddMerchantBackPhoto = "BO";
+
+    // 添加图片页
+    public static final String AddPicture = "CN";
+    public static final String AddPictureCancel = "BA";
+    public static final String AddPictureConfirm = "BB";
     
     // 满意度评分页
     public static final String SatisfyRate = "CL";
@@ -527,6 +535,8 @@ public class ActionLog extends LogUpload {
     
     // 地铁图页
     public static final String TrafficSubwayMap = "BR";
+    public static final String TrafficSubwayMapClickPOI = "BA";
+    public static final String TrafficSubwayMapClickSearch = "BB";
     
     // == 用户模块通用 ==
     public static final String UserCommonLoginBtn = "AA";
@@ -667,7 +677,7 @@ public class ActionLog extends LogUpload {
     public static final String HotelPickLocationAlternative = "BC";
     public static final String HotelPickLocationAlternativeSelect = "BD";
     
-    public static final String HotelPicture = "GC";
+    public static final String ViewPicture = "GC";
 
     // 酒店简介页
     public static final String HotelIntro = "GD";

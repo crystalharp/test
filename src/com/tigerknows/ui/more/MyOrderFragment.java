@@ -22,6 +22,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.decarta.Globals;
+import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.android.os.TKAsyncTask;
@@ -52,6 +53,7 @@ public class MyOrderFragment extends BaseFragment{
 	private Shangjia mRequestLogin = null;
 	
 	private boolean mFromTuangou;
+	private boolean mActualOnCreate;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState){
@@ -88,6 +90,12 @@ public class MyOrderFragment extends BaseFragment{
 	}
 	
 	@Override
+	public void onPause() {
+		super.onPause();
+		mActualOnCreate = false;
+	}
+	
+	@Override
 	public void onResume() {
 		super.onResume();
 		mTitleBtn.setText(mSphinx.getString(R.string.wodedingdan));
@@ -96,8 +104,10 @@ public class MyOrderFragment extends BaseFragment{
             return;
         }
         
-		List<Shangjia> list = Shangjia.getShangjiaList();
-		synchronized (MyOrderFragment.this) {
+        LogWrapper.d("Trap", mActualOnCreate == true ? "Create" : "Resume");
+        
+		synchronized (Shangjia.getShangjiaList()) {
+			List<Shangjia> list = Shangjia.getShangjiaList();
 			if (list.size() != mResultList.size()) {
 				mResultList.clear();
 				mResultList.addAll(list);
@@ -113,16 +123,15 @@ public class MyOrderFragment extends BaseFragment{
 
 					@Override
 					public void run() {
-						synchronized (MyOrderFragment.this) {
+						synchronized (Shangjia.getShangjiaList()) {
 							List<Shangjia> newList = Shangjia.getShangjiaList();
-							if (true || newList.size() != mResultList.size()) {
+							if (mActualOnCreate || newList.size() != mResultList.size()) {
 								mResultList.clear();
 								mResultList.addAll(newList);
 								createShangjiaListView();
 							}
 						}
 					}
-					
 				});
 			}
 		}).start();
@@ -272,5 +281,6 @@ public class MyOrderFragment extends BaseFragment{
     	}else{
     		mFromTuangou = false;
     	}
+    	mActualOnCreate = true;
     }
 }

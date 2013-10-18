@@ -452,4 +452,14 @@
         android:background="@color/normal_background"
         >
         </LinearLayout>
+    <ImageButton 
+        android:id="@+id/dish_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="80dp"
+        android:visibility="invisible"
+        android:background="@drawable/btn_dingdan"
+        />
 </RelativeLayout>

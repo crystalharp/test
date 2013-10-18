@@ -82,7 +82,7 @@ public class BaseQueryTest {
     
     public static final String URL = "http://www.tigerknows.com";
     
-    public static final String PIC_URL = "http://wap.tigerknows.com/images/logo_back.png";
+    public static final String PIC_URL = "http://www.tigerknows.com/wp-content/themes/tiger/images/logo.jpg";
     
     public static boolean UnallowedAccessNetwork = false;
     
@@ -498,6 +498,8 @@ public class BaseQueryTest {
         layout.addView(useSystemTimeChb);
         final CheckBox unallowedAccessNetworkChb = new CheckBox(activity);
         layout.addView(unallowedAccessNetworkChb);
+        final CheckBox closeSubwaymapDataCheckChb = new CheckBox(activity);
+        layout.addView(closeSubwaymapDataCheckChb);
         
         editConfigBtn.setText("View or Modify config.txt");
         editConfigBtn.setOnClickListener(new View.OnClickListener() {
@@ -843,6 +845,17 @@ public class BaseQueryTest {
             public void onClick(View arg0) {
                 UnallowedAccessNetwork = unallowedAccessNetworkChb.isChecked();
             }
+        });
+        
+        closeSubwaymapDataCheckChb.setChecked(TKConfig.CloseSubwayDataCheck);
+        closeSubwaymapDataCheckChb.setText("close subwaymap data check");
+        closeSubwaymapDataCheckChb.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                TKConfig.CloseSubwayDataCheck = closeSubwaymapDataCheckChb.isChecked();
+            }
+            
         });
         
         ScrollView scrollView = new ScrollView(activity);

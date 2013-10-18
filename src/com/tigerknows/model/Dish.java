@@ -1,10 +1,16 @@
 package com.tigerknows.model;
 
+import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
+import com.tigerknows.TKConfig;
 import com.tigerknows.android.app.TKApplication;
 import com.tigerknows.model.Comment.LocalMark;
 import com.tigerknows.model.Hotel.HotelTKDrawable;
 import com.tigerknows.model.xobject.XMap;
+import com.tigerknows.util.Utility;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 菜品
@@ -52,6 +58,9 @@ public class Dish extends XMapData {
     private long hitCount;
     private boolean isLike = false;
     private static LocalMark sLocalMark = null;
+    
+    private List<HotelTKDrawable> pictureList;
+    private List<HotelTKDrawable> originalPictureList;
     
     public static LocalMark getLocalMark() {
         if (sLocalMark == null) {
@@ -143,6 +152,34 @@ public class Dish extends XMapData {
 
     public long getHitCount() {
         return hitCount;
+    }
+
+    public List<HotelTKDrawable> getPictureList() {
+        return pictureList;
+    }
+
+    public List<HotelTKDrawable> getOriginalPictureList() {
+        return originalPictureList;
+    }
+
+    public void setOriginalPictureList(List<HotelTKDrawable> originalPictureList) {
+        this.originalPictureList = originalPictureList;
+        if (this.originalPictureList != null) {
+            pictureList = new ArrayList<Hotel.HotelTKDrawable>();
+            for(int i = 0, size = originalPictureList.size(); i < size; i++) {
+                HotelTKDrawable originalHotelTKDrawable = originalPictureList.get(i);
+                HotelTKDrawable hotelTKDrawable = new HotelTKDrawable();
+                hotelTKDrawable.setName(originalHotelTKDrawable.getName());
+                if (originalHotelTKDrawable.getTKDrawable() != null) {
+                    TKDrawable tkDrawable = new TKDrawable();
+                    tkDrawable.setUrl(Utility.getPictureUrlByWidthHeight(originalHotelTKDrawable.getTKDrawable().getUrl(), Globals.getPicWidthHeight(TKConfig.PICTURE_HOTEL_LIST)));
+                    hotelTKDrawable.setTkDrawable(tkDrawable);
+                }
+                pictureList.add(hotelTKDrawable);
+            }
+        } else {
+            pictureList = null;
+        }
     }
 
     @Override

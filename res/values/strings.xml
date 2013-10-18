@@ -1302,7 +1302,7 @@
     <string name="install">安装</string>
     
     <string name="subway_map">地铁图</string>
-    <string name="no_subway_map">当前城市暂无地铁图</string>
+    <string name="no_subway_map">地铁正在修建中...</string>
     <string name="subway_location_error">获取位置信息出错</string>
     <string name="loading_subway_map">首次加载地铁图，请耐心等待...</string>
     <string name="subway_map_updated">地铁图已更新</string>
@@ -1310,8 +1310,15 @@
     <string name="has_take_screenshot">已截取本屏地图</string>
     <string name="measure_distance_tip">点击地图进行测距</string>
     <string name="save_falied_tip">保存失败</string>
-    <string name="traffic_highLight_normal">公交站 / 加油站 / 机场</string>    <string name="traffic_highLight_subwaymap">地铁图 / 公交站 / 加油站</string>
+    <string name="traffic_highLight_normal">公交站 / 加油站 / 机场</string>
+    <string name="traffic_highLight_subwaymap">地铁图 / 公交站 / 加油站</string>
     
     <string name="like_">喜欢%1$d</string>
     <string name="cancel_like">取消喜欢</string>
+    <string name="like_empty_tip">Yummy，yummy~做个有态度的吃货~</string>
+    <string name="add_dish">添加菜单</string>
+    <string name="dish_merchant">菜单商户</string>
+    <string name="recommend_dish">推荐菜</string>
+    <string name="add_picture">添加图片</string>
+    <string name="add_picture_success">上传图片成功</string>
 </resources>

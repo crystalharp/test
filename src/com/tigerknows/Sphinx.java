@@ -123,12 +123,12 @@ import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.ui.BrowserActivity;
 import com.tigerknows.ui.BrowserFragment;
 import com.tigerknows.ui.HintActivity;
-import com.tigerknows.ui.ViewImageActivity;
 import com.tigerknows.ui.MeasureDistanceFragment;
 import com.tigerknows.ui.MenuFragment;
 import com.tigerknows.ui.ResultMapFragment;
 import com.tigerknows.ui.TakeScreenshotActivity;
 import com.tigerknows.ui.TitleFragment;
+import com.tigerknows.ui.common.ViewImageActivity;
 import com.tigerknows.ui.discover.DianyingDetailFragment;
 import com.tigerknows.ui.discover.DiscoverChildListFragment;
 import com.tigerknows.ui.discover.DiscoverHomeFragment;
@@ -3258,9 +3258,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 intent.setClass(this, DishActivity.class);
                 startActivityForResult(intent, R.id.activity_poi_dish);
                 return true;
-            } else if (R.id.activity_view_image == viewId) {
+            } else if (R.id.activity_common_view_image == viewId) {
                 intent.setClass(this, ViewImageActivity.class);
-                startActivityForResult(intent, R.id.activity_view_image);
+                startActivityForResult(intent, R.id.activity_common_view_image);
                 return true;
             }
             

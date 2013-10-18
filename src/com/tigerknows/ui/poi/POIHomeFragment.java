@@ -88,6 +88,11 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
     static final String ELEMENT_HIGH_LIGHT_ATTR = "highLight";
     
     /**
+     * 美食在列表中的下标
+     */
+    static final int FOOD_INDEX = 0;
+    
+    /**
      * 酒店在列表中的下标
      */
     static final int HOTEL_INDEX = 1;
@@ -468,6 +473,15 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
         }
         mSphinx.showHomeDragHint();
 
+        refeshSubwayMap();
+        refreshSubCategoryListView();
+		mDragView.setVisibility(View.INVISIBLE);
+		mIsSubCategoryExpanded = false;
+		
+		refreshFilterArea();
+    }
+    
+    void refeshSubwayMap() {
         int cityId = Globals.getCurrentCityInfo().getId();
         if (mCityId != cityId) {
             mCityId = cityId;
@@ -478,11 +492,6 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
             }
             mCategoryAdapter.notifyDataSetChanged();
         }
-        refreshSubCategoryListView();
-		mDragView.setVisibility(View.INVISIBLE);
-		mIsSubCategoryExpanded = false;
-		
-		refreshFilterArea();
     }
     
     void refreshFilterArea() {
@@ -579,11 +588,19 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
                 mSphinx.showView(R.id.view_hotel_pick_location);
             }
         } else if (id == R.id.subway_map_btn) {
-            mActionLog.addAction(mActionTag + ActionLog.POIHomeSubwayMap);
-            TKConfig.setPref(mSphinx, TKConfig.PREFS_SUBWAY_MAP, "1");
+            if (mCurrentCategoryIndex == TRAFFIC_INDEX) {
+                mActionLog.addAction(mActionTag + ActionLog.POIHomeSubwayMap);
+                TKConfig.setPref(mSphinx, TKConfig.PREFS_SUBWAY_MAP, "1");
+                mSphinx.getSubwayMapFragment().setData(Globals.getCurrentCityInfo());
+                mSphinx.showView(R.id.view_subway_map);
+            } else if (mCurrentCategoryIndex == FOOD_INDEX) {
+                mActionLog.addAction(mActionTag + ActionLog.POIHomeDish);
+                TKConfig.setPref(mSphinx, TKConfig.PREFS_DISH, "1");
+                
+                //TODO：搜索所有菜单商户
+                jumpToPOIResult("菜单");
+            }
             mSubwayMapImv.setVisibility(View.GONE);
-            mSphinx.getSubwayMapFragment().setData(Globals.getCurrentCityInfo());
-            mSphinx.showView(R.id.view_subway_map);
         }
     }
     
@@ -603,6 +620,8 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
         if (filter != null) {
             FilterListView.selectedFilter(filter, Integer.MIN_VALUE);
         }
+        
+        refeshSubwayMap();
     }
     
     public void refreshLocationView() {
@@ -1037,8 +1056,23 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
 		mSubCategoryAdapter.clear();
 		ArrayList<String> subs = subCategories.get(position);
 		if (position == TRAFFIC_INDEX && MapEngine.checkSupportSubway(Globals.getCurrentCityInfo().getId())) {
+            mSubwayMapBtn.setText(R.string.subway_map);
+            Drawable drawable = mSphinx.getResources().getDrawable(R.drawable.ic_subway_map);
+            drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+            mSubwayMapBtn.setCompoundDrawables(drawable, null, null, null);
             mSubwayMapView.setVisibility(View.VISIBLE);
             if (TKConfig.getPref(mSphinx, TKConfig.PREFS_SUBWAY_MAP) == null) {
+                mSubwayMapImv.setVisibility(View.VISIBLE);
+            } else {
+                mSubwayMapImv.setVisibility(View.GONE);
+            }
+		} else if (position == FOOD_INDEX) {
+		    mSubwayMapBtn.setText(R.string.dish_merchant);
+		    Drawable drawable = mSphinx.getResources().getDrawable(R.drawable.ic_dish);
+		    drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+		    mSubwayMapBtn.setCompoundDrawables(drawable, null, null, null);
+		    mSubwayMapView.setVisibility(View.VISIBLE);
+            if (TKConfig.getPref(mSphinx, TKConfig.PREFS_DISH) == null) {
                 mSubwayMapImv.setVisibility(View.VISIBLE);
             } else {
                 mSubwayMapImv.setVisibility(View.GONE);
