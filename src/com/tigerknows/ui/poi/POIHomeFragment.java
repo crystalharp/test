@@ -468,6 +468,15 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
         }
         mSphinx.showHomeDragHint();
 
+        refeshSubwayMap();
+        refreshSubCategoryListView();
+		mDragView.setVisibility(View.INVISIBLE);
+		mIsSubCategoryExpanded = false;
+		
+		refreshFilterArea();
+    }
+    
+    void refeshSubwayMap() {
         int cityId = Globals.getCurrentCityInfo().getId();
         if (mCityId != cityId) {
             mCityId = cityId;
@@ -478,11 +487,6 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
             }
             mCategoryAdapter.notifyDataSetChanged();
         }
-        refreshSubCategoryListView();
-		mDragView.setVisibility(View.INVISIBLE);
-		mIsSubCategoryExpanded = false;
-		
-		refreshFilterArea();
     }
     
     void refreshFilterArea() {
@@ -603,6 +607,8 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
         if (filter != null) {
             FilterListView.selectedFilter(filter, Integer.MIN_VALUE);
         }
+        
+        refeshSubwayMap();
     }
     
     public void refreshLocationView() {
