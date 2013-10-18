@@ -923,7 +923,9 @@ public class DataQueryTest {
         data.put(Dish.FIELD_FOOD_NAME, id+"FIELD_FOOD_NAME");
         data.put(Dish.FIELD_PRICE, "FIELD_PRICE;FIELD_PRICE;FIELD_PRICE");
         data.put(Dish.FIELD_PRICE_JSON, "[]");
-        data.put(Dish.FIELD_DEFAULT_PICTURE, launchHotelTKDrawable(1));
+        if (id%2 == 0) {
+            data.put(Dish.FIELD_DEFAULT_PICTURE, launchHotelTKDrawable(1));
+        }
         data.put(Dish.FIELD_FOOD_PICTURES, 1);
         data.put(Dish.FIELD_HIT_COUNT, 1);
         return data;

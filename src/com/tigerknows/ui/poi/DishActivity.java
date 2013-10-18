@@ -10,6 +10,8 @@ import java.util.List;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
@@ -29,6 +31,7 @@ import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -46,6 +49,8 @@ import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataOperation;
 import com.tigerknows.model.DataQuery;
+import com.tigerknows.model.FileUpload;
+import com.tigerknows.model.TKDrawable;
 import com.tigerknows.model.DataQuery.DishResponse;
 import com.tigerknows.model.DataQuery.DishResponse.Category;
 import com.tigerknows.model.DataQuery.DishResponse.DishList;
@@ -55,6 +60,7 @@ import com.tigerknows.model.Hotel.HotelTKDrawable;
 import com.tigerknows.model.Dish;
 import com.tigerknows.model.POI;
 import com.tigerknows.ui.BaseActivity;
+import com.tigerknows.ui.common.AddPictureActivity;
 import com.tigerknows.ui.common.ViewImageActivity;
 import com.tigerknows.util.Utility;
 import com.tigerknows.widget.QueryingView;
@@ -103,7 +109,6 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
     private static POI sPOI = null;
     
     private POI mPOI = null;
-    private Dish mDish = null;
     
     private DataQuery mRecommendDataQuery;
     private DataQuery mAllDataQuery;
@@ -418,6 +423,32 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
             commendView.setOnClickListener(DishActivity.this);
             pictureImv.setTag(R.id.picture_imv, data);
             pictureImv.setOnClickListener(DishActivity.this);
+            
+            HotelTKDrawable hotelTKDrawable = data.getPicture();
+            TKDrawable tkDrawable = null;
+            if (hotelTKDrawable != null) {
+                tkDrawable = hotelTKDrawable.getTKDrawable();
+                if (tkDrawable != null) {
+                    Drawable drawable = tkDrawable.loadDrawable(mThis, mLoadedDrawableRun, DishActivity.this.toString());
+                    if(drawable != null) {
+                        //To prevent the problem of size change of the same pic 
+                        //After it is used at a different place with smaller size
+                        Rect bounds = drawable.getBounds();
+                        if(bounds != null && (bounds.width() != pictureImv.getWidth() || bounds.height() != pictureImv.getHeight())){
+                            pictureImv.setBackgroundDrawable(null);
+                        }
+                        pictureImv.setBackgroundDrawable(drawable);
+                    } else {
+                        pictureImv.setBackgroundDrawable(null);
+                    }
+                }
+            }
+            
+            if (tkDrawable == null) {
+                Drawable drawable = getResources().getDrawable(R.drawable.icon);
+                pictureImv.setBackgroundDrawable(drawable);
+            }
+            
             long likes = data.getHitCount();
             String likesStr;
             if (data.isLike()) {
@@ -426,17 +457,27 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
                 if (myLike) {
                     likesStr = getString(R.string.cancel_like);
                 } else {
-                    likesStr = getString(R.string.like_, likes);
+                    likesStr = String.valueOf(likes);
                 }
-                commendTxv.setText(likesStr);
             } else {
                 commendTxv.setTextColor(TKConfig.COLOR_BLACK_LIGHT);
                 commendImv.setImageResource(R.drawable.ic_commend_disabled);
-                likesStr = getString(R.string.like_, likes);
-                commendTxv.setText(likesStr);
+                likesStr = String.valueOf(likes);
+                commendImv.setVisibility(View.VISIBLE);
             }
-            float right = likesStr.length()*Globals.g_metrics.density*8 + Globals.g_metrics.density*12;
-            ((RelativeLayout.LayoutParams) commendImv.getLayoutParams()).rightMargin = (int)right;
+            commendTxv.setText(likesStr);
+
+            if (myLike) {
+                commendImv.setVisibility(View.GONE);
+                int margin = Utility.dip2px(mThis, 10);
+                ((LinearLayout.LayoutParams) commendTxv.getLayoutParams()).leftMargin = margin;
+            } else {
+                commendImv.setVisibility(View.VISIBLE);
+                int margin = Utility.dip2px(mThis, 32);
+                ((LinearLayout.LayoutParams) commendTxv.getLayoutParams()).leftMargin = margin;
+                float right = likesStr.length()*Globals.g_metrics.density*4 + Globals.g_metrics.density*12;
+                ((RelativeLayout.LayoutParams) commendImv.getLayoutParams()).rightMargin = (int)right;
+            }
             
             pictureCountTxv.setText(getString(R.string.pictures, data.getPictureCount()));
             nameTxv.setText(data.getName());
@@ -468,14 +509,10 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
         
         DataQuery dataQuery = (DataQuery)(tkAsyncTask.getBaseQuery());
 
-        int mode = -1;
-        int tab = -1;
-        if (dataQuery.hasLocalParameter(LocalParameterMode)) {
-            mode = Integer.parseInt(dataQuery.getLocalParameter(LocalParameterMode));
-            tab = Integer.parseInt(dataQuery.getLocalParameter(LocalParameterTab));
-            if (mode == mMode && tab == mTab) {
-                mQueryingView.setVisibility(View.GONE);
-            }
+        int mode = Integer.parseInt(dataQuery.getLocalParameter(LocalParameterMode));
+        int tab = Integer.parseInt(dataQuery.getLocalParameter(LocalParameterTab));
+        if (mode == mMode && tab == mTab) {
+            mQueryingView.setVisibility(View.GONE);
         }
         if (BaseActivity.checkReLogin(dataQuery, mThis, mSourceUserHome, mId, mId, mId, mCancelLoginListener)) {
             isReLogin = true;
@@ -484,19 +521,6 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
             
             if (mode == mMode && tab == mTab) {
                 mRetryView.setVisibility(View.VISIBLE);
-            } else if (mode == -1 && tab == -1) {
-                Toast.makeText(mThis, BaseActivity.getResponseResId(dataQuery), Toast.LENGTH_LONG).show();
-            }
-
-        } else if (mode == -1 && tab == -1) {
-            PictureResponse pictureResponse = (PictureResponse) dataQuery.getResponse();
-            PictureList pictureList = pictureResponse.getList();
-            if (pictureList != null) {
-                List<HotelTKDrawable> list = pictureList.getPictureList();
-                if (mDish != null) {
-                    mDish.setOriginalPictureList(list);
-                    viewImage(mDish);
-                }
             }
         } else {
             if (mode == 0) {
@@ -550,6 +574,9 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
                         if (dishId == c.getDishId()) {
                             if (isLike) {
                                 c.addLike();
+                                if (mMyLikeList.contains(c)) {
+                                    mMyLikeList.add(c);
+                                }
                             } else {
                                 c.deleteLike();
                             }
@@ -561,8 +588,23 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
                         if (dishId == c.getDishId()) {
                             if (isLike) {
                                 c.addLike();
+                                if (mMyLikeList.contains(c)) {
+                                    mMyLikeList.add(c);
+                                }
                             } else {
                                 c.deleteLike();
+                            }
+                            break;
+                        }
+                    }
+                    for(int i = mMyLikeList.size()-1; i >= 0; i--) {
+                        Dish c = mMyLikeList.get(i);
+                        if (dishId == c.getDishId()) {
+                            if (isLike) {
+                                
+                            } else {
+                                c.deleteLike();
+                                mMyLikeList.remove(i);
                             }
                             break;
                         }
@@ -587,23 +629,22 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
             
             v.setBackgroundResource(R.drawable.btn_subway_busstop_normal);
             commendTxv.setTextColor(TKConfig.COLOR_ORANGE);
-            commendTxv.setText(getString(R.string.like_, data.getHitCount()));
-            commendImv.setImageResource(R.drawable.ic_commend_enabled);
-            Animation animation = AnimationUtils.loadAnimation(mThis, R.anim.commend);
-            commendImv.startAnimation(animation);
+            commendTxv.setText(String.valueOf(data.getHitCount()));
+            if (isLike) {
+                commendImv.setImageResource(R.drawable.ic_commend_enabled);
+                Animation animation = AnimationUtils.loadAnimation(mThis, R.anim.commend);
+                commendImv.startAnimation(animation);
+            }
         } else if (id == R.id.picture_imv) {
             Dish data = (Dish) v.getTag(R.id.picture_imv);
-            if (data.getOriginalPictureList() != null) {
-                viewImage(data);
+            if (data.getPicture() == null) {
+                Intent intent = new Intent(mThis, AddPictureActivity.class);
+                intent.putExtra(FileUpload.SERVER_PARAMETER_REF_DATA_TYPE, BaseQuery.DATA_TYPE_DISH);
+                intent.putExtra(FileUpload.SERVER_PARAMETER_REF_ID, String.valueOf(data.getDishId()));
+                startActivityForResult(intent, 0);
                 return;
             }
-            DataQuery dataQuery = new DataQuery(mThis);
-            dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_PICTURE);
-            dataQuery.addParameter(DataQuery.SERVER_PARAMETER_REF_DATA_TYPE, DataQuery.DATA_TYPE_DISH);
-            dataQuery.addParameter(DataQuery.SERVER_PARAMETER_REF_ID, String.valueOf(data.getDishId()));
-            dataQuery.setup(Globals.getCurrentCityInfo().getId(), mId, mId, null, false, false, mPOI);
-            queryStart(dataQuery);
-            mDish = data;
+            viewImage(data);
         }
     }
     
@@ -939,9 +980,13 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
         intent.setClass(mThis, ViewImageActivity.class);
         ArrayList<HotelTKDrawable> pictureList = (ArrayList<HotelTKDrawable>)dish.getPictureList();
         ArrayList<HotelTKDrawable> originalPictureList = (ArrayList<HotelTKDrawable>)dish.getOriginalPictureList();
-        intent.putExtra(ViewImageActivity.EXTRA_TITLE, dish.getName() + pictureList.size());
-        intent.putParcelableArrayListExtra(ViewImageActivity.EXTRA_IMAGE_LIST, pictureList);
-        intent.putParcelableArrayListExtra(ViewImageActivity.EXTRA_ORIGINAL_IMAGE_LIST, originalPictureList);
+        if (pictureList != null && originalPictureList != null) {
+            intent.putParcelableArrayListExtra(ViewImageActivity.EXTRA_IMAGE_LIST, pictureList);
+            intent.putParcelableArrayListExtra(ViewImageActivity.EXTRA_ORIGINAL_IMAGE_LIST, originalPictureList);
+        }
+        intent.putExtra(ViewImageActivity.EXTRA_TITLE, dish.getName());
+        intent.putExtra(BaseQuery.SERVER_PARAMETER_REF_DATA_TYPE, BaseQuery.DATA_TYPE_DISH);
+        intent.putExtra(BaseQuery.SERVER_PARAMETER_REF_ID, String.valueOf(dish.getDishId()));
         intent.putExtra(ViewImageActivity.EXTRA_CAN_ADD, true);
         startActivity(intent);
     }

@@ -162,6 +162,7 @@ public class ViewImageActivity extends BaseActivity implements RetryView.CallBac
             mQueryingView.setVisibility(View.VISIBLE);
             
             mDataQuery = new DataQuery(mThis);
+            mDataQuery.addParameter(BaseQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_PICTURE);
             mDataQuery.addParameter(BaseQuery.SERVER_PARAMETER_REF_DATA_TYPE, mRefDty);
             mDataQuery.addParameter(BaseQuery.SERVER_PARAMETER_REF_ID, mRefId);
             
