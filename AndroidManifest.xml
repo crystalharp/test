@@ -210,6 +210,12 @@
             android:windowSoftInputMode="adjustResize|stateHidden"
             android:screenOrientation="portrait" />
         
+        <activity android:name="com.tigerknows.ui.common.AddPictureActivity"
+            android:theme="@style/Transparent" 
+            android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
+            android:windowSoftInputMode="adjustResize|stateHidden"
+            android:screenOrientation="portrait" />
+        
         <!-- User Module -->
         
         <activity android:name="com.tigerknows.share.WeiboSendActivity" 

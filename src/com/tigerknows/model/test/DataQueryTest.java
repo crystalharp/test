@@ -132,7 +132,7 @@ public class DataQueryTest {
     
     protected static XMap launchTKDrawable(Context context) {
         XMap data = new XMap();
-        data.put(TKDrawable.FIELD_URL, "http://wm2e16.263.net/resource/images/58/226/tigerknows.com/domain_logo.gif");
+        data.put(TKDrawable.FIELD_URL, BaseQueryTest.PIC_URL);
 //        data.put(TKDrawable.FIELD_DATA, launchDrawable(context, R.drawable.icon));
         return data;
     }

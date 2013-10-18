@@ -46,7 +46,7 @@ import com.tigerknows.model.Hotel.RoomType;
 import com.tigerknows.model.TKDrawable;
 import com.tigerknows.model.TKDrawable.LoadImageRunnable;
 import com.tigerknows.ui.BaseActivity;
-import com.tigerknows.ui.ViewImageActivity;
+import com.tigerknows.ui.common.ViewImageActivity;
 import com.tigerknows.ui.hotel.DateListView;
 import com.tigerknows.ui.hotel.HotelHomeFragment;
 import com.tigerknows.ui.hotel.HotelIntroActivity;
@@ -334,7 +334,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
                     intent.putExtra(ViewImageActivity.EXTRA_TITLE, mSphinx.getString(R.string.hotel_picture_title, list.size()));
                     intent.putParcelableArrayListExtra(ViewImageActivity.EXTRA_IMAGE_LIST, list);
                     intent.putParcelableArrayListExtra(ViewImageActivity.EXTRA_ORIGINAL_IMAGE_LIST, (ArrayList<HotelTKDrawable>)hotel.getOriginalHotelTKDrawableList());
-                    mSphinx.showView(R.id.activity_view_image, intent);
+                    mSphinx.showView(R.id.activity_common_view_image, intent);
                 }
             }
         });

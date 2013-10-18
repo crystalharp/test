@@ -35,6 +35,7 @@ import android.widget.TextView;
 import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ExpandableListView.OnGroupExpandListener;
 import android.widget.LinearLayout.LayoutParams;
+import android.widget.Toast;
 
 import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
@@ -48,9 +49,13 @@ import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.DataQuery.DishResponse;
 import com.tigerknows.model.DataQuery.DishResponse.Category;
 import com.tigerknows.model.DataQuery.DishResponse.DishList;
+import com.tigerknows.model.DataQuery.PictureResponse;
+import com.tigerknows.model.DataQuery.PictureResponse.PictureList;
+import com.tigerknows.model.Hotel.HotelTKDrawable;
 import com.tigerknows.model.Dish;
 import com.tigerknows.model.POI;
 import com.tigerknows.ui.BaseActivity;
+import com.tigerknows.ui.common.ViewImageActivity;
 import com.tigerknows.util.Utility;
 import com.tigerknows.widget.QueryingView;
 import com.tigerknows.widget.RetryView;
@@ -66,11 +71,39 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
     
     static final String LocalParameterTab = "LocalParameterTab";
     
+    private Runnable mLoadedDrawableRun = new Runnable() {
+        
+        @Override
+        public void run() {
+            mHandler.removeCallbacks(mActualLoadedDrawableRun);
+            mHandler.post(mActualLoadedDrawableRun);
+        }
+    };
+    
+    private Runnable mActualLoadedDrawableRun = new Runnable() {
+        
+        @Override
+        public void run() {
+            if (isFinishing() == false) {
+                if (mMode == 0) {
+                    if (mTab == 0) {
+                        mMyLikeAdapter.notifyDataSetChanged();
+                    } else {
+                        mRecommendAdapter.notifyDataSetChanged();
+                    }
+                } else {
+                    mSelectedAdapter.notifyDataSetChanged();
+                }
+            }
+        }
+    };
+    
     public static final int REQUEST_CODE_COMMENT = 1;
 
     private static POI sPOI = null;
     
     private POI mPOI = null;
+    private Dish mDish = null;
     
     private DataQuery mRecommendDataQuery;
     private DataQuery mAllDataQuery;
@@ -101,7 +134,7 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
 
     private View mSelectedView;
     private ExpandableListView mCategoryElv = null;
-    private int mGroupPos = -1;
+    private int mGroupPosition = -1;
     private int mFromYDelta = 0;
     private int mFirstVisibleItem = 0;
     private Category mCurrentCategoryItem = null;
@@ -224,10 +257,10 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
             
             @Override
             public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
-                if (mGroupPos == groupPosition) {
+                if (mGroupPosition == groupPosition) {
                     return true;
                 }
-                mGroupPos = groupPosition;
+                mGroupPosition = groupPosition;
                 return false;
             }
         });
@@ -287,7 +320,7 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
                     Dish dish = mSelectedList.get(mFirstVisibleItem);
                     long dishId = dish.getDishId();
                     if (mCurrentCategoryItem != null && !mCurrentCategoryItem.getDishList().contains(dishId)) {
-                        List<Category> categoryList = mCategoryList.get(mGroupPos).getChildList();
+                        List<Category> categoryList = mCategoryList.get(mGroupPosition).getChildList();
                         int i = 0;
                         for(int size = categoryList.size(); i < size; i++) {
                             if (categoryList.get(i).getDishList().contains(dishId)) {
@@ -303,7 +336,7 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
     }
     
     void animationSelectView(int childPosition) {
-        int toYDelta = (mGroupPos+1)*mCategoryAdapter.groupHeight+childPosition*mCategoryAdapter.childHeight;
+        int toYDelta = (mGroupPosition+1)*mCategoryAdapter.groupHeight+childPosition*mCategoryAdapter.childHeight;
         
         Animation anim = new TranslateAnimation(0, 0, mFromYDelta, toYDelta);
         anim.setDuration(300);
@@ -375,6 +408,7 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
             View commendView = view.findViewById(R.id.commend_view);
             TextView commendTxv = (TextView)view.findViewById(R.id.commend_txv);
             ImageView commendImv = (ImageView)view.findViewById(R.id.commend_imv);
+            ImageView pictureImv = (ImageView)view.findViewById(R.id.picture_imv);
 
             Dish data = getItem(position);
             commendView.setTag(R.id.commend_view, data);
@@ -382,6 +416,8 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
             commendView.setTag(R.id.commend_txv, commendTxv);
             commendView.setTag(R.id.index, position);
             commendView.setOnClickListener(DishActivity.this);
+            pictureImv.setTag(R.id.picture_imv, data);
+            pictureImv.setOnClickListener(DishActivity.this);
             long likes = data.getHitCount();
             String likesStr;
             if (data.isLike()) {
@@ -432,10 +468,14 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
         
         DataQuery dataQuery = (DataQuery)(tkAsyncTask.getBaseQuery());
 
-        int mode = Integer.parseInt(dataQuery.getLocalParameter(LocalParameterMode));
-        int tab = Integer.parseInt(dataQuery.getLocalParameter(LocalParameterTab));
-        if (mode == mMode && tab == mTab) {
-            mQueryingView.setVisibility(View.GONE);
+        int mode = -1;
+        int tab = -1;
+        if (dataQuery.hasLocalParameter(LocalParameterMode)) {
+            mode = Integer.parseInt(dataQuery.getLocalParameter(LocalParameterMode));
+            tab = Integer.parseInt(dataQuery.getLocalParameter(LocalParameterTab));
+            if (mode == mMode && tab == mTab) {
+                mQueryingView.setVisibility(View.GONE);
+            }
         }
         if (BaseActivity.checkReLogin(dataQuery, mThis, mSourceUserHome, mId, mId, mId, mCancelLoginListener)) {
             isReLogin = true;
@@ -444,6 +484,19 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
             
             if (mode == mMode && tab == mTab) {
                 mRetryView.setVisibility(View.VISIBLE);
+            } else if (mode == -1 && tab == -1) {
+                Toast.makeText(mThis, BaseActivity.getResponseResId(dataQuery), Toast.LENGTH_LONG).show();
+            }
+
+        } else if (mode == -1 && tab == -1) {
+            PictureResponse pictureResponse = (PictureResponse) dataQuery.getResponse();
+            PictureList pictureList = pictureResponse.getList();
+            if (pictureList != null) {
+                List<HotelTKDrawable> list = pictureList.getPictureList();
+                if (mDish != null) {
+                    mDish.setOriginalPictureList(list);
+                    viewImage(mDish);
+                }
             }
         } else {
             if (mode == 0) {
@@ -534,14 +587,23 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
             
             v.setBackgroundResource(R.drawable.btn_subway_busstop_normal);
             commendTxv.setTextColor(TKConfig.COLOR_ORANGE);
-            String txt = commendTxv.getText().toString();
-            if (txt.length() > 0) {
-                int val = Integer.parseInt(txt);
-                commendTxv.setText(String.valueOf(val+1));
-            }
+            commendTxv.setText(getString(R.string.like_, data.getHitCount()));
             commendImv.setImageResource(R.drawable.ic_commend_enabled);
             Animation animation = AnimationUtils.loadAnimation(mThis, R.anim.commend);
             commendImv.startAnimation(animation);
+        } else if (id == R.id.picture_imv) {
+            Dish data = (Dish) v.getTag(R.id.picture_imv);
+            if (data.getOriginalPictureList() != null) {
+                viewImage(data);
+                return;
+            }
+            DataQuery dataQuery = new DataQuery(mThis);
+            dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_PICTURE);
+            dataQuery.addParameter(DataQuery.SERVER_PARAMETER_REF_DATA_TYPE, DataQuery.DATA_TYPE_DISH);
+            dataQuery.addParameter(DataQuery.SERVER_PARAMETER_REF_ID, String.valueOf(data.getDishId()));
+            dataQuery.setup(Globals.getCurrentCityInfo().getId(), mId, mId, null, false, false, mPOI);
+            queryStart(dataQuery);
+            mDish = data;
         }
     }
     
@@ -635,7 +697,7 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
                     mCategoryList.addAll(categories);
                     mCategoryAdapter.measure();
                     mCategoryAdapter.notifyDataSetChanged();
-                    mGroupPos = 0;
+                    mGroupPosition = 0;
                     mCategoryElv.expandGroup(0);
                 }
 
@@ -689,7 +751,7 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
         dataQuery.addLocalParameter(LocalParameterMode, String.valueOf(mode));
         dataQuery.addLocalParameter(LocalParameterTab, String.valueOf(tab));
         if (mode == 0 && tab == 1) {
-            dataQuery.addParameter(DataQuery.SERVER_PARAMETER_BIAS, "1");
+            dataQuery.addParameter(DataQuery.SERVER_PARAMETER_BIAS, DataQuery.BIAS_RECOMMEND_DISH);
         }
         dataQuery.setup(Globals.getCurrentCityInfo().getId(), mId, mId, null, false, false, mPOI);
         queryStart(dataQuery);
@@ -823,7 +885,7 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
             int childrenCount = getChildrenCount(groupPosition);
             if (childPosition == childrenCount-1) {
                 int bottom = Globals.g_metrics.heightPixels-titleHeight-getGroupCount()*groupHeight-childrenCount*childHeight;
-                textView.setPadding(0, 0, 0, bottom);
+                textView.setPadding(0, 0, 0, bottom > 0 ? bottom : 0);
             } else {
                 textView.setPadding(0, 0, 0, 0);
             }
@@ -867,5 +929,20 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
         public boolean hasStableIds() {
             return true;
         }
+    }
+    
+    void viewImage(Dish dish) {
+        if (dish == null) {
+            return;
+        }
+        Intent intent = new Intent();
+        intent.setClass(mThis, ViewImageActivity.class);
+        ArrayList<HotelTKDrawable> pictureList = (ArrayList<HotelTKDrawable>)dish.getPictureList();
+        ArrayList<HotelTKDrawable> originalPictureList = (ArrayList<HotelTKDrawable>)dish.getOriginalPictureList();
+        intent.putExtra(ViewImageActivity.EXTRA_TITLE, dish.getName() + pictureList.size());
+        intent.putParcelableArrayListExtra(ViewImageActivity.EXTRA_IMAGE_LIST, pictureList);
+        intent.putParcelableArrayListExtra(ViewImageActivity.EXTRA_ORIGINAL_IMAGE_LIST, originalPictureList);
+        intent.putExtra(ViewImageActivity.EXTRA_CAN_ADD, true);
+        startActivity(intent);
     }
 }

@@ -1,4 +1,4 @@
-package com.tigerknows.ui;
+package com.tigerknows.ui.common;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,17 +27,19 @@ import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataQuery;
+import com.tigerknows.model.FileUpload;
 import com.tigerknows.model.Response;
 import com.tigerknows.model.TKDrawable;
 import com.tigerknows.model.DataQuery.PictureResponse;
 import com.tigerknows.model.DataQuery.PictureResponse.PictureList;
 import com.tigerknows.model.Hotel.HotelTKDrawable;
+import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.discover.TKGallery;
 import com.tigerknows.util.Utility;
 import com.tigerknows.widget.QueryingView;
 import com.tigerknows.widget.RetryView;
 
-public class ViewImageActivity extends BaseActivity implements RetryView.CallBack {
+public class ViewImageActivity extends BaseActivity implements RetryView.CallBack, View.OnClickListener {
     
     public static final String EXTRA_CAN_ADD = "EXTRA_CAN_ADD";
     
@@ -133,9 +135,9 @@ public class ViewImageActivity extends BaseActivity implements RetryView.CallBac
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mActionTag = ActionLog.HotelPicture;
+        mActionTag = ActionLog.ViewPicture;
 		
-        setContentView(R.layout.view_image);
+        setContentView(R.layout.common_view_image);
 		
 		findViews();
 		setListener();
@@ -286,8 +288,10 @@ public class ViewImageActivity extends BaseActivity implements RetryView.CallBac
             Drawable image;
             if (mCanAdd && position == 0) {
                 image = getResources().getDrawable(R.drawable.icon);
+                iconImv.setOnClickListener(ViewImageActivity.this);
             } else {
                 image = hotelTKDrawable.getTKDrawable().loadDrawable(mThis, mLoadedDrawableRun, ViewImageActivity.this.toString());
+                iconImv.setOnClickListener(null);
             }
             
             int newWidth = (int) (Globals.g_metrics.density*mColumnWidth);
@@ -411,5 +415,13 @@ public class ViewImageActivity extends BaseActivity implements RetryView.CallBac
         
         mRetryView.setVisibility(View.GONE);
         mQueryingView.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onClick(View v) {
+        Intent intent = new Intent(mThis, AddPictureActivity.class);
+        intent.putExtra(FileUpload.SERVER_PARAMETER_REF_DATA_TYPE, mRefDty);
+        intent.putExtra(FileUpload.SERVER_PARAMETER_REF_ID, mRefId);
+        startActivityForResult(intent, 0);
     }
 }

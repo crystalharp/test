@@ -642,6 +642,7 @@ public abstract class BaseQuery {
     }
     
     protected void launchTest() {
+        responseXMap = BaseQueryTest.launchResponse();
     }
     
     private void execute() {
@@ -657,7 +658,10 @@ public abstract class BaseQuery {
                             || apiType.equals(API_TYPE_ACCOUNT_MANAGE)
                             || apiType.equals(API_TYPE_PROXY)
                             || apiType.equals(API_TYPE_HOTEL_ORDER)
-                            || apiType.equals(API_TYPE_NOTICE)) {
+                            || apiType.equals(API_TYPE_NOTICE)
+                            || apiType.equals(API_TYPE_FEEDBACK_UPLOAD)
+                            || apiType.equals(API_TYPE_FILE_UPLOAD)
+                            || apiType.equals(API_TYPE_FILE_DOWNLOAD)) {
                         try {
                             httpClient.execute(context);
                         } catch (Exception e) {

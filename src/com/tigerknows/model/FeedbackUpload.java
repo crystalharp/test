@@ -70,11 +70,6 @@ public class FeedbackUpload extends BaseQuery {
         this.response = new Response(responseXMap);
     }
     
-    protected void launchTest() {
-        super.launchTest();
-        responseXMap = BaseQueryTest.launchResponse();
-    }
-    
     /**
      * 目前用户在点击各种poi详情页面的时候会向服务器发起多个请求,导致没有办法精确统计用户进入详情页的行为,设计解决办法如下:
      * 在进入任何详情页面(包括poi,动态poi)的时候,向服务器发送额外发送一条请求,其中包含所有公共字段和下面几个关键字段

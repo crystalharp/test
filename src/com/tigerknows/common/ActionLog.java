@@ -402,6 +402,11 @@ public class ActionLog extends LogUpload {
     public static final String AddMerchantConfirmTime = "BM";
     public static final String AddMerchantCity = "BN";
     public static final String AddMerchantBackPhoto = "BO";
+
+    // 添加图片页
+    public static final String AddPicture = "CN";
+    public static final String AddPictureCancel = "BA";
+    public static final String AddPictureConfirm = "BB";
     
     // 满意度评分页
     public static final String SatisfyRate = "CL";
@@ -670,7 +675,7 @@ public class ActionLog extends LogUpload {
     public static final String HotelPickLocationAlternative = "BC";
     public static final String HotelPickLocationAlternativeSelect = "BD";
     
-    public static final String HotelPicture = "GC";
+    public static final String ViewPicture = "GC";
 
     // 酒店简介页
     public static final String HotelIntro = "GD";

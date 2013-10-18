@@ -95,6 +95,7 @@ import com.tigerknows.model.POI;
 import com.tigerknows.model.TrafficQuery;
 import com.tigerknows.provider.HistoryWordTable;
 import com.tigerknows.ui.ErrorDialogActivity;
+import com.tigerknows.ui.common.AddPictureActivity;
 import com.tigerknows.ui.traffic.TrafficQueryFragment;
 import com.tigerknows.widget.SpringbackListView;
 import com.tigerknows.widget.StringArrayAdapter;
@@ -1359,7 +1360,7 @@ public class Utility {
     	});
     }
 
-    public static void showTakePhotoDialog(final String actionTag, final Activity activity, final int pickRequestCode,
+    public static Dialog showTakePhotoDialog(final String actionTag, final Activity activity, final int pickRequestCode,
             final int captureRequestCode, final Uri captureUri) {
         final List<String> textList = new ArrayList<String>();
         textList.add(activity.getString(R.string.capture_photo));
@@ -1387,16 +1388,28 @@ public class Utility {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View arg1, int which, long arg3) {
                 ActionLog actionLog = ActionLog.getInstance(activity);
+                AddPictureActivity addPictureActivity = null;
+                if (activity instanceof AddPictureActivity) {
+                    addPictureActivity = (AddPictureActivity) activity;
+                }
                 if (which == 0) {
                     actionLog.addAction(actionTag+ActionLog.CameraPhoto);
                     capturePicture(activity, captureRequestCode, captureUri);
+                    if (addPictureActivity != null) {
+                        addPictureActivity.mSelected = true;
+                    }
                 } else if (which == 1) {
                     actionLog.addAction(actionTag+ActionLog.PickPhoto);
                     pickPicture(activity, pickRequestCode);
+                    if (addPictureActivity != null) {
+                        addPictureActivity.mSelected = true;
+                    }
                 }
                 dialog.dismiss();
             }
         });
+        
+        return dialog;
     }
 
     public static void capturePicture(Activity activity, int requestCode, Uri uri) {

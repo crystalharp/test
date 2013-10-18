@@ -82,7 +82,7 @@ public class BaseQueryTest {
     
     public static final String URL = "http://www.tigerknows.com";
     
-    public static final String PIC_URL = "http://wap.tigerknows.com/images/logo_back.png";
+    public static final String PIC_URL = "http://www.tigerknows.com/wp-content/themes/tiger/images/logo.jpg";
     
     public static boolean UnallowedAccessNetwork = false;
     

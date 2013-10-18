@@ -639,6 +639,9 @@ public final class DataQuery extends BaseQuery {
             ekeys = Utility.mergeArray(ekeys, new String[] {SERVER_PARAMETER_POI_ID, SERVER_PARAMETER_NEED_FIELD});
             okeys = Utility.mergeArray(okeys, new String[] {SERVER_PARAMETER_BIAS});
             debugCheckParameters(ekeys, okeys);
+        } else if (DATA_TYPE_PICTURE.equals(dataType)) {
+            ekeys = Utility.mergeArray(ekeys, new String[] {SERVER_PARAMETER_REF_DATA_TYPE, SERVER_PARAMETER_REF_ID});
+            debugCheckParameters(ekeys, okeys);
         } else {
             throw APIException.wrapToMissingRequestParameterException("invalid data type.");
         }
