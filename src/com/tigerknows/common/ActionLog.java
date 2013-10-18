@@ -521,6 +521,8 @@ public class ActionLog extends LogUpload {
     
     // 地铁图页
     public static final String TrafficSubwayMap = "BR";
+    public static final String TrafficSubwayMapClickPOI = "BA";
+    public static final String TrafficSubwayMapClickSearch = "BB";
     
     // == 用户模块通用 ==
     public static final String UserCommonLoginBtn = "AA";
