@@ -320,6 +320,7 @@ public class POI extends BaseData {
         public static final String TYPE_ZHANLAN = BaseQuery.DATA_TYPE_ZHANLAN;
         public static final String TYPE_FENDIAN = BaseQuery.DATA_TYPE_FENDIAN;
         public static final String TYPE_COUPON = BaseQuery.DATA_TYPE_COUPON;
+        public static final String TYPE_DISH = BaseQuery.DATA_TYPE_DISH;
         
         // 0x02 x_string    主动态poi的uid，masterUid
         public static final byte FIELD_MASTER_UID = 0x02;
@@ -451,6 +452,8 @@ public class POI extends BaseData {
     private List<DynamicPOI> dynamicPOIList;
     
     private List<Dianying> dynamicDianyingList;
+    
+    private List<Dish> dynamicDishList;
     
     private DataQuery dishQuery = null;
     
@@ -799,6 +802,14 @@ public class POI extends BaseData {
 
     public void setDynamicDianyingList(List<Dianying> dynamicDianyingList) {
         this.dynamicDianyingList = dynamicDianyingList;
+    }
+
+    public List<Dish> getDynamicDishList() {
+        return dynamicDishList;
+    }
+
+    public void setDynamicDishList(List<Dish> dynamicDishList) {
+        this.dynamicDishList = dynamicDishList;
     }
 
     public Hotel getHotel() {

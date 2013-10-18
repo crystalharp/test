@@ -1313,5 +1313,7 @@
     <string name="like_">喜欢%1$d</string>
     <string name="cancel_like">取消喜欢</string>
     <string name="like_empty_tip">Yummy，yummy~做个有态度的吃货~</string>
+    <string name="add_dish">添加菜单</string>
+    <string name="dish_merchant">菜单商户</string>
     <string name="recommend_dish">推荐菜</string>
 </resources>

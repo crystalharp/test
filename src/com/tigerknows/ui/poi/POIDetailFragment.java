@@ -35,6 +35,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Animation.AnimationListener;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
@@ -197,6 +198,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     
     DynamicMoviePOI mDynamicMoviePOI;
     
+    DynamicDishPOI mDynamicDishPOI;
+    
     ExtraSubwayPOI mExtraSubwayPOI;
     
     ExtraBusstopPOI mExtraBusstopPOI;
@@ -214,6 +217,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     private View mWeixinView;
     
     private Button mWeixinBtn;
+    
+    protected ImageButton mDishBtn;
     
     @Override
     public boolean isReLogin() {
@@ -247,6 +252,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         DPOIViewTable.put(DynamicPOI.TYPE_YANCHU, mDynamicNormalPOI);
         DPOIViewTable.put(DynamicPOI.TYPE_COUPON, mDynamicNormalPOI);
         DPOIViewTable.put(DynamicPOI.TYPE_DIANYING, mDynamicMoviePOI);
+        DPOIViewTable.put(DynamicPOI.TYPE_DISH, mDynamicDishPOI);
     }
 
     /**
@@ -567,6 +573,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         
         mDynamicMoviePOI = new DynamicMoviePOI(this, mLayoutInflater);
         
+        mDynamicDishPOI = new DynamicDishPOI(this, mLayoutInflater);
+        
         mExtraSubwayPOI = new ExtraSubwayPOI(this, mLayoutInflater);
         
         mExtraBusstopPOI = new ExtraBusstopPOI(this, mLayoutInflater);
@@ -886,6 +894,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         mToolsView = mRootView.findViewById(R.id.tools_view);
         mWeixinView = mRootView.findViewById(R.id.weixin_view);
         mWeixinBtn = (Button)mRootView.findViewById(R.id.weixin_btn);
+        mDishBtn = (ImageButton)mRootView.findViewById(R.id.dish_btn);
 
         mNavigationWidget = mRootView.findViewById(R.id.navigation_widget);
     }
@@ -901,6 +910,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         mCommentTipView.setOnTouchListener(this);
         mWeixinBtn.setOnClickListener(this);
         mCommentTipEdt.setOnClickListener(this);
+        mDishBtn.setOnClickListener(this);
     }
 
     public void onClick(View view) {
@@ -953,6 +963,12 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                 TKWeixin tkWeixin = TKWeixin.getInstance(mSphinx);
                 tkWeixin.sendResp(TKWeixin.makePOIResp(mSphinx, poi, mSphinx.getBundle()));
                 mSphinx.finish();
+                break;
+                
+            case R.id.dish_btn:
+                mActionLog.addAction(mActionTag + ActionLog.POIDetailDish);
+                DishActivity.setPOI(poi);
+                mSphinx.showView(R.id.activity_poi_dish);
                 break;
                 
             case R.id.comment_tip_btn:
@@ -1078,6 +1094,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         if (poi == null) {
             return;
         }
+        mDishBtn.setVisibility(View.INVISIBLE);
         //这两个函数放在前面初始化动态POI信息
         clearDynamicView(DPOIViewBlockList);
         //初始化和动态POI信息相关的动态布局
@@ -1112,7 +1129,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             if (poi.ciytId != 0) {
                 cityId = poi.ciytId;
             } else if (poi.getPosition() != null){
-                cityId = MapEngine.getInstance().getCityId(poi.getPosition());
+                cityId = MapEngine.getCityId(poi.getPosition());
             }
             poiQuery.setup(cityId, getId(), getId(), null);
             baseQueryList.add(poiQuery);

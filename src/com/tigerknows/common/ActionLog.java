@@ -150,6 +150,7 @@ public class ActionLog extends LogUpload {
     public static final String POIHomeMyLocation = "BK";
     public static final String POIHomeAppointedArea = "BL";
     public static final String POIHomeSubwayMap = "BM";
+    public static final String POIHomeDish = "BN";
     
     // POI输入查询页
     public static final String POIHomeInputQuery = "AB";
@@ -187,6 +188,8 @@ public class ActionLog extends LogUpload {
     public static final String POIDetailBusstop = "CD";
     public static final String POIDetailMoreSameCategory = "CE";
     public static final String POIDetailSameCategory = "CF";
+    public static final String POIDetailDish = "CG";
+    public static final String POIDetailShopkeeper = "CH";
 
     // POI点评列表页
     public static final String POICommentList = "AE";

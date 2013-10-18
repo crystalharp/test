@@ -65,7 +65,11 @@ public class LinearListView {
      * @param list
      */
     @SuppressWarnings("rawtypes")
-	public void refreshList(List list) {
+    public void refreshList(List list) {
+        refreshList(list, 1);
+    }
+    
+	public void refreshList(List list, int columnNum) {
         int dataSize = (list != null ? list.size() : 0);
         parentLayout.removeAllViews();
 //        List<View> tmp = new LinkedList<View>();
@@ -76,13 +80,31 @@ public class LinearListView {
         if(dataSize == 0){
             return;
         }else{
+            boolean twoColumn = (columnNum == 2);
             for(int i = 0; i < dataSize; i++) {
                 Object data = list.get(i);
                 View child;
                 child = getInstance();
 //                tmp.add(child);
                 initer.initItem(data, child);
-                parentLayout.addView(child, new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
+                if (twoColumn) {
+                    if (i % 2 == 0) {
+                        LinearLayout linearLayout = new LinearLayout(mSphinx);
+                        linearLayout.setOrientation(LinearLayout.HORIZONTAL);
+                        linearLayout.setWeightSum(2);
+                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+                        params.weight = 1;
+                        linearLayout.addView(child, params);
+                        parentLayout.addView(linearLayout, new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
+                    } else {
+                        LinearLayout linearLayout = (LinearLayout) parentLayout.getChildAt(i == 0 ? 0 : (i-1)/2);
+                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+                        params.weight = 1;
+                        linearLayout.addView(child, params);
+                    }
+                } else {
+                    parentLayout.addView(child, new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
+                }
                 child.setVisibility(View.VISIBLE);
             }
             
