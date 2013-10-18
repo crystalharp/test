@@ -54,6 +54,14 @@ public class TitleFragment extends BaseFragment {
     }
 
     protected void setListener() {
+        setOnTouchListener(new OnTouchListener() {
+            
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                // TODO Auto-generated method stub
+                return true;
+            }
+        });
     }
     
     public void showPopupWindow(ListAdapter adapter, OnItemClickListener listener, String actionTag) {
