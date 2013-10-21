@@ -755,6 +755,16 @@ public class TilesView extends GLSurfaceView {
 			tilesWaitForLoading.clear();
 		}
 	}
+	
+	private void resetRecord() {
+	    touchRecord1.reset();
+        touchRecord2.reset();
+
+        synchronized (drawingLock) {
+            easingRecord.reset();
+            zoomingRecord.reset();
+        }
+	}
 
 	/**
 	 * main method handle touch related events
@@ -1424,6 +1434,8 @@ public class TilesView extends GLSurfaceView {
 		if (position == null)
 			return;
 
+		resetRecord();
+		
 		boolean moveJustDown = false;
 		if (duration == -1) {
 			duration = MapView.PAN_TO_POSITION_TIME_DEF;
