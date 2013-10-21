@@ -682,6 +682,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
                     mRoomType.getRoomType(),
                     mRoomHowmany,
                     Utility.doubleKeep(mTotalPrice, 2),
+                    mRoomType.getVendorID(),
                     CalendarUtil.strDateToLong(SIMPLE_TIME_FORMAT, mRTimeDetail),
                     mCheckIn.getTimeInMillis(),
                     mCheckOut.getTimeInMillis(),

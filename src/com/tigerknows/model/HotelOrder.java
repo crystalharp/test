@@ -208,7 +208,7 @@ public class HotelOrder extends XMapData{
 	public HotelOrder(String id, long createTime, int state,
 			String hotelPoiUUID, String hotelName, String hotelAddress,
 			Position position, String hotelTel, String roomType,
-			long roomNum, double totalFee, 
+			long roomNum, double totalFee, long vendorID,
 			long retentionTime, long checkinTime, long checkoutTime, int dayCount,
 			String guestName, String mobileNum, long cancelDeadline) {
 		super();
@@ -223,7 +223,7 @@ public class HotelOrder extends XMapData{
 		this.roomType = roomType;
 		this.roomNum = roomNum;
 		this.totalFee = totalFee;
-		this.vendorID = FAKE_ELONG_ID;
+		this.vendorID = vendorID;
 		this.retentionTime = retentionTime;
 		this.checkinTime = checkinTime;
 		this.checkoutTime = checkoutTime;

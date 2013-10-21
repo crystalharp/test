@@ -39,10 +39,10 @@ public class HotelVendor extends BaseData implements Parcelable {
     public static final int SOURCE_TEST = 9999;
     
     // TODO: 艺龙
-    public static final int SOURCE_ELONG = 1000;
+    public static final int SOURCE_ELONG = 10000;
     
     // TODO: 携程
-    public static final int SOURCE_CTRIP = 1001;
+    public static final int SOURCE_CTRIP = 10001;
     
     public static final List<HotelVendor> hotelVendorList = new ArrayList<HotelVendor>();
     

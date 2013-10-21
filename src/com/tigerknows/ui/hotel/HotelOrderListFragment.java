@@ -283,7 +283,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     		
     		if(list.size() < maxDbSize){
     			HotelOrder order = new HotelOrder("11111", System.currentTimeMillis(), 1, "0F2B4330-906A-11E2-A511-06973B18DA73", "HotelName", "hotelAddress", new Position(39.88, 116.3), "13581704277", 
-    					mContext.getString(R.string.app_name), 3, 390, 
+    					mContext.getString(R.string.app_name), 3, 390, 9999, 
     					System.currentTimeMillis(), System.currentTimeMillis(), System.currentTimeMillis(),2, 
     					"GuestName", "13581704277", System.currentTimeMillis()+120000);
     			for (int i = list.size(); i < maxDbSize; i++) {

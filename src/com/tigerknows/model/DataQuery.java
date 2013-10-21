@@ -642,6 +642,10 @@ public final class DataQuery extends BaseQuery {
         } else if (DATA_TYPE_PICTURE.equals(dataType)) {
             ekeys = Utility.mergeArray(ekeys, new String[] {SERVER_PARAMETER_REF_DATA_TYPE, SERVER_PARAMETER_REF_ID});
             debugCheckParameters(ekeys, okeys);
+        } else if (DATA_TYPE_HOTELVENDOR.equals(dataType)) { 
+            ekeys = Utility.mergeArray(ekeys, new String[] {SERVER_PARAMETER_NEED_FIELD});
+            okeys = Utility.mergeArray(okeys, positionKeys, new String[]{SERVER_PARAMETER_IDS});
+            debugCheckParameters(ekeys, okeys);
         } else {
             throw APIException.wrapToMissingRequestParameterException("invalid data type.");
         }
@@ -828,6 +832,8 @@ public final class DataQuery extends BaseQuery {
             addFilterParameters(cfv, nfv);
         } else if (DATA_TYPE_DISH.equals(dataType)) {
             addParameter(SERVER_PARAMETER_NEED_FIELD, Dish.NEED_FIELD);
+        } else if (DATA_TYPE_HOTELVENDOR.equals(dataType)) { 
+            addParameter(SERVER_PARAMETER_NEED_FIELD, getParameter(SERVER_PARAMETER_NEED_FIELD));
         }
         
         addParameter(SERVER_PARAMETER_TIME_STAMP, TIME_STAMP_FORMAT.format(Calendar.getInstance().getTime()));
@@ -922,6 +928,9 @@ public final class DataQuery extends BaseQuery {
             this.response = response;
         } else if (DATA_TYPE_PICTURE.equals(dataType)) {
             PictureResponse response = new PictureResponse(responseXMap);
+            this.response = response;
+        } else if (DATA_TYPE_SHANGJIA.equals(dataType)) {
+            ShangjiaResponse response = new ShangjiaResponse(responseXMap);
             this.response = response;
         }
     }
@@ -2832,6 +2841,8 @@ public final class DataQuery extends BaseQuery {
             responseXMap = DataQueryTest.launchDishResponse(256);
         } else if (DATA_TYPE_PICTURE.equals(dataType)){
             responseXMap = DataQueryTest.launchPictureResponse(168);
+        } else if (DATA_TYPE_SHANGJIA.equals(dataType)) {
+            responseXMap = DataQueryTest.launchHotelVendorResponse(context, 10);
         }
     }
 }

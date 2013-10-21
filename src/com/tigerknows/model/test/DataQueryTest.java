@@ -12,6 +12,7 @@ import com.tigerknows.model.DataQuery.CouponResponse;
 import com.tigerknows.model.DataQuery.CouponResponse.CouponList;
 import com.tigerknows.model.DataQuery.FilterConfigResponse;
 import com.tigerknows.model.DataQuery.DishResponse;
+import com.tigerknows.model.DataQuery.HotelVendorResponse;
 import com.tigerknows.model.DataQuery.PictureResponse;
 import com.tigerknows.model.DataQuery.PictureResponse.PictureList;
 import com.tigerknows.model.Dianying;
@@ -20,6 +21,7 @@ import com.tigerknows.model.Dish;
 import com.tigerknows.model.Hotel;
 import com.tigerknows.model.Hotel.HotelTKDrawable;
 import com.tigerknows.model.Hotel.RoomType;
+import com.tigerknows.model.HotelVendor;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.POI.PresetTime;
 import com.tigerknows.model.POI.Busstop;
@@ -49,6 +51,7 @@ import com.tigerknows.model.DataQuery.DianyingResponse.DianyingList;
 import com.tigerknows.model.DataQuery.DiscoverResponse.DiscoverCategoryList;
 import com.tigerknows.model.DataQuery.DiscoverResponse.DiscoverCategoryList.DiscoverCategory;
 import com.tigerknows.model.DataQuery.FendianResponse.FendianList;
+import com.tigerknows.model.DataQuery.HotelVendorResponse.HotelVendorList;
 import com.tigerknows.model.DataQuery.DishResponse.DishList;
 import com.tigerknows.model.DataQuery.POIResponse.POIList;
 import com.tigerknows.model.DataQuery.ShangjiaResponse.ShangjiaList;
@@ -226,6 +229,7 @@ public class DataQueryTest {
         return data;
     }
 
+    
     protected static XMap launchShangjiaList(Context context, int total) {
         XMap data = new XMap();
         data.put(ShangjiaList.FIELD_TOTAL, total);
@@ -950,6 +954,40 @@ public class DataQueryTest {
             list.add(launchHotelTKDrawable(i));
         }
         data.put(PictureList.FIELD_LIST, list);
+        return data;
+    }
+    
+    
+    public static XMap launchHotelVendorResponse(Context context, int total) {
+        XMap data = new XMap();
+        BaseQueryTest.launchResponse(data);
+        data.put(HotelVendorResponse.FIELD_LIST, launchHotelVendorList(context, total));
+        return data;
+    }
+    
+    protected static XMap launchHotelVendorList(Context context, int total) {
+        XMap data = new XMap();
+        data.put(HotelVendorList.FIELD_TOTAL, total);
+        XArray<XMap> list = new XArray<XMap>();
+        for(int i = 0; i < total; i++) {
+            list.add(launchHotelVendor(context, i));
+        }
+        data.put(HotelVendorList.FIELD_LIST, list);
+        return data;
+    }
+    
+    protected static XMap launchHotelVendor(Context context, int message) {
+        return launchHotelVendor(context, message, null);
+    }
+
+    protected static XMap launchHotelVendor(Context context, int message, XMap data) {
+        if (data == null) {
+            data = new XMap();
+        }
+        data.put(HotelVendor.FIELD_ID, HotelVendor.SOURCE_TEST + message);
+        data.put(HotelVendor.FIELD_NAME, "虚拟商家" + message);
+        data.put(HotelVendor.FIELD_SERVICE_TEL, "400000" + message * 1111);
+        data.put(HotelVendor.FIELD_RESERVE_TEL, message == 2 ? "12588888888" : "");
         return data;
     }
 }
