@@ -164,7 +164,7 @@ public class TilesView extends GLSurfaceView {
 	public boolean isPaused() {
 		return paused;
 	}
-
+	
 	public void tkRotateZToDegree(float zRotation) {
 		synchronized (drawingLock) {
 			tkZRotation = zRotation;
@@ -288,8 +288,7 @@ public class TilesView extends GLSurfaceView {
 	 * @param gl
 	 * @return
 	 */
-	public static Bitmap savePixels(Context context, int x, int y, int w,
-			int h, GL10 gl) {
+	public static Bitmap savePixels(Context context, int x, int y, int w, int h, GL10 gl) {
 		int b[] = new int[w * h];
 		int bt[] = new int[w * h];
 		IntBuffer ib = IntBuffer.wrap(b);
@@ -309,20 +308,18 @@ public class TilesView extends GLSurfaceView {
 				bt[(h - i - 1) * w + j] = pix1;
 			}
 		}
-
+		
 		Bitmap.Config config = Config.RGB_565;
 		Bitmap origBm = Bitmap.createBitmap(bt, w, h, config);
-
-		Bitmap bm = origBm.copy(config, true);
-		origBm.recycle();
-
+		
+        Bitmap bm = origBm.copy(config, true);
+        origBm.recycle();
+		
 		Canvas canvas = new Canvas(bm);
-		Bitmap watermark = BitmapFactory.decodeResource(context.getResources(),
-				R.drawable.ic_water_mark);
-		canvas.drawBitmap(watermark, w - watermark.getWidth() - 8, h
-				- watermark.getHeight() - 8, new Paint());
+		Bitmap watermark = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_water_mark);
+		canvas.drawBitmap(watermark, w-watermark.getWidth()-8, h-watermark.getHeight()-8, new Paint());
 		watermark.recycle();
-
+		
 		return bm;
 	}
 
@@ -355,9 +352,9 @@ public class TilesView extends GLSurfaceView {
 	 * info window. There is only one instance of info window.
 	 */
 	private InfoWindow infoWindow = new InfoWindow();
-
+	
 	private ScaleView scaleView = new ScaleView();
-
+	
 	private XYInteger gridSize = new XYInteger(0, 0);
 	private XYInteger displaySize = new XYInteger(0, 0);
 	private double radiusX;
@@ -458,12 +455,7 @@ public class TilesView extends GLSurfaceView {
 				.getSystemService(Context.WINDOW_SERVICE);
 		Display display = winMan.getDefaultDisplay();
 		display.getMetrics(Globals.g_metrics);
-		LogWrapper.i("TilesView", "xdpi:" + Globals.g_metrics.xdpi + ",ydpi:"
-				+ Globals.g_metrics.ydpi + ",widthPixels:"
-				+ Globals.g_metrics.widthPixels + ",heightPixesl:"
-				+ Globals.g_metrics.heightPixels + ",density:"
-				+ Globals.g_metrics.density + ",densityDpi:"
-				+ Globals.g_metrics.densityDpi);
+		LogWrapper.i("TilesView", "xdpi:" + Globals.g_metrics.xdpi + ",ydpi:" + Globals.g_metrics.ydpi + ",widthPixels:" + Globals.g_metrics.widthPixels + ",heightPixesl:" + Globals.g_metrics.heightPixels + ",density:" + Globals.g_metrics.density + ",densityDpi:" + Globals.g_metrics.densityDpi);
 
 		for (int i = 0; i < MapLayerType.values().length; i++) {
 			MapLayerProperty mapLayerProperty = MapLayerProperty
@@ -472,21 +464,20 @@ public class TilesView extends GLSurfaceView {
 			mapLayers.add(mapLayer);
 		}
 
-		MAX_WORD_SIZE = (display.getWidth() * display.getHeight()) / 2048;
-		if (MAX_WORD_SIZE > 512 || MAX_WORD_SIZE <= 0)
-			MAX_WORD_SIZE = 512;
-		LogWrapper.d("Label", "word count: " + MAX_WORD_SIZE);
+    	MAX_WORD_SIZE = (display.getWidth() * display.getHeight()) / 2048;
+    	if(MAX_WORD_SIZE > 512 || MAX_WORD_SIZE <= 0)
+    		MAX_WORD_SIZE = 512;
+    	LogWrapper.d("Label", "word count: " + MAX_WORD_SIZE);
 		configureMapLayer();
 		configureTileGrid(display.getWidth(), display.getHeight());
 
-		LogWrapper.i("TilesView", "displaySize:" + displaySize + ",gridSize:"
-				+ gridSize);
+		LogWrapper.i("TilesView", "displaySize:" + displaySize + ",gridSize:" + gridSize);
 		setFocusable(true);
 
 		if (CONFIG.DRAW_BY_OPENGL) {
-			// setEGLConfigChooser(8, 8, 8, 8, 16, 0);
+//			setEGLConfigChooser(8, 8, 8, 8, 16, 0);
 			mapRender = new MapRender(context);
-			setRenderer(mapRender);// 启动gl线程
+			setRenderer(mapRender);//启动gl线程
 			setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 			requestFocus();
 			setFocusableInTouchMode(true);
@@ -591,11 +582,11 @@ public class TilesView extends GLSurfaceView {
 
 	@Override
 	public void surfaceDestroyed(SurfaceHolder holder) {
-		LogWrapper.i("Sequence", "TilesView.surfaceDestroyed");
+		LogWrapper.i("Sequence","TilesView.surfaceDestroyed");
 		paused = true;
 		this.queueEvent(new Runnable() {
 			public void run() {
-				LogWrapper.i("Sequence", "TilesView run clearAllTextures");
+				LogWrapper.i("Sequence","TilesView run clearAllTextures");
 				mapRender.clearMap();
 			}
 		});
@@ -629,7 +620,7 @@ public class TilesView extends GLSurfaceView {
 	public void clearTileTextures() {
 		this.queueEvent(new Runnable() {
 			public void run() {
-				LogWrapper.i("Sequence", "TilesView run clearTileTextures");
+				LogWrapper.i("Sequence","TilesView run clearTileTextures");
 				mapRender.clearMap();
 			}
 		});
@@ -640,17 +631,17 @@ public class TilesView extends GLSurfaceView {
 	}
 
 	public void pause() {
-		// if(!paused) {
-		// paused = true;
-		// this.queueEvent(new Runnable() {
-		// public void run() {
-		// LogWrapper.i("Sequence","TilesView run clearAllTextures");
-		// mapRender.clearAllTextures();
-		// }
-		// });
-		// }
+//		if(!paused) {
+//			paused = true;
+//			this.queueEvent(new Runnable() {
+//				public void run() {
+//					LogWrapper.i("Sequence","TilesView run clearAllTextures");
+//					mapRender.clearAllTextures();
+//				}
+//			});
+//		}
 	}
-
+	
 	public void changeMapType(MapType mapType) {
 		if (this.mapType.equals(mapType))
 			return;
@@ -667,8 +658,7 @@ public class TilesView extends GLSurfaceView {
 		if (!CONFIG.DRAW_BY_OPENGL)
 			return;
 		if (xRotation > 0 || xRotation < MapView.MAP_TILT_MIN) {
-			LogWrapper.e("TilesView", "x rotation must be between "
-					+ MapView.MAP_TILT_MIN + " to 0");
+			LogWrapper.e("TilesView", "x rotation must be between " + MapView.MAP_TILT_MIN + " to 0");
 			return;
 			// throw new
 			// APIException("x rotation must be between "+MapView.MAP_TILT_MIN+" to 0");
@@ -738,7 +728,7 @@ public class TilesView extends GLSurfaceView {
 		TileThread.stopAllThreads();
 		DownloadThread.stopAllThreads();
 		clearTilesWaitForLoading();
-
+		
 		resetLongTouchTimer();
 
 		overlays.clear();
@@ -847,7 +837,7 @@ public class TilesView extends GLSurfaceView {
 				multiTouch = true;
 			}
 			isTouchBegin = true;
-			// LogWrapper.d("Label", "--------touch begin---------");
+//			LogWrapper.d("Label", "--------touch begin---------");
 		} else if (action == MotionEvent.ACTION_MOVE) {
 			if (pCount > 1) {
 				resetLongTouchTimer();
@@ -906,8 +896,7 @@ public class TilesView extends GLSurfaceView {
 				if (Math.abs(event.getX(0) - lastTouch.x)
 						+ Math.abs(event.getY(0) - lastTouch.y) > ABNORMAL_DRAGGING_DIST
 						* density) {
-					LogWrapper.e("Moving", "onTouchEvent dragging abruptly:"
-							+ draggingConv);
+					LogWrapper.e("Moving", "onTouchEvent dragging abruptly:" + draggingConv);
 				} else {
 					long time = System.nanoTime();
 					touchRecord1.push(time, xy0Conv.x, xy0Conv.y);
@@ -922,12 +911,9 @@ public class TilesView extends GLSurfaceView {
 							isTouchBegin = false;
 						}
 						lastMoveTime = System.currentTimeMillis();
-						// LogWrapper.i("Moving", "drag: " +
-						// draggingConv.toString() + "centerXY: " +
-						// centerXY.toString());
+//						LogWrapper.i("Moving", "drag: " + draggingConv.toString() + "centerXY: " + centerXY.toString());
 						moveView(draggingConv.x, draggingConv.y);
-						// LogWrapper.i("Moving", "after dragging centerXY: " +
-						// centerXY.toString());
+//						LogWrapper.i("Moving", "after dragging centerXY: " + centerXY.toString());
 					}
 					refreshMap();
 				}
@@ -1011,10 +997,7 @@ public class TilesView extends GLSurfaceView {
 						if ((centerDistXConv + centerDistYConv) > ABNORMAL_PINCH_CENTER_DIST
 								* density) {
 							lastDistConv = 0;
-							LogWrapper
-									.e("TilesView",
-											"onTouchEvent pinch abnormal center dist:"
-													+ (centerDistXConv + centerDistYConv));
+							LogWrapper.e("TilesView", "onTouchEvent pinch abnormal center dist:" + (centerDistXConv + centerDistYConv));
 						} else {
 							lastCenterConv.x = (xy0Conv.x + xy1Conv.x) / 2;
 							lastCenterConv.y = (xy0Conv.y + xy1Conv.y) / 2;
@@ -1027,16 +1010,15 @@ public class TilesView extends GLSurfaceView {
 							synchronized (drawingLock) {
 								try {
 									if (Math.round(newZoomLevel) == 9) {
-										if (newZoomLevel > zoomLevel) {
-											setZoomLevel(10);
-										} else {
-											setZoomLevel(8);
-										}
-									} else {
+		                                if (newZoomLevel > zoomLevel) {
+		                                	setZoomLevel(10);
+		                                } else {
+		                                	setZoomLevel(8);
+		                                }
+		                            } else {
 										zoomView(newZoomLevel, lastCenterConv);
-									}
-									mParentMapView
-											.executeMultiTouchZoomListeners(newZoomLevel);
+		                            }
+									mParentMapView.executeMultiTouchZoomListeners(newZoomLevel);
 								} catch (Exception e) {
 									e.printStackTrace();
 									return true;
@@ -1187,13 +1169,10 @@ public class TilesView extends GLSurfaceView {
 						}
 					}
 
-					if (cluster != null
-							&& !mParentMapView.getSphinx().getTouchMode()
-									.equals(TouchMode.MEASURE_DISTANCE)) {
+					if (cluster != null && !mParentMapView.getSphinx().getTouchMode().equals(TouchMode.MEASURE_DISTANCE)) {
 						// Log.i("TilesView","onTouchEvent snap to:"+overlayItem.getPosition()+","+overlayItem.getMessage());
 						if (cluster.size() == 0) {
-							LogWrapper.e("TilesView",
-									"onTouchEvent touchUp cluster size is 0");
+							LogWrapper.e("TilesView", "onTouchEvent touchUp cluster size is 0");
 						}
 						ArrayList<OverlayItem> visiblePins = new ArrayList<OverlayItem>();
 						for (int ii = 0; ii < cluster.size(); ii++) {
@@ -1275,8 +1254,7 @@ public class TilesView extends GLSurfaceView {
 						synchronized (drawingLock) {
 							easingRecord.speed = s / timeInterval;
 							if (easingRecord.speed > easingRecord.MAXIMUM_SPEED) {
-								LogWrapper.d("Moving", "too high speed:"
-										+ easingRecord.speed);
+								LogWrapper.d("Moving", "too high speed:" + easingRecord.speed);
 								easingRecord.speed = easingRecord.MAXIMUM_SPEED;
 							}
 							easingRecord.startMoveTime = touchUpTime;
@@ -1286,7 +1264,7 @@ public class TilesView extends GLSurfaceView {
 							easingRecord.listener = null;
 						}
 						// Log.i("Moving","onTouchEvent s:"+s+",t(ms):"+(int)(timeInterval/1000000));
-						// LogWrapper.i("Moving","onTouchEvent speed:"+easingRecord.speed+",decelerate:"+easingRecord.decelerate_rate+",direction:"+easingRecord.direction);
+//						LogWrapper.i("Moving","onTouchEvent speed:"+easingRecord.speed+",decelerate:"+easingRecord.decelerate_rate+",direction:"+easingRecord.direction);
 					}
 					if (CONFIG.DECELERATE_RATE <= 0 || easingRecord.speed <= 0) {
 						Position center;
@@ -1373,17 +1351,13 @@ public class TilesView extends GLSurfaceView {
 		synchronized (drawingLock) {
 			try {
 				int z = Math.round(zoomLevel);
-				LogWrapper.i("TilesView", "centerOnPosition z:" + z
-						+ ",position:" + position);
+				LogWrapper.i("TilesView", "centerOnPosition z:" + z + ",position:" + position);
 				XYDouble centerXYL = Util.posToMercPix(position, z);
-				LogWrapper.i("TilesView", "centerOnPosition centerXYL:"
-						+ centerXYL);
+				LogWrapper.i("TilesView", "centerOnPosition centerXYL:" + centerXYL);
 
 				TileGridResponse resp = Util.handlePortrayMapRequest(centerXYL,
 						z);
-				LogWrapper.w("TilesView", "centerOnPosition(), centerXYL="
-						+ centerXYL + ", zoomLevel= " + zoomLevel
-						+ ", refreshMap=" + refreshMap);
+				LogWrapper.w("TilesView", "centerOnPosition(), centerXYL=" + centerXYL + ", zoomLevel= " + zoomLevel + ", refreshMap=" + refreshMap);
 
 				this.zoomLevel = zoomLevel;
 				renderMap(resp);
@@ -1399,9 +1373,9 @@ public class TilesView extends GLSurfaceView {
 				throw APIException.wrapToAPIException(e);
 			}
 		}
-
+		
 		if (refreshMap) {
-			refreshMap();
+    		refreshMap();
 		}
 		mParentMapView.executeMoveEndListeners(getCenterPosition());
 		mParentMapView.executeZoomEndListeners(Math.round(zoomLevel));
@@ -1466,9 +1440,7 @@ public class TilesView extends GLSurfaceView {
 				easingRecord.speed = -s / easingRecord.TIME_SCALE
 						* Math.log(easingRecord.decelerate_rate);
 				easingRecord.listener = listener;
-				LogWrapper.d("Moving", "panToPosition speed,decelerate,s:"
-						+ easingRecord.speed + ","
-						+ easingRecord.decelerate_rate + "," + s);
+				LogWrapper.d("Moving", "panToPosition speed,decelerate,s:" + easingRecord.speed + "," + easingRecord.decelerate_rate + "," + s);
 
 				refreshMap();
 
@@ -1581,9 +1553,10 @@ public class TilesView extends GLSurfaceView {
 					|| displaySize.y == 0) {
 				zoomLevel = newLevel;
 			} else {
-				zoomView(newLevel, new XYFloat(displaySize.x / 2,
-						displaySize.y / 2));
-				mParentMapView.executeZoomEndListeners(Math.round(newLevel));
+				zoomView(newLevel,
+						new XYFloat(displaySize.x / 2, displaySize.y / 2));
+				mParentMapView.executeZoomEndListeners(Math
+						.round(newLevel));
 			}
 		}
 	}
@@ -1592,21 +1565,21 @@ public class TilesView extends GLSurfaceView {
 			long duration, final MapView.ZoomEndEventListener listener)
 			throws APIException {
 		newZoomLevel = (int) tkJumpZoomLevel(newZoomLevel);
-		// if (newZoomLevel < CONFIG.ZOOM_LOWER_BOUND
-		// || newZoomLevel > CONFIG.ZOOM_UPPER_BOUND) {
-		// throw new APIException("invalid zoom level: " + newZoomLevel
-		// + " must be between " + CONFIG.ZOOM_LOWER_BOUND + " - "
-		// + CONFIG.ZOOM_UPPER_BOUND);
-		// }
-		if (newZoomLevel < CONFIG.ZOOM_LOWER_BOUND) {
+//		if (newZoomLevel < CONFIG.ZOOM_LOWER_BOUND
+//				|| newZoomLevel > CONFIG.ZOOM_UPPER_BOUND) {
+//			throw new APIException("invalid zoom level: " + newZoomLevel
+//					+ " must be between " + CONFIG.ZOOM_LOWER_BOUND + " - "
+//					+ CONFIG.ZOOM_UPPER_BOUND);
+//		}
+		if(newZoomLevel < CONFIG.ZOOM_LOWER_BOUND) {
 			newZoomLevel = CONFIG.ZOOM_LOWER_BOUND;
 		}
-		if (newZoomLevel > CONFIG.ZOOM_UPPER_BOUND) {
+		if(newZoomLevel > CONFIG.ZOOM_UPPER_BOUND) {
 			newZoomLevel = CONFIG.ZOOM_UPPER_BOUND;
 		}
 		if (zoomCenter != null) {
 			XYFloat screenXY = positionToScreenXYConv(zoomCenter);
-			zoomTo(newZoomLevel, screenXY, duration, listener);
+			zoomTo(newZoomLevel, screenXY, duration, listener);	
 		} else if ((zoomLevel > CONFIG.ZOOM_JUMP && newZoomLevel == CONFIG.ZOOM_JUMP - 1)
 				|| (zoomLevel < CONFIG.ZOOM_JUMP && newZoomLevel == CONFIG.ZOOM_JUMP + 1)) {
 			setZoomLevel(newZoomLevel);
@@ -1663,33 +1636,31 @@ public class TilesView extends GLSurfaceView {
 			panDirection.x = numX >= 0 ? 1 : -1;
 			panDirection.y = numY >= 0 ? 1 : -1;
 		}
-		// LogWrapper.i("center", centerXYZ.toString() + "......" +
-		// centerXY.toString() + "......" + centerDelta.toString());
+//		LogWrapper.i("center", centerXYZ.toString() + "......" + centerXY.toString() + "......" + centerDelta.toString());
 	}
-
 	private int getTKZoomLevelByDecartaLevel(int decartaZoomLevel) {
-		int ret;
-		if (decartaZoomLevel == 9) {
-			if (decartaZoomLevel < zoomLevel) {
-				ret = 8;
-			} else {
-				ret = 10;
-			}
-		} else {
-			ret = decartaZoomLevel;
-		}
-		return ret;
+	    int ret;
+	    if (decartaZoomLevel == 9) {
+	        if (decartaZoomLevel < zoomLevel) {
+	            ret = 8;
+	        } else {
+	            ret = 10;
+	        }
+	    } else {
+	        ret = decartaZoomLevel;
+	    }
+	    return ret;
 	}
-
+	
 	public void zoomView(float newZoomLevel, XYFloat zoomCenterXY)
 			throws APIException {
-		// newZoomLevel = tkJumpZoomLevel(newZoomLevel);
+//		newZoomLevel = tkJumpZoomLevel(newZoomLevel);
 		if (zooming || newZoomLevel == zoomLevel)
 			return;
-		if (newZoomLevel < CONFIG.ZOOM_LOWER_BOUND) {
+		if(newZoomLevel < CONFIG.ZOOM_LOWER_BOUND) {
 			newZoomLevel = CONFIG.ZOOM_LOWER_BOUND;
 		}
-		if (newZoomLevel > CONFIG.ZOOM_UPPER_BOUND) {
+		if(newZoomLevel > CONFIG.ZOOM_UPPER_BOUND) {
 			newZoomLevel = CONFIG.ZOOM_UPPER_BOUND;
 		}
 		try {
@@ -1735,8 +1706,7 @@ public class TilesView extends GLSurfaceView {
 			}
 			zoomLevel = newZoomLevel;
 			if (zoomLevel > centerXYZ.z + 0.5 || zoomLevel < centerXYZ.z - 0.5) {
-				int roundLevel = getTKZoomLevelByDecartaLevel(Math
-						.round(zoomLevel));
+				int roundLevel = getTKZoomLevelByDecartaLevel(Math.round(zoomLevel));
 				if (roundLevel > CONFIG.ZOOM_UPPER_BOUND
 						|| roundLevel < CONFIG.ZOOM_LOWER_BOUND)
 					return;
@@ -1809,8 +1779,7 @@ public class TilesView extends GLSurfaceView {
 
 		if (!Util.inChina(new XYDouble(centerXY.x - moveX, centerXY.y + moveY),
 				centerXYZ.z)) {
-			// LogWrapper.i("Moving", "out of China: centerXY: " +
-			// centerXY.toString() + "moveX: " + moveX + "moveY: " + moveY);
+//			LogWrapper.i("Moving", "out of China: centerXY: " + centerXY.toString() + "moveX: " + moveX + "moveY: " + moveY);
 			return;
 		}
 
@@ -1908,9 +1877,7 @@ public class TilesView extends GLSurfaceView {
 			}
 		}
 
-		LogWrapper.i("TilesView",
-				"configureMapLayer visible num,max image,image size,max texture ref:"
-						+ visibleLayerNum + ",");
+		LogWrapper.i("TilesView", "configureMapLayer visible num,max image,image size,max texture ref:" + visibleLayerNum + ",");
 	}
 
 	private XYFloat screenXYToScreenXYConv(float left, float top) {
@@ -2014,8 +1981,7 @@ public class TilesView extends GLSurfaceView {
 		for (int i = 0; i < size; i++) {
 			ArrayList<OverlayItem> cluster = clusters.get((i + start) % size);
 			if (cluster.size() == 0) {
-				LogWrapper
-						.e("ItemizedOverlay", "onSnapToItem cluster is empty");
+				LogWrapper.e("ItemizedOverlay", "onSnapToItem cluster is empty");
 			}
 			OverlayItem pin = null;
 			for (int ii = 0; ii < cluster.size(); ii++) {
@@ -2264,17 +2230,15 @@ public class TilesView extends GLSurfaceView {
 				easingRecord.movedDistance += (float) distance;
 				status[0] = true;
 			}
-			// LogWrapper.i("centerXY","centerXY"+centerXY.toString());
+//			LogWrapper.i("centerXY","centerXY"+centerXY.toString());
 			moveView((float) (distance) * easingRecord.direction.x,
 					(float) (distance) * easingRecord.direction.y);
-			// LogWrapper.i("centerXY","centerXY after move distance: " +
-			// distance + ", " + centerXY.toString());
+//			LogWrapper.i("centerXY","centerXY after move distance: " + distance + ", " + centerXY.toString());
 			if (newSpeed <= 0) {
 				easingRecord.reset();
 			}
-			// LogWrapper.i("Moving","TilesView.onDraw distance:"+(int)distance+",timeElapsed:"+(int)(timeElapsed/(1E6))+
-			// ",newSpeed:"+newSpeed + "decelerate: " +
-			// easingRecord.decelerate_rate);
+//			LogWrapper.i("Moving","TilesView.onDraw distance:"+(int)distance+",timeElapsed:"+(int)(timeElapsed/(1E6))+
+//					",newSpeed:"+newSpeed + "decelerate: " + easingRecord.decelerate_rate);
 		}
 	}
 
@@ -2306,8 +2270,7 @@ public class TilesView extends GLSurfaceView {
 		synchronized (drawingLock) {
 			float zDif = newZoomLevel - zoomLevel;
 			if (zDif != 0 && duration == 0) {
-				LogWrapper.w("TilesView", "zoom from " + zoomLevel + " to "
-						+ newZoomLevel + " duration==0");
+				LogWrapper.w("TilesView", "zoom from " + zoomLevel + " to " + newZoomLevel + " duration==0");
 				return;
 			}
 			zoomingRecord.digitalZooming = true;
@@ -2320,7 +2283,7 @@ public class TilesView extends GLSurfaceView {
 			refreshMap();
 		}
 	}
-
+	
 	public void zoomInAtPosition(Position position) {
 		int newZoom = Math.round(zoomLevel) + 1;
 		long duration = Math.round(MapView.DIGITAL_ZOOMING_TIME_PER_LEVEL
@@ -2329,8 +2292,7 @@ public class TilesView extends GLSurfaceView {
 			XYFloat screenXY = positionToScreenXYConv(position);
 			this.zoomTo(newZoom, screenXY, duration, null);
 		} catch (Exception e) {
-			LogWrapper.e("TilesView", "zoomInAtPosition to " + newZoom
-					+ "failed. Cause exception: " + e.getMessage());
+			LogWrapper.e("TilesView", "zoomInAtPosition to " + newZoom + "failed. Cause exception: " + e.getMessage());
 		}
 	}
 
@@ -2341,7 +2303,7 @@ public class TilesView extends GLSurfaceView {
 	 * @param resp
 	 */
 	private void renderMap(TileGridResponse resp) throws APIException {
-		// LogWrapper.d("Sequence","TilesView renderMap start");
+//		LogWrapper.d("Sequence","TilesView renderMap start");
 		try {
 			easingRecord.reset();
 
@@ -2557,9 +2519,7 @@ public class TilesView extends GLSurfaceView {
 						textureRefBuf.put(0, textureRef);
 						textureRefBuf.position(0);
 						glDeleteTextures(1, textureRefBuf);
-						LogWrapper.i("TilesView",
-								"iconPool removeEldestEntry texture:"
-										+ textureRef);
+						LogWrapper.i("TilesView", "iconPool removeEldestEntry texture:" + textureRef);
 					}
 					remove(eldest.getKey());
 				}
@@ -2583,9 +2543,7 @@ public class TilesView extends GLSurfaceView {
 						textureRefBuf.put(0, textureRef);
 						textureRefBuf.position(0);
 						glDeleteTextures(1, textureRefBuf);
-						LogWrapper.i("TilesView",
-								"clusterTextPool removeEldestEntry texture:"
-										+ textureRef);
+						LogWrapper.i("TilesView", "clusterTextPool removeEldestEntry texture:" + textureRef);
 					}
 					remove(eldest.getKey());
 				}
@@ -2606,8 +2564,7 @@ public class TilesView extends GLSurfaceView {
 			ArrayList<Label> shownlabelList = shownLabels[label.priority];
 			if (shownlabelList == null
 					|| shownlabelList.size() == 0
-					|| (label.pointNum == 1 && label.type != 0
-							&& label.type != 1 && label.type != 2)) {// 城市的绿地0水域1，以及全国的水域2
+					|| (label.pointNum == 1 && label.type != 0 && label.type != 1 && label.type != 2)) {//城市的绿地0水域1，以及全国的水域2
 				return false;
 			}
 			for (int i = 0, shownNum = shownlabelList.size(); i < shownNum; ++i) {
@@ -2633,9 +2590,7 @@ public class TilesView extends GLSurfaceView {
 			int num = labels.length;
 			for (int i = 0; i < num; ++i) {
 				if (labels[i].priority >= maxLabelPriority) {
-					LogWrapper.i("TilesViewException", "add label: "
-							+ labels[i].name + "priority: "
-							+ labels[i].priority);
+					LogWrapper.i("TilesViewException", "add label: " + labels[i].name + "priority: " + labels[i].priority);
 					continue;
 				}
 				ArrayList<Label> labelList = this.priorityLabels[labels[i].priority];
@@ -2663,8 +2618,7 @@ public class TilesView extends GLSurfaceView {
 							displaySize.y / 2), centerXYZ, centerDelta, mapMode
 							.getzRotation(), mapMode.getSinZ(), mapMode
 							.getCosZ(), zoomScale, labelGrid, TEXTURE_COORDS,
-							mVertexBuffer, isDrawNew, maxLabelToDraw,
-							textTexturePool, mapWordIconPool);
+							mVertexBuffer, isDrawNew, maxLabelToDraw, textTexturePool, mapWordIconPool);
 					if (label.state != Label.LABEL_STATE_CANT_BE_SHOWN) {
 						shownLabelList.add(label);
 					} else {
@@ -2699,8 +2653,7 @@ public class TilesView extends GLSurfaceView {
 								mapMode.getzRotation(), mapMode.getSinZ(),
 								mapMode.getCosZ(), zoomScale, labelGrid,
 								TEXTURE_COORDS, mVertexBuffer, isDrawNew,
-								maxLabelToDraw, textTexturePool,
-								mapWordIconPool);
+								maxLabelToDraw, textTexturePool, mapWordIconPool);
 						if (label.state != Label.LABEL_STATE_CANT_BE_SHOWN) {
 							shownLabelList.add(label);
 						} else {
@@ -2767,7 +2720,7 @@ public class TilesView extends GLSurfaceView {
 			max_tile_texture_ref = (int) ((Math.ceil(displaySize.x
 					/ (float) CONFIG.TILE_SIZE) + 1)
 					* (Math.ceil(displaySize.y / (float) CONFIG.TILE_SIZE) + 1) * 4) + 1;
-			if (texturePool == null) {
+			if(texturePool == null) {
 				texturePool = new TexturePool(max_tile_texture_ref
 						+ CONFIG.TILE_THREAD_COUNT);
 			}
@@ -2775,7 +2728,6 @@ public class TilesView extends GLSurfaceView {
 				tileInfos = new LinkedHashMap<Tile, TileInfo>(
 						max_tile_texture_ref * 2, 0.75f, true) {
 					private static final long serialVersionUID = 1L;
-
 					@Override
 					protected boolean removeEldestEntry(
 							java.util.Map.Entry<Tile, TileInfo> eldest) {
@@ -2863,38 +2815,38 @@ public class TilesView extends GLSurfaceView {
 			LogWrapper.i("Sequence", "MapRender.onSurfaceCreated end");
 		}
 
-		public void clearTextTexture() {
-			Iterator<Texture> iterator4 = textTexturePool.values().iterator();
-			while (iterator4.hasNext()) {
-				Texture texture = iterator4.next();
-				if (texture != null && texture.textureRef != 0) {
-					int textureRef = texture.textureRef;
-					IntBuffer textureRefBuf = IntBuffer.allocate(1);
-					textureRefBuf.clear();
-					textureRefBuf.put(0, textureRef);
-					textureRefBuf.position(0);
-					GLES10.glDeleteTextures(1, textureRefBuf);
-				}
-			}
-			textTexturePool.clear();
-		}
-
-		public void clearIconTexture() {
-			// 清空纹理
-			Iterator<Texture> iterator5 = mapWordIconPool.values().iterator();
-			while (iterator5.hasNext()) {
-				Texture texture = iterator5.next();
-				if (texture != null && texture.textureRef != 0) {
-					int textureRef = texture.textureRef;
-					IntBuffer textureRefBuf = IntBuffer.allocate(1);
-					textureRefBuf.clear();
-					textureRefBuf.put(0, textureRef);
-					textureRefBuf.position(0);
-					GLES10.glDeleteTextures(1, textureRefBuf);
-				}
-			}
-			mapWordIconPool.clear();
-		}
+	    public void clearTextTexture() {
+	        Iterator<Texture> iterator4=textTexturePool.values().iterator();
+	        while(iterator4.hasNext()){
+	            Texture texture = iterator4.next();
+	            if (texture != null && texture.textureRef != 0) {
+	                int textureRef=texture.textureRef;
+	                IntBuffer textureRefBuf=IntBuffer.allocate(1);
+	    			textureRefBuf.clear();
+	    			textureRefBuf.put(0,textureRef);
+	    			textureRefBuf.position(0);
+	    			GLES10.glDeleteTextures(1, textureRefBuf);
+	            }
+	        }
+	        textTexturePool.clear();
+	    }
+	    
+	    public void clearIconTexture() {
+	    	//清空纹理
+	        Iterator<Texture> iterator5 = mapWordIconPool.values().iterator();
+	        while(iterator5.hasNext()){
+	            Texture texture = iterator5.next();
+	            if (texture != null && texture.textureRef != 0) {
+	                int textureRef = texture.textureRef;
+	                IntBuffer textureRefBuf=IntBuffer.allocate(1);
+	    			textureRefBuf.clear();
+	    			textureRefBuf.put(0,textureRef);
+	    			textureRefBuf.position(0);
+	    			GLES10.glDeleteTextures(1, textureRefBuf);
+	            }
+	        }
+	        mapWordIconPool.clear();
+	    }
 
 		protected void clearMap() {
 			synchronized (drawingLock) {
@@ -2911,7 +2863,7 @@ public class TilesView extends GLSurfaceView {
 				clearIconTexture();
 				scaleView.clearTexture();
 				clearTexRefs();
-
+				
 				Label.clearTextBitmap();
 				SingleRectLabel.clearIcon();
 			}
@@ -2919,29 +2871,30 @@ public class TilesView extends GLSurfaceView {
 		}
 
 		protected void clearTiles() {
-			if (tileInfos != null) {
-				Iterator<TileInfo> iterator1 = tileInfos.values().iterator();
-				while (iterator1.hasNext()) {
-					TileInfo info = iterator1.next();
-					if (info.tileTextureRef != 0) {
-						if (!texturePool.returnTexture(info.tileTextureRef)) {
-							IntBuffer textureRefBuf = IntBuffer.allocate(1);
-							textureRefBuf.clear();
-							textureRefBuf.put(0, info.tileTextureRef);
-							textureRefBuf.position(0);
-							glDeleteTextures(1, textureRefBuf);
-						}
-					} else {
-						if (info.bitmap != null) {
-							info.bitmap.recycle();
-							info.bitmap = null;
+				if (tileInfos != null) {
+					Iterator<TileInfo> iterator1 = tileInfos.values()
+							.iterator();
+					while (iterator1.hasNext()) {
+						TileInfo info = iterator1.next();
+						if (info.tileTextureRef != 0) {
+							if (!texturePool.returnTexture(info.tileTextureRef)) {
+								IntBuffer textureRefBuf = IntBuffer.allocate(1);
+								textureRefBuf.clear();
+								textureRefBuf.put(0, info.tileTextureRef);
+								textureRefBuf.position(0);
+								glDeleteTextures(1, textureRefBuf);
+							}
+						} else {
+							if (info.bitmap != null) {
+								info.bitmap.recycle();
+								info.bitmap = null;
+							}
 						}
 					}
+					tileInfos.clear();
 				}
-				tileInfos.clear();
-			}
-			if (texturePool != null)
-				texturePool.clean();
+				if (texturePool != null)
+					texturePool.clean();
 			LogWrapper.i("Sequence", "clearTileTextures end");
 		}
 
@@ -2949,11 +2902,7 @@ public class TilesView extends GLSurfaceView {
 		 * the main method to draw all the map elements
 		 */
 		public void onDrawFrame(GL10 gl) {
-			if (paused || stopRefreshMyLocation) {
-				LogWrapper.i("Sequence", "onDrawFrame paused");
-				return;
-			}
-			// LogWrapper.i("Sequence", "onDrawFrame begin");
+//			LogWrapper.i("Sequence", "onDrawFrame begin");
 			if (centerXY == null) {
 				return;
 			}
@@ -3180,8 +3129,7 @@ public class TilesView extends GLSurfaceView {
 														.addFirst(requestTile);
 											} else {
 												requestTiles.add(requestTile);
-												// LogWrapper.i("requestTiles",
-												// requestTile.xyz.toString());
+//												LogWrapper.i("requestTiles", requestTile.xyz.toString());
 											}
 										}
 										continue;
@@ -3228,8 +3176,7 @@ public class TilesView extends GLSurfaceView {
 											requestTiles.addFirst(requestTile);
 										} else {
 											requestTiles.add(requestTile);
-											// LogWrapper.i("requestTiles",
-											// requestTile.xyz.toString());
+//											LogWrapper.i("requestTiles", requestTile.xyz.toString());
 										}
 										continue;
 									} else {
@@ -3367,8 +3314,7 @@ public class TilesView extends GLSurfaceView {
 														.addFirst(requestTile);
 											} else {
 												requestTiles.add(requestTile);
-												// LogWrapper.i("requestTiles",
-												// requestTile.xyz.toString());
+//												LogWrapper.i("requestTiles", requestTile.xyz.toString());
 											}
 											continue;
 										}
@@ -3445,9 +3391,7 @@ public class TilesView extends GLSurfaceView {
 							Tile requestTile = willDrawTiles.get(ii);
 							int textureRef = tileInfos.get(requestTile).tileTextureRef;
 							if (textureRef == 0) {
-								LogWrapper.e("TilesView",
-										"onDrawFrame tile texture 0: "
-												+ requestTile.toString());
+								LogWrapper.e("TilesView", "onDrawFrame tile texture 0: " + requestTile.toString());
 								continue;
 							}
 							gl.glBindTexture(GL_TEXTURE_2D, textureRef);
@@ -3503,9 +3447,9 @@ public class TilesView extends GLSurfaceView {
 								&& ((easingRecord.startMoveTime == 0
 										&& zoomingRecord.digitalZoomEndTime == 0 && !touching))
 								|| zoomingJustDoneL || isManuelZoom
-								|| rotatingZJustDoneL || rotatingXJustDoneL || (!isTouchBegin
-								&& !isBeginMoving && !movingL));// isStaying
-																// &&
+								|| rotatingZJustDoneL || rotatingXJustDoneL || (
+								!isTouchBegin && !isBeginMoving && !movingL));// isStaying
+																					// &&
 
 						isLabelFading = this.shownLabels((float) zoomScale,
 								refreshText, refreshText);
@@ -3528,11 +3472,10 @@ public class TilesView extends GLSurfaceView {
 							++movingFrameCount;
 						}
 					}
-
+				
 					// draw the shapes
 					gl.glEnable(GL10.GL_BLEND);
-					gl.glBlendFunc(GL10.GL_SRC_ALPHA,
-							GL10.GL_ONE_MINUS_SRC_ALPHA);
+					gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 					gl.glDisable(GL_TEXTURE_2D);
 					for (int i = 0; i < shapes.size(); i++) {
 						Shape shape = shapes.get(i);
@@ -3703,25 +3646,20 @@ public class TilesView extends GLSurfaceView {
 						infoWindow.drawInfoWindowOpenGL(gl, new XYFloat(0, 0));
 						gl.glPopMatrix();
 					}
-
-					// draw scale view
+					
+					//draw scale view
 					gl.glPushMatrix();
-					gl.glTranslatef(displaySize.x / 2.0f, displaySize.y / 2.0f,
-							0);// 中心点移到屏幕中心点
+					gl.glTranslatef(displaySize.x/2.0f, displaySize.y/2.0f, 0);//中心点移到屏幕中心点
 					gl.glRotatef(-mapMode.getxRotation(), 1, 0, 0);
 					gl.glRotatef(-mapMode.getzRotation(), 0, 0, 1);
-					gl.glTranslatef(-displaySize.x / 2.0f,
-							-displaySize.y / 2.0f, 0);// 中心点移到屏幕中心点
+					gl.glTranslatef(-displaySize.x/2.0f, -displaySize.y/2.0f, 0);//中心点移到屏幕中心点
 					gl.glVertexPointer(2, GL_FLOAT, 0, mVertexBuffer);
 					float density = Globals.g_metrics.density;
-					Position centerPos = getCenterPosition();
-					XYFloat leftTop = new XYFloat(10 * density, displaySize.y
-							- 50 * density);
-					scaleView.renderGL(leftTop, zoomLevel,
-							(float) centerPos.getLat(), centerXYZ.z,
-							TEXTURE_COORDS);
+			        Position centerPos = getCenterPosition();
+			        XYFloat leftTop = new XYFloat(10 * density, displaySize.y - 50 * density);
+					scaleView.renderGL(leftTop, zoomLevel, (float)centerPos.getLat(), centerXYZ.z, TEXTURE_COORDS);
 					gl.glPopMatrix();
-
+					
 					gl.glColor4f(1, 1, 1, 1);
 					gl.glDisable(GL_BLEND);
 					gl.glEnable(GL_TEXTURE_2D);
@@ -3773,8 +3711,8 @@ public class TilesView extends GLSurfaceView {
 						// 确保快照地图时，地图已经移动到指定的中心位置，误差为32像素?
 						if (Math.abs(xy.x - displaySize.x / 2) < 32
 								&& Math.abs(xy.y - displaySize.y / 2) < 32) {
-							snapBmp = savePixels(getContext(), 0, 0,
-									displaySize.x, displaySize.y, gl);
+							snapBmp = savePixels(getContext(), 0, 0, displaySize.x,
+									displaySize.y, gl);
 							synchronized (snapCenterPos) {
 								snapCenterPos.notifyAll();
 							}
@@ -3830,8 +3768,7 @@ public class TilesView extends GLSurfaceView {
 		 * coordinate to coordinate system relative to screen center.
 		 */
 		public void onSurfaceChanged(GL10 gl, int w, int h) {
-			LogWrapper.i("Sequence", "MapRender.onSurfaceChanged " + "w:" + w
-					+ ",h:" + h + ",displaySize:" + displaySize);
+			LogWrapper.i("Sequence", "MapRender.onSurfaceChanged " + "w:" + w + ",h:" + h + ",displaySize:" + displaySize);
 
 			gl.glMatrixMode(GL_PROJECTION);
 			gl.glLoadIdentity();
@@ -3839,12 +3776,11 @@ public class TilesView extends GLSurfaceView {
 					-displaySize.y / 2f, displaySize.y / 2f, mapMode.nearZ,
 					mapMode.farZ + 1);
 
-			// clearTexRefs();
+//			clearTexRefs();
 		}
-
+		
 		private void clearIconPool() {
-			LogWrapper.i("TilesView", "clean iconPool total texture num:"
-					+ iconPool.size());
+			LogWrapper.i("TilesView", "clean iconPool total texture num:" + iconPool.size());
 			Iterator<Integer> iterator2 = iconPool.values().iterator();
 			while (iterator2.hasNext()) {
 				int textureRef = iterator2.next();
@@ -3852,11 +3788,9 @@ public class TilesView extends GLSurfaceView {
 			}
 			iconPool.clear();
 		}
-
+		
 		private void clearClusterTextPool() {
-			LogWrapper.i("TilesView",
-					"clean clusterTextPool total texture num:"
-							+ clusterTextPool.size());
+			LogWrapper.i("TilesView", "clean clusterTextPool total texture num:" + clusterTextPool.size());
 			Iterator<Integer> iterator3 = clusterTextPool.values().iterator();
 			while (iterator3.hasNext()) {
 				int textureRef = iterator3.next();
@@ -3864,19 +3798,19 @@ public class TilesView extends GLSurfaceView {
 			}
 			clusterTextPool.clear();
 		}
-
+		
 		/**************************************************** private methods *************************************************/
 		private void clearTexRefs() {
 			clearIconPool();
 			clearClusterTextPool();
-			// infoWindow.clearTextureRef(gl);
+//			infoWindow.clearTextureRef(gl);
 			infoWindow.clearTextureRef();
 
-			// SingleRectLabel.clearIcon();
-			// Label.clearTextBitmap();
-			// Label.clearTextTexture();
+//			SingleRectLabel.clearIcon();
+//			Label.clearTextBitmap();
+//			Label.clearTextTexture();
 
-			// compass.clearTextureRef(gl);
+//			compass.clearTextureRef(gl);
 			compass.clearTextureRef();
 		}
 
@@ -3888,7 +3822,7 @@ public class TilesView extends GLSurfaceView {
 			return textureRefBuf.get(0);
 
 		}
-
+		
 		private void deleteTextureRef(int textureRef) {
 			if (textureRef == 0)
 				return;
@@ -3898,7 +3832,7 @@ public class TilesView extends GLSurfaceView {
 			textureRefBuf.position(0);
 			GLES10.glDeleteTextures(1, textureRefBuf);
 		}
-
+		
 		private void deleteTextureRef(GL10 gl, int textureRef) {
 			if (textureRef == 0)
 				return;
@@ -3991,9 +3925,7 @@ public class TilesView extends GLSurfaceView {
 							GL_CLAMP_TO_EDGE);
 					GLUtils.texImage2D(GL_TEXTURE_2D, 0, bm, 0);
 					clusterTextPool.put(key, textureRef);
-					LogWrapper.d("TilesView",
-							"clusterTextPool put textureRef,key:" + textureRef
-									+ "," + key);
+					LogWrapper.d("TilesView", "clusterTextPool put textureRef,key:" + textureRef + "," + key);
 
 				} catch (Exception e) {
 					deleteTextureRef(gl, textureRef);
@@ -4068,7 +4000,7 @@ public class TilesView extends GLSurfaceView {
 					Bitmap bm = Bitmap.createBitmap(bmSizeX, bmSizeY, config);
 					Canvas canvas = new Canvas(bm);
 					bm.eraseColor(0);
-
+					
 					canvas.drawBitmap(icon.getImage(), null, new RectF(0, 0,
 							size.x, size.y), null);
 
