@@ -601,7 +601,7 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
                 TKConfig.setPref(mSphinx, TKConfig.PREFS_SUBWAY_MAP, "1");
                 mSphinx.getSubwayMapFragment().setData(Globals.getCurrentCityInfo());
                 mSphinx.showView(R.id.view_subway_map);
-            } else if (mCurrentCategoryIndex == FOOD_INDEX) {
+            } else if (mCurrentCategoryIndex == FOOD_INDEX && mCityId == MapEngine.CITY_ID_BEIJING) {
                 mActionLog.addAction(mActionTag + ActionLog.POIHomeDish);
                 TKConfig.setPref(mSphinx, TKConfig.PREFS_DISH, "1");
                 
@@ -1084,7 +1084,7 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
             } else {
                 mSubwayMapImv.setVisibility(View.GONE);
             }
-		} else if (position == FOOD_INDEX) {
+		} else if (position == FOOD_INDEX && mCityId == MapEngine.CITY_ID_BEIJING) {
 		    mSubwayMapBtn.setText(R.string.dish_merchant);
 		    Drawable drawable = mSphinx.getResources().getDrawable(R.drawable.ic_dish);
 		    drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
