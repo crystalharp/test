@@ -595,10 +595,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                         e1.printStackTrace();
                     }
                     Globals.initOptimalAdaptiveScreenSize();
-                    while (Globals.g_My_Location_State == Globals.LOCATION_STATE_NONE &&
-                            fristUse == false) {
+                    do {
                         try {
-                            Thread.sleep(LOGO_ANIMATION_TIME);
+                            Thread.sleep(LOGO_ANIMATION_TIME*2);
                         } catch (InterruptedException e) {
                             // TODO Auto-generated catch block
                             e.printStackTrace();
@@ -606,7 +605,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                         if (isFinishing()) {
                             break;
                         }
-                    }
+                    } while (Globals.g_My_Location_State == Globals.LOCATION_STATE_NONE &&
+                            fristUse == false);
 
                     if (isFinishing() == false) {
                         mHandler.post(mCheckLocationCityRun);
@@ -2716,7 +2716,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         if (size != 0 && !(size == 1 &&
                 (viewId == R.id.view_poi_home ||
                  viewId == R.id.view_discover_home ||
-                 (viewId == R.id.view_traffic_home && getTrafficQueryFragment().isNormalState() == false) ||
+                 (viewId == R.id.view_traffic_home && getTrafficQueryFragment().isNormalState()) ||
                  viewId == R.id.view_more_home))) {
             return false;
         }
