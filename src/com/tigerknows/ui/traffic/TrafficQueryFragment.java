@@ -825,10 +825,6 @@ public class TrafficQueryFragment extends BaseFragment {
             mMapLocationHelper.mTargetCityInfo = MapEngine.getCityInfo(MapEngine.getCityId(poi.getPosition()));
         }
         
-        changeToMode(TRAFFIC_MODE);
-        //自定起起点功能要求不显示起点，用这个变量进行标识，onpause的时候恢复
-        setShowStartMyLocation(false);
-        
         mSettedRadioBtn = R.id.traffic_transfer_rbt;
         switch (queryType) {
         case TrafficQuery.QUERY_TYPE_DRIVE:
@@ -844,6 +840,10 @@ public class TrafficQueryFragment extends BaseFragment {
         mRadioGroup.check(mSettedRadioBtn);
         setState(TrafficViewSTT.State.Input);
         setPOI(poi.clone(), index);
+        
+        changeToMode(TRAFFIC_MODE);
+        //自定起起点功能要求不显示起点，用这个变量进行标识，onpause的时候恢复
+        setShowStartMyLocation(false);
     }    
     
     /*
