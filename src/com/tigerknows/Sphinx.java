@@ -4324,11 +4324,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         }
     };
     
-    private Circle getMyLocationRadiusCircle(){
-        Circle circle=(Circle)mMapView.getShapesByName(Shape.MY_LOCATION);
-        return circle;
-    }
-    
     private boolean updateMyLocation(Position myPosition) {
     	if(myPosition == null) {
     		return false;
@@ -4405,7 +4400,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             }
         }
         
-        Circle myLocationRadiusCircle=getMyLocationRadiusCircle();
+        Circle myLocationRadiusCircle=(Circle)mMapView.getShapesByName(Shape.MY_LOCATION);
         if(myLocationRadiusCircle==null){
             try{
                 myLocationRadiusCircle=new Circle(myLocation,new Length(myLocation.getAccuracy(),UOM.M),Shape.MY_LOCATION);

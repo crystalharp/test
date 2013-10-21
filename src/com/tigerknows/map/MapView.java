@@ -1065,7 +1065,7 @@ public class MapView extends RelativeLayout implements
 
     public int getCenterCityId() {
         Position position = getCenterPosition();
-        int cityId = MapEngine.getInstance().getCityId(position);
+        int cityId = MapEngine.getCityId(position);
         return cityId;
     }
     
@@ -1204,9 +1204,19 @@ public class MapView extends RelativeLayout implements
         mapScene.zoomLevel = (int) getZoomLevel();
         List<ItemizedOverlay> itemizedOverlay = new ArrayList<ItemizedOverlay>();
         itemizedOverlay.addAll(tilesView.getOverlays());
+        for (int i = itemizedOverlay.size() - 1; i >= 0; i--) {
+            if (itemizedOverlay.get(i).getName().equals(ItemizedOverlay.MY_LOCATION_OVERLAY)) {
+                itemizedOverlay.remove(i);
+            }
+        }
         mapScene.itemizedOverlay = itemizedOverlay;
         List<Shape> shape = new ArrayList<Shape>();
         shape.addAll(tilesView.getShapes());
+        for (int i = shape.size() - 1; i >= 0; i--) {
+            if (shape.get(i).getName().equals(Shape.MY_LOCATION)) {
+                shape.remove(i);
+            }
+        }
         mapScene.shape = shape;
         InfoWindow infoWindow = tilesView.getInfoWindow();
         if (infoWindow.isVisible()) {
