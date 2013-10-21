@@ -98,7 +98,7 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
     /**
      * 交通在列表中的下标
      */
-    static final int TRAFFIC_INDEX = 8;
+    static final int TRAFFIC_INDEX = 5;
 
     private Button mCityBtn;
     private Button mInputBtn;
@@ -140,10 +140,10 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
             R.drawable.category_play,
             R.drawable.category_shopping,
             R.drawable.category_travel,
-            R.drawable.category_beauty,
-            R.drawable.category_sports,
-            R.drawable.category_bank,
             R.drawable.category_traffic,
+            R.drawable.category_beauty,
+            R.drawable.category_bank,
+            R.drawable.category_sports,
             R.drawable.category_hospital
             };
     private final int[] mCategoryTagResIdList = {
@@ -152,10 +152,10 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
             R.drawable.category_tag_play,
             R.drawable.category_tag_shopping,
             R.drawable.category_tag_travel,
-            R.drawable.category_tag_beauty,
-            R.drawable.category_tag_sports,
-            R.drawable.category_tag_bank,
             R.drawable.category_tag_traffic,
+            R.drawable.category_tag_beauty,
+            R.drawable.category_tag_bank,
+            R.drawable.category_tag_sports,
             R.drawable.category_tag_hospital
             };
 
