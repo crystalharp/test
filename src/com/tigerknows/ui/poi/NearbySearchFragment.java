@@ -40,6 +40,7 @@ import com.tigerknows.android.location.Position;
 import com.tigerknows.android.widget.TKEditText;
 import android.widget.Toast;
 import com.tigerknows.common.ActionLog;
+import com.tigerknows.map.MapEngine;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.DataQuery;
@@ -99,10 +100,10 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         R.drawable.ic_amusement_search_near,
         R.drawable.ic_buy_search_near,
         R.drawable.ic_tour_search_near,
-        R.drawable.ic_beautiful_search_near,
-        R.drawable.ic_sport_search_near,
-        R.drawable.ic_bandk_search_near,
         R.drawable.ic_traffic_search_near,
+        R.drawable.ic_beautiful_search_near,
+        R.drawable.ic_bandk_search_near,
+        R.drawable.ic_sport_search_near,
         R.drawable.ic_hospital_search_near
         };
     
@@ -301,7 +302,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
             mSphinx.hideSoftInput(mKeywordEdt.getInput());
             DataQuery poiQuery = new DataQuery(mContext);
             POI requestPOI = mPOI;
-            int cityId = mSphinx.getMapEngine().getCityId(requestPOI.getPosition());
+            int cityId = MapEngine.getCityId(requestPOI.getPosition());
             poiQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_POI);
             poiQuery.addParameter(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_POI);
             poiQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
