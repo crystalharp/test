@@ -1418,7 +1418,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     @Override
                     public void onClick(View v) {
                         int id = v.getId();
-                        getTrafficQueryFragment().priorityMyLocation = false;
+                        if (uiStackPeek() == R.id.view_traffic_home) {
+                            getTrafficQueryFragment().priorityMyLocation = false;
+                        }
                         if (id == R.id.button1_view) {
                             mActionLog.addAction(ActionLog.MapTakeScreenshot);
                             
