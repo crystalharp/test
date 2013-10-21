@@ -155,6 +155,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
 
     private LinearLayout mFeatureTxv;
     
+    private boolean needForceReloadPOI = false;
+    
     //如下两个layout用来添加动态POI内容到该页
     public LinearLayout mBelowAddressLayout;
     
@@ -573,6 +575,10 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         
         return mRootView;
     }
+    
+    public final void needForceReload() {
+        needForceReloadPOI = true;
+    }
 
     @Override
     public void onResume() {
@@ -604,6 +610,11 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         
         if (poi.getName() == null && poi.getUUID() != null) {
             mActionLog.addAction(mActionTag + ActionLog.POIDetailFromWeixin);
+            needForceReloadPOI = true;
+        }
+        
+        if (needForceReloadPOI) {
+            needForceReloadPOI = false;
             List<BaseQuery> baseQueryList = new ArrayList<BaseQuery>();
             DataOperation poiQuery = new DataOperation(mSphinx);
             poiQuery.addParameter(DataOperation.SERVER_PARAMETER_DATA_TYPE, DataOperation.DATA_TYPE_POI);
@@ -615,7 +626,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             if (poi.ciytId != 0) {
                 cityId = poi.ciytId;
             } else if (poi.getPosition() != null){
-                cityId = MapEngine.getInstance().getCityId(poi.getPosition());
+                cityId = MapEngine.getCityId(poi.getPosition());
             }
             poiQuery.setup(cityId, getId(), getId(), mSphinx.getString(R.string.doing_and_wait));
             baseQueryList.add(poiQuery);
@@ -1445,11 +1456,13 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                             poi.updateData(mSphinx, onlinePOI.getData());
                             poi.setFrom(POI.FROM_ONLINE);
                             initDynamicPOIView(mPOI);
+                            initExtraView(mPOI);
                             refreshDetail();
                             refreshComment();
                             refreshNavigation();
 
                             loadDynamicView(DynamicPOIView.FROM_FAV_HISTORY);
+                            loadExtraView(DynamicPOIView.FROM_FAV_HISTORY);
                         }
                     }
                     
