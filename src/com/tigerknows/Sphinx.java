@@ -4216,7 +4216,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             checkLocationCity(true);
         }
     };
-    private Position myPosition;
+    private Position lastMyPosition;
     private Runnable mLocationChangedRun = new Runnable() {
         
         @Override
@@ -4224,10 +4224,15 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             LogWrapper.d(TAG, "mLocationChangedRun");
             
             CityInfo myLocationCityInfo = Globals.g_My_Location_City_Info;
+            Position myPosition = null;
+            if (myLocationCityInfo != null) {
+                myPosition = myLocationCityInfo.getPosition();
+            }
             
-            if (myPosition == null || (myLocationCityInfo != null && myPosition.equals(myLocationCityInfo.getPosition()))) {
+            if (lastMyPosition == myPosition || (lastMyPosition != null && lastMyPosition.equals(myPosition))) {
                 return;
             }
+            lastMyPosition = myPosition;
 
             LogWrapper.d(TAG, "mLocationChangedRun refresh");
             if (uiStackPeek() == R.id.view_poi_home || uiStackPeek() == R.id.view_discover_home) {
