@@ -100,10 +100,10 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         R.drawable.ic_amusement_search_near,
         R.drawable.ic_buy_search_near,
         R.drawable.ic_tour_search_near,
-        R.drawable.ic_beautiful_search_near,
-        R.drawable.ic_sport_search_near,
-        R.drawable.ic_bandk_search_near,
         R.drawable.ic_traffic_search_near,
+        R.drawable.ic_beautiful_search_near,
+        R.drawable.ic_bandk_search_near,
+        R.drawable.ic_sport_search_near,
         R.drawable.ic_hospital_search_near
         };
     

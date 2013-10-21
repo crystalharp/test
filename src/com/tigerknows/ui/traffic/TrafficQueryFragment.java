@@ -176,6 +176,12 @@ public class TrafficQueryFragment extends BaseFragment {
 //		return mMapLocationHelper.getQueryCityInfo();
 //	}
 	
+	/**
+	 * 是否优先使用当前位置
+	 * 当从截图、测距、指南针界面返回时，此时地图中心点所在城市与之前在交通界面的地图所在城市一致则不移动地图
+	 */
+	public boolean priorityMyLocation = true;
+	
 	public TrafficQueryFragment(Sphinx sphinx) {
         super(sphinx);
 	}
@@ -340,7 +346,9 @@ public class TrafficQueryFragment extends BaseFragment {
 					TouchMode.CHOOSE_ROUTING_START_POINT : TouchMode.CHOOSE_ROUTING_END_POINT);
         }
         
-        mMapLocationHelper.resetMapCenter();
+        mMapLocationHelper.resetMapCenter(priorityMyLocation);
+        priorityMyLocation = true;
+        
         /*
          * 由于在一个“session”中会多次调用onresume，导致在地图选点和收藏夹选点之后返回本页面都会调用initstart
          * 这里引入mDissmissed变量，在整个页面被dismiss的时候设为true，onresume的时候把变量设为false，并把所有
@@ -403,8 +411,8 @@ public class TrafficQueryFragment extends BaseFragment {
 //		mStateTransitionTable.clearTransitionStack();
 	}
 	
-	public boolean isSelectPointState() {
-	    return TrafficViewSTT.State.SelectPoint.equals(mStateTransitionTable.getCurrentState());
+	public boolean isNormalState() {
+	    return TrafficViewSTT.State.Normal.equals(mStateTransitionTable.getCurrentState());
 	}
 	
 	public void postTask(Runnable r) {
@@ -817,10 +825,6 @@ public class TrafficQueryFragment extends BaseFragment {
             mMapLocationHelper.mTargetCityInfo = MapEngine.getCityInfo(MapEngine.getCityId(poi.getPosition()));
         }
         
-        changeToMode(TRAFFIC_MODE);
-        //自定起起点功能要求不显示起点，用这个变量进行标识，onpause的时候恢复
-        setShowStartMyLocation(false);
-        
         mSettedRadioBtn = R.id.traffic_transfer_rbt;
         switch (queryType) {
         case TrafficQuery.QUERY_TYPE_DRIVE:
@@ -836,6 +840,10 @@ public class TrafficQueryFragment extends BaseFragment {
         mRadioGroup.check(mSettedRadioBtn);
         setState(TrafficViewSTT.State.Input);
         setPOI(poi.clone(), index);
+        
+        changeToMode(TRAFFIC_MODE);
+        //自定起起点功能要求不显示起点，用这个变量进行标识，onpause的时候恢复
+        setShowStartMyLocation(false);
     }    
     
     /*

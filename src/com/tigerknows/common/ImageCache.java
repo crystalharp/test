@@ -51,6 +51,7 @@ public class ImageCache {
 	
 	public void init (Context context) throws APIException{
 		LogWrapper.d("TileTable", "init");
+		externalStorage = true;
 		if (!Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
 			externalStorage=false;
 			LogWrapper.i("TileTable","external storage is not mounted");

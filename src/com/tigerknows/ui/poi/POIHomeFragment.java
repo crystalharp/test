@@ -36,7 +36,10 @@ import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -100,7 +103,7 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
     /**
      * 交通在列表中的下标
      */
-    static final int TRAFFIC_INDEX = 8;
+    static final int TRAFFIC_INDEX = 5;
 
     private Button mCityBtn;
     private Button mInputBtn;
@@ -142,10 +145,10 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
             R.drawable.category_play,
             R.drawable.category_shopping,
             R.drawable.category_travel,
-            R.drawable.category_beauty,
-            R.drawable.category_sports,
-            R.drawable.category_bank,
             R.drawable.category_traffic,
+            R.drawable.category_beauty,
+            R.drawable.category_bank,
+            R.drawable.category_sports,
             R.drawable.category_hospital
             };
     private final int[] mCategoryTagResIdList = {
@@ -154,15 +157,17 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
             R.drawable.category_tag_play,
             R.drawable.category_tag_shopping,
             R.drawable.category_tag_travel,
-            R.drawable.category_tag_beauty,
-            R.drawable.category_tag_sports,
-            R.drawable.category_tag_bank,
             R.drawable.category_tag_traffic,
+            R.drawable.category_tag_beauty,
+            R.drawable.category_tag_bank,
+            R.drawable.category_tag_sports,
             R.drawable.category_tag_hospital
             };
 
 	ArrayList< ArrayList<String> > subCategories = new ArrayList< ArrayList<String> >();
 	String[] mHighLightedSubs;
+	String mSubwaymap;
+	SpannableStringBuilder mSubwaymapHighLightedSub;
     
     private Dialog mProgressDialog = null;
     
@@ -428,7 +433,10 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
         mCategoryTop = mMyLocationViewHeight+mCategoryPadding;
         mCategoryAdapter.notifyDataSetChanged();
         
-
+        mSubwaymap = mSphinx.getString(R.string.subway_map);
+        mSubwaymapHighLightedSub = new SpannableStringBuilder(mSphinx.getString(R.string.traffic_highLight_subwaymap));
+        int orange = mSphinx.getResources().getColor(R.color.orange);
+        mSubwaymapHighLightedSub.setSpan(new ForegroundColorSpan(orange),0,3,Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
         
         return mRootView;
     }
@@ -722,6 +730,16 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
         	
         	Button btnSubCategory = (Button) convertView.findViewById(R.id.btn_sub_category);
         	btnSubCategory.setText(mHighLightedSubs[position]);
+            
+            if (position == TRAFFIC_INDEX) {
+                if (mHighLightedSubs[position].startsWith(mSubwaymap)) {
+                    btnSubCategory.setText(mSubwaymapHighLightedSub);
+                } else {
+                    btnSubCategory.setText(mHighLightedSubs[position]);
+                }
+            } else {
+                btnSubCategory.setText(mHighLightedSubs[position]);
+            }
         	
         	btnCategory.setOnClickListener(new CategoryBtnOnClickListener(position));
         	

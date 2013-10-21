@@ -105,11 +105,17 @@ public class TrafficQueryMapAndLocationHelper {
      * 0   1   1   上一次地图中心
      * 0   2   1   当前城市中心
      */
-    public void resetMapCenter() {
+    public void resetMapCenter(boolean priorityMyLocation) {
     	
+        LogWrapper.d(TAG, "resetMapCenter() priorityMyLocation:"+priorityMyLocation);
         mQueryFragment.mSphinx.resetLoactionButtonState();
         CityInfo currentCityInfo = Globals.getCurrentCityInfo();
     	CityInfo locationCityInfo = Globals.g_My_Location_City_Info;
+    	Position currentPosition = mQueryFragment.mSphinx.getMapView().getCenterPosition();
+    	if (priorityMyLocation == false && mMapCityInfo.getId() == MapEngine.getCityId(currentPosition)) {
+            mMapCityInfo.setPosition(currentPosition);
+            mMapCityInfo.setLevel((int)mQueryFragment.mSphinx.getMapView().getZoomLevel());
+    	}
     	CityInfo lastCityInfo = mMapCityInfo;
     	CityInfo targetCityInfo = mTargetCityInfo;
     	
@@ -132,7 +138,7 @@ public class TrafficQueryMapAndLocationHelper {
     	
     	CityInfo result = null;
         if (locationCityInfo != null) {
-            if (locationId == queryId) {
+            if (locationId == queryId && priorityMyLocation) {
                 result = locationCityInfo;
             }
         }

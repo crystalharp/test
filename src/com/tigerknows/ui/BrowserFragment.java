@@ -57,6 +57,7 @@ public class BrowserFragment extends BaseFragment implements View.OnClickListene
     private String mTitle;
     private String mFinishedUrl;
     private String mLastUrl;
+    private boolean mReload = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -104,6 +105,7 @@ public class BrowserFragment extends BaseFragment implements View.OnClickListene
         mURL = url;
         mFinishedUrl = null;
         mLastUrl = null;
+        mReload = false;
 
         LogWrapper.d(TAG, "mURL="+mURL);
         
@@ -150,11 +152,14 @@ public class BrowserFragment extends BaseFragment implements View.OnClickListene
                 // 结束
                 super.onPageFinished(view, url);
                 if (mFinishedUrl == null || mFinishedUrl.equals(url)) {
-                    view.clearHistory();
+                    if (mReload == false) {
+                        view.clearHistory();
+                    }
                     mLastUrl = mURL;
                 } else {
                     mLastUrl = url;
                 }
+                mReload = false;
                 mFinishedUrl = url;
                 mProgressBar.setVisibility(View.GONE);
                 mBackBtn.setEnabled(mWebWbv.canGoBack());
@@ -201,6 +206,7 @@ public class BrowserFragment extends BaseFragment implements View.OnClickListene
             }
         } else if (id == R.id.refresh_btn) {
             mActionLog.addAction(mActionTag +  ActionLog.BrowserRefresh);
+            mReload = true;
             mWebWbv.reload();
         } else if (id == R.id.stop_btn) {
             mWebWbv.stopLoading();
