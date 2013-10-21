@@ -4422,6 +4422,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             }
             
         }
+        mMapView.refreshMap();
         return true;
     }
         
