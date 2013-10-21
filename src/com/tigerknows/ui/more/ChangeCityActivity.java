@@ -69,8 +69,6 @@ public class ChangeCityActivity extends BaseActivity {
     private static List<CityInfo> sAllCityInfoList = null;
     private String mNotFindCity;
     
-    private MapEngine mMapEngine;
-    
     private Comparator<CityInfo> mCityComparator = new Comparator<CityInfo>() {
 
         @Override
@@ -99,9 +97,8 @@ public class ChangeCityActivity extends BaseActivity {
         mSuggestCityAdapter = new SuggestCityAdapter(mThis, mSuggestCityList);
         mSuggestCityLsv.setAdapter(mSuggestCityAdapter);
 
-        mMapEngine = MapEngine.getInstance();
         if (sAllCityInfoList ==  null) {
-           sAllCityInfoList = mMapEngine.getAllProvinceCityList(mThis);
+           sAllCityInfoList = MapEngine.getAllProvinceCityList(mThis);
            for(int i = sAllCityInfoList.size()-1; i >= 0; i--) {
                CityInfo cityInfo = sAllCityInfoList.get(i);
                List<CityInfo> cityInfoList = cityInfo.getCityList();

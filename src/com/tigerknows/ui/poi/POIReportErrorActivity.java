@@ -450,7 +450,7 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
         	mMainEdt.setInputType(InputType.TYPE_CLASS_PHONE);
         	mMainEdt.setFilters(phoneFilter);
             mMainTxv.setText(getString(R.string.erreport_merchant_tel));
-            mOrigin = MapEngine.getAreaCodeByCityId(MapEngine.getInstance().getCityId(mPOI.getPosition())) + '-';
+            mOrigin = MapEngine.getAreaCodeByCityId(MapEngine.getCityId(mPOI.getPosition())) + '-';
             mMainEdt.setHint(getString(R.string.tel_or_mobile));
             break;
         case ADDRESS_ERR:
@@ -482,7 +482,7 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
         	mMainEdt.setInputType(InputType.TYPE_CLASS_PHONE);
         	mMainEdt.setFilters(phoneFilter);
             mMainTxv.setText(getString(R.string.erreport_merchant_tel));
-            mOrigin = MapEngine.getAreaCodeByCityId(MapEngine.getInstance().getCityId(mPOI.getPosition())) + '-';
+            mOrigin = MapEngine.getAreaCodeByCityId(MapEngine.getCityId(mPOI.getPosition())) + '-';
             mMainEdt.setHint(getString(R.string.tel_or_mobile));
             break;
         case NOT_EXIST:

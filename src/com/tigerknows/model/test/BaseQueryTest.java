@@ -589,8 +589,7 @@ public class BaseQueryTest {
             
             @Override
             public void onClick(View arg0) {
-                MapEngine mapEngine = MapEngine.getInstance();
-                List<Integer> list = mapEngine.getRegionIdList(viewCityMapVersionEdt.getEditableText().toString());
+                List<Integer> list = MapEngine.getRegionIdList(viewCityMapVersionEdt.getEditableText().toString());
                 StringBuilder s = new StringBuilder();
                 int totalSize = 0;
                 int downloadedSize = 0;
@@ -599,11 +598,11 @@ public class BaseQueryTest {
                         int id = list.get(j);
                         s.append(id);
                         s.append(": ");
-                        RegionMetaVersion regionMetaVersion = mapEngine.getRegionMetaVersion(id);
+                        RegionMetaVersion regionMetaVersion = MapEngine.getRegionMetaVersion(id);
                         if (regionMetaVersion != null) {
                             s.append(regionMetaVersion.toString());
                         }
-                        LocalRegionDataInfo regionMapInfo = mapEngine.getLocalRegionDataInfo(id);
+                        LocalRegionDataInfo regionMapInfo = MapEngine.getLocalRegionDataInfo(id);
                         if (regionMapInfo != null) {
                             totalSize += regionMapInfo.getTotalSize();
                             downloadedSize += regionMapInfo.getDownloadedSize();
@@ -751,7 +750,7 @@ public class BaseQueryTest {
             
             @Override
             public void onClick(View v) {
-                List<CityInfo> allCityInfoList = MapEngine.getInstance().getAllProvinceCityList(activity.getApplicationContext());  
+                List<CityInfo> allCityInfoList = MapEngine.getAllProvinceCityList(activity.getApplicationContext());  
                 for(int i = allCityInfoList.size()-1; i >= 0; i--) {
                     CityInfo cityInfo1 = allCityInfoList.get(i);
                     List<CityInfo> childCityInfoList = cityInfo1.getCityList();
@@ -960,9 +959,8 @@ public class BaseQueryTest {
           
           @Override
           public void run() {
-              MapEngine mapEngine = MapEngine.getInstance();
               final MapView mapView = sphinx.getMapView();
-              List<CityInfo>  sAllCityInfoList = mapEngine.getAllProvinceCityList(sphinx);
+              List<CityInfo>  sAllCityInfoList = MapEngine.getAllProvinceCityList(sphinx);
               boolean stop = false;
               for(CityInfo cityInfo : sAllCityInfoList) {
                   List<CityInfo> cityInfoList = cityInfo.getCityList();

@@ -25,6 +25,7 @@ import com.tigerknows.android.location.Position;
 import com.tigerknows.android.os.TKAsyncTask;
 import android.widget.Toast;
 import com.tigerknows.common.ActionLog;
+import com.tigerknows.map.MapEngine;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.FeedbackUpload;
 import com.tigerknows.model.TrafficModel.Plan;
@@ -105,7 +106,7 @@ public class TrafficReportErrorActivity extends BaseActivity {
 				
 				StringBuilder result = new StringBuilder();
                 result.append("T");
-                result.append("_C" + mMapEngine.getCityId(mPlan.getEnd().getPosition()));
+                result.append("_C" + MapEngine.getCityId(mPlan.getEnd().getPosition()));
 				result.append("_S");
 				
 				String stationError = "";
