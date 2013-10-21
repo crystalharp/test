@@ -43,7 +43,6 @@ import android.widget.TextView;
 
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
