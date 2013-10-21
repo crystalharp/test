@@ -176,7 +176,6 @@ public final class ByteUtil {
         if (num < 1) {
             return list;
         }
-        MapEngine mapEngine = MapEngine.getInstance();
         for (int i=0; i<num; i++) {
             int rid = arr2int(byteTileInfo, start + 12*i);
             
@@ -184,7 +183,7 @@ public final class ByteUtil {
             
             int len = arr2int(byteTileInfo, start + 12*i + 8);
             
-            RegionMetaVersion regionMetaVersion = mapEngine.getRegionMetaVersion(rid);
+            RegionMetaVersion regionMetaVersion = MapEngine.getRegionMetaVersion(rid);
             if (regionMetaVersion != null) {
                 String version = regionMetaVersion.toString();
                 TileDownload tileInfo = new TileDownload(rid, offset, len, version);

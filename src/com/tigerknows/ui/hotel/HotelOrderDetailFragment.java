@@ -631,7 +631,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
         poiQuery.addParameter(DataQuery.SERVER_PARAMETER_CHECKIN, SIMPLE_DATE_FORMAT.format(today.getTime()));
         poiQuery.addParameter(DataQuery.SERVER_PARAMETER_CHECKOUT, SIMPLE_DATE_FORMAT.format(tomorrow.getTime()));
         
-        int cityId= MapEngine.getInstance().getCityId(mOrder.getPosition());
+        int cityId= MapEngine.getCityId(mOrder.getPosition());
         poiQuery.setup(cityId, getId(), getId(), mContext.getString(R.string.doing_and_wait));
         return poiQuery;
     }

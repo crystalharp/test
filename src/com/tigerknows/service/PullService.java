@@ -151,8 +151,8 @@ public class PullService extends Service {
                     try {
                         mapEngine.initMapDataPath(getApplicationContext());
                         position = mapEngine.latlonTransform(new Position(location.getLatitude(), location.getLongitude()));
-                        int cityId = mapEngine.getCityId(position);
-                        locationCityInfo = mapEngine.getCityInfo(cityId);
+                        int cityId = MapEngine.getCityId(position);
+                        locationCityInfo = MapEngine.getCityInfo(cityId);
                     } catch (APIException e) {
                         e.printStackTrace();
                     }

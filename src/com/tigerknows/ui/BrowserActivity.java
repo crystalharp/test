@@ -12,8 +12,6 @@ import android.graphics.Bitmap;
 import android.graphics.Paint;
 import android.net.http.SslError;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
@@ -105,6 +103,7 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
     private static Tuangou sTuangou;
     
     private String mFinishedUrl;
+    private boolean mReload = false;
     
     private static Activity mActivity;
     private static String mPayInfo;
@@ -245,9 +244,10 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
             public void onPageFinished(WebView view, String url) {
                 // 结束
                 super.onPageFinished(view, url);
-                if (mFinishedUrl == null || mFinishedUrl.equals(url)) {
+                if ((mFinishedUrl == null || mFinishedUrl.equals(url)) && mReload == false) {
                     view.clearHistory();
                 }
+                mReload = false;
                 mFinishedUrl = url;
                 mProgressBar.setVisibility(View.GONE);
                 mBackBtn.setEnabled(mWebWbv.canGoBack());
@@ -322,6 +322,7 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
             }
         } else if (id == R.id.refresh_btn) {
             mActionLog.addAction(mActionTag +  ActionLog.BrowserRefresh);
+            mReload = true;
             mWebWbv.reload();
         } else if (id == R.id.stop_btn) {
             mWebWbv.stopLoading();
@@ -415,6 +416,7 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
     
     void loadDiandan(String url) {
         mFinishedUrl = null;
+        mReload = false;
         mWebWbv.clearHistory();
         mWebWbv.loadUrl(url);
         mButtonView.setVisibility(View.VISIBLE);

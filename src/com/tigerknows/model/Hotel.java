@@ -503,16 +503,14 @@ public class Hotel extends XMapData {
         public String getSubtitle() {
             return subtitle;
         }
-        
         public long getVendorID(){
         	return vendorId;
         }
         
         public String getVendorName(){
         	return vendorName;
-        }
-        
-        public String genDescription() {
+        }        
+        public String generateDescription() {
             return Utility.joinFields(" ", bedType, breakfast, netService, floor, area);
         }
 
