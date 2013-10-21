@@ -161,7 +161,7 @@ public class TKWeixin {
     
     private static WXMediaMessage makeWXWebpageObject(Activity activity, POI poi) {
         WXWebpageObject webpage = new WXWebpageObject();
-        webpage.webpageUrl = String.format(POI_URL, MapEngine.getInstance().getCityId(poi.getPosition()), poi.getUUID());
+        webpage.webpageUrl = String.format(POI_URL, MapEngine.getCityId(poi.getPosition()), poi.getUUID());
         WXMediaMessage msg = new WXMediaMessage(webpage);
         msg.title = poi.getName();
         msg.description = poi.getAddress();

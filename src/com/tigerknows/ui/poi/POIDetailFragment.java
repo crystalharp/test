@@ -623,7 +623,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             if (poi.ciytId != 0) {
                 cityId = poi.ciytId;
             } else if (poi.getPosition() != null){
-                cityId = MapEngine.getInstance().getCityId(poi.getPosition());
+                cityId = MapEngine.getCityId(poi.getPosition());
             }
             poiQuery.setup(cityId, getId(), getId(), mSphinx.getString(R.string.doing_and_wait));
             baseQueryList.add(poiQuery);

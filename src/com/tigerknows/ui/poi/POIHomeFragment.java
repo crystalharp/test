@@ -669,7 +669,7 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
         long currentTime = System.currentTimeMillis();
         int distance = Position.distanceBetween(myLocationPosition, mLastPosition);
 
-        String name = mSphinx.getMapEngine().getPositionName(myLocationPosition);
+        String name = MapEngine.getPositionName(myLocationPosition);
         
         if (!TextUtils.isEmpty(name) && name.length() > 0) {
             if ((myLocation != null && myLocation.getProvider().equals(LocationManager.GPS_PROVIDER) && distance > 100)) {
