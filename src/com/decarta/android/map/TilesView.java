@@ -708,7 +708,12 @@ public class TilesView extends GLSurfaceView {
 				overlays.remove(i);
 			}
 		}
-		shapes.clear();
+        for (int i = shapes.size() - 1; i >= 0; i--) {
+            if (!shapes.get(i).getName()
+                    .equals(Shape.MY_LOCATION)) {
+                shapes.remove(i);
+            }
+        }
 
 		infoWindow.setAssociatedOverlayItem(null);
 		infoWindow.setVisible(false);
