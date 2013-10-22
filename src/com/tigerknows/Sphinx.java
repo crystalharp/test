@@ -4387,20 +4387,20 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     showInfoWindow(mMyLocation);
                 }
             }
+            mMapView.refreshMap();
         }
         if (mMapView.getOverlaysByName(ItemizedOverlay.MY_LOCATION_OVERLAY) == null) {
             try {
                 mMapView.addOverlay(mMyLocationOverlay);
             } catch (APIException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
         
-        Circle myLocationRadiusCircle=getMyLocationRadiusCircle();
+        Circle myLocationRadiusCircle = getMyLocationRadiusCircle();
         if(myLocationRadiusCircle==null){
             try{
-                myLocationRadiusCircle=new Circle(myLocation,new Length(myLocation.getAccuracy(),UOM.M),Shape.MY_LOCATION);
+                myLocationRadiusCircle=new Circle(myLocation, new Length(myLocation.getAccuracy(),UOM.M),Shape.MY_LOCATION);
                 mMapView.addShape(myLocationRadiusCircle);
             }catch(Exception e){
                 e.printStackTrace();
