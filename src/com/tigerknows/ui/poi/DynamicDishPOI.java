@@ -78,10 +78,9 @@ public class DynamicDishPOI extends POIDetailFragment.DynamicPOIView implements 
         mPOIDetailFragment = poiFragment;
         mSphinx = mPOIDetailFragment.mSphinx;
         mInflater = inflater;
-        mViewBlock = new DynamicPOIViewBlock(mPOIDetailFragment.mBelowAddressLayout, mMovieRefresher);
         mDynamicDianyingView = (LinearLayout) mInflater.inflate(R.layout.poi_dynamic_dish, null);
         mDynamicDianyingListView = (LinearLayout) mDynamicDianyingView.findViewById(R.id.list_view);
-        mViewBlock.mOwnLayout = mDynamicDianyingView;
+        mViewBlock = new DynamicPOIViewBlock(mPOIDetailFragment.mBelowAddressLayout, mDynamicDianyingView, mMovieRefresher);
         lsv = new LinearListView(mSphinx, mDynamicDianyingListView, initer, R.layout.poi_dynamic_dish_item);
         mDynamicDianyingView.findViewById(R.id.shopkeeper_txv).setOnClickListener(this);
     }

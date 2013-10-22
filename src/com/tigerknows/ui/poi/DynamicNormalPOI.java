@@ -126,10 +126,9 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
         mPOIDetailFragment = poiFragment;
         mSphinx = mPOIDetailFragment.mSphinx;
         mInflater = inflater;
-        mViewBlock = new DynamicPOIViewBlock(mPOIDetailFragment.mBelowAddressLayout, mViewBlockRefresher);
         LinearLayout poiListView = (LinearLayout) mInflater.inflate(R.layout.poi_dynamic_normal_poi, null);
         lsv = new LinearListView(mSphinx, poiListView, initer, R.layout.poi_dynamic_poi_list_item);
-        mViewBlock.mOwnLayout = poiListView;
+        mViewBlock = new DynamicPOIViewBlock(mPOIDetailFragment.mBelowAddressLayout, poiListView, mViewBlockRefresher);
         
     }
 

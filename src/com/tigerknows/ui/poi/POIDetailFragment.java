@@ -326,14 +326,19 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
      * 需要有个block级别的刷新机制。
      */
     public static class DynamicPOIViewBlock {
-        View mOwnLayout;
-        LinearLayout mBelongsLayout;
+        private View mOwnLayout;
+        private LinearLayout mBelongsLayout;
         boolean mLoadSucceed = true;
-        BlockRefresher mRefresher;
+        private BlockRefresher mRefresher;
 
-        public DynamicPOIViewBlock(LinearLayout belongsLayout, BlockRefresher refresher) {
+        public DynamicPOIViewBlock(LinearLayout belongsLayout, View ownLayout) {
+            this(belongsLayout, ownLayout, null);
+        }
+        
+        public DynamicPOIViewBlock(LinearLayout belongsLayout, View ownLayout, BlockRefresher refresher) {
             mBelongsLayout = belongsLayout;
             mRefresher = refresher;
+            mOwnLayout = ownLayout;
         }
 
         final void addToParent() {
@@ -359,8 +364,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         final public void refresh() {
             if (mRefresher != null) {
                 mRefresher.refresh();
-                show();
             }
+            show();
         }
     }
 
