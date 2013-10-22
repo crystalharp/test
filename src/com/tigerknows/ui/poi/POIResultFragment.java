@@ -593,6 +593,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         private static final int RESOURCE_ID = R.layout.poi_list_item;
         
         private Drawable icAPOI;
+        private Drawable icDish;
         private String distanceA;
         private String commentTitle;
         private String addressTitle;
@@ -604,6 +605,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         private Runnable loadedDrawableRun;
         private String viewToken;
         private int hotelPicWidth = 0;
+        private int padding = 0;
         private String subDataType = BaseQuery.SUB_DATA_TYPE_POI;
         
         public String getSubDataType() {
@@ -626,12 +628,14 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             layoutInflater = (LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             Resources resources = activity.getResources();
             icAPOI = resources.getDrawable(R.drawable.ic_location_nearby);
+            icDish = resources.getDrawable(R.drawable.ic_dynamicpoi_dish);
             commentTitle = resources.getString(R.string.comment) + " : ";
             addressTitle = resources.getString(R.string.address) + " : ";
             aColor = resources.getColor(R.color.blue);
             bColor = resources.getColor(R.color.black_dark);
             distanceA = activity.getString(R.string.distanceA);
             hotelPicWidth = Util.dip2px(Globals.g_metrics.density, 68);
+            padding = Util.dip2px(Globals.g_metrics.density, 4);
         }
         
         @Override
@@ -704,7 +708,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 nameTxv.setTextColor(aColor);
                 icAPOI.setBounds(0, 0, icAPOI.getIntrinsicWidth(), icAPOI.getIntrinsicHeight());
                 nameTxv.setCompoundDrawables(icAPOI, null, null, null);
-                nameTxv.setCompoundDrawablePadding(Util.dip2px(Globals.g_metrics.density, 4));
+                nameTxv.setCompoundDrawablePadding(padding);
             } else {
                 nameTxv.setCompoundDrawables(null, null, null, null);
                 nameTxv.setTextColor(bColor);
@@ -733,6 +737,26 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             String str = poi.getCategory();
             if (!TextUtils.isEmpty(str)) {
                 categoryTxv.setText(str);
+
+                boolean dish = false;
+                List<DynamicPOI> list = poi.getDynamicPOIList();
+                if (list != null) {
+                    for(int i = 0, size = list.size(); i < size; i++) {
+                        String dataType = list.get(i).getType();
+                        if (BaseQuery.DATA_TYPE_DISH.equals(dataType)) {
+                            dish = true;
+                            break;
+                        }
+                    }
+                }
+                if (dish) {
+                    icDish.setBounds(0, 0, icDish.getIntrinsicWidth(), icDish.getIntrinsicHeight());
+                    categoryTxv.setCompoundDrawables(null, null, icDish, null);
+                    categoryTxv.setCompoundDrawablePadding(padding);
+                } else {
+                    categoryTxv.setCompoundDrawables(null, null, null, null);
+                    categoryTxv.setCompoundDrawablePadding(0);
+                }
             } else {
                 categoryTxv.setText("");
             }
@@ -863,8 +887,6 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                         iconImv.setImageResource(R.drawable.ic_dynamicpoi_dianying);
                     } else if (BaseQuery.DATA_TYPE_COUPON.equals(dataType)) {
                         iconImv.setImageResource(R.drawable.ic_dynamicpoi_coupon);
-                    } else if (BaseQuery.DATA_TYPE_DISH.equals(dataType)) {
-                        iconImv.setImageResource(R.drawable.ic_dynamicpoi_dish);
                     } else {
                         continue;
                     }
