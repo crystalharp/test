@@ -121,7 +121,7 @@
     <string name="may_upgrade">可更新</string>
     <string name="exist_download_list">已添加到下载列表</string>
     <string name="add">添加</string>
-    <string name="all_province">全省</string>
+    <string name="all_province">全省下载</string>
     <string name="added">已加</string>
     <string name="map_static_waiting_tip">地图信息读取中...</string>
     <string name="chengshi">城市</string>
