@@ -312,6 +312,12 @@ public class HotelOrder extends XMapData{
 		}else{
 			throw new APIException("FIELD_TOTAL_FEE");
 		}
+		
+		if (vendorID >= 0) {
+			map.put(FIELD_VENDOR_ID, vendorID);
+		}else{
+			throw new APIException("FIELD_VENDOR_ID");
+		}
 
 
 		if (retentionTime>0) {
