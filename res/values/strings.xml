@@ -1306,6 +1306,7 @@
     <string name="subway_location_error">获取位置信息出错</string>
     <string name="loading_subway_map">首次加载地铁图，请耐心等待...</string>
     <string name="subway_map_updated">地铁图已更新</string>
+    <string name="subway_poi_name_suffix">(地铁站)</string>
 	
     <string name="has_take_screenshot">已截取本屏地图</string>
     <string name="measure_distance_tip">点击地图进行测距</string>
