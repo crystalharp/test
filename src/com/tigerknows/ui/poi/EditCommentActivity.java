@@ -575,8 +575,54 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
         		}
         	}
         });
-        
-        
+        mHotelEnvironmentRtb.setOnRatingBarChangeListener(new OnRatingBarChangeListener(){
+        	@Override
+        	public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromTouch){
+        		if(fromTouch && rating==0){
+        			mHotelEnvironmentRtb.setRating(1);
+        		}
+        	}
+        });        
+        mHotelQosRtb.setOnRatingBarChangeListener(new OnRatingBarChangeListener(){
+        	@Override
+        	public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromTouch){
+        		if(fromTouch && rating==0){
+        			mHotelQosRtb.setRating(1);
+        		}
+        	}
+        });
+        mCinemaQosRtb.setOnRatingBarChangeListener(new OnRatingBarChangeListener(){
+        	@Override
+        	public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromTouch){
+        		if(fromTouch && rating==0){
+        			mCinemaQosRtb.setRating(1);
+        		}
+        	}
+        });
+        mHospitalQosRtb.setOnRatingBarChangeListener(new OnRatingBarChangeListener(){
+        	@Override
+        	public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromTouch){
+        		if(fromTouch && rating==0){
+        			mHospitalQosRtb.setRating(1);
+        		}
+        	}
+        });
+        mEffectRtb.setOnRatingBarChangeListener(new OnRatingBarChangeListener(){
+        	@Override
+        	public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromTouch){
+        		if(fromTouch && rating==0){
+        			mEffectRtb.setRating(1);
+        		}
+        	}
+        });
+        mLevelRtb.setOnRatingBarChangeListener(new OnRatingBarChangeListener(){
+        	@Override
+        	public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromTouch){
+        		if(fromTouch && rating==0){
+        			mLevelRtb.setRating(1);
+        		}
+        	}
+        });        
         mGradeRtb.setOnRatingBarChangeListener(new OnRatingBarChangeListener() {
             
             @Override
