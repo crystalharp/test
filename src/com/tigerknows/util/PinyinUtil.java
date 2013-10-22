@@ -59,7 +59,7 @@ public abstract class PinyinUtil {
                     continue;
                 }
                 if (ch >= '0' && ch <= '9') {
-                    sb.append(ch);
+                    sb.append('*');
                     continue;
                 }
                 if (ch == 0x3007) {
