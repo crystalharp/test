@@ -518,7 +518,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
      * In state querying, the button shouldn't be clickable 
      */
     private void updateTitleButtonState(){
-    	if(mTitleBtn == null){
+    	if(mTitleBtn == null || mSphinx.uiStackPeek() != getId()){
     		return;
     	}
         if (mState == STATE_QUERYING) {
