@@ -82,6 +82,8 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     MoreRoomTypeClickListener moreRoomTypeClickListener;
     roomTypeClickListener mItemClickListener = new roomTypeClickListener();
     
+    View upperView;
+    View lowerView;
     private LinearLayout mDynamicRoomTypeListView;
     private LinearLayout mDynamicRoomTypeMoreView;
     LinearLayout mRetryView;
@@ -273,10 +275,10 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         mPOIDetailFragment = poiFragment;
         mSphinx = poiFragment.mSphinx;
         mInflater = inflater;
-        mUpperBlock = new DynamicPOIViewBlock(poiFragment.mBelowAddressLayout, mUpperBlockRefresher);
-        mLowerBlock = new DynamicPOIViewBlock(poiFragment.mBelowCommentLayout, mLowerBlockRefresher);
-        mUpperBlock.mOwnLayout = mInflater.inflate(R.layout.poi_dynamic_hotel_upper, null);
-        mLowerBlock.mOwnLayout = mInflater.inflate(R.layout.poi_dynamic_hotel_lower, null);
+        upperView = mInflater.inflate(R.layout.poi_dynamic_hotel_upper, null);
+        lowerView = mInflater.inflate(R.layout.poi_dynamic_hotel_lower, null);
+        mUpperBlock = new DynamicPOIViewBlock(poiFragment.mBelowAddressLayout, upperView, mUpperBlockRefresher);
+        mLowerBlock = new DynamicPOIViewBlock(poiFragment.mBelowCommentLayout, lowerView, mLowerBlockRefresher);
         findViews();
         roomTypeList = new LinearListView(mSphinx, mDynamicRoomTypeListView, init, R.layout.poi_dynamic_hotel_room_item);
         
@@ -341,19 +343,19 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     }
     
     void findViews(){
-        mDynamicRoomTypeListView = (LinearLayout) mUpperBlock.mOwnLayout.findViewById(R.id.dynamic_roomtype_list_view);
-        mDynamicRoomTypeMoreView = (LinearLayout) mUpperBlock.mOwnLayout.findViewById(R.id.dynamic_roomtype_more_view);
-        hotelImage = (ImageView)mLowerBlock.mOwnLayout.findViewById(R.id.icon_imv);
-        hotelSummary = (TextView)mLowerBlock.mOwnLayout.findViewById(R.id.short_summary);
-        mDynamicRoomTypeMoreView = (LinearLayout) mUpperBlock.mOwnLayout.findViewById(R.id.dynamic_roomtype_more_view);
-        mRetryView = (LinearLayout) mUpperBlock.mOwnLayout.findViewById(R.id.dynamic_roomtype_retry_view);
-        imageNumTxv = (TextView) mLowerBlock.mOwnLayout.findViewById(R.id.image_num_txv);
+        mDynamicRoomTypeListView = (LinearLayout) upperView.findViewById(R.id.dynamic_roomtype_list_view);
+        mDynamicRoomTypeMoreView = (LinearLayout) upperView.findViewById(R.id.dynamic_roomtype_more_view);
+        hotelImage = (ImageView)lowerView.findViewById(R.id.icon_imv);
+        hotelSummary = (TextView)lowerView.findViewById(R.id.short_summary);
+        mDynamicRoomTypeMoreView = (LinearLayout) upperView.findViewById(R.id.dynamic_roomtype_more_view);
+        mRetryView = (LinearLayout) upperView.findViewById(R.id.dynamic_roomtype_retry_view);
+        imageNumTxv = (TextView) lowerView.findViewById(R.id.image_num_txv);
         moreTxv = (TextView) mDynamicRoomTypeMoreView.findViewById(R.id.more_txv);
         retryTxv = (TextView)mRetryView.findViewById(R.id.retry_txv);
         moreRoomTypeArrow = (ImageView) mDynamicRoomTypeMoreView.findViewById(R.id.more_imv);
-        mCheckInTimeView = mUpperBlock.mOwnLayout.findViewById(R.id.check_in_time_view);
-        hotelSummaryBlock = (LinearLayout) mLowerBlock.mOwnLayout.findViewById(R.id.hotel_summary);
-        mCheckInTimeTxv = (TextView) mUpperBlock.mOwnLayout.findViewById(R.id.check_in_time_txv);
+        mCheckInTimeView = upperView.findViewById(R.id.check_in_time_view);
+        hotelSummaryBlock = (LinearLayout) lowerView.findViewById(R.id.hotel_summary);
+        mCheckInTimeTxv = (TextView) upperView.findViewById(R.id.check_in_time_txv);
     }
     
     class MoreRoomTypeClickListener implements View.OnClickListener{

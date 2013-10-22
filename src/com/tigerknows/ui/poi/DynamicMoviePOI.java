@@ -140,11 +140,10 @@ public class DynamicMoviePOI extends POIDetailFragment.DynamicPOIView{
         mPOIDetailFragment = poiFragment;
         mSphinx = mPOIDetailFragment.mSphinx;
         mInflater = inflater;
-        mViewBlock = new DynamicPOIViewBlock(mPOIDetailFragment.mBelowAddressLayout, mMovieRefresher);
         mDynamicDianyingView = (LinearLayout) mInflater.inflate(R.layout.poi_dynamic_movie_poi, null);
         mDynamicDianyingListView = (LinearLayout) mDynamicDianyingView.findViewById(R.id.dynamic_dianying_list_view);
         mDynamicDianyingMoreView = (LinearLayout) mDynamicDianyingView.findViewById(R.id.dynamic_dianying_more_view);
-        mViewBlock.mOwnLayout = mDynamicDianyingView;
+        mViewBlock = new DynamicPOIViewBlock(mPOIDetailFragment.mBelowAddressLayout, mDynamicDianyingView, mMovieRefresher);
         lsv = new LinearListView(mSphinx, mDynamicDianyingListView, initer, R.layout.poi_dynamic_movie_list_item);
         mDynamicDianyingMoreView.setOnClickListener(mMoreClickListener);
     }

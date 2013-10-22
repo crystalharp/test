@@ -142,13 +142,12 @@ public class ExtraSubwayPOI extends DynamicPOIView {
         mPOIDetailFragment = poiFragment;
         mSphinx = poiFragment.mSphinx;
         mInflater = inflater;
-        mSubwayBlock = new DynamicPOIViewBlock(poiFragment.mBelowAddressLayout, mSubwayRefresher);
         mSubwayView = (LinearLayout) mInflater.inflate(R.layout.poi_dynamic_subway, null);
         mSubwayTimeInfoView = (LinearLayout) mSubwayView.findViewById(R.id.subway_time_lst);
         mSubwayExitInfoView = (LinearLayout) mSubwayView.findViewById(R.id.subway_exit_lst);
         mSubwayExitView = mSubwayView.findViewById(R.id.subway_exit);
         mSubwayPresetTimeView = mSubwayView.findViewById(R.id.subway_preset_time);
-        mSubwayBlock.mOwnLayout = mSubwayView;
+        mSubwayBlock = new DynamicPOIViewBlock(poiFragment.mBelowAddressLayout, mSubwayView, mSubwayRefresher);
         
         mSubwayTimeLsv = new LinearListView(mSphinx, mSubwayTimeInfoView, timeInit, R.layout.poi_dynamic_subway_time_item);
         mSubwayExitLsv = new LinearListView(mSphinx, mSubwayExitInfoView, exitInit, R.layout.poi_dynamic_subway_exit_item);

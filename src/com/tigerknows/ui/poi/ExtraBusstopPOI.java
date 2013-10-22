@@ -98,10 +98,9 @@ public class ExtraBusstopPOI extends DynamicPOIView {
         mPOIDetailFragment = poiFragment;
         mSphinx = poiFragment.mSphinx;
         mInflater = inflater;
-        mBusstopBlock = new DynamicPOIViewBlock(poiFragment.mBelowAddressLayout, mBusstopRefresher);
         mBusstopView = (LinearLayout) mInflater.inflate(R.layout.poi_dynamic_busstop, null);
         mBuslineListView = (LinearLayout) mBusstopView.findViewById(R.id.busline_lsv);
-        mBusstopBlock.mOwnLayout = mBusstopView;
+        mBusstopBlock = new DynamicPOIViewBlock(poiFragment.mBelowAddressLayout, mBusstopView, mBusstopRefresher);
         mBuslinelsv = new LinearListView(mSphinx, mBuslineListView, buslineInit, R.layout.poi_dynamic_busline_item);
     }
 
