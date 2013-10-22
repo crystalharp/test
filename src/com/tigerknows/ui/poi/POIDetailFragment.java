@@ -1267,8 +1267,14 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         }
     	List<Integer> indexs = new ArrayList<Integer>();
     	
-        byte[] showKeys = {Description.FIELD_PRODUCT_ATTITUDE, Description.FIELD_TASTE, Description.FIELD_SERVICE_ATTITUDE, Description.FIELD_ENVIRONMENT,
+        byte[] showKeys;
+        if (mDynamicDishPOI.isExist()) {
+            showKeys = new byte[] {Description.FIELD_PRODUCT_ATTITUDE, Description.FIELD_SERVICE_ATTITUDE, Description.FIELD_ENVIRONMENT,
+                    Description.FIELD_FILM_EFFECT, Description.FIELD_SERVICE_QUALITY, Description.FIELD_PRICE_LEVEL, Description.FIELD_MEDICAL_TREATMENT_LEVEL};
+        } else {
+            showKeys = new byte[] {Description.FIELD_PRODUCT_ATTITUDE, Description.FIELD_TASTE, Description.FIELD_SERVICE_ATTITUDE, Description.FIELD_ENVIRONMENT,
                 Description.FIELD_FILM_EFFECT, Description.FIELD_SERVICE_QUALITY, Description.FIELD_PRICE_LEVEL, Description.FIELD_MEDICAL_TREATMENT_LEVEL};
+        }
         
         int addCount = 1;
         for(int i = 0; i < showKeys.length; i++) {

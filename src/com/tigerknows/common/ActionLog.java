@@ -190,6 +190,7 @@ public class ActionLog extends LogUpload {
     public static final String POIDetailSameCategory = "CF";
     public static final String POIDetailDish = "CG";
     public static final String POIDetailShopkeeper = "CH";
+    public static final String POIDetailDishList = "CI";
 
     // POI点评列表页
     public static final String POICommentList = "AE";
