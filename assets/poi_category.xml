@@ -82,6 +82,18 @@
 		<sub word="植物园" />
 		<sub word="农家院" />
   	</category>
+  	<category word="交通" highLight="公交站 / 加油站 / 机场">
+		<sub word="公交站" />
+		<sub word="地铁站" />
+		<sub word="火车站" />
+		<sub word="长途车站" />
+		<sub word="停车场" />
+		<sub word="加油站" />
+		<sub word="火车票代售点" />
+		<sub word="高速" />
+		<sub word="机场" />
+		<sub word="收费站" />
+  	</category>
   	<category word="丽人" highLight="美发 / 美容 / 婚礼服务">
 		<sub word="美发" />
 		<sub word="美容" />
@@ -93,21 +105,6 @@
 		<sub word="写真" />
 		<sub word="婚礼服务" />
 		<sub word="婚纱礼服" />
-  	</category>
-  	<category word="运动" highLight="体育馆 / 健身 / 游泳馆">
-		<sub word="体育场馆" />
-		<sub word="健身中心" />
-		<sub word="游泳馆" />
-		<sub word="羽毛球馆" />
-		<sub word="溜冰场" />
-		<sub word="瑜伽" />
-		<sub word="舞蹈" />
-		<sub word="高尔夫" />
-		<sub word="篮球馆" />
-		<sub word="网球场" />
-		<sub word="保龄球馆" />
-		<sub word="乒乓球馆" />
-		<sub word="足球场" />
   	</category>
   	<category word="银行" highLight="ATM / 工行 / 民生银行">
 		<sub word="ATM" />
@@ -126,17 +123,20 @@
 		<sub word="兴业银行" />
 		<sub word="华夏银行" />
   	</category>
-  	<category word="交通" highLight="公交站 / 加油站 / 机场">
-		<sub word="公交站" />
-		<sub word="地铁站" />
-		<sub word="火车站" />
-		<sub word="长途车站" />
-		<sub word="停车场" />
-		<sub word="加油站" />
-		<sub word="火车票代售点" />
-		<sub word="高速" />
-		<sub word="机场" />
-		<sub word="收费站" />
+  	<category word="运动" highLight="体育馆 / 健身 / 游泳馆">
+		<sub word="体育场馆" />
+		<sub word="健身中心" />
+		<sub word="游泳馆" />
+		<sub word="羽毛球馆" />
+		<sub word="溜冰场" />
+		<sub word="瑜伽" />
+		<sub word="舞蹈" />
+		<sub word="高尔夫" />
+		<sub word="篮球馆" />
+		<sub word="网球场" />
+		<sub word="保龄球馆" />
+		<sub word="乒乓球馆" />
+		<sub word="足球场" />
   	</category>
 	<category word="医疗" highLight="医院 / 药店 / 妇幼医院">
 		<sub word="医院" />

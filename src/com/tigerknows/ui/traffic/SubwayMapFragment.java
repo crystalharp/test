@@ -100,6 +100,7 @@ public class SubwayMapFragment extends BaseFragment implements RetryView.CallBac
             if (!TextUtils.isEmpty(subwayUpdated)) {
                 mSphinx.showTip(R.string.subway_map_updated, Toast.LENGTH_SHORT);
                 TKConfig.setPref(mSphinx, TKConfig.getSubwayMapUpdatedPrefs(mCityInfo.getId()), "");
+                mWebWbv.clearCache(false);
             }
         }
         FileDownload fileDownload = new FileDownload(mSphinx);
@@ -219,6 +220,7 @@ public class SubwayMapFragment extends BaseFragment implements RetryView.CallBac
     
     class StationHandler {
         public void show(final String poiid) {
+            mActionLog.addAction(mActionTag, ActionLog.TrafficSubwayMapClickPOI);
             Runnable run = new Runnable() {
 
                 @Override
@@ -235,6 +237,7 @@ public class SubwayMapFragment extends BaseFragment implements RetryView.CallBac
         
         public void search(final String poiid, final String x, final String y, final String name) {
             LogWrapper.d(TAG, "x:" + x + " y:" + y);
+            mActionLog.addAction(mActionTag, ActionLog.TrafficSubwayMapClickSearch);
             if ((TextUtils.isEmpty(x) || x.length() < 1) ||
                     (TextUtils.isEmpty(y) || y.length() < 1)) {
                 mSphinx.showTip(R.string.subway_location_error, Toast.LENGTH_SHORT);
@@ -248,8 +251,10 @@ public class SubwayMapFragment extends BaseFragment implements RetryView.CallBac
                     POI poi = new POI();
                     Position pos = new Position(Double.parseDouble(y), Double.parseDouble(x));
                     poi.setUUID(poiid);
-                    poi.setName(name);
+                    poi.setName(name + mSphinx.getString(R.string.subway_poi_name_suffix));
                     poi.setPosition(pos);
+                    poi.setSourceType(POI.SOURCE_TYPE_SUBWAY);
+                    poi.setFrom(POI.FROM_LOCAL);
                     mSphinx.getPOINearbyFragment().setData(poi);
                     mSphinx.showView(R.id.view_poi_nearby_search);
                 }

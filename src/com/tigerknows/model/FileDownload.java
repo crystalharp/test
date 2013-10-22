@@ -73,14 +73,17 @@ public final class FileDownload extends BaseQuery {
             if (dataResponse != null) {
                 FileData fileData = dataResponse.getFileData();
                 String ver = TKConfig.getPref(context, TKConfig.getSubwayMapVersionPrefs(cityId), "");
-                if (!TextUtils.isEmpty(ver) && !ver.equals(fileData.version)) {
-                     TKConfig.setPref(context, TKConfig.getSubwayMapUpdatedPrefs(cityId), "true");
-                }
-                if (fileData != null && fileData.url != null && !ver.equals(fileData.version)) {
+                if (fileData != null && fileData.url != null && 
+                        (!ver.equals(fileData.version) || !MapEngine.checkSubwayMapValidity(context, cityId))) {
                     SubwayMapDownloadManager manager = SubwayMapDownloadManager.getInstance();
                     if (!manager.checkRunning(fileData.url)) {
                         manager.download(context, fileData.url, isStop, cityId);
                     }
+                }
+                String newver = TKConfig.getPref(context, TKConfig.getSubwayMapVersionPrefs(cityId), "");
+                if (!TextUtils.isEmpty(ver) && !TextUtils.isEmpty(newver) &&
+                        !ver.equals(newver)) {
+                     TKConfig.setPref(context, TKConfig.getSubwayMapUpdatedPrefs(cityId), "true");
                 }
             }
         }
@@ -231,7 +234,7 @@ public final class FileDownload extends BaseQuery {
                 return;
             }
             String versionFilePath = path + "version.txt";
-            String ver = "error";
+            String ver = "";
             long size = 0;
             try {
                 FileInputStream fis = new FileInputStream(versionFilePath);

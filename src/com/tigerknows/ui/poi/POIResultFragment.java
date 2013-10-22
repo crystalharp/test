@@ -561,6 +561,10 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             case R.id.location_txv:
                 if (mAPOI != null) {
                     mActionLog.addAction(mActionTag + ActionLog.ListViewItem, 0, mAPOI.getUUID(), mAPOI.getName());
+                    if (mAPOI.getSourceType() == POI.SOURCE_TYPE_SUBWAY &&
+                            mAPOI.getFrom() == POI.FROM_LOCAL) {
+                        mSphinx.getPOIDetailFragment().needForceReload();
+                    }
                     mSphinx.showView(R.id.view_poi_detail);
                     mSphinx.getPOIDetailFragment().setData(mAPOI, 0);
                 }

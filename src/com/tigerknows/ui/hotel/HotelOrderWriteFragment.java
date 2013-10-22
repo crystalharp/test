@@ -352,23 +352,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         	mRoomtypeSubtitleTxv.setVisibility(View.VISIBLE);
         	mRoomtypeSubtitleTxv.setText(appendContent);
         }
-        String roomTypeDetail="";
-        appendContent = mRoomType.getBedType();
-        roomTypeDetail += appendContent;
-        roomTypeDetail += (appendContent != null) ? " " : null;
-        appendContent = mRoomType.getBreakfast();
-        roomTypeDetail += appendContent;
-        roomTypeDetail += (appendContent != null) ? " " : null;
-        appendContent = mRoomType.getNetService();
-        roomTypeDetail += appendContent;
-        roomTypeDetail += (appendContent != null) ? " " : null;
-        appendContent = mRoomType.getFloor();
-        roomTypeDetail += appendContent;
-        roomTypeDetail += (appendContent != null) ? " " : null;
-        appendContent = mRoomType.getArea();
-        roomTypeDetail += appendContent;
-        roomTypeDetail += (appendContent != null) ? " " : null;
-        mRoomtypeDetailTxv.setText(roomTypeDetail);
+        mRoomtypeDetailTxv.setText(mRoomType.generateDescription());
         mRoomDateTxv.setText(mSphinx.getString(R.string.hotel_room_date,
                 checkIn.get(Calendar.MONTH)+1,
                 checkIn.get(Calendar.DATE),

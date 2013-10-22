@@ -595,10 +595,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                         e1.printStackTrace();
                     }
                     Globals.initOptimalAdaptiveScreenSize();
-                    while (Globals.g_My_Location_State == Globals.LOCATION_STATE_NONE &&
-                            fristUse == false) {
+                    do {
                         try {
-                            Thread.sleep(LOGO_ANIMATION_TIME);
+                            Thread.sleep(LOGO_ANIMATION_TIME*2);
                         } catch (InterruptedException e) {
                             // TODO Auto-generated catch block
                             e.printStackTrace();
@@ -606,7 +605,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                         if (isFinishing()) {
                             break;
                         }
-                    }
+                    } while (Globals.g_My_Location_State == Globals.LOCATION_STATE_NONE &&
+                            fristUse == false);
 
                     if (isFinishing() == false) {
                         mHandler.post(mCheckLocationCityRun);
@@ -1418,6 +1418,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     @Override
                     public void onClick(View v) {
                         int id = v.getId();
+                        if (uiStackPeek() == R.id.view_traffic_home) {
+                            getTrafficQueryFragment().priorityMyLocation = false;
+                        }
                         if (id == R.id.button1_view) {
                             mActionLog.addAction(ActionLog.MapTakeScreenshot);
                             
@@ -2710,10 +2713,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         // 仅在频道首页时才提示切换城市的对话框
         int viewId = uiStackPeek();
         int size = uiStackSize();
-        if (!(size == 1 &&
+        if (size != 0 && !(size == 1 &&
                 (viewId == R.id.view_poi_home ||
                  viewId == R.id.view_discover_home ||
-                 (viewId == R.id.view_traffic_home && getTrafficQueryFragment().isSelectPointState() == false) ||
+                 (viewId == R.id.view_traffic_home && getTrafficQueryFragment().isNormalState()) ||
                  viewId == R.id.view_more_home))) {
             return false;
         }
@@ -4216,7 +4219,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             checkLocationCity(true);
         }
     };
-    private Position myPosition;
+    private Position lastMyPosition;
     private Runnable mLocationChangedRun = new Runnable() {
         
         @Override
@@ -4224,10 +4227,15 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             LogWrapper.d(TAG, "mLocationChangedRun");
             
             CityInfo myLocationCityInfo = Globals.g_My_Location_City_Info;
+            Position myPosition = null;
+            if (myLocationCityInfo != null) {
+                myPosition = myLocationCityInfo.getPosition();
+            }
             
-            if (myPosition == null || (myLocationCityInfo != null && myPosition.equals(myLocationCityInfo.getPosition()))) {
+            if (lastMyPosition == myPosition || (lastMyPosition != null && lastMyPosition.equals(myPosition))) {
                 return;
             }
+            lastMyPosition = myPosition;
 
             LogWrapper.d(TAG, "mLocationChangedRun refresh");
             if (uiStackPeek() == R.id.view_poi_home || uiStackPeek() == R.id.view_discover_home) {
@@ -4316,11 +4324,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         }
     };
     
-    private Circle getMyLocationRadiusCircle(){
-        Circle circle=(Circle)mMapView.getShapesByName(Shape.MY_LOCATION);
-        return circle;
-    }
-    
     private boolean updateMyLocation(Position myPosition) {
     	if(myPosition == null) {
     		return false;
@@ -4397,7 +4400,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             }
         }
         
-        Circle myLocationRadiusCircle = getMyLocationRadiusCircle();
+        Circle myLocationRadiusCircle=(Circle)mMapView.getShapesByName(Shape.MY_LOCATION);
         if(myLocationRadiusCircle==null){
             try{
                 myLocationRadiusCircle=new Circle(myLocation, new Length(myLocation.getAccuracy(),UOM.M),Shape.MY_LOCATION);
@@ -4414,6 +4417,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             }
             
         }
+        mMapView.refreshMap();
         return true;
     }
         

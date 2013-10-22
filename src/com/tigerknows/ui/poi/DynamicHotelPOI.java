@@ -76,7 +76,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     RoomType mClickedRoomType;
     List<RoomType> mShowingRoomList = new ArrayList<RoomType>();
     List<RoomType> mAllRoomList = new ArrayList<RoomType>();
-    final int SHOW_DYNAMIC_HOTEL_MAX = 3;
+    final int SHOW_DYNAMIC_HOTEL_MAX = 6;
     MoreRoomTypeClickListener moreRoomTypeClickListener;
     roomTypeClickListener mItemClickListener = new roomTypeClickListener();
     
@@ -240,8 +240,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             Button bookBtn = (Button) v.findViewById(R.id.book_btn);
             priceTxv.setText(roomType.getPrice());
             roomTypeTxv.setText(roomType.getRoomType());
-            roomDetailTxv.setText(roomType.getBedType() + " " + roomType.getBreakfast() + " " + roomType.getNetService()
-                    + " " + roomType.getFloor() + " " + roomType.getArea());
+            roomDetailTxv.setText(roomType.generateDescription());
             roomGuaranteeTxv.setVisibility(roomType.getNeedGuarantee() == 0 ? View.GONE : View.VISIBLE);
             if (roomType.getSubtitle() != null) {
                 roomSubtitle.setVisibility(View.VISIBLE);
