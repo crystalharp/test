@@ -4369,7 +4369,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             mMapView.refreshMap();
             return false;
         }
+        boolean toRefreshMap = false;
         if(!myLocation.equals(mMyLocation.getPosition())){
+        	toRefreshMap = true;
             try{
                 mMyLocation.setPosition(myLocation);
             }catch(Exception e){
@@ -4395,7 +4397,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             try {
                 mMapView.addOverlay(mMyLocationOverlay);
             } catch (APIException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
@@ -4403,7 +4404,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         Circle myLocationRadiusCircle=(Circle)mMapView.getShapesByName(Shape.MY_LOCATION);
         if(myLocationRadiusCircle==null){
             try{
-                myLocationRadiusCircle=new Circle(myLocation,new Length(myLocation.getAccuracy(),UOM.M),Shape.MY_LOCATION);
+                myLocationRadiusCircle=new Circle(myLocation, new Length(myLocation.getAccuracy(),UOM.M),Shape.MY_LOCATION);
                 mMapView.addShape(myLocationRadiusCircle);
             }catch(Exception e){
                 e.printStackTrace();
@@ -4417,7 +4418,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             }
             
         }
-        mMapView.refreshMap();
+        if(toRefreshMap){
+        	mMapView.refreshMap();
+        }
         return true;
     }
         
