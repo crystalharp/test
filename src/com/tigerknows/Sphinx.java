@@ -4369,7 +4369,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             mMapView.refreshMap();
             return false;
         }
+        boolean toRefreshMap = false;
         if(!myLocation.equals(mMyLocation.getPosition())){
+        	toRefreshMap = true;
             try{
                 mMyLocation.setPosition(myLocation);
             }catch(Exception e){
@@ -4390,7 +4392,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     showInfoWindow(mMyLocation);
                 }
             }
-            mMapView.refreshMap();
         }
         if (mMapView.getOverlaysByName(ItemizedOverlay.MY_LOCATION_OVERLAY) == null) {
             try {
@@ -4417,7 +4418,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             }
             
         }
-        mMapView.refreshMap();
+        if(toRefreshMap){
+        	mMapView.refreshMap();
+        }
         return true;
     }
         
