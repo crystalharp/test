@@ -23,8 +23,8 @@ public class HotelOrder extends XMapData{
 	public static final int STATE_POST_DUE = 4;
 	public static final int STATE_CHECKED_IN = 5;
 	
-	// 假的艺龙ID，仅供测试用
-	public static final long FAKE_ELONG_ID = 9999;
+	// 艺龙ID，供升级用
+	public static final long ELONG_ID = 2000;
 	
 	public static final String NEED_FIELDS = "0102030405060708090A0B0C0D0E0F101112131420";
 	
@@ -91,7 +91,7 @@ public class HotelOrder extends XMapData{
 	/**
 	 * 第三方商家id
 	 */
-	private long vendorID = FAKE_ELONG_ID;
+	private long vendorID = ELONG_ID;
 
 	// time info
 	/**
@@ -198,7 +198,7 @@ public class HotelOrder extends XMapData{
 		if(data.containsKey(FIELD_VENDOR_ID)){
 			vendorID = data.getInt(FIELD_VENDOR_ID);
 		}
-		else vendorID = FAKE_ELONG_ID;
+		else vendorID = ELONG_ID;
 	}
 	
 	public HotelOrder() {
