@@ -35,6 +35,8 @@ public class HotelVendor extends BaseData implements Parcelable {
     
     public static final String NEED_FIELD = "01020304";
     
+    public static final String ALL = "all";
+    
     // 测试 9999
     public static final int SOURCE_TEST = 9999;
     

@@ -39,6 +39,7 @@ import com.tigerknows.model.DataQuery.CommentResponse.CommentList;
 import com.tigerknows.model.HotelOrder;
 import com.tigerknows.model.HotelOrderOperation;
 import com.tigerknows.model.HotelOrderOperation.HotelOrderStatesResponse;
+import com.tigerknows.model.HotelVendor;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.Response;
 import com.tigerknows.provider.HotelOrderTable;
@@ -630,6 +631,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
         tomorrow.add(Calendar.DAY_OF_YEAR, 1);
         poiQuery.addParameter(DataQuery.SERVER_PARAMETER_CHECKIN, SIMPLE_DATE_FORMAT.format(today.getTime()));
         poiQuery.addParameter(DataQuery.SERVER_PARAMETER_CHECKOUT, SIMPLE_DATE_FORMAT.format(tomorrow.getTime()));
+        poiQuery.addParameter(DataQuery.SERVER_PARAMETER_HOTEL_SOURCE, HotelVendor.ALL);
         
         int cityId= MapEngine.getCityId(mOrder.getPosition());
         poiQuery.setup(cityId, getId(), getId(), mContext.getString(R.string.doing_and_wait));

@@ -34,6 +34,7 @@ import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.MapEngine;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataOperation;
+import com.tigerknows.model.HotelVendor;
 import com.tigerknows.model.DataOperation.POIQueryResponse;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.Hotel;
@@ -494,7 +495,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             mData = (RoomType) mClickedBookBtn.getTag(R.id.tag_hotel_room_type_data);
             mClickedRoomType = mData;
             List<BaseQuery> baseQueryList = new ArrayList<BaseQuery>();
-            baseQueryList.add(buildRoomTypeDynamicQuery(mHotel.getUuid(), mData.getRoomId(), mData.getRateplanId(), checkin, checkout));
+            baseQueryList.add(buildRoomTypeDynamicQuery(mData.getVendorID(), mHotel.getUuid(), mData.getRoomId(), mData.getRateplanId(), checkin, checkout));
             queryStart(baseQueryList);
             
         }
@@ -513,13 +514,15 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         dataOperation.addParameter(DataOperation.SERVER_PARAMETER_NEED_FIELD, "01" + needFiled);   // 01表示poi的uuid
         dataOperation.addParameter(DataOperation.SERVER_PARAMETER_CHECKIN, checkinTime);
         dataOperation.addParameter(DataOperation.SERVER_PARAMETER_CHECKOUT, checkoutTime);
+        dataOperation.addParameter(DataOperation.SERVER_PARAMETER_HOTEL_SOURCE, HotelVendor.ALL);
         dataOperation.setup(mHotelCityId, mPOIDetailFragment.getId(), mPOIDetailFragment.getId());
         return dataOperation;
     }
     
-    private BaseQuery buildRoomTypeDynamicQuery(String hotelId, String roomId, String pkgId, Calendar checkin, Calendar checkout){
+    private BaseQuery buildRoomTypeDynamicQuery(long vendorID, String hotelId, String roomId, String pkgId, Calendar checkin, Calendar checkout){
         mHotelCityId = MapEngine.getCityId(mPOI.getPosition());
         ProxyQuery query = new ProxyQuery(mSphinx);
+        query.addParameter(ProxyQuery.SERVER_PARAMETER_VENDORID, String.valueOf(vendorID));
         query.addParameter(ProxyQuery.SERVER_PARAMETER_CHECKIN_DATE, HotelHomeFragment.SIMPLE_DATE_FORMAT.format(checkin.getTime()));
         query.addParameter(ProxyQuery.SERVER_PARAMETER_CHECKOUT_DATE, HotelHomeFragment.SIMPLE_DATE_FORMAT.format(checkout.getTime()));
         query.addParameter(ProxyQuery.SERVER_PARAMETER_HOTELID, hotelId);

@@ -689,6 +689,7 @@ public final class DataQuery extends BaseQuery {
                 nfv = Filter_Category_Order_POI.version;
             }
             addFilterParameters(cfv, nfv);
+            addParameter(SERVER_PARAMETER_HOTEL_SOURCE, HotelVendor.ALL);
 
         } else if (DATA_TYPE_DISCOVER.equals(dataType)) { 
             addParameter(SERVER_PARAMETER_NEED_FIELD, DiscoverCategory.NEED_FILED);

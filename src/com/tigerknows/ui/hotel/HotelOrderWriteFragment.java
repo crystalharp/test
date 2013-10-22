@@ -610,6 +610,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         hotelOrderOperation.addParameter(HotelOrderOperation.SERVER_PARAMETER_MOBILE, mMobile);
         hotelOrderOperation.addParameter(HotelOrderOperation.SERVER_PARAMETER_GUESTS, mUsername);
         hotelOrderOperation.addParameter(HotelOrderOperation.SERVER_PARAMETER_GUESTTYPE, mRoomtypeDynamic.getGuesttype());
+        hotelOrderOperation.addParameter(HotelOrderOperation.SERVER_PARAMETER_VENDORID, String.valueOf(mRoomType.getVendorID()));
         if(HasCreditInfo){
             hotelOrderOperation.addParameter(HotelOrderOperation.SERVER_PARAMETER_CREDIT_CARD_NO, mCreditCardNo);
             hotelOrderOperation.addParameter(HotelOrderOperation.SERVER_PARAMETER_VERIFY_CODE, mVerifyCode);
