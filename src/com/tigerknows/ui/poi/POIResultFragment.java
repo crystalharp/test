@@ -758,6 +758,8 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                     categoryTxv.setCompoundDrawablePadding(0);
                 }
             } else {
+                categoryTxv.setCompoundDrawables(null, null, null, null);
+                categoryTxv.setCompoundDrawablePadding(0);
                 categoryTxv.setText("");
             }
             
