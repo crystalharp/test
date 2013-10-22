@@ -176,7 +176,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     
     private Button mPOIBtn;
     
-    private POI mPOI;
+    protected POI mPOI;
     
     private View mAddressAndPhoneView = null;
     
@@ -1105,7 +1105,11 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         if (poi == null) {
             return;
         }
-        mDishBtn.setAnimation(null);
+        Animation animation = mDishBtn.getAnimation();
+        if (animation != null) {
+            animation.reset();
+            mDishBtn.setAnimation(null);
+        }
         mDishBtn.setVisibility(View.INVISIBLE);
         //这两个函数放在前面初始化动态POI信息
         clearDynamicView(DPOIViewBlockList);

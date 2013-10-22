@@ -33,6 +33,7 @@ public class DynamicDishPOI extends POIDetailFragment.DynamicPOIView implements 
     TextView mContentTxv;
     View mShopkeeperView;
     Animation mAnimation;
+    BaseQuery mBaseQuery;
     
     BlockRefresher mRefresher = new BlockRefresher() {
 
@@ -80,7 +81,7 @@ public class DynamicDishPOI extends POIDetailFragment.DynamicPOIView implements 
         
         mPOIDetailFragment.mDishBtn.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
         mAnimation = new TranslateAnimation(mPOIDetailFragment.mDishBtn.getMeasuredWidth(), 0, 0, 0);
-        mAnimation.setDuration(300);
+        mAnimation.setDuration(500);
         mAnimation.setFillAfter(true);
     }
 
@@ -98,12 +99,13 @@ public class DynamicDishPOI extends POIDetailFragment.DynamicPOIView implements 
 
 	@Override
 	public void onPostExecute(TKAsyncTask tkAsyncTask) {
+	    BaseQuery baseQuery = tkAsyncTask.getBaseQuery();
 	    mPOIDetailFragment.minusLoadingView();
 	    POI poi = mPOI;
-        if (poi == null) {
+	    String uuid = baseQuery.getParameter(DataQuery.SERVER_PARAMETER_POI_ID);
+        if (poi == null || uuid == null || uuid.equals(poi.getUUID()) == false || poi.equals(mPOIDetailFragment.mPOI) == false || baseQuery.isStop()) {
             return;
         }
-        BaseQuery baseQuery = tkAsyncTask.getBaseQuery();
         int mPOIFragmentId = mPOIDetailFragment.getId();
         if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), mPOIFragmentId, mPOIFragmentId, mPOIFragmentId, null)) {
             mPOIDetailFragment.isReLogin = true;
@@ -138,11 +140,15 @@ public class DynamicDishPOI extends POIDetailFragment.DynamicPOIView implements 
 
     @Override
     public void loadData(int fromType) {
+        if (mBaseQuery != null) {
+            mBaseQuery.stop();
+        }
         DataQuery dataQuery = new DataQuery(mSphinx);
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_DISH);
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_POI_ID, mPOI.getUUID());
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_BIAS, DataQuery.BIAS_RECOMMEND_DISH);
         queryStart(dataQuery);
+        mBaseQuery = dataQuery;
         mPOIDetailFragment.addLoadingView();
     }
 
