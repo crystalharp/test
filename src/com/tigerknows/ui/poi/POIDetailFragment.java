@@ -1105,6 +1105,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         if (poi == null) {
             return;
         }
+        mDishBtn.setAnimation(null);
         mDishBtn.setVisibility(View.INVISIBLE);
         //这两个函数放在前面初始化动态POI信息
         clearDynamicView(DPOIViewBlockList);
