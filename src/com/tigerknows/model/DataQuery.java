@@ -2839,7 +2839,7 @@ public final class DataQuery extends BaseQuery {
         } else if (DATA_TYPE_FILTER.equals(dataType)){
             responseXMap = DataQueryTest.launchFilterConfigResponse();
         } else if (DATA_TYPE_DISH.equals(dataType)){
-            responseXMap = DataQueryTest.launchDishResponse(256);
+            responseXMap = DataQueryTest.launchDishResponse(108);
         } else if (DATA_TYPE_PICTURE.equals(dataType)){
             responseXMap = DataQueryTest.launchPictureResponse(168);
         } else if (DATA_TYPE_SHANGJIA.equals(dataType)) {

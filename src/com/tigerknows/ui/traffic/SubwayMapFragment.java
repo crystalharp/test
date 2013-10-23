@@ -92,16 +92,16 @@ public class SubwayMapFragment extends BaseFragment implements RetryView.CallBac
         if (subwayPath == null) {
             setStatus(STAT_QUERY);
         } else {
-            setStatus(STAT_MAP);
-            mURL = Uri.fromFile(new File(subwayPath)).toString();
-            showSubwayMap(mURL);
-            
             String subwayUpdated = TKConfig.getPref(mSphinx, TKConfig.getSubwayMapUpdatedPrefs(mCityInfo.getId()), "");
             if (!TextUtils.isEmpty(subwayUpdated)) {
                 mSphinx.showTip(R.string.subway_map_updated, Toast.LENGTH_SHORT);
                 TKConfig.setPref(mSphinx, TKConfig.getSubwayMapUpdatedPrefs(mCityInfo.getId()), "");
                 mWebWbv.clearCache(false);
             }
+            
+            setStatus(STAT_MAP);
+            mURL = Uri.fromFile(new File(subwayPath)).toString();
+            showSubwayMap(mURL);
         }
         FileDownload fileDownload = new FileDownload(mSphinx);
         fileDownload.addParameter(FileDownload.SERVER_PARAMETER_FILE_TYPE, FileDownload.FILE_TYPE_SUBWAY);

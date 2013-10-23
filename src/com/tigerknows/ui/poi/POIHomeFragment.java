@@ -605,8 +605,7 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
                 mActionLog.addAction(mActionTag + ActionLog.POIHomeDish);
                 TKConfig.setPref(mSphinx, TKConfig.PREFS_DISH, "1");
                 
-                //TODO：搜索所有菜单商户
-                jumpToPOIResult("菜单");
+                jumpToPOIResult(mCategorylist.get(FOOD_INDEX).name, "2");
             }
             mSubwayMapImv.setVisibility(View.GONE);
         }
@@ -1145,7 +1144,11 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
 		
 	};
 	
-	private void jumpToPOIResult(String keyWord){
+    private void jumpToPOIResult(String keyWord){
+        jumpToPOIResult(keyWord, null);
+    }
+	
+	private void jumpToPOIResult(String keyWord, String bais){
        POI requestPOI = mSphinx.getPOI();
        if (mPOI != null) {
            requestPOI = mPOI;
@@ -1154,6 +1157,9 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
        DataQuery poiQuery = getDataQuery();
        poiQuery.addParameter(DataQuery.SERVER_PARAMETER_KEYWORD, keyWord);
        poiQuery.addParameter(DataQuery.SERVER_PARAMETER_INFO, DataQuery.INFO_TYPE_TAG);
+       if (bais != null) {
+           poiQuery.addParameter(DataQuery.SERVER_PARAMETER_BIAS, bais);
+       }
        poiQuery.setup(cityId, getId(), mSphinx.getPOIResultFragmentID(), null, false, false, requestPOI);
        BaseFragment baseFragment = mSphinx.getFragment(poiQuery.getTargetViewId());
        

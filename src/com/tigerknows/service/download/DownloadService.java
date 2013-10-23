@@ -288,9 +288,6 @@ public class DownloadService extends IntentService {
             HttpEntity entity = response.getEntity();
             long length = entity.getContentLength();   //TODO: getContentLength()某些服务器可能返回-1
             LogWrapper.d(TAG, "length:"+length);
-            if(length <= fileSize) {
-                return tempFile;
-            }
             InputStream is = entity.getContent();
             if(is != null) {
                 BufferedInputStream bis = new BufferedInputStream(is);

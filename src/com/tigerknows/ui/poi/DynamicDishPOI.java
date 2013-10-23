@@ -16,42 +16,26 @@ import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BrowserActivity;
 import com.tigerknows.ui.poi.POIDetailFragment.BlockRefresher;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIViewBlock;
-import com.tigerknows.widget.LinearListView;
-import com.tigerknows.widget.LinearListView.ItemInitializer;
 
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class DynamicDishPOI extends POIDetailFragment.DynamicPOIView implements View.OnClickListener {
     
     List<DynamicPOIViewBlock> blockList = new ArrayList<DynamicPOIViewBlock>();
-    LinearListView lsv;
     DynamicPOIViewBlock mViewBlock;
     List<Dish> mAllList = new ArrayList<Dish>();
+    TextView mContentTxv;
+    View mShopkeeperView;
+    Animation mAnimation;
+    BaseQuery mBaseQuery;
     
-    LinearLayout mDynamicDianyingView;
-    LinearLayout mDynamicDianyingListView;
-    
-    ItemInitializer initer = new ItemInitializer(){
-
-        @Override
-        public void initItem(Object data, View view) {
-            TextView nameTxv = (TextView) view.findViewById(R.id.name_txv);
-            TextView priceTxv = (TextView) view.findViewById(R.id.price_txv);
-            TextView commendTxv = (TextView)view.findViewById(R.id.commend_txv);
-
-            Dish dish = (Dish) data;
-            commendTxv.setText(String.valueOf(dish.getHitCount()));
-            nameTxv.setText(dish.getName());
-            priceTxv.setText(dish.getPrice());
-        }
-        
-    };
-    
-    BlockRefresher mMovieRefresher = new BlockRefresher() {
+    BlockRefresher mRefresher = new BlockRefresher() {
 
         @Override
         public void refresh() {
@@ -70,7 +54,12 @@ public class DynamicDishPOI extends POIDetailFragment.DynamicPOIView implements 
             }
             mAllList.addAll(list);
             
-            lsv.refreshList(mAllList, 2);
+            StringBuilder s = new StringBuilder();
+            for(int i = 0, count = mAllList.size(); i < count; i++) {
+                s.append(mAllList.get(i).getName());
+                s.append("  ");
+            }
+            mContentTxv.setText(s.toString());
         }
     };
     
@@ -78,6 +67,22 @@ public class DynamicDishPOI extends POIDetailFragment.DynamicPOIView implements 
         mPOIDetailFragment = poiFragment;
         mSphinx = mPOIDetailFragment.mSphinx;
         mInflater = inflater;
+        
+        mViewBlock = new DynamicPOIViewBlock(mPOIDetailFragment.mBelowAddressLayout, mRefresher);
+
+        LinearLayout layout = (LinearLayout) mInflater.inflate(R.layout.poi_dynamic_dish, null);
+        mViewBlock.mOwnLayout = layout;
+        
+        mContentTxv = (TextView) layout.findViewById(R.id.content_txv);
+        mContentTxv.setOnClickListener(this);
+        
+        mShopkeeperView = layout.findViewById(R.id.shopkeeper_txv);
+        mShopkeeperView.setOnClickListener(this);
+        
+        mPOIDetailFragment.mDishBtn.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        mAnimation = new TranslateAnimation(mPOIDetailFragment.mDishBtn.getMeasuredWidth(), 0, 0, 0);
+        mAnimation.setDuration(500);
+        mAnimation.setFillAfter(true);
         mDynamicDianyingView = (LinearLayout) mInflater.inflate(R.layout.poi_dynamic_dish, null);
         mDynamicDianyingListView = (LinearLayout) mDynamicDianyingView.findViewById(R.id.list_view);
         mViewBlock = new DynamicPOIViewBlock(mPOIDetailFragment.mBelowAddressLayout, mDynamicDianyingView, mMovieRefresher);
@@ -99,12 +104,13 @@ public class DynamicDishPOI extends POIDetailFragment.DynamicPOIView implements 
 
 	@Override
 	public void onPostExecute(TKAsyncTask tkAsyncTask) {
+	    BaseQuery baseQuery = tkAsyncTask.getBaseQuery();
 	    mPOIDetailFragment.minusLoadingView();
 	    POI poi = mPOI;
-        if (poi == null) {
+	    String uuid = baseQuery.getParameter(DataQuery.SERVER_PARAMETER_POI_ID);
+        if (poi == null || uuid == null || uuid.equals(poi.getUUID()) == false || poi.equals(mPOIDetailFragment.mPOI) == false || baseQuery.isStop()) {
             return;
         }
-        BaseQuery baseQuery = tkAsyncTask.getBaseQuery();
         int mPOIFragmentId = mPOIDetailFragment.getId();
         if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), mPOIFragmentId, mPOIFragmentId, mPOIFragmentId, null)) {
             mPOIDetailFragment.isReLogin = true;
@@ -125,6 +131,7 @@ public class DynamicDishPOI extends POIDetailFragment.DynamicPOIView implements 
                     mPOI.setRecommendDishQuery(dataQuery);
                     refresh();
                     mPOIDetailFragment.mDishBtn.setVisibility(View.VISIBLE);
+                    mPOIDetailFragment.mDishBtn.startAnimation(mAnimation);
                 }
             }
         }
@@ -138,21 +145,32 @@ public class DynamicDishPOI extends POIDetailFragment.DynamicPOIView implements 
 
     @Override
     public void loadData(int fromType) {
+        if (mBaseQuery != null) {
+            mBaseQuery.stop();
+        }
         DataQuery dataQuery = new DataQuery(mSphinx);
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_DISH);
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_POI_ID, mPOI.getUUID());
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_BIAS, DataQuery.BIAS_RECOMMEND_DISH);
         queryStart(dataQuery);
+        mBaseQuery = dataQuery;
         mPOIDetailFragment.addLoadingView();
     }
 
     @Override
     public void onClick(View v) {
-        mPOIDetailFragment.mActionLog.addAction(mPOIDetailFragment.mActionTag+ActionLog.POIDetailShopkeeper);
-        Intent intent = new Intent();
-        intent.putExtra(BrowserActivity.TITLE, mSphinx.getString(R.string.add_dish));
-        intent.putExtra(BrowserActivity.URL, "http://www.tigerknows.com");
-        mSphinx.showView(R.id.activity_browser, intent);
+        int id = v.getId();
+        if (id == R.id.shopkeeper_txv) {
+            mPOIDetailFragment.mActionLog.addAction(mPOIDetailFragment.mActionTag+ActionLog.POIDetailShopkeeper);
+            Intent intent = new Intent();
+            intent.putExtra(BrowserActivity.TITLE, mSphinx.getString(R.string.add_dish));
+            intent.putExtra(BrowserActivity.URL, "http://www.tigerknows.com");
+            mSphinx.showView(R.id.activity_browser, intent);
+        } else if (id == R.id.content_txv) {
+            mPOIDetailFragment.mActionLog.addAction(mPOIDetailFragment.mActionTag + ActionLog.POIDetailDishList);
+            DishActivity.setPOI(mPOI);
+            mSphinx.showView(R.id.activity_poi_dish);
+        }
         
     }
 }

@@ -110,20 +110,25 @@
         android:singleLine="true"
         android:focusable="false" />   
     
-    <TextView
-        android:id="@+id/category_txv"
+    <LinearLayout 
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/name_view"
         android:layout_toLeftOf="@id/distance_from_txv"
-        android:layout_toRightOf="@id/stars_rtb"
-        android:focusable="false"
-        android:gravity="left"
-        android:paddingLeft="5dp"
-        android:singleLine="true"
-        android:text="@string/app_name"
-        android:textColor="@color/black_light"
-        android:textSize="14sp" />
+        android:layout_toRightOf="@id/stars_rtb">
+        <TextView
+            android:id="@+id/category_txv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:focusable="false"
+            android:gravity="left"
+            android:paddingLeft="5dp"
+            android:singleLine="true"
+            android:text="@string/app_name"
+            android:textColor="@color/black_light"
+            android:textSize="14sp" />
+    </LinearLayout>
+    
         
     <TextView 
         android:id="@+id/money_txv" 

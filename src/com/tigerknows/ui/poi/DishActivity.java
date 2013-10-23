@@ -978,16 +978,11 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
         }
         Intent intent = new Intent();
         intent.setClass(mThis, ViewImageActivity.class);
-        ArrayList<HotelTKDrawable> pictureList = (ArrayList<HotelTKDrawable>)dish.getPictureList();
-        ArrayList<HotelTKDrawable> originalPictureList = (ArrayList<HotelTKDrawable>)dish.getOriginalPictureList();
-        if (pictureList != null && originalPictureList != null) {
-            intent.putParcelableArrayListExtra(ViewImageActivity.EXTRA_IMAGE_LIST, pictureList);
-            intent.putParcelableArrayListExtra(ViewImageActivity.EXTRA_ORIGINAL_IMAGE_LIST, originalPictureList);
-        }
         intent.putExtra(ViewImageActivity.EXTRA_TITLE, dish.getName());
         intent.putExtra(BaseQuery.SERVER_PARAMETER_REF_DATA_TYPE, BaseQuery.DATA_TYPE_DISH);
         intent.putExtra(BaseQuery.SERVER_PARAMETER_REF_ID, String.valueOf(dish.getDishId()));
         intent.putExtra(ViewImageActivity.EXTRA_CAN_ADD, true);
+        intent.putExtra(ViewImageActivity.EXTRA_IMAGE, dish.getPicture());
         startActivity(intent);
     }
 }

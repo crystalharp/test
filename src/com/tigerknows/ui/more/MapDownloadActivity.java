@@ -421,6 +421,7 @@ public class MapDownloadActivity extends BaseActivity implements View.OnClickLis
                     if (cityInfo.getId() == cityInfo2.getId() && cityInfo.getType() == cityInfo2.getType()) {
                         downloadCity.totalSize = totalSize;
                         downloadCity.downloadedSize = downloadSize;
+                        downloadCity.state = DownloadCity.STATE_DOWNLOADING;
                         if (downloadCity.downloadedSize/(float)downloadCity.totalSize >= PERCENT_COMPLETE) {
                             downloadCity.state = DownloadCity.STATE_COMPLETED;
                             addDownloadCity(mThis, mDownloadCityList, downloadCity, true);
@@ -678,7 +679,7 @@ public class MapDownloadActivity extends BaseActivity implements View.OnClickLis
             for(int i = mDownloadCityList.size()-1; i >= 0; i--) {
                 DownloadCity downloadCity = mDownloadCityList.get(i);
                 if (downloadCity.cityInfo.getId() == downloading.getId()) {
-                    downloadCity.state =DownloadCity.STATE_DOWNLOADING;
+                    downloadCity.state =DownloadCity.STATE_WAITING;
                     break;
                 }
             }
@@ -1325,8 +1326,10 @@ public class MapDownloadActivity extends BaseActivity implements View.OnClickLis
             } else {
                 if (downloadCity.state == DownloadCity.STATE_CAN_BE_UPGRADE) {
                     percentTxv.setText(mThis.getString(R.string.may_upgrade));
-                } else if (downloadCity.state == DownloadCity.STATE_DOWNLOADING || downloadCity.state == DownloadCity.STATE_WAITING) {
+                } else if (downloadCity.state == DownloadCity.STATE_DOWNLOADING) {
                     percentTxv.setText(mThis.getString(R.string.downloading_, String.valueOf(downloadCity.getDownloadPercent())));
+                } else if (downloadCity.state == DownloadCity.STATE_WAITING) {
+                    percentTxv.setText(mThis.getString(R.string.waiting_download_, String.valueOf(downloadCity.getDownloadPercent())));
                 } else if (downloadCity.state == DownloadCity.STATE_COMPLETED) {
                     percentTxv.setText(mThis.getString(R.string.completed));
                 } else {

@@ -176,7 +176,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     
     private Button mPOIBtn;
     
-    private POI mPOI;
+    protected POI mPOI;
     
     private View mAddressAndPhoneView = null;
     
@@ -1110,6 +1110,11 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         if (poi == null) {
             return;
         }
+        Animation animation = mDishBtn.getAnimation();
+        if (animation != null) {
+            animation.reset();
+            mDishBtn.setAnimation(null);
+        }
         mDishBtn.setVisibility(View.INVISIBLE);
         //这两个函数放在前面初始化动态POI信息
         clearDynamicView(DPOIViewBlockList);
@@ -1204,11 +1209,21 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         for(int i = 0; i < count; i++) {
             viewGroup.getChildAt(i).setVisibility(View.GONE);
         }
-        byte[] showKeys = {Description.FIELD_RECOMMEND_COOK, Description.FIELD_FEATURE, Description.FIELD_RECOMMEND, Description.FIELD_GUEST_CAPACITY, Description.FIELD_BUSINESS_HOURS,
-                Description.FIELD_HOUSING_PRICE, Description.FIELD_SYNOPSIS, Description.FIELD_CINEMA_FEATURE, Description.FIELD_MEMBER_POLICY, Description.FIELD_FEATURE_SPECIALTY, 
-                Description.FIELD_TOUR_DATE, Description.FIELD_TOUR_LIKE, Description.FIELD_POPEDOM_SCENERY, Description.FIELD_RECOMMEND_SCENERY,
-                Description.FIELD_NEARBY_INFO, Description.FIELD_COMPANY_WEB, Description.FIELD_COMPANY_TYPE,
-                Description.FIELD_COMPANY_SCOPE, Description.FIELD_INDUSTRY_INFO};
+
+        byte[] showKeys;
+        if (mDynamicDishPOI.isExist()) {
+            showKeys = new byte[] {Description.FIELD_FEATURE, Description.FIELD_RECOMMEND, Description.FIELD_GUEST_CAPACITY, Description.FIELD_BUSINESS_HOURS,
+                    Description.FIELD_HOUSING_PRICE, Description.FIELD_SYNOPSIS, Description.FIELD_CINEMA_FEATURE, Description.FIELD_MEMBER_POLICY, Description.FIELD_FEATURE_SPECIALTY, 
+                    Description.FIELD_TOUR_DATE, Description.FIELD_TOUR_LIKE, Description.FIELD_POPEDOM_SCENERY, Description.FIELD_RECOMMEND_SCENERY,
+                    Description.FIELD_NEARBY_INFO, Description.FIELD_COMPANY_WEB, Description.FIELD_COMPANY_TYPE,
+                    Description.FIELD_COMPANY_SCOPE, Description.FIELD_INDUSTRY_INFO};;
+        } else {
+            showKeys = new byte[] {Description.FIELD_RECOMMEND_COOK, Description.FIELD_FEATURE, Description.FIELD_RECOMMEND, Description.FIELD_GUEST_CAPACITY, Description.FIELD_BUSINESS_HOURS,
+                    Description.FIELD_HOUSING_PRICE, Description.FIELD_SYNOPSIS, Description.FIELD_CINEMA_FEATURE, Description.FIELD_MEMBER_POLICY, Description.FIELD_FEATURE_SPECIALTY, 
+                    Description.FIELD_TOUR_DATE, Description.FIELD_TOUR_LIKE, Description.FIELD_POPEDOM_SCENERY, Description.FIELD_RECOMMEND_SCENERY,
+                    Description.FIELD_NEARBY_INFO, Description.FIELD_COMPANY_WEB, Description.FIELD_COMPANY_TYPE,
+                    Description.FIELD_COMPANY_SCOPE, Description.FIELD_INDUSTRY_INFO};;
+        }
 
         int margin = (int)(Globals.g_metrics.density*8);
         LayoutParams layoutParamsTitle = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);

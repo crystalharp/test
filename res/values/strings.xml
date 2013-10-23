@@ -121,7 +121,7 @@
     <string name="may_upgrade">可更新</string>
     <string name="exist_download_list">已添加到下载列表</string>
     <string name="add">添加</string>
-    <string name="all_province">全省</string>
+    <string name="all_province">全省下载</string>
     <string name="added">已加</string>
     <string name="map_static_waiting_tip">地图信息读取中...</string>
     <string name="chengshi">城市</string>
@@ -135,6 +135,7 @@
     <string name="map_download_progress_tip">%1$s市地图 %2$s%%</string>
     <string name="_m">%1$sM</string>
     <string name="downloading_">正在下载\u0020\u0020%1s%%</string>
+    <string name="waiting_download_">等待下载\u0020\u0020%1s%%</string>
     <string name="downloaded_">已暂停\u0020\u0020%1$s%%</string>
     <string name="map_download_mutile_thread_tip">同时下载过多，可能影响查询速度...</string>
     
@@ -1311,6 +1312,7 @@
     <string name="has_take_screenshot">已截取本屏地图</string>
     <string name="measure_distance_tip">点击地图进行测距</string>
     <string name="save_falied_tip">保存失败</string>
+    <string name="take_screenshot_save_to_">截图已保存到%1$s</string>
     <string name="traffic_highLight_normal">公交站 / 加油站 / 机场</string>
     <string name="traffic_highLight_subwaymap">地铁图 / 公交站 / 加油站</string>
     

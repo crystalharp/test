@@ -88,7 +88,7 @@ public class TakeScreenshotActivity extends BaseActivity implements View.OnClick
                     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
                     String filePath = path+simpleDateFormat.format(Calendar.getInstance().getTime())+".png";
                     Utility.copyFile(new File(TKConfig.getDataPath(true)+"mapsnap.png"), new File(filePath), true);
-                    Toast.makeText(mThis, filePath, Toast.LENGTH_LONG).show();
+                    Toast.makeText(mThis, getString(R.string.take_screenshot_save_to_, filePath), Toast.LENGTH_LONG).show();
                     return;
                 }
             }

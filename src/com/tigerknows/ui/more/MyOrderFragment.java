@@ -116,6 +116,9 @@ public class MyOrderFragment extends BaseFragment{
 
 			@Override
 			public void run() {
+				if(!mActualOnCreate){
+					return;
+				}
 				Shangjia.readShangjiaList(mContext);
 				mSphinx.getHandler().post(new Runnable(){
 
@@ -123,7 +126,7 @@ public class MyOrderFragment extends BaseFragment{
 					public void run() {
 						synchronized (Shangjia.getShangjiaList()) {
 							List<Shangjia> newList = Shangjia.getShangjiaList();
-							if (mActualOnCreate || newList.size() != mResultList.size()) {
+							if (newList.size() != mResultList.size()) {
 								mResultList.clear();
 								mResultList.addAll(newList);
 								createShangjiaListView();
