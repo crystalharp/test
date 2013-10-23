@@ -339,8 +339,13 @@ public class TrafficQueryFragment extends BaseFragment {
             mSphinx.clearMap();
             mMenuFragment.updateMenuStatus(R.id.traffic_btn);
             mMenuFragment.display();
+            /**
+             * 从测距回来，左上的指南针位置不正确。
+             */
+            mSphinx.layoutTopViewPadding(0, Util.dip2px(Globals.g_metrics.density, 182), 0, 0);
         } else if (currentState == TrafficViewSTT.State.Map) {
         	mSphinx.setTouchMode(TouchMode.LONG_CLICK);
+            mSphinx.layoutTopViewPadding(0, Util.dip2px(Globals.g_metrics.density, 78), 0, 0);
         } else if (currentState == TrafficViewSTT.State.SelectPoint) {
 			mSphinx.setTouchMode(R.id.start_edt == mSelectedEdt.getEdt().getId() ? 
 					TouchMode.CHOOSE_ROUTING_START_POINT : TouchMode.CHOOSE_ROUTING_END_POINT);
