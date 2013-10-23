@@ -125,7 +125,6 @@ public class MapDownloadService extends Service implements MapTileDataDownload.I
                         downloadedSize = 0;
                         writeSize = 0;
                         isStopCurrentCity = false;
-                        int statusCode = BaseQuery.STATUS_CODE_NETWORK_OK;
                         
                         // 查询所有城市的所有Region的数据信息
                         HashMap<Integer, ServerRegionDataInfo> allServerRegionDataInfoMap = MapStatsService.queryServerRegionDataInfoMapInternally(context);
@@ -201,7 +200,7 @@ public class MapDownloadService extends Service implements MapTileDataDownload.I
                         }
                         
                         //下载Region数据
-                        statusCode = downloadRegionList(regionIdList);
+                        downloadRegionList(regionIdList);
                         
                         refreshProgress(true);
                         if (totalSize > 0
@@ -209,15 +208,6 @@ public class MapDownloadService extends Service implements MapTileDataDownload.I
                                 && downloadedSize/(float)totalSize >= MapDownloadActivity.PERCENT_COMPLETE) {
                             synchronized (CityInfoList) {
                                 CityInfoList.remove(currentCityInfo);
-                            }
-                        }
-                        
-                        if (statusCode != BaseQuery.STATUS_CODE_NETWORK_OK) {
-                            try {
-                                Thread.sleep(NETWORK_FAILURE_RETRY_INTERVAL);
-                            } catch (InterruptedException e) {
-                                // TODO Auto-generated catch block
-                                e.printStackTrace();
                             }
                         }
                     }

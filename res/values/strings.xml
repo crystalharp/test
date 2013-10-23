@@ -135,6 +135,7 @@
     <string name="map_download_progress_tip">%1$s市地图 %2$s%%</string>
     <string name="_m">%1$sM</string>
     <string name="downloading_">正在下载\u0020\u0020%1s%%</string>
+    <string name="waiting_download_">等待下载\u0020\u0020%1s%%</string>
     <string name="downloaded_">已暂停\u0020\u0020%1$s%%</string>
     <string name="map_download_mutile_thread_tip">同时下载过多，可能影响查询速度...</string>
     
