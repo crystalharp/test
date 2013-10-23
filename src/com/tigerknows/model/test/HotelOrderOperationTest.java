@@ -23,10 +23,10 @@ public class HotelOrderOperationTest {
 		return data;
 	}
 	
-	public static XMap launchHotelOrderCreateResponse(Context context) {
+	public static XMap launchHotelOrderCreateResponse(Context context, long orderID) {
         XMap data = new XMap();
         BaseQueryTest.launchResponse(data);
-        data.put(HotelOrderCreateResponse.FIELD_ORDER_ID, "123456789");
+        data.put(HotelOrderCreateResponse.FIELD_ORDER_ID, String.valueOf(orderID));
         data.put(HotelOrderCreateResponse.FIELD_CANCEL_DEADLINE, Calendar.getInstance().getTimeInMillis() + 120000);
 		return data;
 	}
