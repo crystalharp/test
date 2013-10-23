@@ -108,6 +108,7 @@ public class SpringbackListView extends ListView {
         this.normalFooterView = !footerSpringback;
         super.addFooterView(footerView); 
         measureView(footerView);
+        footerView.setPadding(0, 0, 0, 0);
         footerView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
         footerContentHeight = footerView.getMeasuredHeight();  
         footerView.setPadding(0, 0, 0, 0);

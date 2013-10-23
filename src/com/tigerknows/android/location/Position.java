@@ -29,6 +29,11 @@ public class Position implements Serializable, Parcelable{
 	private boolean mHasSpeed;
     public float accuracy=0;
     public int type = 2; //0代表来源GPS，1代表来源基站或wifi，2代表不知道来源 
+    
+    public Position(Position pos) {
+    	this(pos.lat, pos.lon, 0);
+    }
+    
 	public Position(double lat, double lon){
 		this(lat, lon, 0);
 	}
@@ -57,6 +62,14 @@ public class Position implements Serializable, Parcelable{
 		this.lon = Double.parseDouble(latlon.substring(index1 + 1));
 		this.lon = (this.lon + 180 + 360) % 360 - 180;	
 	}
+	
+	public void copyPosition(Position position) {
+		lat = position.lat;
+		lon = position.lon;
+		accuracy = position.accuracy;
+		type = position.type;
+		this.altitude = position.getAltitude();
+	}
 
 	public final double getLat() {
 		return lat;
@@ -84,7 +97,7 @@ public class Position implements Serializable, Parcelable{
 		}
 		Position other = (Position) obj;
 		// 浮点数的判断不能用==
-		if(Math.abs(other.lat-this.lat) < 0.00001 && Math.abs(other.lon-this.lon) < 0.00001 && Math.abs(other.accuracy-this.accuracy) < 0.00001)
+		if(Math.abs(other.lat-this.lat) < 0.0000001 && Math.abs(other.lon-this.lon) < 0.0000001 && Math.abs(other.accuracy-this.accuracy) < 0.0000001)
 			return true;
 		else
 			return false;

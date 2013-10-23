@@ -779,8 +779,8 @@ public class MapView extends RelativeLayout implements
 	 * @param overlayName
 	 */
 	public ItemizedOverlay getOverlaysByName(String overlayName){
-		for(int i=0;i<tilesView.getOverlays().size();i++){
-			ItemizedOverlay overlay=tilesView.getOverlays().get(i);
+		for(int i=0, size = tilesView.getOverlays().size(); i < size; i++){
+			ItemizedOverlay overlay = tilesView.getOverlays().get(i);
 			if(overlay.getName().equals(overlayName)){
 				return overlay;
 			}
