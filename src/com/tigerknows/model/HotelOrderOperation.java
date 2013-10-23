@@ -265,7 +265,7 @@ public class HotelOrderOperation extends BaseQuery {
             String operationCode = getParameter(SERVER_PARAMETER_OPERATION_CODE);
             
             if (OPERATION_CODE_CREATE.equals(operationCode)) {
-                responseXMap = HotelOrderOperationTest.launchHotelOrderCreateResponse(context);
+                responseXMap = HotelOrderOperationTest.launchHotelOrderCreateResponse(context, System.currentTimeMillis() % 1000000);
             } if (OPERATION_CODE_QUERY.equals(operationCode)) {
                 responseXMap = HotelOrderOperationTest.launchHotelOrderStateResponse(context, getParameter(SERVER_PARAMETER_ORDER_IDS));
             } if (OPERATION_CODE_UPDATE.equals(operationCode)) {
