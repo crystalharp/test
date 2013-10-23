@@ -1376,7 +1376,7 @@ public class Utility {
         final Dialog dialog = Utility.getChoiceDialog(activity, alterListView, R.style.AlterChoiceDialog);
         
         TextView titleTxv = (TextView)alterListView.findViewById(R.id.title_txv);
-        titleTxv.setText(R.string.storefront_photo);
+        titleTxv.setText(R.string.select_picture);
         
         Button button = (Button)alterListView.findViewById(R.id.confirm_btn);
         button.setVisibility(View.GONE);
