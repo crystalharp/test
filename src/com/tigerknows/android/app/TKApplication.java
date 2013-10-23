@@ -9,6 +9,7 @@ import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.MapEngine;
 import com.tigerknows.map.MapWord;
 import com.tigerknows.map.label.SingleRectLabel;
+import com.tigerknows.service.download.DownloadService;
 
 import android.app.Application;
 
@@ -41,6 +42,7 @@ public class TKApplication extends Application {
 
     @Override
     public void onTerminate() {
+        DownloadService.DownloadedList.clear();
         ActionLog.getInstance(this).onTerminate();
         MapEngine.getInstance().destroyEngine();
         super.onTerminate();
