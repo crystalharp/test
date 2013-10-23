@@ -68,10 +68,8 @@ public class DynamicDishPOI extends POIDetailFragment.DynamicPOIView implements 
         mSphinx = mPOIDetailFragment.mSphinx;
         mInflater = inflater;
         
-        mViewBlock = new DynamicPOIViewBlock(mPOIDetailFragment.mBelowAddressLayout, mRefresher);
-
         LinearLayout layout = (LinearLayout) mInflater.inflate(R.layout.poi_dynamic_dish, null);
-        mViewBlock.mOwnLayout = layout;
+        mViewBlock = new DynamicPOIViewBlock(mPOIDetailFragment.mBelowAddressLayout, layout, mRefresher);
         
         mContentTxv = (TextView) layout.findViewById(R.id.content_txv);
         mContentTxv.setOnClickListener(this);
@@ -83,11 +81,6 @@ public class DynamicDishPOI extends POIDetailFragment.DynamicPOIView implements 
         mAnimation = new TranslateAnimation(mPOIDetailFragment.mDishBtn.getMeasuredWidth(), 0, 0, 0);
         mAnimation.setDuration(500);
         mAnimation.setFillAfter(true);
-        mDynamicDianyingView = (LinearLayout) mInflater.inflate(R.layout.poi_dynamic_dish, null);
-        mDynamicDianyingListView = (LinearLayout) mDynamicDianyingView.findViewById(R.id.list_view);
-        mViewBlock = new DynamicPOIViewBlock(mPOIDetailFragment.mBelowAddressLayout, mDynamicDianyingView, mMovieRefresher);
-        lsv = new LinearListView(mSphinx, mDynamicDianyingListView, initer, R.layout.poi_dynamic_dish_item);
-        mDynamicDianyingView.findViewById(R.id.shopkeeper_txv).setOnClickListener(this);
     }
 
     @Override
