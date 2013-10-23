@@ -94,6 +94,8 @@ public class DownloadService extends IntentService {
     
     private static HashMap<String, DownloadItem> sDownloadList = new HashMap<String, DownloadItem>();
     
+    public static HashMap<String, DownloadItem> DownloadedList = new HashMap<String, DownloadItem>();
+    
     private static Map<String, DownloadedProcessor> processorMap = new HashMap<String, DownloadedProcessor>();
     
     public static void download(Context context, String url, String tickerText, DownloadedProcessor processor) {
@@ -172,6 +174,18 @@ public class DownloadService extends IntentService {
                 String tickerText = intent.getStringExtra(EXTRA_TICKERTEXT);
                 int percent = intent.getIntExtra(EXTRA_PERCENT, 0);
                 DownloadItem downloadItem = notifyOnGoing(url, tickerText, percent);
+                if (DownloadedList.containsKey(url) == false) {
+                    try {
+                        File tempFile = createFileByUrl(url);
+                        if (tempFile.exists() && tempFile.isFile()) {
+                            tempFile.delete();
+                        }
+                    } catch (Exception e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                    DownloadedList.put(url, downloadItem);
+                }
                 sDownloadList.put(url, downloadItem);
                 Toast.makeText(this, R.string.add_to_download_list, Toast.LENGTH_SHORT).show();
             }
@@ -218,7 +232,7 @@ public class DownloadService extends IntentService {
     
     // 在状态栏添加下载进度条
     private DownloadItem notifyOnGoing(String url, String tickerText, int percent) {
-        LogWrapper.d(TAG, "notifyOnGoing:"+url);
+        LogWrapper.d(TAG, "notifyOnGoing:"+url+","+percent);
         Context context = getApplication();
         
         int id = url.hashCode();
@@ -350,6 +364,7 @@ public class DownloadService extends IntentService {
     private void notifyPause(String url, DownloadItem downloadItem) {
         Context context = getApplication();
         
+        LogWrapper.d(TAG, "notifyPause:"+url+","+downloadItem.percent);
         Intent service = new Intent(context, DownloadService.class);
         service.putExtra(EXTRA_OPERATION_CODE, OPERATION_CODE_ADD);
         service.putExtra(EXTRA_URL, url);
@@ -358,7 +373,7 @@ public class DownloadService extends IntentService {
         
         int id = downloadItem.tickerText.hashCode();
         
-        PendingIntent pendingIntent = PendingIntent.getService(context, id, service, 0);
+        PendingIntent pendingIntent = PendingIntent.getService(context, (int)System.currentTimeMillis(), service, 0);
         
         Notification notification = new Notification();
         notification.icon = R.drawable.icon;
@@ -378,7 +393,6 @@ public class DownloadService extends IntentService {
             remoteViews.setTextViewText(R.id.control_btn, context.getString(R.string.go_on));
         }
     
-        LogWrapper.d(TAG, "notifyPause:"+url);
         remoteViews.setImageViewResource(R.id.icon_imv, R.drawable.ic_notification_pause);
         remoteViews.setTextViewText(R.id.name_txv, downloadItem.tickerText);
         remoteViews.setTextViewText(R.id.process_txv, getString(R.string.paused));

@@ -196,18 +196,18 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
     }
     
     public SpannableStringBuilder getCheckDescription() {
-        today.add(Calendar.DAY_OF_YEAR, checkinPosition-2);
+        today.add(Calendar.DAY_OF_YEAR, confirmCheckinPosition-2);
         StringBuilder s = new StringBuilder();
         s.append(monthDayFormat.format(today.getTime())+context.getString(R.string.hotel_checkin_));
         int indexDay = s.length();
-        s.append((checkoutPosition-1)+1);
+        s.append((confirmCheckoutPosition-1)+1);
         int indexN = s.length();
         s.append(context.getString(R.string.night));
         SpannableStringBuilder style = new SpannableStringBuilder(s.toString());
         int orange = getContext().getResources().getColor(R.color.orange);
         style.setSpan(new ForegroundColorSpan(orange),0,indexDay,Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
         style.setSpan(new ForegroundColorSpan(orange),indexDay,indexN,Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
-        today.add(Calendar.DAY_OF_YEAR, -(checkinPosition-2));
+        today.add(Calendar.DAY_OF_YEAR, -(confirmCheckinPosition-2));
         return style;
     }
 

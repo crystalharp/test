@@ -5,7 +5,9 @@
  */
 package com.tigerknows.map;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -1149,7 +1151,8 @@ public class MapView extends RelativeLayout implements
                             String mapPath = TKConfig.getDataPath(true);
                             Uri uri = null;
                             if (bm != null && !TextUtils.isEmpty(mapPath)) {
-                                uri = Utility.bitmap2Png(bm, "mapsnap.png", mapPath);
+                                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
+                                uri = Utility.bitmap2Png(bm, "mapsnap_"+simpleDateFormat.format(Calendar.getInstance().getTime()), mapPath);
                                 if (bm.isRecycled() == false) {
                                     bm.recycle();
                                 }
