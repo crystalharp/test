@@ -16,6 +16,7 @@ import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BrowserActivity;
 import com.tigerknows.ui.poi.POIDetailFragment.BlockRefresher;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIViewBlock;
+import com.tigerknows.widget.LinearListAdapter;
 
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -28,6 +29,7 @@ import android.widget.TextView;
 public class DynamicDishPOI extends POIDetailFragment.DynamicPOIView implements View.OnClickListener {
     
     List<DynamicPOIViewBlock> blockList = new ArrayList<DynamicPOIViewBlock>();
+    LinearListAdapter lsv;
     DynamicPOIViewBlock mViewBlock;
     List<Dish> mAllList = new ArrayList<Dish>();
     TextView mContentTxv;

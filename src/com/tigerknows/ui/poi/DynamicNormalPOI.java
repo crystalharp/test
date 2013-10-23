@@ -25,8 +25,7 @@ import com.tigerknows.model.Zhanlan;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.poi.POIDetailFragment.BlockRefresher;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIViewBlock;
-import com.tigerknows.widget.LinearListView;
-import com.tigerknows.widget.LinearListView.ItemInitializer;
+import com.tigerknows.widget.LinearListAdapter;
 import com.tigerknows.model.DataOperation.TuangouQueryResponse;
 import com.tigerknows.model.DataOperation.FendianQueryResponse;
 import com.tigerknows.model.DataOperation.YanchuQueryResponse;
@@ -45,33 +44,8 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
     DynamicPOIViewBlock mViewBlock;
     static Tuangou tuangou = null;
     NormalDPOIClickListener clickListener = new NormalDPOIClickListener();
-    LinearListView lsv;
+    LinearListAdapter listAdapter;
     List<DynamicPOIViewBlock> blockList = new ArrayList<DynamicPOIViewBlock>();
-    
-    ItemInitializer initer = new ItemInitializer(){
-
-        @Override
-        public void initItem(Object data, View v) {
-            DynamicPOI dynamicPOI = ((DynamicPOI)data);
-            ImageView iconImv = (ImageView) v.findViewById(R.id.icon_imv);
-            TextView textTxv = (TextView) v.findViewById(R.id.text_txv);
-            if (BaseQuery.DATA_TYPE_TUANGOU.equals(dynamicPOI.getType())) {
-                iconImv.setImageResource(R.drawable.ic_dynamicpoi_tuangou);
-            } else if (BaseQuery.DATA_TYPE_YANCHU.equals(dynamicPOI.getType())) {
-                iconImv.setImageResource(R.drawable.ic_dynamicpoi_yanchu);
-            } else if (BaseQuery.DATA_TYPE_ZHANLAN.equals(dynamicPOI.getType())) {
-                iconImv.setImageResource(R.drawable.ic_dynamicpoi_zhanlan);
-            } else if (BaseQuery.DATA_TYPE_COUPON.equals(dynamicPOI.getType())) {
-                iconImv.setImageResource(R.drawable.ic_dynamicpoi_coupon);
-            }
-            textTxv.setText(dynamicPOI.getSummary());
-            v.setTag(dynamicPOI);
-            v.setOnClickListener(clickListener);
-            v.setBackgroundResource(R.drawable.list_middle);
-            v.findViewById(R.id.list_separator_imv).setVisibility(View.VISIBLE);
-        }
-        
-    };
     
     BlockRefresher mViewBlockRefresher = new BlockRefresher() {
 
@@ -98,10 +72,10 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
                 return;
             }
             
-            lsv.refreshList(dataList);
+            listAdapter.refreshList(dataList);
             
             for (int i = 0; i < size; i++){
-                View child = lsv.getChildView(i);
+                View child = listAdapter.getChildView(i);
                 if (size != 1) {
                     if (i == 0) {
                         child.setBackgroundResource(R.drawable.list_header);
@@ -127,7 +101,31 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
         mSphinx = mPOIDetailFragment.mSphinx;
         mInflater = inflater;
         LinearLayout poiListView = (LinearLayout) mInflater.inflate(R.layout.poi_dynamic_normal_poi, null);
-        lsv = new LinearListView(mSphinx, poiListView, initer, R.layout.poi_dynamic_poi_list_item);
+        listAdapter = new LinearListAdapter(mSphinx, poiListView, R.layout.poi_dynamic_poi_list_item) {
+
+            @Override
+            public View getView(Object data, View child, int pos) {
+                DynamicPOI dynamicPOI = ((DynamicPOI)data);
+                ImageView iconImv = (ImageView) child.findViewById(R.id.icon_imv);
+                TextView textTxv = (TextView) child.findViewById(R.id.text_txv);
+                if (BaseQuery.DATA_TYPE_TUANGOU.equals(dynamicPOI.getType())) {
+                    iconImv.setImageResource(R.drawable.ic_dynamicpoi_tuangou);
+                } else if (BaseQuery.DATA_TYPE_YANCHU.equals(dynamicPOI.getType())) {
+                    iconImv.setImageResource(R.drawable.ic_dynamicpoi_yanchu);
+                } else if (BaseQuery.DATA_TYPE_ZHANLAN.equals(dynamicPOI.getType())) {
+                    iconImv.setImageResource(R.drawable.ic_dynamicpoi_zhanlan);
+                } else if (BaseQuery.DATA_TYPE_COUPON.equals(dynamicPOI.getType())) {
+                    iconImv.setImageResource(R.drawable.ic_dynamicpoi_coupon);
+                }
+                textTxv.setText(dynamicPOI.getSummary());
+                child.setTag(dynamicPOI);
+                child.setOnClickListener(clickListener);
+                child.setBackgroundResource(R.drawable.list_middle);
+                child.findViewById(R.id.list_separator_imv).setVisibility(View.VISIBLE);
+                return null;
+            }
+            
+        };
         mViewBlock = new DynamicPOIViewBlock(mPOIDetailFragment.mBelowAddressLayout, poiListView, mViewBlockRefresher);
         
     }

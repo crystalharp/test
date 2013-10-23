@@ -26,8 +26,7 @@ import com.tigerknows.model.Response;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.poi.POIDetailFragment.BlockRefresher;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIViewBlock;
-import com.tigerknows.widget.LinearListView;
-import com.tigerknows.widget.LinearListView.ItemInitializer;
+import com.tigerknows.widget.LinearListAdapter;
 
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
@@ -45,7 +44,7 @@ public class DynamicMoviePOI extends POIDetailFragment.DynamicPOIView{
 	static final int SHOW_DYNAMIC_YINGXUN_MAX = 3;
     
     List<DynamicPOIViewBlock> blockList = new ArrayList<DynamicPOIViewBlock>();
-    LinearListView lsv;
+    LinearListAdapter dianyingListAdapter;
     DynamicPOIViewBlock mViewBlock;
     List<Dianying> mShowingList = new ArrayList<Dianying>();
     List<Dianying> mAllList = new ArrayList<Dianying>();
@@ -53,52 +52,6 @@ public class DynamicMoviePOI extends POIDetailFragment.DynamicPOIView{
     LinearLayout mDynamicDianyingView;
     LinearLayout mDynamicDianyingListView;
     LinearLayout mDynamicDianyingMoreView;
-    
-    ItemInitializer initer = new ItemInitializer(){
-
-        @Override
-        public void initItem(Object data, View v) {
-            
-            final Dianying movie = (Dianying)data;
-            final ImageView pictureImv = (ImageView) v.findViewById(R.id.picture_imv);
-            TextView nameTxv = (TextView) v.findViewById(R.id.name_txv);
-            RatingBar starsRtb = (RatingBar) v.findViewById(R.id.stars_rtb);
-            TextView distanceTxv = (TextView) v.findViewById(R.id.distance_txv);
-            TextView addressTxv = (TextView) v.findViewById(R.id.category_txv);
-            TextView dateTxv = (TextView) v.findViewById(R.id.date_txv);
-            
-            v.findViewById(R.id.body_view).setBackgroundDrawable(null);
-            v.setTag(data);
-            v.setOnClickListener(mDynamicMovieListener);
-
-            TKDrawable tkDrawable = movie.getPicture();
-            LoadImageRunnable loadImageRunnable = new LoadImageRunnable(mSphinx, tkDrawable, pictureImv, R.drawable.bg_picture, mPOIDetailFragment.toString());
-            Drawable drawable = tkDrawable.loadDrawable(mSphinx, loadImageRunnable, mPOIDetailFragment.toString());
-            if(drawable != null) {
-                //To prevent the problem of size change of the same pic 
-                //After it is used at a different place with smaller size
-                Rect bounds = drawable.getBounds();
-                if(bounds != null && (bounds.width() != pictureImv.getWidth() || bounds.height() != pictureImv.getHeight())){
-                    pictureImv.setBackgroundDrawable(null);
-                }
-                pictureImv.setBackgroundDrawable(drawable);
-            } else {
-                pictureImv.setBackgroundResource(R.drawable.bg_picture);
-            }
-            
-            nameTxv.setText(movie.getName());
-            starsRtb.setProgress((int) movie.getRank());
-            distanceTxv.setVisibility(View.GONE);
-            
-            addressTxv.setText(movie.getTag());
-            if (TextUtils.isEmpty(movie.getLength())) {
-                dateTxv.setText(R.string.dianying_no_length_now);
-            } else {
-                dateTxv.setText(String.valueOf(movie.getLength()));
-            }
-        }
-        
-    };
     
     BlockRefresher mMovieRefresher = new BlockRefresher() {
 
@@ -130,8 +83,8 @@ public class DynamicMoviePOI extends POIDetailFragment.DynamicPOIView{
                 mDynamicDianyingMoreView.setVisibility(View.GONE);
             }
             
-            lsv.refreshList(mShowingList);
-            refreshBackground(lsv, mShowingList.size());
+            dianyingListAdapter.refreshList(mShowingList);
+            refreshBackground(dianyingListAdapter, mShowingList.size());
         }
         
     };
@@ -144,7 +97,53 @@ public class DynamicMoviePOI extends POIDetailFragment.DynamicPOIView{
         mDynamicDianyingListView = (LinearLayout) mDynamicDianyingView.findViewById(R.id.dynamic_dianying_list_view);
         mDynamicDianyingMoreView = (LinearLayout) mDynamicDianyingView.findViewById(R.id.dynamic_dianying_more_view);
         mViewBlock = new DynamicPOIViewBlock(mPOIDetailFragment.mBelowAddressLayout, mDynamicDianyingView, mMovieRefresher);
-        lsv = new LinearListView(mSphinx, mDynamicDianyingListView, initer, R.layout.poi_dynamic_movie_list_item);
+        dianyingListAdapter = new LinearListAdapter(mSphinx, mDynamicDianyingListView, R.layout.poi_dynamic_movie_list_item) {
+
+            @Override
+            public View getView(Object data, View child, int pos) {
+
+                final Dianying movie = (Dianying)data;
+                final ImageView pictureImv = (ImageView) child.findViewById(R.id.picture_imv);
+                TextView nameTxv = (TextView) child.findViewById(R.id.name_txv);
+                RatingBar starsRtb = (RatingBar) child.findViewById(R.id.stars_rtb);
+                TextView distanceTxv = (TextView) child.findViewById(R.id.distance_txv);
+                TextView addressTxv = (TextView) child.findViewById(R.id.category_txv);
+                TextView dateTxv = (TextView) child.findViewById(R.id.date_txv);
+
+                child.findViewById(R.id.body_view).setBackgroundDrawable(null);
+                child.setTag(data);
+                child.setOnClickListener(mDynamicMovieListener);
+
+                TKDrawable tkDrawable = movie.getPicture();
+                LoadImageRunnable loadImageRunnable = new LoadImageRunnable(mSphinx, tkDrawable, pictureImv, R.drawable.bg_picture, mPOIDetailFragment.toString());
+                Drawable drawable = tkDrawable.loadDrawable(mSphinx, loadImageRunnable, mPOIDetailFragment.toString());
+                if(drawable != null) {
+                    //To prevent the problem of size change of the same pic 
+                    //After it is used at a different place with smaller size
+                    Rect bounds = drawable.getBounds();
+                    if(bounds != null && (bounds.width() != pictureImv.getWidth() || bounds.height() != pictureImv.getHeight())){
+                        pictureImv.setBackgroundDrawable(null);
+                    }
+                    pictureImv.setBackgroundDrawable(drawable);
+                } else {
+                    pictureImv.setBackgroundResource(R.drawable.bg_picture);
+                }
+
+                nameTxv.setText(movie.getName());
+                starsRtb.setProgress((int) movie.getRank());
+                distanceTxv.setVisibility(View.GONE);
+
+                addressTxv.setText(movie.getTag());
+                if (TextUtils.isEmpty(movie.getLength())) {
+                    dateTxv.setText(R.string.dianying_no_length_now);
+                } else {
+                    dateTxv.setText(String.valueOf(movie.getLength()));
+                }
+
+                return null;
+            }
+
+        };
         mDynamicDianyingMoreView.setOnClickListener(mMoreClickListener);
     }
     
@@ -217,7 +216,7 @@ public class DynamicMoviePOI extends POIDetailFragment.DynamicPOIView{
         }
     };
     
-    void refreshBackground(LinearListView lsv, int size) {
+    void refreshBackground(LinearListAdapter lsv, int size) {
         for(int i = 0; i < size; i++) {
             View child = mDynamicDianyingListView.getChildAt(i);
             if (i == (size-1) && mDynamicDianyingMoreView.getVisibility() == View.GONE) {
@@ -235,9 +234,9 @@ public class DynamicMoviePOI extends POIDetailFragment.DynamicPOIView{
         @Override
         public void onClick(View v) {
             mPOIDetailFragment.mActionLog.addAction(mPOIDetailFragment.mActionTag+ActionLog.POIDetailDianyingMore);
-            lsv.refreshList(mAllList);
+            dianyingListAdapter.refreshList(mAllList);
             mDynamicDianyingMoreView.setVisibility(View.GONE);
-            refreshBackground(lsv, mAllList.size());
+            refreshBackground(dianyingListAdapter, mAllList.size());
             
         }
     };

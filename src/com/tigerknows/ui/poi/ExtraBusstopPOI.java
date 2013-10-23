@@ -20,8 +20,7 @@ import com.tigerknows.model.xobject.XMap;
 import com.tigerknows.ui.poi.POIDetailFragment.BlockRefresher;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIView;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIViewBlock;
-import com.tigerknows.widget.LinearListView;
-import com.tigerknows.widget.LinearListView.ItemInitializer;
+import com.tigerknows.widget.LinearListAdapter;
 
 public class ExtraBusstopPOI extends DynamicPOIView {
     
@@ -46,7 +45,7 @@ public class ExtraBusstopPOI extends DynamicPOIView {
     LinearLayout mBusstopView;
     LinearLayout mBuslineListView;
 
-    LinearListView mBuslinelsv;
+    LinearListAdapter mBuslinelsv;
     
     List<Line> mBuslineList = null;
     
@@ -59,27 +58,8 @@ public class ExtraBusstopPOI extends DynamicPOIView {
         }
         
     };
-    
-    ItemInitializer buslineInit = new ItemInitializer() {
-
-        @Override
-        public void initItem(Object data, View v) {
-            final Line busline = (Line) data;
-            TextView txv = (TextView) v.findViewById(R.id.busline_name);
-            txv.setText(busline.getName());
-            v.setOnClickListener(new View.OnClickListener() {
-                
-                @Override
-                public void onClick(View v) {
-                    mSphinx.getBuslineDetailFragment().setData(busline, -1, mPOI.getName());
-                    mSphinx.showView(mSphinx.getBuslineDetailFragment().getId());
-                }
-            });
-        }
         
-    };
-    
-    void refreshBackground(LinearListView lsv, int size) {
+    void refreshBackground(LinearListAdapter lsv, int size) {
         for(int i = 0; i < size; i++) {
             View child = mBuslineListView.getChildAt(i);
             if (i == (size-1)) {
@@ -101,7 +81,26 @@ public class ExtraBusstopPOI extends DynamicPOIView {
         mBusstopView = (LinearLayout) mInflater.inflate(R.layout.poi_dynamic_busstop, null);
         mBuslineListView = (LinearLayout) mBusstopView.findViewById(R.id.busline_lsv);
         mBusstopBlock = new DynamicPOIViewBlock(poiFragment.mBelowAddressLayout, mBusstopView, mBusstopRefresher);
-        mBuslinelsv = new LinearListView(mSphinx, mBuslineListView, buslineInit, R.layout.poi_dynamic_busline_item);
+        mBuslinelsv = new LinearListAdapter(mSphinx, mBuslineListView, R.layout.poi_dynamic_busline_item) {
+
+            @Override
+            public View getView(Object data, View child, int pos) {
+                // TODO Auto-generated method stub
+                final Line busline = (Line) data;
+                TextView txv = (TextView) child.findViewById(R.id.busline_name);
+                txv.setText(busline.getName());
+                child.setOnClickListener(new View.OnClickListener() {
+                    
+                    @Override
+                    public void onClick(View v) {
+                        mSphinx.getBuslineDetailFragment().setData(busline, -1, mPOI.getName());
+                        mSphinx.showView(mSphinx.getBuslineDetailFragment().getId());
+                    }
+                });
+                return null;
+            }
+            
+        };
     }
 
     @Override
