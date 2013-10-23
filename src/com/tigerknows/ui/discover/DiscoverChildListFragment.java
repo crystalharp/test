@@ -85,6 +85,8 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
     
     private String mDataType;
     
+    private boolean toScrollDown = false;
+    
     private Runnable mTurnPageRun = new Runnable() {
         
         @Override
@@ -488,6 +490,11 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
             makeChangciView(yingxun, mSphinx, mLayoutInflater, changciListView);
             refreshDayView(yingxun, todayBtn, tomorrowBtn, afterTomorrowBtn, showTimeDividerImv, notimeView);
             
+            if(toScrollDown){
+            	mResultLsv.smoothScrollToPosition(mResultLsv.getBottom());
+            	toScrollDown = false;
+            }
+            
             View.OnClickListener onClickListener = new OnClickListener() {
                 
                 @Override
@@ -499,6 +506,7 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
                             yingxun.setChangciOption(0);
                         } else {
                             yingxun.setChangciOption(Changci.OPTION_DAY_TODAY);
+                            nodifyScrollDown(position);
                         }
                     } else if (id  == R.id.tomorrow_btn) {
                         mActionLog.addAction(mActionTag +  ActionLog.DiscoverCommonDianyingTomorrow);
@@ -506,6 +514,7 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
                             yingxun.setChangciOption(0);
                         } else {
                             yingxun.setChangciOption(Changci.OPTION_DAY_TOMORROW);
+                            nodifyScrollDown(position);
                         }
                     } else if (id  == R.id.after_tomorrow_btn) {
                         mActionLog.addAction(mActionTag +  ActionLog.DiscoverCommonDianyingAfterTomorrow);
@@ -513,6 +522,7 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
                             yingxun.setChangciOption(0);
                         } else {
                             yingxun.setChangciOption(Changci.OPTION_DAY_AFTER_TOMORROW);
+                            nodifyScrollDown(position);
                         }
                     } else if (id == R.id.telephone_view) {
                         mActionLog.addAction(mActionTag +  ActionLog.CommonTelphone);
@@ -535,6 +545,12 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
             
             return view;
         }
+    }
+    
+    private void nodifyScrollDown(int pos){
+    	if(pos >= mResultLsv.getCount() - 2 && mResultLsv.getState(false) == SpringbackListView.DONE){
+    		toScrollDown = true;
+    	}
     }
     
     public static void layoutShowTimeView(ViewGroup showTimeView, ImageView showTimeDividerImv) {
