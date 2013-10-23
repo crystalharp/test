@@ -37,14 +37,14 @@ public class HotelVendor extends BaseData implements Parcelable {
     
     public static final String ALL = "all";
     
-    // 测试 9999
-    public static final int SOURCE_TEST = 9999;
+    // 测试 1999
+    public static final int SOURCE_TEST = 1999;
     
-    // TODO: 艺龙
-    public static final int SOURCE_ELONG = 10000;
+    // 艺龙
+    public static final int SOURCE_ELONG = 2000;
     
     // TODO: 携程
-    public static final int SOURCE_CTRIP = 10001;
+    public static final int SOURCE_CTRIP = 2001;
     
     public static final List<HotelVendor> hotelVendorList = new ArrayList<HotelVendor>();
     
@@ -115,7 +115,6 @@ public class HotelVendor extends BaseData implements Parcelable {
     
     @Override
     public int describeContents() {
-        // TODO Auto-generated method stub
         return 0;
     }
 
@@ -197,7 +196,6 @@ public class HotelVendor extends BaseData implements Parcelable {
                     hotelVendorList.add(hotelVendor);
                     
                 } catch (APIException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
             }
@@ -239,7 +237,6 @@ public class HotelVendor extends BaseData implements Parcelable {
                 byte[] data = ByteUtil.xobjectToByte(xarray);
                 Utility.writeFile(path, data, true);
             } catch (Exception e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }

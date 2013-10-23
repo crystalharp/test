@@ -39,6 +39,7 @@ import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.HotelOrder;
 import com.tigerknows.model.HotelOrderOperation;
+import com.tigerknows.model.HotelVendor;
 import com.tigerknows.model.HotelOrderOperation.HotelOrderSyncResponse;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.HotelOrderOperation.HotelOrderStatesResponse;
@@ -89,6 +90,8 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
 	private int orderTotal = 0;
 	
 	private List<HotelOrder> orders = new ArrayList<HotelOrder>();
+	
+	private List<HotelVendor> mHotelVendorList = new ArrayList<HotelVendor>();
     
     /**
      * 需要查询状态的订单的buffer
@@ -228,6 +231,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
         if(toSync){
         	logI("Anomaly could exists. Send list sync query.");
         	sendOrderSyncQuery();
+        	updateHotelVendorInfo();
         }
         toSync = false;
     }
@@ -242,6 +246,11 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     	String orderSubmited = TKConfig.getPref(mContext, TKConfig.PREFS_HOTEL_ORDER_COULD_ANOMALY_EXISTS, "no");
     	logI("orderSubmited: " + orderSubmited);
 		return "yes".equals(orderSubmited);
+    }
+    
+    private void updateHotelVendorInfo() {
+    	// TODO: unfinished method
+    	mHotelVendorList = HotelVendor.getHotelVendorList();
     }
     
 	private void sendOrderSyncQuery(){
@@ -283,7 +292,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     		
     		if(list.size() < maxDbSize){
     			HotelOrder order = new HotelOrder("11111", System.currentTimeMillis(), 1, "0F2B4330-906A-11E2-A511-06973B18DA73", "HotelName", "hotelAddress", new Position(39.88, 116.3), "13581704277", 
-    					mContext.getString(R.string.app_name), 3, 390, 9999, 
+    					mContext.getString(R.string.app_name), 3, 390, 1999, 
     					System.currentTimeMillis(), System.currentTimeMillis(), System.currentTimeMillis(),2, 
     					"GuestName", "13581704277", System.currentTimeMillis()+120000);
     			for (int i = list.size(); i < maxDbSize; i++) {
