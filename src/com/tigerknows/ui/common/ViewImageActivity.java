@@ -67,6 +67,7 @@ public class ViewImageActivity extends BaseActivity implements RetryView.CallBac
     
     private int mState =  STATE_GRID;
 
+    private HotelTKDrawable mImage;
     private List<HotelTKDrawable> mImageList = new ArrayList<HotelTKDrawable>();;
     private List<HotelTKDrawable> mOriginalImageList = new ArrayList<HotelTKDrawable>();;
     private GridView mGridView;
@@ -126,7 +127,11 @@ public class ViewImageActivity extends BaseActivity implements RetryView.CallBac
             mGridAdapter.notifyDataSetChanged();
         } else if (this.mState == STATE_GALLERY) {
             if (mTitleBtn != null) {
-                mTitleBtn.setText(R.string.picture_detail);
+                if (mImage != null) {
+                    mTitleBtn.setText(mTitle);
+                } else {
+                    mTitleBtn.setText(R.string.picture_detail);
+                }
             }
             mGridView.setVisibility(View.GONE);
             mTKGallery.setVisibility(View.VISIBLE);
@@ -150,7 +155,7 @@ public class ViewImageActivity extends BaseActivity implements RetryView.CallBac
         mRefId = intent.getStringExtra(BaseQuery.SERVER_PARAMETER_REF_ID);
         mCanAdd = intent.getBooleanExtra(EXTRA_CAN_ADD, false);
         mColumnWidth = intent.getIntExtra(EXTRA_COLUMN_WIDTH, DEFAULT_COLUMN_WIDTH);
-        HotelTKDrawable image = intent.getParcelableExtra(EXTRA_IMAGE);
+        mImage = intent.getParcelableExtra(EXTRA_IMAGE);
         List<HotelTKDrawable>  imageList = intent.getParcelableArrayListExtra(EXTRA_IMAGE_LIST);
         List<HotelTKDrawable> originalImageList = intent.getParcelableArrayListExtra(EXTRA_ORIGINAL_IMAGE_LIST);
         
@@ -159,11 +164,11 @@ public class ViewImageActivity extends BaseActivity implements RetryView.CallBac
         boolean noList = (imageList == null || originalImageList == null);
         boolean noRef = (mRefDty == null || mRefId == null);
         
-        if (image != null) {
-            mOriginalImageList.add(image);
+        if (mImage != null) {
+            mOriginalImageList.add(mImage);
 
             if (mCanAdd) {
-                mRightBtn.setBackgroundResource(R.drawable.btn_submit_comment);
+                mRightBtn.setBackgroundResource(R.drawable.btn_add_picture_title);
                 mRightBtn.setOnClickListener(this);
             }
 
@@ -199,7 +204,7 @@ public class ViewImageActivity extends BaseActivity implements RetryView.CallBac
             
             @Override
             public void onClick(View v) {
-                if (mState == STATE_GALLERY && mImageList.size() > 0) {
+                if (mState == STATE_GALLERY && mImage == null) {
                     setState(STATE_GRID);
                 } else {
                     finish();
@@ -208,11 +213,11 @@ public class ViewImageActivity extends BaseActivity implements RetryView.CallBac
         });
         mTitleBtn.setText(mTitle);
         
-        if (noList == false || image != null) {
+        if (noList == false || mImage != null) {
             setState(mState);
         }
         
-        if (mCanAdd && image == null) {
+        if (mCanAdd && mImage == null) {
             mImageList.add(0, new HotelTKDrawable());
         }
     }
@@ -265,7 +270,7 @@ public class ViewImageActivity extends BaseActivity implements RetryView.CallBac
     
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (mState == STATE_GALLERY && mImageList.size() > 0) {
+            if (mState == STATE_GALLERY && mImage == null) {
                 setState(STATE_GRID);
                 return true;
             }

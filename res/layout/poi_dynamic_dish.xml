@@ -4,36 +4,54 @@
     android:layout_height="match_parent"
     android:paddingBottom="12dp"
     android:orientation="vertical" >
-    
-    <LinearLayout 
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" 
-        android:orientation="horizontal"
-        android:background="@drawable/list_header_title"
+                    
+    <LinearLayout
+        android:layout_width="fill_parent" 
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
         >
-		 <TextView
-	        android:layout_width="wrap_content"
-	        android:layout_height="fill_parent" 
-	        android:textSize="12sp"
-	        android:padding="8dp"
-	        android:text="推荐菜--更多精彩菜品可以在菜单中查看"
-	        />
-		 <TextView
-            android:id="@+id/shopkeeper_txv"
-	        android:layout_width="wrap_content"
-	        android:layout_height="fill_parent" 
-	        android:textSize="16sp"
-	        android:background="@drawable/list_header_title"
-	        android:padding="8dp"
-	        android:text="我是店主"
-	        />
-	    
-	    <ImageView
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content" 
-	        android:src="@drawable/bg_line_split"
-	        />
-           
+        <RelativeLayout
+            android:id="@+id/dish_title_view" 
+            android:layout_width="fill_parent" 
+            android:layout_height="wrap_content"
+            android:background="@drawable/list_header_title"
+            android:clickable="true">
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content" 
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="8dp"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:gravity="left|center_vertical"
+                android:text="@string/recommend_dish"
+                android:clickable="false"
+                android:focusable="false"
+                android:focusableInTouchMode="false"/>
+            <TextView
+                android:id="@+id/shopkeeper_txv" 
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" 
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:padding="8dp"
+                android:layout_marginRight="8dp"
+                android:gravity="right|center_vertical"
+                android:drawableRight="@drawable/icon_arrow_right"
+                android:textColor="@color/text_gray"
+                android:text="@string/i_am_shopkeeper"
+                android:textSize="14sp"
+                android:clickable="false"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                />
+        </RelativeLayout>
+        <ImageView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" 
+            android:background="@drawable/bg_line_split"
+            />
     </LinearLayout>
     
     <TextView
@@ -42,6 +60,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/app_name"
+        android:paddingLeft="10dp"
+        android:paddingTop="4dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="8dp"
+        android:gravity="center_vertical"
         android:background="@drawable/list_footer" >
     </TextView>
     

@@ -1319,6 +1319,7 @@
     <string name="add_dish">添加菜单</string>
     <string name="dish_merchant">菜单商户</string>
     <string name="recommend_dish">推荐菜</string>
+    <string name="i_am_shopkeeper">我是店主</string>
     <string name="add_picture">添加图片</string>
     <string name="add_picture_success">上传图片成功</string>
 </resources>
