@@ -19,7 +19,7 @@ public class BladeView extends View {
 	
 	private String mActionTag;
 	
-	String[] b = { "#", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K",
+	String[] b = { "#", "*", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K",
 			"L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X",
 			"Y", "Z" };
 	
@@ -108,14 +108,14 @@ public class BladeView extends View {
 		return true;
 	}
 
-	private void showPopup(int item) {
+	private void showPopup(String text) {
 
-		String text = "";
-		if (item == 0) {
-			text = "#";
-		} else {
-			text = Character.toString((char) ('A' + item - 1));
-		}
+//		String text = "";
+//		if (item == 0) {
+//			text = "#";
+//		} else {
+//			text = Character.toString((char) ('A' + item - 1));
+//		}
 		mPopupText.setText(text);
 		
 		mPopupText.setVisibility(View.VISIBLE);
@@ -145,7 +145,7 @@ public class BladeView extends View {
 		if (mOnItemClickListener != null) {
 		    ActionLog.getInstance(getContext()).addAction(mActionTag + ActionLog.FilterAreaChar, b[item]);
 			mOnItemClickListener.onItemClick(b[item]);
-			showPopup(item);
+			showPopup(b[item]);
 		}
 	}
 
