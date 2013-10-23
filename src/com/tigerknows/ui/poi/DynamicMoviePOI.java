@@ -24,7 +24,6 @@ import com.tigerknows.model.DataOperation.DianyingQueryResponse;
 import com.tigerknows.model.DataOperation.YingxunQueryResponse;
 import com.tigerknows.model.Response;
 import com.tigerknows.ui.BaseActivity;
-import com.tigerknows.ui.poi.POIDetailFragment.BlockRefresher;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIViewBlock;
 import com.tigerknows.widget.LinearListAdapter;
 
@@ -52,43 +51,7 @@ public class DynamicMoviePOI extends POIDetailFragment.DynamicPOIView{
     LinearLayout mDynamicDianyingView;
     LinearLayout mDynamicDianyingListView;
     LinearLayout mDynamicDianyingMoreView;
-    
-    BlockRefresher mMovieRefresher = new BlockRefresher() {
-
-        @Override
-        public void refresh() {
-            if (mPOI == null) {
-                mViewBlock.clear();
-                return;
-            }
-            
-            mAllList.clear();
-            mShowingList.clear();
-            
-            List<Dianying> list = mPOI.getDynamicDianyingList();        
-            int size = (list != null ? list.size() : 0);
-            if (size == 0) {
-                mViewBlock.clear();
-                return;
-            }
-            mAllList.addAll(list);
-            
-            if (size > SHOW_DYNAMIC_YINGXUN_MAX) {
-                for(int i = 0; i < SHOW_DYNAMIC_YINGXUN_MAX; i++) {
-                    mShowingList.add(mAllList.get(i));
-                }
-                mDynamicDianyingMoreView.setVisibility(View.VISIBLE);
-            } else {
-                mShowingList.addAll(mAllList);
-                mDynamicDianyingMoreView.setVisibility(View.GONE);
-            }
-            
-            dianyingListAdapter.refreshList(mShowingList);
-            refreshBackground(dianyingListAdapter, mShowingList.size());
-        }
         
-    };
-    
     public DynamicMoviePOI(POIDetailFragment poiFragment, LayoutInflater inflater){
         mPOIDetailFragment = poiFragment;
         mSphinx = mPOIDetailFragment.mSphinx;
@@ -96,7 +59,41 @@ public class DynamicMoviePOI extends POIDetailFragment.DynamicPOIView{
         mDynamicDianyingView = (LinearLayout) mInflater.inflate(R.layout.poi_dynamic_movie_poi, null);
         mDynamicDianyingListView = (LinearLayout) mDynamicDianyingView.findViewById(R.id.dynamic_dianying_list_view);
         mDynamicDianyingMoreView = (LinearLayout) mDynamicDianyingView.findViewById(R.id.dynamic_dianying_more_view);
-        mViewBlock = new DynamicPOIViewBlock(mPOIDetailFragment.mBelowAddressLayout, mDynamicDianyingView, mMovieRefresher);
+        mViewBlock = new DynamicPOIViewBlock(mPOIDetailFragment.mBelowAddressLayout, mDynamicDianyingView) {
+
+            @Override
+            public void refresh() {
+                if (mPOI == null) {
+                    clear();
+                    return;
+                }
+                
+                mAllList.clear();
+                mShowingList.clear();
+                
+                List<Dianying> list = mPOI.getDynamicDianyingList();        
+                int size = (list != null ? list.size() : 0);
+                if (size == 0) {
+                    clear();
+                    return;
+                }
+                mAllList.addAll(list);
+                
+                if (size > SHOW_DYNAMIC_YINGXUN_MAX) {
+                    for(int i = 0; i < SHOW_DYNAMIC_YINGXUN_MAX; i++) {
+                        mShowingList.add(mAllList.get(i));
+                    }
+                    mDynamicDianyingMoreView.setVisibility(View.VISIBLE);
+                } else {
+                    mShowingList.addAll(mAllList);
+                    mDynamicDianyingMoreView.setVisibility(View.GONE);
+                }
+                
+                dianyingListAdapter.refreshList(mShowingList);
+                refreshBackground(dianyingListAdapter, mShowingList.size());
+                show();
+            }
+        };
         dianyingListAdapter = new LinearListAdapter(mSphinx, mDynamicDianyingListView, R.layout.poi_dynamic_movie_list_item) {
 
             @Override

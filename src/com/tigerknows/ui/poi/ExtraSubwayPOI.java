@@ -12,13 +12,12 @@ import android.widget.TextView;
 import com.tigerknows.R;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
-import com.tigerknows.model.POI;
+import com.tigerknows.map.MapEngine;
 import com.tigerknows.model.POI.Description;
 import com.tigerknows.model.POI.PresetTime;
 import com.tigerknows.model.POI.Busstop;
 import com.tigerknows.model.POI.SubwayExit;
 import com.tigerknows.model.POI.SubwayPresetTime;
-import com.tigerknows.ui.poi.POIDetailFragment.BlockRefresher;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIView;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIViewBlock;
 import com.tigerknows.ui.traffic.TrafficQueryFragment;
@@ -42,27 +41,7 @@ public class ExtraSubwayPOI extends DynamicPOIView {
     
     LinearListAdapter mSubwayTimeLsv;
     LinearListAdapter mSubwayExitLsv;
-    
-    BlockRefresher mSubwayRefresher = new BlockRefresher() {
-
-        @Override
-        public void refresh() {
-            if (mExitList == null || mExitList.size() == 0) {
-                mSubwayExitView.setVisibility(View.GONE);
-            } else {
-                mSubwayExitView.setVisibility(View.VISIBLE);
-                mSubwayExitLsv.refreshList(mExitList);
-            }
-            if (mPresetTimeList == null || mPresetTimeList.size() == 0) {
-                mSubwayPresetTimeView.setVisibility(View.GONE);
-            } else {
-                mSubwayPresetTimeView.setVisibility(View.VISIBLE);
-                mSubwayTimeLsv.refreshList(mPresetTimeList);
-            }
-        }
-        
-    };
-        
+            
     public ExtraSubwayPOI(POIDetailFragment poiFragment, LayoutInflater inflater) {
         mPOIDetailFragment = poiFragment;
         mSphinx = poiFragment.mSphinx;
@@ -72,7 +51,25 @@ public class ExtraSubwayPOI extends DynamicPOIView {
         mSubwayExitInfoView = (LinearLayout) mSubwayView.findViewById(R.id.subway_exit_lst);
         mSubwayExitView = mSubwayView.findViewById(R.id.subway_exit);
         mSubwayPresetTimeView = mSubwayView.findViewById(R.id.subway_preset_time);
-        mSubwayBlock = new DynamicPOIViewBlock(poiFragment.mBelowAddressLayout, mSubwayView, mSubwayRefresher);
+        mSubwayBlock = new DynamicPOIViewBlock(poiFragment.mBelowAddressLayout, mSubwayView) {
+
+            @Override
+            public void refresh() {
+                if (mExitList == null || mExitList.size() == 0) {
+                    mSubwayExitView.setVisibility(View.GONE);
+                } else {
+                    mSubwayExitView.setVisibility(View.VISIBLE);
+                    mSubwayExitLsv.refreshList(mExitList);
+                }
+                if (mPresetTimeList == null || mPresetTimeList.size() == 0) {
+                    mSubwayPresetTimeView.setVisibility(View.GONE);
+                } else {
+                    mSubwayPresetTimeView.setVisibility(View.VISIBLE);
+                    mSubwayTimeLsv.refreshList(mPresetTimeList);
+                }
+                show();
+            }
+        };
         
         mSubwayTimeLsv = new LinearListAdapter(mSphinx, mSubwayTimeInfoView, R.layout.poi_dynamic_subway_time_item) {
 
@@ -131,7 +128,7 @@ public class ExtraSubwayPOI extends DynamicPOIView {
                         @Override
                         public void onClick(View v) {
                             mPOIDetailFragment.mActionLog.addAction(mPOIDetailFragment.mActionTag+ActionLog.POIDetailBusstop, busstopTxv.getText().toString());
-                            int cityId = mSphinx.getMapEngine().getCityId(mPOI.getPosition());
+                            int cityId = MapEngine.getCityId(mPOI.getPosition());
                             TrafficQueryFragment.submitBuslineQuery(mSphinx, busstopTxv.getText().toString(), cityId);
 
                         }

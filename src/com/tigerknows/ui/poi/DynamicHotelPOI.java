@@ -51,7 +51,6 @@ import com.tigerknows.ui.common.ViewImageActivity;
 import com.tigerknows.ui.hotel.DateListView;
 import com.tigerknows.ui.hotel.HotelHomeFragment;
 import com.tigerknows.ui.hotel.HotelIntroActivity;
-import com.tigerknows.ui.poi.POIDetailFragment.BlockRefresher;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIView;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIViewBlock;
 import com.tigerknows.util.CalendarUtil;
@@ -101,68 +100,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     
     //记录现在缓存的日期所属的POI的id
     public String mInitDatePOIid;
-    
-    BlockRefresher mUpperBlockRefresher = new BlockRefresher() {
-
-        @Override
-        public void refresh() {
-            refreshDate();
-            if (!mUpperBlock.mLoadSucceed
-                    || mHotel == null || mHotel.getRoomTypeList() == null) {
-            	setState(STATE_LOAD_FAILED);
-            	roomTypeAdapter.refreshList(null);
-            	return;
-            }
-            
-            mAllRoomList.clear();
-            mShowingRoomList.clear();
-            mAllRoomList.addAll(mHotel.getRoomTypeList());
-            int size = (mAllRoomList != null? mAllRoomList.size() : 0);
-            if (size == 0) {
-                LogWrapper.i(TAG, "size of roomTypeList is 0.");
-                setState(STATE_NO_DATA);
-            } else if (size > SHOW_DYNAMIC_HOTEL_MAX) {
-                for(int i = 0; i < SHOW_DYNAMIC_HOTEL_MAX; i++) {
-                    mShowingRoomList.add(mAllRoomList.get(i));
-                }
-                setState(STATE_DATA_GT_MAX);
-            } else {
-                mShowingRoomList.addAll(mAllRoomList);
-                setState(STATE_DATA_LT_MAX);
-            }
-            roomTypeAdapter.refreshList(mShowingRoomList);
-            refreshBackground(roomTypeAdapter, mShowingRoomList);
-            
-        }
         
-    };
-    
-    BlockRefresher mLowerBlockRefresher = new BlockRefresher() {
-
-        @Override
-        public void refresh() {
-            String value = mHotel.getLongDescription();
-            if (TextUtils.isEmpty(value)) {
-                value = mSphinx.getString(R.string.hotel_no_summary);
-                hotelSummaryBlock.setClickable(false);
-            } else {
-                hotelSummaryBlock.setClickable(true);
-            }
-            hotelSummary.setText(value);
-
-            List<HotelTKDrawable> picList = mHotel.getHotelTKDrawableList();
-            int picNum = (picList == null ? 0 : picList.size());
-            refreshPicture();
-            if (picNum == 0) {
-                hotelImage.setClickable(false);
-            } else {
-                hotelImage.setClickable(true);
-            }
-            
-        }
-        
-    };
-    
     DateListView getDateListView() {
         if (mDateListView == null) {
             DateListView view = new DateListView(mSphinx);
@@ -236,9 +174,69 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         mInflater = inflater;
         upperView = mInflater.inflate(R.layout.poi_dynamic_hotel_upper, null);
         lowerView = mInflater.inflate(R.layout.poi_dynamic_hotel_lower, null);
-        mUpperBlock = new DynamicPOIViewBlock(poiFragment.mBelowAddressLayout, upperView, mUpperBlockRefresher);
-        mLowerBlock = new DynamicPOIViewBlock(poiFragment.mBelowCommentLayout, lowerView, mLowerBlockRefresher);
         findViews();
+        
+        mUpperBlock = new DynamicPOIViewBlock(poiFragment.mBelowAddressLayout, upperView) {
+
+            @Override
+            public void refresh() {
+                refreshDate();
+                if (!mUpperBlock.mLoadSucceed
+                        || mHotel == null || mHotel.getRoomTypeList() == null) {
+                    setState(STATE_LOAD_FAILED);
+                    roomTypeAdapter.refreshList(null);
+                    return;
+                }
+                
+                mAllRoomList.clear();
+                mShowingRoomList.clear();
+                mAllRoomList.addAll(mHotel.getRoomTypeList());
+                int size = (mAllRoomList != null? mAllRoomList.size() : 0);
+                if (size == 0) {
+                    LogWrapper.i(TAG, "size of roomTypeList is 0.");
+                    setState(STATE_NO_DATA);
+                } else if (size > SHOW_DYNAMIC_HOTEL_MAX) {
+                    for(int i = 0; i < SHOW_DYNAMIC_HOTEL_MAX; i++) {
+                        mShowingRoomList.add(mAllRoomList.get(i));
+                    }
+                    setState(STATE_DATA_GT_MAX);
+                } else {
+                    mShowingRoomList.addAll(mAllRoomList);
+                    setState(STATE_DATA_LT_MAX);
+                }
+                roomTypeAdapter.refreshList(mShowingRoomList);
+                refreshBackground(roomTypeAdapter, mShowingRoomList);
+                show();
+            }
+            
+        };
+        
+        mLowerBlock = new DynamicPOIViewBlock(poiFragment.mBelowCommentLayout, lowerView) {
+
+            @Override
+            public void refresh() {
+                String value = mHotel.getLongDescription();
+                if (TextUtils.isEmpty(value)) {
+                    value = mSphinx.getString(R.string.hotel_no_summary);
+                    hotelSummaryBlock.setClickable(false);
+                } else {
+                    hotelSummaryBlock.setClickable(true);
+                }
+                hotelSummary.setText(value);
+
+                List<HotelTKDrawable> picList = mHotel.getHotelTKDrawableList();
+                int picNum = (picList == null ? 0 : picList.size());
+                refreshPicture();
+                if (picNum == 0) {
+                    hotelImage.setClickable(false);
+                } else {
+                    hotelImage.setClickable(true);
+                }
+                show();
+            }
+            
+        };
+        
         roomTypeAdapter = new LinearListAdapter(mSphinx, mDynamicRoomTypeListView, R.layout.poi_dynamic_hotel_room_item) {
 
             @Override

@@ -17,7 +17,6 @@ import com.tigerknows.model.BuslineModel.Line;
 import com.tigerknows.model.BuslineQuery;
 import com.tigerknows.model.POI.Description;
 import com.tigerknows.model.xobject.XMap;
-import com.tigerknows.ui.poi.POIDetailFragment.BlockRefresher;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIView;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIViewBlock;
 import com.tigerknows.widget.LinearListAdapter;
@@ -48,17 +47,7 @@ public class ExtraBusstopPOI extends DynamicPOIView {
     LinearListAdapter mBuslinelsv;
     
     List<Line> mBuslineList = null;
-    
-    BlockRefresher mBusstopRefresher = new BlockRefresher() {
-
-        @Override
-        public void refresh() {
-            mBuslinelsv.refreshList(mBuslineList);
-            refreshBackground(mBuslinelsv, mBuslineList.size());
-        }
-        
-    };
-        
+            
     void refreshBackground(LinearListAdapter lsv, int size) {
         for(int i = 0; i < size; i++) {
             View child = mBuslineListView.getChildAt(i);
@@ -80,7 +69,15 @@ public class ExtraBusstopPOI extends DynamicPOIView {
         mInflater = inflater;
         mBusstopView = (LinearLayout) mInflater.inflate(R.layout.poi_dynamic_busstop, null);
         mBuslineListView = (LinearLayout) mBusstopView.findViewById(R.id.busline_lsv);
-        mBusstopBlock = new DynamicPOIViewBlock(poiFragment.mBelowAddressLayout, mBusstopView, mBusstopRefresher);
+        mBusstopBlock = new DynamicPOIViewBlock(poiFragment.mBelowAddressLayout, mBusstopView) {
+
+            @Override
+            public void refresh() {
+                mBuslinelsv.refreshList(mBuslineList);
+                refreshBackground(mBuslinelsv, mBuslineList.size());
+                show();
+            }
+        };
         mBuslinelsv = new LinearListAdapter(mSphinx, mBuslineListView, R.layout.poi_dynamic_busline_item) {
 
             @Override
