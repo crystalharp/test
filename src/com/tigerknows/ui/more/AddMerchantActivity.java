@@ -1,8 +1,6 @@
 package com.tigerknows.ui.more;
 
-import java.io.File;
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,10 +9,8 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -29,7 +25,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.ImageView.ScaleType;
@@ -57,6 +52,7 @@ import com.tigerknows.model.DataQuery.FilterCategoryOrder;
 import com.tigerknows.model.DataQuery.FilterOption;
 import com.tigerknows.model.DataQuery.FilterResponse;
 import com.tigerknows.ui.BaseActivity;
+import com.tigerknows.ui.common.AddPictureActivity;
 import com.tigerknows.util.Utility;
 import com.tigerknows.widget.FilterListView;
 import com.tigerknows.widget.MultichoiceArrayAdapter;
@@ -65,23 +61,12 @@ import com.tigerknows.widget.TimeListView;
 public class AddMerchantActivity extends BaseActivity implements View.OnClickListener, FilterListView.CallBack {
     
     public static final String EXTRA_INPUT_TEXT = "input_text";
-
-    public static final int REQUEST_CODE_PICK_PHOTO = 0;
-
-    public static final int REQUEST_CODE_CAPTURE_PHOTO = 1;
+    
+    public static final int REQUEST_CODE_PICK_PICTURE = 1;
     
     public static final int REQUEST_CODE_CHANGE_CITY = 2;
     
-    private String mCacheFilePath;
-    
-    private String mCameraFilePath;
-    
-    private Uri mCaptureUri;
-    private Uri mPhotoUri;
-    private Uri mUploadUri;
     private String mPhotoMD5;
-    
-    private View mTitleView;
     
     private ImageButton mTakePhotoBtn;
     
@@ -128,19 +113,11 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
     
     private EditText mYourTelephoneEdt = null;
     
-    private ImageView mImageImv;
-    
-    private View mImageView;
-    
     private Button mDeletePhotoBtn;
 
     private TextView mPhotoTitleTxv;
     
     private TextView mPhotoDescriptionTxv;
-    
-    private Button mCancelBtn;
-    
-    private Button mConfirmBtn;
     
 	static final String TAG = "AddMerchant";
 	
@@ -157,9 +134,6 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
         mTitleBtn.setText(R.string.add_merchant);
         mRightBtn.setBackgroundResource(R.drawable.btn_submit_comment);
         
-        mCacheFilePath = TKConfig.getDataPath(true) + "cache.jpg";
-        mCameraFilePath = TKConfig.getDataPath(true) + "camera.jpg";
-        
         CityInfo cityInfo = Globals.getCurrentCityInfo();
         
         mCityBtn.setText(cityInfo.getCName());
@@ -167,7 +141,6 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
         mTelephoneEdt.setText(mLastAreaCode);
         mTelephoneEdt.setSelection(mLastAreaCode.length());
         
-        mImageView.setVisibility(View.GONE);
         mDeletePhotoBtn.setVisibility(View.GONE);
 
         mPickTimeView = mLayoutInflater.inflate(R.layout.more_add_merchant_pick_time, null, false);
@@ -285,7 +258,6 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
      */
     protected void findViews() {
         super.findViews();
-        mTitleView = findViewById(R.id.title_view);
         mAddMerchantScv = (ScrollView)findViewById(R.id.add_merchant_scv);
         mNameEdt = (EditText)findViewById(R.id.name_edt);
         mType = (Button)findViewById(R.id.type_btn);
@@ -302,11 +274,6 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
         mDeletePhotoBtn = (Button) findViewById(R.id.delete_photo_btn);
         mPhotoTitleTxv = (TextView) findViewById(R.id.upload_image_title_txv);
         mPhotoDescriptionTxv = (TextView) findViewById(R.id.upload_image_description_txv);
-        
-        mImageView = findViewById(R.id.image_view);
-        mImageImv = (ImageView) findViewById(R.id.image_imv);
-        mCancelBtn = (Button) findViewById(R.id.cancel_btn);
-        mConfirmBtn = (Button) findViewById(R.id.confirm_btn);
     }
 
     /**
@@ -318,18 +285,9 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
         mRightBtn.setOnClickListener(this);
         mTakePhotoBtn.setOnClickListener(this);
         mDeletePhotoBtn.setOnClickListener(this);
-        mCancelBtn.setOnClickListener(this);
-        mConfirmBtn.setOnClickListener(this);
         mCityBtn.setOnClickListener(this);
         mDateBtn.setOnClickListener(this);
         mTimeBtn.setOnClickListener(this);
-        mImageView.setOnTouchListener(new OnTouchListener() {
-            
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return true;
-            }
-        });
         
         mType.setOnClickListener(this);
         
@@ -383,10 +341,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK
                 && event.getAction() == KeyEvent.ACTION_DOWN) {
-            if (mImageView.getVisibility() == View.VISIBLE) {
-                mImageView.setVisibility(View.GONE);
-                backHome();
-            } else if (mFilterListView.getVisibility() == View.VISIBLE) {
+            if (mFilterListView.getVisibility() == View.VISIBLE) {
                 mFilterListView.setVisibility(View.GONE);
                 backHome();
             } else {
@@ -423,7 +378,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
             notEmpty = !TextUtils.isEmpty(mTimeBtn.getText().toString());
         }
         if (notEmpty == false) {
-            notEmpty = (mUploadUri != null);
+            notEmpty = (mPhotoMD5 != null);
         }
         if (notEmpty == false) {
             notEmpty = !TextUtils.isEmpty(mYourTelephoneEdt.getText().toString());
@@ -451,11 +406,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
         // TODO Auto-generated method stub
         switch(v.getId()){
             case R.id.left_btn:
-                if (mImageView.getVisibility() == View.VISIBLE) {
-                    mActionLog.addAction(mActionTag +  ActionLog.AddMerchantBackPhoto);
-                    mImageView.setVisibility(View.GONE);
-                    backHome();
-                } else if (mFilterListView.getVisibility() == View.VISIBLE) {
+                if (mFilterListView.getVisibility() == View.VISIBLE) {
                     mFilterListView.setVisibility(View.GONE);
                     backHome();
                 } else {
@@ -469,48 +420,36 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
                 break;
                 
             case R.id.take_photo_btn:
-                if (mUploadUri == null || mPhotoMD5 == null) {
+                if (mPhotoMD5 == null) {
                     mActionLog.addAction(mActionTag +  ActionLog.AddMerchantPhoto);
                     hideSoftInput(false);
-                    showTakePhotoDialog(REQUEST_CODE_PICK_PHOTO, REQUEST_CODE_CAPTURE_PHOTO);
+
+                    Intent intent = new Intent(mThis, AddPictureActivity.class);
+                    intent.putExtra(FileUpload.SERVER_PARAMETER_REF_DATA_TYPE, BaseQuery.DATA_TYPE_POI);
+                    startActivityForResult(intent, REQUEST_CODE_PICK_PICTURE);
                 }
                 break;
                 
             case R.id.delete_photo_btn:
 
-                if (mUploadUri != null || mPhotoMD5 != null) {
+                if (mPhotoMD5 != null) {
                     mActionLog.addAction(mActionTag +  ActionLog.AddMerchantDeletePhoto);
                     Utility.showNormalDialog(mThis, getString(R.string.add_merchant_delete_photo_tip), new DialogInterface.OnClickListener() {
                         
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             if (which == DialogInterface.BUTTON_POSITIVE) {
-                                mUploadUri = null;
                                 mPhotoMD5 = null;
-                                mPhotoUri = null;
                                 mTakePhotoBtn.setScaleType(ScaleType.FIT_XY);
                                 mTakePhotoBtn.setImageResource(R.drawable.btn_take_photo);
                                 mDeletePhotoBtn.setVisibility(View.GONE);
                                 mPhotoTitleTxv.setText(R.string.add_merchant_upload_photo);
                                 mPhotoDescriptionTxv.setText(R.string.add_merchant_upload_photo_not_added);
+                                mTakePhotoBtn.setBackgroundResource(R.drawable.btn_take_photo);
                             }
                         }
                     });
                 }
-                break;
-                
-            case R.id.cancel_btn:
-                mActionLog.addAction(mActionTag +  ActionLog.AddMerchantCancelPhoto);
-                mImageView.setVisibility(View.GONE);
-                backHome();
-                mUploadUri = null;
-                break;
-                
-            case R.id.confirm_btn:
-                mActionLog.addAction(mActionTag +  ActionLog.AddMerchantConfirmPhoto);
-                mImageView.setVisibility(View.GONE);
-                backHome();
-                confrimUploadUri(mImageImv.getDrawable());
                 break;
                 
             case R.id.city_btn:
@@ -732,38 +671,12 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
         }
         
         hideSoftInput(false);
-        List<BaseQuery> list = new ArrayList<BaseQuery>();
+        
         FeedbackUpload feedbackUpload = new FeedbackUpload(mThis);
         feedbackUpload.addParameter(FeedbackUpload.SERVER_PARAMETER_ADD_MERCHANT, s.toString());
         feedbackUpload.setup(Globals.getCurrentCityInfo().getId(), -1, -1, mThis.getString(R.string.doing_and_wait));
-        list.add(feedbackUpload);
         
-        if (mUploadUri != null && mPhotoMD5 != null) {
-            String filePath = Utility.imageUri2FilePath(mThis, mUploadUri);
-            FileUpload fileUpload = new FileUpload(mThis);
-            fileUpload.addParameter(FileUpload.SERVER_PARAMETER_REF_DATA_TYPE, FileUpload.DATA_TYPE_POI);
-            fileUpload.addParameter(FileUpload.SERVER_PARAMETER_FILE_TYPE, FileUpload.FILE_TYPE_IMAGE);
-            fileUpload.addParameter(FileUpload.SERVER_PARAMETER_CHECKSUM, mPhotoMD5);
-            fileUpload.addParameter(FileUpload.SERVER_PARAMETER_FILENAME, mPhotoMD5+filePath.substring(filePath.lastIndexOf(".")));
-            fileUpload.addParameter(FileUpload.SERVER_PARAMETER_UPFILE, filePath);
-            fileUpload.setup(Globals.getCurrentCityInfo().getId(), -1, -1, mThis.getString(R.string.doing_and_wait));
-            list.add(fileUpload);
-        }
-        queryStart(list);
-    }
-    
-    void confrimUploadUri(Drawable drawable) {
-        if (mPhotoUri != null) {
-            mUploadUri = mPhotoUri;
-            String fileName = Utility.imageUri2FilePath(mThis, mUploadUri);
-            mPhotoMD5 = Utility.md5sum(fileName);
-            mTakePhotoBtn.setScaleType(ScaleType.MATRIX);
-            mTakePhotoBtn.setImageMatrix(Utility.resizeSqareMatrix(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Util.dip2px(Globals.g_metrics.density, 112)));
-            mTakePhotoBtn.setImageDrawable(drawable);
-            mDeletePhotoBtn.setVisibility(View.VISIBLE);
-            mPhotoTitleTxv.setText(R.string.add_merchant_upload_photo_added);
-            mPhotoDescriptionTxv.setText(R.string.wait_submit);
-        }
+        queryStart(feedbackUpload);
     }
     
     protected boolean isReLogin() {
@@ -791,73 +704,25 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
     @Override
     public void onPostExecute(TKAsyncTask tkAsyncTask) {
         super.onPostExecute(tkAsyncTask);
-        List<BaseQuery> list = tkAsyncTask.getBaseQueryList();
-        boolean textUploadSuccess = true;
-        boolean imageUploadSuccess = true;
-        boolean showErroDialog = true;
-        BaseQuery imageUpload = null;
         
-        for(int i = 0, size = list.size(); i < size; i++) {
-            BaseQuery baseQuery = list.get(i);
-            if (BaseActivity.checkReLogin(baseQuery, mThis, mSourceUserHome, mId, mId, mId, mCancelLoginListener)) {
-                isReLogin = true;
-                return;
-            } else if (BaseActivity.checkResponseCode(baseQuery, mThis, null, showErroDialog && !(baseQuery instanceof FileUpload), this, false)) {
-                showErroDialog = false;
-                if (baseQuery instanceof FeedbackUpload) {
-                    textUploadSuccess = false;
-                }
-                
-                if (baseQuery instanceof FileUpload) {
-                    imageUploadSuccess = false;
-                    imageUpload = baseQuery;
-                }
-            }
+        BaseQuery baseQuery = tkAsyncTask.getBaseQuery();
+        if (BaseActivity.checkReLogin(baseQuery, mThis, mSourceUserHome, mId, mId, mId, mCancelLoginListener)) {
+            isReLogin = true;
+            return;
+        } else if (BaseActivity.checkResponseCode(baseQuery, mThis, null, true, this, false)) {
+            return;
         }
         
-        if (textUploadSuccess && imageUploadSuccess) {
-            Toast.makeText(mThis, R.string.add_merchant_success, Toast.LENGTH_LONG).show();
-            finish();
-        } else if (textUploadSuccess) {
-            final BaseQuery finalImageUpload = imageUpload;
-            imageUpload.setResponse(null);
-            Utility.showNormalDialog(mThis,
-                    getString(R.string.prompt),
-                    getString(R.string.add_merchant_image_upload_falied_tip),
-                    getString(R.string.retry),
-                    getString(R.string.cancel),
-                    new DialogInterface.OnClickListener() {
-                
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            if (which == DialogInterface.BUTTON_POSITIVE) {
-                                if (finalImageUpload != null) {
-                                    queryStart(finalImageUpload);
-                                }
-                            }
-                        }
-                    });
-        } else {
-            Toast.makeText(mThis, R.string.add_merchant_text_upload_falied_tip, Toast.LENGTH_LONG).show();
-        }
-    }
-
-    public void showTakePhotoDialog(int pickRequestCode, int captureRequestCode) {
-        File file = new File(mCameraFilePath);
-        file.delete();
-        mCaptureUri = Uri.fromFile(file);
-        Utility.showTakePhotoDialog(mActionTag, this, pickRequestCode,
-                captureRequestCode, mCaptureUri);
+        Toast.makeText(mThis, R.string.add_merchant_success, Toast.LENGTH_LONG).show();
+        finish();
     }
     
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
-            if (requestCode == REQUEST_CODE_PICK_PHOTO) {
+            if (requestCode == REQUEST_CODE_PICK_PICTURE) {
                 Uri uri = data.getData();
-                setPhoto(uri, true);
-            } else if (requestCode == REQUEST_CODE_CAPTURE_PHOTO) {
-                setPhoto(mCaptureUri, false);
+                setPhoto(uri);
             } else if (requestCode == REQUEST_CODE_CHANGE_CITY) {
                 if (data != null && RESULT_OK == resultCode) {
                     CityInfo cityInfo = data.getParcelableExtra(ChangeCityActivity.EXTRA_CITYINFO);
@@ -876,102 +741,21 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
         super.onActivityResult(requestCode, resultCode, data);
     }
     
-    public void setPhoto(final Uri uri, final boolean isPick) {
-        mPhotoUri = null;
+    public void setPhoto(final Uri uri) {
         if (uri == null) {
             return;
         }
-        View custom = getLayoutInflater().inflate(R.layout.loading, null);
-        TextView loadingTxv = (TextView)custom.findViewById(R.id.loading_txv);
-        loadingTxv.setText(R.string.doing_and_wait);
-        final Dialog tipProgressDialog = Utility.showNormalDialog(this, custom);
-        tipProgressDialog.setCancelable(false);
-        tipProgressDialog.setCanceledOnTouchOutside(false);
         
-        new Thread(new Runnable() {
-            
-            @Override
-            public void run() {
-                try {
-                    final String imagePath = URLDecoder.decode(Utility.imageUri2FilePath(mThis, uri));
-                    if (Utility.copyFile(imagePath, mCacheFilePath)) {
-                        final File cacheFile = new File(mCacheFilePath);
-                        Uri cache = Uri.fromFile(cacheFile);
-                        Bitmap bm = Utility.getBitmapByUri(mThis, cache, TKConfig.Photo_Max_Width_Height, TKConfig.Photo_Max_Width_Height);
-                        String path = Utility.imageUri2FilePath(mThis, cache);
-                        ExifInterface exifInterface = new ExifInterface(path);
-                        int tag = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, -1);
-                        float degrees = 0;
-                        if (tag == ExifInterface.ORIENTATION_ROTATE_90) {
-                            degrees = 90;
-                        } else if (tag == ExifInterface.ORIENTATION_ROTATE_180) {
-                            degrees = 180;
-                        } else if (tag == ExifInterface.ORIENTATION_ROTATE_270) {
-                            degrees = 270;  
-                        }
-                        if (degrees != 0) {
-                            Matrix matrix = new Matrix();
-                            int w = bm.getWidth();
-                            int h = bm.getHeight();
-                            matrix.preRotate(degrees, w/2, h/2);
-                            Bitmap newBitmap = Bitmap.createBitmap(bm, 0, 0, w, h, matrix, true);
-                            bm.recycle();
-                            bm = newBitmap;
-                        }
-                        
-                        Utility.bitmapToFile(bm, cacheFile);
-                        
-                        final Bitmap resultBitmap = bm;
-
-                        if (resultBitmap != null && Utility.bitmapToFile(resultBitmap, cacheFile)) {
-                            mPhotoUri = Uri.fromFile(cacheFile);
-                        }
-                        
-                        mThis.runOnUiThread(new Runnable() {
-                            
-                            @Override
-                            public void run() {
-                                if (mPhotoUri != null) {
-                                    if (isPick == false) {
-                                        confrimUploadUri(new BitmapDrawable(resultBitmap));
-                                    } else {
-                                        mTitleBtn.setText(R.string.storefront_photo);
-                                        mRightBtn.setVisibility(View.GONE);
-                                        mImageView.setVisibility(View.VISIBLE);
-                                        mImageImv.setScaleType(ScaleType.MATRIX);
-                                        mTitleView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-                                        int h = mTitleView.getMeasuredHeight();
-                                        mImageImv.setImageMatrix(Utility.resizeMaxWidthMatrix(resultBitmap.getWidth(), resultBitmap.getHeight(), Globals.g_metrics.widthPixels, Globals.g_metrics.heightPixels-h));
-                                        mImageImv.setImageBitmap(resultBitmap);
-                                    }
-                                }
-                                if (tipProgressDialog != null && tipProgressDialog.isShowing()) {
-                                    tipProgressDialog.dismiss();
-                                }
-                            }
-                        });
-                    }
-                
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                mThis.runOnUiThread(new Runnable() {
-                    
-                    @Override
-                    public void run() {
-                        if (mPhotoUri == null) {
-                            Toast.makeText(mThis, getString(R.string.get_photo_failed)+uri, Toast.LENGTH_LONG).show();
-                        }
-                        if (tipProgressDialog != null && tipProgressDialog.isShowing()) {
-                            tipProgressDialog.dismiss();
-                        }
-                    }
-                });
-            }
-        }).start();
-        
-//        UploadImageUtils.revitionPostImageSize(Utility.imageUri2FilePath(this, uri));
-        
+        String fileName = Utility.imageUri2FilePath(mThis, uri);
+        mPhotoMD5 = Utility.md5sum(fileName);
+        mTakePhotoBtn.setScaleType(ScaleType.CENTER_INSIDE);
+        int wh = Utility.dip2px(mThis, 72);
+        Bitmap bm = Utility.getBitmapByUri(mThis, uri, wh, wh);
+        mTakePhotoBtn.setImageBitmap(bm);
+        mTakePhotoBtn.setBackgroundDrawable(null);
+        mDeletePhotoBtn.setVisibility(View.VISIBLE);
+        mPhotoTitleTxv.setText(R.string.add_merchant_upload_photo_added);
+        mPhotoDescriptionTxv.setText(R.string.wait_submit);   
     }
 
     @Override
