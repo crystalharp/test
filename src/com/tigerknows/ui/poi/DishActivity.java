@@ -21,24 +21,22 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
 import android.view.animation.TranslateAnimation;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
-import android.widget.ExpandableListView;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.ExpandableListView.OnChildClickListener;
-import android.widget.ExpandableListView.OnGroupExpandListener;
 import android.widget.LinearLayout.LayoutParams;
-import android.widget.Toast;
 
 import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
@@ -54,8 +52,6 @@ import com.tigerknows.model.TKDrawable;
 import com.tigerknows.model.DataQuery.DishResponse;
 import com.tigerknows.model.DataQuery.DishResponse.Category;
 import com.tigerknows.model.DataQuery.DishResponse.DishList;
-import com.tigerknows.model.DataQuery.PictureResponse;
-import com.tigerknows.model.DataQuery.PictureResponse.PictureList;
 import com.tigerknows.model.Hotel.HotelTKDrawable;
 import com.tigerknows.model.Dish;
 import com.tigerknows.model.POI;
@@ -76,6 +72,10 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
     static final String LocalParameterMode = "LocalParameterMode";
     
     static final String LocalParameterTab = "LocalParameterTab";
+    
+    static final int COLUMN_WIDTH = 148;
+    
+    static final int CATEGORY_WIDTH = 120;
     
     private Runnable mLoadedDrawableRun = new Runnable() {
         
@@ -104,8 +104,6 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
         }
     };
     
-    public static final int REQUEST_CODE_COMMENT = 1;
-
     private static POI sPOI = null;
     
     private POI mPOI = null;
@@ -113,7 +111,8 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
     private DataQuery mRecommendDataQuery;
     private DataQuery mAllDataQuery;
 
-    private List<Category> mCategoryList = new ArrayList<Category>();
+    private List<Category> mCategoryGroupList = new ArrayList<Category>();
+    private List<Category> mCategoryList = new ArrayList<DataQuery.DishResponse.Category>();
     private List<Dish> mAllList = new ArrayList<Dish>();
     private List<Dish> mSelectedList = new ArrayList<Dish>();
     private List<Dish> mRecommedList = new ArrayList<Dish>();
@@ -138,14 +137,20 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
     private Button mRecommendBtn;
 
     private View mSelectedView;
-    private ExpandableListView mCategoryElv = null;
+    private AnimationListener mSelectedAnimationListener;
+    private Animation mLikeAnimation;
+    private ListView mCategoryLsv = null;
+    private LinearLayout mCategoryParentView = null;
     private int mGroupPosition = -1;
+    private int mChildPosition = -1;
     private int mFromYDelta = 0;
-    private int mFirstVisibleItem = 0;
+    private int mFirstDishVisibleItem = 0;
+    private int mFirstCategoryVisibleItem = 0;
+    private int mTotalCateoryItem = 0;
     private Category mCurrentCategoryItem = null;
     private ListView mAllLsv = null;
     private ViewPager mRecommendVpg = null;
-    private ListView mMyLikeLsv = null;
+    private GridView mMyLikeGdv = null;
     private GridView mRecommendGdv = null;
 
     private QueryingView mQueryingView = null;
@@ -172,18 +177,66 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
         findViews();
         setListener();
 
+        mSelectedAnimationListener = new AnimationListener() {
+            
+            @Override
+            public void onAnimationStart(Animation animation) {
+            }
+            
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+                // TODO Auto-generated method stub
+                
+            }
+            
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                mSelectedView.setBackgroundDrawable(null);
+                mCategoryAdapter.notifyDataSetChanged();
+            }
+        };
         mSelectedView.setVisibility(View.INVISIBLE);
         mRetryView.setText(R.string.touch_screen_and_retry, true);
         
-        mCategoryAdapter = new CategoryListAdapter();
-        mCategoryElv.setAdapter(mCategoryAdapter);
+        AnimationListener likeAnimationListener = new AnimationListener() {
+            
+            @Override
+            public void onAnimationStart(Animation animation) {
+                // TODO Auto-generated method stub
+                
+            }
+            
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+                // TODO Auto-generated method stub
+                
+            }
+            
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                LogWrapper.d(TAG, "onAnimationEnd");
+                if (mMode == 0) {
+                    if (mTab == 0) {
+                        mMyLikeAdapter.notifyDataSetChanged();
+                    } else {
+                        mRecommendAdapter.notifyDataSetChanged();
+                    }
+                } else {
+                    mSelectedAdapter.notifyDataSetChanged();
+                }
+            }
+        };
+        mLikeAnimation = AnimationUtils.loadAnimation(mThis, R.anim.commend);
+        mLikeAnimation.setAnimationListener(likeAnimationListener);
+        
+        mCategoryAdapter = new CategoryListAdapter(mThis, CategoryListAdapter.RESOURCE_ID, mCategoryList);
+        mCategoryLsv.setAdapter(mCategoryAdapter);
         
         mSelectedAdapter = new DishAdapter(mThis, DishAdapter.TextView_Resource_ID, mSelectedList);
         mAllLsv.setAdapter(mSelectedAdapter);
         
-        mMyLikeAdapter = new DishAdapter(mThis, DishAdapter.TextView_Resource_ID, mMyLikeList);
-        mMyLikeAdapter.myLike = true;
-        mMyLikeLsv.setAdapter(mMyLikeAdapter);
+        mMyLikeAdapter = new DishAdapter(mThis, DishAdapter.Recommend_TextView_Resource_ID, mMyLikeList);
+        mMyLikeGdv.setAdapter(mMyLikeAdapter);
 
         mRecommendAdapter = new DishAdapter(mThis, DishAdapter.Recommend_TextView_Resource_ID, mRecommedList);
         mRecommendGdv.setAdapter(mRecommendAdapter);
@@ -221,24 +274,38 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
         mRecommendBtn = (Button) findViewById(R.id.recommend_btn);
         
         mSelectedView = findViewById(R.id.selected_view);
-        mCategoryElv = (ExpandableListView)findViewById(R.id.category_elv);
+        mCategoryParentView = (LinearLayout) findViewById(R.id.category_view);
+        mCategoryLsv = (ListView)findViewById(R.id.category_lsv);
         mAllLsv = (ListView)findViewById(R.id.all_lsv);
+        mAllLsv.setSelector(R.color.transparent);
         
         mRecommendVpg = (ViewPager)findViewById(R.id.view_pager);
         
+        int padding = Utility.dip2px(mThis, 8);
+        int spacing = Utility.dip2px(mThis, 8);
+        
         mRecommendGdv = new GridView(mThis);
         mRecommendGdv.setNumColumns(GridView.AUTO_FIT);
-        int spacing = Utility.dip2px(mThis, 8);
         mRecommendGdv.setHorizontalSpacing(spacing);
         mRecommendGdv.setVerticalSpacing(spacing);
-        mRecommendGdv.setColumnWidth(Utility.dip2px(mThis, 120));
+        mRecommendGdv.setColumnWidth(Utility.dip2px(mThis, COLUMN_WIDTH));
         mRecommendGdv.setStretchMode(GridView.STRETCH_COLUMN_WIDTH);
         mRecommendGdv.setGravity(Gravity.CENTER);
+        mRecommendGdv.setPadding(0, padding, 0, padding);
+        mRecommendGdv.setSelector(R.color.transparent);
         
-        mMyLikeLsv = Utility.makeListView(mThis);
+        mMyLikeGdv = new GridView(mThis);
+        mMyLikeGdv.setNumColumns(GridView.AUTO_FIT);
+        mMyLikeGdv.setHorizontalSpacing(spacing);
+        mMyLikeGdv.setVerticalSpacing(spacing);
+        mMyLikeGdv.setColumnWidth(Utility.dip2px(mThis, COLUMN_WIDTH));
+        mMyLikeGdv.setStretchMode(GridView.STRETCH_COLUMN_WIDTH);
+        mMyLikeGdv.setGravity(Gravity.CENTER);
+        mMyLikeGdv.setPadding(0, padding, 0, padding);
+        mMyLikeGdv.setSelector(R.color.transparent);
         
         List<View> viewList = new ArrayList<View>();
-        viewList.add(mMyLikeLsv);
+        viewList.add(mMyLikeGdv);
         viewList.add(mRecommendGdv);
         mRecommendVpg.setOnPageChangeListener(new MyPageChangeListener());
         mRecommendVpg.setAdapter(new MyAdapter(viewList));
@@ -258,54 +325,18 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
         mRecommendBtn.setOnClickListener(this);
         mRetryView.setCallBack(this, mActionTag);
         
-        mCategoryElv.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
-            
+        mCategoryLsv.setOnItemClickListener(new OnItemClickListener() {
+
             @Override
-            public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
-                if (mGroupPosition == groupPosition) {
-                    return true;
-                }
-                mGroupPosition = groupPosition;
-                return false;
-            }
-        });
-        mCategoryElv.setOnGroupExpandListener(new OnGroupExpandListener() {
-            
-            @Override
-            public void onGroupExpand(int groupPosition) {
-                mFirstVisibleItem = 0;
-                List<Category> categories = mCategoryList.get(groupPosition).getChildList();
-                mCurrentCategoryItem = categories.get(0);
-                List<Long> idList = new ArrayList<Long>();
-                for(int i = 0, size = categories.size(); i < size; i++) {
-                    Category category = categories.get(i);
-                    List<Long> ides = category.getDishList();
-                    if (ides != null) {
-                        idList.addAll(ides);
+            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+                List<Long> idList = mCategoryList.get(arg2).getDishList();
+                for(int i = 0, size = mSelectedList.size(); i < size; i++) {
+                    if (idList.contains(mSelectedList.get(i).getDishId())) {
+                        mAllLsv.setSelectionFromTop(i, 0);
+                        break;
                     }
                 }
-                refresSelectedList(idList);
-                for(int i = 0, count = mCategoryAdapter.getGroupCount(); i < count; i++) {
-                    if (i != groupPosition) {
-                        mCategoryElv.collapseGroup(i);
-                    }
-                }
-                
-                animationSelectView(0);
-            }
-        });
-        
-        mCategoryElv.setOnChildClickListener(new OnChildClickListener() {
-            
-            @Override
-            public boolean onChildClick(ExpandableListView arg0, View arg1, int groupPosition, int childPosition, long arg4) {
-                Category category = mCategoryList.get(groupPosition).getChildList().get(childPosition);
-                List<Long> idList = category.getDishList();
-                refresSelectedList(idList);
-                
-                animationSelectView(childPosition);
-                
-                return false;
+                animationSelectView(arg2);
             }
         });
         
@@ -320,20 +351,19 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount,
                     int totalItemCount) {
-                if (mFirstVisibleItem != firstVisibleItem) {
-                    mFirstVisibleItem = firstVisibleItem;
-                    Dish dish = mSelectedList.get(mFirstVisibleItem);
+                if (mFirstDishVisibleItem != firstVisibleItem) {
+                    mFirstDishVisibleItem = firstVisibleItem;
+                    Dish dish = mSelectedList.get(mFirstDishVisibleItem);
                     long dishId = dish.getDishId();
-                    if (mCurrentCategoryItem != null && !mCurrentCategoryItem.getDishList().contains(dishId)) {
-                        List<Category> categoryList = mCategoryList.get(mGroupPosition).getChildList();
-                        int i = 0;
-                        for(int size = categoryList.size(); i < size; i++) {
-                            if (categoryList.get(i).getDishList().contains(dishId)) {
-                                mCurrentCategoryItem = categoryList.get(i);
+                    if (mCurrentCategoryItem == null || !mCurrentCategoryItem.getDishList().contains(dishId)) {
+                        for(int i = 0, size = mCategoryList.size(); i < size; i++) {
+                            Category category = mCategoryList.get(i);
+                            if (category.getDishList().contains(dishId)) {
+                                mCurrentCategoryItem = category;
+                                animationSelectView(i);
                                 break;
                             }
                         }
-                        animationSelectView(i);
                     }
                 }
             }
@@ -341,26 +371,45 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
     }
     
     void animationSelectView(int childPosition) {
-        int toYDelta = (mGroupPosition+1)*mCategoryAdapter.groupHeight+childPosition*mCategoryAdapter.childHeight;
+        if (childPosition == mChildPosition) {
+            return;
+        }
         
-        Animation anim = new TranslateAnimation(0, 0, mFromYDelta, toYDelta);
+        mChildPosition = childPosition;
+
+        int firstVisiblePosition = mCategoryLsv.getFirstVisiblePosition();
+        if (childPosition <= firstVisiblePosition) {
+            mSelectedView.setBackgroundDrawable(null);
+            mCategoryAdapter.notifyDataSetChanged();
+            mFirstCategoryVisibleItem = childPosition;
+            mCategoryLsv.setSelectionFromTop(mFirstCategoryVisibleItem, 0);
+            return;
+        } else if (childPosition >= firstVisiblePosition+mTotalCateoryItem-1) {
+            mSelectedView.setBackgroundDrawable(null);
+            mCategoryAdapter.notifyDataSetChanged();
+            mFirstCategoryVisibleItem = childPosition-mTotalCateoryItem+1;
+            mCategoryLsv.setSelectionFromTop(mFirstCategoryVisibleItem, 0);
+            return;
+        } else {
+            mFirstCategoryVisibleItem = firstVisiblePosition;
+        }
+        
+        int toYDelta = (mGroupPosition+1)*mCategoryAdapter.groupHeight+childPosition*mCategoryAdapter.childHeight-(mFirstCategoryVisibleItem*mCategoryAdapter.childHeight);
+        
+        mSelectedView.setBackgroundResource(R.drawable.bg_timelist_selected);
+        mCategoryAdapter.notifyDataSetChanged();
+        
+        Animation anim = mSelectedView.getAnimation();
+        if (anim != null) {
+            anim.reset();
+        }
+        mSelectedView.setAnimation(null);
+        anim = new TranslateAnimation(0, 0, mFromYDelta, toYDelta);
         anim.setDuration(300);
         anim.setFillAfter(true);
+        anim.setAnimationListener(mSelectedAnimationListener);
         mSelectedView.startAnimation(anim);
         mFromYDelta = toYDelta;
-    }
-    
-    void refresSelectedList(List<Long> idList) {
-        mSelectedList.clear();
-        if (idList != null) {
-            for(int i = 0, size = mAllList.size(); i < size; i++) {
-                Dish dish = mAllList.get(i);
-                if (idList.contains(dish.getDishId())) {
-                    mSelectedList.add(dish);
-                }
-            }
-        }
-        mSelectedAdapter.notifyDataSetChanged();
     }
     
     protected void onResume() {
@@ -370,27 +419,11 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
         }
     }
     
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (REQUEST_CODE_COMMENT == requestCode) {
-            if (RESULT_OK == resultCode) {
-                setResult(RESULT_OK, data);
-                finish();
-            }
-        } else {
-            // 在提示用户在登录超时对话框后，点击重新登录返回时
-            if (isReLogin()) {
-                return;
-            }
-        }
-    }
-    
     private class DishAdapter extends ArrayAdapter<Dish> {
         static final int TextView_Resource_ID = R.layout.poi_dish_list_item;
         
         static final int Recommend_TextView_Resource_ID = R.layout.poi_dish_recommend_list_item;
         
-        boolean myLike = false;
         int textViewResourceId;
 
         public DishAdapter(Context context, int textViewResourceId, List<Dish> dishList) {
@@ -421,6 +454,7 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
             commendView.setTag(R.id.commend_txv, commendTxv);
             commendView.setTag(R.id.index, position);
             commendView.setOnClickListener(DishActivity.this);
+            commendImv.setAnimation(null);
             pictureImv.setTag(R.id.picture_imv, data);
             pictureImv.setOnClickListener(DishActivity.this);
             
@@ -445,46 +479,33 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
             }
             
             if (tkDrawable == null) {
-                Drawable drawable = getResources().getDrawable(R.drawable.icon);
+                Drawable drawable = getResources().getDrawable(R.drawable.btn_add_picture);
                 pictureImv.setBackgroundDrawable(drawable);
             }
             
             long likes = data.getHitCount();
-            String likesStr;
+            String likesStr = String.valueOf(likes);
             if (data.isLike()) {
                 commendTxv.setTextColor(TKConfig.COLOR_ORANGE);
-                commendImv.setImageResource(R.drawable.ic_commend_enabled);
-                if (myLike) {
-                    likesStr = getString(R.string.cancel_like);
-                } else {
-                    likesStr = String.valueOf(likes);
-                }
+                commendImv.setImageResource(R.drawable.btn_like_cancel);
             } else {
                 commendTxv.setTextColor(TKConfig.COLOR_BLACK_LIGHT);
-                commendImv.setImageResource(R.drawable.ic_commend_disabled);
-                likesStr = String.valueOf(likes);
-                commendImv.setVisibility(View.VISIBLE);
+                commendImv.setImageResource(R.drawable.btn_like);
             }
             commendTxv.setText(likesStr);
 
-            if (myLike) {
-                commendImv.setVisibility(View.GONE);
-                int margin = Utility.dip2px(mThis, 10);
-                ((LinearLayout.LayoutParams) commendTxv.getLayoutParams()).leftMargin = margin;
-            } else {
-                commendImv.setVisibility(View.VISIBLE);
-                int margin = Utility.dip2px(mThis, 32);
-                ((LinearLayout.LayoutParams) commendTxv.getLayoutParams()).leftMargin = margin;
-                float right = likesStr.length()*Globals.g_metrics.density*4 + Globals.g_metrics.density*12;
-                ((RelativeLayout.LayoutParams) commendImv.getLayoutParams()).rightMargin = (int)right;
-            }
+            int margin = Utility.dip2px(mThis, 24);
+            ((LinearLayout.LayoutParams) commendTxv.getLayoutParams()).leftMargin = margin;
+            float right = likesStr.length()*Globals.g_metrics.density*4 + Globals.g_metrics.density*12;
+            ((RelativeLayout.LayoutParams) commendImv.getLayoutParams()).rightMargin = (int)right;
             
-            pictureCountTxv.setText(getString(R.string.pictures, data.getPictureCount()));
+            pictureCountTxv.setVisibility(View.INVISIBLE);
+//            pictureCountTxv.setText(getString(R.string.pictures, data.getPictureCount()));
             nameTxv.setText(data.getName());
             priceTxv.setText(data.getPrice());
             
             if (Recommend_TextView_Resource_ID == textViewResourceId) {
-                int newWidth = (int) (Globals.g_metrics.density*120);
+                int newWidth = (int) (Globals.g_metrics.density*COLUMN_WIDTH);
                 ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
                 layoutParams.width = newWidth;
             }
@@ -520,20 +541,70 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
         } else if (BaseActivity.checkResponseCode(dataQuery, mThis, null, false, mThis, false)) {
             
             if (mode == mMode && tab == mTab) {
+                mEmptyView.setVisibility(View.GONE);
                 mRetryView.setVisibility(View.VISIBLE);
             }
-        } else {
-            if (mode == 0) {
-                if (tab == 0) {
-                    mAllDataQuery = dataQuery;
-                } else {
-                    mRecommendDataQuery = dataQuery;
-                }
-            } else {
-                mAllDataQuery = dataQuery;
-            }
+        } else {      
+            setDataQuery(dataQuery, mode, tab);
             
-            setData(mode, tab);
+            refreshData(mode, tab, false);
+        }
+    }
+    
+    void setDataQuery(DataQuery dataQuery, int mode, int tab) {
+        
+        DishResponse dishResponse = (DishResponse) dataQuery.getResponse();
+        DishList dishList = dishResponse.getList();
+        if (dishList != null) {
+            List<Dish> dishes = dishList.getDishList();
+            if (dishes != null && dishes.size() > 0) {
+                if (mode == 0 && tab == 1) {
+                    LogWrapper.d(TAG, "recommend.size()"+dishes.size());
+                    mRecommendDataQuery = dataQuery;
+                    mPOI.setRecommendDishQuery(dataQuery);
+                    
+                    mRecommedList.clear();
+                    mRecommedList.addAll(dishes);
+                    mRecommendAdapter.notifyDataSetChanged();
+                    return;
+                }
+
+                LogWrapper.d(TAG, "alldish.size()"+dishes.size());
+                mAllDataQuery = dataQuery;
+                mPOI.setDishQuery(dataQuery);
+                
+                mMyLikeList.clear();
+                for(int i = 0, size = dishes.size(); i < size; i++) {
+                    Dish dish = dishes.get(i);
+                    if (dish.isLike()) {
+                        mMyLikeList.add(dish);
+                    }
+                }
+                mMyLikeAdapter.notifyDataSetChanged();
+                
+                mAllList.clear();
+                mAllList.addAll(dishes);
+                
+                List<Category> categories = dishList.getCategoryList();
+                if (categories != null) {
+                    mCategoryGroupList.addAll(categories);
+                    mCategoryAdapter.measure();
+                    for(int i = 0, size = categories.size(); i < size; i++) {
+                        View view = getLayoutInflater().inflate(CategoryListAdapter.RESOURCE_ID, mCategoryParentView, false);
+                        view.setBackgroundResource(R.drawable.list_selector_background_focus);
+                        view.setTag(i);
+                        view.setOnClickListener(this);
+                        Category data = (Category) categories.get(i);
+                        TextView textView = (TextView) view.findViewById(R.id.text_txv);
+                        textView.setText(data.getName());
+                        mCategoryParentView.addView(view);
+                        view.getLayoutParams().width = Utility.dip2px(mThis, CATEGORY_WIDTH);
+                    }
+                    mGroupPosition = -1;
+                    mChildPosition = -1;
+                    refreshCategory(0);
+                }
+            }
         }
     }
 
@@ -569,47 +640,6 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
                 
                 @Override
                 public void run() {
-                    for(int i = mAllList.size()-1; i >= 0; i--) {
-                        Dish c = mAllList.get(i);
-                        if (dishId == c.getDishId()) {
-                            if (isLike) {
-                                c.addLike();
-                                if (mMyLikeList.contains(c)) {
-                                    mMyLikeList.add(c);
-                                }
-                            } else {
-                                c.deleteLike();
-                            }
-                            break;
-                        }
-                    }
-                    for(int i = mRecommedList.size()-1; i >= 0; i--) {
-                        Dish c = mRecommedList.get(i);
-                        if (dishId == c.getDishId()) {
-                            if (isLike) {
-                                c.addLike();
-                                if (mMyLikeList.contains(c)) {
-                                    mMyLikeList.add(c);
-                                }
-                            } else {
-                                c.deleteLike();
-                            }
-                            break;
-                        }
-                    }
-                    for(int i = mMyLikeList.size()-1; i >= 0; i--) {
-                        Dish c = mMyLikeList.get(i);
-                        if (dishId == c.getDishId()) {
-                            if (isLike) {
-                                
-                            } else {
-                                c.deleteLike();
-                                mMyLikeList.remove(i);
-                            }
-                            break;
-                        }
-                    }
-                    
                     String uuid = String.valueOf(dishId);
                     if (isLike) {
                         Dish.getLocalMark().addCommend(mThis, uuid, false);
@@ -626,15 +656,57 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
                     }
                 }
             }).start();
+
+            for(int i = mAllList.size()-1; i >= 0; i--) {
+                Dish c = mAllList.get(i);
+                if (dishId == c.getDishId()) {
+                    if (isLike) {
+                        c.addLike();
+                        if (mMyLikeList.contains(c) == false) {
+                            mMyLikeList.add(c);
+                        }
+                    } else {
+                        c.deleteLike();
+                    }
+                    break;
+                }
+            }
+            for(int i = mRecommedList.size()-1; i >= 0; i--) {
+                Dish c = mRecommedList.get(i);
+                if (dishId == c.getDishId()) {
+                    if (isLike) {
+                        c.addLike();
+                        if (mMyLikeList.contains(c) == false) {
+                            mMyLikeList.add(c);
+                        }
+                    } else {
+                        c.deleteLike();
+                    }
+                    break;
+                }
+            }
+            if (isLike == false) {
+                for(int i = mMyLikeList.size()-1; i >= 0; i--) {
+                    Dish c = mMyLikeList.get(i);
+                    if (dishId == c.getDishId()) {
+                        c.deleteLike();
+                        mMyLikeList.remove(i);
+                        break;
+                    }
+                }
+            }
             
             v.setBackgroundResource(R.drawable.btn_subway_busstop_normal);
             commendTxv.setTextColor(TKConfig.COLOR_ORANGE);
             commendTxv.setText(String.valueOf(data.getHitCount()));
             if (isLike) {
-                commendImv.setImageResource(R.drawable.ic_commend_enabled);
-                Animation animation = AnimationUtils.loadAnimation(mThis, R.anim.commend);
-                commendImv.startAnimation(animation);
+                commendImv.setImageResource(R.drawable.btn_like);
+            } else {
+                commendImv.setImageResource(R.drawable.btn_like_cancel);
             }
+            mLikeAnimation.reset();
+            commendImv.startAnimation(mLikeAnimation);
+            
         } else if (id == R.id.picture_imv) {
             Dish data = (Dish) v.getTag(R.id.picture_imv);
             if (data.getPicture() == null) {
@@ -645,6 +717,9 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
                 return;
             }
             viewImage(data);
+        } else {
+            int groupPosition = (Integer) v.getTag();
+            refreshCategory(groupPosition);
         }
     }
     
@@ -654,33 +729,41 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
         if (mMode == 0) {
             this.mRecommedView.setVisibility(View.VISIBLE);
             this.mAllView.setVisibility(View.GONE);
-            mSelectedView.setVisibility(View.INVISIBLE);
             mTitleBtn.setBackgroundResource(R.drawable.btn_all_comment_focused);
             mAllBtn.setBackgroundResource(R.drawable.btn_hot_comment);
+            
+            if (tab == 0) {
+                mMyLikeAdapter.notifyDataSetChanged();
+            } else {
+                mRecommendAdapter.notifyDataSetChanged();
+            }
         } else {
             this.mRecommedView.setVisibility(View.GONE);
             this.mAllView.setVisibility(View.VISIBLE);
             mTitleBtn.setBackgroundResource(R.drawable.btn_all_comment);
             mAllBtn.setBackgroundResource(R.drawable.btn_hot_comment_focused);
-            if (mSelectedList.size() > 0) {
-                mSelectedView.setVisibility(View.VISIBLE);
-            }
+            
+            mSelectedAdapter.notifyDataSetChanged();
         }
         mRetryView.setVisibility(View.GONE);
         mEmptyView.setVisibility(View.GONE);
         mQueryingView.setVisibility(View.GONE);
 
-        setData(mode, tab);
+        refreshData(mode, tab);
+    }
+
+    void refreshData(int mode, int tab) {
+        refreshData(mode, tab, true);
     }
     
-    void setData(int mode, int tab) {
+    void refreshData(int mode, int tab, boolean setDataQuery) {
 
         List<Dish> dataList;
         DataQuery dataQuery;
         if (mode == 0) {
             if (tab == 0) {
                 dataQuery = mAllDataQuery;
-                dataList = mAllList;
+                dataList = mMyLikeList;
             } else {
                 dataQuery = mRecommendDataQuery;
                 dataList = mRecommedList;
@@ -695,68 +778,67 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
             return;
         }
         
-        if (dataList.size() > 0) {
-            if (mode == mMode && tab == mTab) {
-                if (mode == 0 && tab == 0) {
-                    if (mMyLikeList.size() <= 0) {
-                        mEmptyView.setVisibility(View.VISIBLE);
-                    }
-                    return;
-                }
-            }
-            return;
+        if (dataList.size() <= 0 && setDataQuery) {
+            setDataQuery(dataQuery, mode, tab);
         }
         
-        DishResponse dishResponse = (DishResponse) dataQuery.getResponse();
-        DishList dishList = dishResponse.getList();
-        if (dishList != null) {
-            List<Dish> dishes = dishList.getDishList();
-            if (dishes != null && dishes.size() > 0) {
-                if (mode == 0 && tab == 1) {
-                    mPOI.setRecommendDishQuery(dataQuery);
-                    
-                    mRecommedList.addAll(dishes);
-                    mRecommendAdapter.notifyDataSetChanged();
-                    return;
+        if (dataList.size() <= 0 && mode == mMode && tab == mTab) {
+            if (mode == 0 && tab == 0) {
+                mEmptyTxv.setText(R.string.like_empty_tip);
+            } else {
+                mEmptyTxv.setText(R.string.no_result);
+            }
+            mEmptyView.setVisibility(View.VISIBLE);
+        }
+    }
+    
+    void refreshCategory(int groupPosition) {
+        if (mGroupPosition != groupPosition) {
+            mGroupPosition = groupPosition;
+            
+            int size = mCategoryGroupList.size();
+            for(int i = 0; i < size; i++) {
+                if (i <= mGroupPosition) {
+                    ((LinearLayout.LayoutParams) mCategoryParentView.getChildAt(i).getLayoutParams()).topMargin = 0;
+                } else if (i == mGroupPosition+1) {
+                    int childTotalHeiht = Globals.g_metrics.heightPixels-mCategoryAdapter.titleHeight;
+                    childTotalHeiht -= (mCategoryGroupList.size()*mCategoryAdapter.childHeight);
+                    ((LinearLayout.LayoutParams) mCategoryParentView.getChildAt(i).getLayoutParams()).topMargin = childTotalHeiht;
+                } else {
+                    ((LinearLayout.LayoutParams) mCategoryParentView.getChildAt(i).getLayoutParams()).topMargin = 0;
                 }
-
-                mPOI.setDishQuery(dataQuery);
-                
-                for(int i = 0, size = dishes.size(); i < size; i++) {
-                    Dish dish = dishes.get(i);
-                    if (dish.isLike()) {
-                        mMyLikeList.add(dish);
-                    }
-                }
-                mMyLikeAdapter.notifyDataSetChanged();
-                
-                mAllList.addAll(dishes);
-                mSelectedList.addAll(dishes);
-                mSelectedAdapter.notifyDataSetChanged();
-                List<Category> categories = dishList.getCategoryList();
-                if (categories != null) {
-                    mCategoryList.addAll(categories);
-                    mCategoryAdapter.measure();
-                    mCategoryAdapter.notifyDataSetChanged();
-                    mGroupPosition = 0;
-                    mCategoryElv.expandGroup(0);
-                }
-
-                if (mode == mMode && tab == mTab) {
-                    if (mode == 0 && tab == 0) {
-                        if (mMyLikeList.size() <= 0) {
-                            mEmptyTxv.setText(R.string.like_empty_tip);
-                            mEmptyView.setVisibility(View.VISIBLE);
+            }
+            
+            int top = (mGroupPosition+1)*mCategoryAdapter.groupHeight;
+            int bottom = (size-mGroupPosition-1)*mCategoryAdapter.groupHeight;
+            mCategoryLsv.setPadding(0, top, 0, bottom);
+            mCategoryList.clear();
+            mCategoryList.addAll(mCategoryGroupList.get(mGroupPosition).getChildList());
+            mCategoryAdapter.notifyDataSetChanged();
+            
+            mSelectedList.clear();
+            size = mCategoryList.size();
+            for(int i = 0; i < size; i++) {
+                List<Long> idList = mCategoryList.get(i).getDishList();
+                for (int n = 0, total = idList.size(); n < total; n++) {
+                    long id = idList.get(n);
+                    for(int j = 0, count = mAllList.size(); j < count; j++) {
+                        Dish dish = mAllList.get(j);
+                        if (dish.getDishId() == id) {
+                            mSelectedList.add(dish);
+                            break;
                         }
                     }
                 }
-                return;
             }
+            
+            mSelectedAdapter.notifyDataSetChanged();
+            
+            int h = Globals.g_metrics.heightPixels - mCategoryGroupList.size()*mCategoryAdapter.groupHeight - mCategoryAdapter.titleHeight;
+            mTotalCateoryItem = h/mCategoryAdapter.groupHeight;
         }
         
-        if (mode == mMode && tab == mTab) {
-            mEmptyView.setVisibility(View.VISIBLE);
-        }
+        animationSelectView(0);
     }
     
     void changeTab(int position) {
@@ -776,7 +858,7 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
         mRetryView.setVisibility(View.GONE);
         mEmptyView.setVisibility(View.GONE);
         mQueryingView.setVisibility(View.GONE);
-        setData(mMode, mTab);
+        refreshData(mMode, mTab);
     }
 
     @Override
@@ -879,8 +961,12 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
 
     }
     
-    public class CategoryListAdapter extends BaseExpandableListAdapter {
+    public class CategoryListAdapter extends ArrayAdapter<Category> {
         
+        public CategoryListAdapter(Context context, int textViewResourceId, List<Category> objects) {
+            super(context, textViewResourceId, objects);
+        }
+
         static final int RESOURCE_ID = R.layout.string_list_item;
 
         int titleHeight = 0;
@@ -891,85 +977,35 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
             if (titleHeight == 0) {
                 mLeftBtn.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
                 titleHeight = mLeftBtn.getMeasuredHeight();
-                View view = getLayoutInflater().inflate(RESOURCE_ID, mCategoryElv, false);
+                View view = getLayoutInflater().inflate(RESOURCE_ID, mCategoryLsv, false);
                 view.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
                 childHeight = view.getMeasuredHeight();
                 groupHeight = childHeight;
             }
         }
 
-        public Object getChild(int groupPosition, int childPosition) {
-            return mCategoryList.get(groupPosition).getChildList().get(childPosition);
-        }
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
 
-        public long getChildId(int groupPosition, int childPosition) {
-            return mCategoryList.get(groupPosition).getChildList().get(childPosition).getId();
-        }
-
-        public int getChildrenCount(int groupPosition) {
-            return mCategoryList.get(groupPosition).getChildList().size();
-        }
-        
-        public View getChildView(int groupPosition, int childPosition, boolean isLastChild,
-                View convertView, ViewGroup parent) {
-            
             View view;
             if (convertView == null) {
                 view = getLayoutInflater().inflate(RESOURCE_ID, parent, false);
             } else {
                 view = convertView;
             }
-            view.setBackgroundResource(R.drawable.list_selector_background_focused);
-            Category data = (Category) getChild(groupPosition, childPosition);
-            TextView textView = (TextView) view.findViewById(R.id.text_txv);
-            textView.setText(data.getName());
-            int childrenCount = getChildrenCount(groupPosition);
-            if (childPosition == childrenCount-1) {
-                int bottom = Globals.g_metrics.heightPixels-titleHeight-getGroupCount()*groupHeight-childrenCount*childHeight;
-                textView.setPadding(0, 0, 0, bottom > 0 ? bottom : 0);
+            if (position == mChildPosition && mSelectedView.getBackground() == null) {
+                view.setBackgroundResource(R.drawable.list_selector_background_pressed);
             } else {
-                textView.setPadding(0, 0, 0, 0);
+                view.setBackgroundResource(R.drawable.list_selector_background_focused);
             }
-            
+            Category data = getItem(position);
+            TextView textView = (TextView) view.findViewById(R.id.text_txv);
+            textView.setSingleLine(true);
+            textView.setText(data.getName());
+
             return view;
         }
 
-        public Object getGroup(int groupPosition) {
-            return mCategoryList.get(groupPosition);
-        }
-
-        public int getGroupCount() {
-            return mCategoryList.size();
-        }
-
-        public long getGroupId(int groupPosition) {
-            return mCategoryList.get(groupPosition).getId();
-        }
-
-        public View getGroupView(int groupPosition, boolean isExpanded, View convertView,
-                ViewGroup parent) {
-            
-            View view;
-            if (convertView == null) {
-                view = getLayoutInflater().inflate(RESOURCE_ID, parent, false);
-            } else {
-                view = convertView;
-            }
-            view.setBackgroundResource(R.drawable.list_selector_background_focus);
-            Category data = (Category) getGroup(groupPosition);
-            TextView textView = (TextView) view.findViewById(R.id.text_txv);
-            textView.setText(data.getName());
-            
-            return view;
-        }
-
-        public boolean isChildSelectable(int groupPosition, int childPosition) {
-            return true;
-        }
-
-        public boolean hasStableIds() {
-            return true;
-        }
     }
     
     void viewImage(Dish dish) {
