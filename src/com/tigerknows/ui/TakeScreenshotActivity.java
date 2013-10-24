@@ -10,6 +10,7 @@ import com.tigerknows.TKConfig;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.util.Utility;
 
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -57,7 +58,8 @@ public class TakeScreenshotActivity extends BaseActivity implements View.OnClick
         mRightBtn.setOnClickListener(this);
         mRightBtn.setBackgroundResource(R.drawable.btn_title);
         
-        mImageImv.setImageURI(mUri);
+        Bitmap bm = Utility.imageUri2Bitmap(mThis, mUri);
+        mImageImv.setImageBitmap(bm);
     }
     
     protected void findViews() {
