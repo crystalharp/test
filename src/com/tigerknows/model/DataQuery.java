@@ -1888,6 +1888,7 @@ public final class DataQuery extends BaseQuery {
             private String name;
             private List<Long> dishList;
             private List<Category> childList;
+            public int firstDishIndex = 0;
             
             public int getId() {
                 return id;

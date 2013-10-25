@@ -61,6 +61,7 @@ public class Dish extends XMapData {
     
     private List<HotelTKDrawable> pictureList;
     private List<HotelTKDrawable> originalPictureList;
+    public int categoryIndex = 0;
     
     public static LocalMark getLocalMark() {
         if (sLocalMark == null) {

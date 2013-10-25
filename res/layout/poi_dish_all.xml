@@ -1,52 +1,70 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:gravity="left|top"
+    android:orientation="horizontal"
     android:background="@color/gray_light" >
-	<LinearLayout
-	    android:layout_width="fill_parent"
-	    android:layout_height="fill_parent"
-	    android:gravity="left|top"
-	    android:orientation="horizontal" >
-		    
-	    <ListView android:id="@+id/category_lsv"
-	        android:layout_width="120dp" 
-	        android:layout_height="fill_parent"
-	        android:padding="0dp"
-	        android:focusable="true"
-	        android:scrollingCache="false"
-	        android:drawSelectorOnTop="false"
-	        android:dividerHeight="0dp"
-	        android:divider="@color/transparent"
-	        android:listSelector="@color/transparent"
-	        android:fadingEdge="none"
-	        android:scrollbars="none" />
-	            
-	    <ListView android:id="@+id/all_lsv"
-	        android:layout_width="fill_parent" 
-	        android:layout_height="fill_parent"
-	        android:padding="4dp"
-	        android:scrollingCache="false"
-	        android:drawSelectorOnTop="false"
-	        android:fadingEdge="none"
-	        android:dividerHeight="4dp"
-	        android:divider="@color/transparent"
-	        android:listSelector="@color/transparent"
-	         />
-	
-	</LinearLayout>
-	<LinearLayout
+    <RelativeLayout
         android:id="@+id/category_view"
-	    android:layout_width="fill_parent"
-	    android:layout_height="fill_parent"
-	    android:gravity="left|top"
-	    android:orientation="vertical" >
-    </LinearLayout>
-    <ImageView 
-	    android:id="@+id/selected_view"
         android:layout_width="120dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:background="@drawable/bg_timelist_selected"/>
-</RelativeLayout>
+        android:layout_height="fill_parent"
+        android:gravity="left|top"
+        android:orientation="vertical" >
+        <TextView 
+            android:id="@+id/padding_top_view"
+            android:layout_width="fill_parent" 
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            />
+        <TextView 
+            android:id="@+id/padding_bottom_view"
+            android:layout_width="fill_parent" 
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            />
+        <ListView android:id="@+id/category_lsv"
+            android:layout_width="fill_parent" 
+            android:layout_height="fill_parent"
+            android:layout_below="@id/padding_top_view"
+            android:layout_above="@id/padding_bottom_view"
+            android:padding="0dp"
+            android:focusable="true"
+            android:scrollingCache="false"
+            android:drawSelectorOnTop="false"
+            android:dividerHeight="0dp"
+            android:divider="@color/transparent"
+            android:listSelector="@color/transparent"
+            android:fadingEdge="none"
+            android:scrollbars="none" />
+        <LinearLayout
+            android:id="@+id/category_group_view"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:gravity="left|top"
+            android:orientation="vertical" >
+        </LinearLayout>
+        <ImageView 
+            android:id="@+id/selected_view"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:background="@drawable/bg_timelist_selected"/>
+    </RelativeLayout>
+    <ListView android:id="@+id/all_lsv"
+        android:layout_width="fill_parent" 
+        android:layout_height="fill_parent"
+        android:padding="4dp"
+        android:scrollingCache="false"
+        android:drawSelectorOnTop="false"
+        android:fadingEdge="none"
+        android:dividerHeight="4dp"
+        android:divider="@color/transparent"
+        android:listSelector="@color/transparent"
+         />
+    
+</LinearLayout>
