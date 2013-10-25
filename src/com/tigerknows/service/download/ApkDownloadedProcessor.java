@@ -56,7 +56,6 @@ public class ApkDownloadedProcessor implements DownloadedProcessor {
             remoteViews.setTextViewText(R.id.control_btn, context.getString(R.string.install));
         }
         int id = tickerText.hashCode();
-        remoteViews.setImageViewResource(R.id.icon_imv, R.drawable.ic_notification_complete);
         remoteViews.setTextViewText(R.id.name_txv, tickerText);
         remoteViews.setTextViewText(R.id.process_txv, context.getString(R.string.download_complete_and_install));
         remoteViews.setProgressBar(R.id.progress_prb, 100, 100, false);

@@ -259,7 +259,6 @@ public class DownloadService extends IntentService {
             remoteViews.setOnClickPendingIntent(R.id.control_btn, pendingIntent);
             remoteViews.setTextViewText(R.id.control_btn, context.getString(R.string.pause));
         }
-        remoteViews.setImageViewResource(R.id.icon_imv, R.drawable.ic_notification_downloading);
         remoteViews.setTextViewText(R.id.name_txv, tickerText);
         remoteViews.setTextViewText(R.id.process_txv, getString(R.string.downloaded_percent, percent));
         remoteViews.setProgressBar(R.id.progress_prb, 100, percent, false);
@@ -393,7 +392,6 @@ public class DownloadService extends IntentService {
             remoteViews.setTextViewText(R.id.control_btn, context.getString(R.string.go_on));
         }
     
-        remoteViews.setImageViewResource(R.id.icon_imv, R.drawable.ic_notification_pause);
         remoteViews.setTextViewText(R.id.name_txv, downloadItem.tickerText);
         remoteViews.setTextViewText(R.id.process_txv, getString(R.string.paused));
         remoteViews.setProgressBar(R.id.progress_prb, 100, downloadItem.percent, false);
