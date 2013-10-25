@@ -12,23 +12,21 @@ import android.widget.TextView;
 import com.tigerknows.R;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
-import com.tigerknows.model.POI;
+import com.tigerknows.map.MapEngine;
 import com.tigerknows.model.POI.Description;
 import com.tigerknows.model.POI.PresetTime;
 import com.tigerknows.model.POI.Busstop;
 import com.tigerknows.model.POI.SubwayExit;
 import com.tigerknows.model.POI.SubwayPresetTime;
-import com.tigerknows.ui.poi.POIDetailFragment.BlockRefresher;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIView;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIViewBlock;
 import com.tigerknows.ui.traffic.TrafficQueryFragment;
-import com.tigerknows.widget.LinearListView;
-import com.tigerknows.widget.LinearListView.ItemInitializer;
+import com.tigerknows.widget.LinearListAdapter;
 
 public class ExtraSubwayPOI extends DynamicPOIView {
 
     List<DynamicPOIViewBlock> blockList = new ArrayList<DynamicPOIViewBlock>();
-    LinearListView lsv;
+    LinearListAdapter lsv;
     DynamicPOIViewBlock mViewBlock;
     List<SubwayPresetTime> mPresetTimeList = new ArrayList<SubwayPresetTime>();
     List<SubwayExit> mExitList = new ArrayList<SubwayExit>();
@@ -41,103 +39,9 @@ public class ExtraSubwayPOI extends DynamicPOIView {
     View mSubwayExitView;
     View mSubwayPresetTimeView;
     
-    LinearListView mSubwayTimeLsv;
-    LinearListView mSubwayExitLsv;
-    
-    BlockRefresher mSubwayRefresher = new BlockRefresher() {
-
-        @Override
-        public void refresh() {
-            if (mExitList == null || mExitList.size() == 0) {
-                mSubwayExitView.setVisibility(View.GONE);
-            } else {
-                mSubwayExitView.setVisibility(View.VISIBLE);
-                mSubwayExitLsv.refreshList(mExitList);
-            }
-            if (mPresetTimeList == null || mPresetTimeList.size() == 0) {
-                mSubwayPresetTimeView.setVisibility(View.GONE);
-            } else {
-                mSubwayPresetTimeView.setVisibility(View.VISIBLE);
-                mSubwayTimeLsv.refreshList(mPresetTimeList);
-            }
-        }
-        
-    };
-    
-    ItemInitializer timeInit = new ItemInitializer() {
-
-        @Override
-        public void initItem(Object data, View v) {
+    LinearListAdapter mSubwayTimeLsv;
+    LinearListAdapter mSubwayExitLsv;
             
-            SubwayPresetTime time = (SubwayPresetTime)data;
-            TextView linenameTxv = (TextView) v.findViewById(R.id.line_name_txv);
-            TextView timeDetailTxv = (TextView) v.findViewById(R.id.time_detail_txv);
-            
-            String timeDetail = "";
-            for (PresetTime ptime : time.getPresetTimes()) {
-                if (!TextUtils.isEmpty(ptime.getDirection())) {
-                    timeDetail += ptime.getDirection();
-                    timeDetail += "  ";
-                }
-                if (!TextUtils.isEmpty(ptime.getStartTime()) && !TextUtils.isEmpty(ptime.getEndTime())) {
-                    timeDetail += ptime.getStartTime();
-                    timeDetail += "-";
-                    timeDetail += ptime.getEndTime();
-                } else {
-                    timeDetail += mSphinx.getString(R.string.subway_no_time_info);
-                }
-                timeDetail += "\n";
-            }
-            timeDetail = timeDetail.substring(0, timeDetail.length() - 1);
-            
-            timeDetailTxv.setText(timeDetail);
-            linenameTxv.setText(time.getName());
-        }
-        
-    };
-    
-    ItemInitializer exitInit = new ItemInitializer() {
-
-        @Override
-        public void initItem(Object data, View v) {
-            
-            SubwayExit exit = (SubwayExit) data;
-            
-            TextView exitTxv = (TextView) v.findViewById(R.id.exit_name_txv);
-            TextView landmarkTxv = (TextView) v.findViewById(R.id.landmark_txv);
-            final TextView busstopTxv = (TextView) v.findViewById(R.id.busstop_txv);
-            
-            exitTxv.setText(exit.getExit());
-            String landmark = exit.getLandmark();
-            if (TextUtils.isEmpty(landmark)) {
-                landmarkTxv.setVisibility(View.GONE);
-            } else {
-                landmarkTxv.setText(exit.getLandmark());
-            }
-            
-            View busstopView = v.findViewById(R.id.busstop_view);
-            List<Busstop> s = exit.getBusstops();
-            if (s != null && s.size() > 0 && !TextUtils.isEmpty(s.get(0).getBusstop())) {
-                busstopView.setVisibility(View.VISIBLE);
-                busstopTxv.setText(s.get(0).getBusstop());
-                busstopTxv.setOnClickListener(new View.OnClickListener() {
-
-                    @Override
-                    public void onClick(View v) {
-                        mPOIDetailFragment.mActionLog.addAction(mPOIDetailFragment.mActionTag+ActionLog.POIDetailBusstop, busstopTxv.getText().toString());
-                        int cityId = mSphinx.getMapEngine().getCityId(mPOI.getPosition());
-                        TrafficQueryFragment.submitBuslineQuery(mSphinx, busstopTxv.getText().toString(), cityId);
-
-                    }
-                });
-            } else {
-                busstopView.setVisibility(View.GONE);
-            }
-            
-        }
-        
-    };
-    
     public ExtraSubwayPOI(POIDetailFragment poiFragment, LayoutInflater inflater) {
         mPOIDetailFragment = poiFragment;
         mSphinx = poiFragment.mSphinx;
@@ -147,10 +51,93 @@ public class ExtraSubwayPOI extends DynamicPOIView {
         mSubwayExitInfoView = (LinearLayout) mSubwayView.findViewById(R.id.subway_exit_lst);
         mSubwayExitView = mSubwayView.findViewById(R.id.subway_exit);
         mSubwayPresetTimeView = mSubwayView.findViewById(R.id.subway_preset_time);
-        mSubwayBlock = new DynamicPOIViewBlock(poiFragment.mBelowAddressLayout, mSubwayView, mSubwayRefresher);
+        mSubwayBlock = new DynamicPOIViewBlock(poiFragment.mBelowAddressLayout, mSubwayView) {
+
+            @Override
+            public void refresh() {
+                if (mExitList == null || mExitList.size() == 0) {
+                    mSubwayExitView.setVisibility(View.GONE);
+                } else {
+                    mSubwayExitView.setVisibility(View.VISIBLE);
+                    mSubwayExitLsv.refreshList(mExitList);
+                }
+                if (mPresetTimeList == null || mPresetTimeList.size() == 0) {
+                    mSubwayPresetTimeView.setVisibility(View.GONE);
+                } else {
+                    mSubwayPresetTimeView.setVisibility(View.VISIBLE);
+                    mSubwayTimeLsv.refreshList(mPresetTimeList);
+                }
+                show();
+            }
+        };
         
-        mSubwayTimeLsv = new LinearListView(mSphinx, mSubwayTimeInfoView, timeInit, R.layout.poi_dynamic_subway_time_item);
-        mSubwayExitLsv = new LinearListView(mSphinx, mSubwayExitInfoView, exitInit, R.layout.poi_dynamic_subway_exit_item);
+        mSubwayTimeLsv = new LinearListAdapter(mSphinx, mSubwayTimeInfoView, R.layout.poi_dynamic_subway_time_item) {
+
+            @Override
+            public View getView(Object data, View child, int pos) {
+                SubwayPresetTime time = (SubwayPresetTime)data;
+                TextView linenameTxv = (TextView) child.findViewById(R.id.line_name_txv);
+                TextView timeDetailTxv = (TextView) child.findViewById(R.id.time_detail_txv);
+                
+                String timeDetail = "";
+                for (PresetTime ptime : time.getPresetTimes()) {
+                    if (!TextUtils.isEmpty(ptime.getDirection())) {
+                        timeDetail += ptime.getDirection();
+                        timeDetail += "  ";
+                    }
+                    if (!TextUtils.isEmpty(ptime.getStartTime()) && !TextUtils.isEmpty(ptime.getEndTime())) {
+                        timeDetail += ptime.getStartTime();
+                        timeDetail += "-";
+                        timeDetail += ptime.getEndTime();
+                    } else {
+                        timeDetail += mSphinx.getString(R.string.subway_no_time_info);
+                    }
+                    timeDetail += "\n";
+                }
+                timeDetail = timeDetail.substring(0, timeDetail.length() - 1);
+                
+                timeDetailTxv.setText(timeDetail);
+                linenameTxv.setText(time.getName());
+                return null;
+            }};
+        mSubwayExitLsv = new LinearListAdapter(mSphinx, mSubwayExitInfoView, R.layout.poi_dynamic_subway_exit_item){
+
+            @Override
+            public View getView(Object data, View child, int pos) {
+                SubwayExit exit = (SubwayExit) data;
+                
+                TextView exitTxv = (TextView) child.findViewById(R.id.exit_name_txv);
+                TextView landmarkTxv = (TextView) child.findViewById(R.id.landmark_txv);
+                final TextView busstopTxv = (TextView) child.findViewById(R.id.busstop_txv);
+                
+                exitTxv.setText(exit.getExit());
+                String landmark = exit.getLandmark();
+                if (TextUtils.isEmpty(landmark)) {
+                    landmarkTxv.setVisibility(View.GONE);
+                } else {
+                    landmarkTxv.setText(exit.getLandmark());
+                }
+                
+                View busstopView = child.findViewById(R.id.busstop_view);
+                List<Busstop> s = exit.getBusstops();
+                if (s != null && s.size() > 0 && !TextUtils.isEmpty(s.get(0).getBusstop())) {
+                    busstopView.setVisibility(View.VISIBLE);
+                    busstopTxv.setText(s.get(0).getBusstop());
+                    busstopTxv.setOnClickListener(new View.OnClickListener() {
+
+                        @Override
+                        public void onClick(View v) {
+                            mPOIDetailFragment.mActionLog.addAction(mPOIDetailFragment.mActionTag+ActionLog.POIDetailBusstop, busstopTxv.getText().toString());
+                            int cityId = MapEngine.getCityId(mPOI.getPosition());
+                            TrafficQueryFragment.submitBuslineQuery(mSphinx, busstopTxv.getText().toString(), cityId);
+
+                        }
+                    });
+                } else {
+                    busstopView.setVisibility(View.GONE);
+                }
+                return null;
+            }};
         
     }
     
