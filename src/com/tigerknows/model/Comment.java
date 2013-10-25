@@ -131,7 +131,7 @@ public class Comment extends BaseData {
     
     public static LocalMark getLocalMark() {
         if (sLocalMark == null) {
-            sLocalMark = new LocalMark("commend");
+            sLocalMark = new LocalMark("commend", BaseQuery.DATA_TYPE_DIANPING);
         }
         return sLocalMark;
     }
@@ -610,9 +610,11 @@ public class Comment extends BaseData {
         private Object writeLock = new Object();
         private File sDraftFile = null;
         private File sCommendFile = null;
+        private String dataType;
         
-        public LocalMark(String fileName) {
+        public LocalMark(String fileName, String dataType) {
             this.fileName = fileName;
+            this.dataType = dataType;
             
             initCommendList(TKApplication.getInstance());
         }
@@ -769,19 +771,19 @@ public class Comment extends BaseData {
         
         public DataOperation makeCommendDataOperationByUUID(Context context, String uuid) {
             String json = uuid2Json(context, uuid);
-            return makeCommendDataOperation(context, json);
+            return makeCommendDataOperation(context, dataType, json);
         }
         
         public DataOperation makeCommendDataOperationByDraft(Context context) {
             String json = draft2Json(context);
-            return makeCommendDataOperation(context, json);
+            return makeCommendDataOperation(context, dataType, json);
         }
         
-        static DataOperation makeCommendDataOperation(Context context, String json) {
+        static DataOperation makeCommendDataOperation(Context context, String dataType, String json) {
             DataOperation dataOperation = null;
             if (TextUtils.isEmpty(json) == false) {
                 dataOperation = new DataOperation(context);
-                dataOperation.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_DISH);
+                dataOperation.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, dataType);
                 dataOperation.addParameter(DataOperation.SERVER_PARAMETER_OPERATION_CODE, URLEncoder.encode(json));
             }
             return dataOperation;

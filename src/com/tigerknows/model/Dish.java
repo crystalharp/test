@@ -65,7 +65,7 @@ public class Dish extends XMapData {
     
     public static LocalMark getLocalMark() {
         if (sLocalMark == null) {
-            sLocalMark = new LocalMark("dish");
+            sLocalMark = new LocalMark("dish", BaseQuery.DATA_TYPE_DISH);
         }
         return sLocalMark;
     }

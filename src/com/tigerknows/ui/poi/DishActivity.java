@@ -18,6 +18,7 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -216,15 +217,7 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
             @Override
             public void onAnimationEnd(Animation animation) {
                 LogWrapper.d(TAG, "onAnimationEnd");
-                if (mMode == 0) {
-                    if (mTab == 0) {
-                        mMyLikeAdapter.notifyDataSetChanged();
-                    } else {
-                        mRecommendAdapter.notifyDataSetChanged();
-                    }
-                } else {
-                    mSelectedAdapter.notifyDataSetChanged();
-                }
+                mHandler.post(mLoadedDrawableRun);
             }
         };
         mLikeAnimation = AnimationUtils.loadAnimation(mThis, R.anim.commend);
@@ -692,11 +685,12 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
             commendTxv.setText(String.valueOf(data.getHitCount()));
             if (isLike) {
                 commendImv.setImageResource(R.drawable.btn_like);
+                mLikeAnimation.reset();
+                commendImv.startAnimation(mLikeAnimation);
             } else {
                 commendImv.setImageResource(R.drawable.btn_like_cancel);
+                mHandler.post(mLoadedDrawableRun);
             }
-            mLikeAnimation.reset();
-            commendImv.startAnimation(mLikeAnimation);
             
         } else if (id == R.id.picture_imv) {
             Dish data = (Dish) v.getTag(R.id.picture_imv);
@@ -805,7 +799,6 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
             mPaddingBottomView.getLayoutParams().height = bottom;
             mCategoryList.clear();
             mCategoryList.addAll(mCategoryGroupList.get(mGroupPosition).getChildList());
-            mCategoryAdapter.notifyDataSetChanged();
             
             mSelectedList.clear();
             size = mCategoryList.size();
@@ -828,8 +821,22 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
                     }
                 }
             }
+//            for(int i = size - 1; i >= 0 ; i--) {
+//                Category category = mCategoryList.get(i);
+//                if (category.firstDishIndex == -1) {
+//                    mCategoryList.remove(i);
+//                }
+//            }
             
+            mCategoryAdapter.notifyDataSetChanged();
+            mCategoryLsv.setSelectionFromTop(0, 0);
+            
+            MotionEvent me = MotionEvent.obtain(0, 0, MotionEvent.ACTION_DOWN, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+            mAllLsv.onTouchEvent(me);
+            me = MotionEvent.obtain(0, 0, MotionEvent.ACTION_UP, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+            mAllLsv.onTouchEvent(me);
             mSelectedAdapter.notifyDataSetChanged();
+            mAllLsv.setSelectionFromTop(0, 0);
             
             int h = mCategoryAdapter.totalHeight - mCategoryGroupList.size()*mCategoryAdapter.groupHeight;
             mTotalCateoryItem = h/mCategoryAdapter.childHeight;
