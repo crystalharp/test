@@ -115,7 +115,7 @@ public class AddPictureActivity extends BaseActivity implements View.OnClickList
         switch(v.getId()){                
             case R.id.cancel_btn:
                 mActionLog.addAction(mActionTag +  ActionLog.AddPictureCancel);
-                showTakePhotoDialog();
+                finish();
                 break;
                 
             case R.id.confirm_btn:

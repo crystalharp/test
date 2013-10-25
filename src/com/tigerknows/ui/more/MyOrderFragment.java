@@ -126,11 +126,9 @@ public class MyOrderFragment extends BaseFragment{
 					public void run() {
 						synchronized (Shangjia.getShangjiaList()) {
 							List<Shangjia> newList = Shangjia.getShangjiaList();
-							if (newList.size() != mResultList.size()) {
-								mResultList.clear();
-								mResultList.addAll(newList);
-								createShangjiaListView();
-							}
+							mResultList.clear();
+							mResultList.addAll(newList);
+							createShangjiaListView();
 						}
 					}
 				});

@@ -21,7 +21,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"  
-                android:text="我喜欢"
+                android:text="@string/i_like"
                 android:textSize="16sp"
                 android:background="@drawable/btn_tab_selected" />
             <ImageView 
@@ -33,7 +33,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"  
-                android:text="小虎推荐"
+                android:text="@string/tiger_recommend"
                 android:textSize="16sp"
                 android:background="@drawable/btn_tab"  />
         </LinearLayout>

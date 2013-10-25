@@ -7,7 +7,7 @@
     android:paddingTop="10dp"
     android:paddingRight="8dp"
     android:paddingBottom="10dp"
-    android:background="@drawable/list_selector_background_gray_light"
+    android:background="@drawable/list_single_normal"
     >
 
     <RelativeLayout
@@ -51,18 +51,6 @@
         android:includeFontPadding="false"
         android:focusable="false"
         />
-
-    <TextView
-        android:id="@+id/price_txv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/picture_view"
-        android:layout_alignBottom="@id/picture_view"
-        android:text="@string/app_name"
-        android:singleLine="true"
-        android:includeFontPadding="false"
-        android:focusable="false"
-        />
     
     <LinearLayout
         android:id="@+id/commend_view" 
@@ -88,13 +76,28 @@
 	        android:singleLine="true"
 	        android:ellipsize="end"/>
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/price_txv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/picture_view"
+        android:layout_alignTop="@id/commend_view"
+        android:text="@string/app_name"
+        android:singleLine="true"
+        android:includeFontPadding="false"
+        android:focusable="false"
+        android:paddingTop="6dp"
+        />
+    
     <ImageView
         android:id="@+id/commend_imv" 
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" 
-        android:layout_alignBottom="@id/picture_view"
-        android:src="@drawable/ic_commend_disabled"
+        android:layout_alignTop="@id/commend_view"
+        android:src="@drawable/btn_like"
         android:background="@color/transparent"
+        android:layout_marginTop="4dp"
         android:layout_marginBottom="4dp"
         android:layout_alignParentRight="true" />
 </RelativeLayout>

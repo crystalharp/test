@@ -71,8 +71,8 @@ public class LinearListView {
     
 	public void refreshList(List list, int columnNum) {
         int dataSize = (list != null ? list.size() : 0);
-        boolean twoColumn = (columnNum == 2);
-        if (twoColumn) {
+        boolean multiserial = (columnNum > 1);
+        if (multiserial) {
             for(int i = 0, count = parentLayout.getChildCount(); i < count; i++) {
                 ((LinearLayout) parentLayout.getChildAt(i)).removeAllViews();
             }
@@ -92,17 +92,17 @@ public class LinearListView {
                 child = getInstance();
 //                tmp.add(child);
                 initer.initItem(data, child);
-                if (twoColumn) {
-                    if (i % 2 == 0) {
+                if (multiserial) {
+                    if (i % columnNum == 0) {
                         LinearLayout linearLayout = new LinearLayout(mSphinx);
                         linearLayout.setOrientation(LinearLayout.HORIZONTAL);
-                        linearLayout.setWeightSum(2);
+                        linearLayout.setWeightSum(columnNum);
                         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
                         params.weight = 1;
                         linearLayout.addView(child, params);
                         parentLayout.addView(linearLayout, new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
                     } else {
-                        LinearLayout linearLayout = (LinearLayout) parentLayout.getChildAt(i == 0 ? 0 : (i-1)/2);
+                        LinearLayout linearLayout = (LinearLayout) parentLayout.getChildAt((int) Math.floor(i/columnNum));
                         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
                         params.weight = 1;
                         linearLayout.addView(child, params);

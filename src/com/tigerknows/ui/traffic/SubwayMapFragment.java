@@ -218,7 +218,7 @@ public class SubwayMapFragment extends BaseFragment implements RetryView.CallBac
 
     }
     
-    class StationHandler {
+    public class StationHandler {
         public void show(final String poiid) {
             mActionLog.addAction(mActionTag, ActionLog.TrafficSubwayMapClickPOI);
             Runnable run = new Runnable() {
