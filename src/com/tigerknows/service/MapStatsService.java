@@ -321,6 +321,7 @@ public class MapStatsService extends Service {
                  */
                 String[] downloadCitysStrArr = downloadCityStr.split(";");
                 
+                boolean hasDownloading = MapDownloadService.CityInfoList.size() > 0;
                 for (int i = downloadCitysStrArr.length-1; i >= 0; i--) {
                     String str = downloadCitysStrArr[i];
                     String[] downloadCityStrArr = str.split(",");
@@ -350,9 +351,11 @@ public class MapStatsService extends Service {
                             // 在用户退出下载地图界面再进入时
                             // v4.20要求之前正在下载和等待的状态保持不变
                             // v4.30要求之前正在下载和等待的状态全部设置为暂停状态
-                            if (downloadCity.state == DownloadCity.STATE_WAITING
-                                    || downloadCity.state == DownloadCity.STATE_DOWNLOADING) {
-                                downloadCity.state = DownloadCity.STATE_STOPPED;
+                            if (hasDownloading == false) {
+                                if (downloadCity.state == DownloadCity.STATE_WAITING
+                                        || downloadCity.state == DownloadCity.STATE_DOWNLOADING) {
+                                    downloadCity.state = DownloadCity.STATE_STOPPED;
+                                }
                             }
                         }
                     }

@@ -10,6 +10,7 @@ import com.tigerknows.TKConfig;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.util.Utility;
 
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -57,7 +58,8 @@ public class TakeScreenshotActivity extends BaseActivity implements View.OnClick
         mRightBtn.setOnClickListener(this);
         mRightBtn.setBackgroundResource(R.drawable.btn_title);
         
-        mImageImv.setImageURI(mUri);
+        Bitmap bm = Utility.imageUri2Bitmap(mThis, mUri);
+        mImageImv.setImageBitmap(bm);
     }
     
     protected void findViews() {
@@ -87,7 +89,7 @@ public class TakeScreenshotActivity extends BaseActivity implements View.OnClick
                 if (path != null) {
                     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
                     String filePath = path+simpleDateFormat.format(Calendar.getInstance().getTime())+".png";
-                    Utility.copyFile(new File(TKConfig.getDataPath(true)+Utility.imageUri2FilePath(mThis, mUri)), new File(filePath), true);
+                    Utility.copyFile(new File(Utility.imageUri2FilePath(mThis, mUri)), new File(filePath), true);
                     Toast.makeText(mThis, getString(R.string.take_screenshot_save_to_, filePath), Toast.LENGTH_LONG).show();
                     return;
                 }

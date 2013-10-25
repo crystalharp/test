@@ -137,9 +137,10 @@ public class TrafficQueryEventHelper {
 	protected class StartEndEdtClickListener implements OnEditorActionListener {
 		
 		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-			if (actionId == EditorInfo.IME_ACTION_NEXT
+			if (event != null && event.getAction() == KeyEvent.ACTION_DOWN && 
+			        (actionId == EditorInfo.IME_ACTION_NEXT
                     || actionId == EditorInfo.IME_ACTION_SEARCH 
-			        || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
+			        || event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
 //				if (!mQueryFragment.mStart.isEmpty() && !mQueryFragment.mEnd.isEmpty()) {
 //					//都有内容，搜索
 //					mQueryFragment.query();
