@@ -246,17 +246,24 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
                 TextView roomTypeTxv = (TextView) child.findViewById(R.id.room_type_txv);
                 TextView roomDetailTxv = (TextView) child.findViewById(R.id.room_detail_txv);
                 TextView roomGuaranteeTxv = (TextView) child.findViewById(R.id.guarantee_txv);
-                TextView roomSubtitle = (TextView) child.findViewById(R.id.room_subtitle);
+                TextView roomSubtitleTxv = (TextView) child.findViewById(R.id.room_subtitle);
+                TextView roomSourceTxv = (TextView) child.findViewById(R.id.room_source_txv);
                 Button bookBtn = (Button) child.findViewById(R.id.book_btn);
                 priceTxv.setText(roomType.getPrice());
                 roomTypeTxv.setText(roomType.getRoomType());
                 roomDetailTxv.setText(roomType.generateDescription());
                 roomGuaranteeTxv.setVisibility(roomType.getNeedGuarantee() == 0 ? View.GONE : View.VISIBLE);
                 if (roomType.getSubtitle() != null) {
-                    roomSubtitle.setVisibility(View.VISIBLE);
-                    roomSubtitle.setText(roomType.getSubtitle());
+                    roomSubtitleTxv.setVisibility(View.VISIBLE);
+                    roomSubtitleTxv.setText(roomType.getSubtitle());
                 } else {
-                    roomSubtitle.setVisibility(View.GONE);
+                    roomSubtitleTxv.setVisibility(View.GONE);
+                }
+                if (!TextUtils.isEmpty(roomType.getVendorName())) {
+                    roomSourceTxv.setVisibility(View.VISIBLE);
+                    roomSourceTxv.setText(roomType.getVendorName());
+                } else {
+                    roomSourceTxv.setVisibility(View.GONE);
                 }
                 if (roomType.getCanReserve() == 0) {
                     refreshBookBtn(bookBtn, roomType.getCanReserve());
