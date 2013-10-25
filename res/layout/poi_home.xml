@@ -110,7 +110,8 @@
                 android:layout_toRightOf="@id/trans_padding"
                 android:background="@color/gray_light"
                 android:gravity="center"
-                android:paddingTop="8dp"
+                android:paddingTop="12dp"
+                android:paddingBottom="4dp"
                 >
                 <Button 
                     android:id="@+id/subway_map_btn"
@@ -130,6 +131,7 @@
                     android:id="@+id/subway_map_imv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
                     android:layout_gravity="top"
                     android:background="@drawable/ic_satisfy_new"
                     android:clickable="false"/>
@@ -144,6 +146,7 @@
                 android:layout_alignParentRight="true"
                 android:numColumns="2"
                 android:paddingBottom="24dp"
+                android:paddingLeft="8dp"
                 android:listSelector="@color/transparent"
                 android:background="@color/gray_light"/>
             
