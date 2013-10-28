@@ -202,8 +202,8 @@
     <string name="share_to_friend">发送给好友</string>
     
     <string name="compass">指南针</string>
-    <string name="compass_gps_open">GPS已开启</string>
-    <string name="compass_gps_close">GPS未开启</string>
+    <string name="compass_gps_open">\u2002GPS已开启</string>
+    <string name="compass_gps_close">\u2002GPS未开启</string>
     <string name="compass_longitude">经度：%1$s</string>
     <string name="compass_latitude">纬度：%1$s</string>
     <string name="compass_altitude">海拔：%1$s</string>
