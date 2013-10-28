@@ -17,6 +17,7 @@ import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -285,7 +286,7 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
         mRecommendGdv.setColumnWidth(Utility.dip2px(mThis, COLUMN_WIDTH));
         mRecommendGdv.setStretchMode(GridView.STRETCH_COLUMN_WIDTH);
         mRecommendGdv.setGravity(Gravity.CENTER);
-        mRecommendGdv.setPadding(0, padding, 0, padding);
+        mRecommendGdv.setPadding(padding, padding, padding, padding);
         mRecommendGdv.setSelector(R.color.transparent);
         
         mMyLikeGdv = new GridView(mThis);
@@ -295,7 +296,7 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
         mMyLikeGdv.setColumnWidth(Utility.dip2px(mThis, COLUMN_WIDTH));
         mMyLikeGdv.setStretchMode(GridView.STRETCH_COLUMN_WIDTH);
         mMyLikeGdv.setGravity(Gravity.CENTER);
-        mMyLikeGdv.setPadding(0, padding, 0, padding);
+        mMyLikeGdv.setPadding(padding, padding, padding, padding);
         mMyLikeGdv.setSelector(R.color.transparent);
         
         List<View> viewList = new ArrayList<View>();
@@ -470,11 +471,11 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
             long likes = data.getHitCount();
             String likesStr = String.valueOf(likes);
             if (data.isLike()) {
-                commendTxv.setTextColor(TKConfig.COLOR_ORANGE);
-                commendImv.setImageResource(R.drawable.btn_like_cancel);
+//                commendTxv.setTextColor(TKConfig.COLOR_ORANGE);
+                commendImv.setImageResource(R.drawable.ic_like);
             } else {
-                commendTxv.setTextColor(TKConfig.COLOR_BLACK_LIGHT);
-                commendImv.setImageResource(R.drawable.btn_like);
+//                commendTxv.setTextColor(TKConfig.COLOR_BLACK_LIGHT);
+                commendImv.setImageResource(R.drawable.ic_like_cancel);
             }
             commendTxv.setText(likesStr);
 
@@ -542,52 +543,61 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
         if (dishList != null) {
             List<Dish> dishes = dishList.getDishList();
             if (dishes != null && dishes.size() > 0) {
-                if (mode == 0 && tab == 1) {
-                    LogWrapper.d(TAG, "recommend.size()"+dishes.size());
-                    mRecommendDataQuery = dataQuery;
-                    mPOI.setRecommendDishQuery(dataQuery);
+                if (mode == 0) {
+                    if (tab == 0) {
+                        mAllDataQuery = dataQuery;
+                        mPOI.setDishQuery(dataQuery);
+                        
+                        mMyLikeList.clear();
+                        for(int i = 0, size = dishes.size(); i < size; i++) {
+                            Dish dish = dishes.get(i);
+                            if (dish.isLike()) {
+                                mMyLikeList.add(dish);
+                            }
+                        }
+                        mMyLikeAdapter.notifyDataSetChanged();
+                        LogWrapper.d(TAG, "likedish.size()"+dishes.size());
+                        
+                    } else {
+                        LogWrapper.d(TAG, "recommenddish.size()"+dishes.size());
+                        mRecommendDataQuery = dataQuery;
+                        mPOI.setRecommendDishQuery(dataQuery);
+                        
+                        mRecommedList.clear();
+                        mRecommedList.addAll(dishes);
+                        mRecommendAdapter.notifyDataSetChanged();
+                    }
+                } else {
+                    LogWrapper.d(TAG, "alldish.size()"+dishes.size());
                     
-                    mRecommedList.clear();
-                    mRecommedList.addAll(dishes);
-                    mRecommendAdapter.notifyDataSetChanged();
-                    return;
+                    mAllDataQuery = dataQuery;
+                    mPOI.setDishQuery(dataQuery);
+                    
+                    mAllList.clear();
+                    mAllList.addAll(dishes);
+                    
+                    List<Category> categories = dishList.getCategoryList();
+                    if (categories != null) {
+                        mCategoryGroupList.clear();
+                        mCategoryGroupList.addAll(categories);
+                        mCategoryAdapter.measure();
+                        for(int i = 0, size = mCategoryGroupList.size(); i < size; i++) {
+                            View view = getLayoutInflater().inflate(CategoryListAdapter.RESOURCE_ID, mCategoryGroupView, false);
+                            view.setBackgroundColor(0xff00ff00);
+                            view.setTag(i);
+                            view.setOnClickListener(this);
+                            Category data = (Category) mCategoryGroupList.get(i);
+                            TextView textView = (TextView) view.findViewById(R.id.text_txv);
+                            textView.setText(data.getName());
+                            mCategoryGroupView.addView(view);
+                        }
+                        mGroupPosition = -1;
+                        mChildPosition = -1;
+                        refreshCategory(0);
+                    }
+                    
                 }
 
-                LogWrapper.d(TAG, "alldish.size()"+dishes.size());
-                mAllDataQuery = dataQuery;
-                mPOI.setDishQuery(dataQuery);
-                
-                mMyLikeList.clear();
-                for(int i = 0, size = dishes.size(); i < size; i++) {
-                    Dish dish = dishes.get(i);
-                    if (dish.isLike()) {
-                        mMyLikeList.add(dish);
-                    }
-                }
-                mMyLikeAdapter.notifyDataSetChanged();
-                
-                mAllList.clear();
-                mAllList.addAll(dishes);
-                
-                List<Category> categories = dishList.getCategoryList();
-                if (categories != null) {
-                    mCategoryGroupList.clear();
-                    mCategoryGroupList.addAll(categories);
-                    mCategoryAdapter.measure();
-                    for(int i = 0, size = categories.size(); i < size; i++) {
-                        View view = getLayoutInflater().inflate(CategoryListAdapter.RESOURCE_ID, mCategoryGroupView, false);
-                        view.setBackgroundColor(0xff00ff00);
-                        view.setTag(i);
-                        view.setOnClickListener(this);
-                        Category data = (Category) categories.get(i);
-                        TextView textView = (TextView) view.findViewById(R.id.text_txv);
-                        textView.setText(data.getName());
-                        mCategoryGroupView.addView(view);
-                    }
-                    mGroupPosition = -1;
-                    mChildPosition = -1;
-                    refreshCategory(0);
-                }
             }
         }
     }
@@ -681,17 +691,22 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
             }
             
             v.setBackgroundResource(R.drawable.btn_subway_busstop_normal);
-            commendTxv.setTextColor(TKConfig.COLOR_ORANGE);
+//            commendTxv.setTextColor(TKConfig.COLOR_ORANGE);
             commendTxv.setText(String.valueOf(data.getHitCount()));
             if (isLike) {
-                commendImv.setImageResource(R.drawable.btn_like);
+                commendImv.setImageResource(R.drawable.ic_like_cancel);
                 mLikeAnimation.reset();
-                commendImv.startAnimation(mLikeAnimation);
+//                commendImv.startAnimation(mLikeAnimation);
+                mHandler.post(mLoadedDrawableRun);
             } else {
-                commendImv.setImageResource(R.drawable.btn_like_cancel);
+                commendImv.setImageResource(R.drawable.ic_like);
                 mHandler.post(mLoadedDrawableRun);
             }
             
+            if (mMyLikeList.size() == 0) {
+                mEmptyTxv.setText(R.string.like_empty_tip);
+                mEmptyView.setVisibility(View.VISIBLE);
+            }
         } else if (id == R.id.picture_imv) {
             Dish data = (Dish) v.getTag(R.id.picture_imv);
             if (data.getPicture() == null) {
@@ -999,6 +1014,7 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
             
             Category data = getItem(position);
             TextView textView = (TextView) view.findViewById(R.id.text_txv);
+            textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
             textView.setSingleLine(true);
             textView.setText(data.getName());
             if (position == mChildPosition && mSelectedView.getBackground() == null) {

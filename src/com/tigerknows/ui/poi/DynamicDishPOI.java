@@ -120,18 +120,21 @@ public class DynamicDishPOI extends POIDetailFragment.DynamicPOIView implements 
                 return;
             }
             
-            DataQuery dataQuery = (DataQuery) baseQuery;
-            DishResponse dishResponse = (DishResponse) dataQuery.getResponse();
-            DishList dishList = dishResponse.getList();
-            if (dishList != null) {
-                List<Dish> dishes = dishList.getDishList();
-                if (dishes != null && dishes.size() > 0) {
-                    mPOI.setDynamicDishList(dishes);
-                    mPOI.setRecommendDishQuery(dataQuery);
-                    refresh();
-                    mPOIDetailFragment.mDishBtn.setVisibility(View.VISIBLE);
-                    mPOIDetailFragment.mDishBtn.startAnimation(mAnimation);
-                }
+            setDataQuery((DataQuery) baseQuery);
+        }
+	}
+	
+	void setDataQuery(DataQuery dataQuery) {
+        DishResponse dishResponse = (DishResponse) dataQuery.getResponse();
+        DishList dishList = dishResponse.getList();
+        if (dishList != null) {
+            List<Dish> dishes = dishList.getDishList();
+            if (dishes != null && dishes.size() > 0) {
+                mPOI.setDynamicDishList(dishes);
+                mPOI.setRecommendDishQuery(dataQuery);
+                refresh();
+                mPOIDetailFragment.mDishBtn.setVisibility(View.VISIBLE);
+                mPOIDetailFragment.mDishBtn.startAnimation(mAnimation);
             }
         }
 	}
@@ -147,7 +150,12 @@ public class DynamicDishPOI extends POIDetailFragment.DynamicPOIView implements 
         if (mBaseQuery != null) {
             mBaseQuery.stop();
         }
-        DataQuery dataQuery = new DataQuery(mSphinx);
+        DataQuery dataQuery = mPOI.getDishQuery();
+        if (dataQuery != null) {
+            setDataQuery(dataQuery);
+            return;
+        }
+        dataQuery = new DataQuery(mSphinx);
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_DISH);
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_POI_ID, mPOI.getUUID());
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_BIAS, DataQuery.BIAS_RECOMMEND_DISH);

@@ -11,6 +11,8 @@
         android:textSize="16sp"
         android:focusable="false"
         android:focusableInTouchMode="false"
+        android:singleLine="true"
+        android:ellipsize="end"
         android:gravity="left|center_vertical"
         android:lineSpacingExtra="0dp"
         android:includeFontPadding="false"
