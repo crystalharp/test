@@ -10,6 +10,12 @@
         android:layout_height="fill_parent"
         android:gravity="left|top"
         android:orientation="vertical" >
+        <ImageView 
+            android:id="@+id/selected_view"
+            android:layout_width="fill_parent"
+            android:layout_height="48dp"
+            android:layout_alignParentLeft="true"
+            android:background="@drawable/bg_dish_category_selected"/>
         <TextView 
             android:id="@+id/padding_top_view"
             android:layout_width="fill_parent" 
@@ -49,12 +55,6 @@
             android:gravity="left|top"
             android:orientation="vertical" >
         </LinearLayout>
-        <ImageView 
-            android:id="@+id/selected_view"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:background="@drawable/bg_timelist_selected"/>
     </RelativeLayout>
     <ListView android:id="@+id/all_lsv"
         android:layout_width="fill_parent" 
