@@ -168,6 +168,8 @@ public final class DataQuery extends BaseQuery {
     // bias string  false   是否对搜索结果有特殊要求，在“我要点评”请求中bias='1' 
     public static final String BIAS_MY_COMMENT = "1";
     
+    public static final String BIAS_DISH = "2";
+    
     // bias="hot"表示获取热门点评 
     public static final String BIAS_HOT = "hot";
     
@@ -553,6 +555,10 @@ public final class DataQuery extends BaseQuery {
                     if (!hasParameter(SERVER_PARAMETER_BIAS)) {
                         ekeys = Utility.mergeArray(ekeys, new String[]{SERVER_PARAMETER_KEYWORD});
                         okeys = Utility.mergeArray(okeys, new String[]{SERVER_PARAMETER_INFO});
+                    } else {
+                        if (BIAS_DISH.equals(getParameter(SERVER_PARAMETER_BIAS))) {
+                            ekeys = Utility.mergeArray(ekeys, new String[]{SERVER_PARAMETER_KEYWORD});
+                        }
                     }
                     okeys = Utility.mergeArray(okeys, new String[]{SERVER_PARAMETER_POI_ID});
                 } else {
