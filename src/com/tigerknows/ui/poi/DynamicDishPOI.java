@@ -13,7 +13,7 @@ import com.tigerknows.model.POI;
 import com.tigerknows.model.DataQuery.DishResponse;
 import com.tigerknows.model.DataQuery.DishResponse.DishList;
 import com.tigerknows.ui.BaseActivity;
-import com.tigerknows.ui.BrowserActivity;
+import com.tigerknows.ui.common.BrowserActivity;
 import com.tigerknows.ui.poi.POIDetailFragment.BlockRefresher;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIViewBlock;
 

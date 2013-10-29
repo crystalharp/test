@@ -2,7 +2,7 @@
  * Copyright (C) 2010 pengwenyue@tigerknows.com
  */
 
-package com.tigerknows.ui;
+package com.tigerknows.ui.common;
 
 import android.graphics.Bitmap;
 import android.net.http.SslError;
@@ -26,6 +26,7 @@ import com.tigerknows.Sphinx;
 import android.widget.Toast;
 
 import com.tigerknows.common.ActionLog;
+import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.util.Utility;
 
 /**

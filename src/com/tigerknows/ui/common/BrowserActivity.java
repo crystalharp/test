@@ -2,7 +2,7 @@
  * Copyright (C) 2010 pengwenyue@tigerknows.com
  */
 
-package com.tigerknows.ui;
+package com.tigerknows.ui.common;
 
 import java.net.URLDecoder;
 
@@ -39,6 +39,7 @@ import com.tigerknows.model.DataOperation;
 import com.tigerknows.model.DataOperation.DingdanCreateResponse;
 import com.tigerknows.model.Response;
 import com.tigerknows.model.Tuangou;
+import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.discover.TuangouDetailView;
 import com.tigerknows.ui.user.UserBaseActivity;
 import com.tigerknows.ui.user.UserLoginRegistActivity;

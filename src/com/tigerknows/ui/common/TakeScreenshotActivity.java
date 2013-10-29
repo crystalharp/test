@@ -2,12 +2,12 @@
  * Copyright (C) 2010 pengwenyue@tigerknows.com
  */
 
-package com.tigerknows.ui;
+package com.tigerknows.ui.common;
 
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
-import com.tigerknows.TKConfig;
 import com.tigerknows.common.ActionLog;
+import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.util.Utility;
 
 import android.graphics.Bitmap;
@@ -26,6 +26,8 @@ import java.util.Calendar;
  * @author Peng Wenyue
  */
 public class TakeScreenshotActivity extends BaseActivity implements View.OnClickListener {
+    
+    static final String TAG = "TakeScreenshotActivity";
     
     private ImageView mImageImv;
     private Uri mUri;

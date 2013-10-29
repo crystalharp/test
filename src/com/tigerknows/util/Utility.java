@@ -94,8 +94,8 @@ import com.tigerknows.map.MapEngine.CityInfo;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.TrafficQuery;
 import com.tigerknows.provider.HistoryWordTable;
-import com.tigerknows.ui.ErrorDialogActivity;
 import com.tigerknows.ui.common.AddPictureActivity;
+import com.tigerknows.ui.common.ExceptionDialogActivity;
 import com.tigerknows.ui.traffic.TrafficQueryFragment;
 import com.tigerknows.widget.SpringbackListView;
 import com.tigerknows.widget.StringArrayAdapter;
@@ -1316,8 +1316,9 @@ public class Utility {
             return;
         }
         Intent intent = new Intent();
-        intent.setClass(activity, ErrorDialogActivity.class);
-        intent.putExtra(ErrorDialogActivity.ERROR_MSG, msg);
+        intent.setClass(activity, ExceptionDialogActivity.class);
+        intent.putExtra(activity.getPackageName()+".level", activity.getString(R.string.prompt));
+        intent.putExtra(activity.getPackageName()+".errorMsg", msg);
         activity.startActivity(intent);
     }
     

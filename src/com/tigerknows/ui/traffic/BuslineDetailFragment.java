@@ -44,7 +44,7 @@ import com.tigerknows.model.POI;
 import com.tigerknows.provider.Tigerknows;
 import com.tigerknows.share.ShareAPI;
 import com.tigerknows.ui.BaseFragment;
-import com.tigerknows.ui.ResultMapFragment.TitlePopupArrayAdapter;
+import com.tigerknows.ui.common.ResultMapFragment.TitlePopupArrayAdapter;
 import com.tigerknows.util.Utility;
 
 public class BuslineDetailFragment extends BaseFragment implements View.OnClickListener {
