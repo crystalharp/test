@@ -371,7 +371,8 @@ public class ViewImageActivity extends BaseActivity implements RetryView.CallBac
                 layoutParams.height = (int) (scale*drawable.getIntrinsicHeight());
                 iconImv.setImageDrawable(null);
             }
-            textTxv.setText(hotelTKDrawable.getName()+" "+(position+1)+"/"+(getCount()));
+            String name = hotelTKDrawable.getName();
+            textTxv.setText((name != null ? name : "")+" "+(position+1)+"/"+(getCount()));
             return view;
         }
         
@@ -442,6 +443,7 @@ public class ViewImageActivity extends BaseActivity implements RetryView.CallBac
         Intent intent = new Intent(mThis, AddPictureActivity.class);
         intent.putExtra(FileUpload.SERVER_PARAMETER_REF_DATA_TYPE, mRefDty);
         intent.putExtra(FileUpload.SERVER_PARAMETER_REF_ID, mRefId);
+        intent.putExtra(AddPictureActivity.EXTRA_SUCCESS_TIP, getIntent().getStringExtra(AddPictureActivity.EXTRA_SUCCESS_TIP));
         startActivityForResult(intent, 0);
     }
 }

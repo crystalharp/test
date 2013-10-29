@@ -43,7 +43,6 @@ import android.widget.LinearLayout.LayoutParams;
 import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
-import com.tigerknows.TKConfig;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BaseQuery;
@@ -724,6 +723,7 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
                 Intent intent = new Intent(mThis, AddPictureActivity.class);
                 intent.putExtra(FileUpload.SERVER_PARAMETER_REF_DATA_TYPE, BaseQuery.DATA_TYPE_DISH);
                 intent.putExtra(FileUpload.SERVER_PARAMETER_REF_ID, String.valueOf(data.getDishId()));
+                intent.putExtra(AddPictureActivity.EXTRA_SUCCESS_TIP, getString(R.string.add_picture_success_for_dish));
                 startActivityForResult(intent, 0);
                 return;
             }
@@ -1057,6 +1057,7 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
         intent.putExtra(BaseQuery.SERVER_PARAMETER_REF_ID, String.valueOf(dish.getDishId()));
         intent.putExtra(ViewImageActivity.EXTRA_CAN_ADD, true);
         intent.putExtra(ViewImageActivity.EXTRA_IMAGE, dish.getPicture());
+        intent.putExtra(AddPictureActivity.EXTRA_SUCCESS_TIP, getString(R.string.add_picture_success_for_dish));
         startActivity(intent);
     }
 }
