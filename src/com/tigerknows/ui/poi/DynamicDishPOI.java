@@ -30,6 +30,7 @@ public class DynamicDishPOI extends POIDetailFragment.DynamicPOIView implements 
     List<DynamicPOIViewBlock> blockList = new ArrayList<DynamicPOIViewBlock>();
     DynamicPOIViewBlock mViewBlock;
     List<Dish> mAllList = new ArrayList<Dish>();
+    View mDishTitleView;
     TextView mContentTxv;
     View mShopkeeperView;
     Animation mAnimation;
@@ -72,6 +73,9 @@ public class DynamicDishPOI extends POIDetailFragment.DynamicPOIView implements 
 
         LinearLayout layout = (LinearLayout) mInflater.inflate(R.layout.poi_dynamic_dish, null);
         mViewBlock.mOwnLayout = layout;
+        
+        mDishTitleView = layout.findViewById(R.id.dish_title_view);
+        mDishTitleView.setOnClickListener(this);
         
         mContentTxv = (TextView) layout.findViewById(R.id.content_txv);
         mContentTxv.setOnClickListener(this);
@@ -163,7 +167,7 @@ public class DynamicDishPOI extends POIDetailFragment.DynamicPOIView implements 
     @Override
     public void onClick(View v) {
         int id = v.getId();
-        if (id == R.id.shopkeeper_txv) {
+        if (id == R.id.shopkeeper_txv || id == R.id.dish_title_view) {
             mPOIDetailFragment.mActionLog.addAction(mPOIDetailFragment.mActionTag+ActionLog.POIDetailShopkeeper);
             Intent intent = new Intent();
             intent.putExtra(BrowserActivity.TITLE, mSphinx.getString(R.string.add_dish));
