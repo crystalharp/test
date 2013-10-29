@@ -14,8 +14,7 @@
             android:id="@+id/dish_title_view" 
             android:layout_width="fill_parent" 
             android:layout_height="wrap_content"
-            android:background="@drawable/list_header_title"
-            android:clickable="true">
+            android:background="@drawable/list_header_title">
             <TextView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content" 
