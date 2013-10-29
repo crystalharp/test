@@ -17,6 +17,6 @@ do
         sed -i 's/meta-data android:name="TD_CHANNEL_ID" android:value=".*"/meta-data android:name="TD_CHANNEL_ID" android:value="'${spreader}'"/g' ${projectpath}/AndroidManifest.xml
         ant clean -f ${projectpath}/build.xml
         ant release -f ${projectpath}/build.xml
-        cp ${projectpath}/bin/Sphinx-release.apk  ${releasepath}/TigerKnows-${tkversion}-$spreader.apk
+        cp ${projectpath}/bin/Sphinx-release.apk  ${releasepath}/TigerMap-${tkversion}-$spreader.apk
 #    fi
 done
