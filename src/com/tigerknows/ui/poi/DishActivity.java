@@ -874,11 +874,13 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
             mMyLikeBtn.setTextColor(mColorSelect);
             mRecommendBtn.setBackgroundResource(R.drawable.btn_tab);
             mRecommendBtn.setTextColor(mColorNormal);
+            mMyLikeAdapter.notifyDataSetChanged();
         } else {
             mMyLikeBtn.setBackgroundResource(R.drawable.btn_tab);
             mMyLikeBtn.setTextColor(mColorNormal);
             mRecommendBtn.setBackgroundResource(R.drawable.btn_tab_selected);
             mRecommendBtn.setTextColor(mColorSelect);
+            mRecommendAdapter.notifyDataSetChanged();
         }
         mRetryView.setVisibility(View.GONE);
         mEmptyView.setVisibility(View.GONE);
