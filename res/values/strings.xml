@@ -12,6 +12,7 @@
     <string name="input_valid_tile_thread_count">Please input valid integer tile thread num</string>
 	
     <string name="all">全部</string>
+    <string name="old_app_name">老虎宝典</string>
     <string name="app_name">老虎地图</string>
     <string name="send_sms">发短信</string>
     <string name="send_mms">发彩信</string>
@@ -564,7 +565,7 @@
     <!-- POI Weibo Share Start -->
     
     <!-- Share Common Start -->
-    <string name="share_from_at_tigerknows">来自@老虎地图</string>
+    <string name="share_from_at_tigerknows">来自@老虎地图官方微博</string>
     <string name="share_from_tigerknows">来自老虎地图</string>
     <string name="share_tiger_official_website">http://www.tigerknows.com/</string>
     <string name="share_text_hint">你想说点什么?</string>
@@ -716,9 +717,8 @@
     <string name="password">密码</string>
     <string name="please_input_">请输入%1$s</string>
     <string name="authorize">授权</string>  
-    <string name="weibo_friendships">关注老虎地图官方新浪微博</string>    
     <string name="weibo_poi_text_type">【%1$s】</string>
-    <string name="weibo_text_tail">来自@老虎地图 http://www.tigerknows.com/</string>
+    <string name="weibo_text_tail">来自@老虎地图官方微博 http://www.tigerknows.com/</string>
     <string name="weibo_omission">...</string>
     <string name="weibo_no_repeat">不能发送重复的微博！</string>
     
@@ -783,7 +783,7 @@
     <string name="poi_comment_update_success">点评修改成功！</string>
     <!-- ：#老虎地图分享#我来过：XXXX（poi 名称）+空格+我觉得 XXX！（整体评价：太差啦！/不咋地！/一般般！/还不错！/太赞啦！）+XXXX（文字点评内容）+推荐菜：XXX，XXX（推荐菜）+来自@老虎地图+空格+www.tigerknows.com （“来自@老虎地图” 之前的内容如果超出 123 字，截断成 122 个字+“…”（半个省略号“……”））；图片为地图图片（同 poi 分享的图片一样） -->
     <string name="poi_comment_share_sina">#老虎地图分享#我来过：%1$s 我觉得%2$s%3$s%4$s</string>
-    <string name="poi_comment_share_sina_source">来自@老虎地图 http://www.tigerknows.com</string>
+    <string name="poi_comment_share_sina_source">来自@老虎地图官方微博http://www.tigerknows.com</string>
     <string name="poi_comment_intput_hit">请输入你的点评！（30字以上）</string>
     <string name="poi_comment_share_grade1">太差啦！</string>
     <string name="poi_comment_share_grade2">不咋地！</string>
