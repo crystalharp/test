@@ -750,6 +750,12 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
             
             if (mRecommendVpg.getCurrentItem() != tab) {
                 mRecommendVpg.setCurrentItem(tab);
+            } else {
+                if (tab == 0) {
+                    mMyLikeAdapter.notifyDataSetChanged();
+                } else {
+                    mRecommendAdapter.notifyDataSetChanged();
+                }
             }
         } else {
             this.mRecommedView.setVisibility(View.INVISIBLE);
