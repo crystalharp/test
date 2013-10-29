@@ -638,14 +638,15 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
         } else if (id == R.id.commend_view) {
             Dish data = (Dish) v.getTag(R.id.commend_view);
             int position = (Integer) v.getTag(R.id.index);
-            mActionLog.addAction(mActionTag+ActionLog.POICommentListCommend, position, data.getHitCount());
             ImageView commendImv = (ImageView) v.getTag(R.id.commend_imv);
             TextView commendTxv = (TextView) v.getTag(R.id.commend_txv);
             final boolean isLike = !data.isLike();
             if (isLike) {
                 data.addLike();
+                mActionLog.addAction(mActionTag + ActionLog.DishLike);
             } else {
                 data.deleteLike();
+                mActionLog.addAction(mActionTag + ActionLog.DishCancelLike);
             }
             final long dishId = data.getDishId();
             new Thread(new Runnable() {
