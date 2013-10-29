@@ -30,7 +30,6 @@ public class DynamicDishPOI extends POIDetailFragment.DynamicPOIView implements 
     List<DynamicPOIViewBlock> blockList = new ArrayList<DynamicPOIViewBlock>();
     DynamicPOIViewBlock mViewBlock;
     List<Dish> mAllList = new ArrayList<Dish>();
-    View mDishTitleView;
     TextView mContentTxv;
     View mShopkeeperView;
     Animation mAnimation;
@@ -73,9 +72,6 @@ public class DynamicDishPOI extends POIDetailFragment.DynamicPOIView implements 
 
         LinearLayout layout = (LinearLayout) mInflater.inflate(R.layout.poi_dynamic_dish, null);
         mViewBlock.mOwnLayout = layout;
-        
-        mDishTitleView = layout.findViewById(R.id.dish_title_view);
-        mDishTitleView.setOnClickListener(this);
         
         mContentTxv = (TextView) layout.findViewById(R.id.content_txv);
         mContentTxv.setOnClickListener(this);
@@ -173,10 +169,12 @@ public class DynamicDishPOI extends POIDetailFragment.DynamicPOIView implements 
             intent.putExtra(BrowserActivity.TITLE, mSphinx.getString(R.string.add_dish));
             intent.putExtra(BrowserActivity.URL, "http://www.tigerknows.com");
             mSphinx.showView(R.id.activity_browser, intent);
-        } else if (id == R.id.content_txv || id == R.id.dish_title_view) {
+        } else if (id == R.id.content_txv) {
             mPOIDetailFragment.mActionLog.addAction(mPOIDetailFragment.mActionTag + ActionLog.POIDetailDishList);
             DishActivity.setPOI(mPOI);
-            mSphinx.showView(R.id.activity_poi_dish);
+            Intent intent = new Intent();
+            intent.putExtra(DishActivity.EXTRA_TAB, 1);
+            mSphinx.showView(R.id.activity_poi_dish, intent);
         }
         
     }

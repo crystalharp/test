@@ -74,6 +74,8 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
     
     static final String LocalParameterTab = "LocalParameterTab";
     
+    public static final String EXTRA_TAB = "EXTRA_TAB";
+    
     static final int COLUMN_WIDTH = 148;
     
     private Runnable mLoadedDrawableRun = new Runnable() {
@@ -167,6 +169,8 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
     private View mPaddingBottomView;
     private View mCategoryView;
     
+    private boolean mManuallyChanged = false;
+    
     public static void setPOI(POI poi) {
         sPOI = poi;
     }
@@ -245,6 +249,9 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
         
         mPOI = sPOI;
         mFromYDelta = Utility.dip2px(mThis, 48);
+        
+        Intent intent = getIntent();
+        mTab = intent.getIntExtra(EXTRA_TAB, 0);
         
         if (mPOI != null) {
             mAllDataQuery = mPOI.getDishQuery();
@@ -616,9 +623,11 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
         int id = v.getId();
         if (id == R.id.title_btn) {
             mActionLog.addAction(mActionTag + ActionLog.DishRecomend);
+            mManuallyChanged = true;
             changeMode(0);
         } else if (id == R.id.all_btn) {
             mActionLog.addAction(mActionTag + ActionLog.DishAll);
+            mManuallyChanged = true;
             changeMode(1);
         } else if (id == R.id.my_like_btn) {
             mActionLog.addAction(mActionTag + ActionLog.DishMyLike);
@@ -743,10 +752,8 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
             mTitleBtn.setBackgroundResource(R.drawable.btn_all_comment_focused);
             mAllBtn.setBackgroundResource(R.drawable.btn_hot_comment);
             
-            if (tab == 0) {
-                mMyLikeAdapter.notifyDataSetChanged();
-            } else {
-                mRecommendAdapter.notifyDataSetChanged();
+            if (mRecommendVpg.getCurrentItem() != tab) {
+                mRecommendVpg.setCurrentItem(tab);
             }
         } else {
             this.mRecommedView.setVisibility(View.INVISIBLE);
@@ -795,6 +802,10 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
         
         if (dataList.size() <= 0 && mode == mMode && tab == mTab) {
             if (mode == 0 && tab == 0) {
+                if (mManuallyChanged == false) {
+                    mRecommendVpg.setCurrentItem(1);
+                    return;
+                }
                 mEmptyImv.setBackgroundResource(R.drawable.ic_like_empty);
                 mEmptyTxv.setText(R.string.like_empty_tip);
             } else {
@@ -933,6 +944,7 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
 
         @Override
         public void onPageSelected(int position) {
+            mManuallyChanged = true;
             changeTab(position);
         }
         
