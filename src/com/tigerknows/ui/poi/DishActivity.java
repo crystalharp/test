@@ -721,7 +721,7 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
                 mHandler.post(mLoadedDrawableRun);
             }
             
-            if (mMyLikeList.size() == 0) {
+            if (mMyLikeList.size() == 0 && mMode == 0 && mTab == 0) {
                 mEmptyTxv.setText(R.string.like_empty_tip);
                 mEmptyImv.setBackgroundResource(R.drawable.ic_like_empty);
                 mEmptyView.setVisibility(View.VISIBLE);
