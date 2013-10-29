@@ -508,7 +508,7 @@ public final class DataQuery extends BaseQuery {
 //                    requestParameters.add(SERVER_PARAMETER_LOCATION_LONGITUDE, criteria.get(SERVER_PARAMETER_LOCATION_LONGITUDE));
 //                    requestParameters.add(SERVER_PARAMETER_LOCATION_LATITUDE, criteria.get(SERVER_PARAMETER_LOCATION_LATITUDE));
 //                }
-            } else {
+            } else if (dataType.equals(DATA_TYPE_PULL_MESSAGE) == false){
                 delParameter(SERVER_PARAMETER_LOCATION_CITY);
                 delParameter(SERVER_PARAMETER_LOCATION_LONGITUDE);
                 delParameter(SERVER_PARAMETER_LOCATION_LATITUDE);
