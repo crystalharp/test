@@ -494,11 +494,6 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
                 commendImv.setImageResource(R.drawable.ic_like_cancel);
             }
             commendTxv.setText(likesStr);
-
-            int margin = Utility.dip2px(mThis, 24);
-            ((LinearLayout.LayoutParams) commendTxv.getLayoutParams()).leftMargin = margin;
-            float right = likesStr.length()*Globals.g_metrics.density*4 + Globals.g_metrics.density*12;
-            ((RelativeLayout.LayoutParams) commendImv.getLayoutParams()).rightMargin = (int)right;
             
             pictureCountTxv.setVisibility(View.INVISIBLE);
 //            pictureCountTxv.setText(getString(R.string.pictures, data.getPictureCount()));

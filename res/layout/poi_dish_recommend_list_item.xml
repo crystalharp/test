@@ -64,11 +64,19 @@
         android:layout_below="@id/name_txv"
         android:gravity="center_vertical"
         android:background="@drawable/btn_subway_busstop">
+    
+	    <ImageView
+	        android:id="@+id/commend_imv" 
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content" 
+	        android:layout_marginLeft="8dp"
+	        android:src="@drawable/ic_like"
+	        android:background="@color/transparent" />
+	    
 	    <TextView
 	        android:id="@+id/commend_txv" 
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content" 
-	        android:layout_marginLeft="32dp"
 	        android:layout_marginTop="8dp"
 	        android:layout_marginRight="10dp"
 	        android:layout_marginBottom="8dp"
@@ -94,14 +102,4 @@
         android:paddingTop="8dp"
         />
     
-    <ImageView
-        android:id="@+id/commend_imv" 
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" 
-        android:layout_alignTop="@id/commend_view"
-        android:src="@drawable/ic_like"
-        android:background="@color/transparent"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="4dp"
-        android:layout_alignParentRight="true" />
 </RelativeLayout>
