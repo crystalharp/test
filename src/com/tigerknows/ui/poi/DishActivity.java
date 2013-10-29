@@ -446,7 +446,14 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
             pictureImv.setTag(R.id.picture_imv, data);
             pictureImv.setOnClickListener(DishActivity.this);
             
-            HotelTKDrawable hotelTKDrawable = data.getPicture();
+            HotelTKDrawable hotelTKDrawable;
+
+            if (Recommend_TextView_Resource_ID == textViewResourceId) {
+                hotelTKDrawable = data.getPictureRecommend();
+            } else {
+                hotelTKDrawable = data.getPictureAll();
+            }
+            
             TKDrawable tkDrawable = null;
             if (hotelTKDrawable != null) {
                 tkDrawable = hotelTKDrawable.getTKDrawable();

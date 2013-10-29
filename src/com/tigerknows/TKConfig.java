@@ -776,6 +776,16 @@ public class TKConfig {
      * 活动通知栏尺寸的Key
      */
     public static final int PICTURE_MORE_NOTICE = 14;
+    
+    /**
+     * 全部菜品图片尺寸的Key
+     */
+    public static final int PICTURE_DISH_ALL = 15;
+    
+    /**
+     * 推荐菜图片尺寸的Key
+     */
+    public static final int PICTURE_DISH_RECOMMEND = 16;
 
     /**
      * 黑色

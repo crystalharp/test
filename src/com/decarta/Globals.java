@@ -193,6 +193,8 @@ public class Globals {
         pic.put(TKConfig.PICTURE_COUPON_HINT, new XYInteger(147, 147));
         pic.put(TKConfig.PICTURE_COUPON_QRIMG, new XYInteger(383, 383));
         pic.put(TKConfig.PICTURE_MORE_NOTICE, new XYInteger(688, 80));
+        pic.put(TKConfig.PICTURE_DISH_ALL, new XYInteger(144, 144));
+        pic.put(TKConfig.PICTURE_DISH_RECOMMEND, new XYInteger(300, 162));
     	sScreenAdaptPic.put(new XYInteger(800, 1280), pic);
 
         sOptimalAdaptive.put(TKConfig.PICTURE_DISCOVER_HOME, new XYInteger(322, 286));
@@ -209,6 +211,8 @@ public class Globals {
         sOptimalAdaptive.put(TKConfig.PICTURE_COUPON_HINT, new XYInteger(88, 88));
         sOptimalAdaptive.put(TKConfig.PICTURE_COUPON_QRIMG, new XYInteger(230, 230));
         sOptimalAdaptive.put(TKConfig.PICTURE_MORE_NOTICE, new XYInteger(412, 48));
+        sOptimalAdaptive.put(TKConfig.PICTURE_DISH_ALL, new XYInteger(96, 96));
+        sOptimalAdaptive.put(TKConfig.PICTURE_DISH_RECOMMEND, new XYInteger(200, 108));
         sScreenAdaptPic.put(new XYInteger(480, 800), sOptimalAdaptive);
         
         pic = new HashMap<Integer, XYInteger>();
@@ -226,6 +230,8 @@ public class Globals {
         pic.put(TKConfig.PICTURE_COUPON_HINT, new XYInteger(59, 59));
         pic.put(TKConfig.PICTURE_COUPON_QRIMG, new XYInteger(153, 153));
         pic.put(TKConfig.PICTURE_MORE_NOTICE, new XYInteger(276, 32));
+        pic.put(TKConfig.PICTURE_DISH_ALL, new XYInteger(64, 64));
+        pic.put(TKConfig.PICTURE_DISH_RECOMMEND, new XYInteger(134, 72));
         sScreenAdaptPic.put(new XYInteger(320, 480), pic);
     }
     
