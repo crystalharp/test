@@ -14,7 +14,7 @@ import android.widget.MultiAutoCompleteTextView.Tokenizer;
 
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.android.location.Position;
-import com.tigerknows.ui.ExceptionDialogActivity;
+import com.tigerknows.ui.common.ExceptionDialogActivity;
 
 public class AppUtil {
 	
