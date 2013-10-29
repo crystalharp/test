@@ -830,10 +830,12 @@ public class TKConfig {
         
         String hasShortCut = getPref(context, PREFS_HAS_SHORT_CUT_PREFS);
         setPref(context, PREFS_HAS_SHORT_CUT_PREFS, "2");
-        if ("1".equals(hasShortCut)) {
+        if (TextUtils.isEmpty(hasShortCut)) {
+            createShortCut(context);
+        } else if ("1".equals(hasShortCut)) {
             delShortcut(context);
+            createShortCut(context);
         }
-        createShortCut(context);
         
         try {
             MapEngine.getInstance().setup(context);
