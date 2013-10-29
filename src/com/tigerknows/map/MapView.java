@@ -1152,7 +1152,7 @@ public class MapView extends RelativeLayout implements
                             Uri uri = null;
                             if (bm != null && !TextUtils.isEmpty(mapPath)) {
                                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
-                                uri = Utility.bitmap2Png(bm, "mapsnap_"+simpleDateFormat.format(Calendar.getInstance().getTime()), mapPath);
+                                uri = Utility.bitmap2Png(bm, "mapsnap_"+simpleDateFormat.format(Calendar.getInstance().getTime())+".png", mapPath);
                                 if (bm.isRecycled() == false) {
                                     bm.recycle();
                                 }

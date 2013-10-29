@@ -1172,10 +1172,19 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         }
         mPreventShowChangeMyLocationDialog = false;
         if (Globals.g_My_Location_State == Globals.LOCATION_STATE_SHOW_CHANGE_CITY_DIALOG) {
-            Globals.g_My_Location_State = Globals.LOCATION_STATE_FIRST_SUCCESS;
+            int viewId = uiStackPeek();
+            int size = uiStackSize();
+            if (size == 1 &&
+                    (viewId == R.id.view_poi_home ||
+                     viewId == R.id.view_discover_home ||
+                     (viewId == R.id.view_traffic_home && getTrafficQueryFragment().isNormalState()) ||
+                     viewId == R.id.view_more_home)) {
+                Globals.g_My_Location_State = Globals.LOCATION_STATE_FIRST_SUCCESS;
+                checkLocationCity(false);
+                Globals.g_My_Location_State = Globals.LOCATION_STATE_SHOW_CHANGE_CITY_DIALOG;
+            }
         }
         
-        checkLocationCity(false);
 	}
 	
 	private void checkLocationCity(boolean tipGps) {
@@ -2713,7 +2722,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         // 仅在频道首页时才提示切换城市的对话框
         int viewId = uiStackPeek();
         int size = uiStackSize();
-        if (size != 0 && !(size == 1 &&
+        if (!(size == 1 &&
                 (viewId == R.id.view_poi_home ||
                  viewId == R.id.view_discover_home ||
                  (viewId == R.id.view_traffic_home && getTrafficQueryFragment().isNormalState()) ||
