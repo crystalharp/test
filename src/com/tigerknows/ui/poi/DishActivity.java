@@ -585,7 +585,7 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
                         
                         DataQuery dataQuery2 = mPOI.getRecommendDishQuery();
                         if (dataQuery2 != null && dataQuery2.getResponse() != null) {
-                            DishResponse dishResponse2 = (DishResponse) dataQuery.getResponse();
+                            DishResponse dishResponse2 = (DishResponse) dataQuery2.getResponse();
                             DishList dishList2 = dishResponse2.getList();
                             if (dishList2 != null) {
                                 List<Dish> dishes2 = dishList2.getDishList();
