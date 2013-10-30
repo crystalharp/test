@@ -166,7 +166,7 @@ public class ProxyQuery extends BaseQuery {
         }
 
         public static class DanbaoGuize extends XMapData {
-            // 0x01 x_int 担保的起始房间数量T，当订房数量 >= T，需要担保
+            // 0x01 x_int 担保的起始房间数量T，根据用户选择预订房间数量与T值的对比结果，来决定展示0x02或0x03的保留时间选
             public static final byte FIELD_NUM = 0x01;
 
             // 0x02 x_array<x_map> 订房数量 < T时，展示给用户的保留时间选项列表，参见保留时间选项
