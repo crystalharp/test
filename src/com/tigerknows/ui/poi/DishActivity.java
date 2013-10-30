@@ -36,7 +36,6 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.LinearLayout.LayoutParams;
 
@@ -146,6 +145,7 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
     private int mChildPosition = -1;
     private int mFromYDelta = 0;
     private int mFirstDishVisibleItem = 0;
+    private int mFirstVisibleItem = 0;
     private int mFirstCategoryVisibleItem = 0;
     private int mTotalCateoryItem = 0;
     private ListView mAllLsv = null;
@@ -221,7 +221,8 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
             
             @Override
             public void onAnimationEnd(Animation animation) {
-                mHandler.post(mLoadedDrawableRun);
+                mSelectedView.setBackgroundDrawable(null);
+                mCategoryAdapter.notifyDataSetChanged();
             }
         };
         mLikeAnimation = AnimationUtils.loadAnimation(mThis, R.anim.commend);
@@ -248,7 +249,6 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
         mColorSelect = resources.getColor(R.color.orange);
         
         mPOI = sPOI;
-        mFromYDelta = Utility.dip2px(mThis, 48);
         
         Intent intent = getIntent();
         mTab = intent.getIntExtra(EXTRA_TAB, 0);
@@ -343,6 +343,23 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
             }
         });
         
+        mCategoryLsv.setOnScrollListener(new OnScrollListener() {
+            
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                // TODO Auto-generated method stub
+                
+            }
+            
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount,
+                    int totalItemCount) {
+                if (mFirstVisibleItem != firstVisibleItem) {
+                    mFirstVisibleItem = firstVisibleItem;
+                }
+            }
+        });
+        
         mAllLsv.setOnScrollListener(new OnScrollListener() {
             
             @Override
@@ -364,14 +381,14 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
     }
     
     void animationSelectView(int childPosition) {
+        mFromYDelta = ((mGroupPosition < 0 ? 0 : mGroupPosition)+1)*mCategoryAdapter.groupHeight+(mChildPosition < 0 ? 0: mChildPosition)*mCategoryAdapter.childHeight-(mFirstCategoryVisibleItem*mCategoryAdapter.childHeight);
         if (childPosition == mChildPosition) {
             return;
         }
-        
         mChildPosition = childPosition;
 
-        int firstVisiblePosition = mCategoryLsv.getFirstVisiblePosition();
-        int lastVisiblePosition = mCategoryLsv.getLastVisiblePosition();
+        int firstVisiblePosition = mFirstVisibleItem;
+        int lastVisiblePosition = mFirstVisibleItem+mTotalCateoryItem-1;
         if (mChildPosition <= firstVisiblePosition) {
             mSelectedView.setBackgroundDrawable(null);
             mCategoryAdapter.notifyDataSetChanged();
@@ -388,7 +405,7 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
             mFirstCategoryVisibleItem = firstVisiblePosition;
         }
         
-        int toYDelta = (mGroupPosition+1)*mCategoryAdapter.groupHeight+mChildPosition*mCategoryAdapter.childHeight-(mFirstCategoryVisibleItem*mCategoryAdapter.childHeight);
+        int toYDelta = (mGroupPosition+1)*mCategoryAdapter.groupHeight+(mChildPosition)*mCategoryAdapter.childHeight-(mFirstCategoryVisibleItem*mCategoryAdapter.childHeight);
         
         mSelectedView.setBackgroundResource(R.drawable.bg_dish_category_selected);
         mCategoryAdapter.notifyDataSetChanged();
@@ -403,7 +420,6 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
         anim.setFillAfter(true);
         anim.setAnimationListener(mSelectedAnimationListener);
         mSelectedView.startAnimation(anim);
-        mFromYDelta = toYDelta;
     }
     
     protected void onResume() {
@@ -619,7 +635,7 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
                             Category data = (Category) mCategoryGroupList.get(i);
                             TextView textView = (TextView) view.findViewById(R.id.text_txv);
                             textView.setText(data.getName());
-                            mCategoryGroupView.addView(view);
+                            mCategoryGroupView.addView(view, new LayoutParams(android.view.ViewGroup.LayoutParams.FILL_PARENT, Utility.dip2px(mThis, 48)));
                         }
                         mGroupPosition = -1;
                         mChildPosition = -1;
@@ -883,13 +899,22 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
             }
 //            for(int i = size - 1; i >= 0 ; i--) {
 //                Category category = mCategoryList.get(i);
+//                LogWrapper.d(TAG, "category.firstDishIndex:"+category.firstDishIndex);
 //                if (category.firstDishIndex == -1) {
+//                    LogWrapper.d(TAG, "category.firstDishIndex == -1:"+category.getName());
 //                    mCategoryList.remove(i);
+//                    for(int j = 0, count = mSelectedList.size(); j < count; j++) {
+//                        Dish dish = mSelectedList.get(j);
+//                        if (dish.categoryIndex > i) {
+//                            dish.categoryIndex--;
+//                        }
+//                    }
 //                }
 //            }
             
             mCategoryAdapter.notifyDataSetChanged();
             mCategoryLsv.setSelectionFromTop(0, 0);
+            mFirstCategoryVisibleItem = 0;
             
             MotionEvent me = MotionEvent.obtain(0, 0, MotionEvent.ACTION_DOWN, 0, 0, 0, 0, 0, 0, 0, 0, 0);
             mAllLsv.onTouchEvent(me);
@@ -902,6 +927,7 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
             mTotalCateoryItem = h/mCategoryAdapter.childHeight;
         }
         
+        mChildPosition = -1;
         animationSelectView(0);
     }
     

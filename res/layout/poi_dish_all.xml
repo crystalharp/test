@@ -14,8 +14,7 @@
             android:id="@+id/selected_view"
             android:layout_width="fill_parent"
             android:layout_height="48dp"
-            android:layout_alignParentLeft="true"
-            android:background="@drawable/bg_dish_category_selected"/>
+            android:layout_alignParentLeft="true"/>
         <TextView 
             android:id="@+id/padding_top_view"
             android:layout_width="fill_parent" 
