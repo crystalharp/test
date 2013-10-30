@@ -943,23 +943,13 @@ public class MapView extends RelativeLayout implements
 	public void moveView(float left, float top) {
 		tilesView.moveView(left, top);
 	}
-	
-	public void setZoomControlsState() {
-		float zoomLevel = tilesView.getZoomLevel();
-		if (zoomLevel >= CONFIG.ZOOM_UPPER_BOUND) {
-            zoomControls.setIsZoomInEnabled(false);
-        } else if (zoomLevel <= CONFIG.ZOOM_LOWER_BOUND) {
-        	zoomControls.setIsZoomOutEnabled(false);
-        } else {
-        	zoomControls.setIsZoomInEnabled(true);
-        	zoomControls.setIsZoomOutEnabled(true);
-        }
-	}
 
 	public void setZoomControlsState(float zoomLevel) {
 		if (zoomLevel >= CONFIG.ZOOM_UPPER_BOUND) {
             zoomControls.setIsZoomInEnabled(false);
+            zoomControls.setIsZoomOutEnabled(true);
         } else if (zoomLevel <= CONFIG.ZOOM_LOWER_BOUND) {
+            zoomControls.setIsZoomInEnabled(true);
         	zoomControls.setIsZoomOutEnabled(false);
         } else {
         	zoomControls.setIsZoomInEnabled(true);
