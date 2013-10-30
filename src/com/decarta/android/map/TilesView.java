@@ -2991,10 +2991,9 @@ public class TilesView extends GLSurfaceView {
 					gl.glClearColor(bgr, bgg, bgb, 1);
 					
 					if (paused || stopRefreshMyLocation) {
-		                LogWrapper.i("Sequence", "onDrawFrame paused");
+						LogWrapper.i("Sequence", "onDrawFrame paused");
 					    return;
 					}
-
 					gl.glEnable(GL_TEXTURE_2D);
 					gl.glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 					gl.glEnableClientState(GL_VERTEX_ARRAY);
@@ -3465,10 +3464,9 @@ public class TilesView extends GLSurfaceView {
 								&& ((easingRecord.startMoveTime == 0
 										&& zoomingRecord.digitalZoomEndTime == 0 && !touching))
 								|| zoomingJustDoneL || isManuelZoom
-								|| rotatingZJustDoneL || rotatingXJustDoneL || (isStaying &&
-								!isTouchBegin && !isBeginMoving && !movingL));// isStaying
-																					// &&
-
+								|| rotatingZJustDoneL || rotatingXJustDoneL || 
+								((isStaying && !isTouchBegin && !isBeginMoving && !movingL) || 
+										(!touching && !movingL)));
 						isLabelFading = this.shownLabels((float) zoomScale,
 								refreshText, refreshText);
 						if (refreshText || zoomingJustDoneL) {
