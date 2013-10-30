@@ -562,12 +562,31 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
                         mMyLikeList.clear();
                         for(int i = 0, size = dishes.size(); i < size; i++) {
                             Dish dish = dishes.get(i);
-                            if (dish.isLike()) {
+                            if (dish.isLike() && mMyLikeList.contains(dish) == false) {
                                 mMyLikeList.add(dish);
                             }
                         }
+                        
+                        DataQuery dataQuery2 = mPOI.getRecommendDishQuery();
+                        if (dataQuery2 != null && dataQuery2.getResponse() != null) {
+                            DishResponse dishResponse2 = (DishResponse) dataQuery.getResponse();
+                            DishList dishList2 = dishResponse2.getList();
+                            if (dishList2 != null) {
+                                List<Dish> dishes2 = dishList2.getDishList();
+                                if (dishes2 != null && dishes2.size() > 0) {
+                                    
+                                    for(int i = 0, size = dishes2.size(); i < size; i++) {
+                                        Dish dish = dishes2.get(i);
+                                        if (dish.isLike() && mMyLikeList.contains(dish) == false) {
+                                            mMyLikeList.add(dish);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        
                         mMyLikeAdapter.notifyDataSetChanged();
-                        LogWrapper.d(TAG, "likedish.size()"+dishes.size());
+                        LogWrapper.d(TAG, "likedish.size()"+mMyLikeList.size());
                         
                     } else {
                         LogWrapper.d(TAG, "recommenddish.size()"+dishes.size());
