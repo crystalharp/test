@@ -13,6 +13,7 @@ import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -37,6 +38,10 @@ public class AddPictureActivity extends BaseActivity implements View.OnClickList
     public static final int REQUEST_CODE_PICK_PHOTO = 0;
 
     public static final int REQUEST_CODE_CAPTURE_PHOTO = 1;
+    
+    public static final String EXTRA_SUCCESS_TIP = "EXTRA_SUCCESS_TIP";
+    
+    private String mSuccessTip;
     
     private String mCacheFilePath;
     
@@ -75,9 +80,14 @@ public class AddPictureActivity extends BaseActivity implements View.OnClickList
         Intent intent = getIntent();
         mRefId = intent.getStringExtra(FileUpload.SERVER_PARAMETER_REF_ID);
         mRefDty = intent.getStringExtra(FileUpload.SERVER_PARAMETER_REF_DATA_TYPE);
+        mSuccessTip = intent.getStringExtra(EXTRA_SUCCESS_TIP);
         
         if (mRefDty == null) {
             finish();
+        }
+        
+        if (TextUtils.isEmpty(mSuccessTip)) {
+            mSuccessTip = getString(R.string.add_picture_success);
         }
 
         mTitleBtn.setText(R.string.add_picture);
@@ -178,7 +188,7 @@ public class AddPictureActivity extends BaseActivity implements View.OnClickList
             return;
         }
         
-        Toast.makeText(mThis, R.string.add_picture_success, Toast.LENGTH_LONG).show();
+        Toast.makeText(mThis, mSuccessTip, Toast.LENGTH_LONG).show();
         Intent data = new Intent();
         data.setData(mUploadUri);
         setResult(RESULT_OK, data);

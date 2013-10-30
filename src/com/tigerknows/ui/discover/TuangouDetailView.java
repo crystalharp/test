@@ -46,7 +46,7 @@ import com.tigerknows.model.Tuangou;
 import com.tigerknows.model.DataOperation.DingdanCreateResponse;
 import com.tigerknows.model.DataOperation.TuangouQueryResponse;
 import com.tigerknows.ui.BaseActivity;
-import com.tigerknows.ui.BrowserActivity;
+import com.tigerknows.ui.common.BrowserActivity;
 import com.tigerknows.ui.user.UserBaseActivity;
 import com.tigerknows.util.Utility;
 

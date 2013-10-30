@@ -13,7 +13,7 @@ import com.tigerknows.model.POI;
 import com.tigerknows.model.DataQuery.DishResponse;
 import com.tigerknows.model.DataQuery.DishResponse.DishList;
 import com.tigerknows.ui.BaseActivity;
-import com.tigerknows.ui.BrowserActivity;
+import com.tigerknows.ui.common.BrowserActivity;
 import com.tigerknows.ui.poi.POIDetailFragment.BlockRefresher;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIViewBlock;
 
@@ -167,16 +167,18 @@ public class DynamicDishPOI extends POIDetailFragment.DynamicPOIView implements 
     @Override
     public void onClick(View v) {
         int id = v.getId();
-        if (id == R.id.shopkeeper_txv) {
+        if (id == R.id.shopkeeper_txv || id == R.id.dish_title_view) {
             mPOIDetailFragment.mActionLog.addAction(mPOIDetailFragment.mActionTag+ActionLog.POIDetailShopkeeper);
             Intent intent = new Intent();
             intent.putExtra(BrowserActivity.TITLE, mSphinx.getString(R.string.add_dish));
             intent.putExtra(BrowserActivity.URL, "http://www.tigerknows.com");
             mSphinx.showView(R.id.activity_browser, intent);
-        } else if (id == R.id.content_txv || id == R.id.dish_title_view) {
+        } else if (id == R.id.content_txv) {
             mPOIDetailFragment.mActionLog.addAction(mPOIDetailFragment.mActionTag + ActionLog.POIDetailDishList);
             DishActivity.setPOI(mPOI);
-            mSphinx.showView(R.id.activity_poi_dish);
+            Intent intent = new Intent();
+            intent.putExtra(DishActivity.EXTRA_TAB, 1);
+            mSphinx.showView(R.id.activity_poi_dish, intent);
         }
         
     }

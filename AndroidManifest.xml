@@ -11,6 +11,7 @@
       <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
       <uses-permission android:name="android.permission.WAKE_LOCK" />
       <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" />
+      <uses-permission android:name="com.android.launcher.permission.UNINSTALL_SHORTCUT" />  
       <!-- <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" /> -->
       
     <application android:name="com.tigerknows.android.app.TKApplication" android:icon="@drawable/icon" android:label="@string/app_name"
@@ -39,12 +40,6 @@
         <service android:name="com.tigerknows.service.MapDownloadService" android:enabled="true"></service>
         
         <service android:name="com.tigerknows.service.download.DownloadService" android:enabled="true"></service>
-        
-        <activity android:name="com.tigerknows.ui.ErrorDialogActivity"
-            android:theme="@style/Theme.NoTitleBar" 
-            android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
-            android:windowSoftInputMode="adjustResize|stateHidden"
-            android:screenOrientation="portrait" />
         
         <activity android:name="com.tigerknows.ui.more.HelpActivity"
             android:theme="@style/Help" 
@@ -162,13 +157,13 @@
             android:windowSoftInputMode="adjustResize|stateVisible"
             android:screenOrientation="portrait" />
          
-        <activity android:name="com.tigerknows.ui.HintActivity"
+        <activity android:name="com.tigerknows.ui.common.HintActivity"
             android:theme="@style/Hit" 
             android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
             android:windowSoftInputMode="adjustResize|stateHidden"
             android:screenOrientation="portrait" />
          
-        <activity android:name="com.tigerknows.ui.BrowserActivity"
+        <activity android:name="com.tigerknows.ui.common.BrowserActivity"
             android:theme="@style/Theme.NoTitleBar" 
             android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
             android:windowSoftInputMode="adjustResize|stateHidden"
@@ -204,7 +199,7 @@
             android:windowSoftInputMode="adjustResize|stateHidden"
             android:screenOrientation="portrait" />
         
-        <activity android:name="com.tigerknows.ui.TakeScreenshotActivity"
+        <activity android:name="com.tigerknows.ui.common.TakeScreenshotActivity"
             android:theme="@style/Theme.NoTitleBar" 
             android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
             android:windowSoftInputMode="adjustResize|stateHidden"
@@ -242,7 +237,11 @@
         </activity>
         
 
-		<activity android:configChanges="orientation" android:name="com.tigerknows.ui.ExceptionDialogActivity" />
+		<activity android:name="com.tigerknows.ui.common.ExceptionDialogActivity" 
+            android:theme="@style/Theme.NoTitleBar" 
+            android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
+            android:windowSoftInputMode="adjustResize|stateHidden"
+            android:screenOrientation="portrait" />
 
         <receiver android:name="com.tigerknows.radar.AlarmInitReceiver">
             <intent-filter>

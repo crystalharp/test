@@ -2,7 +2,7 @@
  * Copyright (C) 2010 pengwenyue@tigerknows.com
  */
 
-package com.tigerknows.ui;
+package com.tigerknows.ui.common;
 
 import com.decarta.Globals;
 import com.decarta.android.map.ItemizedOverlay;
@@ -20,6 +20,7 @@ import com.tigerknows.model.POI;
 import com.tigerknows.model.BuslineModel.Line;
 import com.tigerknows.model.TrafficModel.Plan;
 import com.tigerknows.model.TrafficQuery;
+import com.tigerknows.ui.BaseFragment;
 
 import android.app.Activity;
 import android.content.Context;

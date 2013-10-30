@@ -101,7 +101,9 @@ public class ZoomControls extends LinearLayout {
         } else {
             mZoomIn.setImageResource(R.drawable.ic_zoomin_disabled);
         }
-        mZoomIn.postInvalidate();
+        mZoomIn.clearFocus();
+        mZoomIn.setPressed(false);
+        mZoomIn.invalidate();
     }
     
     public void setIsZoomOutEnabled(boolean isEnabled) {
@@ -111,7 +113,9 @@ public class ZoomControls extends LinearLayout {
         } else {
             mZoomOut.setImageResource(R.drawable.ic_zoomout_disabled);
         }
-        mZoomOut.postInvalidate();
+        mZoomOut.clearFocus();
+        mZoomOut.setPressed(false);
+        mZoomOut.invalidate();
     }
     
     @Override

@@ -776,6 +776,16 @@ public class TKConfig {
      * 活动通知栏尺寸的Key
      */
     public static final int PICTURE_MORE_NOTICE = 14;
+    
+    /**
+     * 全部菜品图片尺寸的Key
+     */
+    public static final int PICTURE_DISH_ALL = 15;
+    
+    /**
+     * 推荐菜图片尺寸的Key
+     */
+    public static final int PICTURE_DISH_RECOMMEND = 16;
 
     /**
      * 黑色
@@ -833,11 +843,14 @@ public class TKConfig {
 
         sUser_Action_Track = getPref(context, PREFS_USER_ACTION_TRACK, "on");
         
-        boolean notShort = TextUtils.isEmpty(getPref(context, PREFS_HAS_SHORT_CUT_PREFS));
-        setPref(context, PREFS_HAS_SHORT_CUT_PREFS, "1");
-        if (notShort) {
+        String hasShortCut = getPref(context, PREFS_HAS_SHORT_CUT_PREFS);
+        setPref(context, PREFS_HAS_SHORT_CUT_PREFS, "2");
+        if (TextUtils.isEmpty(hasShortCut)) {
             createShortCut(context);
-        } 
+        } else if ("1".equals(hasShortCut)) {
+            delShortcut(context);
+            createShortCut(context);
+        }
         
         try {
             MapEngine.getInstance().setup(context);
@@ -931,6 +944,23 @@ public class TKConfig {
         
         context.sendBroadcast(shortcutIntent);//发送广播
     }
+    
+    /**  
+     * 删除程序的快捷方式  
+     */  
+    private static void delShortcut(Context context){   
+        Intent shortcut = new Intent("com.android.launcher.action.UNINSTALL_SHORTCUT");   
+               
+        //快捷方式的名称   
+        shortcut.putExtra(Intent.EXTRA_SHORTCUT_NAME, context.getString(R.string.old_app_name));   
+               
+        Intent sphnixIntent = new Intent(Intent.ACTION_MAIN);
+        sphnixIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+        sphnixIntent.setComponent(new ComponentName(context.getPackageName(), context.getPackageName() + ".Sphinx"));
+        shortcut.putExtra(Intent.EXTRA_SHORTCUT_INTENT, sphnixIntent);//快捷方式的动作  
+               
+        context.sendBroadcast(shortcut);   
+    }  
     
     /**
      * 获取当前基站信息

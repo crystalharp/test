@@ -120,14 +120,14 @@ import com.tigerknows.service.SuggestLexiconService;
 import com.tigerknows.share.TKWeixin;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
-import com.tigerknows.ui.BrowserActivity;
-import com.tigerknows.ui.BrowserFragment;
-import com.tigerknows.ui.HintActivity;
-import com.tigerknows.ui.MeasureDistanceFragment;
 import com.tigerknows.ui.MenuFragment;
-import com.tigerknows.ui.ResultMapFragment;
-import com.tigerknows.ui.TakeScreenshotActivity;
 import com.tigerknows.ui.TitleFragment;
+import com.tigerknows.ui.common.BrowserActivity;
+import com.tigerknows.ui.common.BrowserFragment;
+import com.tigerknows.ui.common.HintActivity;
+import com.tigerknows.ui.common.MeasureDistanceFragment;
+import com.tigerknows.ui.common.ResultMapFragment;
+import com.tigerknows.ui.common.TakeScreenshotActivity;
 import com.tigerknows.ui.common.ViewImageActivity;
 import com.tigerknows.ui.discover.DianyingDetailFragment;
 import com.tigerknows.ui.discover.DiscoverChildListFragment;
@@ -1181,10 +1181,11 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                      (viewId == R.id.view_traffic_home && getTrafficQueryFragment().isNormalState()) ||
                      viewId == R.id.view_more_home)) {
                 Globals.g_My_Location_State = Globals.LOCATION_STATE_FIRST_SUCCESS;
+                checkLocationCity(false);
+                Globals.g_My_Location_State = Globals.LOCATION_STATE_SHOW_CHANGE_CITY_DIALOG;
             }
         }
         
-        checkLocationCity(false);
 	}
 	
 	private void checkLocationCity(boolean tipGps) {

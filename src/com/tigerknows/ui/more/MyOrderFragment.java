@@ -33,7 +33,7 @@ import com.tigerknows.model.DataQuery.ShangjiaResponse;
 import com.tigerknows.model.DataQuery.ShangjiaResponse.ShangjiaList;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
-import com.tigerknows.ui.BrowserActivity;
+import com.tigerknows.ui.common.BrowserActivity;
 import com.tigerknows.ui.user.UserBaseActivity;
 import com.tigerknows.util.Utility;
 
