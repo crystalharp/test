@@ -104,8 +104,8 @@ public class MyOrderFragment extends BaseFragment{
         
         LogWrapper.d("Trap", mActualOnCreate == true ? "Create" : "Resume");
         
-		synchronized (Shangjia.getShangjiaList()) {
-			List<Shangjia> list = Shangjia.getShangjiaList();
+		synchronized (MyOrderFragment.this) {
+		    List<Shangjia> list = Shangjia.getShangjiaList();
 			if (list.size() != mResultList.size()) {
 				mResultList.clear();
 				mResultList.addAll(list);
@@ -124,8 +124,8 @@ public class MyOrderFragment extends BaseFragment{
 
 					@Override
 					public void run() {
-						synchronized (Shangjia.getShangjiaList()) {
-							List<Shangjia> newList = Shangjia.getShangjiaList();
+						synchronized (MyOrderFragment.this) {
+						    List<Shangjia> newList = Shangjia.getShangjiaList();
 							mResultList.clear();
 							mResultList.addAll(newList);
 							createShangjiaListView();

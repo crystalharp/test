@@ -355,7 +355,7 @@ public class Shangjia extends BaseData implements Parcelable {
     private static List<Long> sLoad = new ArrayList<Long>();
     
     private static void loadShangjia(final Activity activity, long source, final Runnable runnable) {
-        synchronized (shangjiaList) {
+        try {
             if (sLoad.contains(source) == false && activity != null) {
                 sLoad.add(source);
                 final DataQuery dataQuery = new DataQuery(activity);
@@ -372,16 +372,20 @@ public class Shangjia extends BaseData implements Parcelable {
                     }
                 }).start();
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
     
     public static Shangjia getShangjiaById(long source, Activity activity, Runnable runnable) {
-        synchronized (shangjiaList) {
+        try {
             for(Shangjia shangjia : shangjiaList) {
                 if (shangjia.source == source) {
                     return shangjia;
                 }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         loadShangjia(activity, source, runnable);
         return null;
