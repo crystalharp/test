@@ -603,7 +603,6 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
                 if (mode == 0) {
                     if (tab == 0) {
                         
-                        mMyLikeList.clear();
                         for(int i = 0, size = dishes.size(); i < size; i++) {
                             Dish dish = dishes.get(i);
                             if (dish.isLike() && mMyLikeList.contains(dish) == false) {
@@ -636,6 +635,20 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
                     } else {
                         LogWrapper.d(TAG, "recommenddish.size()"+dishes.size());
                         
+                        if (mMyLikeList.size() > 0) {
+                            for(int i = 0, size = mMyLikeList.size(); i < size; i++) {
+                                Dish like = mMyLikeList.get(i);
+                                for(int j = 0, count = dishes.size(); j < count; j++) {
+                                    Dish dish = dishes.get(j);
+                                    if (like.equals(dish) && dish.isLike() == false) {
+                                        dish.addLike(false);
+                                        dish.likeTimeStamp = like.likeTimeStamp;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        
                         mRecommedList.clear();
                         mRecommedList.addAll(dishes);
                         mRecommendAdapter.notifyDataSetChanged();
@@ -645,6 +658,20 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
                     
                     mAllList.clear();
                     mAllList.addAll(dishes);
+                    
+                    if (mMyLikeList.size() > 0) {
+                        for(int i = 0, size = mMyLikeList.size(); i < size; i++) {
+                            Dish like = mMyLikeList.get(i);
+                            for(int j = 0, count = dishes.size(); j < count; j++) {
+                                Dish dish = dishes.get(j);
+                                if (like.equals(dish) && dish.isLike() == false) {
+                                    dish.addLike(false);
+                                    dish.likeTimeStamp = like.likeTimeStamp;
+                                    break;
+                                }
+                            }
+                        }
+                    }
                     
                     List<Category> categories = dishList.getCategoryList();
                     if (categories != null) {
@@ -940,7 +967,7 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
                     mCategoryList.remove(i);
                     for(int j = 0, count = mSelectedList.size(); j < count; j++) {
                         Dish dish = mSelectedList.get(j);
-                        if (dish.categoryIndex > i) {
+                        if (dish.categoryIndex >= i) {
                             dish.categoryIndex--;
                         }
                     }
