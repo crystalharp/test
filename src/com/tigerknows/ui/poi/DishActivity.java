@@ -586,7 +586,15 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
     }
     
     void setDataQuery(DataQuery dataQuery, int mode, int tab) {
-        
+
+        if (mode == 0 && tab == 1) {
+            mRecommendDataQuery = dataQuery;
+            mPOI.setRecommendDishQuery(dataQuery);
+        } else {
+            mAllDataQuery = dataQuery;
+            mPOI.setDishQuery(dataQuery);
+        }
+            
         DishResponse dishResponse = (DishResponse) dataQuery.getResponse();
         DishList dishList = dishResponse.getList();
         if (dishList != null) {
@@ -594,8 +602,6 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
             if (dishes != null && dishes.size() > 0) {
                 if (mode == 0) {
                     if (tab == 0) {
-                        mAllDataQuery = dataQuery;
-                        mPOI.setDishQuery(dataQuery);
                         
                         mMyLikeList.clear();
                         for(int i = 0, size = dishes.size(); i < size; i++) {
@@ -605,16 +611,16 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
                             }
                         }
                         
-                        DataQuery dataQuery2 = mPOI.getRecommendDishQuery();
-                        if (dataQuery2 != null && dataQuery2.getResponse() != null) {
-                            DishResponse dishResponse2 = (DishResponse) dataQuery2.getResponse();
-                            DishList dishList2 = dishResponse2.getList();
-                            if (dishList2 != null) {
-                                List<Dish> dishes2 = dishList2.getDishList();
-                                if (dishes2 != null && dishes2.size() > 0) {
+                        DataQuery recommendDataQuery = mPOI.getRecommendDishQuery();
+                        if (recommendDataQuery != null) {
+                            DishResponse recommendDishResponse = (DishResponse) recommendDataQuery.getResponse();
+                            DishList recommendDishList = recommendDishResponse.getList();
+                            if (recommendDishList != null) {
+                                List<Dish> recommendDishes = recommendDishList.getDishList();
+                                if (recommendDishes != null && recommendDishes.size() > 0) {
                                     
-                                    for(int i = 0, size = dishes2.size(); i < size; i++) {
-                                        Dish dish = dishes2.get(i);
+                                    for(int i = 0, size = recommendDishes.size(); i < size; i++) {
+                                        Dish dish = recommendDishes.get(i);
                                         if (dish.isLike() && mMyLikeList.contains(dish) == false) {
                                             mMyLikeList.add(dish);
                                         }
@@ -629,8 +635,6 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
                         
                     } else {
                         LogWrapper.d(TAG, "recommenddish.size()"+dishes.size());
-                        mRecommendDataQuery = dataQuery;
-                        mPOI.setRecommendDishQuery(dataQuery);
                         
                         mRecommedList.clear();
                         mRecommedList.addAll(dishes);
@@ -638,9 +642,6 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
                     }
                 } else {
                     LogWrapper.d(TAG, "alldish.size()"+dishes.size());
-                    
-                    mAllDataQuery = dataQuery;
-                    mPOI.setDishQuery(dataQuery);
                     
                     mAllList.clear();
                     mAllList.addAll(dishes);
