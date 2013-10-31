@@ -934,20 +934,18 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
                     }
                 }
             }
-//            for(int i = size - 1; i >= 0 ; i--) {
-//                Category category = mCategoryList.get(i);
-//                LogWrapper.d(TAG, "category.firstDishIndex:"+category.firstDishIndex);
-//                if (category.firstDishIndex == -1) {
-//                    LogWrapper.d(TAG, "category.firstDishIndex == -1:"+category.getName());
-//                    mCategoryList.remove(i);
-//                    for(int j = 0, count = mSelectedList.size(); j < count; j++) {
-//                        Dish dish = mSelectedList.get(j);
-//                        if (dish.categoryIndex > i) {
-//                            dish.categoryIndex--;
-//                        }
-//                    }
-//                }
-//            }
+            for(int i = size - 1; i >= 0 ; i--) {
+                Category category = mCategoryList.get(i);
+                if (category.firstDishIndex == -1) {
+                    mCategoryList.remove(i);
+                    for(int j = 0, count = mSelectedList.size(); j < count; j++) {
+                        Dish dish = mSelectedList.get(j);
+                        if (dish.categoryIndex > i) {
+                            dish.categoryIndex--;
+                        }
+                    }
+                }
+            }
             
             mCategoryAdapter.notifyDataSetChanged();
             mCategoryLsv.setSelectionFromTop(0, 0);
