@@ -16,6 +16,7 @@ public class MyLocation extends OverlayItem {
     public long refreshTime;
     public Icon faceToNormal;
     public Icon faceToFocused;
+    private Position position;
     
     public MyLocation(Position position, Icon icon, Icon focused, Icon faceToNormal, Icon faceToFocused, String message, RotationTilt rotationTilt)
             throws APIException {
@@ -23,5 +24,19 @@ public class MyLocation extends OverlayItem {
         this.focused = focused;
         this.faceToNormal = faceToNormal;
         this.faceToFocused = faceToFocused;
+    }
+    
+    @Override
+    public void setPosition(Position position) throws APIException {
+        this.position = null;
+        super.setPosition(position);
+        if (getMercXY() != null) {
+            this.position = position;
+        }
+    }
+    
+    @Override
+    public Position getPosition() {
+        return position;
     }
 }

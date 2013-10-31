@@ -2254,15 +2254,15 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         }
     }
 
-    public void showInfoWindow(OverlayItem overlayItem) {
+    public boolean showInfoWindow(OverlayItem overlayItem) {
         
-        if (overlayItem == null) {
-        	return;
+        if (overlayItem == null || overlayItem.getPosition() == null) {
+        	return false;
         }
         
         if (touchMode.equals(TouchMode.MEASURE_DISTANCE)) {
             if (!(TouchMode.MEASURE_DISTANCE.equals(overlayItem.getAssociatedObject()))) {
-                return;
+                return false;
             }
         }
         
@@ -2271,8 +2271,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         try {
             infoWindow.setPosition(overlayItem.getPosition());
         } catch (APIException e) {
+            infoWindow.setAssociatedOverlayItem(null);
             e.printStackTrace();
-            return;
+            return false;
         }
 
         Object object = overlayItem.getAssociatedObject();
@@ -2540,6 +2541,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         infoWindow.setVisible(true);
         
         mMapView.refreshMap();
+        
+        return true;
     }
     
     /**
@@ -4268,7 +4271,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         }
         final Position myPosition = myLocationPosition;
         if (myPosition != null) {
-            updateMyLocation(myPosition);
             if (MyLocation.MODE_NONE == mMyLocation.mode) {
                 updateLoactionButtonState(MyLocation.MODE_NAVIGATION);
                 mMapView.setZoomLevel(TKConfig.ZOOM_LEVEL_LOCATION);
@@ -4280,6 +4282,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         } else {
             resetLoactionButtonState();
         }
+        
         updateMyLocationOverlay(myPosition); 
     }
     
@@ -4318,116 +4321,86 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             if (isFinishing()) {
                 return;
             }
-            CityInfo myLocationCityInfo = Globals.g_My_Location_City_Info;
-            if (myLocationCityInfo != null) {
-                updateMyLocationOverlay(myLocationCityInfo.getPosition());
-            }
+            updateMyLocation();
         }
     };
     
-    private boolean updateMyLocation(Position myPosition) {
-    	if(myPosition == null) {
-    		return false;
-    	}
-    	else {
-    		if(!myPosition.equals(mMyLocation.getPosition())){
-                try{
-                    mMyLocation.setPosition(myPosition);
-                }catch(Exception e){
-                    e.printStackTrace();
-                }
-                String msg=getString(R.string.my_location);
-                String positionName = MapEngine.getPositionName(myPosition);
-                if (positionName != null && positionName.length() > 0) {
-                    msg += "\n" + positionName;
-                }
-                LogWrapper.d("positionbug", positionName);
-                mMyLocation.setMessage(msg);
-             // 定位图层显示InfoWindow时, 若定位点变化, InfoWindow也会变化
-                InfoWindow infoWindow = mMapView.getInfoWindow();
-                OverlayItem overlayItem = infoWindow.getAssociatedOverlayItem();
-                if (infoWindow.isVisible() && overlayItem != null) {
-                    if (ItemizedOverlay.MY_LOCATION_OVERLAY.equals(overlayItem.getOwnerOverlay().getName())) {
-                        showInfoWindow(mMyLocation);
-                    }
-                }
-    		}
-            return true;
-    	}
-    }
-    
     private boolean updateMyLocationOverlay(Position myLocation){
         if(myLocation==null) {
-            mMapView.deleteOverlaysByName(ItemizedOverlay.MY_LOCATION_OVERLAY);
-            mMapView.deleteShapeByName(Shape.MY_LOCATION);
-            InfoWindow infoWindow = mMapView.getInfoWindow();
-            OverlayItem overlayItem = infoWindow.getAssociatedOverlayItem();
-            if (infoWindow.isVisible() && overlayItem != null) {
-                if (ItemizedOverlay.MY_LOCATION_OVERLAY.equals(overlayItem.getOwnerOverlay().getName())) {
-                    infoWindow.setVisible(false);   
+
+            try {
+                mMyLocation.setPosition(null);
+                
+                mMapView.deleteOverlaysByName(ItemizedOverlay.MY_LOCATION_OVERLAY);
+                mMapView.deleteShapeByName(Shape.MY_LOCATION);
+                
+                InfoWindow infoWindow = mMapView.getInfoWindow();
+                OverlayItem overlayItem = infoWindow.getAssociatedOverlayItem();
+                if (infoWindow.isVisible() && 
+                        overlayItem != null && 
+                        ItemizedOverlay.MY_LOCATION_OVERLAY.equals(overlayItem.getOwnerOverlay().getName())) {
+                    infoWindow.setVisible(false);
                 }
-            }
-            mMapView.refreshMap();
-            return false;
-        }
-        boolean toRefreshMap = false;
-        if(!myLocation.equals(mMyLocation.getPosition())){
-        	toRefreshMap = true;
-            try{
-                mMyLocation.setPosition(myLocation);
-            }catch(Exception e){
+                
+                mMapView.refreshMap();
+                return true;
+            } catch (APIException e) {
+                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-            String msg=getString(R.string.my_location);
-            String positionName = MapEngine.getPositionName(myLocation);
-            if (positionName != null && positionName.length() > 0) {
-                msg += "\n" + positionName;
-            }
-            mMyLocation.setMessage(msg);
             
-            // 定位图层显示InfoWindow时, 若定位点变化, InfoWindow也会变化
-            InfoWindow infoWindow = mMapView.getInfoWindow();
-            OverlayItem overlayItem = infoWindow.getAssociatedOverlayItem();
-            if (infoWindow.isVisible() && overlayItem != null) {
-                if (ItemizedOverlay.MY_LOCATION_OVERLAY.equals(overlayItem.getOwnerOverlay().getName())) {
-                    showInfoWindow(mMyLocation);
-                }
-            }
-        }
-        if (mMapView.getOverlaysByName(ItemizedOverlay.MY_LOCATION_OVERLAY) == null) {
+        } else {
             try {
-                mMapView.addOverlay(mMyLocationOverlay);
+                if (mMapView.getOverlaysByName(ItemizedOverlay.MY_LOCATION_OVERLAY) == null) {
+                    mMapView.addOverlay(mMyLocationOverlay);
+                }
+                
+                Circle myLocationRadiusCircle=(Circle)mMapView.getShapesByName(Shape.MY_LOCATION);
+                if(myLocationRadiusCircle==null){
+                    myLocationRadiusCircle=new Circle(myLocation, new Length(myLocation.getAccuracy(),UOM.M),Shape.MY_LOCATION);
+                    mMapView.addShape(myLocationRadiusCircle);
+                }else{
+                    myLocationRadiusCircle.setPosition(myLocation);
+                    myLocationRadiusCircle.setRadius(new Length(myLocation.getAccuracy(),UOM.M));
+                }
+                
+                if(!myLocation.equals(mMyLocation.getPosition())){
+                    boolean refreshMap = false;
+                    mMyLocation.setPosition(myLocation);
+                    
+                    String msg=getString(R.string.my_location);
+                    String positionName = MapEngine.getPositionName(myLocation);
+                    if (positionName != null && positionName.length() > 0) {
+                        msg += "\n" + positionName;
+                    }
+                    mMyLocation.setMessage(msg);
+                    
+                    // 定位图层显示InfoWindow时, 若定位点变化, InfoWindow也会变化
+                    InfoWindow infoWindow = mMapView.getInfoWindow();
+                    OverlayItem overlayItem = infoWindow.getAssociatedOverlayItem();
+                    if (infoWindow.isVisible() &&
+                            overlayItem != null &&
+                            ItemizedOverlay.MY_LOCATION_OVERLAY.equals(overlayItem.getOwnerOverlay().getName())) {
+                        refreshMap = showInfoWindow(mMyLocation);
+                    }
+                    
+                    if (refreshMap == false) {
+                        mMapView.refreshMap();
+                    }
+                    
+                    return true;
+                }
             } catch (APIException e) {
                 e.printStackTrace();
             }
         }
         
-        Circle myLocationRadiusCircle=(Circle)mMapView.getShapesByName(Shape.MY_LOCATION);
-        if(myLocationRadiusCircle==null){
-            try{
-                myLocationRadiusCircle=new Circle(myLocation, new Length(myLocation.getAccuracy(),UOM.M),Shape.MY_LOCATION);
-                mMapView.addShape(myLocationRadiusCircle);
-            }catch(Exception e){
-                e.printStackTrace();
-            }
-        }else{
-            try{
-                myLocationRadiusCircle.setPosition(myLocation);
-                myLocationRadiusCircle.setRadius(new Length(myLocation.getAccuracy(),UOM.M));
-            }catch(Exception e){
-                e.printStackTrace();
-            }
-            
-        }
-        if(toRefreshMap){
-        	mMapView.refreshMap();
-        }
-        return true;
+        return false;
     }
         
     public void requestLocation() {
-        CityInfo myLocationCityInfo = Globals.g_My_Location_City_Info;
-        if (myLocationCityInfo == null || mMyLocation.getPosition() == null) {
+        Position position = mMyLocation.getPosition();
+        if (position == null) {
             updateLoactionButtonState(MyLocation.MODE_NONE);
             showTip(R.string.location_waiting, 3000);
             mHandler.removeCallbacks(mLocationResponseRun);
@@ -4435,24 +4408,23 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         } else {
             try {
                 if (mMyLocation.mode == MyLocation.MODE_NONE || mMyLocation.mode == MyLocation.MODE_NORMAL) {
-                    showTip(getString(R.string.location_success, Utility.formatMeterString((int)myLocationCityInfo.getPosition().getAccuracy())), 3000);
+                    showTip(getString(R.string.location_success, Utility.formatMeterString((int)position.getAccuracy())), 3000);
                     updateLoactionButtonState(MyLocation.MODE_NAVIGATION);
                     int zoomLevel = (int)mMapView.getZoomLevel();
-                    Position pos = myLocationCityInfo.getPosition();
                     if(zoomLevel < TKConfig.ZOOM_LEVEL_LOCATION) {
                     	mMapView.setZoomLevel(TKConfig.ZOOM_LEVEL_LOCATION);
-                    	mMapView.panToPosition(pos);
+                    	mMapView.panToPosition(position);
                     }
                     else {
-                    	mMapView.panToPosition(pos);
+                    	mMapView.panToPosition(position);
                     }
                     resetShowInPreferZoom();
                 } else if (mMyLocation.mode == MyLocation.MODE_NAVIGATION && mSensorOrientation) {
                     updateLoactionButtonState(MyLocation.MODE_ROTATION);
-                    mMapView.centerOnPosition(myLocationCityInfo.getPosition());
+                    mMapView.centerOnPosition(position);
                 } else if (mMyLocation.mode == MyLocation.MODE_ROTATION) {
                     updateLoactionButtonState(MyLocation.MODE_NAVIGATION);
-                    mMapView.centerOnPosition(myLocationCityInfo.getPosition());
+                    mMapView.centerOnPosition(position);
                 }
                 mMapView.showOverlay(ItemizedOverlay.MY_LOCATION_OVERLAY, true);
             } catch (APIException e) {
