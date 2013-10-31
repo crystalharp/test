@@ -5,6 +5,8 @@
 package com.tigerknows.ui.poi;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import android.content.Context;
@@ -129,6 +131,14 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
     private DishAdapter mSelectedAdapter;
     private DishAdapter mMyLikeAdapter;
     private DishAdapter mRecommendAdapter;
+    
+    public static Comparator<Dish> sLikeDishComparator = new Comparator<Dish>() {
+
+        @Override
+        public int compare(Dish dish1, Dish dish2) {
+            return (int)(dish2.likeTimeStamp - dish1.likeTimeStamp);
+        };
+    };
     
     private View mRecommedView;
     private View mAllView;
@@ -600,6 +610,7 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
                                 }
                             }
                         }
+                        Collections.sort(mMyLikeList, sLikeDishComparator);
                         
                         mMyLikeAdapter.notifyDataSetChanged();
                         LogWrapper.d(TAG, "likedish.size()"+mMyLikeList.size());
@@ -672,7 +683,7 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
             TextView commendTxv = (TextView) v.getTag(R.id.commend_txv);
             final boolean isLike = !data.isLike();
             if (isLike) {
-                data.addLike();
+                data.addLike(true);
                 mActionLog.addAction(mActionTag + ActionLog.DishLike);
             } else {
                 data.deleteLike();
@@ -704,7 +715,7 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
                 Dish c = mAllList.get(i);
                 if (dishId == c.getDishId()) {
                     if (isLike) {
-                        c.addLike();
+                        c.addLike(true);
                         if (mMyLikeList.contains(c) == false) {
                             mMyLikeList.add(c);
                         }
@@ -718,7 +729,7 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
                 Dish c = mRecommedList.get(i);
                 if (dishId == c.getDishId()) {
                     if (isLike) {
-                        c.addLike();
+                        c.addLike(true);
                         if (mMyLikeList.contains(c) == false) {
                             mMyLikeList.add(c);
                         }
@@ -738,6 +749,8 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
                     }
                 }
             }
+            
+            Collections.sort(mMyLikeList, sLikeDishComparator);
             
             v.setBackgroundResource(R.drawable.btn_subway_busstop_normal);
 //            commendTxv.setTextColor(TKConfig.COLOR_ORANGE);

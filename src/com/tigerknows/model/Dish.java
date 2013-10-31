@@ -64,6 +64,7 @@ public class Dish extends XMapData {
     private List<HotelTKDrawable> pictureList;
     private List<HotelTKDrawable> originalPictureList;
     public int categoryIndex = 0;
+    public long likeTimeStamp = 0;
     
     public static LocalMark getLocalMark() {
         if (sLocalMark == null) {
@@ -76,11 +77,14 @@ public class Dish extends XMapData {
         return isLike;
     }
 
-    public void addLike() {
+    public void addLike(boolean refreshTimeStamp) {
         if (this.isLike == false) {
             hitCount += 1;
         }
         this.isLike = true;
+        if (refreshTimeStamp) {
+            this.likeTimeStamp = System.currentTimeMillis();
+        }
     }
 
     public void deleteLike() {
@@ -134,11 +138,12 @@ public class Dish extends XMapData {
             this.data = null;
         }
         
-        boolean draft = getLocalMark().findCommend(TKApplication.getInstance(), String.valueOf(dishId), false);
-        if (draft) {
-            addLike();
+        likeTimeStamp = getLocalMark().findCommend(TKApplication.getInstance(), String.valueOf(dishId), false);
+        if (likeTimeStamp > 0) {
+            addLike(false);
         } else {
-            isLike = getLocalMark().findCommend(TKApplication.getInstance(), String.valueOf(dishId), true);
+            likeTimeStamp = getLocalMark().findCommend(TKApplication.getInstance(), String.valueOf(dishId), true);
+            isLike = (likeTimeStamp > 0);
         }
     }
 
