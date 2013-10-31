@@ -542,6 +542,13 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
                 int newWidth = (int) (Globals.g_metrics.density*COLUMN_WIDTH);
                 ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
                 layoutParams.width = newWidth;
+            } else {
+            
+                if (position == getCount() -1) {
+                    view.setPadding(0, 0, 0, mCategoryAdapter.totalHeight-(mCategoryAdapter.childHeight*2));
+                } else {
+                    view.setPadding(0, 0, 0, 0);
+                }
             }
         
             return view;
