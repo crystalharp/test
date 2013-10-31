@@ -53,6 +53,8 @@ public class MyOrderFragment extends BaseFragment{
 	private boolean mFromTuangou;
 	private boolean mActualOnCreate;
 	
+	private Thread mThread;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
@@ -112,28 +114,32 @@ public class MyOrderFragment extends BaseFragment{
 				createShangjiaListView();
 			}
 		}
-		new Thread(new Runnable(){
-
-			@Override
-			public void run() {
-				if(!mActualOnCreate){
-					return;
-				}
-				Shangjia.readShangjiaList(mContext);
-				mSphinx.getHandler().post(new Runnable(){
-
-					@Override
-					public void run() {
-						synchronized (MyOrderFragment.this) {
-						    List<Shangjia> newList = Shangjia.getShangjiaList();
-							mResultList.clear();
-							mResultList.addAll(newList);
-							createShangjiaListView();
-						}
+		if(mThread == null || mThread.isAlive() == false){
+		
+			mThread = new Thread(new Runnable(){
+				
+				@Override
+				public void run() {
+					if(!mActualOnCreate){
+						return;
 					}
-				});
-			}
-		}).start();
+					Shangjia.readShangjiaList(mContext);
+					mSphinx.getHandler().post(new Runnable(){
+						
+						@Override
+						public void run() {
+							synchronized (MyOrderFragment.this) {
+								List<Shangjia> newList = Shangjia.getShangjiaList();
+								mResultList.clear();
+								mResultList.addAll(newList);
+								createShangjiaListView();
+							}
+						}
+					});
+				}
+			});
+			mThread.start();
+		}
 
 		if (mRequestLogin != null) {
 		    if (Globals.g_User != null) {
