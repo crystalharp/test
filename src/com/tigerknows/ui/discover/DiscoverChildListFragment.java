@@ -85,7 +85,7 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
     
     private String mDataType;
     
-    private boolean toScrollDown = false;
+    private int toScrollDownPos = 0;
     
     private Runnable mTurnPageRun = new Runnable() {
         
@@ -490,9 +490,9 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
             makeChangciView(yingxun, mSphinx, mLayoutInflater, changciListView);
             refreshDayView(yingxun, todayBtn, tomorrowBtn, afterTomorrowBtn, showTimeDividerImv, notimeView);
             
-            if(toScrollDown){
-            	mResultLsv.smoothScrollToPosition(mResultLsv.getBottom());
-            	toScrollDown = false;
+            if(toScrollDownPos != 0){
+            	mResultLsv.smoothScrollToPosition(toScrollDownPos);
+            	toScrollDownPos = 0;
             }
             
             View.OnClickListener onClickListener = new OnClickListener() {
@@ -549,7 +549,7 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
     
     private void nodifyScrollDown(int pos){
     	if(pos >= mResultLsv.getCount() - 2 && mResultLsv.getState(false) == SpringbackListView.DONE){
-    		toScrollDown = true;
+    		toScrollDownPos = pos;
     	}
     }
     
