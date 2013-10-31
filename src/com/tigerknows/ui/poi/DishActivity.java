@@ -864,13 +864,18 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
         }
         
         if (dataList.size() <= 0 && mode == mMode && tab == mTab) {
-            if (mode == 0 && tab == 0) {
-                if (mManuallyChanged == false) {
-                    mRecommendVpg.setCurrentItem(1);
-                    return;
+            if (mode == 0) {
+                if (tab == 0) {
+                    if (mManuallyChanged == false) {
+                        mRecommendVpg.setCurrentItem(1);
+                        return;
+                    }
+                    mEmptyImv.setBackgroundResource(R.drawable.ic_like_empty);
+                    mEmptyTxv.setText(R.string.like_empty_tip);
+                } else {
+                    mEmptyImv.setBackgroundResource(R.drawable.bg_query_fail);
+                    mEmptyTxv.setText(R.string.recommend_cook_empty);
                 }
-                mEmptyImv.setBackgroundResource(R.drawable.ic_like_empty);
-                mEmptyTxv.setText(R.string.like_empty_tip);
             } else {
                 mEmptyImv.setBackgroundResource(R.drawable.bg_query_fail);
                 mEmptyTxv.setText(R.string.no_result);

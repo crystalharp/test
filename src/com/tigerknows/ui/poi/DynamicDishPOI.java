@@ -67,14 +67,13 @@ public class DynamicDishPOI extends POIDetailFragment.DynamicPOIView implements 
                 }
             }
             
+            mContentTxv.setClickable(false);
             String recommendCook = mPOI.getDescriptionValue(Description.FIELD_RECOMMEND_COOK);
             if(!TextUtils.isEmpty(recommendCook)) {
                 mContentTxv.setText(recommendCook);
-                mContentTxv.setClickable(false);
-                return;
+            } else {
+                mContentTxv.setText(R.string.recommend_cook_empty);
             }
-            
-            mViewBlock.clear();
         }
     };
     
