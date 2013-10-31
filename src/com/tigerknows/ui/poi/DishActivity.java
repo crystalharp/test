@@ -425,6 +425,18 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
             anim.reset();
         }
         mSelectedView.setAnimation(null);
+        
+        if (mFromYDelta+mCategoryAdapter.groupHeight > mCategoryAdapter.totalHeight) {
+            mFromYDelta = mCategoryAdapter.totalHeight - mCategoryAdapter.groupHeight;
+        } else if (mFromYDelta < mCategoryAdapter.groupHeight) {
+            mFromYDelta = mCategoryAdapter.groupHeight;
+        }
+        
+        if (toYDelta+mCategoryAdapter.groupHeight > mCategoryAdapter.totalHeight) {
+            toYDelta = mCategoryAdapter.totalHeight - mCategoryAdapter.groupHeight;
+        } else if (toYDelta < mCategoryAdapter.groupHeight) {
+            toYDelta = mCategoryAdapter.groupHeight;
+        }
         anim = new TranslateAnimation(0, 0, mFromYDelta, toYDelta);
         anim.setDuration(300);
         anim.setFillAfter(true);
@@ -889,6 +901,12 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
             mCategoryList.clear();
             mCategoryList.addAll(mCategoryGroupList.get(mGroupPosition).getChildList());
             
+            size = mAllList.size();
+            for(int i = size - 1; i >= 0 ; i--) {
+                Dish dish = mAllList.get(i);
+                dish.categoryIndex = -1;
+            }
+            
             mSelectedList.clear();
             size = mCategoryList.size();
             for(int i = 0; i < size; i++) {
@@ -899,7 +917,7 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
                     long id = idList.get(n);
                     for(int j = 0, count = mAllList.size(); j < count; j++) {
                         Dish dish = mAllList.get(j);
-                        if (dish.getDishId() == id) {
+                        if (dish.categoryIndex == -1 && dish.getDishId() == id) {
                             mSelectedList.add(dish);
                             if (category.firstDishIndex == -1) {
                                 category.firstDishIndex = mSelectedList.size()-1;
