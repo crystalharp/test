@@ -669,6 +669,15 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         mDynamicHotelPOI.clearDateCache();
     }
     
+    public void refreshRecommendCook() {
+        
+        // 菜品类型的特殊处理，当存在旧数据的推荐菜时也判断为效
+        DynamicPOIView dpView = DPOIViewTable.get(DynamicPOI.TYPE_DISH);
+        if (dpView.mExistDynamicPOI) {
+            dpView.loadData(DynamicPOIView.FROM_ONRESUME);
+        }
+    }
+    
     public void refreshDetail() {
         POI poi = mPOI;
         if (poi == null) {

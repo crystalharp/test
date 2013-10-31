@@ -181,7 +181,7 @@ public class DynamicDishPOI extends POIDetailFragment.DynamicPOIView implements 
             mPOIDetailFragment.mActionLog.addAction(mPOIDetailFragment.mActionTag+ActionLog.POIDetailShopkeeper);
             Intent intent = new Intent();
             intent.putExtra(BrowserActivity.TITLE, mSphinx.getString(R.string.add_dish));
-            intent.putExtra(BrowserActivity.URL, "http://www.tigerknows.com");
+            intent.putExtra(BrowserActivity.URL, "http://192.168.11.179/emenu/owner.php");
             mSphinx.showView(R.id.activity_browser, intent);
         } else if (id == R.id.content_txv) {
             mPOIDetailFragment.mActionLog.addAction(mPOIDetailFragment.mActionTag + ActionLog.POIDetailDishList);

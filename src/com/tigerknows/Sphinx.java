@@ -1095,6 +1095,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 			}
         } else if (R.id.activity_hint == requestCode) {
 
+        } else if (R.id.activity_poi_dish == requestCode) {
+            getPOIDetailFragment().refreshRecommendCook();
         }
 		
         if (REQUEST_CODE_LOCATION_SETTINGS == requestCode) {
