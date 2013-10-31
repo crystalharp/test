@@ -245,12 +245,12 @@ public class DataOperation extends BaseQuery {
             uid = getStringFromData(FIELD_UID);
             likes = getLongFromData(FIELD_LIKES);
             
-            boolean draft = Comment.getLocalMark().findCommend(TKApplication.getInstance(), this.uid, false);
+            boolean draft = (Comment.getLocalMark().findCommend(TKApplication.getInstance(), this.uid, false) > 0);
             if (draft) {
                 isCommend = true;
                 likes++;
             } else {
-                isCommend = Comment.getLocalMark().findCommend(TKApplication.getInstance(), this.uid, true);
+                isCommend = (Comment.getLocalMark().findCommend(TKApplication.getInstance(), this.uid, true) > 0);
             }
         }
 

@@ -150,7 +150,7 @@ public class DynamicDishPOI extends POIDetailFragment.DynamicPOIView implements 
         if (mBaseQuery != null) {
             mBaseQuery.stop();
         }
-        DataQuery dataQuery = mPOI.getDishQuery();
+        DataQuery dataQuery = mPOI.getRecommendDishQuery();
         if (dataQuery != null) {
             setDataQuery(dataQuery);
             return;
