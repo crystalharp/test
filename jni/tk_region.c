@@ -13,6 +13,7 @@
 #include <assert.h>
 #include <pthread.h>
 #include <sys/stat.h>
+#include <errno.h>
 #include "tk_types.h"
 #include "tk_region.h"
 #include "tk_util.h"
@@ -783,7 +784,13 @@ tk_status_t tk_region_init_file(const char *metafile, int rid)
     sprintf(rname,"%s/%s", tk_global_info.datapath, pname);
     if (access(rname, 0) < 0) { //judge whether the directory exists
         if (tk_mkdir(rname) < 0) {
-            return TK_STATUS_MKDIR_FAILED;
+        	LOG_INFO("error no: %d", errno);
+        	if(access(rname, 0) < 0)
+        		return TK_STATUS_MKDIR_FAILED;
+        	else {
+        		LOG_DBG("dir: %d exist", rname);
+        		assert(0);
+        	}
         }
     }
     strcat(rname, "/");
