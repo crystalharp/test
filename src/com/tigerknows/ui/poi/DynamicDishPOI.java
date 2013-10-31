@@ -45,28 +45,34 @@ public class DynamicDishPOI extends POIDetailFragment.DynamicPOIView implements 
                 return;
             }
             
-            DataQuery dataQuery = mPOI.getRecommendDishQuery();
-            if (dataQuery != null) {
-                DishResponse dishResponse = (DishResponse) dataQuery.getResponse();
-                if (dishResponse != null) {
-                    DishList dishList = dishResponse.getList();
-                    if (dishList != null) {
-                        List<Dish> dishes = dishList.getDishList();
-                        if (dishes != null && dishes.size() > 0) {
-
-                            StringBuilder s = new StringBuilder();
-                            for(int i = 0, count = dishes.size(); i < count; i++) {
-                                s.append(dishes.get(i).getName());
-                                s.append("  ");
+            if (mExistDynamicPOI) {
+                DataQuery dataQuery = mPOI.getRecommendDishQuery();
+                if (dataQuery != null) {
+                    DishResponse dishResponse = (DishResponse) dataQuery.getResponse();
+                    if (dishResponse != null) {
+                        DishList dishList = dishResponse.getList();
+                        if (dishList != null) {
+                            List<Dish> dishes = dishList.getDishList();
+                            if (dishes != null && dishes.size() > 0) {
+    
+                                StringBuilder s = new StringBuilder();
+                                for(int i = 0, count = dishes.size(); i < count; i++) {
+                                    s.append(dishes.get(i).getName());
+                                    s.append("  ");
+                                }
+                                mContentTxv.setText(s.toString());
+                                mContentTxv.setClickable(true);
+                                return;
                             }
-                            mContentTxv.setText(s.toString());
-                            mContentTxv.setClickable(true);
-                            return;
                         }
                     }
                 }
+
+                mContentTxv.setClickable(false);
+                mContentTxv.setText(R.string.recommend_cook_empty);
+                return;
             }
-            
+
             mContentTxv.setClickable(false);
             String recommendCook = mPOI.getDescriptionValue(Description.FIELD_RECOMMEND_COOK);
             if(!TextUtils.isEmpty(recommendCook)) {
@@ -137,6 +143,7 @@ public class DynamicDishPOI extends POIDetailFragment.DynamicPOIView implements 
         }
         if (baseQuery instanceof DataQuery) {
             if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, false, this, false)) {
+                refresh();
                 return;
             }
             
