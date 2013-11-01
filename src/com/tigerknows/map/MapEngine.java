@@ -220,6 +220,9 @@ public class MapEngine {
         
         File metaFile = new File(path);
         if (metaFile.exists()) {
+        	String tmpPath = path + ".rmtmp";
+        	File tmpFile = new File(tmpPath);
+        	metaFile.renameTo(tmpFile);
             metaFile.delete();
         }
         LogWrapper.d("MapEngine", "init region status: " + ret);
