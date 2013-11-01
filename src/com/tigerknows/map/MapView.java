@@ -1162,7 +1162,7 @@ public class MapView extends RelativeLayout implements
             @Override
             public void run() {
                 try {
-                    Thread.sleep(60*1000);
+                    Thread.sleep(15*1000);
                 } catch (InterruptedException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
