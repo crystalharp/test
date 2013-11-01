@@ -221,7 +221,7 @@ public class DownloadService extends IntentService {
                 nm.cancel(currentDownloadItem.url.hashCode());
                 sDownloadList.remove(url);
             }
-            if(tempFile != null) {
+            if(tempFile != null && !stop && !currentDownloadItem.stop) {
                 DownloadedProcessor processor = processorMap.get(url);
                 if(processor != null) {
                     processor.process(this, tempFile, url, tickerText);
