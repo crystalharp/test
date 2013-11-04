@@ -39,20 +39,11 @@ import java.util.List;
 public class MeasureDistanceFragment extends BaseFragment implements View.OnClickListener {
 
     private MapView mMapView;
-    private int mIndex;
     private int mVisibilityLocation;
     private int mVisibilityPreviousNext;
     private OverlayItem mOtherOverlayItem;
     private OverlayItem mLastOverlayItem;
     private TouchMode mTouchMode;
-    
-    public int getIndex() {
-        return mIndex;
-    }
-    
-    public void setIndex(int index) {
-        mIndex = index;
-    }
     
     /**
      * 添加一个点
@@ -60,19 +51,14 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
      * @param newLine 是否需要创建新线路
      * @return
      */
-    public boolean addPoint(Position position, boolean newLine) {
+    public boolean addPoint(Position position) {
         
         boolean result = false;
         
-        String overlayName = ItemizedOverlay.MEASURE_DISTANCE_OVERLAY + mIndex;
-        String shapeName = Shape.MEASURE_DISTANCE + mIndex;
+        String overlayName = ItemizedOverlay.MEASURE_DISTANCE_OVERLAY;
+        String shapeName = Shape.MEASURE_DISTANCE;
         
         ItemizedOverlay overlay= mMapView.getOverlaysByName(overlayName);
-        if (newLine && overlay != null && overlay.size() > 1) {
-            mIndex++;
-            overlayName = ItemizedOverlay.MEASURE_DISTANCE_OVERLAY + mIndex;
-            shapeName = Shape.MEASURE_DISTANCE + mIndex;
-        }
         
         try {
 
@@ -139,8 +125,8 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
         
         boolean result = false;
         
-        String overlayName = ItemizedOverlay.MEASURE_DISTANCE_OVERLAY + mIndex;
-        String shapeName = Shape.MEASURE_DISTANCE + mIndex;
+        String overlayName = ItemizedOverlay.MEASURE_DISTANCE_OVERLAY;
+        String shapeName = Shape.MEASURE_DISTANCE;
         
         try {
 
@@ -157,9 +143,6 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
                 mMapView.getInfoWindow().setVisible(false);
                 mMapView.refreshMap();
                 mLastOverlayItem = null;
-                if (mIndex > 0) {
-                    mIndex--;
-                }
                 return result;
             }
             
@@ -205,11 +188,8 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
      * 清空测距生成的overylay和shape
      */
     public void clearLine() {
-        for(; mIndex >= 0; mIndex--) {
-            mMapView.deleteOverlaysByName(ItemizedOverlay.MEASURE_DISTANCE_OVERLAY + mIndex);
-            mMapView.deleteShapeByName(Shape.MEASURE_DISTANCE + mIndex);
-        }
-        mIndex = 0;
+        mMapView.deleteOverlaysByName(ItemizedOverlay.MEASURE_DISTANCE_OVERLAY);
+        mMapView.deleteShapeByName(Shape.MEASURE_DISTANCE );
         mLastOverlayItem = null;
         mMapView.getInfoWindow().setVisible(false);
         mMapView.refreshMap();
