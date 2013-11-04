@@ -2,10 +2,11 @@
  * Copyright (C) 2010 pengwenyue@tigerknows.com
  */
 
-package com.tigerknows.ui;
+package com.tigerknows.ui.common;
 
 import com.tigerknows.TKConfig;
 import com.tigerknows.common.ActionLog;
+import com.tigerknows.ui.BaseActivity;
 
 import android.os.Bundle;
 import android.view.KeyEvent;

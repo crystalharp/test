@@ -455,8 +455,6 @@ public class POI extends BaseData {
     
     private List<Dianying> dynamicDianyingList;
     
-    private List<Dish> dynamicDishList;
-    
     private DataQuery dishQuery = null;
     
     private DataQuery recommendDishQuery = null;
@@ -804,14 +802,6 @@ public class POI extends BaseData {
 
     public void setDynamicDianyingList(List<Dianying> dynamicDianyingList) {
         this.dynamicDianyingList = dynamicDianyingList;
-    }
-
-    public List<Dish> getDynamicDishList() {
-        return dynamicDishList;
-    }
-
-    public void setDynamicDishList(List<Dish> dynamicDishList) {
-        this.dynamicDishList = dynamicDishList;
     }
 
     public Hotel getHotel() {

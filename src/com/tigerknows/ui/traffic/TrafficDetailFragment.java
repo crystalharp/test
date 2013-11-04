@@ -42,7 +42,7 @@ import com.tigerknows.model.TrafficQuery;
 import com.tigerknows.provider.Tigerknows;
 import com.tigerknows.share.ShareAPI;
 import com.tigerknows.ui.BaseFragment;
-import com.tigerknows.ui.ResultMapFragment.TitlePopupArrayAdapter;
+import com.tigerknows.ui.common.ResultMapFragment.TitlePopupArrayAdapter;
 import com.tigerknows.util.Utility;
 import com.tigerknows.util.NavigationSplitJointRule;
 

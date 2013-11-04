@@ -265,22 +265,34 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         List<DynamicPOI> list = poi.getDynamicPOIList();
         for (DynamicPOIView dpView : DPOIViewTable.values()) {
             dpView.mExist = false;
+            dpView.mExistDynamicPOI = false;
         }
         int size = (list == null ? 0 : list.size());
-        if (size == 0) {
-            return;
-        }
-        //先把动态POI对应的DynamicPOIViewBlock获取出来
-        for (DynamicPOI dynamicPOI : list) {
-            String dataType = dynamicPOI.getType();
-            if (!DPOIViewTable.containsKey(dataType) || 
-                    DPOIViewTable.get(dataType).isExist()) {
-                continue;
+        if (size > 0) {
+            //先把动态POI对应的DynamicPOIViewBlock获取出来
+            for (DynamicPOI dynamicPOI : list) {
+                String dataType = dynamicPOI.getType();
+                if (!DPOIViewTable.containsKey(dataType) || 
+                        DPOIViewTable.get(dataType).isExist()) {
+                    continue;
+                }
+                DynamicPOIView dpView = DPOIViewTable.get(dataType);
+                dpView.mExist = true;
+                dpView.mExistDynamicPOI = true;
+                dpView.initData(poi);
+                DPOIViewBlockList.addAll(dpView.getViewList());
             }
-            DynamicPOIView dpView = DPOIViewTable.get(dataType);
-            dpView.mExist = true;
-            DPOIViewTable.get(dataType).initData(poi);
-            DPOIViewBlockList.addAll(dpView.getViewList());
+        }
+        
+        // 菜品类型的特殊处理，当存在旧数据的推荐菜时也判断为效
+        DynamicPOIView dpView = DPOIViewTable.get(DynamicPOI.TYPE_DISH);
+        if (dpView.mExist == false) {
+            String recommendCook = mPOI.getDescriptionValue(Description.FIELD_RECOMMEND_COOK);
+            if(!TextUtils.isEmpty(recommendCook)) {
+                dpView.mExist = true;
+                dpView.initData(poi);
+                DPOIViewBlockList.addAll(dpView.getViewList());
+            }
         }
 
         //获取到的Block全部加入到该页中
@@ -382,6 +394,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         POI mPOI;
         LayoutInflater mInflater;
         boolean mExist;
+        boolean mExistDynamicPOI;
 
         protected List<BaseQuery> mBaseQuerying;
         protected TKAsyncTask mTkAsyncTasking;
@@ -407,7 +420,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         }
 
         //这个函数一般情况下不需要关心,会在页面setData的时候在检测动态POI时被调到
-        final public void initData(POI poi) {
+        public void initData(POI poi) {
             mPOI = poi;
         }
 
@@ -659,6 +672,15 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     public void dismiss() {
         super.dismiss();
         mDynamicHotelPOI.clearDateCache();
+    }
+    
+    public void refreshRecommendCook() {
+        
+        // 菜品类型的特殊处理，当存在旧数据的推荐菜时也判断为效
+        DynamicPOIView dpView = DPOIViewTable.get(DynamicPOI.TYPE_DISH);
+        if (dpView.mExistDynamicPOI) {
+            dpView.loadData(DynamicPOIView.FROM_ONRESUME);
+        }
     }
     
     public void refreshDetail() {
@@ -1210,20 +1232,11 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             viewGroup.getChildAt(i).setVisibility(View.GONE);
         }
 
-        byte[] showKeys;
-        if (mDynamicDishPOI.isExist()) {
-            showKeys = new byte[] {Description.FIELD_FEATURE, Description.FIELD_RECOMMEND, Description.FIELD_GUEST_CAPACITY, Description.FIELD_BUSINESS_HOURS,
+        byte[] showKeys = new byte[] {Description.FIELD_FEATURE, Description.FIELD_RECOMMEND, Description.FIELD_GUEST_CAPACITY, Description.FIELD_BUSINESS_HOURS,
                     Description.FIELD_HOUSING_PRICE, Description.FIELD_SYNOPSIS, Description.FIELD_CINEMA_FEATURE, Description.FIELD_MEMBER_POLICY, Description.FIELD_FEATURE_SPECIALTY, 
                     Description.FIELD_TOUR_DATE, Description.FIELD_TOUR_LIKE, Description.FIELD_POPEDOM_SCENERY, Description.FIELD_RECOMMEND_SCENERY,
                     Description.FIELD_NEARBY_INFO, Description.FIELD_COMPANY_WEB, Description.FIELD_COMPANY_TYPE,
                     Description.FIELD_COMPANY_SCOPE, Description.FIELD_INDUSTRY_INFO};;
-        } else {
-            showKeys = new byte[] {Description.FIELD_RECOMMEND_COOK, Description.FIELD_FEATURE, Description.FIELD_RECOMMEND, Description.FIELD_GUEST_CAPACITY, Description.FIELD_BUSINESS_HOURS,
-                    Description.FIELD_HOUSING_PRICE, Description.FIELD_SYNOPSIS, Description.FIELD_CINEMA_FEATURE, Description.FIELD_MEMBER_POLICY, Description.FIELD_FEATURE_SPECIALTY, 
-                    Description.FIELD_TOUR_DATE, Description.FIELD_TOUR_LIKE, Description.FIELD_POPEDOM_SCENERY, Description.FIELD_RECOMMEND_SCENERY,
-                    Description.FIELD_NEARBY_INFO, Description.FIELD_COMPANY_WEB, Description.FIELD_COMPANY_TYPE,
-                    Description.FIELD_COMPANY_SCOPE, Description.FIELD_INDUSTRY_INFO};;
-        }
 
         int margin = (int)(Globals.g_metrics.density*8);
         LayoutParams layoutParamsTitle = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);

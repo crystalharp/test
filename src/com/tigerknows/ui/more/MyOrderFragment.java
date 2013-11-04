@@ -33,7 +33,7 @@ import com.tigerknows.model.DataQuery.ShangjiaResponse;
 import com.tigerknows.model.DataQuery.ShangjiaResponse.ShangjiaList;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
-import com.tigerknows.ui.BrowserActivity;
+import com.tigerknows.ui.common.BrowserActivity;
 import com.tigerknows.ui.user.UserBaseActivity;
 import com.tigerknows.util.Utility;
 
@@ -52,6 +52,8 @@ public class MyOrderFragment extends BaseFragment{
 	
 	private boolean mFromTuangou;
 	private boolean mActualOnCreate;
+	
+	private Thread mThread;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState){
@@ -104,36 +106,52 @@ public class MyOrderFragment extends BaseFragment{
         
         LogWrapper.d("Trap", mActualOnCreate == true ? "Create" : "Resume");
         
-		synchronized (Shangjia.getShangjiaList()) {
-			List<Shangjia> list = Shangjia.getShangjiaList();
+        List<Shangjia> list = new ArrayList<Shangjia>();
+        List<Shangjia> shangjiaList = Shangjia.getShangjiaList();
+        synchronized (shangjiaList) {
+            list.addAll(shangjiaList);
+        }
+        
+		synchronized (MyOrderFragment.this) {
+		    
 			if (list.size() != mResultList.size()) {
 				mResultList.clear();
 				mResultList.addAll(list);
 				createShangjiaListView();
 			}
 		}
-		new Thread(new Runnable(){
-
-			@Override
-			public void run() {
-				if(!mActualOnCreate){
-					return;
-				}
-				Shangjia.readShangjiaList(mContext);
-				mSphinx.getHandler().post(new Runnable(){
-
-					@Override
-					public void run() {
-						synchronized (Shangjia.getShangjiaList()) {
-							List<Shangjia> newList = Shangjia.getShangjiaList();
-							mResultList.clear();
-							mResultList.addAll(newList);
-							createShangjiaListView();
-						}
+		if(mThread == null || mThread.isAlive() == false){
+		
+			mThread = new Thread(new Runnable(){
+				
+				@Override
+				public void run() {
+					if(!mActualOnCreate){
+						return;
 					}
-				});
-			}
-		}).start();
+					Shangjia.readShangjiaList(mContext);
+
+			        final List<Shangjia> list = new ArrayList<Shangjia>();
+			        List<Shangjia> shangjiaList = Shangjia.getShangjiaList();
+			        synchronized (shangjiaList) {
+			            list.addAll(shangjiaList);
+			        }
+			        
+					mSphinx.getHandler().post(new Runnable(){
+						
+						@Override
+						public void run() {
+							synchronized (MyOrderFragment.this) {
+								mResultList.clear();
+								mResultList.addAll(list);
+								createShangjiaListView();
+							}
+						}
+					});
+				}
+			});
+			mThread.start();
+		}
 
 		if (mRequestLogin != null) {
 		    if (Globals.g_User != null) {

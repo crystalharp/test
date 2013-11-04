@@ -165,6 +165,14 @@ public class DataOperation extends BaseQuery {
                     String[] uuids = operationCode.split("\",\"");
                     Comment.getLocalMark().deleteCommend(context, uuids, false);
                 }
+            } else if (DATA_TYPE_DISH.equals(dataType)) {
+                response = new Response(responseXMap);
+                if (response.getResponseCode() == Response.RESPONSE_CODE_OK) {
+                    operationCode = URLDecoder.decode(operationCode);
+                    operationCode = operationCode.substring(Comment.LocalMark.JsonHeader.length()+1, operationCode.length()-3);
+                    String[] uuids = operationCode.split("\",\"");
+                    Dish.getLocalMark().deleteCommend(context, uuids, false);
+                }
             }
         }
     }
@@ -237,12 +245,12 @@ public class DataOperation extends BaseQuery {
             uid = getStringFromData(FIELD_UID);
             likes = getLongFromData(FIELD_LIKES);
             
-            boolean draft = Comment.getLocalMark().findCommend(TKApplication.getInstance(), this.uid, false);
+            boolean draft = (Comment.getLocalMark().findCommend(TKApplication.getInstance(), this.uid, false) > 0);
             if (draft) {
                 isCommend = true;
                 likes++;
             } else {
-                isCommend = Comment.getLocalMark().findCommend(TKApplication.getInstance(), this.uid, true);
+                isCommend = (Comment.getLocalMark().findCommend(TKApplication.getInstance(), this.uid, true) > 0);
             }
         }
 

@@ -2,9 +2,11 @@
  * Copyright (C) 2010 pengwenyue@tigerknows.com
  */
 
-package com.tigerknows.ui;
+package com.tigerknows.ui.common;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -26,6 +28,7 @@ import com.tigerknows.Sphinx;
 import android.widget.Toast;
 
 import com.tigerknows.common.ActionLog;
+import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.util.Utility;
 
 /**
@@ -142,6 +145,13 @@ public class BrowserFragment extends BaseFragment implements View.OnClickListene
         mWebWbv.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
+
+                if (url.startsWith("tel:")) { 
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url)); 
+                    mSphinx.startActivity(intent);
+                    return true;
+                }
+                
                 // 在这里也如同onPageStarted这样处理，详见新浪的demo
                 view.loadUrl(url);
                 return true;

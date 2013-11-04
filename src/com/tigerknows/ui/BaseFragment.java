@@ -296,7 +296,7 @@ public class BaseFragment extends LinearLayout {
             Globals.getAsyncImageLoader().setViewToken(toString());
         	mSphinx.getMapView().setStopRefreshMyLocation(true);
         }
-        
+        correctUIStack();
         if (mRootView != null) {
             mRootView.setOnTouchListener(new OnTouchListener() {
                 
@@ -306,6 +306,10 @@ public class BaseFragment extends LinearLayout {
                 }
             });
         }
+    }
+    
+    public void correctUIStack(){
+    	// DO NOT DELETE virtual method
     }
 
     public void onSaveInstanceState(Bundle outState) {

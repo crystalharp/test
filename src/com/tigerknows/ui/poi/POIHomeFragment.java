@@ -605,7 +605,7 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
                 mActionLog.addAction(mActionTag + ActionLog.POIHomeDish);
                 TKConfig.setPref(mSphinx, TKConfig.PREFS_DISH, "1");
                 
-                jumpToPOIResult(mCategorylist.get(FOOD_INDEX).name, "2");
+                jumpToPOIResult(mCategorylist.get(FOOD_INDEX).name, DataQuery.BIAS_DISH);
             }
             mSubwayMapImv.setVisibility(View.GONE);
         }

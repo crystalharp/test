@@ -181,9 +181,7 @@ public class TKLocationManager {
                                     && cid > 0
                                     && lac == lastGpsTKLocation.lac
                                     && cid == lastGpsTKLocation.cid)
-                                || (lac == -1 
-                                    && cid == -1
-                                    && Math.abs(lastGpsTKLocation.time - System.currentTimeMillis()) < TKLocationManager.GPS_TIME_OUT))) {
+                                || Math.abs(System.currentTimeMillis() - lastGpsTKLocation.time) < TKLocationManager.GPS_TIME_OUT)) {
                     
                     // 优先取用gps定位信息
                     location = lastGpsTKLocation.location;

@@ -734,32 +734,30 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 distanceTxv.setText("");
             }
             
-            String str = poi.getCategory();
-            if (!TextUtils.isEmpty(str)) {
-                categoryTxv.setText(str);
-
-                boolean dish = false;
-                List<DynamicPOI> list = poi.getDynamicPOIList();
-                if (list != null) {
-                    for(int i = 0, size = list.size(); i < size; i++) {
-                        String dataType = list.get(i).getType();
-                        if (BaseQuery.DATA_TYPE_DISH.equals(dataType)) {
-                            dish = true;
-                            break;
-                        }
+            boolean dish = false;
+            List<DynamicPOI> list = poi.getDynamicPOIList();
+            if (list != null) {
+                for(int i = 0, size = list.size(); i < size; i++) {
+                    String dataType = list.get(i).getType();
+                    if (BaseQuery.DATA_TYPE_DISH.equals(dataType)) {
+                        dish = true;
+                        break;
                     }
                 }
-                if (dish) {
-                    icDish.setBounds(0, 0, icDish.getIntrinsicWidth(), icDish.getIntrinsicHeight());
-                    categoryTxv.setCompoundDrawables(null, null, icDish, null);
-                    categoryTxv.setCompoundDrawablePadding(padding);
-                } else {
-                    categoryTxv.setCompoundDrawables(null, null, null, null);
-                    categoryTxv.setCompoundDrawablePadding(0);
-                }
+            }
+            if (dish) {
+                icDish.setBounds(0, 0, icDish.getIntrinsicWidth(), icDish.getIntrinsicHeight());
+                categoryTxv.setCompoundDrawables(null, null, icDish, null);
+                categoryTxv.setCompoundDrawablePadding(padding);
             } else {
                 categoryTxv.setCompoundDrawables(null, null, null, null);
                 categoryTxv.setCompoundDrawablePadding(0);
+            }
+            
+            String str = poi.getCategory();
+            if (!TextUtils.isEmpty(str)) {
+                categoryTxv.setText(str);
+            } else {
                 categoryTxv.setText("");
             }
             
@@ -828,7 +826,6 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             }
             
             ViewGroup dynamicPOIListView = (ViewGroup) view.findViewById(R.id.dynamic_poi_list_view);
-            List<DynamicPOI> list = poi.getDynamicPOIList();
             int viewIndex = refresDynamicPOI(list, dynamicPOIListView);
             int dynamicPOIWidth = viewIndex * activity.getResources().getDrawable(R.drawable.ic_dynamicpoi_tuangou).getIntrinsicWidth();
             

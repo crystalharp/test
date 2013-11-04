@@ -3,7 +3,7 @@
  * deCarta confidential and proprietary.
  * Copyright deCarta. All rights reserved.
  */
-package com.tigerknows.ui;
+package com.tigerknows.ui.common;
 
 
 import com.tigerknows.R;

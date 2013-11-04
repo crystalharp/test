@@ -228,6 +228,7 @@ public class TilesView extends GLSurfaceView {
 	 * 是否取消快照
 	 */
 	public boolean isCancelSnap = false;
+	private long snapStartTime;
 
 	/**
 	 * 快照图片
@@ -254,6 +255,7 @@ public class TilesView extends GLSurfaceView {
 	 */
 	public void requestSnap(Position snapCenterPos) {
 		stopSnap();
+		this.snapStartTime = System.currentTimeMillis();
 		this.isCancelSnap = false;
 		this.snapCenterPos = snapCenterPos;
 		refreshMap();
@@ -2649,7 +2651,7 @@ public class TilesView extends GLSurfaceView {
 					}
 				}
 			}
-			int maxPriority = isGetAll ? priorityNum : 3;
+			int maxPriority = isGetAll ? priorityNum : 0;
 			for (i = 0; i < maxPriority; ++i) {
 				ArrayList<Label> labels = priorityLabels[i];
 				labelNum = labels.size();
@@ -2991,10 +2993,9 @@ public class TilesView extends GLSurfaceView {
 					gl.glClearColor(bgr, bgg, bgb, 1);
 					
 					if (paused || stopRefreshMyLocation) {
-		                LogWrapper.i("Sequence", "onDrawFrame paused");
+						LogWrapper.i("Sequence", "onDrawFrame paused");
 					    return;
 					}
-
 					gl.glEnable(GL_TEXTURE_2D);
 					gl.glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 					gl.glEnableClientState(GL_VERTEX_ARRAY);
@@ -3074,6 +3075,7 @@ public class TilesView extends GLSurfaceView {
 
 					LinkedList<Tile> requestTiles = new LinkedList<Tile>();
 					drawingTiles.clear();
+					boolean refreshText = false;
 					boolean haveDrawingTiles = false;
 					boolean fading = false;
 					double scaleF = Math.pow(2, zoomLevel - centerXYZ.z);
@@ -3457,17 +3459,16 @@ public class TilesView extends GLSurfaceView {
 							gl.glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 						}
 						long start = System.currentTimeMillis();
-						isWating = (start - lastMoveTime) < 10;
-						isStaying = touching && !isWating;
+						isWating = (start - lastMoveTime) > 30;
+						isStaying = touching && isWating;
 						isLastLabelFading = isLabelFading;
-						boolean refreshText = (!zoomingL
+						refreshText = (!zoomingL
 								&& ((easingRecord.startMoveTime == 0
 										&& zoomingRecord.digitalZoomEndTime == 0 && !touching))
 								|| zoomingJustDoneL || isManuelZoom
-								|| rotatingZJustDoneL || rotatingXJustDoneL || (
-								!isTouchBegin && !isBeginMoving && !movingL));// isStaying
-																					// &&
-
+								|| rotatingZJustDoneL || rotatingXJustDoneL || 
+								((isStaying && !isTouchBegin && !isBeginMoving && !movingL) || 
+										(!touching && !movingL)));
 						isLabelFading = this.shownLabels((float) zoomScale,
 								refreshText, refreshText);
 						if (refreshText || zoomingJustDoneL) {
@@ -3718,16 +3719,16 @@ public class TilesView extends GLSurfaceView {
 						}
 					}
 
-					if (zoomingL || isLastLabelFading || isWating
+					if (zoomingL || isLastLabelFading || (touching && !refreshText)
 							|| isLabelFading || fading || movingL || rotatingX
 							|| rotatingZ) {
 						requestRender();
-					} else if (requestTiles.size() == 0 && isCancelSnap == false && snapCenterPos != null) {
+					} else if ((requestTiles.size() == 0 || (System.currentTimeMillis() - snapStartTime) > 10000) && isCancelSnap == false && snapCenterPos != null) {
 						XYFloat xy = mercXYToScreenXYConv(Util.posToMercPix(
 								snapCenterPos, getZoomLevel()), getZoomLevel());
 						// 确保快照地图时，地图已经移动到指定的中心位置，误差为32像素?
-						if (Math.abs(xy.x - displaySize.x / 2) < 32
-								&& Math.abs(xy.y - displaySize.y / 2) < 32) {
+						if ((Math.abs(xy.x - displaySize.x / 2) < 128
+								&& Math.abs(xy.y - displaySize.y / 2) < 128) || (System.currentTimeMillis() - snapStartTime) > 10000) {
 							snapBmp = savePixels(getContext(), 0, 0, displaySize.x,
 									displaySize.y, gl);
 							synchronized (snapCenterPos) {

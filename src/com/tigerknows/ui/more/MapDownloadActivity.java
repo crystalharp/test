@@ -421,7 +421,9 @@ public class MapDownloadActivity extends BaseActivity implements View.OnClickLis
                     if (cityInfo.getId() == cityInfo2.getId() && cityInfo.getType() == cityInfo2.getType()) {
                         downloadCity.totalSize = totalSize;
                         downloadCity.downloadedSize = downloadSize;
-                        downloadCity.state = DownloadCity.STATE_DOWNLOADING;
+                        if (downloadCity.state == DownloadCity.STATE_WAITING) {
+                            downloadCity.state = DownloadCity.STATE_DOWNLOADING;
+                        }
                         if (downloadCity.downloadedSize/(float)downloadCity.totalSize >= PERCENT_COMPLETE) {
                             downloadCity.state = DownloadCity.STATE_COMPLETED;
                             addDownloadCity(mThis, mDownloadCityList, downloadCity, true);

@@ -2,7 +2,7 @@
  * Copyright (C) 2010 pengwenyue@tigerknows.com
  */
 
-package com.tigerknows.ui;
+package com.tigerknows.ui.common;
 
 import java.net.URLDecoder;
 
@@ -10,6 +10,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Paint;
+import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -39,6 +40,7 @@ import com.tigerknows.model.DataOperation;
 import com.tigerknows.model.DataOperation.DingdanCreateResponse;
 import com.tigerknows.model.Response;
 import com.tigerknows.model.Tuangou;
+import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.discover.TuangouDetailView;
 import com.tigerknows.ui.user.UserBaseActivity;
 import com.tigerknows.ui.user.UserLoginRegistActivity;
@@ -231,6 +233,12 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
 
+                if (url.startsWith("tel:")) { 
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url)); 
+                    startActivity(intent);
+                    return true;
+                }
+                
                 Tuangou tuangou = sTuangou;
                 if (tuangou != null && mTitleBtn.getText().toString().equals(mThis.getString(R.string.tuanguo_picture_text_detail))) {
                     return true;

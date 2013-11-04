@@ -943,23 +943,13 @@ public class MapView extends RelativeLayout implements
 	public void moveView(float left, float top) {
 		tilesView.moveView(left, top);
 	}
-	
-	public void setZoomControlsState() {
-		float zoomLevel = tilesView.getZoomLevel();
-		if (zoomLevel >= CONFIG.ZOOM_UPPER_BOUND) {
-            zoomControls.setIsZoomInEnabled(false);
-        } else if (zoomLevel <= CONFIG.ZOOM_LOWER_BOUND) {
-        	zoomControls.setIsZoomOutEnabled(false);
-        } else {
-        	zoomControls.setIsZoomInEnabled(true);
-        	zoomControls.setIsZoomOutEnabled(true);
-        }
-	}
 
 	public void setZoomControlsState(float zoomLevel) {
 		if (zoomLevel >= CONFIG.ZOOM_UPPER_BOUND) {
             zoomControls.setIsZoomInEnabled(false);
+            zoomControls.setIsZoomOutEnabled(true);
         } else if (zoomLevel <= CONFIG.ZOOM_LOWER_BOUND) {
+            zoomControls.setIsZoomInEnabled(true);
         	zoomControls.setIsZoomOutEnabled(false);
         } else {
         	zoomControls.setIsZoomInEnabled(true);
@@ -1152,7 +1142,7 @@ public class MapView extends RelativeLayout implements
                             Uri uri = null;
                             if (bm != null && !TextUtils.isEmpty(mapPath)) {
                                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
-                                uri = Utility.bitmap2Png(bm, "mapsnap_"+simpleDateFormat.format(Calendar.getInstance().getTime()), mapPath);
+                                uri = Utility.bitmap2Png(bm, "mapsnap_"+simpleDateFormat.format(Calendar.getInstance().getTime())+".png", mapPath);
                                 if (bm.isRecycled() == false) {
                                     bm.recycle();
                                 }
@@ -1172,7 +1162,7 @@ public class MapView extends RelativeLayout implements
             @Override
             public void run() {
                 try {
-                    Thread.sleep(60*1000);
+                    Thread.sleep(15*1000);
                 } catch (InterruptedException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();

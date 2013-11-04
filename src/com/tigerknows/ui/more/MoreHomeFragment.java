@@ -55,7 +55,7 @@ import com.tigerknows.model.xobject.XMap;
 import com.tigerknows.service.download.ApkDownloadedProcessor;
 import com.tigerknows.service.download.DownloadService;
 import com.tigerknows.ui.BaseFragment;
-import com.tigerknows.ui.BrowserActivity;
+import com.tigerknows.ui.common.BrowserActivity;
 import com.tigerknows.ui.more.MapDownloadActivity.DownloadCity;
 import com.tigerknows.ui.user.UserBaseActivity;
 import com.tigerknows.ui.user.UserLoginRegistActivity;
@@ -336,7 +336,16 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         mHandler.removeCallbacks(mNoticeNextRun);
         mHandler.removeCallbacks(mReloadAppRecommend);
     }
-
+    
+    @Override
+    public void correctUIStack(){
+    	if(R.id.view_more_home == mSphinx.uiStackPeek()){
+			int toRemove;
+			while(R.id.view_more_home != (toRemove = mSphinx.uiStackPeekBottom()))
+			mSphinx.uiStackRemove(toRemove);
+    	}    	
+    }
+    
     @Override
     public void onClick(View view) {
         switch (view.getId()) {

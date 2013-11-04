@@ -4,7 +4,7 @@
     android:layout_width="fill_parent" 
     android:layout_height="fill_parent"
     android:orientation="vertical"
-    android:background="@color/white">
+    android:background="@color/normal_background">
     <RelativeLayout
 	    android:id="@+id/title_view"
 	    android:layout_width="fill_parent"

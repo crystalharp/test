@@ -54,6 +54,8 @@ public class Dish extends XMapData {
     private String name;
     private String price;
     private HotelTKDrawable picture;
+    private HotelTKDrawable pictureAll;
+    private HotelTKDrawable pictureRecommend;
     private long pictureCount;
     private long hitCount;
     private boolean isLike = false;
@@ -61,10 +63,12 @@ public class Dish extends XMapData {
     
     private List<HotelTKDrawable> pictureList;
     private List<HotelTKDrawable> originalPictureList;
+    public int categoryIndex = 0;
+    public long likeTimeStamp = 0;
     
     public static LocalMark getLocalMark() {
         if (sLocalMark == null) {
-            sLocalMark = new LocalMark("dish");
+            sLocalMark = new LocalMark("dish", BaseQuery.DATA_TYPE_DISH);
         }
         return sLocalMark;
     }
@@ -73,11 +77,14 @@ public class Dish extends XMapData {
         return isLike;
     }
 
-    public void addLike() {
+    public void addLike(boolean refreshTimeStamp) {
         if (this.isLike == false) {
             hitCount += 1;
         }
         this.isLike = true;
+        if (refreshTimeStamp) {
+            this.likeTimeStamp = System.currentTimeMillis();
+        }
     }
 
     public void deleteLike() {
@@ -107,6 +114,23 @@ public class Dish extends XMapData {
         this.name = getStringFromData(FIELD_FOOD_NAME, reset ? null : this.name);
         this.price = getStringFromData(FIELD_PRICE, reset ? null : this.price);
         this.picture = getObjectFromData(FIELD_DEFAULT_PICTURE, HotelTKDrawable.Initializer, reset ? null : this.picture);
+        if (this.picture != null) {
+            HotelTKDrawable hotelTKDrawable = new HotelTKDrawable();
+            hotelTKDrawable.setName(this.picture.getName());
+            TKDrawable tkDrawable = new TKDrawable();
+            tkDrawable.setUrl(Utility.getPictureUrlByWidthHeight(this.picture.getTKDrawable().getUrl(), Globals.getPicWidthHeight(TKConfig.PICTURE_DISH_ALL)));
+            hotelTKDrawable.setTkDrawable(tkDrawable);
+            this.pictureAll = hotelTKDrawable;
+            hotelTKDrawable = new HotelTKDrawable();
+            hotelTKDrawable.setName(this.picture.getName());
+            tkDrawable = new TKDrawable();
+            tkDrawable.setUrl(Utility.getPictureUrlByWidthHeight(this.picture.getTKDrawable().getUrl(), Globals.getPicWidthHeight(TKConfig.PICTURE_DISH_RECOMMEND)));
+            hotelTKDrawable.setTkDrawable(tkDrawable);
+            this.pictureRecommend = hotelTKDrawable;
+        } else {
+            this.pictureAll = null;
+            this.pictureRecommend = null;
+        }
         this.pictureCount = getLongFromData(FIELD_FOOD_PICTURES, reset ? 0 : this.pictureCount);
         this.hitCount = getLongFromData(FIELD_HIT_COUNT, reset ? 0 : this.hitCount);
         
@@ -114,11 +138,12 @@ public class Dish extends XMapData {
             this.data = null;
         }
         
-        boolean draft = getLocalMark().findCommend(TKApplication.getInstance(), String.valueOf(dishId), false);
-        if (draft) {
-            addLike();
+        likeTimeStamp = getLocalMark().findCommend(TKApplication.getInstance(), String.valueOf(dishId), false);
+        if (likeTimeStamp > 0) {
+            addLike(false);
         } else {
-            isLike = getLocalMark().findCommend(TKApplication.getInstance(), String.valueOf(dishId), true);
+            likeTimeStamp = getLocalMark().findCommend(TKApplication.getInstance(), String.valueOf(dishId), true);
+            isLike = (likeTimeStamp > 0);
         }
     }
 
@@ -140,6 +165,14 @@ public class Dish extends XMapData {
 
     public HotelTKDrawable getPicture() {
         return picture;
+    }
+
+    public HotelTKDrawable getPictureAll() {
+        return pictureAll;
+    }
+
+    public HotelTKDrawable getPictureRecommend() {
+        return pictureRecommend;
     }
 
     public long getDishId() {

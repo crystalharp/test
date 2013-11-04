@@ -15,7 +15,7 @@ import com.tigerknows.radar.AlarmInitReceiver;
 import com.tigerknows.radar.Alarms;
 import com.tigerknows.service.PullService;
 import com.tigerknows.ui.BaseActivity;
-import com.tigerknows.ui.BrowserActivity;
+import com.tigerknows.ui.common.BrowserActivity;
 import com.tigerknows.util.Utility;
 
 import android.app.Dialog;

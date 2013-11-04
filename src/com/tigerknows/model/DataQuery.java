@@ -168,6 +168,8 @@ public final class DataQuery extends BaseQuery {
     // bias string  false   是否对搜索结果有特殊要求，在“我要点评”请求中bias='1' 
     public static final String BIAS_MY_COMMENT = "1";
     
+    public static final String BIAS_DISH = "2";
+    
     // bias="hot"表示获取热门点评 
     public static final String BIAS_HOT = "hot";
     
@@ -508,7 +510,7 @@ public final class DataQuery extends BaseQuery {
 //                    requestParameters.add(SERVER_PARAMETER_LOCATION_LONGITUDE, criteria.get(SERVER_PARAMETER_LOCATION_LONGITUDE));
 //                    requestParameters.add(SERVER_PARAMETER_LOCATION_LATITUDE, criteria.get(SERVER_PARAMETER_LOCATION_LATITUDE));
 //                }
-            } else {
+            } else if (dataType.equals(DATA_TYPE_PULL_MESSAGE) == false){
                 delParameter(SERVER_PARAMETER_LOCATION_CITY);
                 delParameter(SERVER_PARAMETER_LOCATION_LONGITUDE);
                 delParameter(SERVER_PARAMETER_LOCATION_LATITUDE);
@@ -553,6 +555,10 @@ public final class DataQuery extends BaseQuery {
                     if (!hasParameter(SERVER_PARAMETER_BIAS)) {
                         ekeys = Utility.mergeArray(ekeys, new String[]{SERVER_PARAMETER_KEYWORD});
                         okeys = Utility.mergeArray(okeys, new String[]{SERVER_PARAMETER_INFO});
+                    } else {
+                        if (BIAS_DISH.equals(getParameter(SERVER_PARAMETER_BIAS))) {
+                            ekeys = Utility.mergeArray(ekeys, new String[]{SERVER_PARAMETER_KEYWORD});
+                        }
                     }
                     okeys = Utility.mergeArray(okeys, new String[]{SERVER_PARAMETER_POI_ID});
                 } else {
@@ -1898,6 +1904,7 @@ public final class DataQuery extends BaseQuery {
             private String name;
             private List<Long> dishList;
             private List<Category> childList;
+            public int firstDishIndex = 0;
             
             public int getId() {
                 return id;
@@ -2839,7 +2846,7 @@ public final class DataQuery extends BaseQuery {
         } else if (DATA_TYPE_FILTER.equals(dataType)){
             responseXMap = DataQueryTest.launchFilterConfigResponse();
         } else if (DATA_TYPE_DISH.equals(dataType)){
-            responseXMap = DataQueryTest.launchDishResponse(108);
+            responseXMap = DataQueryTest.launchDishResponse(256);
         } else if (DATA_TYPE_PICTURE.equals(dataType)){
             responseXMap = DataQueryTest.launchPictureResponse(168);
         } else if (DATA_TYPE_SHANGJIA.equals(dataType)) {

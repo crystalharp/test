@@ -2,7 +2,7 @@
  * Copyright (C) 2010 pengwenyue@tigerknows.com
  */
 
-package com.tigerknows.ui;
+package com.tigerknows.ui.common;
 
 import com.decarta.Globals;
 import com.decarta.android.map.Icon;
@@ -21,6 +21,7 @@ import com.tigerknows.Sphinx.TouchMode;
 import com.tigerknows.android.location.Position;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.MapView;
+import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.util.Utility;
 
 import android.content.res.Resources;
