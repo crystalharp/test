@@ -120,9 +120,9 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
             }
             overlayItem.setMessage(Utility.formatMeterString(length));
             mLastOverlayItem = overlayItem;
-            mSphinx.showInfoWindow(overlayItem);
-            
-            mMapView.refreshMap();
+            if (mSphinx.showInfoWindow(overlayItem) == false) {
+                mMapView.refreshMap();
+            }
             result = true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -157,7 +157,6 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
                 mMapView.getInfoWindow().setVisible(false);
                 mMapView.refreshMap();
                 mLastOverlayItem = null;
-                mMapView.refreshMap();
                 if (mIndex > 0) {
                     mIndex--;
                 }
@@ -191,9 +190,9 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
             OverlayItem overlayItem = overlay.get(overlay.size()-1);
             overlayItem.setMessage(Utility.formatMeterString(length));
             mLastOverlayItem = overlayItem;
-            mSphinx.showInfoWindow(overlayItem);
-            
-            mMapView.refreshMap();
+            if (mSphinx.showInfoWindow(overlayItem) == false) {
+                mMapView.refreshMap();
+            }
             result = true;
         } catch (Exception e) {
             e.printStackTrace();

@@ -76,18 +76,13 @@ public class PinOverlayHelper {
 				    @Override
 				    public void onTouchEvent(EventSource eventSource) {
 				        OverlayItem overlayItem=(OverlayItem) eventSource;
-				        try{
-	                        sphinx.showInfoWindow(overlayItem);
-				        }catch(Exception e){
-				            e.printStackTrace();
-				        }
 				        
 				        InfoWindow infoWindow = mapView.getInfoWindow();
 				        infoWindow.setOffset(new XYFloat(0f,(float)(overlayItem.getIcon().getOffset().y)),
 				                overlayItem.getRotationTilt());
 				        infoWindow.setTextAlign(InfoWindow.TextAlign.CENTER);
 				        infoWindow.setVisible(true);
-				        mapView.refreshMap();
+				        sphinx.showInfoWindow(overlayItem);
 				    }
 				});
 	            overlayItem.isFoucsed = true;
