@@ -1174,17 +1174,16 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             return;
         }
         mPreventShowChangeMyLocationDialog = false;
-        if (Globals.g_My_Location_State == Globals.LOCATION_STATE_SHOW_CHANGE_CITY_DIALOG) {
-            int viewId = uiStackPeek();
-            int size = uiStackSize();
-            if (size == 1 &&
-                    (viewId == R.id.view_poi_home ||
-                     viewId == R.id.view_discover_home ||
-                     (viewId == R.id.view_traffic_home && getTrafficQueryFragment().isNormalState()) ||
-                     viewId == R.id.view_more_home)) {
+        int viewId = uiStackPeek();
+        int size = uiStackSize();
+        if (size == 1 &&
+                (viewId == R.id.view_poi_home ||
+                viewId == R.id.view_discover_home ||
+                (viewId == R.id.view_traffic_home && getTrafficQueryFragment().isNormalState()) ||
+                viewId == R.id.view_more_home)) {
+            if (Globals.g_My_Location_City_Info != null) {
                 Globals.g_My_Location_State = Globals.LOCATION_STATE_FIRST_SUCCESS;
                 checkLocationCity(false);
-                Globals.g_My_Location_State = Globals.LOCATION_STATE_SHOW_CHANGE_CITY_DIALOG;
             }
         }
         
@@ -4316,14 +4315,12 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         }
     };
         
+    private boolean mRequestLocation = false;
     private Runnable mLocationResponseRun = new Runnable() {
         
         @Override
         public void run() {
-            if (isFinishing()) {
-                return;
-            }
-            updateMyLocation();
+            mRequestLocation = false;
         }
     };
     
@@ -4377,13 +4374,19 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     }
                     mMyLocation.setMessage(msg);
                     
-                    // 定位图层显示InfoWindow时, 若定位点变化, InfoWindow也会变化
-                    InfoWindow infoWindow = mMapView.getInfoWindow();
-                    OverlayItem overlayItem = infoWindow.getAssociatedOverlayItem();
-                    if (infoWindow.isVisible() &&
-                            overlayItem != null &&
-                            ItemizedOverlay.MY_LOCATION_OVERLAY.equals(overlayItem.getOwnerOverlay().getName())) {
+                    if (mRequestLocation) {
+                        mRequestLocation = false;
+                        showTip(getString(R.string.location_success, Utility.formatMeterString((int)myLocation.getAccuracy())), 3000);
                         refreshMap = showInfoWindow(mMyLocation);
+                    } else {
+                        // 定位图层显示InfoWindow时, 若定位点变化, InfoWindow也会变化
+                        InfoWindow infoWindow = mMapView.getInfoWindow();
+                        OverlayItem overlayItem = infoWindow.getAssociatedOverlayItem();
+                        if (infoWindow.isVisible() &&
+                                overlayItem != null &&
+                                ItemizedOverlay.MY_LOCATION_OVERLAY.equals(overlayItem.getOwnerOverlay().getName())) {
+                            refreshMap = showInfoWindow(mMyLocation);
+                        }
                     }
                     
                     if (refreshMap == false) {
@@ -4405,6 +4408,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         if (position == null) {
             updateLoactionButtonState(MyLocation.MODE_NONE);
             showTip(R.string.location_waiting, 3000);
+            mRequestLocation = true;
             mHandler.removeCallbacks(mLocationResponseRun);
             mHandler.postDelayed(mLocationResponseRun, 20000);
         } else {

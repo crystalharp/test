@@ -228,6 +228,7 @@ public class TilesView extends GLSurfaceView {
 	 * 是否取消快照
 	 */
 	public boolean isCancelSnap = false;
+	private long snapStartTime;
 
 	/**
 	 * 快照图片
@@ -254,6 +255,7 @@ public class TilesView extends GLSurfaceView {
 	 */
 	public void requestSnap(Position snapCenterPos) {
 		stopSnap();
+		this.snapStartTime = System.currentTimeMillis();
 		this.isCancelSnap = false;
 		this.snapCenterPos = snapCenterPos;
 		refreshMap();
@@ -3721,12 +3723,12 @@ public class TilesView extends GLSurfaceView {
 							|| isLabelFading || fading || movingL || rotatingX
 							|| rotatingZ) {
 						requestRender();
-					} else if (requestTiles.size() == 0 && isCancelSnap == false && snapCenterPos != null) {
+					} else if ((requestTiles.size() == 0 || (System.currentTimeMillis() - snapStartTime) > 10000) && isCancelSnap == false && snapCenterPos != null) {
 						XYFloat xy = mercXYToScreenXYConv(Util.posToMercPix(
 								snapCenterPos, getZoomLevel()), getZoomLevel());
 						// 确保快照地图时，地图已经移动到指定的中心位置，误差为32像素?
-						if (Math.abs(xy.x - displaySize.x / 2) < 32
-								&& Math.abs(xy.y - displaySize.y / 2) < 32) {
+						if ((Math.abs(xy.x - displaySize.x / 2) < 128
+								&& Math.abs(xy.y - displaySize.y / 2) < 128) || (System.currentTimeMillis() - snapStartTime) > 10000) {
 							snapBmp = savePixels(getContext(), 0, 0, displaySize.x,
 									displaySize.y, gl);
 							synchronized (snapCenterPos) {

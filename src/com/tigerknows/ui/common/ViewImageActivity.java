@@ -124,7 +124,6 @@ public class ViewImageActivity extends BaseActivity implements RetryView.CallBac
             }
             mGridView.setVisibility(View.VISIBLE);
             mTKGallery.setVisibility(View.GONE);
-            mGridAdapter.notifyDataSetChanged();
         } else if (this.mState == STATE_GALLERY) {
             if (mTitleBtn != null) {
                 if (mImage != null) {
@@ -135,8 +134,8 @@ public class ViewImageActivity extends BaseActivity implements RetryView.CallBac
             }
             mGridView.setVisibility(View.GONE);
             mTKGallery.setVisibility(View.VISIBLE);
-            mGalleryAdapter.notifyDataSetChanged();
         }
+        mHandler.post(mLoadedDrawableRun);
     }
 
     @Override
@@ -187,8 +186,8 @@ public class ViewImageActivity extends BaseActivity implements RetryView.CallBac
                 queryStart(mDataQuery);
                 
             } else if (noList == false) {
-                mImageList = imageList;
-                mOriginalImageList = originalImageList;
+                mImageList.addAll(imageList);
+                mOriginalImageList.addAll(originalImageList);
             } else {
                 finish();
             }
@@ -307,11 +306,13 @@ public class ViewImageActivity extends BaseActivity implements RetryView.CallBac
             HotelTKDrawable hotelTKDrawable = getItem(position);
             Drawable image;
             if (mCanAdd && position == 0) {
-                image = getResources().getDrawable(R.drawable.icon);
+                image = getResources().getDrawable(R.drawable.btn_add_picture);
                 iconImv.setOnClickListener(ViewImageActivity.this);
+                iconImv.setClickable(true);
             } else {
                 image = hotelTKDrawable.getTKDrawable().loadDrawable(mThis, mLoadedDrawableRun, ViewImageActivity.this.toString());
                 iconImv.setOnClickListener(null);
+                iconImv.setClickable(false);
             }
             
             int newWidth = (int) (Globals.g_metrics.density*mColumnWidth);

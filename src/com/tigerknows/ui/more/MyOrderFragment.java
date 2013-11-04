@@ -106,8 +106,14 @@ public class MyOrderFragment extends BaseFragment{
         
         LogWrapper.d("Trap", mActualOnCreate == true ? "Create" : "Resume");
         
+        List<Shangjia> list = new ArrayList<Shangjia>();
+        List<Shangjia> shangjiaList = Shangjia.getShangjiaList();
+        synchronized (shangjiaList) {
+            list.addAll(shangjiaList);
+        }
+        
 		synchronized (MyOrderFragment.this) {
-		    List<Shangjia> list = Shangjia.getShangjiaList();
+		    
 			if (list.size() != mResultList.size()) {
 				mResultList.clear();
 				mResultList.addAll(list);
@@ -124,14 +130,20 @@ public class MyOrderFragment extends BaseFragment{
 						return;
 					}
 					Shangjia.readShangjiaList(mContext);
+
+			        final List<Shangjia> list = new ArrayList<Shangjia>();
+			        List<Shangjia> shangjiaList = Shangjia.getShangjiaList();
+			        synchronized (shangjiaList) {
+			            list.addAll(shangjiaList);
+			        }
+			        
 					mSphinx.getHandler().post(new Runnable(){
 						
 						@Override
 						public void run() {
 							synchronized (MyOrderFragment.this) {
-								List<Shangjia> newList = Shangjia.getShangjiaList();
 								mResultList.clear();
-								mResultList.addAll(newList);
+								mResultList.addAll(list);
 								createShangjiaListView();
 							}
 						}
