@@ -86,19 +86,19 @@ public class MapMetaFileDownload extends BaseQuery {
             return;
         }
         File metaFile = new File(mapPath + String.format(TKConfig.MAP_REGION_METAFILE, mRegionId));
-        if (metaFile.exists()) {
-            long off = metaFile.length();
-            if (off > 30) {
-                addParameter("off", String.valueOf(off));
-                String dataVersion = "";
-                RegionMetaVersion version = mapEngine.getRegionMetaVersion(mRegionId);
-                if (null != version) {
-                    dataVersion = version.toString();
-                }
-                addParameter("vd", dataVersion);
-            } else {
+        if (metaFile.exists()) {//暂时不做断点续传
+//            long off = metaFile.length();
+//            if (off > 30) {
+//                addParameter("off", String.valueOf(off));
+//                String dataVersion = "";
+//                RegionMetaVersion version = MapEngine.getRegionMetaVersion(mRegionId);
+//                if (null != version) {
+//                    dataVersion = version.toString();
+//                }
+//                addParameter("vd", dataVersion);
+//            } else {
                 metaFile.delete();
-            }
+//            }
         }
     }
 
@@ -136,7 +136,7 @@ public class MapMetaFileDownload extends BaseQuery {
                 ParserUtil parseUtil = dataPackage.getData();
                 int length = parseUtil.availableDataleng();
 
-                if (length > 0) {
+                if (length >= 0) {
                     FileOutputStream fout = new FileOutputStream(regionMetaFile, true);
                     fout.write(parseUtil.getData(), parseUtil.getStart(), length);
                     fout.close();
