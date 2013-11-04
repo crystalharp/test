@@ -82,10 +82,12 @@ public class PinOverlayHelper {
 				            e.printStackTrace();
 				        }
 				        
-				        mapView.getInfoWindow().setOffset(new XYFloat(0f,(float)(overlayItem.getIcon().getOffset().y)),
+				        InfoWindow infoWindow = mapView.getInfoWindow();
+				        infoWindow.setOffset(new XYFloat(0f,(float)(overlayItem.getIcon().getOffset().y)),
 				                overlayItem.getRotationTilt());
-				        mapView.getInfoWindow().setTextAlign(InfoWindow.TextAlign.CENTER);
-				        mapView.getInfoWindow().setVisible(true);
+				        infoWindow.setTextAlign(InfoWindow.TextAlign.CENTER);
+				        infoWindow.setVisible(true);
+				        mapView.refreshMap();
 				    }
 				});
 	            overlayItem.isFoucsed = true;

@@ -155,6 +155,7 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
                 mMapView.deleteOverlaysByName(overlayName);
                 mMapView.deleteShapeByName(shapeName);
                 mMapView.getInfoWindow().setVisible(false);
+                mMapView.refreshMap();
                 mLastOverlayItem = null;
                 mMapView.refreshMap();
                 if (mIndex > 0) {
@@ -247,8 +248,8 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
             InfoWindow infoWindow = mapView.getInfoWindow();
             if (infoWindow.isVisible()) {
                 mOtherOverlayItem = infoWindow.getAssociatedOverlayItem();
-                mapView.refreshMap();
                 infoWindow.setVisible(false);
+                mapView.refreshMap();
             } else {
                 mOtherOverlayItem = null;
             }
@@ -284,6 +285,7 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
             mSphinx.showInfoWindow(mLastOverlayItem);
         } else  {
             mMapView.getInfoWindow().setVisible(false);
+            mMapView.refreshMap();
         }
     }
 

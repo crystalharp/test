@@ -11,15 +11,16 @@ import java.nio.ShortBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.microedition.khronos.opengles.GL10;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
 
-import com.decarta.CONFIG;
 import com.decarta.android.event.EventListener;
 import com.decarta.android.event.EventSource;
 import com.decarta.android.exception.APIException;
@@ -203,6 +204,78 @@ public class Polyline extends Shape implements EventSource{
 		}
 		
 		
+        // FIXME: 当两个点跨越的距离过大时，会造成此两点线路不在屏幕内引起线路不会被绘制的问题
+		if (idx.size()==0 && overlapTiles.size() > 0) {
+		    Entry<XYZ, ArrayList<Short>> lt = null;
+		    Entry<XYZ, ArrayList<Short>> rb = null;
+            Entry<XYZ, ArrayList<Short>> rt = null;
+            Entry<XYZ, ArrayList<Short>> lb = null;
+		    XYZ overlayTile=overlapTiles.get(0);
+            int ltx = Integer.MAX_VALUE, lty = Integer.MIN_VALUE, rbx = Integer.MIN_VALUE, rby = Integer.MAX_VALUE;
+            int ltx1 = Integer.MAX_VALUE, lty1 = Integer.MAX_VALUE, rbx1 = Integer.MIN_VALUE, rby1 = Integer.MIN_VALUE;
+    		    Iterator<Entry<XYZ, ArrayList<Short>>> iteratoer = pointIdx.entrySet().iterator();
+    		    for (; iteratoer.hasNext(); ) {
+    		        Entry<XYZ, ArrayList<Short>> currentEntry = iteratoer.next();
+    		        XYZ currentXYZ = currentEntry.getKey();
+    		        if (currentXYZ.z == overlayTile.z) {
+        		        int x = overlayTile.x - currentXYZ.x;
+        		        int y = overlayTile.y - currentXYZ.y;
+        		        if (x >= 0 && y <= 0) {
+        		            if (x <= ltx && y >= lty){
+        		                lt = currentEntry;
+        		                ltx = x;
+        		                lty = y;
+        		            }
+        		        } else if (x <= 0 && y >= 0) {
+                            if (x >= rbx && y <= rby) {
+                                rb = currentEntry;
+                                rbx = x;
+                                rby = y;
+                            }
+        		        }
+        		        
+        		        if (x >= 0 && y >= 0) {
+                            if (x <= ltx1 && y <= lty1){
+                                rt = currentEntry;
+                                ltx1 = x;
+                                lty1 = y;
+                            }
+                        } else if (x <= 0 && y <= 0) {
+                            if (x >= rbx1 && y >= rby1) {
+                                lb = currentEntry;
+                                rbx1 = x;
+                                rby1 = y;
+                            }
+                        }
+    		        }
+    		    }
+    		    XYZ xyz = null;
+    		    if (lt != null) {
+    		        xyz = lt.getKey();
+    		        if(pointIdx.containsKey(xyz)){
+    		            idx.addAll(pointIdx.get(xyz));
+    		        }
+    		    }
+                if (rb != null) {
+                    xyz = rb.getKey();
+                    if(pointIdx.containsKey(xyz)){
+                        idx.addAll(pointIdx.get(xyz));
+                    }
+                }
+                if (rt != null) {
+                    xyz = rt.getKey();
+                    if(pointIdx.containsKey(xyz)){
+                        idx.addAll(pointIdx.get(xyz));
+                    }
+                }
+                if (lb != null) {
+                    xyz = lb.getKey();
+                    if(pointIdx.containsKey(xyz)){
+                        idx.addAll(pointIdx.get(xyz));
+                    }
+                }
+		}
+
 		Collections.sort(idx);
 
         return idx;

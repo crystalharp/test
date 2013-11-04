@@ -979,6 +979,7 @@ err:
     }
     if (meta_data_fp != NULL) {
         fclose(meta_data_fp);
+    	remove(metafile);
     }
     if (region_data_fp != NULL) {
         fclose(region_data_fp);
