@@ -17,6 +17,7 @@ import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.common.BrowserActivity;
 import com.tigerknows.ui.poi.POIDetailFragment.BlockRefresher;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIViewBlock;
+import com.tigerknows.widget.LinearListAdapter;
 
 import android.content.Intent;
 import android.text.TextUtils;
@@ -30,58 +31,17 @@ import android.widget.TextView;
 public class DynamicDishPOI extends POIDetailFragment.DynamicPOIView implements View.OnClickListener {
     
     List<DynamicPOIViewBlock> blockList = new ArrayList<DynamicPOIViewBlock>();
+    LinearListAdapter lsv;
     DynamicPOIViewBlock mViewBlock;
     View mDishTitleView;
     TextView mContentTxv;
     Animation mAnimation;
     BaseQuery mBaseQuery;
     
-    BlockRefresher mRefresher = new BlockRefresher() {
+//    BlockRefresher mRefresher = new BlockRefresher() {
+//
 
-        @Override
-        public void refresh() {
-            if (mPOI == null) {
-                mViewBlock.clear();
-                return;
-            }
-            
-            if (mExistDynamicPOI) {
-                DataQuery dataQuery = mPOI.getRecommendDishQuery();
-                if (dataQuery != null) {
-                    DishResponse dishResponse = (DishResponse) dataQuery.getResponse();
-                    if (dishResponse != null) {
-                        DishList dishList = dishResponse.getList();
-                        if (dishList != null) {
-                            List<Dish> dishes = dishList.getDishList();
-                            if (dishes != null && dishes.size() > 0) {
-    
-                                StringBuilder s = new StringBuilder();
-                                for(int i = 0, count = dishes.size(); i < count; i++) {
-                                    s.append(dishes.get(i).getName());
-                                    s.append("  ");
-                                }
-                                mContentTxv.setText(s.toString());
-                                mContentTxv.setClickable(true);
-                                return;
-                            }
-                        }
-                    }
-                }
-
-                mContentTxv.setClickable(false);
-                mContentTxv.setText(R.string.recommend_cook_empty);
-                return;
-            }
-
-            mContentTxv.setClickable(false);
-            String recommendCook = mPOI.getDescriptionValue(Description.FIELD_RECOMMEND_COOK);
-            if(!TextUtils.isEmpty(recommendCook)) {
-                mContentTxv.setText(recommendCook);
-            } else {
-                mContentTxv.setText(R.string.recommend_cook_empty);
-            }
-        }
-    };
+//    };
     
     public DynamicDishPOI(POIDetailFragment poiFragment, LayoutInflater inflater){
         mPOIDetailFragment = poiFragment;
@@ -89,7 +49,51 @@ public class DynamicDishPOI extends POIDetailFragment.DynamicPOIView implements 
         mInflater = inflater;
         
         LinearLayout layout = (LinearLayout) mInflater.inflate(R.layout.poi_dynamic_dish, null);
-        mViewBlock = new DynamicPOIViewBlock(mPOIDetailFragment.mBelowAddressLayout, layout, mRefresher);
+        mViewBlock = new DynamicPOIViewBlock(mPOIDetailFragment.mBelowAddressLayout, layout){
+        	
+	        @Override
+	        public void refresh() {
+	            if (mPOI == null) {
+	                mViewBlock.clear();
+	                return;
+	            }
+	          
+	            if (mExistDynamicPOI) {
+	                DataQuery dataQuery = mPOI.getRecommendDishQuery();
+	                if (dataQuery != null) {
+	                    DishResponse dishResponse = (DishResponse) dataQuery.getResponse();
+	                    if (dishResponse != null) {
+	                        DishList dishList = dishResponse.getList();
+	                        if (dishList != null) {
+	                            List<Dish> dishes = dishList.getDishList();
+	                            if (dishes != null && dishes.size() > 0) {
+	    
+	                                StringBuilder s = new StringBuilder();
+	                                for(int i = 0, count = dishes.size(); i < count; i++) {
+	                                    s.append(dishes.get(i).getName());
+	                                    s.append("  ");
+	                                    }
+	                                    mContentTxv.setText(s.toString());
+	                                    mContentTxv.setClickable(true);
+	                                    return;
+	                                }
+	                            }
+	                        }
+	                    }
+	                    mContentTxv.setClickable(false);
+	                    mContentTxv.setText(R.string.recommend_cook_empty);
+	                    return;
+	                }
+	   
+	                mContentTxv.setClickable(false);
+	                String recommendCook = mPOI.getDescriptionValue(Description.FIELD_RECOMMEND_COOK);
+	                if(!TextUtils.isEmpty(recommendCook)) {
+	                    mContentTxv.setText(recommendCook);
+	                } else {
+	                    mContentTxv.setText(R.string.recommend_cook_empty);
+	                }
+	            }
+        };
         
         mDishTitleView = layout.findViewById(R.id.dish_title_view);
         mDishTitleView.setOnClickListener(this);
