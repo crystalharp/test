@@ -793,7 +793,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                         clearMap();
                         PinOverlayHelper.drawSelectPointOverlay(Sphinx.this, mHandler, mMapView, touchMode.equals(TouchMode.CHOOSE_ROUTING_START_POINT), positionName, position);
                     } else if(touchMode.equals(TouchMode.MEASURE_DISTANCE)) {
-                        getMeasureDistanceFragment().addPoint(position, false);
+                        getMeasureDistanceFragment().addPoint(position);
                     }
                 }
             });
@@ -839,7 +839,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                         PinOverlayHelper.drawSelectPointOverlay(Sphinx.this, mHandler, mMapView, touchMode.equals(TouchMode.CHOOSE_ROUTING_START_POINT), positionName, position);
                         return;
                     } else if (touchMode.equals(TouchMode.MEASURE_DISTANCE)){
-                        getMeasureDistanceFragment().addPoint(position, false);
+                        getMeasureDistanceFragment().addPoint(position);
                         return;
                     } else if (!touchMode.equals(TouchMode.LONG_CLICK)) {
                         return;
@@ -1452,7 +1452,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                             mActionLog.addAction(ActionLog.MapDistance);
 
                             getMeasureDistanceFragment().setData();
-                            getMeasureDistanceFragment().setIndex(0);
                             showView(R.id.view_measure_distance);
                             
                             Toast.makeText(mThis, R.string.measure_distance_tip, Toast.LENGTH_LONG).show();
