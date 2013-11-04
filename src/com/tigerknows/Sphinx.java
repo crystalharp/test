@@ -2665,13 +2665,19 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         setTouchMode(TouchMode.NORMAL);
     }
     
-    public void hideInfoWindow(String overlayName) {
-        OverlayItem overlayItem = mMapView.getInfoWindow().getAssociatedOverlayItem();
-        if (mMapView.getInfoWindow().isVisible() && 
+    public boolean hideInfoWindow(String overlayName) {
+        boolean refreshMap = false;
+        InfoWindow infoWindow = mMapView.getInfoWindow();
+        OverlayItem overlayItem = infoWindow.getAssociatedOverlayItem();
+        if (infoWindow.isVisible() && 
                 overlayItem != null && 
                 overlayName.equals(overlayItem.getOwnerOverlay().getName())) {
-            mMapView.getInfoWindow().setVisible(false);
+            infoWindow.setVisible(false);
+            mMapView.refreshMap();
+            refreshMap = true;
         }
+        
+        return refreshMap;
     }
 
     // TODO: cityinfo start
@@ -4333,15 +4339,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 mMapView.deleteOverlaysByName(ItemizedOverlay.MY_LOCATION_OVERLAY);
                 mMapView.deleteShapeByName(Shape.MY_LOCATION);
                 
-                InfoWindow infoWindow = mMapView.getInfoWindow();
-                OverlayItem overlayItem = infoWindow.getAssociatedOverlayItem();
-                if (infoWindow.isVisible() && 
-                        overlayItem != null && 
-                        ItemizedOverlay.MY_LOCATION_OVERLAY.equals(overlayItem.getOwnerOverlay().getName())) {
-                    infoWindow.setVisible(false);
+                if (hideInfoWindow(ItemizedOverlay.MY_LOCATION_OVERLAY) == false) {
+                    mMapView.refreshMap();
                 }
                 
-                mMapView.refreshMap();
                 return true;
             } catch (APIException e) {
                 // TODO Auto-generated catch block
