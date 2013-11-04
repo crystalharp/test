@@ -368,31 +368,12 @@ public class Shangjia extends BaseData implements Parcelable {
     private static List<Long> sLoadedList = new ArrayList<Long>();
     
     private static void loadShangjia(final Activity activity, long source, final Runnable runnable) {
-<<<<<<< HEAD
-        synchronized (shangjiaList) {
-            if (sLoad.contains(source) == false && activity != null) {
-                sLoad.add(source);
-                final DataQuery dataQuery = new DataQuery(activity);
-                dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_SHANGJIA);
-                dataQuery.addParameter(DataQuery.SERVER_PARAMETER_NEED_FIELD, Globals.g_Session_Id != null ? NEED_FIELD : NEED_FIELD_NO_LOGON);
-                dataQuery.addParameter(DataQuery.SERVER_PARAMETER_IDS, String.valueOf(source));
-                dataQuery.setup(Globals.getCurrentCityInfo().getId(), -1, -1, null, false, false, null);
-                new Thread(new Runnable() {
-                    
-                    @Override
-                    public void run() {
-                        dataQuery.query();
-                        activity.runOnUiThread(runnable);
-                    }
-                }).start();
-=======
         if (activity == null) {
             return;
         }
         synchronized (sLoadedList) {
             if (sLoadedList.contains(source)) {
                 return;
->>>>>>> dev_dish
             }
             sLoadedList.add(source);
         }

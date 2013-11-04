@@ -36,9 +36,8 @@ import com.tigerknows.Sphinx;
  * List = new LinearListView(mSphinx, mListView, initer, R.layout.item)
  * 这样就可以直接给这个LinearListView传数据来刷新显示内容了,做法是List.refreshList(dataList)
  */
-public class LinearListView {
+public abstract class LinearListAdapter {
 
-    ItemInitializer initer;
     Sphinx mSphinx;
     LinearLayout parentLayout;
     LayoutInflater mLayoutInflater;
@@ -46,18 +45,14 @@ public class LinearListView {
     //每个LinearListView对象配有一个缓冲池，用来缓冲item的view对象
     List<CacheableView> viewPool = new LinkedList<CacheableView>();
     
-    public LinearListView(Sphinx sphinx, LinearLayout parent, ItemInitializer i, int itemResId){
-        this.initer = i;
+    public LinearListAdapter(Sphinx sphinx, LinearLayout parent, int itemResId){
         mSphinx = sphinx;
         parentLayout = parent;
         mLayoutInflater = mSphinx.getLayoutInflater();
         mItemResId = itemResId;
     }
-    
-    public interface ItemInitializer{
-        //v为传进去的可使用的view,函数不需要关心,已经做了对象缓冲,不会为null.这个接口实际上就是Adapter的getView
-        void initItem(Object data, View v);
-    }
+        
+    public abstract View getView(Object data, View child, int pos);
     
     /**
      * 这个函数相当于ListView的notifyChanged,不同的是在使用时需要来回传递List,绑定List的做法需要来回复制数据,比较麻烦
@@ -91,7 +86,7 @@ public class LinearListView {
                 View child;
                 child = getInstance();
 //                tmp.add(child);
-                initer.initItem(data, child);
+                getView(data, child, i);
                 if (multiserial) {
                     if (i % columnNum == 0) {
                         LinearLayout linearLayout = new LinearLayout(mSphinx);

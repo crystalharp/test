@@ -322,34 +322,19 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             }
         }
     }
-
-    /**
-     * 有些动态POI并不止一个显示区块，但是刷新的时候却有着不同的刷新规则
-     * 为了让刷新可以分开，而不是一次把相关的所有区块刷新，在ViewBlock下
-     * 也添加了refresh的接口，用来控制单独的刷新。
-     */
-    public interface BlockRefresher {
-        void refresh();
-    }
-
+    
     /**
      * 该类是动态POI的块级控制类,有着足够用的控制方法.
      * 每个显示块都需要有一个这个类的对象,里面存有自己的Layout和所属的Layout
      * 需要有个block级别的刷新机制。
      */
-    public static class DynamicPOIViewBlock {
+    public static abstract class DynamicPOIViewBlock {
         private View mOwnLayout;
         private LinearLayout mBelongsLayout;
         boolean mLoadSucceed = true;
-        private BlockRefresher mRefresher;
 
         public DynamicPOIViewBlock(LinearLayout belongsLayout, View ownLayout) {
-            this(belongsLayout, ownLayout, null);
-        }
-        
-        public DynamicPOIViewBlock(LinearLayout belongsLayout, View ownLayout, BlockRefresher refresher) {
             mBelongsLayout = belongsLayout;
-            mRefresher = refresher;
             mOwnLayout = ownLayout;
         }
 
@@ -373,12 +358,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             }
         }
 
-        final public void refresh() {
-            if (mRefresher != null) {
-                mRefresher.refresh();
-            }
-            show();
-        }
+        //该block的刷新方法，调用者自己控制
+        public abstract void refresh(); 
     }
 
     /*
