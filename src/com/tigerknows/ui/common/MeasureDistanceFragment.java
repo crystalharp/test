@@ -39,20 +39,11 @@ import java.util.List;
 public class MeasureDistanceFragment extends BaseFragment implements View.OnClickListener {
 
     private MapView mMapView;
-    private int mIndex;
     private int mVisibilityLocation;
     private int mVisibilityPreviousNext;
     private OverlayItem mOtherOverlayItem;
     private OverlayItem mLastOverlayItem;
     private TouchMode mTouchMode;
-    
-    public int getIndex() {
-        return mIndex;
-    }
-    
-    public void setIndex(int index) {
-        mIndex = index;
-    }
     
     /**
      * 添加一个点
@@ -60,19 +51,14 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
      * @param newLine 是否需要创建新线路
      * @return
      */
-    public boolean addPoint(Position position, boolean newLine) {
+    public boolean addPoint(Position position) {
         
         boolean result = false;
         
-        String overlayName = ItemizedOverlay.MEASURE_DISTANCE_OVERLAY + mIndex;
-        String shapeName = Shape.MEASURE_DISTANCE + mIndex;
+        String overlayName = ItemizedOverlay.MEASURE_DISTANCE_OVERLAY;
+        String shapeName = Shape.MEASURE_DISTANCE;
         
         ItemizedOverlay overlay= mMapView.getOverlaysByName(overlayName);
-        if (newLine && overlay != null && overlay.size() > 1) {
-            mIndex++;
-            overlayName = ItemizedOverlay.MEASURE_DISTANCE_OVERLAY + mIndex;
-            shapeName = Shape.MEASURE_DISTANCE + mIndex;
-        }
         
         try {
 
@@ -120,9 +106,9 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
             }
             overlayItem.setMessage(Utility.formatMeterString(length));
             mLastOverlayItem = overlayItem;
-            mSphinx.showInfoWindow(overlayItem);
-            
-            mMapView.refreshMap();
+            if (mSphinx.showInfoWindow(overlayItem) == false) {
+                mMapView.refreshMap();
+            }
             result = true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -139,8 +125,8 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
         
         boolean result = false;
         
-        String overlayName = ItemizedOverlay.MEASURE_DISTANCE_OVERLAY + mIndex;
-        String shapeName = Shape.MEASURE_DISTANCE + mIndex;
+        String overlayName = ItemizedOverlay.MEASURE_DISTANCE_OVERLAY;
+        String shapeName = Shape.MEASURE_DISTANCE;
         
         try {
 
@@ -155,11 +141,8 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
                 mMapView.deleteOverlaysByName(overlayName);
                 mMapView.deleteShapeByName(shapeName);
                 mMapView.getInfoWindow().setVisible(false);
-                mLastOverlayItem = null;
                 mMapView.refreshMap();
-                if (mIndex > 0) {
-                    mIndex--;
-                }
+                mLastOverlayItem = null;
                 return result;
             }
             
@@ -190,9 +173,9 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
             OverlayItem overlayItem = overlay.get(overlay.size()-1);
             overlayItem.setMessage(Utility.formatMeterString(length));
             mLastOverlayItem = overlayItem;
-            mSphinx.showInfoWindow(overlayItem);
-            
-            mMapView.refreshMap();
+            if (mSphinx.showInfoWindow(overlayItem) == false) {
+                mMapView.refreshMap();
+            }
             result = true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -205,11 +188,8 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
      * 清空测距生成的overylay和shape
      */
     public void clearLine() {
-        for(; mIndex >= 0; mIndex--) {
-            mMapView.deleteOverlaysByName(ItemizedOverlay.MEASURE_DISTANCE_OVERLAY + mIndex);
-            mMapView.deleteShapeByName(Shape.MEASURE_DISTANCE + mIndex);
-        }
-        mIndex = 0;
+        mMapView.deleteOverlaysByName(ItemizedOverlay.MEASURE_DISTANCE_OVERLAY);
+        mMapView.deleteShapeByName(Shape.MEASURE_DISTANCE );
         mLastOverlayItem = null;
         mMapView.getInfoWindow().setVisible(false);
         mMapView.refreshMap();
@@ -247,8 +227,8 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
             InfoWindow infoWindow = mapView.getInfoWindow();
             if (infoWindow.isVisible()) {
                 mOtherOverlayItem = infoWindow.getAssociatedOverlayItem();
-                mapView.refreshMap();
                 infoWindow.setVisible(false);
+                mapView.refreshMap();
             } else {
                 mOtherOverlayItem = null;
             }
@@ -284,6 +264,7 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
             mSphinx.showInfoWindow(mLastOverlayItem);
         } else  {
             mMapView.getInfoWindow().setVisible(false);
+            mMapView.refreshMap();
         }
     }
 
