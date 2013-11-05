@@ -48,6 +48,8 @@ public class HotelVendor extends BaseData implements Parcelable {
     
     public static final List<HotelVendor> hotelVendorList = new ArrayList<HotelVendor>();
     
+    static final Object sWriteLock = new Object();
+    
     // 0x01 x_int    酒店商家ID
     public static final byte FIELD_ID = 0x01;
     
@@ -144,93 +146,107 @@ public class HotelVendor extends BaseData implements Parcelable {
     
     @SuppressWarnings("unchecked")
     public static void readHotelVendorList(Context context) {
-        synchronized (hotelVendorList) {
-        	hotelVendorList.clear();
-            sLoad.clear();
-            String path = TKConfig.getDataPath(false) + "HotelVendorList";
-            File file = new File(path);
-            if (file.exists()) {
-                FileInputStream fis = null;
-                try {
-                    fis = new FileInputStream(file);
-                    XArray<XMap> xarray = (XArray<XMap>)ByteUtil.byteToXObject(Utility.readFileToByte(fis));
-                    for(int i = 0, size = xarray.size(); i < size; i++) {
-                    	HotelVendor hotelVendor = new HotelVendor();
-                    	hotelVendor.init(xarray.get(i), true);
-                    	hotelVendorList.add(hotelVendor);
-                    }
-                } catch (Exception e) {
-                    file.delete();
-                    e.printStackTrace();
-                } finally {
-                    if (null != fis) {
-                        try {
-                            fis.close();
-                        } catch (IOException e) {
-                            // Ignore
-                            LogWrapper.e("HotelVendor", "readHotelVendorList() IOException caught while closing stream");
-                        }
-                    }
-                }
-            } else {
+        synchronized (sLoadedList) {
+        	sLoadedList.clear();
+        }
+        
+        List<HotelVendor> list = new ArrayList<HotelVendor>();
+        String path = TKConfig.getDataPath(false) + "HotelVendorList";
+        File file = new File(path);
+        if (file.exists()) {
+        	synchronized (sWriteLock) {
+				
+        		FileInputStream fis = null;
+        		try {
+        			fis = new FileInputStream(file);
+        			XArray<XMap> xarray = (XArray<XMap>)ByteUtil.byteToXObject(Utility.readFileToByte(fis));
+        			for(int i = 0, size = xarray.size(); i < size; i++) {
+        				HotelVendor hotelVendor = new HotelVendor();
+        				hotelVendor.init(xarray.get(i), true);
+        				list.add(hotelVendor);
+        			}
+        		} catch (Exception e) {
+        			file.delete();
+        			e.printStackTrace();
+        		} finally {
+        			if (null != fis) {
+        				try {
+        					fis.close();
+        				} catch (IOException e) {
+        					// Ignore
+        					LogWrapper.e("HotelVendor", "readHotelVendorList() IOException caught while closing stream");
+        				}
+        			}
+        		}
+			}
+        } else {
 
-                try {
-                    XMap xmap = new XMap();
-                    xmap.put(FIELD_ID, SOURCE_ELONG);
-                    xmap.put(FIELD_SERVICE_TEL, "4009333333");
-                    xmap.put(FIELD_NAME, context.getString(R.string.elong));
-                    xmap.put(FIELD_RESERVE_TEL, "");
-                    
-                    HotelVendor hotelVendor = new HotelVendor();
-                    hotelVendor.init(xmap, true);
-                    hotelVendorList.add(hotelVendor);
-                    
-                    xmap = new XMap();
-                    xmap.put(FIELD_ID, SOURCE_CTRIP);
-                    xmap.put(FIELD_SERVICE_TEL, "4009210661");
-                    xmap.put(FIELD_NAME, context.getString(R.string.ctrip));
-                    xmap.put(FIELD_RESERVE_TEL, "");
-                    
-                    hotelVendor = new HotelVendor();
-                    hotelVendor.init(xmap, true);
-                    hotelVendorList.add(hotelVendor);
-                    
-                } catch (APIException e) {
-                    e.printStackTrace();
-                }
-            }
-            
-            DataQuery dataQuery = new DataQuery(context);
-            dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_HOTELVENDOR);
-            dataQuery.addParameter(DataQuery.SERVER_PARAMETER_NEED_FIELD, NEED_FIELD);
-            dataQuery.setup(Globals.getCurrentCityInfo().getId(), -1, -1, null);
-            dataQuery.query();
-            
-            Response response = dataQuery.getResponse();
-            if (response != null) {
-            	HotelVendorResponse hotelvendorResponse = (HotelVendorResponse)response;
-                HotelVendorList hotelVendorList = hotelvendorResponse.getList();
-                if (hotelVendorList != null) {
-                    List<HotelVendor> hotelVendorArrayList = hotelVendorList.getList();
-                    List<HotelVendor> oldHotelVendorList = new ArrayList<HotelVendor>();
-                    oldHotelVendorList.addAll(HotelVendor.hotelVendorList);
-                    
-                    HotelVendor.hotelVendorList.clear();
-                    if (hotelVendorArrayList != null && hotelVendorArrayList.size() > 0) {
-                        
-                    	HotelVendor.hotelVendorList.addAll(hotelVendorArrayList);
-                    }
-                    writeHotelVendorList();
-                }
+            try {
+                XMap xmap = new XMap();
+                xmap.put(FIELD_ID, SOURCE_ELONG);
+                xmap.put(FIELD_SERVICE_TEL, "4009333333");
+                xmap.put(FIELD_NAME, context.getString(R.string.elong));
+                xmap.put(FIELD_RESERVE_TEL, "");
+                
+                HotelVendor hotelVendor = new HotelVendor();
+                hotelVendor.init(xmap, true);
+                list.add(hotelVendor);
+                
+                xmap = new XMap();
+                xmap.put(FIELD_ID, SOURCE_CTRIP);
+                xmap.put(FIELD_SERVICE_TEL, "4009210661");
+                xmap.put(FIELD_NAME, context.getString(R.string.ctrip));
+                xmap.put(FIELD_RESERVE_TEL, "");
+                
+                hotelVendor = new HotelVendor();
+                hotelVendor.init(xmap, true);
+                list.add(hotelVendor);
+                
+            } catch (APIException e) {
+                e.printStackTrace();
             }
         }
-    }
-    
-    private static void writeHotelVendorList() {
+        
+        DataQuery dataQuery = new DataQuery(context);
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_HOTELVENDOR);
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_NEED_FIELD, NEED_FIELD);
+        dataQuery.setup(Globals.getCurrentCityInfo().getId(), -1, -1, null);
+        dataQuery.query();
+        
+        boolean writeHotelVendorList = false;
+        Response response = dataQuery.getResponse();
+        if (response != null) {
+        	HotelVendorResponse hotelvendorResponse = (HotelVendorResponse)response;
+            HotelVendorList hotelVendorList = hotelvendorResponse.getList();
+            if (hotelVendorList != null) {
+                List<HotelVendor> hotelVendorArrayList = hotelVendorList.getList();
+                List<HotelVendor> oldHotelVendorList = new ArrayList<HotelVendor>();
+                oldHotelVendorList.addAll(list);
+                
+                list.clear();
+                if (hotelVendorArrayList != null && hotelVendorArrayList.size() > 0) {
+                    
+                	list.addAll(hotelVendorArrayList);
+                }
+                writeHotelVendorList = true;
+            }
+        }
         synchronized (hotelVendorList) {
+			hotelVendorList.clear();
+			hotelVendorList.addAll(list);
+		}
+        
+        if(writeHotelVendorList) {
+        	writeHotelVendorList(list);
+        }
+    }
+
+    
+    private static void writeHotelVendorList(List<HotelVendor> list) {
+        synchronized (sWriteLock) {
             try {
                 XArray<XMap> xarray = new XArray<XMap>();
-                for(HotelVendor hotelVendor : hotelVendorList) {
+                for(HotelVendor hotelVendor : list) {
                     xarray.add(hotelVendor.data);
                 }
                 String path = TKConfig.getDataPath(false) + "HotelVendorList";
@@ -243,27 +259,32 @@ public class HotelVendor extends BaseData implements Parcelable {
         
     }
     
-    private static List<Long> sLoad = new ArrayList<Long>();
+    private static List<Long> sLoadedList = new ArrayList<Long>();
     
     private static void loadHotelVendor(final Activity activity, long id, final Runnable runnable) {
-        synchronized (hotelVendorList) {
-            if (sLoad.contains(id) == false && activity != null) {
-                sLoad.add(id);
-                final DataQuery dataQuery = new DataQuery(activity);
-                dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_HOTELVENDOR);
-                dataQuery.addParameter(DataQuery.SERVER_PARAMETER_NEED_FIELD, NEED_FIELD);
-                dataQuery.addParameter(DataQuery.SERVER_PARAMETER_IDS, String.valueOf(id));
-                dataQuery.setup(Globals.getCurrentCityInfo().getId(), -1, -1, null, false, false, null);
-                new Thread(new Runnable() {
-                    
-                    @Override
-                    public void run() {
-                        dataQuery.query();
-                        activity.runOnUiThread(runnable);
-                    }
-                }).start();
-            }
+    	if (activity == null){
+    		return;
+    	}
+        synchronized (sLoadedList) {
+        	if (sLoadedList.contains(id)){
+        		return;
+        	}
+        	sLoadedList.add(id);
         }
+        final DataQuery dataQuery = new DataQuery(activity);
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_HOTELVENDOR);
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_NEED_FIELD, NEED_FIELD);
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_IDS, String.valueOf(id));
+        dataQuery.setup(Globals.getCurrentCityInfo().getId(), -1, -1, null, false, false, null);
+        new Thread(new Runnable() {
+            
+            @Override
+            public void run() {
+                dataQuery.query();
+                activity.runOnUiThread(runnable);
+            }
+        }).start();
+        
     }
     
     public static HotelVendor getHotelVendorById(long id, Activity activity, Runnable runnable) {
