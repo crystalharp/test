@@ -23,10 +23,6 @@
                 android:text="@string/i_like"
                 android:textSize="16sp"
                 android:background="@drawable/btn_tab_selected" />
-            <ImageView 
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/ic_split" />
             <Button
                 android:id="@+id/recommend_btn"
                 android:layout_width="wrap_content"
