@@ -415,7 +415,7 @@ static tk_base_tile_data_t *_tk_load_tile_from_region(tk_region_t *region, tk_co
 //    }
     if (feature_num == 0) {
     	tk_set_result(TK_STATUS_SUCCESS);
-    	return NULL;
+    	goto CATCH;
     }
     name_length = (tile_data_buf.buf[buf_pos + 2] << 4) + ((tile_data_buf.buf[buf_pos + 3] >> 4) & 0x0f);
     point_num = ((tile_data_buf.buf[buf_pos + 3] & 0xf) << 8) + tile_data_buf.buf[buf_pos + 4];//这里数据是否已是每级需要读取节点个数，预先分配的空间是否正好？最终看来不是。如何无缝兼容？
