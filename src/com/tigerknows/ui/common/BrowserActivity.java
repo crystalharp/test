@@ -233,7 +233,7 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
 
-                if (url.startsWith("tel:")) { 
+                if (url.startsWith("mailto:") || url.startsWith("tel:")) { 
                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url)); 
                     startActivity(intent);
                     return true;
