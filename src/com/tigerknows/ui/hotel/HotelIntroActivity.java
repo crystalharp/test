@@ -18,15 +18,11 @@ public class HotelIntroActivity extends BaseActivity {
     
     public static final String EXTRA_ROOM_DESCRIPTION = "EXTRA_ROOM_DESCRIPTION";
     
-    public static final String EXTRA_SERVICE = "EXTRA_SERVICE";
-
     TextView hotelNameTxv;
     TextView longDescriptionTxv;
     TextView roomDescriptionTxv;
-    TextView hotelServiceTxv;
     View longDescriptionBlock;
     View roomDescriptionBlock;
-    View hotelServiceBlock;
     ScrollView hotelScrollView;
     
 	@Override
@@ -47,7 +43,6 @@ public class HotelIntroActivity extends BaseActivity {
         hotelScrollView.scrollTo(0, 0);
         String longDescription = intent.getStringExtra(EXTRA_LONG_DESCRIPTION);
         String roomDescription = intent.getStringExtra(EXTRA_ROOM_DESCRIPTION);
-        String hotelService = intent.getStringExtra(EXTRA_SERVICE);
         if (longDescription == null){
             longDescriptionBlock.setVisibility(View.GONE);
         } else {
@@ -60,12 +55,6 @@ public class HotelIntroActivity extends BaseActivity {
             roomDescriptionBlock.setVisibility(View.VISIBLE);
             roomDescriptionTxv.setText(roomDescription);
         }
-        if (hotelService == null) {
-            hotelServiceBlock.setVisibility(View.GONE);
-        } else {
-            hotelServiceBlock.setVisibility(View.VISIBLE);
-            hotelServiceTxv.setText(hotelService);
-        }
 	}
 	
 	protected void findViews() {
@@ -73,10 +62,8 @@ public class HotelIntroActivity extends BaseActivity {
 		hotelNameTxv = (TextView) findViewById(R.id.hotel_head);
 		longDescriptionTxv = (TextView) findViewById(R.id.hotel_long_description);
 		roomDescriptionTxv = (TextView) findViewById(R.id.hotel_room_description);
-		hotelServiceTxv = (TextView) findViewById(R.id.hotel_service);
 		longDescriptionBlock = findViewById(R.id.hotel_long_desc_block);
 		roomDescriptionBlock = findViewById(R.id.hotel_room_desc_block);
-		hotelServiceBlock = findViewById(R.id.hotel_service_block);
 		hotelScrollView = (ScrollView) findViewById(R.id.hotel_scrollView);
 	}
 	 

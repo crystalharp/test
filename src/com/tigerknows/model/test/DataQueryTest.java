@@ -229,7 +229,6 @@ public class DataQueryTest {
         return data;
     }
 
-    
     protected static XMap launchShangjiaList(Context context, int total) {
         XMap data = new XMap();
         data.put(ShangjiaList.FIELD_TOTAL, total);
@@ -642,6 +641,7 @@ public class DataQueryTest {
         xarray.add(launchDynamicPOI(Integer.parseInt(DynamicPOI.TYPE_HOTEL)));
         data.put(POI.FIELD_DYNAMIC_POI, xarray);
         data.put(POI.FIELD_PRICE, "168");
+        data.put(POI.FIELD_HOTEL_SERVICE, "FIELD_HOTEL_SERVICE");
         return data;
     }
 
@@ -746,7 +746,6 @@ public class DataQueryTest {
             xarray.add(launchRoomType(i));
         }
         data.put(Hotel.FIELD_ROOM_TYPE_LIST, xarray);
-        data.put(Hotel.FIELD_SERVICE, "FIELD_SERVICE");
         data.put(Hotel.FIELD_CAN_RESERVE, canReserve);
         return data;
     }

@@ -29,7 +29,7 @@ public class Hotel extends XMapData {
     
     public static final String NEED_FILED_LIST = "5051525357";
     
-    public static final String NEED_FILED_DETAIL = "5455565859";
+    public static final String NEED_FILED_DETAIL = "54555859";
     
     public static final String NEED_FILED_ROOM_INFO = "5055";
     
@@ -50,9 +50,6 @@ public class Hotel extends XMapData {
 
     // 0x55 x_array<x_map> x_array<房型套餐>
     public static final byte FIELD_ROOM_TYPE_LIST = 0x55;
-
-    // 0x56 x_string 酒店设施服务
-    public static final byte FIELD_SERVICE = 0x56;
 
     // 0x57 x_int 是否可预订，0为否，大于0为是
     public static final byte FIELD_CAN_RESERVE = 0x57;
@@ -88,9 +85,6 @@ public class Hotel extends XMapData {
 
     // 0x55 x_array<x_map> x_array<房型套餐>
     private List<RoomType> roomTypeList;
-
-    // 0x56 x_string 酒店设施服务
-    private String service;
 
     // 0x57 x_int 是否可预订，0为否，大于0为是
     private long canReserve;
@@ -144,7 +138,6 @@ public class Hotel extends XMapData {
             }
         }
         this.roomTypeList = getListFromData(FIELD_ROOM_TYPE_LIST, RoomType.Initializer, reset ? null : this.roomTypeList);
-        this.service = getStringFromData(FIELD_SERVICE, reset ? null : this.service);
         this.canReserve = getLongFromData(FIELD_CAN_RESERVE, reset ? 0 : this.canReserve);
         this.longDescription = getStringFromData(FIELD_LONG_DESCRIPTION, reset ? null : this.longDescription);
         this.roomDescription = getStringFromData(FIELD_ROOM_DESCRIPTION, reset ? null : this.roomDescription);
@@ -182,9 +175,6 @@ public class Hotel extends XMapData {
                     xArray.add(roomTypeList.get(i).getData());
                 }
                 data.put(FIELD_ROOM_TYPE_LIST, xArray);
-            }
-            if (service != null) {
-                data.put(FIELD_SERVICE, service);
             }
             // TODO 是否可预订状态只在第一次初始化时赋值，后续不能被更新
 //            if (canReserve != 0) {
@@ -236,11 +226,7 @@ public class Hotel extends XMapData {
     public List<RoomType> getRoomTypeList() {
         return roomTypeList;
     }
-
-    public String getService() {
-        return service;
-    }
-
+    
     public long getCanReserve() {
         return canReserve;
     }

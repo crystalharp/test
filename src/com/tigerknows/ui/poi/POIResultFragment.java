@@ -11,6 +11,8 @@ import com.tigerknows.Sphinx;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BaseQuery;
+import com.tigerknows.model.BuslineModel;
+import com.tigerknows.model.BuslineQuery;
 import com.tigerknows.model.Comment;
 import com.tigerknows.model.Hotel;
 import com.tigerknows.model.POI;
@@ -906,7 +908,10 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     @Override
     public void onPostExecute(TKAsyncTask tkAsyncTask) {
         super.onPostExecute(tkAsyncTask);
-        DataQuery dataQuery = (DataQuery) tkAsyncTask.getBaseQuery();
+        setData((DataQuery) (tkAsyncTask.getBaseQuery()));
+    }
+    
+    public void setData(DataQuery dataQuery) {
         String subDataType = dataQuery.getParameter(BaseQuery.SERVER_PARAMETER_SUB_DATA_TYPE);
         mResultAdapter.setSubDataType(subDataType);
         if (BaseQuery.SUB_DATA_TYPE_HOTEL.equals(subDataType)) {
@@ -968,6 +973,28 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         }
 
         POIResponse poiResponse = (POIResponse)dataQuery.getResponse();
+        BuslineModel buslineModel = poiResponse.getBuslineModel();
+        if (buslineModel != null) {
+            BuslineQuery buslineQuery = new BuslineQuery(mSphinx);
+            buslineQuery.setup(dataQuery.getCityId(), dataQuery.getParameter(BaseQuery.SERVER_PARAMETER_KEYWORD), 0, false, R.id.view_traffic_busline_line_result, mContext.getString(R.string.doing_and_wait));
+            buslineQuery.setBuslineModel(buslineModel);
+            if (buslineModel.getType() == BuslineModel.TYPE_BUSLINE) {
+                poiResponse.setBuslineModel(null);
+                uiStackAdjust(dataQuery);
+                mSphinx.uiStackRemove(POIResultFragment.this.getId());
+                mSphinx.getBuslineResultLineFragment().setData(buslineQuery, dataQuery);
+                mSphinx.showView(R.id.view_traffic_busline_line_result);
+                return;
+            } else if (buslineModel.getType() == BuslineModel.TYPE_STATION) {
+                poiResponse.setBuslineModel(null);
+                uiStackAdjust(dataQuery);
+                mSphinx.uiStackRemove(POIResultFragment.this.getId());
+                mSphinx.getBuslineResultStationFragment().setData(buslineQuery, dataQuery);
+                mSphinx.showView(R.id.view_traffic_busline_station_result);
+                return;
+            }
+        }
+        
         if ((poiResponse.getAPOIList() != null && 
                 poiResponse.getAPOIList().getList() != null && 
                 poiResponse.getAPOIList().getList().size() > 0) || 
@@ -1030,20 +1057,9 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 }
                 mPOIList.addAll(bPOIList);
             }
-
-            if (dataQuery.getSourceViewId() == R.id.view_poi_nearby_search) {
-                if (this.mSphinx.uiStackContains(R.id.view_more_favorite)) {
-                    mSphinx.uiStackClose(new int[]{R.id.view_more_home, R.id.view_more_favorite, getId()});
-                } else if (this.mSphinx.uiStackContains(R.id.view_more_history)) {
-                    mSphinx.uiStackClose(new int[]{R.id.view_more_home, R.id.view_more_history, getId()});
-                } else {
-                    mSphinx.uiStackClose(new int[]{R.id.view_poi_home, getId()});
-                    if (mSphinx.uiStackContains(R.id.view_poi_home) == false) {
-                        mSphinx.uiStackInsert(R.id.view_poi_home, 0);
-                    }
-                }
-            }
-
+            
+            uiStackAdjust(dataQuery);
+            
             mResultLsv.setFooterSpringback(canTurnPage());
             List<Filter> filterList = mDataQuery.getFilterList();
             if (filterList != null && filterList.size() > 0) {
@@ -1064,6 +1080,21 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             mSphinx.getHandler().postDelayed(mTurnPageRun, 1000);
         }
         
+    }
+    
+    void uiStackAdjust(DataQuery dataQuery) {
+        if (dataQuery.getSourceViewId() == R.id.view_poi_nearby_search) {
+            if (this.mSphinx.uiStackContains(R.id.view_more_favorite)) {
+                mSphinx.uiStackClose(new int[]{R.id.view_more_home, R.id.view_more_favorite, getId()});
+            } else if (this.mSphinx.uiStackContains(R.id.view_more_history)) {
+                mSphinx.uiStackClose(new int[]{R.id.view_more_home, R.id.view_more_history, getId()});
+            } else {
+                mSphinx.uiStackClose(new int[]{R.id.view_poi_home, R.id.view_poi_input_search, getId()});
+                if (mSphinx.uiStackContains(R.id.view_poi_home) == false) {
+                    mSphinx.uiStackInsert(R.id.view_poi_home, 0);
+                }
+            }
+        }
     }
     
     private boolean canTurnPage() {

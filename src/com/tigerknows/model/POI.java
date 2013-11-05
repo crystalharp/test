@@ -299,6 +299,9 @@ public class POI extends BaseData {
     
     // 0x17    x_string    价格描述，格式为"960元" 
     public static final byte FIELD_PRICE = 0x17;
+
+    // 0x56 x_string 酒店设施服务
+    public static final byte FIELD_HOTEL_SERVICE = 0x56;
     
     public static class DynamicPOI extends XMapData {
         
@@ -423,7 +426,7 @@ public class POI extends BaseData {
 
     public static final int FROM_LOCAL = 1;
     
-    public static final String NEED_FIELD = "0102030405060708090a0b121314151617";
+    public static final String NEED_FIELD = "0102030405060708090a0b12131415161756";
     
     private String uuid;
     
@@ -479,6 +482,9 @@ public class POI extends BaseData {
     private long perCapity = -1;
     
     private String price;
+
+    // 0x56 x_string 酒店设施服务
+    private String hotelService;
     
     public String getPrice() {
         return this.price;
@@ -739,6 +745,10 @@ public class POI extends BaseData {
     public String getService() {
     	return service;
     }
+    
+    public String getHotelService() {
+        return hotelService;
+    }
 
     public String getEnvironment() {
     	return envrionment;
@@ -919,6 +929,7 @@ public class POI extends BaseData {
         this.lastComment = getObjectFromData(FIELD_LAST_COMMENT, Comment.Initializer, reset ? null : this.lastComment);
         this.hotel.init(this.data, reset);
         this.price = getStringFromData(FIELD_PRICE, reset ? null : this.price);
+        this.hotelService = getStringFromData(FIELD_HOTEL_SERVICE, reset ? null : this.hotelService);
         
         if (reset == false) {
             this.data = null;

@@ -764,7 +764,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             mAddressAndPhoneView.setVisibility(View.GONE);
         }
         
-        makeFeature(mFeatureTxv);
+        makeFeature();
         
     }
     
@@ -1195,30 +1195,17 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         mDoingView.setVisibility(View.GONE);
     }
         
-    private void makeFeature(ViewGroup viewGroup) {
+    private void makeFeature() {
         POI poi = mPOI;
         if (poi == null) {
             return;
         }
         
-        if (mDynamicHotelPOI.isExist()) {
-            mFeatureTxv.setVisibility(View.GONE);
-            return;
-        } else {
-            mFeatureTxv.setVisibility(View.VISIBLE);
+        int count = mFeatureTxv.getChildCount();
+        for(int i = 0; i < count; i++) {
+            mFeatureTxv.getChildAt(i).setVisibility(View.GONE);
         }
         
-        int count = viewGroup.getChildCount();
-        for(int i = 0; i < count; i++) {
-            viewGroup.getChildAt(i).setVisibility(View.GONE);
-        }
-
-        byte[] showKeys = new byte[] {Description.FIELD_FEATURE, Description.FIELD_RECOMMEND, Description.FIELD_GUEST_CAPACITY, Description.FIELD_BUSINESS_HOURS,
-                    Description.FIELD_HOUSING_PRICE, Description.FIELD_SYNOPSIS, Description.FIELD_CINEMA_FEATURE, Description.FIELD_MEMBER_POLICY, Description.FIELD_FEATURE_SPECIALTY, 
-                    Description.FIELD_TOUR_DATE, Description.FIELD_TOUR_LIKE, Description.FIELD_POPEDOM_SCENERY, Description.FIELD_RECOMMEND_SCENERY,
-                    Description.FIELD_NEARBY_INFO, Description.FIELD_COMPANY_WEB, Description.FIELD_COMPANY_TYPE,
-                    Description.FIELD_COMPANY_SCOPE, Description.FIELD_INDUSTRY_INFO};;
-
         int margin = (int)(Globals.g_metrics.density*8);
         LayoutParams layoutParamsTitle = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
         layoutParamsTitle.topMargin = margin;
@@ -1230,6 +1217,52 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         TextView titleTxv;
         TextView bodyTxv;
         ImageView splitImv = null;
+        
+        if (mDynamicHotelPOI.isExist()) {
+            String hotelService = poi.getHotelService();
+            if (hotelService != null) {
+                if (count > 0) {
+                    titleTxv = (TextView) mFeatureTxv.getChildAt(0);
+                    bodyTxv = (TextView) mFeatureTxv.getChildAt(1);
+                    splitImv = (ImageView) mFeatureTxv.getChildAt(2);
+                    titleTxv.setVisibility(View.VISIBLE);
+                    bodyTxv.setVisibility(View.VISIBLE);
+                    splitImv.setVisibility(View.GONE);
+                } else {
+                    titleTxv = new TextView(mContext);
+                    titleTxv.setGravity(Gravity.LEFT);
+                    int color = mSphinx.getResources().getColor(R.color.black_middle);
+                    titleTxv.setTextColor(color);
+                    mFeatureTxv.addView(titleTxv, layoutParamsTitle);
+                    bodyTxv = new TextView(mContext);
+                    bodyTxv.setGravity(Gravity.LEFT);
+                    bodyTxv.setLineSpacing(0f, 1.2f);
+                    color = mSphinx.getResources().getColor(R.color.black_light);
+                    bodyTxv.setTextColor(color);
+                    mFeatureTxv.addView(bodyTxv, layoutParamsBody);
+                    splitImv = new ImageView(mContext);
+                    splitImv.setBackgroundResource(R.drawable.bg_line_split);
+                    mFeatureTxv.addView(splitImv, layoutParamsSplit);
+                    splitImv.setVisibility(View.GONE);
+                }
+                titleTxv.setText(R.string.hotel_service_title);
+                bodyTxv.setText(hotelService);
+                mFeatureTxv.setVisibility(View.VISIBLE);
+            } else {
+                mFeatureTxv.setVisibility(View.GONE);
+            }
+            return;
+        } else {
+            mFeatureTxv.setVisibility(View.VISIBLE);
+        }
+
+        splitImv = null;
+        byte[] showKeys = new byte[] {Description.FIELD_FEATURE, Description.FIELD_RECOMMEND, Description.FIELD_GUEST_CAPACITY, Description.FIELD_BUSINESS_HOURS,
+                    Description.FIELD_HOUSING_PRICE, Description.FIELD_SYNOPSIS, Description.FIELD_CINEMA_FEATURE, Description.FIELD_MEMBER_POLICY, Description.FIELD_FEATURE_SPECIALTY, 
+                    Description.FIELD_TOUR_DATE, Description.FIELD_TOUR_LIKE, Description.FIELD_POPEDOM_SCENERY, Description.FIELD_RECOMMEND_SCENERY,
+                    Description.FIELD_NEARBY_INFO, Description.FIELD_COMPANY_WEB, Description.FIELD_COMPANY_TYPE,
+                    Description.FIELD_COMPANY_SCOPE, Description.FIELD_INDUSTRY_INFO};
+
         for(int i = 0; i < showKeys.length; i++) {
             
             byte key = showKeys[i];
@@ -1237,9 +1270,9 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             
             if(!TextUtils.isEmpty(value)) {
                 if (i*3 < count) {
-                    titleTxv = (TextView) viewGroup.getChildAt(i*3);
-                    bodyTxv = (TextView) viewGroup.getChildAt(i*3+1);
-                    splitImv = (ImageView) viewGroup.getChildAt(i*3+2);
+                    titleTxv = (TextView) mFeatureTxv.getChildAt(i*3);
+                    bodyTxv = (TextView) mFeatureTxv.getChildAt(i*3+1);
+                    splitImv = (ImageView) mFeatureTxv.getChildAt(i*3+2);
                     titleTxv.setVisibility(View.VISIBLE);
                     bodyTxv.setVisibility(View.VISIBLE);
                     splitImv.setVisibility(View.VISIBLE);
@@ -1248,16 +1281,16 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                     titleTxv.setGravity(Gravity.LEFT);
                     int color = mSphinx.getResources().getColor(R.color.black_middle);
                     titleTxv.setTextColor(color);
-                    viewGroup.addView(titleTxv, layoutParamsTitle);
+                    mFeatureTxv.addView(titleTxv, layoutParamsTitle);
                     bodyTxv = new TextView(mContext);
                     bodyTxv.setGravity(Gravity.LEFT);
                     bodyTxv.setLineSpacing(0f, 1.2f);
                     color = mSphinx.getResources().getColor(R.color.black_light);
                     bodyTxv.setTextColor(color);
-                    viewGroup.addView(bodyTxv, layoutParamsBody);
+                    mFeatureTxv.addView(bodyTxv, layoutParamsBody);
                     splitImv = new ImageView(mContext);
                     splitImv.setBackgroundResource(R.drawable.bg_line_split);
-                    viewGroup.addView(splitImv, layoutParamsSplit);
+                    mFeatureTxv.addView(splitImv, layoutParamsSplit);
                 }
                 String name = poi.getDescriptionName(mContext, key);
                 titleTxv.setText(name.substring(0, name.length()-1));
@@ -1265,10 +1298,10 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             }
         }
         if (splitImv != null) {
-            viewGroup.setVisibility(View.VISIBLE);
+            mFeatureTxv.setVisibility(View.VISIBLE);
             splitImv.setVisibility(View.GONE);
         } else {
-            viewGroup.setVisibility(View.GONE);
+            mFeatureTxv.setVisibility(View.GONE);
         }
     }
     

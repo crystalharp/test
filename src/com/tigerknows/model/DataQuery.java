@@ -138,6 +138,11 @@ public final class DataQuery extends BaseQuery {
     // configinfo   String  true    JSON字符串，key标识config的类型，value标识版本号,具体定义见默认筛选项参数定义
     public static final String SERVER_PARAMETER_CONFIGINFO = "configinfo";
     
+    // ext  String  true    扩展搜索，当前支持busline，表示支持优先展示公交线路搜索结果 
+    public static final String SERVER_PARAMETER_EXT = "ext";
+    
+    static final String EXT_BUSLINE = "busline";
+    
     // 评论版本 
     public static final String COMMENT_VERSION = "1";
     
@@ -560,7 +565,7 @@ public final class DataQuery extends BaseQuery {
                             ekeys = Utility.mergeArray(ekeys, new String[]{SERVER_PARAMETER_KEYWORD});
                         }
                     }
-                    okeys = Utility.mergeArray(okeys, new String[]{SERVER_PARAMETER_POI_ID});
+                    okeys = Utility.mergeArray(okeys, new String[]{SERVER_PARAMETER_POI_ID, SERVER_PARAMETER_EXT});
                 } else {
                     ekeys = Utility.mergeArray(ekeys, new String[]{SERVER_PARAMETER_ID_LIST});
                 }
@@ -675,6 +680,7 @@ public final class DataQuery extends BaseQuery {
                     addParameter(SERVER_PARAMETER_NEED_FIELD, POI.NEED_FIELD);
                     addParameter(SERVER_PARAMETER_COMMENT_VERSION, COMMENT_VERSION);
                 }
+                addParameter(SERVER_PARAMETER_EXT, EXT_BUSLINE);
             } else if (SUB_DATA_TYPE_HOTEL.equals(subDataType)) {
                 String appendaction = getParameter(SERVER_PARAMETER_APPENDACTION);
                 if (appendaction == null) {
@@ -1627,6 +1633,9 @@ public final class DataQuery extends BaseQuery {
 
         // 0x03 x_map B类poi结果（格式同上）
         public static final byte FIELD_B_POI_LIST = 0x03;
+
+        // 0x04     x_map   公交类线路查询返回格式
+        public static final byte FIELD_EXT_BUSLINE = 0x04;
         
         // 0x23 x_array<x_int>
         // 与请求idlist相关，反映id们属性的字段，用整数表示属性，第1个bit为1表示无效，第2bit为1表示不存在，第3bit为1表示金戳，第4bit为1表示银戳(从低位开始)
@@ -1637,6 +1646,8 @@ public final class DataQuery extends BaseQuery {
         private POIList bPOIList;
 
         private List<Long> idList;
+        
+        private BuslineModel buslineModel;
 
         public POIList getAPOIList() {
             return aPOIList;
@@ -1658,6 +1669,14 @@ public final class DataQuery extends BaseQuery {
             return idList;
         }
 
+        public BuslineModel getBuslineModel() {
+            return buslineModel;
+        }
+
+        public void setBuslineModel(BuslineModel buslineModel) {
+            this.buslineModel = buslineModel;
+        }
+
         @SuppressWarnings("unchecked")
         public POIResponse(XMap data) throws APIException {
             super(data);
@@ -1670,6 +1689,9 @@ public final class DataQuery extends BaseQuery {
             }
             if (this.data.containsKey(FIELD_ID_LIST)) {
                 this.idList = this.data.getXArray(FIELD_ID_LIST).toIntList();
+            }
+            if (this.data.containsKey(FIELD_EXT_BUSLINE)) {
+                this.buslineModel = new BuslineModel(this.data.getXMap(FIELD_EXT_BUSLINE));
             }
         }
 

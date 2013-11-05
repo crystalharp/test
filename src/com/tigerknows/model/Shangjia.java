@@ -1,4 +1,4 @@
-﻿/*
+/*
  * @(#)POI.java 5:30:43 PM Aug 26, 2007 2007
  * 
  * Copyright (C) 2007 Beijing TigerKnows Science and Technology Ltd. All rights

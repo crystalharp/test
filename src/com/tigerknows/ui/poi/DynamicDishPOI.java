@@ -16,7 +16,6 @@ import com.tigerknows.model.POI.Description;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.common.BrowserActivity;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIViewBlock;
-import com.tigerknows.widget.LinearListAdapter;
 
 import android.content.Intent;
 import android.text.TextUtils;
@@ -30,7 +29,6 @@ import android.widget.TextView;
 public class DynamicDishPOI extends POIDetailFragment.DynamicPOIView implements View.OnClickListener {
     
     List<DynamicPOIViewBlock> blockList = new ArrayList<DynamicPOIViewBlock>();
-    LinearListAdapter lsv;
     DynamicPOIViewBlock mViewBlock;
     View mDishTitleView;
     TextView mContentTxv;
@@ -53,9 +51,10 @@ public class DynamicDishPOI extends POIDetailFragment.DynamicPOIView implements 
 	        @Override
 	        public void refresh() {
 	            if (mPOI == null) {
-	                mViewBlock.clear();
+	                clear();
 	                return;
 	            }
+                show();
 	          
 	            if (mExistDynamicPOI) {
 	                DataQuery dataQuery = mPOI.getRecommendDishQuery();
