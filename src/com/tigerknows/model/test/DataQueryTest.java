@@ -2,6 +2,7 @@ package com.tigerknows.model.test;
 
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
+import com.tigerknows.android.app.TKApplication;
 import com.tigerknows.map.MapEngine;
 import com.tigerknows.map.MapEngine.CityInfo;
 import com.tigerknows.model.BaseQuery;
@@ -636,6 +637,9 @@ public class DataQueryTest {
         XArray<XMap> xarray = new XArray<XMap>();
         for(int i = 0; i < 128; i ++) {
             xarray.add(launchDynamicPOI(i));
+            xarray.add(launchDynamicPOI(i));
+            xarray.add(launchDynamicPOI(i));
+            xarray.add(launchDynamicPOI(i));
         }
         xarray.add(launchDynamicPOI(Integer.parseInt(BaseQuery.DATA_TYPE_COUPON)));
         xarray.add(launchDynamicPOI(Integer.parseInt(DynamicPOI.TYPE_HOTEL)));
@@ -704,6 +708,9 @@ public class DataQueryTest {
         data.put(DynamicPOI.FIELD_MASTER_UID, "FIELD_MASTER_UID");
         data.put(DynamicPOI.FIELD_SUMMARY, "FIELD_SUMMARY");
         data.put(DynamicPOI.FIELD_SLAVE_UID, "FIELD_SLAVE_UID");
+        if (DynamicPOI.TYPE_TUANGOU.equals(String.valueOf(type))) {
+            data.put(DynamicPOI.FIELD_REMARK, launchTuangou(TKApplication.getInstance(), "NAME", "NOTICE", "CONTENTTEXT", false));
+        }
         return data;
     }
 

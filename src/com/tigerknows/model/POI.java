@@ -333,11 +333,15 @@ public class POI extends BaseData {
 
         // 0x04 x_string 从动态poi的uid，slaveUid
         public static final byte FIELD_SLAVE_UID = 0x04;
+        
+        // 0x05     x_map   附加信息4 
+        public static final byte FIELD_REMARK = 0x05;
 
         private long type;
         private String masterUid;
         private String summary;
         private String slaveUid;
+        private XMap remark;
         
         public DynamicPOI(XMap data) throws APIException {
             super(data);
@@ -346,6 +350,9 @@ public class POI extends BaseData {
             masterUid = getStringFromData(FIELD_MASTER_UID);
             summary = getStringFromData(FIELD_SUMMARY);
             slaveUid = getStringFromData(FIELD_SLAVE_UID);
+            if (this.data.containsKey(FIELD_REMARK)) {
+                remark = this.data.getXMap(FIELD_REMARK);
+            }
         }
 
         public String getType() {
@@ -362,6 +369,10 @@ public class POI extends BaseData {
 
         public String getSlaveUid() {
             return slaveUid;
+        }
+        
+        public XMap getRemark() {
+            return remark;
         }
 
         public static XMapInitializer<DynamicPOI> Initializer = new XMapInitializer<DynamicPOI>() {

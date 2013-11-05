@@ -1035,6 +1035,9 @@
 	
 	<string name="play_dianying">在映电影</string>
 	<string name="more_dianying">更多电影</string>
+    <string name="dynamic_tuangou_title">本店团购</string>
+    <string name="dynamic_tuangou_more">全部%1$d条团购</string>
+    <string name="dynamic_poi_title">同类推荐</string>
 
 <!-- Hotel Reservation Start -->
     
