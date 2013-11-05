@@ -1315,7 +1315,7 @@
     <string name="dish_merchant">菜单商户</string>
     <string name="recommend_dish">推荐菜</string>
     <string name="all_dish"> 全部菜品</string>
-    <string name="i_like">我喜欢</string>
+    <string name="i_like">我喜欢\u2002</string>
     <string name="tiger_recommend">小虎推荐</string>
     <string name="i_am_shopkeeper">我是店主</string>
     <string name="select_picture">选择图片</string>

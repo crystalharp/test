@@ -10,11 +10,6 @@
         android:layout_height="fill_parent"
         android:gravity="left|top"
         android:orientation="vertical" >
-        <ImageView 
-            android:id="@+id/selected_view"
-            android:layout_width="fill_parent"
-            android:layout_height="48dp"
-            android:layout_alignParentLeft="true"/>
         <TextView 
             android:id="@+id/padding_top_view"
             android:layout_width="fill_parent" 
@@ -33,20 +28,35 @@
             android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
             />
-        <ListView android:id="@+id/category_lsv"
-            android:layout_width="fill_parent" 
+        <RelativeLayout 
+            android:id="@+id/category_child_view"
+            android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_below="@id/padding_top_view"
             android:layout_above="@id/padding_bottom_view"
-            android:padding="0dp"
-            android:focusable="true"
-            android:scrollingCache="false"
-            android:drawSelectorOnTop="false"
-            android:dividerHeight="0dp"
-            android:divider="@color/transparent"
-            android:listSelector="@color/transparent"
-            android:fadingEdge="none"
-            android:scrollbars="none" />
+            android:gravity="left|top"
+            android:orientation="vertical"
+            >
+            <ImageView 
+                android:id="@+id/selected_view"
+                android:layout_width="fill_parent"
+                android:layout_height="48dp"/>
+            <ListView android:id="@+id/category_lsv"
+                android:layout_width="fill_parent" 
+                android:layout_height="fill_parent"
+                android:layout_below="@id/padding_top_view"
+                android:layout_above="@id/padding_bottom_view"
+                android:padding="0dp"
+                android:focusable="true"
+                android:scrollingCache="false"
+                android:drawSelectorOnTop="false"
+                android:dividerHeight="0dp"
+                android:divider="@color/transparent"
+                android:listSelector="@color/transparent"
+                android:fadingEdge="none"
+                android:scrollbars="none" >
+            </ListView>
+        </RelativeLayout>
         <LinearLayout
             android:id="@+id/category_group_view"
             android:layout_width="fill_parent"

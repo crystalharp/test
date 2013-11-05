@@ -146,7 +146,7 @@ public class BrowserFragment extends BaseFragment implements View.OnClickListene
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
 
-                if (url.startsWith("tel:")) { 
+                if (url.startsWith("mailto:") || url.startsWith("tel:")) { 
                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url)); 
                     mSphinx.startActivity(intent);
                     return true;
