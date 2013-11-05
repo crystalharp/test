@@ -407,15 +407,15 @@ static tk_base_tile_data_t *_tk_load_tile_from_region(tk_region_t *region, tk_co
             break;
     }
     feature_num = (tile_data_buf.buf[buf_pos] << 8) + tile_data_buf.buf[buf_pos + 1];
-    if (feature_num < 0 || (feature_num == 0 && tile_data_buf.buf_length > 15) || feature_num > tile_data_buf.buf_length) {//出错
-    	LOG_INFO("_tk_load_tile_from_region failed: TK_STATUS_TILE_DATA_ERROR, data buf length: %d", tile_data_buf.buf_length);
-        tk_set_result(TK_STATUS_TILE_DATA_ERROR);
-        tk_context_add_lost_data(context, region->rid, tile_offset, tile_data_buf.buf_length, TK_LOST_TYPE_DATA_ERROR);
-        goto CATCH;
-    }
+//    if (feature_num < 0 || (feature_num == 0 && tile_data_buf.buf_length > 15) || feature_num > tile_data_buf.buf_length) {//出错
+//    	LOG_INFO("_tk_load_tile_from_region failed: TK_STATUS_TILE_DATA_ERROR, data buf length: %d", tile_data_buf.buf_length);
+//        tk_set_result(TK_STATUS_TILE_DATA_ERROR);
+//        tk_context_add_lost_data(context, region->rid, tile_offset, tile_data_buf.buf_length, TK_LOST_TYPE_DATA_ERROR);
+//        goto CATCH;
+//    }
     if (feature_num == 0) {
     	tk_set_result(TK_STATUS_SUCCESS);
-    	goto CATCH;
+    	return NULL;
     }
     name_length = (tile_data_buf.buf[buf_pos + 2] << 4) + ((tile_data_buf.buf[buf_pos + 3] >> 4) & 0x0f);
     point_num = ((tile_data_buf.buf[buf_pos + 3] & 0xf) << 8) + tile_data_buf.buf[buf_pos + 4];//这里数据是否已是每级需要读取节点个数，预先分配的空间是否正好？最终看来不是。如何无缝兼容？
