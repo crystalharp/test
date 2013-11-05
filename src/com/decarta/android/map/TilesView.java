@@ -1089,6 +1089,7 @@ public class TilesView extends GLSurfaceView {
 				lastDirection = null;
 				lastTouchY = null;
 				touchRecord2.reset();
+				multiTouch = false;
 			}
 			isTouchBegin = false;
 
