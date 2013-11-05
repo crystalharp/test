@@ -612,28 +612,13 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
                         
                         for(int i = 0, size = dishes.size(); i < size; i++) {
                             Dish dish = dishes.get(i);
-                            if (dish.isLike() && mMyLikeList.contains(dish) == false) {
-                                mMyLikeList.add(dish);
-                            }
-                        }
-                        
-                        DataQuery recommendDataQuery = mPOI.getRecommendDishQuery();
-                        if (recommendDataQuery != null) {
-                            DishResponse recommendDishResponse = (DishResponse) recommendDataQuery.getResponse();
-                            DishList recommendDishList = recommendDishResponse.getList();
-                            if (recommendDishList != null) {
-                                List<Dish> recommendDishes = recommendDishList.getDishList();
-                                if (recommendDishes != null && recommendDishes.size() > 0) {
-                                    
-                                    for(int i = 0, size = recommendDishes.size(); i < size; i++) {
-                                        Dish dish = recommendDishes.get(i);
-                                        if (dish.isLike() && mMyLikeList.contains(dish) == false) {
-                                            mMyLikeList.add(dish);
-                                        }
-                                    }
+                            if (dish.isLike()) {
+                                if (mMyLikeList.contains(dish) == false) {
+                                    mMyLikeList.add(dish);
                                 }
                             }
                         }
+                        
                         Collections.sort(mMyLikeList, sLikeDishComparator);
                         
                         mMyLikeAdapter.notifyDataSetChanged();
@@ -642,16 +627,11 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
                     } else {
                         LogWrapper.d(TAG, "recommenddish.size()"+dishes.size());
                         
-                        if (mMyLikeList.size() > 0) {
-                            for(int i = 0, size = mMyLikeList.size(); i < size; i++) {
-                                Dish like = mMyLikeList.get(i);
-                                for(int j = 0, count = dishes.size(); j < count; j++) {
-                                    Dish dish = dishes.get(j);
-                                    if (like.equals(dish) && dish.isLike() == false) {
-                                        dish.addLike(false);
-                                        dish.likeTimeStamp = like.likeTimeStamp;
-                                        break;
-                                    }
+                        for(int i = 0, size = dishes.size(); i < size; i++) {
+                            Dish dish = dishes.get(i);
+                            if (dish.isLike()) {
+                                if (mMyLikeList.contains(dish) == false) {
+                                    dish.deleteLike();
                                 }
                             }
                         }
@@ -663,28 +643,24 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
                 } else {
                     LogWrapper.d(TAG, "alldish.size()"+dishes.size());
                     
-                    mAllList.clear();
-                    mAllList.addAll(dishes);
-                    
-                    if (mMyLikeList.size() > 0) {
-                        for(int i = 0, size = mMyLikeList.size(); i < size; i++) {
-                            Dish like = mMyLikeList.get(i);
-                            for(int j = 0, count = dishes.size(); j < count; j++) {
-                                Dish dish = dishes.get(j);
-                                if (like.equals(dish) && dish.isLike() == false) {
-                                    dish.addLike(false);
-                                    dish.likeTimeStamp = like.likeTimeStamp;
-                                    break;
-                                }
+                    for(int i = 0, size = dishes.size(); i < size; i++) {
+                        Dish dish = dishes.get(i);
+                        if (dish.isLike()) {
+                            if (mMyLikeList.contains(dish) == false) {
+                                mMyLikeList.add(dish);
                             }
                         }
                     }
+                    
+                    mAllList.clear();
+                    mAllList.addAll(dishes);
                     
                     List<Category> categories = dishList.getCategoryList();
                     if (categories != null) {
                         mCategoryGroupList.clear();
                         mCategoryGroupList.addAll(categories);
                         mCategoryAdapter.measure();
+                        mCategoryGroupView.removeAllViews();
                         for(int i = 0, size = mCategoryGroupList.size(); i < size; i++) {
                             View view = getLayoutInflater().inflate(CategoryListAdapter.RESOURCE_ID, mCategoryGroupView, false);
                             view.setBackgroundResource(R.drawable.bg_dish_category);
@@ -897,24 +873,30 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
             setDataQuery(dataQuery, mode, tab);
         }
         
-        if (dataList.size() <= 0 && mode == mMode && tab == mTab) {
-            if (mode == 0) {
-                if (tab == 0) {
-                    if (mManuallyChanged == false) {
-                        mRecommendVpg.setCurrentItem(1);
-                        return;
+        if (mode == mMode && tab == mTab) {
+            if (dataList.size() <= 0) {
+                if (mode == 0) {
+                    if (tab == 0) {
+                        if (mManuallyChanged == false) {
+                            mRecommendVpg.setCurrentItem(1);
+                            return;
+                        }
+                        mEmptyImv.setBackgroundResource(R.drawable.ic_like_empty);
+                        mEmptyTxv.setText(R.string.like_empty_tip);
+                    } else {
+                        mEmptyImv.setBackgroundResource(R.drawable.bg_query_fail);
+                        mEmptyTxv.setText(R.string.recommend_cook_empty);
                     }
-                    mEmptyImv.setBackgroundResource(R.drawable.ic_like_empty);
-                    mEmptyTxv.setText(R.string.like_empty_tip);
                 } else {
                     mEmptyImv.setBackgroundResource(R.drawable.bg_query_fail);
-                    mEmptyTxv.setText(R.string.recommend_cook_empty);
+                    mEmptyTxv.setText(R.string.no_result);
                 }
+                mEmptyView.setVisibility(View.VISIBLE);
             } else {
-                mEmptyImv.setBackgroundResource(R.drawable.bg_query_fail);
-                mEmptyTxv.setText(R.string.no_result);
+                mEmptyView.setVisibility(View.GONE);
             }
-            mEmptyView.setVisibility(View.VISIBLE);
+            mQueryingView.setVisibility(View.GONE);
+            mRetryView.setVisibility(View.GONE);
         }
     }
     

@@ -261,10 +261,6 @@ public class TilesView extends GLSurfaceView {
 		refreshMap();
 	}
 
-	public boolean isSnapFinish() {
-		return this.snapCenterPos == null;
-	}
-
 	/**
 	 * 获取快照地图
 	 * 
@@ -3719,24 +3715,34 @@ public class TilesView extends GLSurfaceView {
 						}
 					}
 
+                    if (snapCenterPos != null) {
+                        long time = System.currentTimeMillis() - snapStartTime;
+    					if (((requestTiles.size() == 0 && ((zoomingL || isLastLabelFading || (touching && !refreshText)
+                                || isLabelFading || fading || movingL || rotatingX
+                                || rotatingZ) == false)) || time > 10000) &&
+    					        isCancelSnap == false) {
+    	                    XYFloat xy = mercXYToScreenXYConv(Util.posToMercPix(snapCenterPos, getZoomLevel()), getZoomLevel());
+	                        // 确保快照地图时，地图已经移动到指定的中心位置，误差为32像素?
+	                        if ((Math.abs(xy.x - displaySize.x / 2) < 32
+	                                && Math.abs(xy.y - displaySize.y / 2) < 32) || time > 10000) {
+        					    snapBmp = savePixels(getContext(), 0, 0, displaySize.x, displaySize.y, gl);
+        					    synchronized (snapCenterPos) {
+        					        snapCenterPos.notifyAll();
+        					    }
+        					    snapCenterPos = null;
+	                        } else {
+	                            requestRender();
+	                        }
+    					} else {
+    					    requestRender();
+    					}
+                    }
+					
 					if (zoomingL || isLastLabelFading || (touching && !refreshText)
 							|| isLabelFading || fading || movingL || rotatingX
 							|| rotatingZ) {
 						requestRender();
-					} else if ((requestTiles.size() == 0 || (System.currentTimeMillis() - snapStartTime) > 10000) && isCancelSnap == false && snapCenterPos != null) {
-						XYFloat xy = mercXYToScreenXYConv(Util.posToMercPix(
-								snapCenterPos, getZoomLevel()), getZoomLevel());
-						// 确保快照地图时，地图已经移动到指定的中心位置，误差为32像素?
-						if ((Math.abs(xy.x - displaySize.x / 2) < 128
-								&& Math.abs(xy.y - displaySize.y / 2) < 128) || (System.currentTimeMillis() - snapStartTime) > 10000) {
-							snapBmp = savePixels(getContext(), 0, 0, displaySize.x,
-									displaySize.y, gl);
-							synchronized (snapCenterPos) {
-								snapCenterPos.notifyAll();
-							}
-							snapCenterPos = null;
-						}
-					}
+					} 
 
 				} catch (Exception e) {
 					e.printStackTrace();
