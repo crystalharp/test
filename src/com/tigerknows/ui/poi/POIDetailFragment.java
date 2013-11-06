@@ -196,6 +196,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     
     DynamicNormalPOI mDynamicNormalPOI;
     
+    DynamicTuangouPOI mDynamicTuangouPOI;
+    
     DynamicHotelPOI mDynamicHotelPOI;
     
     DynamicMoviePOI mDynamicMoviePOI;
@@ -205,6 +207,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     ExtraSubwayPOI mExtraSubwayPOI;
     
     ExtraBusstopPOI mExtraBusstopPOI;
+    
+    ExtraSameTypePOI mExtraSameTypePOI;
     
     private Button mCommentTipEdt;
     
@@ -249,7 +253,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     //目前可以处理的动态POI类型
     private void initDynamicPOIEnv(){
         DPOIViewTable.put(DynamicPOI.TYPE_HOTEL, mDynamicHotelPOI);
-        DPOIViewTable.put(DynamicPOI.TYPE_TUANGOU, mDynamicNormalPOI);
+        DPOIViewTable.put(DynamicPOI.TYPE_TUANGOU, mDynamicTuangouPOI);
         DPOIViewTable.put(DynamicPOI.TYPE_ZHANLAN, mDynamicNormalPOI);
         DPOIViewTable.put(DynamicPOI.TYPE_YANCHU, mDynamicNormalPOI);
         DPOIViewTable.put(DynamicPOI.TYPE_COUPON, mDynamicNormalPOI);
@@ -487,6 +491,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     private void initExtraViewEnv() {
         mExtraViewList.add(mExtraSubwayPOI);
         mExtraViewList.add(mExtraBusstopPOI);
+        mExtraViewList.add(mExtraSameTypePOI);
     }
     
     /**
@@ -570,6 +575,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         
         mDynamicNormalPOI = new DynamicNormalPOI(this, mLayoutInflater);
         
+        mDynamicTuangouPOI = new DynamicTuangouPOI(this, mLayoutInflater);
+        
         mDynamicHotelPOI = new DynamicHotelPOI(this, mLayoutInflater);
         
         mDynamicMoviePOI = new DynamicMoviePOI(this, mLayoutInflater);
@@ -579,6 +586,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         mExtraSubwayPOI = new ExtraSubwayPOI(this, mLayoutInflater);
         
         mExtraBusstopPOI = new ExtraBusstopPOI(this, mLayoutInflater);
+        
+        mExtraSameTypePOI = new ExtraSameTypePOI(this, mLayoutInflater);
         
         return mRootView;
     }

@@ -51,7 +51,7 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
         mSphinx = mPOIDetailFragment.mSphinx;
         mInflater = inflater;
         LinearLayout poiListView = (LinearLayout) mInflater.inflate(R.layout.poi_dynamic_normal_poi, null);
-        listAdapter = new LinearListAdapter(mSphinx, poiListView, R.layout.poi_dynamic_poi_list_item) {
+        listAdapter = new LinearListAdapter(mSphinx, poiListView, R.layout.poi_dynamic_normal_list_item) {
 
             @Override
             public View getView(Object data, View child, int pos) {

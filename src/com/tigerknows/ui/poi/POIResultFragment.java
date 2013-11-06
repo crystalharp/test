@@ -1149,4 +1149,8 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         }
         setup(mInputText);
     }
+    
+    public DataQuery getDataQuery() {
+        return mDataQuery;
+    }
 }

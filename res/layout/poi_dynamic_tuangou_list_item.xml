@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root_view"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+	<TextView
+	    android:id="@+id/name_txv" 
+	    android:layout_height="wrap_content" 
+	    android:layout_width="fill_parent"
+	    android:text="@string/app_name"
+	></TextView>
+	<TextView
+	    android:id="@+id/price_txv" 
+	    android:layout_height="wrap_content" 
+	    android:layout_width="fill_parent"
+	    android:text="@string/app_name"
+	></TextView>
+	<TextView
+	    android:id="@+id/org_price_txv" 
+	    android:layout_height="wrap_content" 
+	    android:layout_width="fill_parent"
+	    android:text="@string/app_name"
+	></TextView>
+    <TextView
+        android:id="@+id/appointment_txv"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:background="@drawable/bg_need_guarantee"
+        android:textSize="12sp"
+        android:textColor="@color/orange"
+        android:text="@string/mian_yu_yue"
+        />
+	<TextView
+	    android:id="@+id/source_txv" 
+	    android:layout_height="wrap_content" 
+	    android:layout_width="fill_parent"
+	    android:text="@string/app_name"
+	></TextView>
+</LinearLayout>

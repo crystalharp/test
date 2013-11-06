@@ -6,7 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import android.content.Intent;
-import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.text.Html;
@@ -445,24 +444,23 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         imageNumTxv.setText(mSphinx.getString(R.string.pictures, picNum));
         boolean setDefault = true;
         if (picList != null && picList.size() > 0) {
-            final TKDrawable tkDrawable = picList.get(0).getTKDrawable();
+            TKDrawable tkDrawable = picList.get(0).getTKDrawable();
             if (tkDrawable != null) {
                 LoadImageRunnable loadImageRunnable = new LoadImageRunnable(mSphinx, tkDrawable, hotelImage, R.drawable.bg_picture_detail, mPOIDetailFragment.toString());
                 Drawable hotelImageDraw = tkDrawable.loadDrawable(mSphinx, loadImageRunnable, mPOIDetailFragment.toString());
                 if (hotelImageDraw != null) {
-                    Rect bounds = hotelImageDraw.getBounds();
-                    if(bounds != null && (bounds.width() != hotelImage.getWidth() || bounds.height() != hotelImage.getHeight())){
-                        hotelImage.setBackgroundDrawable(null);
-                    }
-                    hotelImage.setBackgroundDrawable(hotelImageDraw);
+                    hotelImage.setImageDrawable(hotelImageDraw);
+                    hotelImage.setBackgroundResource(R.drawable.bg_picture_detail);
                     setDefault = false;
                 }
             }
         } else {
+            hotelImage.setImageDrawable(null);
             hotelImage.setBackgroundResource(R.drawable.bg_picture_none);
             setDefault = false;
         }
         if (setDefault)  {
+            hotelImage.setImageDrawable(null);
             hotelImage.setBackgroundResource(R.drawable.bg_picture_detail);
         }
     }

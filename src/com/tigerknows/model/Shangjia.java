@@ -51,6 +51,7 @@ public class Shangjia extends BaseData implements Parcelable {
     // 糯米 1001
     public static final int SOURCE_NUOMI = 1001;
     
+    
     public static final int SOURCE_MEITUAN = 1002;
     
     public static final List<Shangjia> shangjiaList = new ArrayList<Shangjia>();

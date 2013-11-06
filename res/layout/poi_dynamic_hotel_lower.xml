@@ -15,21 +15,25 @@
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:layout_marginRight="8dp"
+	        android:padding="4dp"
 	        >
 		    <ImageView
 		        android:id="@+id/icon_imv"
-		        android:layout_width="80dp"
-		        android:layout_height="80dp"
+		        android:layout_width="62dp"
+		        android:layout_height="62dp"
 		        android:layout_alignParentLeft="true"
 		        android:layout_alignParentTop="true"
+		        android:layout_centerHorizontal="true"
+		        android:scaleType="centerCrop"
 		        android:background="@drawable/bg_picture_detail" />
 		    
 		    <TextView 
 		        android:id="@+id/image_num_txv"
-		        android:layout_width="80dp"
+		        android:layout_width="60dp"
 		        android:layout_height="wrap_content"
 		        android:layout_centerHorizontal="true"
 		        android:layout_alignBottom="@id/icon_imv"
+	            android:layout_margin="1dp"
 		        android:background="#99000000"
 		        android:textColor="@color/white"
 		        android:textSize="16sp"

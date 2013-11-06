@@ -290,12 +290,15 @@ public class ViewImageActivity extends BaseActivity implements RetryView.CallBac
                 LinearLayout viewGroup = new LinearLayout(getContext());
                 ImageView iconImv = new ImageView(getContext());
                 iconImv.setId(R.id.icon_imv);
-                iconImv.setScaleType(ImageView.ScaleType.FIT_XY);
+                iconImv.setScaleType(ImageView.ScaleType.CENTER_CROP);
                 iconImv.setBackgroundResource(R.drawable.bg_picture);
-                int padding = Util.dip2px(Globals.g_metrics.density, 4);
-                iconImv.setPadding(padding, padding, padding, padding);
                 viewGroup.addView(iconImv);
                 viewGroup.setGravity(Gravity.CENTER);
+                
+                ViewGroup.LayoutParams layoutParams = iconImv.getLayoutParams();
+                layoutParams.width = Utility.dip2px(mThis, mColumnWidth);
+                layoutParams.height = layoutParams.width;
+                
                 view = viewGroup;
             } else {
                 view = convertView;
@@ -315,21 +318,12 @@ public class ViewImageActivity extends BaseActivity implements RetryView.CallBac
                 iconImv.setClickable(false);
             }
             
-            int newWidth = (int) (Globals.g_metrics.density*mColumnWidth);
-            ViewGroup.LayoutParams layoutParams = iconImv.getLayoutParams();
-            layoutParams.width = newWidth;
-            layoutParams.height = newWidth;
             if (image != null) {
-//                float scale = ((float) newWidth) / image.getIntrinsicWidth();
-//                layoutParams.height = (int) (scale*image.getIntrinsicHeight());
-                iconImv.setImageDrawable(null);
                 iconImv.setImageDrawable(image);
             } else {
-//                Drawable drawable = iconImv.getBackground();
-//                float scale = ((float) newWidth) / drawable.getIntrinsicWidth();
-//                layoutParams.height = (int) (scale*drawable.getIntrinsicHeight());
                 iconImv.setImageDrawable(null);
             }
+            
             return view;
         }
         
@@ -355,22 +349,16 @@ public class ViewImageActivity extends BaseActivity implements RetryView.CallBac
             ImageView iconImv = (ImageView)view.findViewById(R.id.icon_imv);
             TextView textTxv = (TextView)view.findViewById(R.id.text_txv);
             
-            iconImv.setScaleType(ImageView.ScaleType.FIT_XY);
+            iconImv.setScaleType(ImageView.ScaleType.FIT_CENTER);
             
             HotelTKDrawable hotelTKDrawable = getItem(position);
             
             Drawable image = hotelTKDrawable.getTKDrawable().loadDrawable(mThis, mLoadedDrawableRun, ViewImageActivity.this.toString());
-            ViewGroup.LayoutParams layoutParams = iconImv.getLayoutParams();
-            layoutParams.width = Globals.g_metrics.widthPixels;
             if (image != null) {
-                float scale = ((float) Globals.g_metrics.widthPixels) / image.getIntrinsicWidth();
-                layoutParams.height = (int) (scale*image.getIntrinsicHeight());
                 iconImv.setImageDrawable(image);
             } else {
-                Drawable drawable = iconImv.getBackground();
-                float scale = ((float) Globals.g_metrics.widthPixels) / drawable.getIntrinsicWidth();
-                layoutParams.height = (int) (scale*drawable.getIntrinsicHeight());
-                iconImv.setImageDrawable(null);
+                Drawable drawable = getResources().getDrawable(R.drawable.bg_picture);
+                iconImv.setImageDrawable(drawable);
             }
             String name = hotelTKDrawable.getName();
             textTxv.setText((name != null ? name : "")+" "+(position+1)+"/"+(getCount()));
