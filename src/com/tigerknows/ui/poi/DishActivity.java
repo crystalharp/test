@@ -121,7 +121,9 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
         @Override
         public void run() {
             if (isFinishing() == false) {
-                mSelectedView.setBackgroundDrawable(null);
+                if (mSelectedView.getTag() == null) {
+                    mSelectedView.setBackgroundDrawable(null);
+                }
             }
         }
     };
@@ -175,7 +177,6 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
     private int mChildPosition = -1;
     private int mFromYDelta = 0;
     private int mFirstDishVisibleItem = 0;
-    private int mFirstVisibleItem = 0;
     private int mFirstCategoryVisibleItem = 0;
     private int mTotalCateoryItem = 0;
     private ListView mAllLsv = null;
@@ -371,23 +372,6 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
                 Category category = mCategoryList.get(position);
                 mAllLsv.setSelectionFromTop(category.firstDishIndex, 0);
                 animationSelectView(position);
-            }
-        });
-        
-        mCategoryLsv.setOnScrollListener(new OnScrollListener() {
-            
-            @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState) {
-                // TODO Auto-generated method stub
-                
-            }
-            
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount,
-                    int totalItemCount) {
-                if (mFirstVisibleItem != firstVisibleItem) {
-                    mFirstVisibleItem = firstVisibleItem;
-                }
             }
         });
         
