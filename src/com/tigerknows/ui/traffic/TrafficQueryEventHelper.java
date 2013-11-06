@@ -608,7 +608,6 @@ public class TrafficQueryEventHelper {
 				
 				mQueryFragment.mSphinx.clearMap();
 				PinOverlayHelper.drawSelectPointOverlay(mQueryFragment.mSphinx, mQueryFragment.mSphinx.getHandler(), mQueryFragment.mSphinx.getMapView(), R.id.start_edt == queryEditText.getEdt().getId(), positionName, center);
-				mQueryFragment.mSphinx.getMapView().refreshMap();
 				
 				mQueryFragment.mStateTransitionTable.event(TrafficViewSTT.Event.ClicktoSelectPoint);
 	            

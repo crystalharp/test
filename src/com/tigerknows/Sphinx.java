@@ -439,7 +439,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     centerShowCurrentOverlayFocusedItem();
                 } else if (msg.what == ADJUST_SHOW_FOCUSED_OVERLAYITEM) {
                     adjustShowCurrentOverlayFocusedItem();
-                    mMapView.refreshMap();
                 }
                 
             }
@@ -743,25 +742,25 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 }
             });
             
-            EventRegistry.addEventListener(mMapView, MapView.EventType.ROTATEEND, new MapView.RotateEndEventListener(){
-                @Override
-                public void onRotateEndEvent(MapView mapView, float rotation) {
-                    LogWrapper.i(TAG,"MapView.RotateEndEventListener rotation:"+rotation);
-                    if(rotation!=0 && mMapView.getCompass()!=null) {
-                        mMapView.refreshMap();
-                    }
-                }
-            });
+//            EventRegistry.addEventListener(mMapView, MapView.EventType.ROTATEEND, new MapView.RotateEndEventListener(){
+//                @Override
+//                public void onRotateEndEvent(MapView mapView, float rotation) {
+//                    LogWrapper.i(TAG,"MapView.RotateEndEventListener rotation:"+rotation);
+//                    if(rotation!=0 && mMapView.getCompass()!=null) {
+//                        mMapView.refreshMap();
+//                    }
+//                }
+//            });
             
-            EventRegistry.addEventListener(mMapView, MapView.EventType.TILTEND, new MapView.TiltEndEventListener(){
-                @Override
-                public void onTiltEndEvent(MapView mapView, float tilt) {
-                    LogWrapper.i(TAG,"MapView.TiltEndEventListener tilt:"+tilt);
-                    if(tilt!=0 && mMapView.getCompass()!=null) {
-                        mMapView.refreshMap();
-                    }
-                }
-            });
+//            EventRegistry.addEventListener(mMapView, MapView.EventType.TILTEND, new MapView.TiltEndEventListener(){
+//                @Override
+//                public void onTiltEndEvent(MapView mapView, float tilt) {
+//                    LogWrapper.i(TAG,"MapView.TiltEndEventListener tilt:"+tilt);
+//                    if(tilt!=0 && mMapView.getCompass()!=null) {
+//                        mMapView.refreshMap();
+//                    }
+//                }
+//            });
             
             EventRegistry.addEventListener(mMapView, MapView.EventType.TOUCHDOWN, new MapView.TouchDownEventListener() {
                 
@@ -858,12 +857,12 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             Compass compass = mMapView.getCompass();
             if(compass!=null){
                 compass.setVisible(false);
-                compass.addEventListener(EventType.TOUCH, new Compass.TouchEventListener() {
-                    @Override
-                    public void onTouchEvent(EventSource eventSource) {
-                        mMapView.refreshMap();
-                    }
-                });
+//                compass.addEventListener(EventType.TOUCH, new Compass.TouchEventListener() {
+//                    @Override
+//                    public void onTouchEvent(EventSource eventSource) {
+//                        mMapView.refreshMap();
+//                    }
+//                });
             }
             
         }catch(Exception e){
@@ -4313,7 +4312,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 if (mMyLocation.mode == MyLocation.MODE_ROTATION) {
                     mMapView.rotateZToDegree(-rotateZ);
                 }
-                mMapView.refreshMap();
             }
         }
         public void onAccuracyChanged(Sensor sensor, int accuracy) {
@@ -4445,10 +4443,11 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         Compass compass = mMapView.getCompass();
         if (mMyLocation.mode == MyLocation.MODE_NONE) {
             compass.setVisible(false);
+            if (hideInfoWindow(ItemizedOverlay.MY_LOCATION_OVERLAY) == false) {
+                mMapView.refreshMap();
+            }
             if (uiStackSize() > 0)
                 mCompassView.setVisibility(View.VISIBLE);
-            mMapView.refreshMap();
-            hideInfoWindow(ItemizedOverlay.MY_LOCATION_OVERLAY);
             mLocationBtn.setImageResource(R.drawable.progress_location);
             mLocationTxv.setText(R.string.location_text_doing);
             Animatable animationDrawable = (Animatable)(mLocationBtn.getDrawable());
@@ -4466,7 +4465,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 compass.setVisible(false);
                 if (uiStackSize() > 0)
                     mCompassView.setVisibility(View.VISIBLE);
-                mMapView.refreshMap();
                 rotateZ = 365;
                 mMapView.rotateZToDegree(0);
                 resid = R.drawable.ic_location_navigation;
@@ -4475,19 +4473,18 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             } else if (mMyLocation.mode == MyLocation.MODE_ROTATION) {
             	//只有这种情况下要指南针。
                 compass.setVisible(true);
+                if (hideInfoWindow(ItemizedOverlay.MY_LOCATION_OVERLAY) == false) {
+                    mMapView.refreshMap();
+                }
                 if (uiStackSize() > 0)
                     mCompassView.setVisibility(View.INVISIBLE);
-                mMapView.refreshMap();
-                hideInfoWindow(ItemizedOverlay.MY_LOCATION_OVERLAY);
                 rotateZ = 365;
-                mMapView.refreshMap();
                 resid = R.drawable.ic_location_rotation;
                 text = R.string.location_text_compass;
             } else {
                 compass.setVisible(false);
                 if (uiStackSize() > 0)
                     mCompassView.setVisibility(View.VISIBLE);
-                mMapView.refreshMap();
                 resid = R.drawable.ic_location_normal;
                 text = R.string.location_text;
                 rotateZ = 365;
