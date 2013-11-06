@@ -189,11 +189,11 @@ public class Comment extends BaseData {
             this.data = null;
         }
         
-        long draft = getLocalMark().findCommend(TKApplication.getInstance(), this.uid, false);
+        long draft = getLocalMark().findCommend(TKApplication.getInstance(), this.uid, LocalMark.STATE_DRAFT);
         if (draft > 0) {
             addCommend(true);
         } else {
-            isCommend = (getLocalMark().findCommend(TKApplication.getInstance(), this.uid, true) > 0);
+            isCommend = (getLocalMark().findCommend(TKApplication.getInstance(), this.uid, LocalMark.STATE_SENT) > 0);
         }
     }
     
@@ -607,11 +607,22 @@ public class Comment extends BaseData {
         public static final String SEPARATOR = " ";
         private String fileName = null;
         private List<String> sCommendList = null;
-        private List<String> sDraftCommendList = null;
+        private List<String> sDraftList = null;
+        private List<String> sDeleteList = null;
         private Object writeLock = new Object();
         private File sDraftFile = null;
-        private File sCommendFile = null;
+        private File sSentFile = null;
+        private File sDeleteFile = null;
         private String dataType;
+
+        public static final int STATE_DRAFT = 0;
+        public static final int STATE_SENT = 1;
+        public static final int STATE_DELETE = 2;
+
+
+        public static final String LOCAL_PARAMETER_MARK = "LOCAL_PARAMETER_MARK";
+        public static final String LOCAL_PARAMETER_MARK_ON = "ON";
+        public static final String LOCAL_PARAMETER_MARK_OFF = "OFF";
         
         public LocalMark(String fileName, String dataType) {
             this.fileName = fileName;
@@ -620,13 +631,25 @@ public class Comment extends BaseData {
             initCommendList(TKApplication.getInstance());
         }
         
-        private File getFile(Context context, boolean sent) {
-            if (sent && sCommendFile != null) {
-                return sCommendFile;
-            } else if (!sent && sDraftFile != null) {
-                return sDraftFile;
+        private File getFile(Context context, int state) {
+            String name = null;
+            if (state == STATE_SENT) {
+                if (sSentFile != null) {
+                    return sSentFile;
+                }
+                name = "sent";
+            } else if (state == STATE_DRAFT) {
+                if (sDraftFile != null) {
+                    return sDraftFile;
+                }
+                name = "draft";
+            } else if (state == STATE_DELETE) {
+                if (sDeleteFile != null) {
+                    return sDeleteFile;
+                }
+                name = "delete";
             }
-            File file = new File(context.getFilesDir().getAbsolutePath() + "/" + fileName +(sent ? "sent" : "draft"));
+            File file = new File(context.getFilesDir().getAbsolutePath() + "/" + fileName +name);
 //            File file = new File(TKConfig.getDataPath(true) + "/commend"+(sent ? "sent" : "draft"));
             if (!file.exists()) {
                 try {
@@ -639,10 +662,10 @@ public class Comment extends BaseData {
         }
         
         //对于已经赞过的commend列表并不会再去删除，数据量会变大，所以写入策略选用追加
-        public void addCommend(Context context, String uuid, boolean sent) {
+        public void addCommend(Context context, String uuid, int state) {
             long time = System.currentTimeMillis();
-            File file = getFile(context, sent);
-            List<String> list = getCommendList(sent);
+            File file = getFile(context, state);
+            List<String> list = getCommendList(state);
             for(int i = list.size()-1; i >= 0; i--) {
                 String str = list.get(i);
                 if (str.startsWith(uuid+SEPARATOR)) {
@@ -654,12 +677,12 @@ public class Comment extends BaseData {
             writeCommendList(file, list);
         }
         
-        public long findCommend(Context context, String uuid, boolean sent) {
+        public long findCommend(Context context, String uuid, int state) {
             long result = 0;
             if (uuid == null) {
                 return result;
             }
-            List<String> list = getCommendList(sent);
+            List<String> list = getCommendList(state);
             for(int i = list.size()-1; i >= 0; i--) {
                 String str = list.get(i);
                 if (str.startsWith(uuid + SEPARATOR)) {
@@ -671,9 +694,9 @@ public class Comment extends BaseData {
         }
         
         //因为只会删除draft中的id，所以它的写入策略是删掉原文件，然后整个list写进去。
-        public void deleteCommend(Context context, String uuids[], boolean sent) {
-            File file = getFile(context, sent);
-            List<String> list = getCommendList(sent);
+        public void deleteCommend(Context context, String uuids[], int state) {
+            File file = getFile(context, state);
+            List<String> list = getCommendList(state);
             boolean deleted = false;
             for (String uuid : uuids) {
                 for(int i = list.size()-1; i >= 0; i--) {
@@ -692,23 +715,27 @@ public class Comment extends BaseData {
             return;
         }
         
-        private final List<String> getCommendList(boolean sent) {
-            if (sent) {
+        private final List<String> getCommendList(int state) {
+            if (state == STATE_SENT) {
                 return sCommendList;
+            } else if (state == STATE_DRAFT) {
+                return sDraftList;
             } else {
-                return sDraftCommendList;
+                return sDeleteList;
             }
         }
         
         private final void initCommendList(Context context) {
-            if (sDraftCommendList == null || sCommendList == null) {
-                sDraftCommendList = new LinkedList<String>();
+            if (sDraftList == null || sCommendList == null) {
+                sDraftList = new LinkedList<String>();
                 sCommendList = new LinkedList<String>();
+                sDeleteList = new LinkedList<String>();
                 try {
-                    sCommendFile = getFile(context, true);
-                    sDraftFile = getFile(context, false);
+                    sSentFile = getFile(context, STATE_SENT);
+                    sDraftFile = getFile(context, STATE_DRAFT);
+                    sDeleteFile = getFile(context, STATE_DELETE);
                     String line = null;
-                    BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(sCommendFile)));
+                    BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(sSentFile)));
                     long time = System.currentTimeMillis();
                     while((line = br.readLine()) != null) {
                         if (line.indexOf(SEPARATOR) != -1) {
@@ -721,9 +748,18 @@ public class Comment extends BaseData {
                     br = new BufferedReader(new InputStreamReader(new FileInputStream(sDraftFile)));
                     while ((line = br.readLine()) != null) {
                         if (line.indexOf(SEPARATOR) != -1) {
-                            sDraftCommendList.add(line);
+                            sDraftList.add(line);
                         } else {
-                            sDraftCommendList.add(line + SEPARATOR + time);
+                            sDraftList.add(line + SEPARATOR + time);
+                        }
+                    }
+                    br.close();
+                    br = new BufferedReader(new InputStreamReader(new FileInputStream(sDeleteFile)));
+                    while ((line = br.readLine()) != null) {
+                        if (line.indexOf(SEPARATOR) != -1) {
+                            sDeleteList.add(line);
+                        } else {
+                            sDeleteList.add(line + SEPARATOR + time);
                         }
                     }
                     br.close();
@@ -746,11 +782,12 @@ public class Comment extends BaseData {
             }
         }
         
-        public static final String JsonHeader = "json{\"up\":[";
+        public static final String UpJsonHeader = "json{\"up\":[";
+        public static final String DownJsonHeader = "json{\"down\":[";
 
-        private static String uuid2Json(Context context, String uuid) {
+        private static String uuid2Json(Context context, String uuid, boolean mark) {
             StringBuilder json = new StringBuilder();
-            json.append(JsonHeader);
+            json.append(mark ? UpJsonHeader : DownJsonHeader);
             json.append('"');
             json.append(uuid);
             json.append('"');
@@ -758,33 +795,23 @@ public class Comment extends BaseData {
             return json.toString();
         }
 
-        private String draft2Json(Context context) {
+        private String commendList2Json(Context context, int state) {
             StringBuilder json = new StringBuilder();
-            json.append(JsonHeader);
-            File file = getFile(context, false);
+            json.append(state == STATE_DELETE ? DownJsonHeader : UpJsonHeader);
 
             int i = 0;
-            try {
-                BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
-                String line = null;
-                while((line = br.readLine()) != null) {
-                    line = line.trim();
-                    if (TextUtils.isEmpty(line) == false) {
-                        if (i > 0) {
-                            json.append(',');
-                        }
-                        json.append('"');
-                        json.append(line);
-                        json.append('"');
-                        i++;
-                    }
+            
+            List<String> list = getCommendList(state);
+            for(;i < list.size(); i++) {
+                String str = list.get(i);
+                if (i > 0) {
+                    json.append(',');
                 }
-                json.append("]}");
-                br.close();
-            } catch (Exception e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                json.append('"');
+                json.append(str.substring(0, str.indexOf(SEPARATOR)));
+                json.append('"');
             }
+            json.append("]}");
             
             if (i == 0) {
                 return null;
@@ -793,20 +820,21 @@ public class Comment extends BaseData {
             }
         }
         
-        public DataOperation makeCommendDataOperationByUUID(Context context, String uuid) {
-            String json = uuid2Json(context, uuid);
-            return makeCommendDataOperation(context, dataType, json);
+        public DataOperation makeCommendDataOperationByUUID(Context context, String uuid, boolean mark) {
+            String json = uuid2Json(context, uuid, mark);
+            return makeCommendDataOperation(context, dataType, json, mark);
         }
         
-        public DataOperation makeCommendDataOperationByDraft(Context context) {
-            String json = draft2Json(context);
-            return makeCommendDataOperation(context, dataType, json);
+        public DataOperation makeCommendDataOperation(Context context, int state) {
+            String json = commendList2Json(context, state);
+            return makeCommendDataOperation(context, dataType, json, state == STATE_DRAFT);
         }
         
-        static DataOperation makeCommendDataOperation(Context context, String dataType, String json) {
+        static DataOperation makeCommendDataOperation(Context context, String dataType, String json, boolean mark) {
             DataOperation dataOperation = null;
             if (TextUtils.isEmpty(json) == false) {
                 dataOperation = new DataOperation(context);
+                dataOperation.addLocalParameter(LOCAL_PARAMETER_MARK, mark ? LOCAL_PARAMETER_MARK_ON : LOCAL_PARAMETER_MARK_OFF);
                 dataOperation.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, dataType);
                 dataOperation.addParameter(DataOperation.SERVER_PARAMETER_OPERATION_CODE, URLEncoder.encode(json));
             }

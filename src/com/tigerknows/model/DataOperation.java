@@ -11,6 +11,7 @@ package com.tigerknows.model;
 import com.decarta.android.exception.APIException;
 import com.tigerknows.TKConfig;
 import com.tigerknows.android.app.TKApplication;
+import com.tigerknows.model.Comment.LocalMark;
 import com.tigerknows.model.test.BaseQueryTest;
 import com.tigerknows.model.test.DataOperationTest;
 import com.tigerknows.model.xobject.XMap;
@@ -97,7 +98,7 @@ public class DataOperation extends BaseQuery {
             debugCheckParameters(Utility.mergeArray(ekeys,new String[] {SERVER_PARAMETER_DATA_UID, SERVER_PARAMETER_ENTITY}));
         } else if (OPERATION_CODE_DELETE.equals(operationCode)) {
             debugCheckParameters(Utility.mergeArray(ekeys,new String[] {SERVER_PARAMETER_DATA_UID}));
-        } else if (operationCode.startsWith(URLEncoder.encode(Comment.LocalMark.JsonHeader))) {
+        } else if (operationCode.startsWith(URLEncoder.encode(Comment.LocalMark.UpJsonHeader)) || operationCode.startsWith(URLEncoder.encode(Comment.LocalMark.DownJsonHeader))) {
             
         } else {
             throw APIException.wrapToMissingRequestParameterException("operationCode invalid.");
@@ -156,22 +157,32 @@ public class DataOperation extends BaseQuery {
             if (DATA_TYPE_DIANPING.equals(dataType)) {
                 response = new CommentUpdateResponse(responseXMap);
             }
-        } else if (operationCode.startsWith(URLEncoder.encode(Comment.LocalMark.JsonHeader))) {
+        } else if (operationCode.startsWith(URLEncoder.encode(Comment.LocalMark.UpJsonHeader)) || operationCode.startsWith(URLEncoder.encode(Comment.LocalMark.DownJsonHeader))) {
             if (DATA_TYPE_DIANPING.equals(dataType)) {
                 response = new Response(responseXMap);
                 if (response.getResponseCode() == Response.RESPONSE_CODE_OK) {
                     operationCode = URLDecoder.decode(operationCode);
-                    operationCode = operationCode.substring(Comment.LocalMark.JsonHeader.length()+1, operationCode.length()-3);
+                    operationCode = operationCode.substring(Comment.LocalMark.UpJsonHeader.length()+1, operationCode.length()-3);
                     String[] uuids = operationCode.split("\",\"");
-                    Comment.getLocalMark().deleteCommend(context, uuids, false);
+                    Comment.getLocalMark().deleteCommend(context, uuids, LocalMark.STATE_DRAFT);
                 }
             } else if (DATA_TYPE_DISH.equals(dataType)) {
                 response = new Response(responseXMap);
                 if (response.getResponseCode() == Response.RESPONSE_CODE_OK) {
                     operationCode = URLDecoder.decode(operationCode);
-                    operationCode = operationCode.substring(Comment.LocalMark.JsonHeader.length()+1, operationCode.length()-3);
+                    boolean mark;
+                    String parmeterMark = getLocalParameter(Comment.LocalMark.LOCAL_PARAMETER_MARK);
+                    String jsonHeader;
+                    if (Comment.LocalMark.LOCAL_PARAMETER_MARK_OFF.equals(parmeterMark)) {
+                        jsonHeader = Comment.LocalMark.DownJsonHeader;
+                        mark = false;
+                    } else {
+                        jsonHeader = Comment.LocalMark.UpJsonHeader;
+                        mark = true;
+                    }
+                    operationCode = operationCode.substring(jsonHeader.length()+1, operationCode.length()-3);
                     String[] uuids = operationCode.split("\",\"");
-                    Dish.getLocalMark().deleteCommend(context, uuids, false);
+                    Dish.getLocalMark().deleteCommend(context, uuids, mark ? LocalMark.STATE_DRAFT : LocalMark.STATE_DELETE);
                 }
             }
         }
@@ -245,12 +256,12 @@ public class DataOperation extends BaseQuery {
             uid = getStringFromData(FIELD_UID);
             likes = getLongFromData(FIELD_LIKES);
             
-            boolean draft = (Comment.getLocalMark().findCommend(TKApplication.getInstance(), this.uid, false) > 0);
+            boolean draft = (Comment.getLocalMark().findCommend(TKApplication.getInstance(), this.uid, LocalMark.STATE_DRAFT) > 0);
             if (draft) {
                 isCommend = true;
                 likes++;
             } else {
-                isCommend = (Comment.getLocalMark().findCommend(TKApplication.getInstance(), this.uid, true) > 0);
+                isCommend = (Comment.getLocalMark().findCommend(TKApplication.getInstance(), this.uid, LocalMark.STATE_SENT) > 0);
             }
         }
 
@@ -513,7 +524,7 @@ public class DataOperation extends BaseQuery {
                 } else if (DATA_TYPE_DISH.equals(dataType)) {
                     responseXMap = DataOperationTest.launchDianpingUpdateResponse();
                 }
-            } else if (operationCode.startsWith(URLEncoder.encode(Comment.LocalMark.JsonHeader))) {
+            } else if (operationCode.startsWith(URLEncoder.encode(Comment.LocalMark.UpJsonHeader)) || operationCode.startsWith(URLEncoder.encode(Comment.LocalMark.DownJsonHeader))) {
                 if (DATA_TYPE_DIANPING.equals(dataType)) {
                     responseXMap = BaseQueryTest.launchResponse(new XMap());
                 }

@@ -291,9 +291,18 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
             finish();
         }
         
-        DataOperation dataOperation = Dish.getLocalMark().makeCommendDataOperationByDraft(this);
+        DataOperation dataOperation = Dish.getLocalMark().makeCommendDataOperation(this, LocalMark.STATE_DRAFT);
+        List<BaseQuery> list = new ArrayList<BaseQuery>();
         if (dataOperation != null) {
-            queryStart(dataOperation);
+            list.add(dataOperation);
+        }
+        dataOperation = Dish.getLocalMark().makeCommendDataOperation(this, LocalMark.STATE_DELETE);
+        if (dataOperation != null) {
+            list.add(dataOperation);
+        }
+        
+        if (list.size() > 0) {
+            queryStart(list);
         }
     }
 
@@ -619,11 +628,11 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
                 for(int i = 0, size = dishes.size(); i < size; i++) {
                     Dish dish = dishes.get(i);
                     dish.likeTimeStamp = 0;
-                    long draft = localMark.findCommend(mThis, String.valueOf(dish.getDishId()), false);
+                    long draft = localMark.findCommend(mThis, String.valueOf(dish.getDishId()), LocalMark.STATE_DRAFT);
                     if (draft > 0) {
                         dish.likeTimeStamp = draft;
                     } else {
-                        long sent = localMark.findCommend(mThis, String.valueOf(dish.getDishId()), true);
+                        long sent = localMark.findCommend(mThis, String.valueOf(dish.getDishId()), LocalMark.STATE_SENT);
                         if (sent> 0) {
                             dish.likeTimeStamp = sent;
                         }
@@ -735,17 +744,23 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
                 public void run() {
                     String uuid = String.valueOf(dishId);
                     if (isLike) {
-                        Dish.getLocalMark().addCommend(mThis, uuid, false);
-                        Dish.getLocalMark().addCommend(mThis, uuid, true);
+                        Dish.getLocalMark().addCommend(mThis, uuid, LocalMark.STATE_DRAFT);
+                        Dish.getLocalMark().addCommend(mThis, uuid, LocalMark.STATE_SENT);
                         
-                        DataOperation dataOperation = Dish.getLocalMark().makeCommendDataOperationByUUID(mThis, uuid);
+                        DataOperation dataOperation = Dish.getLocalMark().makeCommendDataOperationByUUID(mThis, uuid, true);
                         if (dataOperation != null) {
                             dataOperation.query();
                         }
                     } else {
                         String[] uuids = new String[]{uuid};
-                        Dish.getLocalMark().deleteCommend(mThis, uuids, false);
-                        Dish.getLocalMark().deleteCommend(mThis, uuids, true);
+                        Dish.getLocalMark().deleteCommend(mThis, uuids, LocalMark.STATE_DRAFT);
+                        Dish.getLocalMark().deleteCommend(mThis, uuids, LocalMark.STATE_SENT);
+                        Dish.getLocalMark().addCommend(mThis, uuid, LocalMark.STATE_DELETE);
+                        
+                        DataOperation dataOperation = Dish.getLocalMark().makeCommendDataOperationByUUID(mThis, uuid, false);
+                        if (dataOperation != null) {
+                            dataOperation.query();
+                        }
                     }
                 }
             }).start();
