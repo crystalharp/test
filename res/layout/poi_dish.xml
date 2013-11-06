@@ -115,38 +115,4 @@
         android:scrollingCache="false"
         android:paddingBottom="50dp"/>
     
-     <Button
-         android:id="@+id/padding_view"
-         android:layout_width="wrap_content"
-         android:layout_height="wrap_content"
-        android:layout_below="@id/title_view"
-         android:text="@string/app_name"
-         android:textSize="16sp"
-         android:background="@drawable/btn_tab_selected"
-         android:visibility="invisible" />
-    
-    <include
-        layout="@layout/empty_view"
-        android:id="@+id/empty_view"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_below="@id/padding_view"
-        />
-    
-    <com.tigerknows.widget.QueryingView
-        android:id="@+id/querying_view"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_below="@id/padding_view"
-        >
-    </com.tigerknows.widget.QueryingView>
-    
-    <com.tigerknows.widget.RetryView
-        android:id="@+id/retry_view"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_below="@id/padding_view"
-        >
-    </com.tigerknows.widget.RetryView>
-    
 </RelativeLayout>
