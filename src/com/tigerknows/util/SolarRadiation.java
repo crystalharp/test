@@ -24,19 +24,19 @@ public class SolarRadiation {
 	}
 	
 	// 依据日角，计算太阳赤纬角(弧度值)
-	public static double chiWeiJiao(double angle){
-		return 0.3723 + 23.2567*sin(angle) + 0.1149*sin(2*angle) + -0.1712*sin(3*angle)-0.758*cos(angle)+0.3656*cos(2*angle)+0.0201*cos(3*angle);
+	public static double chiWeiJiao(double rj){
+		return 0.3723 + 23.2567*sin(rj) + 0.1149*sin(2*rj) - 0.1712*sin(3*rj) - 0.758*cos(rj) + 0.3656*cos(2*rj) + 0.0201*cos(3*rj);
 	}
 	
 	// 依据日角，计算因太阳活动不均匀产生的时差(分钟)
-	public static double shiCha(double angle){
-		return 0.0028 - 1.9857*sin(angle) + 9.9059*sin(2*angle) - 7.0924*cos(angle) - 0.6882*cos(2*angle);
+	public static double shiCha(double rj){
+		return 0.0028 - 1.9857*sin(rj) + 9.9059*sin(2*rj) - 7.0924*cos(rj) - 0.6882*cos(2*rj);
 	}
 	
 	// 依据当前时间(绝对时间)和纬度(角度值[-90,90])，计算时角(弧度值)
 	public static double shiJiao(Calendar calendar, double longitude){
-		long sjMillis = (calendar.getTimeInMillis() + (long)(longitude * 240000) + (long)(shiCha(riJiao(calendar)) * 60000)) % 86400000;
-		return Math.PI/ 180 * (sjMillis * 1.0 / 240000 - 180);
+		long sjMillis = calendar.getTimeInMillis() + (long)(longitude * 240000) + (long)(shiCha(riJiao(calendar)) * 60000);
+		return Math.PI/ 180 * ((sjMillis % 86400000) * 1.0 / 240000 - 180);
 	}
 	
 	// 依据时角、赤纬角、纬度，计算高度角的正弦值
