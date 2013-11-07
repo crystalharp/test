@@ -7,7 +7,6 @@ package com.tigerknows.android.app;
 import com.tigerknows.TKConfig;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.MapEngine;
-import com.tigerknows.map.MapWord;
 import com.tigerknows.map.label.SingleRectLabel;
 import com.tigerknows.service.download.DownloadService;
 

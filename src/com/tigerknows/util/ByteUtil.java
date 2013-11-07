@@ -12,9 +12,7 @@ import java.util.List;
 
 import com.tigerknows.TKConfig;
 import com.tigerknows.android.location.Position;
-import com.tigerknows.map.LocalRegionDataInfo;
 import com.tigerknows.map.MapEngine;
-import com.tigerknows.map.MapWord;
 import com.tigerknows.map.TileDownload;
 import com.tigerknows.map.MapEngine.RegionMetaVersion;
 import com.tigerknows.model.TKWord;
@@ -237,52 +235,6 @@ public final class ByteUtil {
          String returnString = new String(c);
          return returnString;
      }
-
-    public static MapWord[] parseMapText(byte[] mapTextBytes) {
-        if (mapTextBytes == null || mapTextBytes.length < 1) {
-            return null;
-        }
-        int mapTextNum = arr2int(mapTextBytes, 0);
-        if (mapTextNum <= 0) {
-            return null;
-        }
-        
-        MapWord[] mapWords = new MapWord[mapTextNum];
-        int start = 4;
-        for(int i=0; i<mapTextNum; i++) {
-            int nameLen = 0;
-            while(mapTextBytes[start+nameLen] != 0) {
-                nameLen ++;
-            }
-            nameLen ++;
-            
-            try {
-                
-//                String name = new String(mapTextBytes, start, start+nameLen, "GBK");
-                byte[] tempNameBytes = new byte[nameLen-1];
-                System.arraycopy(mapTextBytes, start, tempNameBytes, 0, nameLen-1);
-                String name = new String(tempNameBytes, "GBK");
-                
-                start += nameLen;
-                int fontColor = arr2int(mapTextBytes, start);
-                int fontSize = arr2int(mapTextBytes, start + 4);
-                float slope = arr2float(mapTextBytes, start + 8);
-                int outlineColor = arr2int(mapTextBytes, start + 12);
-                int x = arr2int(mapTextBytes, start + 16);
-                int y = arr2int(mapTextBytes, start + 20);
-                int iconIndex = arr2int(mapTextBytes, start + 24);
-                int iconX = arr2int(mapTextBytes, start + 28);
-                int iconY = arr2int(mapTextBytes, start + 32);
-                MapWord.Icon icon = new MapWord.Icon(iconIndex, iconX, iconY);
-                MapWord mapWord = new MapWord(toDBC(name), fontColor, fontSize, slope, outlineColor, x, y, icon);
-                mapWords[i] = mapWord;
-                start += 36;
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-        }
-        return mapWords;
-    }
     
     public static XObject byteToXObject(byte[] data) throws IOException {
         if (data == null) {
