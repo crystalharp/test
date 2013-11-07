@@ -38,6 +38,7 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.LinearLayout.LayoutParams;
 
@@ -184,17 +185,17 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
     private GridView mMyLikeGdv = null;
     private GridView mRecommendGdv = null;
 
-    private QueryingView mQueryingView = null;
-    
-    private TextView mQueryingTxv = null;
-    
-    private View mEmptyView = null;
-    
-    private TextView mEmptyTxv = null;
-    
-    private ImageView mEmptyImv = null;
-    
-    private RetryView mRetryView;
+    private QueryingView mQueryingViewLike = null;
+    private View mEmptyViewLike = null;
+    private RetryView mRetryViewLike;
+
+    private QueryingView mQueryingViewRecommend = null;
+    private View mEmptyViewRecommend = null;
+    private RetryView mRetryViewRecommend;
+
+    private QueryingView mQueryingViewAll = null;
+    private View mEmptyViewAll = null;
+    private RetryView mRetryViewAll;
     
     private View mPaddingTopView;
     private View mPaddingBottomView;
@@ -235,7 +236,6 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
                 mCategoryAdapter.notifyDataSetChanged();
             }
         };
-        mRetryView.setText(R.string.touch_screen_and_retry, true);
         
         AnimationListener likeAnimationListener = new AnimationListener() {
             
@@ -291,9 +291,18 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
             finish();
         }
         
-        DataOperation dataOperation = Dish.getLocalMark().makeCommendDataOperationByDraft(this);
+        DataOperation dataOperation = Dish.getLocalMark().makeCommendDataOperation(this, LocalMark.STATE_DRAFT);
+        List<BaseQuery> list = new ArrayList<BaseQuery>();
         if (dataOperation != null) {
-            queryStart(dataOperation);
+            list.add(dataOperation);
+        }
+        dataOperation = Dish.getLocalMark().makeCommendDataOperation(this, LocalMark.STATE_DELETE);
+        if (dataOperation != null) {
+            list.add(dataOperation);
+        }
+        
+        if (list.size() > 0) {
+            queryStart(list);
         }
     }
 
@@ -339,18 +348,54 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
         mMyLikeGdv.setPadding(horizontalSpacing, padding, horizontalSpacing, padding);
         mMyLikeGdv.setSelector(R.color.transparent);
         
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.FILL_PARENT, RelativeLayout.LayoutParams.FILL_PARENT);
+        RelativeLayout likeLayout = new RelativeLayout(mThis);
+        likeLayout.addView(mMyLikeGdv, layoutParams);
+        mQueryingViewLike = new QueryingView(mThis);
+        mQueryingViewLike.setVisibility(View.GONE);
+        likeLayout.addView(mQueryingViewLike, layoutParams);
+        mEmptyViewLike = mLayoutInflater.inflate(R.layout.empty_view, likeLayout, false);
+        mEmptyViewLike.setVisibility(View.GONE);
+        likeLayout.addView(mEmptyViewLike, layoutParams);
+        TextView emptyTxv = (TextView) mEmptyViewLike.findViewById(R.id.empty_txv);
+        ImageView emptyImv = (ImageView) mEmptyViewLike.findViewById(R.id.icon_imv);
+        emptyTxv.setText(R.string.like_empty_tip);
+        emptyImv.setBackgroundResource(R.drawable.ic_like_empty);
+        mRetryViewLike = new RetryView(mThis);
+        likeLayout.addView(mRetryViewLike, layoutParams);
+        mRetryViewLike.setVisibility(View.GONE);
+        mRetryViewLike.setText(R.string.touch_screen_and_retry, true);
+        mRetryViewLike.setVisibility(View.GONE);
+        
+        RelativeLayout recommendLayout = new RelativeLayout(mThis);
+        recommendLayout.addView(mRecommendGdv, layoutParams);
+        mQueryingViewRecommend = new QueryingView(mThis);
+        recommendLayout.addView(mQueryingViewRecommend, layoutParams);
+        mQueryingViewRecommend.setVisibility(View.GONE);
+        mEmptyViewRecommend = mLayoutInflater.inflate(R.layout.empty_view, likeLayout, false);
+        mEmptyViewRecommend.setVisibility(View.GONE);
+        recommendLayout.addView(mEmptyViewRecommend, layoutParams);
+        emptyTxv = (TextView) mEmptyViewRecommend.findViewById(R.id.empty_txv);
+        emptyTxv.setText(R.string.recommend_cook_empty);
+        mRetryViewRecommend = new RetryView(mThis);
+        recommendLayout.addView(mRetryViewRecommend, layoutParams);
+        mRetryViewRecommend.setVisibility(View.GONE);
+        mRetryViewRecommend.setText(R.string.touch_screen_and_retry, true);
+        mRetryViewRecommend.setVisibility(View.GONE);
+        
         List<View> viewList = new ArrayList<View>();
-        viewList.add(mMyLikeGdv);
-        viewList.add(mRecommendGdv);
+        viewList.add(likeLayout);
+        viewList.add(recommendLayout);
         mRecommendVpg.setOnPageChangeListener(new MyPageChangeListener());
         mRecommendVpg.setAdapter(new MyAdapter(viewList));
         
-        mQueryingView = (QueryingView)findViewById(R.id.querying_view);
-        mEmptyView = findViewById(R.id.empty_view);
-        mEmptyTxv = (TextView) mEmptyView.findViewById(R.id.empty_txv);
-        mEmptyImv = (ImageView) mEmptyView.findViewById(R.id.icon_imv);
-        mQueryingTxv = (TextView) mQueryingView.findViewById(R.id.loading_txv);
-        mRetryView = (RetryView) findViewById(R.id.retry_view);
+        mQueryingViewAll = (QueryingView)findViewById(R.id.querying_view);
+        mQueryingViewAll.setVisibility(View.GONE);
+        mEmptyViewAll = findViewById(R.id.empty_view);
+        mEmptyViewAll.setVisibility(View.GONE);
+        mRetryViewAll = (RetryView) findViewById(R.id.retry_view);
+        mRetryViewAll.setVisibility(View.GONE);
+        mRetryViewAll.setText(R.string.touch_screen_and_retry, true);
 
         mPaddingTopView = findViewById(R.id.padding_top_view);
         mPaddingBottomView = findViewById(R.id.padding_bottom_view);
@@ -363,7 +408,9 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
         mAllBtn.setOnClickListener(this);
         mMyLikeBtn.setOnClickListener(this);
         mRecommendBtn.setOnClickListener(this);
-        mRetryView.setCallBack(this, mActionTag);
+        mRetryViewLike.setCallBack(this, mActionTag);
+        mRetryViewRecommend.setCallBack(this, mActionTag);
+        mRetryViewAll.setCallBack(this, mActionTag);
         
         mCategoryLsv.setOnItemClickListener(new OnItemClickListener() {
 
@@ -493,6 +540,7 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
             commendView.setTag(R.id.commend_txv, commendTxv);
             commendView.setTag(R.id.index, position);
             commendView.setOnClickListener(DishActivity.this);
+            commendView.setClickable(true);
             commendImv.setAnimation(null);
             pictureImv.setTag(R.id.picture_imv, data);
             pictureImv.setOnClickListener(DishActivity.this);
@@ -506,17 +554,12 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
             }
             
             TKDrawable tkDrawable = null;
+            Drawable drawable = null;
             if (hotelTKDrawable != null) {
                 tkDrawable = hotelTKDrawable.getTKDrawable();
                 if (tkDrawable != null) {
-                    Drawable drawable = tkDrawable.loadDrawable(mThis, mLoadedDrawableRun, DishActivity.this.toString());
+                    drawable = tkDrawable.loadDrawable(mThis, mLoadedDrawableRun, DishActivity.this.toString());
                     if(drawable != null) {
-                        //To prevent the problem of size change of the same pic 
-                        //After it is used at a different place with smaller size
-                        Rect bounds = drawable.getBounds();
-                        if(bounds != null && (bounds.width() != pictureImv.getWidth() || bounds.height() != pictureImv.getHeight())){
-                            pictureImv.setImageDrawable(null);
-                        }
                         pictureImv.setImageDrawable(drawable);
                     } else {
                         pictureImv.setImageDrawable(null);
@@ -525,7 +568,10 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
             }
             
             if (tkDrawable == null) {
-                Drawable drawable = getResources().getDrawable(R.drawable.btn_add_picture);
+                drawable = getResources().getDrawable(R.drawable.btn_add_picture);
+                pictureImv.setImageDrawable(drawable);
+            } else if (drawable == null){
+                drawable = getResources().getDrawable(R.drawable.bg_picture_detail);
                 pictureImv.setImageDrawable(drawable);
             }
             
@@ -580,18 +626,35 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
 
         int mode = Integer.parseInt(dataQuery.getLocalParameter(LocalParameterMode));
         int tab = Integer.parseInt(dataQuery.getLocalParameter(LocalParameterTab));
-        if (mode == mMode && tab == mTab) {
-            mQueryingView.setVisibility(View.GONE);
+
+        View mRetryView;
+        View mQueryingView;
+        View mEmptyView;
+        
+        if (mode == 0) {
+            if (tab == 0) {
+                mRetryView = mRetryViewLike;
+                mQueryingView = mQueryingViewLike;
+                mEmptyView = mEmptyViewLike;
+            } else {
+                mRetryView = mRetryViewRecommend;
+                mQueryingView = mQueryingViewRecommend;
+                mEmptyView = mEmptyViewRecommend;
+            }
+        } else {
+            mRetryView = mRetryViewAll;
+            mQueryingView = mQueryingViewAll;
+            mEmptyView = mEmptyViewAll;
         }
+        
+        mQueryingView.setVisibility(View.GONE);
         if (BaseActivity.checkReLogin(dataQuery, mThis, mSourceUserHome, mId, mId, mId, mCancelLoginListener)) {
             isReLogin = true;
             return;
         } else if (BaseActivity.checkResponseCode(dataQuery, mThis, null, false, mThis, false)) {
             
-            if (mode == mMode && tab == mTab) {
-                mEmptyView.setVisibility(View.GONE);
-                mRetryView.setVisibility(View.VISIBLE);
-            }
+            mEmptyView.setVisibility(View.GONE);
+            mRetryView.setVisibility(View.VISIBLE);
         } else {      
             setDataQuery(dataQuery, mode, tab);
             
@@ -619,11 +682,11 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
                 for(int i = 0, size = dishes.size(); i < size; i++) {
                     Dish dish = dishes.get(i);
                     dish.likeTimeStamp = 0;
-                    long draft = localMark.findCommend(mThis, String.valueOf(dish.getDishId()), false);
+                    long draft = localMark.findCommend(mThis, String.valueOf(dish.getDishId()), LocalMark.STATE_DRAFT);
                     if (draft > 0) {
                         dish.likeTimeStamp = draft;
                     } else {
-                        long sent = localMark.findCommend(mThis, String.valueOf(dish.getDishId()), true);
+                        long sent = localMark.findCommend(mThis, String.valueOf(dish.getDishId()), LocalMark.STATE_SENT);
                         if (sent> 0) {
                             dish.likeTimeStamp = sent;
                         }
@@ -716,6 +779,7 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
             mActionLog.addAction(mActionTag + ActionLog.DishTigerRecommend);
             mRecommendVpg.setCurrentItem(1);
         } else if (id == R.id.commend_view) {
+            v.setClickable(false);
             Dish data = (Dish) v.getTag(R.id.commend_view);
             int position = (Integer) v.getTag(R.id.index);
             ImageView commendImv = (ImageView) v.getTag(R.id.commend_imv);
@@ -735,17 +799,23 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
                 public void run() {
                     String uuid = String.valueOf(dishId);
                     if (isLike) {
-                        Dish.getLocalMark().addCommend(mThis, uuid, false);
-                        Dish.getLocalMark().addCommend(mThis, uuid, true);
+                        Dish.getLocalMark().addCommend(mThis, uuid, LocalMark.STATE_DRAFT);
+                        Dish.getLocalMark().addCommend(mThis, uuid, LocalMark.STATE_SENT);
                         
-                        DataOperation dataOperation = Dish.getLocalMark().makeCommendDataOperationByUUID(mThis, uuid);
+                        DataOperation dataOperation = Dish.getLocalMark().makeCommendDataOperationByUUID(mThis, uuid, true);
                         if (dataOperation != null) {
                             dataOperation.query();
                         }
                     } else {
                         String[] uuids = new String[]{uuid};
-                        Dish.getLocalMark().deleteCommend(mThis, uuids, false);
-                        Dish.getLocalMark().deleteCommend(mThis, uuids, true);
+                        Dish.getLocalMark().deleteCommend(mThis, uuids, LocalMark.STATE_DRAFT);
+                        Dish.getLocalMark().deleteCommend(mThis, uuids, LocalMark.STATE_SENT);
+                        Dish.getLocalMark().addCommend(mThis, uuid, LocalMark.STATE_DELETE);
+                        
+                        DataOperation dataOperation = Dish.getLocalMark().makeCommendDataOperationByUUID(mThis, uuid, false);
+                        if (dataOperation != null) {
+                            dataOperation.query();
+                        }
                     }
                 }
             }).start();
@@ -805,9 +875,7 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
             }
             
             if (mMyLikeList.size() == 0 && mMode == 0 && mTab == 0) {
-                mEmptyTxv.setText(R.string.like_empty_tip);
-                mEmptyImv.setBackgroundResource(R.drawable.ic_like_empty);
-                mEmptyView.setVisibility(View.VISIBLE);
+                mEmptyViewLike.setVisibility(View.VISIBLE);
             }
         } else if (id == R.id.picture_imv) {
             Dish data = (Dish) v.getTag(R.id.picture_imv);
@@ -852,9 +920,6 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
             
             mSelectedAdapter.notifyDataSetChanged();
         }
-        mRetryView.setVisibility(View.GONE);
-        mEmptyView.setVisibility(View.GONE);
-        mQueryingView.setVisibility(View.GONE);
 
         refreshData(mode, tab);
     }
@@ -888,32 +953,41 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
         if (dataList.size() <= 0 && setDataQuery) {
             setDataQuery(dataQuery, mode, tab);
         }
+
+        View mRetryView;
+        View mQueryingView;
+        View mEmptyView;
         
-        if (mode == mMode && tab == mTab) {
-            if (dataList.size() <= 0) {
-                if (mode == 0) {
-                    if (tab == 0) {
-                        if (mManuallyChanged == false) {
-                            mRecommendVpg.setCurrentItem(1);
-                            return;
-                        }
-                        mEmptyImv.setBackgroundResource(R.drawable.ic_like_empty);
-                        mEmptyTxv.setText(R.string.like_empty_tip);
-                    } else {
-                        mEmptyImv.setBackgroundResource(R.drawable.bg_query_fail);
-                        mEmptyTxv.setText(R.string.recommend_cook_empty);
-                    }
-                } else {
-                    mEmptyImv.setBackgroundResource(R.drawable.bg_query_fail);
-                    mEmptyTxv.setText(R.string.no_result);
-                }
-                mEmptyView.setVisibility(View.VISIBLE);
+        if (mode == 0) {
+            if (tab == 0) {
+                mRetryView = mRetryViewLike;
+                mQueryingView = mQueryingViewLike;
+                mEmptyView = mEmptyViewLike;
             } else {
-                mEmptyView.setVisibility(View.GONE);
+                mRetryView = mRetryViewRecommend;
+                mQueryingView = mQueryingViewRecommend;
+                mEmptyView = mEmptyViewRecommend;
             }
-            mQueryingView.setVisibility(View.GONE);
-            mRetryView.setVisibility(View.GONE);
+        } else {
+            mRetryView = mRetryViewAll;
+            mQueryingView = mQueryingViewAll;
+            mEmptyView = mEmptyViewAll;
         }
+        
+        if (dataList.size() <= 0) {
+            if (mode == 0) {
+                if (tab == 0) {
+                    if (mManuallyChanged == false && mode == mMode && mTab == tab) {
+                        mRecommendVpg.setCurrentItem(1);
+                    }
+                }
+            }
+            mEmptyView.setVisibility(View.VISIBLE);
+        } else {
+            mEmptyView.setVisibility(View.GONE);
+        }
+        mQueryingView.setVisibility(View.GONE);
+        mRetryView.setVisibility(View.GONE);
     }
     
     void refreshCategory(int groupPosition) {
@@ -1027,9 +1101,6 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
             mRecommendBtn.setTextColor(mColorSelect);
             mRecommendAdapter.notifyDataSetChanged();
         }
-        mRetryView.setVisibility(View.GONE);
-        mEmptyView.setVisibility(View.GONE);
-        mQueryingView.setVisibility(View.GONE);
         refreshData(mMode, mTab);
     }
 
@@ -1050,6 +1121,22 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
         }
         dataQuery.setup(Globals.getCurrentCityInfo().getId(), mId, mId, null, false, false, mPOI);
         queryStart(dataQuery);
+
+        View mRetryView;
+        View mQueryingView;
+        
+        if (mode == 0) {
+            if (tab == 0) {
+                mRetryView = mRetryViewLike;
+                mQueryingView = mQueryingViewLike;
+            } else {
+                mRetryView = mRetryViewRecommend;
+                mQueryingView = mQueryingViewRecommend;
+            }
+        } else {
+            mRetryView = mRetryViewAll;
+            mQueryingView = mQueryingViewAll;
+        }
         
         mRetryView.setVisibility(View.GONE);
         mQueryingView.setVisibility(View.VISIBLE);

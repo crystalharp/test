@@ -46,6 +46,7 @@ import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.Response;
 import com.tigerknows.model.User;
+import com.tigerknows.model.Comment.LocalMark;
 import com.tigerknows.model.DataQuery.CommentResponse;
 import com.tigerknows.model.DataQuery.CommentResponse.CommentList;
 import com.tigerknows.ui.BaseActivity;
@@ -152,7 +153,7 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
             finish();
         }
         
-        DataOperation dataOperation = Comment.getLocalMark().makeCommendDataOperationByDraft(mThis);
+        DataOperation dataOperation = Comment.getLocalMark().makeCommendDataOperation(mThis, LocalMark.STATE_DRAFT);
         if (dataOperation != null) {
             queryStart(dataOperation);
         }
@@ -767,9 +768,9 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
                             }
                         }
                         
-                        Comment.getLocalMark().addCommend(mThis, uuid, false);
-                        Comment.getLocalMark().addCommend(mThis, uuid, true);
-                        DataOperation dataOperation = Comment.getLocalMark().makeCommendDataOperationByUUID(mThis, uuid);
+                        Comment.getLocalMark().addCommend(mThis, uuid, LocalMark.STATE_DRAFT);
+                        Comment.getLocalMark().addCommend(mThis, uuid, LocalMark.STATE_SENT);
+                        DataOperation dataOperation = Comment.getLocalMark().makeCommendDataOperationByUUID(mThis, uuid, true);
                         if (dataOperation != null) {
                             dataOperation.query();
                         }

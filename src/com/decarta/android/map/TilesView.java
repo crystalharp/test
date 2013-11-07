@@ -810,7 +810,7 @@ public class TilesView extends GLSurfaceView {
 
 			long time = System.nanoTime();
 			touchRecord1.push(time, xy0Conv.x, xy0Conv.y);
-			// Log.i("TilesView","onTouchEvent touch down x,y,pCount:"+(int)(time/1000000)+","+event.getX()+","+event.getY()+","+pCount);
+//			LogWrapper.i("TilesView","onTouchEvent touch down x,y,pCount:"+(int)(time/1000000)+","+event.getX()+","+event.getY()+","+pCount);
 
 			if (pCount == 1) {
 				lastTouchDownTime = System.nanoTime();
@@ -850,7 +850,6 @@ public class TilesView extends GLSurfaceView {
 				multiTouch = true;
 			}
 			isTouchBegin = true;
-//			LogWrapper.d("Label", "--------touch begin---------");
 		} else if (action == MotionEvent.ACTION_MOVE) {
 			if (pCount > 1) {
 				resetLongTouchTimer();
@@ -860,7 +859,6 @@ public class TilesView extends GLSurfaceView {
 				synchronized (longTouchLock) {
 					if (longClicked)
 						return true;
-
 				}
 				if (infoWindowClicked) {
 					if (snapToInfoWindow(event.getX(0), event.getY(0), null)) {
@@ -890,18 +888,6 @@ public class TilesView extends GLSurfaceView {
 						* density * SAME_POINT_MOVED_DISTANCE_MAX * density) {
 					resetLongTouchTimer();
 				}
-				// if(moveFromTouchDown < 0.00001) {
-				// if(staying == false) {
-				// beginStaying = true;
-				// staying = true;
-				// }
-				// LogWrapper.e("Moving","onTouchEvent staying");
-				// }
-				// else {
-				// staying = false;
-				// beginStaying = false;
-				// LogWrapper.e("Moving","onTouchEvent moving");
-				// }
 				XYFloat draggingConv = new XYFloat(0f, 0f);
 				draggingConv.x = xy0Conv.x - lastTouchConv.x;
 				draggingConv.y = xy0Conv.y - lastTouchConv.y;
@@ -913,7 +899,7 @@ public class TilesView extends GLSurfaceView {
 				} else {
 					long time = System.nanoTime();
 					touchRecord1.push(time, xy0Conv.x, xy0Conv.y);
-					// Log.i("TilesView","onTouchEvent touchRecord1:"+(int)(time/1000000)+","+event.getX()+","+event.getY());
+//					LogWrapper.i("TilesView","onTouchEvent touchRecord1:"+(int)(time/1000000)+","+event.getX()+","+event.getY());
 					lastTouchConv.x = xy0Conv.x;
 					lastTouchConv.y = xy0Conv.y;
 					lastTouch.x = event.getX(0);
@@ -931,8 +917,9 @@ public class TilesView extends GLSurfaceView {
 					refreshMap();
 				}
 			} else if (pCount > 1) {
+//				LogWrapper.i("TilesView","onTouchEvent ACTION_MOVE pCount:"+pCount);
 				multiTouch = true;
-				// Log.i("TilesView","onTouchEvent event.x0,event.y0,event.x1,event.y1:"+(int)event.getX(0)+","+(int)event.getY(0)+","+(int)event.getX(1)+","+(int)event.getY(1));
+//				LogWrapper.i("TilesView","onTouchEvent ----event.x0,event.y0,event.x1,event.y1:"+(int)event.getX(0)+","+(int)event.getY(0)+","+(int)event.getX(1)+","+(int)event.getY(1));
 
 				touchRecord2.push(0, event.getX(0), event.getY(0));
 				touchRecord2.push(0, event.getX(1), event.getY(1));
@@ -1088,13 +1075,17 @@ public class TilesView extends GLSurfaceView {
 				lastDistConv = 0;
 				lastDirection = null;
 				lastTouchY = null;
+				lastTouchConv.x = xy0Conv.x;
+				lastTouchConv.y = xy0Conv.y;
+				lastTouch.x = event.getX(0);
+				lastTouch.y = event.getY(0);
 				touchRecord2.reset();
 				multiTouch = false;
 			}
 			isTouchBegin = false;
 
 		} else if (action == MotionEvent.ACTION_UP) {
-			// Log.i("TilesView","onTouchEvent touchup pCount:"+pCount);
+//			LogWrapper.i("TilesView","onTouchEvent touchup pCount:"+pCount);
 
 			isTouchBegin = false;
 			resetLongTouchTimer();
@@ -1130,7 +1121,6 @@ public class TilesView extends GLSurfaceView {
 								touching = false;
 								touchingLock.notifyAll();
 							}
-
 							return true;
 						}
 					}

@@ -334,6 +334,11 @@ public class LocationQuery extends BaseQuery {
             return location;
         }
         boolean mccMncLacCidValid = Utility.mccMncLacCidValid(locationParameter.mcc, locationParameter.mnc, locationParameter.tkCellLocation.lac, locationParameter.tkCellLocation.cid);
+        if (mccMncLacCidValid) {
+            if (locationParameter.tkCellLocation.lac == 0 || locationParameter.tkCellLocation.cid == 0) {
+                mccMncLacCidValid = false;
+            }
+        }
         float cellInfoRate = 0f;
         float wifiMatchRate = 0f;
         float totalRate = 0f;

@@ -138,11 +138,11 @@ public class Dish extends XMapData {
             this.data = null;
         }
         
-        likeTimeStamp = getLocalMark().findCommend(TKApplication.getInstance(), String.valueOf(dishId), false);
+        likeTimeStamp = getLocalMark().findCommend(TKApplication.getInstance(), String.valueOf(dishId), LocalMark.STATE_DRAFT);
         if (likeTimeStamp > 0) {
             addLike(false);
         } else {
-            likeTimeStamp = getLocalMark().findCommend(TKApplication.getInstance(), String.valueOf(dishId), true);
+            likeTimeStamp = getLocalMark().findCommend(TKApplication.getInstance(), String.valueOf(dishId), LocalMark.STATE_SENT);
             isLike = (likeTimeStamp > 0);
         }
     }

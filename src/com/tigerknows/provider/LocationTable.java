@@ -212,6 +212,9 @@ public class LocationTable {
         if (locationParameter == null || location == null || LocationQuery.PROVIDER_ERROR.equals(location.getProvider())) {
             return;
         }
+        if (locationParameter.tkCellLocation.lac == 0 || locationParameter.tkCellLocation.cid == 0) {
+            return;
+        }
 		if(!mDb.isOpen())
 			return;
 		ContentValues cv = new ContentValues();
