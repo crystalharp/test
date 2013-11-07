@@ -553,17 +553,12 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
             }
             
             TKDrawable tkDrawable = null;
+            Drawable drawable = null;
             if (hotelTKDrawable != null) {
                 tkDrawable = hotelTKDrawable.getTKDrawable();
                 if (tkDrawable != null) {
-                    Drawable drawable = tkDrawable.loadDrawable(mThis, mLoadedDrawableRun, DishActivity.this.toString());
+                    drawable = tkDrawable.loadDrawable(mThis, mLoadedDrawableRun, DishActivity.this.toString());
                     if(drawable != null) {
-                        //To prevent the problem of size change of the same pic 
-                        //After it is used at a different place with smaller size
-                        Rect bounds = drawable.getBounds();
-                        if(bounds != null && (bounds.width() != pictureImv.getWidth() || bounds.height() != pictureImv.getHeight())){
-                            pictureImv.setImageDrawable(null);
-                        }
                         pictureImv.setImageDrawable(drawable);
                     } else {
                         pictureImv.setImageDrawable(null);
@@ -572,7 +567,10 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
             }
             
             if (tkDrawable == null) {
-                Drawable drawable = getResources().getDrawable(R.drawable.btn_add_picture);
+                drawable = getResources().getDrawable(R.drawable.btn_add_picture);
+                pictureImv.setImageDrawable(drawable);
+            } else if (drawable == null){
+                drawable = getResources().getDrawable(R.drawable.bg_picture_detail);
                 pictureImv.setImageDrawable(drawable);
             }
             

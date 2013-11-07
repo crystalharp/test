@@ -4477,7 +4477,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 compass.setVisible(true);
                 if (uiStackSize() > 0)
                     mCompassView.setVisibility(View.INVISIBLE);
-                mMapView.refreshMap();
                 hideInfoWindow(ItemizedOverlay.MY_LOCATION_OVERLAY);
                 rotateZ = 365;
                 mMapView.refreshMap();
