@@ -93,6 +93,7 @@ public class MapView extends RelativeLayout implements
 	private ZoomControls zoomControls;
 	private TilesView tilesView;
 	private Map<Integer, ArrayList<EventListener>> eventListeners = new HashMap<Integer, ArrayList<EventListener>>();
+    Compass compass;
 	private float xRotation = 0;
 	
 	private Sphinx sphinx;
@@ -139,54 +140,52 @@ public class MapView extends RelativeLayout implements
 		Util.init();
         
 		zoomControls = new ZoomControls(context);
+		zoomControls.setOnZoomInClickListener(new OnClickListener() {
+		    public void onClick(View view) {
+		        MapView.this.zoomIn();
+		    }
+		});
+		
+		zoomControls.setOnZoomOutClickListener(new OnClickListener() {
+		    public void onClick(View view) {
+		        MapView.this.zoomOut();
+		    }
+		});
+		
+		if(CONFIG.COMPASS_PLACE_LOCATION>-1 && CONFIG.COMPASS_PLACE_LOCATION<=4){
+		    Icon icon=Icon.getIcon(getResources(), R.drawable.ic_compass);
+		    compass=new Compass(icon.getSize(), icon.getOffset(), PlaceLocation.TOP_LEFT, icon);
+		    compass.setPlaceLocation(PlaceLocation.values()[CONFIG.COMPASS_PLACE_LOCATION]);
+		    try{
+		        compass.addEventListener(EventType.TOUCH, new Compass.TouchEventListener() {
+		            
+		            @Override
+		            public void onTouchEvent(EventSource eventSource) {
+		                // TODO Auto-generated method stub
+		                try{
+		                    if (xRotation == MapView.MAP_TILT_MIN) {
+		                        rotateXToDegree(0);
+		                        xRotation = 0;
+		                    } else {
+		                        rotateXToDegree(MapView.MAP_TILT_MIN);
+		                        xRotation = MapView.MAP_TILT_MIN;
+		                    }
+		                }catch(Exception e){
+		                    
+		                }
+		                //rotateZToDegree(0);
+		            }
+		        });
+		    }catch(Exception e){
+		        
+		    }
+		}
 
 		tilesView = new TilesView(context, this);
 		tilesView.setId(R.id.view_invalid);
 		addView(tilesView, android.view.ViewGroup.LayoutParams.FILL_PARENT,
 				android.view.ViewGroup.LayoutParams.FILL_PARENT);
-
-		zoomControls.setOnZoomInClickListener(new OnClickListener() {
-			public void onClick(View view) {
-				MapView.this.zoomIn();
-			}
-		});
-
-		zoomControls.setOnZoomOutClickListener(new OnClickListener() {
-			public void onClick(View view) {
-				MapView.this.zoomOut();
-			}
-		});
-		
-		if(CONFIG.COMPASS_PLACE_LOCATION>-1 && CONFIG.COMPASS_PLACE_LOCATION<=4){
-	        Icon icon=Icon.getIcon(getResources(), R.drawable.ic_compass);
-    		Compass compass=new Compass(icon.getSize(), icon.getOffset(), PlaceLocation.TOP_LEFT, icon);
-    		compass.setPlaceLocation(PlaceLocation.values()[CONFIG.COMPASS_PLACE_LOCATION]);
-    		try{
-    			compass.addEventListener(EventType.TOUCH, new Compass.TouchEventListener() {
-    				
-    				@Override
-    				public void onTouchEvent(EventSource eventSource) {
-    					// TODO Auto-generated method stub
-    					try{
-    					    if (xRotation == MapView.MAP_TILT_MIN) {
-    						    rotateXToDegree(0);
-    						    xRotation = 0;
-    					    } else {
-    				            rotateXToDegree(MapView.MAP_TILT_MIN);
-                                xRotation = MapView.MAP_TILT_MIN;
-    					    }
-    					}catch(Exception e){
-    						
-    					}
-    					//rotateZToDegree(0);
-    				}
-    			});
-    		}catch(Exception e){
-    			
-    		}
-    		tilesView.setCompass(compass);
-    		
-    	}
+        tilesView.setCompass(compass);
 		
 	}
 
@@ -693,10 +692,6 @@ public class MapView extends RelativeLayout implements
 		return tilesView.getZoomLevel();
 	}
 
-	public XYInteger getDisplaySize() {
-		return tilesView.getDisplaySize();
-	}
-
 	/**
 	 * get the current center position
 	 * 
@@ -715,29 +710,6 @@ public class MapView extends RelativeLayout implements
 
 	public MapPreference getMapPreference() {
 		return tilesView.getMapPreference();
-	}
-	
-	/**
-	 * delete all overlays
-	 */
-	public void deleteOverlays() {
-		tilesView.getOverlays().clear();
-	}
-	
-	/**
-	 * delete one overlay
-	 * @param overlay
-	 */
-	public void deleteOverlay(ItemizedOverlay overlay){
-		tilesView.getOverlays().remove(overlay);
-	}
-	
-	/**
-	 * delete overlay by it's sequence in overlays array
-	 * @param i
-	 */
-	public void deleteOverlay(int i){
-		tilesView.getOverlays().remove(i);
 	}
 
 	/**
@@ -810,31 +782,6 @@ public class MapView extends RelativeLayout implements
         return null;
     }
 	
-	public int getOverlaysSize(){
-		return tilesView.getOverlays().size();
-	}
-	
-	/**
-	 * get overlay by it's sequence in the overlays array
-	 * @param i
-	 */
-	public ItemizedOverlay getOverlay(int i){
-		return tilesView.getOverlays().get(i);
-	}
-	
-	public int getShapesSize(){
-		return tilesView.getShapes().size();
-		
-	}
-	
-	/**
-	 * get shape according to it's sequence in the shapes array
-	 * @param i
-	 */
-	public Shape getShape(int i){
-		return tilesView.getShapes().get(i);
-	}
-	
 	/**
 	 * get shape by it's unique name
 	 * @param shapeName
@@ -865,28 +812,6 @@ public class MapView extends RelativeLayout implements
 	}
 	
 	/**
-	 * remove all of the shapes
-	 */
-	public void removeShapes(){
-		tilesView.getShapes().clear();
-	}
-	/**
-	 * remove shape by it's sequence in the shapes array
-	 * @param i
-	 * @return removed shape
-	 */
-	public Shape removeShape(int i){
-		if(i>=tilesView.getShapes().size()) return null;
-		return tilesView.getShapes().remove(i);
-	}
-	/**
-	 * remove one shape
-	 * @param shape
-	 */
-	public void removeShape(Shape shape){
-		tilesView.getShapes().remove(shape);
-	}
-	/**
 	 * remove shape by it's unique name
 	 * @param shapeName
 	 * @return removed shape
@@ -899,24 +824,6 @@ public class MapView extends RelativeLayout implements
 			
 		}
 		return null;
-	}
-
-	/**
-	 * get the distance between current center to the top border of screen
-	 * 
-	 * @return vertical radius
-	 */
-	public double getRadiusY() {
-		return tilesView.getRadiusY();
-	}
-
-	/**
-	 * get the distance between current center to the left border of screen
-	 * 
-	 * @return horizontal radius
-	 */
-	public double getRadiusX() {
-		return tilesView.getRadiusX();
 	}
 	
 	public Compass getCompass(){
@@ -979,37 +886,6 @@ public class MapView extends RelativeLayout implements
             LogWrapper.w("MapView", "zoomTo exception:"+e.getMessage());
         }
 	}
-	/**
-	 * zoom the map to newZoomLevel at zoomCenter
-	 * @param newZoomLevel
-	 * @param zoomCenter
-	 * @throws APIException
-	 */
-//	public void zoomTo(int newZoomLevel, Position zoomCenter) {
-//        try{
-//        	tilesView.zoomTo(newZoomLevel, null, -1, null);
-//        }catch(APIException e){
-//            LogWrapper.w("MapView", "zoomTo exception:"+e.getMessage());
-//        }
-//		
-//	}
-	
-	/**
-	 * zoom the map to newZoomLevel at zoomCenter with ZoomEnd listener
-	 * @param newZoomLevel
-	 * @param zoomCenter
-	 * @param duration
-	 * @param listener
-	 * @throws APIException
-	 */
-//	public void zoomTo(int newZoomLevel, Position zoomCenter, long duration, ZoomEndEventListener listener) {
-//        try{
-//        	tilesView.zoomTo(newZoomLevel, null, duration, listener);
-////        	tilesView.panToPosition(zoomCenter, duration, null);
-//        }catch(APIException e){
-//            LogWrapper.w("MapView", "zoomTo exception:"+e.getMessage());
-//        }
-//	}
 
 	/**
 	 * zoom in the map one level
@@ -1044,14 +920,6 @@ public class MapView extends RelativeLayout implements
 	public void zoomOut(Position zoomCenter) throws APIException {
 		tilesView.zoomTo(Math.round(getZoomLevel()-1),zoomCenter,-1,null);
 	}
-	
-	/**
-     * returns the current boundingbox for the viewable area of map on the screen, useful for clipping
-     * @return BoundingBox
-     */
-    public BoundingBox getScreenBoundingBox() throws APIException{
-    	return tilesView.getScreenBoundingBox();
-    }
 
 	// end of wrapped TilesView functions
 
