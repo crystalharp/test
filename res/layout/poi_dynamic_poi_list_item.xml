@@ -3,77 +3,81 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent" 
     android:layout_height="wrap_content">
-    <RelativeLayout
-	    android:layout_width="fill_parent" 
-	    android:layout_height="wrap_content"
-	    android:padding="8dp">
-	    <TextView 
-	        android:id="@+id/name_txv" 
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content" 
-	        android:layout_alignParentLeft="true"
-	        android:layout_alignParentTop="true"
-	        android:gravity="left"
-	        android:textColor="@color/black_dark"
-	        android:textSize="16sp"
-	        android:text="@string/app_name"
-	        android:singleLine="true"
-	        android:lineSpacingExtra="0dp"
-	        android:includeFontPadding="false"
-	        android:focusable="false" />
-	    <RatingBar android:id="@+id/stars_rtb"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:padding="0dp"
-	        android:layout_alignParentLeft="true"
-	        android:layout_marginTop="6dp"
-	        android:layout_below="@id/name_txv" 
-	        android:progressDrawable="@drawable/ratingbar_small"
-	        style="@style/RatingBar.Small"
-	        android:numStars="5"
-	        android:focusable="false"
-	        android:focusableInTouchMode="false" /> 
-	    
-	    <TextView 
-	        android:id="@+id/distance_txv" 
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content" 
-	        android:layout_alignParentRight="true"
-	        android:layout_alignParentTop="true"
-	        android:textColor="@color/black_light"
-	        android:textSize="14sp"
-	        android:text="@string/app_name"
-	        android:singleLine="true"
-	        android:focusable="false" />   
-	    
-	    <TextView 
-	        android:id="@+id/distance_from_txv" 
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content" 
-	        android:layout_toLeftOf="@id/distance_txv" 
-	        android:layout_alignParentTop="true"
-	        android:drawableRight="@drawable/ic_location_nearby"
-	        android:textColor="@color/black_light"
-	        android:textSize="14sp"
-	        android:text="@string/distance"
-	        android:singleLine="true"
-	        android:focusable="false" />   
-	    
-	        
-	    <TextView 
-	        android:id="@+id/money_txv" 
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content" 
-	        android:layout_alignParentRight="true" 
-	        android:layout_below="@id/distance_txv" 
-	        android:layout_marginLeft="8dp"
-	        android:layout_marginTop="5dp"
-	        android:textColor="@color/orange"
-	        android:textSize="16sp"
-	        android:text="@string/app_name"
-	        android:singleLine="true"
-	        android:lineSpacingExtra="0dp"
-	        android:includeFontPadding="false"
-	        android:focusable="false" /> 
-    </RelativeLayout>
+    <TextView 
+        android:id="@+id/name_txv" 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" 
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="8dp"
+        android:gravity="left"
+        android:textColor="@color/black_dark"
+        android:textSize="16sp"
+        android:text="@string/app_name"
+        android:singleLine="true"
+        android:lineSpacingExtra="0dp"
+        android:includeFontPadding="false"
+        android:focusable="false" />
+    <RatingBar android:id="@+id/stars_rtb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="0dp"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="8dp"
+        android:layout_below="@id/name_txv" 
+        android:progressDrawable="@drawable/ratingbar_small"
+        style="@style/RatingBar.Small"
+        android:numStars="5"
+        android:focusable="false"
+        android:focusableInTouchMode="false" /> 
+    
+    <TextView 
+        android:id="@+id/distance_txv" 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" 
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="8dp"
+        android:layout_marginRight="8dp"
+        android:textColor="@color/black_light"
+        android:textSize="14sp"
+        android:text="@string/app_name"
+        android:singleLine="true"
+        android:focusable="false" />   
+    
+    <TextView 
+        android:id="@+id/distance_from_txv" 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" 
+        android:layout_toLeftOf="@id/distance_txv" 
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="8dp"
+        android:drawableRight="@drawable/ic_location_nearby"
+        android:textColor="@color/black_light"
+        android:textSize="14sp"
+        android:text="@string/distance"
+        android:singleLine="true"
+        android:focusable="false" />   
+    
+        
+    <TextView 
+        android:id="@+id/money_txv" 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" 
+        android:layout_alignParentRight="true" 
+        android:layout_below="@id/distance_txv" 
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
+        android:textColor="@color/orange"
+        android:textSize="16sp"
+        android:text="@string/app_name"
+        android:singleLine="true"
+        android:lineSpacingExtra="0dp"
+        android:includeFontPadding="false"
+        android:focusable="false" /> 
 </RelativeLayout>

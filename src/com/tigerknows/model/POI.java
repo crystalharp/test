@@ -265,6 +265,9 @@ public class POI extends BaseData {
         
         // 0x3c x_array<x_map>  地铁出口信息
         public static final byte FIELD_SUBWAY_EXITS = 0X3C;
+        
+        // 0x3d    x_string    加油站品牌   ？？ 
+        public static final byte FIELD_GAS_STATION = 0X3D;
     }
 
     // 0x07 x_string 电话
@@ -1103,7 +1106,12 @@ public class POI extends BaseData {
         
         StringBuilder s = new StringBuilder();
         
-        byte[] showKeys = {Description.FIELD_COOKING_STYLE, Description.FIELD_STAR, Description.FIELD_CATEGORY, Description.FIELD_HOSPITAL_LEVEL, Description.FIELD_NATIONAL_CERTIFICATION};
+        byte[] showKeys = {Description.FIELD_COOKING_STYLE,
+                Description.FIELD_STAR,
+                Description.FIELD_CATEGORY,
+                Description.FIELD_HOSPITAL_LEVEL,
+                Description.FIELD_NATIONAL_CERTIFICATION,
+                Description.FIELD_GAS_STATION};
         
         for(int i = 0; i < showKeys.length; i++) {
             
