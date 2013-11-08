@@ -96,12 +96,10 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     private Button mFeedbackBtn;
     private Button mAddMerchantBtn;
     private Button mGiveFavourableCommentBtn;
-    private View mGiveFavourableCommentImv;
     private View[] mAppRecommendView;
     private ImageView[] mAppRecommendImv;
     private TextView[] mAppRecommendTxv;
     private LinearLayout mAppRecommendLly;
-    private ImageView mTencentAppRecommendImv;
     private static final int[] APP_RECOMMEND_ID = {R.id.app_item_1,
     	R.id.app_item_2,
     	R.id.app_item_3,
@@ -193,7 +191,6 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         
         if (TKConfig.sSPREADER.startsWith(TKConfig.SPREADER_TENCENT)) {
             mAppRecommendBtn.setText(R.string.recommend_tencent);
-            mTencentAppRecommendImv.setVisibility(View.GONE);
             mAppRecommendLly.setVisibility(View.GONE);
             mAppRecommendBtn.setBackgroundDrawable(mSphinx.getResources().getDrawable(R.drawable.list_single));
             mAppRecommendBtn.setGravity(Gravity.LEFT|Gravity.CENTER_VERTICAL);
@@ -204,10 +201,8 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         
         if (mSphinx.getPackageManager().queryIntentActivities(makeGiveFavourableIntent(), PackageManager.MATCH_DEFAULT_ONLY).size() > 0) {
             mGiveFavourableCommentBtn.setVisibility(View.VISIBLE);
-            mGiveFavourableCommentImv.setVisibility(View.VISIBLE);
         } else {
             mGiveFavourableCommentBtn.setVisibility(View.GONE);
-            mGiveFavourableCommentImv.setVisibility(View.GONE);
         }
         mHandler = new Handler();
 
@@ -231,11 +226,9 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         mFeedbackBtn = (Button)mRootView.findViewById(R.id.feedback_btn);
         mAddMerchantBtn = (Button)mRootView.findViewById(R.id.add_merchant_btn);
         mGiveFavourableCommentBtn = (Button)mRootView.findViewById(R.id.give_favourable_comment_btn);
-        mGiveFavourableCommentImv = mRootView.findViewById(R.id.give_favourable_comment_imv);
         mAppRecommendView = new View[NUM_APP_RECOMMEND];
         mAppRecommendImv = new ImageView[NUM_APP_RECOMMEND];
         mAppRecommendTxv = new TextView[NUM_APP_RECOMMEND];
-        mTencentAppRecommendImv = (ImageView)mRootView.findViewById(R.id.more_home_app_recommend_imv);
         mAppRecommendLly = (LinearLayout)mRootView.findViewById(R.id.more_home_app_recommend_lly);
         for (int i=0; i < NUM_APP_RECOMMEND; i++){
         	mAppRecommendView[i] = (View)mRootView.findViewById(APP_RECOMMEND_ID[i]);

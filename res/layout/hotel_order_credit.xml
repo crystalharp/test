@@ -21,12 +21,6 @@
             android:padding="8dp"
             >
 
-            <ImageView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_line_split"
-                android:contentDescription="@string/app_name"
-                />
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -61,12 +55,6 @@
 
             </LinearLayout>
 
-            <ImageView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_line_split"
-                android:contentDescription="@string/app_name"
-                />
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -100,12 +88,6 @@
 
             </LinearLayout>
 
-            <ImageView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_line_split"
-                android:contentDescription="@string/app_name"
-                />
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -140,12 +122,6 @@
 
             </LinearLayout>
 
-            <ImageView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_line_split"
-                android:contentDescription="@string/app_name"
-                />
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -177,12 +153,6 @@
 
             </LinearLayout>
 
-            <ImageView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_line_split"
-                android:contentDescription="@string/app_name"
-                />
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -218,12 +188,6 @@
                     />
             </LinearLayout>
 
-            <ImageView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_line_split"
-                android:contentDescription="@string/app_name"
-                />
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"

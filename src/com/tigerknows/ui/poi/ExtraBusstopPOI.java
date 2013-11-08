@@ -53,10 +53,8 @@ public class ExtraBusstopPOI extends DynamicPOIView {
             View child = mBuslineListView.getChildAt(i);
             if (i == (size-1)) {
                 child.setBackgroundResource(R.drawable.list_footer);
-                child.findViewById(R.id.list_separator_imv).setVisibility(View.GONE);
             } else {
                 child.setBackgroundResource(R.drawable.list_middle);
-                child.findViewById(R.id.list_separator_imv).setVisibility(View.VISIBLE);
             }
         }
     }

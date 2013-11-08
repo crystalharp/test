@@ -71,7 +71,6 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
                 child.setTag(dynamicPOI);
                 child.setOnClickListener(clickListener);
                 child.setBackgroundResource(R.drawable.list_middle);
-                child.findViewById(R.id.list_separator_imv).setVisibility(View.VISIBLE);
                 return null;
             }
             
@@ -110,17 +109,13 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
                     if (size != 1) {
                         if (i == 0) {
                             child.setBackgroundResource(R.drawable.list_header);
-                            child.findViewById(R.id.list_separator_imv).setVisibility(View.VISIBLE);
                         } else if (i == (size - 1)) {
                             child.setBackgroundResource(R.drawable.list_footer);
-                            child.findViewById(R.id.list_separator_imv).setVisibility(View.GONE);
                         } else {
                             child.setBackgroundResource(R.drawable.list_middle);
-                            child.findViewById(R.id.list_separator_imv).setVisibility(View.VISIBLE);
                         }
                     } else {
                         child.setBackgroundResource(R.drawable.list_single);
-                        child.findViewById(R.id.list_separator_imv).setVisibility(View.GONE);
                     }
                 }
                 

@@ -62,8 +62,6 @@ public class ZhanlanDetailView extends BaseDetailView implements View.OnClickLis
     
     private TextView mAddressTxv = null;
     
-    private View mDividerView;
-    
     private TextView mTelephoneTxv = null;
     
     private TextView mDescriptionTitle;
@@ -126,7 +124,7 @@ public class ZhanlanDetailView extends BaseDetailView implements View.OnClickLis
        
         String name = mData.getPlaceName();
         DiscoverChildListFragment.showPOI(mSphinx, 0, TextUtils.isEmpty(name) ? mSphinx.getString(R.string.zhanlan_didian) : name, mData.getDistance(), mData.getAddress(), mData.getContactTel(), 
-                mFendianNameTxv, mDistanceTxv, mAddressView, mDividerView, mTelephoneView, mAddressTxv, mTelephoneTxv, 
+                mFendianNameTxv, mDistanceTxv, mAddressView, mTelephoneView, mAddressTxv, mTelephoneTxv, 
                 R.drawable.list_middle, R.drawable.list_footer, R.drawable.list_footer, mSphinx.getString(R.string.xiangxidizhi), mSphinx.getString(R.string.lianxidianhua));
         
         refreshDescription(true);
@@ -196,7 +194,6 @@ public class ZhanlanDetailView extends BaseDetailView implements View.OnClickLis
         mDistanceTxv = (TextView)view.findViewById(R.id.distance_txv);
         mAddressView = view.findViewById(R.id.address_view);
         mTelephoneView = view.findViewById(R.id.telephone_view);    
-        mDividerView = view.findViewById(R.id.divider_imv);
         mAddressTxv = (TextView)view.findViewById(R.id.address_txv);
         mTelephoneTxv = (TextView)view.findViewById(R.id.telephone_txv);
         

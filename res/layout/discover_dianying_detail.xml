@@ -192,14 +192,6 @@
                     android:textSize="14sp"
                     />
              </RelativeLayout>
-             
-             <ImageView
-                 android:background="@drawable/bg_line_split"
-                 android:layout_width="fill_parent"
-                 android:layout_height="wrap_content"
-                 android:layout_marginLeft="8dp"
-                 android:layout_marginRight="8dp"
-                 />
 
              <include
                  android:layout_width="match_parent"
@@ -230,13 +222,6 @@
                      android:textColor="@color/blue_title"
                      android:textSize="16sp"
                      android:background="@drawable/list_header_title"
-                     />
-                 <ImageView
-                     android:layout_width="fill_parent"
-                     android:layout_height="wrap_content"
-                     android:background="@drawable/bg_line_split"
-                     android:layout_marginLeft="8dp"
-                     android:layout_marginRight="8dp"
                      />
                  <TextView
                      android:id="@+id/description_txv"

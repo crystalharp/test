@@ -184,8 +184,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     
     private TextView mAddressTxv = null;
     
-    private ImageView mAddressTelephoneDividerImv = null;
-    
     private View mTelephoneView = null;
     
     private TextView mTelephoneTxv = null;
@@ -744,10 +742,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                 mAddressTxv.setText(address);
                 if (TextUtils.isEmpty(telephone)) {
                     mAddressView.setBackgroundResource(R.drawable.list_single);
-                    mAddressTelephoneDividerImv.setVisibility(View.GONE);
                 } else {
                     mAddressView.setBackgroundResource(R.drawable.list_header);
-                    mAddressTelephoneDividerImv.setVisibility(View.VISIBLE);
                 }
             } else {
                 mAddressView.setVisibility(View.GONE);
@@ -759,10 +755,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                 
                 if (TextUtils.isEmpty(address)) {
                     mTelephoneView.setBackgroundResource(R.drawable.list_single);
-                    mAddressTelephoneDividerImv.setVisibility(View.GONE);
                 } else {
                     mTelephoneView.setBackgroundResource(R.drawable.list_footer);
-                    mAddressTelephoneDividerImv.setVisibility(View.VISIBLE);
                 }
             } else {
                 mTelephoneView.setVisibility(View.GONE);
@@ -802,7 +796,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         boolean result = false;
         mCommentTipView.setVisibility(View.GONE);
         int count = mCommentListView.getChildCount();
-        for(int i = 2; i < count; i++) {
+        for(int i = 1; i < count; i++) {
             mCommentListView.getChildAt(i).setVisibility(View.GONE);
         }
         mCommentListView.setVisibility(View.GONE);
@@ -851,8 +845,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                     result = true;
                     mCommentListView.setVisibility(View.VISIBLE);
                     View commentView = null;
-                    if (count == 3) {
-                        View view = mCommentListView.getChildAt(2);
+                    if (count == 2) {
+                        View view = mCommentListView.getChildAt(1);
                         view.setVisibility(View.VISIBLE);
                         commentView = getCommentItemView(view, mCommentListView, lastComment, poi);
                     } else {
@@ -911,7 +905,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         mAddressAndPhoneView = mRootView.findViewById(R.id.address_phone_view);
         mAddressView = mRootView.findViewById(R.id.address_view);
         mAddressTxv = (TextView)mRootView.findViewById(R.id.address_txv);
-        mAddressTelephoneDividerImv = (ImageView) mRootView.findViewById(R.id.address_telephome_divider_imv);
         mTelephoneView = mRootView.findViewById(R.id.telephone_view);
         mTelephoneTxv = (TextView)mRootView.findViewById(R.id.telephone_txv);
         

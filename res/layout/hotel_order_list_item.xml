@@ -32,11 +32,6 @@
 	        android:textSize="18sp"/>
         
     </LinearLayout>
-    <ImageView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/bg_line_split"
-        />
     <LinearLayout  android:id="@+id/item_detail_lly"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"

@@ -30,29 +30,11 @@
 	            <include android:id="@+id/gps_view"
 	                layout="@layout/more_setting_list_item"
 	                />
-	            <ImageView 
-	                android:layout_width="fill_parent"
-	                android:layout_height="wrap_content"
-	                android:contentDescription="@string/app_name"
-	                android:background="@drawable/bg_line_split"
-	                />
 	            <include android:id="@+id/wake_view"
 	                layout="@layout/more_setting_list_item"
 	                />
-	            <ImageView 
-	                android:layout_width="fill_parent"
-	                android:layout_height="wrap_content"
-	                android:contentDescription="@string/app_name"
-	                android:background="@drawable/bg_line_split"
-	                />
 	            <include android:id="@+id/radar_view"
 	                layout="@layout/more_setting_list_item"
-	                />
-	            <ImageView 
-	                android:layout_width="fill_parent"
-	                android:layout_height="wrap_content"
-	                android:contentDescription="@string/app_name"
-	                android:background="@drawable/bg_line_split"
 	                />
 	            <include android:id="@+id/clear_cache_view"
 	                layout="@layout/more_setting_list_item"
@@ -66,12 +48,6 @@
                 >
 	            <include android:id="@+id/help_view"
 	                layout="@layout/more_setting_list_item"
-	                />
-	            <ImageView 
-	                android:layout_width="fill_parent"
-	                android:layout_height="wrap_content"
-	                android:contentDescription="@string/app_name"
-	                android:background="@drawable/bg_line_split"
 	                />
 	            <include android:id="@+id/about_view"
 	                layout="@layout/more_setting_list_item"

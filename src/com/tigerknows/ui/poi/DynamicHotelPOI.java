@@ -569,10 +569,8 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             View child = lsv.getChildView(i);
             if (i == (size-1) && mDynamicRoomTypeMoreView.getVisibility() == View.GONE) {
                 child.setBackgroundResource(R.drawable.list_footer);
-                child.findViewById(R.id.list_separator_imv).setVisibility(View.GONE);
             } else {
                 child.setBackgroundResource(R.drawable.list_middle);
-                child.findViewById(R.id.list_separator_imv).setVisibility(View.VISIBLE);
             }
             child.setPadding(Util.dip2px(Globals.g_metrics.density, 8), 0, Util.dip2px(Globals.g_metrics.density, 8), 0);
         }

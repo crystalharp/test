@@ -62,8 +62,6 @@ public class YanchuDetailView extends BaseDetailView implements View.OnClickList
     
     private TextView mAddressTxv = null;
     
-    private View mDividerView;
-    
     private TextView mTelephoneTxv = null;
     
     private TextView mDescriptionTitle;
@@ -136,7 +134,7 @@ public class YanchuDetailView extends BaseDetailView implements View.OnClickList
         }
         String name = mData.getPlaceName();
         DiscoverChildListFragment.showPOI(mSphinx, 0, TextUtils.isEmpty(name) ? mSphinx.getString(R.string.yanchu_didian) : name, mData.getDistance(), mData.getAddress(), telephone, 
-                mFendianNameTxv, mDistanceTxv, mAddressView, mDividerView, mTelephoneView, mAddressTxv, mTelephoneTxv, 
+                mFendianNameTxv, mDistanceTxv, mAddressView, mTelephoneView, mAddressTxv, mTelephoneTxv, 
                 R.drawable.list_middle, R.drawable.list_footer, R.drawable.list_footer, mSphinx.getString(R.string.xiangxidizhi), telephoneTitle);
         
         refreshDescription(true);
@@ -232,7 +230,6 @@ public class YanchuDetailView extends BaseDetailView implements View.OnClickList
         mDistanceTxv = (TextView)view.findViewById(R.id.distance_txv);
         mAddressView = view.findViewById(R.id.address_view);
         mTelephoneView = view.findViewById(R.id.telephone_view);    
-        mDividerView = view.findViewById(R.id.divider_imv);
         mAddressTxv = (TextView)view.findViewById(R.id.address_txv);
         mTelephoneTxv = (TextView)view.findViewById(R.id.telephone_txv);
         

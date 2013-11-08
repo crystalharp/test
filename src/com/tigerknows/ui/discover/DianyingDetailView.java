@@ -106,8 +106,6 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
     
     private View mAddressView = null;
     
-    private View mDividerView;
-    
     private View mTelephoneView = null;
     
     private View mNotimeView = null;
@@ -233,7 +231,7 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
         
         mYingxun = mData.getYingxun();
         DiscoverChildListFragment.showPOI(mSphinx, mYingxun.getName(), mYingxun.getDistance(), mYingxun.getAddress(), mYingxun.getPhone(), 
-                mFendianNameTxv, mDistanceTxv, mAddressView, mDividerView, mTelephoneView, mAddressTxv, mTelephoneTxv, 
+                mFendianNameTxv, mDistanceTxv, mAddressView, mTelephoneView, mAddressTxv, mTelephoneTxv, 
                 R.drawable.list_middle, R.drawable.list_middle, R.drawable.list_middle);
         
         mNotimeView.setVisibility(View.GONE);
@@ -321,7 +319,6 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
         
         mNotimeView = view.findViewById(R.id.no_time_view);
         mAddressView = view.findViewById(R.id.address_view);
-        mDividerView = view.findViewById(R.id.divider_imv);
         mTelephoneView = view.findViewById(R.id.telephone_view);
         mFendianNameView = view.findViewById(R.id.name_view);
         mFendianNameView.setBackgroundResource(R.drawable.list_middle);

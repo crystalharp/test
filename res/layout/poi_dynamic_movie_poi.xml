@@ -23,11 +23,6 @@
                 android:text="@string/play_dianying"
                 android:textSize="18sp"
                 android:padding="8dp" />
-        
-            <ImageView
-                android:background="@drawable/bg_line_split"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"/>
         </LinearLayout>
         <LinearLayout android:id="@+id/dynamic_dianying_list_view"
             android:layout_width="fill_parent" 

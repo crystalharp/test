@@ -65,10 +65,6 @@
                 android:text="@string/change_password"
                 android:textColor="@color/black_dark"
                 android:textSize="16sp" />
-            <ImageView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_line_split" />
             <Button
                 android:id="@+id/update_mobile_phone_btn"
                 android:layout_width="fill_parent"

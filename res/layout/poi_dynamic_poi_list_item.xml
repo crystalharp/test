@@ -26,7 +26,7 @@
 	        android:layout_height="wrap_content"
 	        android:padding="0dp"
 	        android:layout_alignParentLeft="true"
-	        android:layout_marginTop="2dp"
+	        android:layout_marginTop="6dp"
 	        android:layout_below="@id/name_txv" 
 	        android:progressDrawable="@drawable/ratingbar_small"
 	        style="@style/RatingBar.Small"

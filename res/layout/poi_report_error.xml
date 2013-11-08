@@ -32,12 +32,6 @@
                 android:drawablePadding="4dp"
                 android:paddingLeft="16dp"
                 />
-            <ImageView 
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_line_split"
-                android:contentDescription="@string/app_name"
-                />
             <Button android:id="@+id/tel_btn"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -46,12 +40,6 @@
                 android:background="@drawable/list_middle"
                 android:drawablePadding="4dp"
                 android:paddingLeft="16dp"
-                />
-            <ImageView 
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_line_split"
-                android:contentDescription="@string/app_name"
                 />
             <Button android:id="@+id/notexist_btn"
                 android:layout_width="fill_parent"
@@ -62,12 +50,6 @@
                 android:background="@drawable/list_middle"
                 android:drawablePadding="4dp"
                 android:paddingLeft="16dp"
-                />
-            <ImageView 
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_line_split"
-                android:contentDescription="@string/app_name"
                 />
             <Button android:id="@+id/address_btn"
                 android:layout_width="fill_parent"
@@ -89,12 +71,6 @@
                 android:background="@drawable/list_header"
                 android:drawablePadding="4dp"
                 android:paddingLeft="16dp"
-                />
-            <ImageView 
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_line_split"
-                android:contentDescription="@string/app_name"
                 />
             <Button android:id="@+id/location_btn"
                 android:layout_width="fill_parent"

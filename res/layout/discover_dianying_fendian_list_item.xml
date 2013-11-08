@@ -13,12 +13,6 @@
         layout="@layout/discover_tuangou_fendian_list_item"
         android:id="@+id/tuangou_fendian_list_item"
         />
-
-    <ImageView android:id="@+id/divider_imv"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/bg_line_split"
-        />
     
     <RelativeLayout
         android:layout_width="fill_parent"

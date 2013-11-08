@@ -159,11 +159,6 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
     private View mAddressViewGroup = null;
     
     /**
-     * Divider view between Address View and telephone view
-     */
-    private View mDividerView;
-    
-    /**
      * View group containing the {@link mTelephoneTxv}
      */
     private View mTelephoneView = null;
@@ -461,7 +456,7 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
     private void refreshFendian() {
         Fendian fendian = mData.getFendian();
         DiscoverChildListFragment.showPOI(mSphinx, fendian.getPlaceName(), fendian.getDistance(), fendian.getAddress(), fendian.getPlacePhone(), 
-                mFendianNameTxv, mDistanceTxv, mAddressViewGroup, mDividerView, mTelephoneView, mAddressTxv, mTelephoneTxv, 
+                mFendianNameTxv, mDistanceTxv, mAddressViewGroup, mTelephoneView, mAddressTxv, mTelephoneTxv, 
                 R.drawable.list_middle, R.drawable.list_footer, R.drawable.list_footer);
     }
     
@@ -583,7 +578,6 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
         mFendianNameTxv = (TextView) view.findViewById(R.id.name_txv);
         mDistanceTxv = (TextView)view.findViewById(R.id.distance_txv);
         mAddressViewGroup = view.findViewById(R.id.address_view);
-        mDividerView = view.findViewById(R.id.divider_imv);
         mTelephoneView = view.findViewById(R.id.telephone_view);
         mAddressTxv = (TextView)view.findViewById(R.id.address_txv);
         mTelephoneTxv = (TextView)view.findViewById(R.id.telephone_txv);

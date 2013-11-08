@@ -218,10 +218,8 @@ public class DynamicMoviePOI extends POIDetailFragment.DynamicPOIView{
             View child = mDynamicDianyingListView.getChildAt(i);
             if (i == (size-1) && mDynamicDianyingMoreView.getVisibility() == View.GONE) {
                 child.setBackgroundResource(R.drawable.list_footer);
-                child.findViewById(R.id.list_separator_imv).setVisibility(View.GONE);
             } else {
                 child.setBackgroundResource(R.drawable.list_middle);
-                child.findViewById(R.id.list_separator_imv).setVisibility(View.VISIBLE);
             }
         }
     }

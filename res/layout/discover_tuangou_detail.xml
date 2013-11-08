@@ -218,13 +218,6 @@
                     android:textSize="14sp"
                     />
              </RelativeLayout>
-             <ImageView
-                 android:background="@drawable/bg_line_split"
-                 android:layout_width="fill_parent"
-                 android:layout_height="wrap_content"
-                 android:layout_marginLeft="8dp"
-                 android:layout_marginRight="8dp"
-                 />
              <include layout="@layout/discover_tuangou_fendian_list_item"
                  android:id="@+id/tuangou_fendian_list_item"
                  android:layout_width="fill_parent"
@@ -255,14 +248,6 @@
                      android:textSize="16sp"
                      android:background="@drawable/list_header_title"
                      />
-
-                 <ImageView
-                     android:layout_width="fill_parent"
-                     android:layout_height="wrap_content"
-                     android:background="@drawable/bg_line_split"
-                     android:layout_marginLeft="8dp"
-                     android:layout_marginRight="8dp"
-                     />
                  <LinearLayout 
                      android:id="@+id/content_container_view"
                      android:layout_width="fill_parent"
@@ -291,12 +276,6 @@
                      android:layout_height="wrap_content"
                      android:background="@drawable/list_footer"
                      android:orientation="vertical">
-
-                     <ImageView
-                         android:layout_width="fill_parent"
-                         android:layout_height="wrap_content"
-                         android:background="@drawable/bg_line_split"
-                         />
                     <TextView
                         android:id="@+id/viewurl_txv"
                         android:layout_width="wrap_content"
@@ -333,13 +312,6 @@
                      android:textColor="@color/blue_title"
                      android:textSize="16sp"
                      android:background="@drawable/list_header_title"
-                     />
-                 <ImageView
-                     android:layout_width="fill_parent"
-                     android:layout_height="wrap_content"
-                     android:background="@drawable/bg_line_split"
-                     android:layout_marginLeft="8dp"
-                     android:layout_marginRight="8dp"
                      />
                  <TextView
                      android:id="@+id/noticed_txv"

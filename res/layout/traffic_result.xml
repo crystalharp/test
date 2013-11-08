@@ -93,13 +93,6 @@
 	        </TextView>
 	        
         </RelativeLayout>
-        <!-- <ImageView 
-	        android:id="@+id/shadow2"
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
-	        android:background="@color/white"
-	        android:scaleType="fitXY"
-	        android:src="@drawable/bg_line_split" /> -->
     </LinearLayout>        
 	
     <!-- <TextView android:id="@+id/length_txv"

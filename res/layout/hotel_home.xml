@@ -81,11 +81,6 @@
                         android:ellipsize="end"
                         />
                 </LinearLayout>
-                <ImageView
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/bg_line_split"
-                    />
                 <LinearLayout
                     android:id="@+id/location_view"
                     android:layout_width="fill_parent"
@@ -125,11 +120,6 @@
                         android:ellipsize="end"
                         />
                 </LinearLayout>
-                <ImageView
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/bg_line_split"
-                    />
                 <RelativeLayout
                     android:id="@+id/check_in_time_view"
                     android:layout_width="fill_parent"
@@ -144,11 +134,6 @@
                         android:layout_height="wrap_content"
                         />
                 </RelativeLayout>
-                <ImageView
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/bg_line_split"
-                    />
                 <LinearLayout
                     android:id="@+id/price_view"
                     android:layout_width="fill_parent"
@@ -188,11 +173,6 @@
                         android:ellipsize="end"
                         />
                 </LinearLayout>
-                <ImageView
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/bg_line_split"
-                    />
                 <RelativeLayout
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"

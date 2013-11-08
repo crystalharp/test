@@ -148,14 +148,6 @@
                     />
             </LinearLayout>
 
-            <ImageView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_line_split"
-                android:contentDescription="@string/app_name"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                />
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -189,14 +181,6 @@
                     />
             </LinearLayout>
 
-            <ImageView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_line_split"
-                android:contentDescription="@string/app_name"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                />
             <LinearLayout android:id="@+id/person_name_lly"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -237,14 +221,6 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <ImageView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_line_split"
-                android:contentDescription="@string/app_name"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                />
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"

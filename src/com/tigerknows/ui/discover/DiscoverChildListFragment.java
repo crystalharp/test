@@ -358,14 +358,13 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
             TextView addressTxv = (TextView) view.findViewById(R.id.address_txv);
             final TextView telephoneTxv = (TextView) view.findViewById(R.id.telephone_txv);
             View telephoneView = view.findViewById(R.id.telephone_view);
-            View dividerView = view.findViewById(R.id.divider_imv);
 
             final Fendian fendian = getItem(position);
             String distance = fendian.getDistance();
             String address = fendian.getAddress();
             String phone = fendian.getPlacePhone();
             showPOI(mSphinx, position+1, fendian.getPlaceName(), distance, address, phone, 
-                    nameTxv, distanceTxv, addressView, dividerView, telephoneView, addressTxv, telephoneTxv, 
+                    nameTxv, distanceTxv, addressView, telephoneView, addressTxv, telephoneTxv, 
                     R.drawable.list_middle, R.drawable.list_footer, R.drawable.list_footer, null, null);
             
             View.OnClickListener onClickListener = new OnClickListener() {
@@ -391,11 +390,11 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
         }
     }
     
-    public static void showPOI(Context context, String name, String distance, String address, String phone, TextView nameTxv, TextView distanceTxv, View addressView, View dividerView, View telephoneView, TextView addressTxv, TextView telephoneTxv, int headerResId, int footerResId, int singleResId) {
-        showPOI(context, 0, name, distance, address, phone, nameTxv, distanceTxv, addressView, dividerView, telephoneView, addressTxv, telephoneTxv, headerResId, footerResId, singleResId, null, null);
+    public static void showPOI(Context context, String name, String distance, String address, String phone, TextView nameTxv, TextView distanceTxv, View addressView, View telephoneView, TextView addressTxv, TextView telephoneTxv, int headerResId, int footerResId, int singleResId) {
+        showPOI(context, 0, name, distance, address, phone, nameTxv, distanceTxv, addressView, telephoneView, addressTxv, telephoneTxv, headerResId, footerResId, singleResId, null, null);
     }
     
-    public static void showPOI(Context context, int order, String name, String distance, String address, String phone, TextView nameTxv, TextView distanceTxv, View addressView, View dividerView, View telephoneView, TextView addressTxv, TextView telephoneTxv, int headerResId, int footerResId, int singleResId, String addressTitle, String telephoneTitle) {
+    public static void showPOI(Context context, int order, String name, String distance, String address, String phone, TextView nameTxv, TextView distanceTxv, View addressView, View telephoneView, TextView addressTxv, TextView telephoneTxv, int headerResId, int footerResId, int singleResId, String addressTitle, String telephoneTitle) {
         
         nameTxv.setText(order > 0 ? order+". "+name : name);
         
@@ -424,21 +423,17 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
             telephoneView.setBackgroundResource(footerResId);
             addressView.setVisibility(View.VISIBLE);
             telephoneView.setVisibility(View.VISIBLE);
-            dividerView.setVisibility(View.VISIBLE);
         } else if (addressEmpty && phoneEmpty) {
             addressView.setVisibility(View.GONE);
             telephoneView.setVisibility(View.GONE);
-            dividerView.setVisibility(View.GONE);
         } else if (addressEmpty == false) {
             addressView.setBackgroundResource(singleResId);
             addressView.setVisibility(View.VISIBLE);
             telephoneView.setVisibility(View.GONE);
-            dividerView.setVisibility(View.GONE);
         } else if (phoneEmpty == false) {
             telephoneView.setBackgroundResource(singleResId);
             addressView.setVisibility(View.GONE);
             telephoneView.setVisibility(View.VISIBLE);
-            dividerView.setVisibility(View.GONE);
         }
 
     }
@@ -475,7 +470,6 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
             View addressView = view.findViewById(R.id.address_view);
             View telephoneView = view.findViewById(R.id.telephone_view);
             View notimeView = view.findViewById(R.id.no_time_view);
-            View dividerView = view.findViewById(R.id.divider_imv);
             
             layoutShowTimeView(showTimeView, showTimeDividerImv);
             
@@ -484,7 +478,7 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
             String address = yingxun.getAddress();
             String phone = yingxun.getPhone();
             showPOI(mSphinx, position+1, yingxun.getName(), distance, address, phone, 
-                    nameTxv, distanceTxv, addressView, dividerView, telephoneView, addressTxv, telephoneTxv, 
+                    nameTxv, distanceTxv, addressView, telephoneView, addressTxv, telephoneTxv, 
                     R.drawable.list_middle, R.drawable.list_middle, R.drawable.list_middle, null, null);
             
             makeChangciView(yingxun, mSphinx, mLayoutInflater, changciListView);

@@ -403,7 +403,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
     	}
     	
     	DiscoverChildListFragment.showPOI(mContext, order.getHotelName(), null, order.getHotelAddress(), mOrder.getHotelTel(), mHotelNameTxv, mDistanceTxv, 
-    			mRootView.findViewById(R.id.address_view), mRootView.findViewById(R.id.divider_imv), mRootView.findViewById(R.id.telephone_view)
+    			mRootView.findViewById(R.id.address_view), mRootView.findViewById(R.id.telephone_view)
     			, mHotelAddressTxv, mHotelTelTxv, R.drawable.list_middle, R.drawable.list_footer, R.drawable.list_footer);
     	
     	mOrderIdTxv.setText(order.getId());

@@ -40,11 +40,6 @@
             android:focusable="false"
         /> 
     </RelativeLayout>
-
-	<ImageView
-		android:background="@drawable/bg_line_split"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"/>
              
     <LinearLayout android:id="@+id/address_view"
         android:layout_width="fill_parent"
@@ -65,11 +60,6 @@
             android:autoLink="none"
             />
     </LinearLayout>
-
-	<ImageView android:id="@+id/divider_imv"
-		android:background="@drawable/bg_line_split"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"/>
 	
     <LinearLayout android:id="@+id/telephone_view"
         android:layout_width="fill_parent"

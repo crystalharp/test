@@ -72,6 +72,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:divider="@drawable/bg_line_split"
+            android:dividerHeight="0.3dp"
             android:footerDividersEnabled="true"
             android:fadingEdge="none"
             android:scrollingCache="false"

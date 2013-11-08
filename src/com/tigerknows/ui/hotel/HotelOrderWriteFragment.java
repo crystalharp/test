@@ -443,16 +443,12 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     private void RefreshPersonView(){
         // 这个函数用于在房间数变化时，入住人的编辑框数量相应变化
         int count = mPersonNameLly.getChildCount();
-        if(count > mRoomHowmany*2-1){
-            for (int i = count-1; i >= mRoomHowmany*2-1; i--){
+        if(count > mRoomHowmany){
+            for (int i = count-1; i >= mRoomHowmany; i--){
                 mPersonNameLly.removeViewAt(i);
             }
-        }else if(count < mRoomHowmany*2-1){
-            for (int i = (count+1)/2; i < mRoomHowmany; i++){
-                ImageView imv = new ImageView(mContext);
-                imv.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
-                imv.setBackgroundDrawable(getResources().getDrawable(R.drawable.bg_line_split));
-                mPersonNameLly.addView(imv);
+        }else if(count < mRoomHowmany){
+            for (int i = count; i < mRoomHowmany; i++){
                 mPersonNameLly.addView(createPerson(idArray[i]));
             }
         }
