@@ -8,6 +8,8 @@
 
 package com.tigerknows.model;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -657,8 +659,7 @@ public abstract class BaseQuery {
         while ((isFirstConnection || needReconntection) && !isStop) {
             try {
                 httpClient.setApiType(getActionTag());
-                boolean isLaunchTest = false;
-                if (TKConfig.LaunchTest) {
+                if (TKConfig.LaunchTest == 1) {
                     if (apiType.equals(API_TYPE_DATA_QUERY)
                             || apiType.equals(API_TYPE_DATA_OPERATION)
                             || apiType.equals(API_TYPE_ACCOUNT_MANAGE)
@@ -668,25 +669,45 @@ public abstract class BaseQuery {
                             || apiType.equals(API_TYPE_FEEDBACK_UPLOAD)
                             || apiType.equals(API_TYPE_FILE_UPLOAD)
                             || apiType.equals(API_TYPE_FILE_DOWNLOAD)) {
-                        try {
-                            httpClient.execute(context);
-                        } catch (Exception e) {
-                            
-                        }
                         launchTest();
                         if (responseXMap != null) {
-                            httpClient.launchTest(ByteUtil.xobjectToByte(responseXMap), STATUS_CODE_NETWORK_OK);
-                            isLaunchTest = true;
+                            byte[] data = ByteUtil.xobjectToByte(responseXMap);
+                            data = ZLibUtils.compress(data);
+                            DataEncryptor.getInstance().encrypt(data);
+                            httpClient.launchTest(data, STATUS_CODE_NETWORK_OK);
+                        }
+                    } 
+                } else if (TKConfig.LaunchTest == 2) {
+                    File file = new File(TKConfig.getTestDataPath()+getActionTag());
+                    if (file.exists()) {
+                        FileInputStream fis = null;
+                        try {
+                            fis = new FileInputStream(file);
+                            byte[] data = Utility.readFileToByte(fis);
+                            httpClient.launchTest(data, STATUS_CODE_NETWORK_OK);
+                        } catch (Exception e) {
+                            file.delete();
+                            e.printStackTrace();
+                        } finally {
+                            if (null != fis) {
+                                try {
+                                    fis.close();
+                                } catch (IOException e) {
+                                    // Ignore
+                                    LogWrapper.e(TAG, "excute() IOException caught while closing stream");
+                                }
+                            }
                         }
                     }
-                }
-                LogWrapper.d(TAG, "isLaunchTest="+isLaunchTest);
-                if (isLaunchTest == false) {
+                } else {
                     httpClient.execute(context);
                 }
                 statusCode = httpClient.getStatusCode();
                 if (statusCode == STATUS_CODE_NETWORK_OK) {
                     byte[] data = httpClient.getData();
+                    if (TKConfig.SaveResponseData) {
+                        Utility.writeFile(TKConfig.getTestDataPath() + getActionTag(), data, true);
+                    }
                     if (data != null) {
                         LogWrapper.i(TAG, "execute():at="+apiType+", response="+data.length);
                     } else {
@@ -871,15 +892,13 @@ public abstract class BaseQuery {
     
     protected void translateResponse(byte[] data) throws APIException {
         try {
-            if (TKConfig.LaunchTest == false) { // 如果是自动测试分填充的数据，则没有加密
-                // 解密数据
-                DataEncryptor.getInstance().decrypt(data);
-                // 解压数据
-                try {
-                    data = ZLibUtils.decompress(data);
-                } catch (Exception cause) {
-                    throw new APIException("decode data error");
-                }
+            // 解密数据
+            DataEncryptor.getInstance().decrypt(data);
+            // 解压数据
+            try {
+                data = ZLibUtils.decompress(data);
+            } catch (Exception cause) {
+                throw new APIException("decode data error");
             }
             try {
                 responseXMap = (XMap) ByteUtil.byteToXObject(data);
@@ -1422,7 +1441,7 @@ public abstract class BaseQuery {
         }
     }
     
-    String getActionTag() {
+    protected String getActionTag() {
         StringBuilder s = new StringBuilder();
         s.append(apiType);
         s.append('@');
@@ -1435,17 +1454,6 @@ public abstract class BaseQuery {
             s.append(getParameter(SERVER_PARAMETER_SUB_DATA_TYPE));
         }
         s.append('@');
-        if (hasParameter(FeedbackUpload.SERVER_PARAMETER_FEEDBACK)) {
-            s.append(FeedbackUpload.SERVER_PARAMETER_FEEDBACK);
-        } else if (hasParameter(FeedbackUpload.SERVER_PARAMETER_ACTION_LOG)) {
-            s.append(FeedbackUpload.SERVER_PARAMETER_ACTION_LOG);
-        } else if (hasParameter(FeedbackUpload.SERVER_PARAMETER_LOCATION)) {
-            s.append(FeedbackUpload.SERVER_PARAMETER_LOCATION);
-        } else if (hasParameter(FeedbackUpload.SERVER_PARAMETER_LOCATION_IN_ANDROID)) {
-            s.append(FeedbackUpload.SERVER_PARAMETER_LOCATION_IN_ANDROID);
-        } else if (hasParameter(FeedbackUpload.SERVER_PARAMETER_ERROR_RECOVERY)) {
-            s.append(FeedbackUpload.SERVER_PARAMETER_ERROR_RECOVERY);
-        }
         s.append('@');
         if (hasParameter(SERVER_PARAMETER_REQUSET_SOURCE_TYPE)) {
             s.append(getParameter(SERVER_PARAMETER_REQUSET_SOURCE_TYPE));

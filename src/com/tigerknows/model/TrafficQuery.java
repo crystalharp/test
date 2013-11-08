@@ -283,4 +283,21 @@ public final class TrafficQuery extends BaseQuery {
         }
     }
 
+    @Override
+    protected String getActionTag() {
+        StringBuilder s = new StringBuilder();
+        s.append(apiType);
+        s.append('@');
+        
+        s.append(queryType);
+        s.append('@');
+        s.append('@');
+        s.append('@');
+        if (hasParameter(SERVER_PARAMETER_REQUSET_SOURCE_TYPE)) {
+            s.append(getParameter(SERVER_PARAMETER_REQUSET_SOURCE_TYPE));
+        }
+        s.append('@');
+        
+        return s.toString();
+    }
 }

@@ -10,10 +10,14 @@ package com.tigerknows.model;
 
 import android.content.Context;
 
+import java.io.IOException;
+
 import com.decarta.android.exception.APIException;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.TKConfig;
 import com.tigerknows.map.MapEngine;
+import com.tigerknows.util.ByteUtil;
+import com.tigerknows.util.Utility;
 
 public final class BuslineQuery extends BaseQuery {
 
@@ -102,7 +106,15 @@ public final class BuslineQuery extends BaseQuery {
     protected void translateResponse(byte[] data) throws APIException {
         super.translateResponse(data);
         buslineModel = new BuslineModel(responseXMap);
-    	
+        try {
+        if (TKConfig.SaveResponseData) {
+            String path = TKConfig.getTestDataPath() + "buslinemodel";
+            Utility.writeFile(path, ByteUtil.xobjectToByte(responseXMap), true);
+        }
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         LogWrapper.d("eric", "BuslineQuery query response:" + buslineModel);
     }
 }

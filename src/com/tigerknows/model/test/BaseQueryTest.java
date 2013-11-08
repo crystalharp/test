@@ -437,12 +437,16 @@ public class BaseQueryTest {
         deleteMobileNumLayout.addView(deleteMobileNumEdt, new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
         layout.addView(deleteMobileNumLayout);
 
+        final CheckBox saveResponseDataChb = new CheckBox(activity);
+        layout.addView(saveResponseDataChb);
         final CheckBox modifyRequestData = new CheckBox(activity);
         layout.addView(modifyRequestData);
         final CheckBox modifyResponseData = new CheckBox(activity);
         layout.addView(modifyResponseData);
-        final CheckBox launchTestChb = new CheckBox(activity);
-        layout.addView(launchTestChb);
+        final TextView launchTestTxv = new TextView(activity);
+        layout.addView(launchTestTxv);
+        final EditText launchTestEdt = new EditText(activity);
+        layout.addView(launchTestEdt, new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
         final LinearLayout lunchTestLayout = new LinearLayout(activity);
         lunchTestLayout.setOrientation(LinearLayout.HORIZONTAL);
         TextView responseCodeTxv = new TextView(activity);
@@ -647,6 +651,16 @@ public class BaseQueryTest {
                 TKLocationManager.UnallowedLocation = unallowedLocationChb.isChecked();
             }
         });
+        saveResponseDataChb.setText("Save response data");
+        saveResponseDataChb.setTextColor(0xffffffff);
+        saveResponseDataChb.setChecked(TKConfig.SaveResponseData);
+        saveResponseDataChb.setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View arg0) {
+                TKConfig.SaveResponseData = saveResponseDataChb.isChecked();
+            }
+        });
         modifyRequestData.setText("Modify request data");
         modifyRequestData.setTextColor(0xffffffff);
         modifyRequestData.setChecked(TKConfig.ModifyRequestData);
@@ -667,15 +681,23 @@ public class BaseQueryTest {
                 TKConfig.ModifyResponseData = modifyResponseData.isChecked();
             }
         });
-        launchTestChb.setText("Launch fake data(Bootstrap, FeedbackUpload, DataQuery, DataOperation, AccountManage, ProxyQuery, HotelOrderOperation)");
-        launchTestChb.setTextColor(0xffffffff);
-        launchTestChb.setChecked(TKConfig.LaunchTest);
-        launchTestChb.setOnClickListener(new OnClickListener() {
+        launchTestEdt.setText(String.valueOf(TKConfig.LaunchTest));
+        launchTestEdt.setInputType(InputType.TYPE_CLASS_NUMBER);
+        launchTestTxv.setText("Launch fake data(0,no launch fake;1,launch from xmap;2,launch from file)");
+        launchTestTxv.setTextColor(0xff000000);
+        launchTestTxv.setBackgroundResource(R.drawable.btn_default);
+        launchTestTxv.setOnClickListener(new OnClickListener() {
             
             @Override
             public void onClick(View arg0) {
-                TKConfig.LaunchTest = launchTestChb.isChecked();
-                lunchTestLayout.setVisibility(TKConfig.LaunchTest ? View.VISIBLE : View.GONE);
+                String str = launchTestEdt.getEditableText().toString().trim();
+                if (TextUtils.isEmpty(str) == false) {
+                    try {
+                        TKConfig.LaunchTest = Integer.parseInt(str);
+                    } catch (Exception e) {
+                    }
+                }
+                lunchTestLayout.setVisibility(TKConfig.LaunchTest != 0 ? View.VISIBLE : View.GONE);
             }
         });
         responseCodeTxv.setText("ResponseCode:");
@@ -683,7 +705,7 @@ public class BaseQueryTest {
         responseCodeEdt.setText("");
         responseCodeEdt.setInputType(InputType.TYPE_CLASS_NUMBER);
         responseCodeEdt.setSingleLine();
-        lunchTestLayout.setVisibility(TKConfig.LaunchTest ? View.VISIBLE : View.GONE);
+        lunchTestLayout.setVisibility(TKConfig.LaunchTest != 0 ? View.VISIBLE : View.GONE);
         
         locationChb.setText("Specific Location(lat,lon,accuracy)");
         locationChb.setOnClickListener(new OnClickListener() {
@@ -866,7 +888,7 @@ public class BaseQueryTest {
             .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
                     try {
-                        if (launchTestChb.isChecked()) {
+                        if (TKConfig.LaunchTest == 0) {
                             String str = responseCodeEdt.getEditableText().toString().trim();
                             if (TextUtils.isEmpty(str) == false) {
                                 RESPONSE_CODE = Integer.parseInt(str);

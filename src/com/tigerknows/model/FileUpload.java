@@ -88,7 +88,7 @@ public final class FileUpload extends BaseQuery {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            if (TKConfig.LaunchTest) {
+            if (TKConfig.LaunchTest == 1) {
                 launchTest();
                 result = ByteUtil.xobjectToByte(responseXMap);
                 statusCode = STATUS_CODE_NETWORK_OK;

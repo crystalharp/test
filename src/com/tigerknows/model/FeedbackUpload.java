@@ -2,7 +2,6 @@ package com.tigerknows.model;
 
 import com.decarta.android.exception.APIException;
 import com.tigerknows.TKConfig;
-import com.tigerknows.model.test.BaseQueryTest;
 
 import android.content.Context;
 
@@ -68,6 +67,40 @@ public class FeedbackUpload extends BaseQuery {
     protected void translateResponse(byte[] data) throws APIException {
         super.translateResponse(data);
         this.response = new Response(responseXMap);
+    }
+    
+    @Override
+    protected String getActionTag() {
+        StringBuilder s = new StringBuilder();
+        s.append(apiType);
+        s.append('@');
+        
+        if (hasParameter(SERVER_PARAMETER_DATA_TYPE)) {
+            s.append(getParameter(SERVER_PARAMETER_DATA_TYPE));
+        }
+        s.append('@');
+        if (hasParameter(SERVER_PARAMETER_SUB_DATA_TYPE)) {
+            s.append(getParameter(SERVER_PARAMETER_SUB_DATA_TYPE));
+        }
+        s.append('@');
+        if (hasParameter(FeedbackUpload.SERVER_PARAMETER_FEEDBACK)) {
+            s.append(FeedbackUpload.SERVER_PARAMETER_FEEDBACK);
+        } else if (hasParameter(FeedbackUpload.SERVER_PARAMETER_ACTION_LOG)) {
+            s.append(FeedbackUpload.SERVER_PARAMETER_ACTION_LOG);
+        } else if (hasParameter(FeedbackUpload.SERVER_PARAMETER_LOCATION)) {
+            s.append(FeedbackUpload.SERVER_PARAMETER_LOCATION);
+        } else if (hasParameter(FeedbackUpload.SERVER_PARAMETER_LOCATION_IN_ANDROID)) {
+            s.append(FeedbackUpload.SERVER_PARAMETER_LOCATION_IN_ANDROID);
+        } else if (hasParameter(FeedbackUpload.SERVER_PARAMETER_ERROR_RECOVERY)) {
+            s.append(FeedbackUpload.SERVER_PARAMETER_ERROR_RECOVERY);
+        }
+        s.append('@');
+        if (hasParameter(SERVER_PARAMETER_REQUSET_SOURCE_TYPE)) {
+            s.append(getParameter(SERVER_PARAMETER_REQUSET_SOURCE_TYPE));
+        }
+        s.append('@');
+        
+        return s.toString();
     }
     
     /**

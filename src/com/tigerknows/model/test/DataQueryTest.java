@@ -68,11 +68,15 @@ import com.tigerknows.model.Yingxun.Changci;
 import com.tigerknows.model.xobject.XArray;
 import com.tigerknows.model.xobject.XInt;
 import com.tigerknows.model.xobject.XMap;
+import com.tigerknows.util.ByteUtil;
 import com.tigerknows.util.Utility;
 
 import android.content.Context;
 import android.text.TextUtils;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.List;
 
 public class DataQueryTest {
@@ -603,6 +607,28 @@ public class DataQueryTest {
         data.put(POIResponse.FIELD_FILTER_ORDER_INDEX, launchFilterIndex(3, 168));
         data.put(POIResponse.FIELD_FILTER_AREA, launchFilterArea());
         data.put(POIResponse.FIELD_FILTER_CATEGORY_ORDER, launchFilterCategoryOrder());
+        
+        String path = TKConfig.getDataPath(true) + "buslinemodel";
+        File file = new File(path);
+        if (file.exists()) {
+            FileInputStream fis = null;
+            try {
+                fis = new FileInputStream(file);
+                XMap xmap = (XMap)ByteUtil.byteToXObject(Utility.readFileToByte(fis));
+                data.put(POIResponse.FIELD_EXT_BUSLINE, xmap);
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                if (null != fis) {
+                    try {
+                        fis.close();
+                    } catch (IOException e) {
+                        // Ignore
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
         return data;
     }
 
