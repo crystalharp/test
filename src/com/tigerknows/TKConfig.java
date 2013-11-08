@@ -224,7 +224,12 @@ public class TKConfig {
     /**
      * 是否使用假数据
      */    
-    public static boolean LaunchTest = false;
+    public static int LaunchTest = 0;
+    
+    /**
+     * 是否保存数据
+     */    
+    public static boolean SaveResponseData = false;
     
     /**
      * 是否显示测试选项对话框
@@ -1123,6 +1128,21 @@ public class TKConfig {
         if (!file.exists()) {
             if (!file.mkdirs()) {
                 LogWrapper.e(TAG, "getSnapPath() Unable to create new folder: " + path);
+            }
+        }
+        return path;
+    }
+    
+    /**
+     * 获取测试数据文件存储路径
+     * @return
+     */
+    public static String getTestDataPath() {
+        String path = getSavePath()+ "testdata/";
+        File file = new File(path);
+        if (!file.exists()) {
+            if (!file.mkdirs()) {
+                LogWrapper.e(TAG, "getTestDataPath() Unable to create new folder: " + path);
             }
         }
         return path;

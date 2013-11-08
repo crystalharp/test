@@ -260,7 +260,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
                 }
                 if (!TextUtils.isEmpty(roomType.getVendorName())) {
                     roomSourceTxv.setVisibility(View.VISIBLE);
-                    roomSourceTxv.setText(roomType.getVendorName());
+                    roomSourceTxv.setText(mSphinx.getString(R.string.come_from_colon, roomType.getVendorName()));
                 } else {
                     roomSourceTxv.setVisibility(View.GONE);
                 }

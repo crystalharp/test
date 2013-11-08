@@ -44,7 +44,7 @@ public class DynamicSamplePOI extends DynamicPOIView {
         mSphinx = mPOIDetailFragment.mSphinx;
         mInflater = inflater;
         
-        View layout = mInflater.inflate(R.layout.poi_dynamic_normal_poi, null);
+        View layout = mInflater.inflate(R.layout.poi_dynamic_template, null);
         //该Block是个控制块，它的第一个参数是该Block要被加入的块区，第二个参数是Block要展示的layout
         mViewBlock = new DynamicPOIViewBlock(mPOIDetailFragment.mBelowAddressLayout, layout){
 

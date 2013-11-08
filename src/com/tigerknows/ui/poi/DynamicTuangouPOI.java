@@ -13,6 +13,7 @@ import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataOperation;
 import com.tigerknows.model.Fendian;
+import com.tigerknows.model.Shangjia;
 import com.tigerknows.model.Tuangou;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.POI.DynamicPOI;
@@ -23,6 +24,7 @@ import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIViewBlock;
 import com.tigerknows.widget.LinearListAdapter;
 
+import android.graphics.Paint;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,11 +47,13 @@ public class DynamicTuangouPOI extends POIDetailFragment.DynamicPOIView{
     LinearLayout mMoreView;
     TextView mTitleTxv;
     TextView mMoreTxv;
+    String mRMB;
         
     public DynamicTuangouPOI(POIDetailFragment poiFragment, LayoutInflater inflater){
         mPOIDetailFragment = poiFragment;
         mSphinx = mPOIDetailFragment.mSphinx;
         mInflater = inflater;
+        mRMB = mSphinx.getString(R.string.rmb_text);
         mRootView = (LinearLayout) mInflater.inflate(R.layout.poi_dynamic_template, null);
         mTitleTxv = (TextView) mRootView.findViewById(R.id.title_txv);
         mTitleTxv.setText(R.string.dynamic_tuangou_title);
@@ -105,22 +109,37 @@ public class DynamicTuangouPOI extends POIDetailFragment.DynamicPOIView{
         mListAdapter = new LinearListAdapter(mSphinx, mListView, R.layout.poi_dynamic_tuangou_list_item) {
 
             @Override
-            public View getView(Object data, View child, int pos) {
+            public View getView(Object data, View view, int pos) {
                 DynamicPOI dynamicPOI = (DynamicPOI) data;
                 try {
-                    Tuangou target = new Tuangou(dynamicPOI.getRemark());
-                    TextView nameTxv = (TextView) child.findViewById(R.id.name_txv);
-                    TextView priceTxv = (TextView) child.findViewById(R.id.price_txv);
-                    TextView orgPriceTxv = (TextView) child.findViewById(R.id.org_price_txv);
-                    TextView sourceTxv = (TextView) child.findViewById(R.id.source_txv);
                     
-                    child.setTag(dynamicPOI);
-                    child.setOnClickListener(mOnItemClickedListener);
+                    view.setTag(dynamicPOI);
+                    view.setOnClickListener(mOnItemClickedListener);
                     
-                    nameTxv.setText(target.getName());
-                    priceTxv.setText(target.getPrice());
-                    orgPriceTxv.setText(target.getOrgPrice());
-                    sourceTxv.setText(String.valueOf(target.getSource()));
+                    Tuangou tuangou = new Tuangou(dynamicPOI.getRemark());
+                    
+                    TextView nameTxv = (TextView) view.findViewById(R.id.name_txv);
+                    TextView priceTxv = (TextView) view.findViewById(R.id.price_txv);
+                    TextView orgPriceTxv = (TextView) view.findViewById(R.id.org_price_txv);
+                    TextView sourceTxv = (TextView) view.findViewById(R.id.source_txv);
+                    TextView appointmentTxv = (TextView) view.findViewById(R.id.appointment_txv);
+
+                    Shangjia shangjia = Shangjia.getShangjiaById(tuangou.getSource(), mSphinx, null);
+                    if (shangjia != null) {
+                        sourceTxv.setText(mSphinx.getString(R.string.come_from_colon, shangjia.getName()));
+                    } else {
+                        sourceTxv.setText(null);
+                    }
+                    nameTxv.setText(tuangou.getDescription());
+                    priceTxv.setText(tuangou.getPrice());
+                    orgPriceTxv.setText(tuangou.getOrgPrice()+mRMB);
+                    orgPriceTxv.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
+                    
+                    if (tuangou.getAppointment() == 1) {
+                        appointmentTxv.setVisibility(View.VISIBLE);
+                    } else {
+                        appointmentTxv.setVisibility(View.GONE);
+                    }
                 } catch (APIException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();

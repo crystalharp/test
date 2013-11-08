@@ -1038,6 +1038,7 @@
     <string name="dynamic_tuangou_title">本店团购</string>
     <string name="dynamic_tuangou_more">全部%1$d条团购</string>
     <string name="dynamic_poi_title">同类推荐</string>
+    <string name="dynamic_normal_title">本店活动</string>
 
 <!-- Hotel Reservation Start -->
     
@@ -1327,4 +1328,5 @@
     <string name="add_picture_success_for_dish">感谢你的反馈，图片待小虎审核后，就能在菜单中看到啦~</string>
     
     <string name="view_poi_result">查看商户搜索结果</string>
+    <string name="come_from_colon">来自：%1$s</string>
 </resources>
