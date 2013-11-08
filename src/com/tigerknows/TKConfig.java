@@ -1114,6 +1114,21 @@ public class TKConfig {
     }
     
     /**
+     * 获取快照文件存储路径
+     * @return
+     */
+    public static String getSnapPath() {
+        String path = getSavePath()+ "snapshot/";
+        File file = new File(path);
+        if (!file.exists()) {
+            if (!file.mkdirs()) {
+                LogWrapper.e(TAG, "getSnapPath() Unable to create new folder: " + path);
+            }
+        }
+        return path;
+    }
+    
+    /**
      * 获取引导服务访问的URL
      * @return
      */

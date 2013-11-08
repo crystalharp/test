@@ -1138,11 +1138,11 @@ public class MapView extends RelativeLayout implements
 
                         if (tilesView.isCancelSnap == false) {
                             Bitmap bm = tilesView.getSnapBitmap();
-                            String mapPath = TKConfig.getDataPath(true);
+                            String path = TKConfig.getSnapPath();
                             Uri uri = null;
-                            if (bm != null && !TextUtils.isEmpty(mapPath)) {
+                            if (bm != null && !TextUtils.isEmpty(path)) {
                                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
-                                uri = Utility.bitmap2Png(bm, "mapsnap_"+simpleDateFormat.format(Calendar.getInstance().getTime())+".png", mapPath);
+                                uri = Utility.bitmap2Png(bm, simpleDateFormat.format(Calendar.getInstance().getTime())+".png", path);
                                 if (bm.isRecycled() == false) {
                                     bm.recycle();
                                 }

@@ -19,6 +19,10 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 import com.decarta.Globals;
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
@@ -70,8 +74,19 @@ public class TrafficCompassActivity extends BaseActivity implements SensorEventL
 			public void onClick(View v) {
 				mActionLog.addAction(mActionTag + ActionLog.TrafficCompassShare);
 				Bitmap bm = Utility.viewToBitmap(mBodyRly);
-				Uri uri = Utility.bitmap2Png(bm, "compasssnap.png", TKConfig.getDataPath(true));
-				Utility.share(mThis, getString(R.string.share), null, uri);
+				String path = TKConfig.getSnapPath();
+                Uri uri = null;
+                if (bm != null && !TextUtils.isEmpty(path)) {
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
+                    uri = Utility.bitmap2Png(bm, simpleDateFormat.format(Calendar.getInstance().getTime())+".png", path);
+                    if (bm.isRecycled() == false) {
+                        bm.recycle();
+                    }
+                    bm = null;
+                    if (uri != null) {
+                        Utility.share(mThis, getString(R.string.share), null, uri);
+                    }
+                }
 			}
 		});
         mRightBtn.setBackgroundResource(R.drawable.btn_title);
