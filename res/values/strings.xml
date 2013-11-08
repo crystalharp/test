@@ -1325,4 +1325,6 @@
     <string name="add_picture">添加图片</string>
     <string name="add_picture_success">上传图片成功</string>
     <string name="add_picture_success_for_dish">感谢你的反馈，图片待小虎审核后，就能在菜单中看到啦~</string>
+    
+    <string name="view_poi_result">查看商户搜索结果</string>
 </resources>

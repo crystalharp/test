@@ -608,7 +608,7 @@ public class DataQueryTest {
         data.put(POIResponse.FIELD_FILTER_AREA, launchFilterArea());
         data.put(POIResponse.FIELD_FILTER_CATEGORY_ORDER, launchFilterCategoryOrder());
         
-        String path = TKConfig.getDataPath(true) + "buslinemodel";
+        String path = TKConfig.getTestDataPath() + "buslinemodel";
         File file = new File(path);
         if (file.exists()) {
             FileInputStream fis = null;

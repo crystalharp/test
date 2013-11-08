@@ -10,6 +10,7 @@ import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
+import com.tigerknows.map.MapEngine;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.BuslineModel;
 import com.tigerknows.model.BuslineQuery;
@@ -183,7 +184,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         if (sourceType == POI.SOURCE_TYPE_MY_LOCATION) {
             str = mContext.getString(R.string.searching);
         } else if (sourceType == POI.SOURCE_TYPE_CITY_CENTER) {
-            str = mContext.getString(R.string.at_city_searching, mSphinx.getMapEngine().getCityInfo(lastDataQuerying.getCityId()).getCName());
+            str = mContext.getString(R.string.at_city_searching, MapEngine.getCityInfo(lastDataQuerying.getCityId()).getCName());
         } else {
             str = mContext.getString(R.string.at_location_searching);
         }
@@ -984,13 +985,6 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 mSphinx.uiStackRemove(POIResultFragment.this.getId());
                 mSphinx.getBuslineResultLineFragment().setData(buslineQuery, dataQuery);
                 mSphinx.showView(R.id.view_traffic_busline_line_result);
-                return;
-            } else if (buslineModel.getType() == BuslineModel.TYPE_STATION) {
-                poiResponse.setBuslineModel(null);
-                uiStackAdjust(dataQuery);
-                mSphinx.uiStackRemove(POIResultFragment.this.getId());
-                mSphinx.getBuslineResultStationFragment().setData(buslineQuery, dataQuery);
-                mSphinx.showView(R.id.view_traffic_busline_station_result);
                 return;
             }
         }

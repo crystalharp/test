@@ -33,9 +33,7 @@ import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BuslineModel;
 import com.tigerknows.model.BuslineModel.Station;
 import com.tigerknows.model.BuslineQuery;
-import com.tigerknows.model.DataQuery;
 import com.tigerknows.ui.BaseFragment;
-import com.tigerknows.ui.poi.POIResultFragment;
 import com.tigerknows.widget.SpringbackListView;
 import com.tigerknows.widget.SpringbackListView.OnRefreshListener;
 
@@ -74,14 +72,6 @@ public class BuslineResultStationFragment extends BaseFragment {
      * 用于控制序号图片显示
      */
     private ChildView downView;
-    
-    private View mLoadingView = null;
-    
-    private View mAddMerchantFootView = null;
-    
-    private View mCurrentFootView;
-    
-    private DataQuery mDataQuery;
     
     int focusedIndex = Integer.MAX_VALUE;
     
@@ -132,10 +122,8 @@ public class BuslineResultStationFragment extends BaseFragment {
      */
     protected void findViews() {
         mResultLsv = (SpringbackListView)mRootView.findViewById(R.id.result_lsv);
-        mLoadingView =  mLayoutInflater.inflate(R.layout.loading, null);
-        mResultLsv.addFooterView(mLoadingView);
-        mCurrentFootView = mLoadingView;
-        mAddMerchantFootView = mLayoutInflater.inflate(R.layout.poi_list_item_add_merchant, null);
+        View v =  mLayoutInflater.inflate(R.layout.loading, null);
+        mResultLsv.addFooterView(v);
         mCommentTxv = (TextView)mRootView.findViewById(R.id.comment_txv);
     }
     
@@ -167,12 +155,6 @@ public class BuslineResultStationFragment extends BaseFragment {
                 if (!TextUtils.isEmpty(busLine)) {
                     mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position);
                     submitBuslineQuery(busLine);
-                } else if (mResultLsv.isFooterSpringback() == false && mDataQuery != null) {
-                    mSphinx.uiStackRemove(R.id.view_traffic_busline_station_result);
-                    int poiResultFragmentId = mSphinx.getPOIResultFragmentID();
-                    POIResultFragment poiResultFragment = (POIResultFragment) mSphinx.getFragment(poiResultFragmentId);
-                    poiResultFragment.setData(mDataQuery);
-                    mSphinx.showView(poiResultFragmentId);
                 }
             }
             
@@ -228,21 +210,16 @@ public class BuslineResultStationFragment extends BaseFragment {
         mActionLog.addAction(mActionTag+ActionLog.ListViewItemMore);
         }
     }
-    
-    public void setData(BuslineQuery buslineQuery) {
-        setData(buslineQuery, null);
-    }
 
     /**
      * 判断有无数据返回并根据内容设置当前状态
      * @param poiQuery 查询结果
      */
-    public void setData(BuslineQuery buslineQuery, DataQuery dataQuery) {
+    public void setData(BuslineQuery buslineQuery) {
         mResultLsv.onRefreshComplete(false);
         mResultLsv.setFooterSpringback(false);
         mBuslineQuery = buslineQuery;
         mBuslineModel = mBuslineQuery.getBuslineModel();
-        mDataQuery = dataQuery;
         
         if (mBuslineQuery.isTurnPage()) {
             if (mBuslineQuery.getBuslineModel() == null) {
@@ -267,33 +244,8 @@ public class BuslineResultStationFragment extends BaseFragment {
         mStationAdapter.notifyDataSetChanged();
         if (mStationList.size() >= mBuslineModel.getTotal()) {
             mResultLsv.setFooterSpringback(false);
-            if (mDataQuery != null) {
-                if (mCurrentFootView != mAddMerchantFootView) {
-                    mResultLsv.removeFooterView(mAddMerchantFootView);
-                    mResultLsv.removeFooterView(mLoadingView);
-                    mResultLsv.addFooterView(mAddMerchantFootView, false);
-                    mCurrentFootView = mAddMerchantFootView;
-                }
-            } else {
-                if (mCurrentFootView != mLoadingView) {
-                    int state = mResultLsv.getState(false);
-                    mResultLsv.removeFooterView(mAddMerchantFootView);
-                    mResultLsv.removeFooterView(mLoadingView);
-                    mResultLsv.addFooterView(mLoadingView);
-                    mCurrentFootView = mLoadingView;
-                    mResultLsv.changeHeaderViewByState(false, state);
-                }
-            }
         } else {
             mResultLsv.setFooterSpringback(true);
-            if (mCurrentFootView != mLoadingView) {
-                int state = mResultLsv.getState(false);
-                mResultLsv.removeFooterView(mAddMerchantFootView);
-                mResultLsv.removeFooterView(mLoadingView);
-                mResultLsv.addFooterView(mLoadingView);
-                mCurrentFootView = mLoadingView;
-                mResultLsv.changeHeaderViewByState(false, state);
-            }
             mSphinx.getHandler().postDelayed(mTurnPageRun, 1000);
         }
     }
@@ -459,10 +411,10 @@ public class BuslineResultStationFragment extends BaseFragment {
         		mSphinx.showTip(R.string.busline_non_tip, Toast.LENGTH_SHORT);
         	} else {
         		if (buslineModel.getType() == BuslineModel.TYPE_BUSLINE) {
-        			mSphinx.getBuslineResultLineFragment().setData(buslineQuery, mDataQuery);
+        			mSphinx.getBuslineResultLineFragment().setData(buslineQuery);
         			mSphinx.showView(R.id.view_traffic_busline_line_result);
         		} else if (buslineModel.getType() == BuslineModel.TYPE_STATION) {
-        			mSphinx.getBuslineResultStationFragment().setData(buslineQuery, mDataQuery);
+        			mSphinx.getBuslineResultStationFragment().setData(buslineQuery);
         		}        		
         	}
         }

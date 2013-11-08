@@ -56,9 +56,9 @@ public class ExtraSameTypePOI extends DynamicPOIView {
         for(int i = 0; i < size; i++) {
             View child = mListView.getChildAt(i);
             if (i == (size-1)) {
-                child.setBackgroundResource(R.drawable.list_footer);
+                child.setBackgroundResource(R.drawable.list_footer_separation_line);
             } else {
-                child.setBackgroundResource(R.drawable.list_middle);
+                child.setBackgroundResource(R.drawable.list_middle_separation_line);
             }
         }
     }

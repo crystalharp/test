@@ -135,7 +135,7 @@ public class BuslineResultLineFragment extends BaseFragment {
         mLoadingView =  mLayoutInflater.inflate(R.layout.loading, null);
         mResultLsv.addFooterView(mLoadingView);
         mCurrentFootView = mLoadingView;
-        mAddMerchantFootView = mLayoutInflater.inflate(R.layout.poi_list_item_add_merchant, null);
+        mAddMerchantFootView = mLayoutInflater.inflate(R.layout.traffic_busline_list_item_more_poi, null);
         mCommentTxv = (TextView)mRootView.findViewById(R.id.comment_txv);
     }
 

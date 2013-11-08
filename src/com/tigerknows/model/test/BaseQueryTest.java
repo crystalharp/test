@@ -445,8 +445,6 @@ public class BaseQueryTest {
         layout.addView(modifyResponseData);
         final TextView launchTestTxv = new TextView(activity);
         layout.addView(launchTestTxv);
-        final EditText launchTestEdt = new EditText(activity);
-        layout.addView(launchTestEdt, new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
         final LinearLayout lunchTestLayout = new LinearLayout(activity);
         lunchTestLayout.setOrientation(LinearLayout.HORIZONTAL);
         TextView responseCodeTxv = new TextView(activity);
@@ -681,23 +679,16 @@ public class BaseQueryTest {
                 TKConfig.ModifyResponseData = modifyResponseData.isChecked();
             }
         });
-        launchTestEdt.setText(String.valueOf(TKConfig.LaunchTest));
-        launchTestEdt.setInputType(InputType.TYPE_CLASS_NUMBER);
-        launchTestTxv.setText("Launch fake data(0,no launch fake;1,launch from xmap;2,launch from file)");
+        launchTestTxv.setText(TKConfig.LaunchTest + "\nLaunch fake data(0,no launch fake;1,launch from xmap;2,launch from file)");
         launchTestTxv.setTextColor(0xff000000);
         launchTestTxv.setBackgroundResource(R.drawable.btn_default);
         launchTestTxv.setOnClickListener(new OnClickListener() {
             
             @Override
             public void onClick(View arg0) {
-                String str = launchTestEdt.getEditableText().toString().trim();
-                if (TextUtils.isEmpty(str) == false) {
-                    try {
-                        TKConfig.LaunchTest = Integer.parseInt(str);
-                    } catch (Exception e) {
-                    }
-                }
-                lunchTestLayout.setVisibility(TKConfig.LaunchTest != 0 ? View.VISIBLE : View.GONE);
+                TKConfig.LaunchTest = (TKConfig.LaunchTest+1)%3;
+                launchTestTxv.setText(TKConfig.LaunchTest + "\nLaunch fake data(0,no launch fake;1,launch from xmap;2,launch from file)");
+                lunchTestLayout.setVisibility(TKConfig.LaunchTest == 1 ? View.VISIBLE : View.GONE);
             }
         });
         responseCodeTxv.setText("ResponseCode:");
@@ -705,7 +696,7 @@ public class BaseQueryTest {
         responseCodeEdt.setText("");
         responseCodeEdt.setInputType(InputType.TYPE_CLASS_NUMBER);
         responseCodeEdt.setSingleLine();
-        lunchTestLayout.setVisibility(TKConfig.LaunchTest != 0 ? View.VISIBLE : View.GONE);
+        lunchTestLayout.setVisibility(TKConfig.LaunchTest == 1 ? View.VISIBLE : View.GONE);
         
         locationChb.setText("Specific Location(lat,lon,accuracy)");
         locationChb.setOnClickListener(new OnClickListener() {
