@@ -495,7 +495,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             mData = (RoomType) mClickedBookBtn.getTag(R.id.tag_hotel_room_type_data);
             mClickedRoomType = mData;
             List<BaseQuery> baseQueryList = new ArrayList<BaseQuery>();
-            baseQueryList.add(buildRoomTypeDynamicQuery(mData.getVendorID(), mHotel.getUuid(), mData.getRoomId(), mData.getRateplanId(), checkin, checkout));
+            baseQueryList.add(buildRoomTypeDynamicQuery(mData.getVendorID(), mData.getHotelID(), mData.getRoomId(), mData.getRateplanId(), checkin, checkout));
             queryStart(baseQueryList);
             
         }

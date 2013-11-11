@@ -765,8 +765,6 @@ public class DataQueryTest {
 
     public static XMap launchHotelPOI(String name, int canReserve) {
         XMap data = launchPOI(name);
-        data.put(Hotel.FIELD_UUID, "FIELD_UUID");
-        data.put(Hotel.FIELD_SOURCE, "FIELD_SOURCE");
         data.put(Hotel.FIELD_BRAND, 8);
         data.put(Hotel.FIELD_IMAGE_THUMB, "FIELD_IMAGE_THUMB");
         XArray<XMap> xarray = new XArray<XMap>();
@@ -805,6 +803,7 @@ public class DataQueryTest {
         data.put(RoomType.FIELD_SUBTITLE, "FIELD_SUBTITLE");
         data.put(RoomType.FIELD_VENDOR_ID, order%3 + 2000);
         data.put(RoomType.FIELD_VENDOR_NAME, "FIELD_VENDOR_" + order%3);
+        data.put(RoomType.FIELD_HOTEL_ID, "FIELD_HOTEL_ID");
         return data;
     }
 

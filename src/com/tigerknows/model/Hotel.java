@@ -27,17 +27,11 @@ import java.util.List;
  */
 public class Hotel extends XMapData {
     
-    public static final String NEED_FILED_LIST = "5051525357";
+    public static final String NEED_FILED_LIST = "525357";
     
     public static final String NEED_FILED_DETAIL = "54555859";
     
-    public static final String NEED_FILED_ROOM_INFO = "5055";
-    
-    // 0x50 x_string 酒店ID
-    public static final byte FIELD_UUID = 0x50;
-
-    // 0x51 x_string 合作商来源
-    public static final byte FIELD_SOURCE = 0x51;
+    public static final String NEED_FILED_ROOM_INFO = "55";
 
     // 0x52 x_string 酒店品牌，{ "如家", ... "其它" }
     public static final byte FIELD_BRAND = 0x52;
@@ -108,8 +102,6 @@ public class Hotel extends XMapData {
     public void init(XMap data, boolean reset) throws APIException {
         super.init(data, reset);
         
-        this.uuid = getStringFromData(FIELD_UUID, reset ? null : this.uuid);
-        this.source = getStringFromData(FIELD_SOURCE, reset ? null : this.source);
         this.brand = getLongFromData(FIELD_BRAND, reset ? 0 : this.brand);
         
         imageThumbUrl = getStringFromData(FIELD_IMAGE_THUMB);
@@ -150,12 +142,6 @@ public class Hotel extends XMapData {
     public XMap getData() {
         if (this.data == null) {
             XMap data = new XMap();
-            if (uuid != null) {
-                data.put(FIELD_UUID, uuid);
-            }
-            if (source != null) {
-                data.put(FIELD_SOURCE, source);
-            }
             if (brand != 0) {
                 data.put(FIELD_BRAND, brand);
             }
@@ -377,6 +363,9 @@ public class Hotel extends XMapData {
         
         // 0x13 x_string 第三方商家来源名字
         public static final byte FIELD_VENDOR_NAME = 0x13;
+        
+        // 0x14 x_string 第三方商家中，该酒店ID
+        public static final byte FIELD_HOTEL_ID = 0x14;
 
         // 0x00 x_string 房型id room_id
         private String roomId;
@@ -419,6 +408,9 @@ public class Hotel extends XMapData {
         
         // 0x13 x_string 第三方商家来源名字
         private String vendorName;
+        
+        // 0x14 x_string 第三方商家中，该酒店ID
+        private String hotelID;
 
         public RoomType(XMap data) throws APIException {
             super(data);
@@ -436,6 +428,7 @@ public class Hotel extends XMapData {
             this.subtitle = getStringFromData(FIELD_SUBTITLE);
             this.vendorId = getLongFromData(FIELD_VENDOR_ID);
             this.vendorName = getStringFromData(FIELD_VENDOR_NAME);
+            this.hotelID = getStringFromData(FIELD_HOTEL_ID);
         }
 
         public String getRoomId() {
@@ -495,7 +488,12 @@ public class Hotel extends XMapData {
         
         public String getVendorName(){
         	return vendorName;
-        }        
+        }
+        
+        public String getHotelID(){
+        	return hotelID;
+        }
+        
         public String generateDescription() {
             return Utility.joinFields(" ", bedType, breakfast, netService, floor, area);
         }
