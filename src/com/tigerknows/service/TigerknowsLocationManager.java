@@ -35,7 +35,7 @@ public class TigerknowsLocationManager {
     }
     
     private ILocationBinder mLocationService;
-    private ServiceConnection mConnection = new ServiceConnection() {
+    private ServiceConnection mServiceConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className,
                 IBinder service) {
             mLocationService = ILocationBinder.Stub.asInterface(service);
@@ -47,6 +47,12 @@ public class TigerknowsLocationManager {
         }
         
         public void onServiceDisconnected(ComponentName className) {
+            try {
+                mLocationService.unregisterCallback(mLocationCallback);
+            } catch (RemoteException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
             mLocationService = null;
         }
     };
@@ -90,10 +96,10 @@ public class TigerknowsLocationManager {
     
     public void bindService() {
         Intent intent = new Intent(mContext, LocationService.class);
-        mContext.bindService(intent, mConnection, Context.BIND_AUTO_CREATE); 
+        mContext.bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE); 
     }
 
     public void unbindService() {
-        mContext.unbindService(mConnection);
+        mContext.unbindService(mServiceConnection);
     }
 }
