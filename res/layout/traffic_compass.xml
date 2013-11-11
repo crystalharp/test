@@ -96,7 +96,7 @@
 	        android:padding="8dp"
 	        android:layout_marginBottom="16dp"
 	        />
-	    <ImageView android:id="@+id/compass_imv"
+	    <com.tigerknows.widget.RotateImageView android:id="@+id/compass_imv"
 	        android:layout_width="fill_parent"
 	        android:layout_height="fill_parent"
 	        android:src="@drawable/ani_compass"
@@ -115,7 +115,6 @@
 	        android:layout_margin="16dp"
 	        android:scaleType="fitCenter"
 	        />        
-        
     </RelativeLayout>
 
 </LinearLayout>

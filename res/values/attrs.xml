@@ -33,6 +33,11 @@
         <attr name="maxLines" format="integer" />
         <attr name="textSize" format="dimension" />
     </declare-styleable>
+    
+    <declare-styleable name="RotateImageView">  
+        <attr name="angle" format="integer" />  
+    </declare-styleable>  
+
 
     <!-- Additional features you can enable in an IME associated with an editor,
          to improve the integration with your application.  The constants
