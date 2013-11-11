@@ -27,11 +27,13 @@ import java.util.List;
  */
 public class Hotel extends XMapData {
     
-    public static final String NEED_FILED_LIST = "525357";
+    public static final String NEED_FIELD_LIST = "525357";
     
-    public static final String NEED_FILED_DETAIL = "54555859";
+    public static final String NEED_FIELD_DETAIL = "545559";
     
-    public static final String NEED_FILED_ROOM_INFO = "55";
+    public static final String NEED_FIELD_ROOM_INFO = "55";
+    
+    public static final String NEED_FIELD_APPEND_DETAIL = "5253";
 
     // 0x52 x_string 酒店品牌，{ "如家", ... "其它" }
     public static final byte FIELD_BRAND = 0x52;
@@ -54,12 +56,6 @@ public class Hotel extends XMapData {
     // 0x59 x_string 长简介
     public static final byte FIELD_LONG_DESCRIPTION = 0x59;
     
-    // 0x50 x_string 酒店ID
-    private String uuid;
-
-    // 0x51 x_string 合作商来源
-    private String source;
-
     // 0x52 x_string 酒店品牌，{ "如家", ... "其它" }
     private long brand;
 
@@ -175,14 +171,6 @@ public class Hotel extends XMapData {
             this.data = data;
         }
         return data;
-    }
-    
-    public String getUuid() {
-        return uuid;
-    }
-
-    public String getSource() {
-        return source;
     }
 
     public long getBrand() {

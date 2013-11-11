@@ -693,15 +693,15 @@ public class DataQueryTest {
         XArray<XMap> dataList = new XArray<XMap>();
         for (int i = 0; i < 4; i++) {
             XMap subwayExit = new XMap();
-            subwayExit.put(SubwayExit.FEILD_SUBWAY_EXIT, "Exit " + i);
-            subwayExit.put(SubwayExit.FEILD_LANDMARK, "Landmark " + i);
+            subwayExit.put(SubwayExit.FIELD_SUBWAY_EXIT, "Exit " + i);
+            subwayExit.put(SubwayExit.FIELD_LANDMARK, "Landmark " + i);
             XArray<XMap> stationList = new XArray<XMap>();
 //            for (int j = 0; j < 3; j++) {
                 XMap station = new XMap();
-                station.put(Busstop.FEILD_STATION, "中关园北站");
+                station.put(Busstop.FIELD_STATION, "中关园北站");
                 stationList.add(station);
 //            }
-            subwayExit.put(SubwayExit.FEILD_BUSSTOP, stationList);
+            subwayExit.put(SubwayExit.FIELD_BUSSTOP, stationList);
             dataList.add(subwayExit);
         }
         
@@ -712,16 +712,16 @@ public class DataQueryTest {
         XArray<XMap> dataList = new XArray<XMap>();
         for (int i = 0; i < 2; i++) {
             XMap subwayPresetTime = new XMap();
-            subwayPresetTime.put(SubwayPresetTime.FEILD_SUBWAY_NAME, "Line " + i);
+            subwayPresetTime.put(SubwayPresetTime.FIELD_SUBWAY_NAME, "Line " + i);
             XArray<XMap> presetTimeList = new XArray<XMap>();
             for (int j = 0; j < 3; j++) {
                 XMap presetTime = new XMap();
-                presetTime.put(PresetTime.FEILD_DIRECTION, "Direction");
-                presetTime.put(PresetTime.FEILD_END_TIME, "EndTime");
-                presetTime.put(PresetTime.FEILD_START_TIME, "StartTime");
+                presetTime.put(PresetTime.FIELD_DIRECTION, "Direction");
+                presetTime.put(PresetTime.FIELD_END_TIME, "EndTime");
+                presetTime.put(PresetTime.FIELD_START_TIME, "StartTime");
                 presetTimeList.add(presetTime);
             }
-            subwayPresetTime.put(SubwayPresetTime.FEILD_PRESET_TIME, presetTimeList);
+            subwayPresetTime.put(SubwayPresetTime.FIELD_PRESET_TIME, presetTimeList);
             dataList.add(subwayPresetTime);
         }
         

@@ -1329,4 +1329,5 @@
     
     <string name="view_poi_result">查看商户搜索结果</string>
     <string name="come_from_colon">来自：%1$s</string>
+    <string name="this_come_from_colon">本单来自：%1$s</string>
 </resources>

@@ -684,7 +684,7 @@ public final class DataQuery extends BaseQuery {
             } else if (SUB_DATA_TYPE_HOTEL.equals(subDataType)) {
                 String appendaction = getParameter(SERVER_PARAMETER_APPENDACTION);
                 if (appendaction == null) {
-                    addParameter(SERVER_PARAMETER_NEED_FIELD, POI.NEED_FIELD+Hotel.NEED_FILED_LIST);
+                    addParameter(SERVER_PARAMETER_NEED_FIELD, POI.NEED_FIELD+Hotel.NEED_FIELD_LIST);
                     addParameter(SERVER_PARAMETER_COMMENT_VERSION, COMMENT_VERSION);
                     addParameter(SERVER_PARAMETER_PICTURE, 
                             Util.byteToHexString(Hotel.FIELD_IMAGE_THUMB)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_HOTEL_LIST)+"_[11000000000000000000]" + ";" +
@@ -704,7 +704,7 @@ public final class DataQuery extends BaseQuery {
             addParameter(SERVER_PARAMETER_HOTEL_SOURCE, HotelVendor.ALL);
 
         } else if (DATA_TYPE_DISCOVER.equals(dataType)) { 
-            addParameter(SERVER_PARAMETER_NEED_FIELD, DiscoverCategory.NEED_FILED);
+            addParameter(SERVER_PARAMETER_NEED_FIELD, DiscoverCategory.NEED_FIELD);
             String pic = "";
             String cdv = "";
             if (Discover_Config_List != null) {
@@ -2497,7 +2497,7 @@ public final class DataQuery extends BaseQuery {
 
             public static class DiscoverCategory extends XMapData implements Parcelable {
                 
-                public static final String NEED_FILED = "01020304";
+                public static final String NEED_FIELD = "01020304";
                     
                 // 0x01 x_int 该动态poi的类型
                 public static final byte FIELD_TYPE = 0x01;

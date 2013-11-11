@@ -1648,8 +1648,8 @@ public class POI extends BaseData {
     };
     
     public static class SubwayPresetTime extends XMapData {
-        public final static byte FEILD_SUBWAY_NAME = 0x01;
-        public final static byte FEILD_PRESET_TIME = 0x02;
+        public final static byte FIELD_SUBWAY_NAME = 0x01;
+        public final static byte FIELD_PRESET_TIME = 0x02;
         private String name;
         private List<PresetTime> presetTimes;
         
@@ -1663,8 +1663,8 @@ public class POI extends BaseData {
         
         public SubwayPresetTime(XMap data) throws APIException {
             super(data);
-            this.name = getStringFromData(FEILD_SUBWAY_NAME);
-            this.presetTimes = getListFromData(FEILD_PRESET_TIME, PresetTime.Initializer);
+            this.name = getStringFromData(FIELD_SUBWAY_NAME);
+            this.presetTimes = getListFromData(FIELD_PRESET_TIME, PresetTime.Initializer);
         }
         
         public final static XMapInitializer<SubwayPresetTime> Initializer = new XMapInitializer<SubwayPresetTime>() {
@@ -1678,9 +1678,9 @@ public class POI extends BaseData {
     }
     
     public static class PresetTime extends XMapData {
-        public final static byte FEILD_DIRECTION = 0x01;
-        public final static byte FEILD_START_TIME = 0x02;
-        public final static byte FEILD_END_TIME = 0x03;
+        public final static byte FIELD_DIRECTION = 0x01;
+        public final static byte FIELD_START_TIME = 0x02;
+        public final static byte FIELD_END_TIME = 0x03;
         private String direction;
         private String startTime;
         private String endTime;
@@ -1699,9 +1699,9 @@ public class POI extends BaseData {
         
         public PresetTime(XMap data) throws APIException {
             super(data);
-            this.direction = getStringFromData(FEILD_DIRECTION);
-            this.startTime = getStringFromData(FEILD_START_TIME);
-            this.endTime = getStringFromData(FEILD_END_TIME);
+            this.direction = getStringFromData(FIELD_DIRECTION);
+            this.startTime = getStringFromData(FIELD_START_TIME);
+            this.endTime = getStringFromData(FIELD_END_TIME);
         }
         
         public final static XMapInitializer<PresetTime> Initializer = new XMapInitializer<PresetTime>() {
@@ -1715,9 +1715,9 @@ public class POI extends BaseData {
     }
     
     public static class SubwayExit extends XMapData {
-        public final static byte FEILD_SUBWAY_EXIT = 0x01;
-        public final static byte FEILD_LANDMARK = 0x02;
-        public final static byte FEILD_BUSSTOP = 0x03;
+        public final static byte FIELD_SUBWAY_EXIT = 0x01;
+        public final static byte FIELD_LANDMARK = 0x02;
+        public final static byte FIELD_BUSSTOP = 0x03;
         private String exit;
         private String landmark;
         private List<Busstop> busstops;
@@ -1736,9 +1736,9 @@ public class POI extends BaseData {
         
         public SubwayExit(XMap data) throws APIException {
             super(data);
-            this.exit = getStringFromData(FEILD_SUBWAY_EXIT);
-            this.landmark = getStringFromData(FEILD_LANDMARK);
-            this.busstops = getListFromData(FEILD_BUSSTOP, Busstop.Initializer);
+            this.exit = getStringFromData(FIELD_SUBWAY_EXIT);
+            this.landmark = getStringFromData(FIELD_LANDMARK);
+            this.busstops = getListFromData(FIELD_BUSSTOP, Busstop.Initializer);
         }
         
         public final static XMapInitializer<SubwayExit> Initializer = new XMapInitializer<SubwayExit>() {
@@ -1751,7 +1751,7 @@ public class POI extends BaseData {
     }
     
     public static class Busstop extends XMapData {
-        public final static byte FEILD_STATION = 0x01;
+        public final static byte FIELD_STATION = 0x01;
         private String busstop;
         
         public String getBusstop() {
@@ -1760,7 +1760,7 @@ public class POI extends BaseData {
         
         public Busstop(XMap data) throws APIException {
             super(data);
-            this.busstop = getStringFromData(FEILD_STATION);
+            this.busstop = getStringFromData(FIELD_STATION);
         }
         
         public final static XMapInitializer<Busstop> Initializer = new XMapInitializer<Busstop>() {

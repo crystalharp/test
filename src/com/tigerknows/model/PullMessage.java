@@ -176,7 +176,7 @@ public class PullMessage extends Response {
 
         public static class PulledProductMessage extends XMapData implements Parcelable{
 
-        	public static final byte FILED_PRODUCT_DOWNLOAD_URL = 0x01;
+        	public static final byte FIELD_PRODUCT_DOWNLOAD_URL = 0x01;
         	public static final byte FIELD_PRODUCT_DESCRIPTION = 0x02;
         	// 0x03   主题活动时有效，表示点击后WAP页的标题，用于在客户端加载的过程中显示。 
             public static final byte FIELD_PRODUCT_TITLE = 0x03;
@@ -203,7 +203,7 @@ public class PullMessage extends Response {
 
 	        private PulledProductMessage(XMap data) throws APIException {
 	        	super(data);
-	            this.downloadUrl = getStringFromData(FILED_PRODUCT_DOWNLOAD_URL);
+	            this.downloadUrl = getStringFromData(FIELD_PRODUCT_DOWNLOAD_URL);
 	            this.description = getStringFromData(FIELD_PRODUCT_DESCRIPTION);
                 this.title = getStringFromData(FIELD_PRODUCT_TITLE);
 	        }

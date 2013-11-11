@@ -86,6 +86,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     private TextView mRoomDateTxv;
     private TextView mRoomNightsTxv;
     private TextView mDanbaoHintTxv;
+    private TextView mRoomTypeComeFromTxv;
     private Button mRoomHowmanyBtn;
     private Button mRoomReserveBtn;
     private EditText mRoomMobileNumberEdt;
@@ -126,8 +127,6 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     private String mIdCardType;
     private String mIdCardNo;
 
-    
-    
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -171,6 +170,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         mRoomDateTxv = (TextView) mRootView.findViewById(R.id.room_date_txv);
         mRoomNightsTxv = (TextView) mRootView.findViewById(R.id.room_nights_txv);
         mDanbaoHintTxv = (TextView) mRootView.findViewById(R.id.danbao_hint_txv);
+        mRoomTypeComeFromTxv = (TextView) mRootView.findViewById(R.id.roomtype_come_from_txv);
         mRoomHowmanyBtn = (Button) mRootView.findViewById(R.id.room_howmany_btn);
         mRoomReserveBtn = (Button) mRootView.findViewById(R.id.room_reserve_btn);
         mRoomMobileNumberEdt = (EditText) mRootView.findViewById(R.id.room_mobile_number_edt);
@@ -363,6 +363,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         mCheckOut = checkOut;
         mNights = CalendarUtil.dateInterval(mCheckIn, mCheckOut);
         mRoomNightsTxv.setText(mSphinx.getString(R.string.hotel_total_nights, mNights));
+        mRoomTypeComeFromTxv.setText(mSphinx.getString(R.string.this_come_from_colon, mRoomType.getVendorName()));
         mRoomHowmany = 1;
         mRTimeWhich = 0;
         mHotelOrderWriteScv.smoothScrollTo(0, 0);
@@ -591,7 +592,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     public void submit(boolean HasCreditInfo) {
         HotelOrderOperation hotelOrderOperation = new HotelOrderOperation(mSphinx);
         hotelOrderOperation.addParameter(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, HotelOrderOperation.OPERATION_CODE_CREATE);
-        hotelOrderOperation.addParameter(HotelOrderOperation.SERVER_PARAMETER_HOTEL_ID, mHotel.getUuid());
+        hotelOrderOperation.addParameter(HotelOrderOperation.SERVER_PARAMETER_HOTEL_ID, mRoomType.getHotelID());
         hotelOrderOperation.addParameter(HotelOrderOperation.SERVER_PARAMETER_BRAND, String.valueOf(mHotel.getBrand()));
         hotelOrderOperation.addParameter(HotelOrderOperation.SERVER_PARAMETER_ROOMTYPE, mRoomType.getRoomId());
         hotelOrderOperation.addParameter(HotelOrderOperation.SERVER_PARAMETER_PKGID, mRoomType.getRateplanId());

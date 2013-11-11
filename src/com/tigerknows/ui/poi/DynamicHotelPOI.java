@@ -301,7 +301,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             public void onClick(View v) {
                 mPOIDetailFragment.mActionLog.addAction(ActionLog.POIDetail + ActionLog.POIDetailHotelFailRetry);
                 //不能直接重发上一个请求，否则无网络的时候进详情页，再改个日期，所发的请求nf字段就只有房态信息了。
-                BaseQuery baseQuery = buildHotelQuery(checkin, checkout, mPOI, Hotel.NEED_FILED_DETAIL + Hotel.NEED_FILED_LIST);
+                BaseQuery baseQuery = buildHotelQuery(checkin, checkout, mPOI, Hotel.NEED_FIELD_DETAIL + Hotel.NEED_FIELD_LIST);
                 baseQuery.setTipText(mSphinx.getString(R.string.doing_and_wait));
                 queryStart(baseQuery);
             }
@@ -312,7 +312,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             
             @Override
             public void onClick(View v) {
-                if (mPOI.getHotel().getUuid() != null) {
+                if (mPOI.getHotel() != null) {
                     mPOIDetailFragment.mActionLog.addAction(ActionLog.POIDetail + ActionLog.POIDetailHotelIntro);
                     Intent intent = new Intent();
                     intent.putExtra(HotelIntroActivity.EXTRA_NAME, mPOI.getName());
@@ -328,7 +328,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             @Override
             public void onClick(View v) {
                 Hotel hotel = mPOI.getHotel();
-                if (hotel.getUuid() != null && hotel.getHotelTKDrawableList() != null && hotel.getHotelTKDrawableList().size() > 0) {
+                if (hotel != null && hotel.getHotelTKDrawableList() != null && hotel.getHotelTKDrawableList().size() > 0) {
                     mPOIDetailFragment.mActionLog.addAction(ActionLog.POIDetail + ActionLog.POIDetailHotelImage);
                     Intent intent = new Intent();
                     ArrayList<HotelTKDrawable> list = (ArrayList<HotelTKDrawable>)hotel.getHotelTKDrawableList();
@@ -381,7 +381,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             checkout = out;
         }
         refreshDate();
-        BaseQuery baseQuery = buildHotelQuery(checkin, checkout, mPOI, Hotel.NEED_FILED_ROOM_INFO);
+        BaseQuery baseQuery = buildHotelQuery(checkin, checkout, mPOI, Hotel.NEED_FIELD_ROOM_INFO);
         baseQuery.setTipText(mSphinx.getString(R.string.doing_and_wait));
         queryStart(baseQuery);
         mPOIDetailFragment.dismissPopupWindow();
@@ -543,8 +543,8 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         if (this.checkin.equals(checkinInHoteHome) && this.checkout.equals(checkoutInHoteHome)) {
             updateCanReserve = true;
         }
-        String nf = Hotel.NEED_FILED_DETAIL;
-        if (mHotel.getUuid() != null && mHotel.getRoomTypeList() == null) {
+        String nf = Hotel.NEED_FIELD_DETAIL;
+        if (mHotel != null && mHotel.getRoomTypeList() == null) {
             if (updateCanReserve) {
                 nf += Util.byteToHexString(Hotel.FIELD_CAN_RESERVE);
             }
@@ -552,7 +552,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             baseQueryList.add(baseQuery);
             LogWrapper.i(TAG, "hotel.roomtype is null, generate Query:" + baseQueryList);
         } else {
-            nf += "50515253";
+            nf += Hotel.NEED_FIELD_APPEND_DETAIL;
             if (updateCanReserve) {
                 nf += Util.byteToHexString(Hotel.FIELD_CAN_RESERVE);
             }
