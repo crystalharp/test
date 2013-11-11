@@ -24,18 +24,23 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import com.decarta.Globals;
+import com.decarta.android.exception.APIException;
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
 import com.tigerknows.common.ActionLog;
+import com.tigerknows.service.LocationService;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.more.SettingActivity;
+import com.tigerknows.util.CalendarUtil;
+import com.tigerknows.util.SolarRadiation;
 import com.tigerknows.util.Utility;
+import com.tigerknows.widget.RotateImageView;
 
 public class TrafficCompassActivity extends BaseActivity implements SensorEventListener{
 	
 	
 	private float mCurrentDegree = 0f;
-	private ImageView mCompassImv;
+	private RotateImageView mCompassImv;
 	private ImageView mCompassBgImv;
 	private SensorManager mSensorManager;
 	private Button mGPSBtn;
@@ -94,7 +99,7 @@ public class TrafficCompassActivity extends BaseActivity implements SensorEventL
     	mLocationListener = new MyLocationListener(mThis, new Runnable(){
 			@Override
 			public void run() {
-				refreshLocation();
+				refreshLocationAndCompass();
 			}
     	});
     }
@@ -102,7 +107,7 @@ public class TrafficCompassActivity extends BaseActivity implements SensorEventL
     protected void findViews(){
     	super.findViews();
     	mBodyRly = (RelativeLayout)findViewById(R.id.body_rly);
-    	mCompassImv = (ImageView)findViewById(R.id.compass_imv);
+    	mCompassImv = (RotateImageView)findViewById(R.id.compass_imv);
     	mCompassBgImv = (ImageView)findViewById(R.id.compass_bg_imv);
     	mGPSBtn = (Button)findViewById(R.id.gps_btn);
     	mLocationDetailTxv[0] = (TextView)findViewById(R.id.longitude_txv);
@@ -145,28 +150,28 @@ public class TrafficCompassActivity extends BaseActivity implements SensorEventL
     public void onResume(){
     	super.onResume();
     	mTitleBtn.setText(getString(R.string.compass));
-    	refreshCompass();
+    	refreshLocationAndCompass();
     	refreshGPS();
-    	refreshLocation();
     }
     
-    public void refreshCompass(){
-    	if(mSensorManager != null){
-    		Sensor sensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
-    		if(sensor != null){
-    			mSensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_GAME);
-    			mCompassImv.setImageResource(R.drawable.ani_compass);
-    			mCompassBgImv.setImageResource(R.drawable.bg_compass);
-    		}else{
-    			// TODO: default image
-    			mCompassImv.setImageResource(R.drawable.ani_compass_notavailable);
-    			mCompassBgImv.setImageResource(R.drawable.transparent_bg);
-    		}
-    	}else{
-    		// TODO: default image
+   
+    private void setSunCompass(Location location){
+    	if(location == null){
     		mCompassImv.setImageResource(R.drawable.ani_compass_notavailable);
     		mCompassBgImv.setImageResource(R.drawable.transparent_bg);
+    		return;
     	}
+    	Calendar calendar = Calendar.getInstance();
+    	calendar.setTimeInMillis(CalendarUtil.getExactTime(mThis));
+    	double degree = 0;
+		try {
+			degree = SolarRadiation.taiYangFangWeiJiao(calendar, location.getLongitude(), location.getLatitude());
+		} catch (APIException e) {
+			e.printStackTrace();
+		}
+		mCompassImv.setImageResource(R.drawable.ani_compass_sun);
+		mCompassBgImv.setImageResource(R.drawable.bg_compass_sun);
+		mCompassImv.setAngle((int)degree);
     }
     
     public void refreshGPS(){
@@ -177,7 +182,7 @@ public class TrafficCompassActivity extends BaseActivity implements SensorEventL
     	}
     }
     
-    public void refreshLocation(){
+    public void refreshLocationAndCompass(){
     	Location location = Globals.g_My_Location;
     	final String EMPTY = "...";
     	String locationDetail[] = new String[6];
@@ -200,6 +205,19 @@ public class TrafficCompassActivity extends BaseActivity implements SensorEventL
     			locationDetail[i] += fUnit[i];
     		}
     		mLocationDetailTxv[i].setText(getString(mLocationDetailID[i], locationDetail[i]));
+    	}
+    	if(false && mSensorManager != null){
+    		Sensor sensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
+    		if(sensor != null){
+    			mSensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_GAME);
+    			mCompassImv.setImageResource(R.drawable.ani_compass);
+    			mCompassImv.setAngle(0);
+    			mCompassBgImv.setImageResource(R.drawable.bg_compass);
+    		}else{
+    			setSunCompass(location);
+    		}
+    	}else{
+    		setSunCompass(location);
     	}
     }
 	
