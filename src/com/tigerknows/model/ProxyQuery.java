@@ -1,6 +1,7 @@
 package com.tigerknows.model;
 
 import com.decarta.android.exception.APIException;
+import com.decarta.android.util.LogWrapper;
 import com.tigerknows.TKConfig;
 import com.tigerknows.model.test.ProxyQueryTest;
 import com.tigerknows.model.xobject.XMap;
@@ -75,7 +76,7 @@ public class ProxyQuery extends BaseQuery {
     @Override
     protected void createHttpClient() {
         super.createHttpClient();
-        String url = String.format(TKConfig.getProxyUrl(), TKConfig.getQueryHost());
+        String url = String.format(TKConfig.getProxyUrl(), TKConfig.getProxyQueryHost());
         httpClient.setURL(url);
     }
 

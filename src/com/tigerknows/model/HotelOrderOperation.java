@@ -165,7 +165,7 @@ public class HotelOrderOperation extends BaseQuery {
     @Override
     protected void createHttpClient() {
         super.createHttpClient();
-        String url = String.format(TKConfig.getHotelOrderUrl(), TKConfig.getQueryHost());
+        String url = String.format(TKConfig.getHotelOrderUrl(), TKConfig.getHotelOrderHost());
         httpClient.setURL(url);
     }
 

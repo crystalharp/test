@@ -400,6 +400,16 @@ public class TKConfig {
      * 默认文件下载服务的Host
      */
     private static String sFILE_DOWNLOAD_HOST = "down.tigerknows.net";
+    
+    /**
+     * 默认第三方接口的Host
+     */
+    private static String sPROXY_QUERY_HOST = "search.tigerknows.net";
+    
+    /**
+     * 默认酒店订单的Host
+     */
+    private static String sHOTEL_ORDER_HOST = "search.tigerknows.net";
 
     /**
      * 软件登录服务推送用于动态负载均衡的下载服务器Host
@@ -1377,6 +1387,26 @@ public class TKConfig {
     }
     
     /**
+     * 获取第三方接口Host，如果有动态负载均衡的查询服务器Host则返回该值
+     */
+    public static String getProxyQueryHost(){
+//    	if (!TextUtils.isEmpty(sDYNAMIC_QUERY_HOST)){
+//    		return sDYNAMIC_QUERY_HOST;
+//    	}
+    	return sPROXY_QUERY_HOST;
+    }
+    
+    /**
+     * 获取酒店订单Host，如果有动态负载均衡的查询服务器Host则返回该值
+     */
+    public static String getHotelOrderHost(){
+    	if (!TextUtils.isEmpty(sDYNAMIC_QUERY_HOST)){
+    		return sDYNAMIC_QUERY_HOST;
+    	}
+    	return sHOTEL_ORDER_HOST;
+    }
+    
+    /**
      * 获取动态负载均衡的下载服务器Host
      * @return
      */
@@ -1715,11 +1745,23 @@ public class TKConfig {
                     start += "alarmCheckDelayTime=".length();
                     AlarmCheckDelayTime = Integer.parseInt(text.substring(start, end));
                 }
+                start = text.indexOf("proxyQueryHost=");
+                end = text.indexOf(";", start);
+                if (start > -1 && end > -1) {
+                    start += "proxyQueryHost=".length();
+                    TKConfig.sPROXY_QUERY_HOST = text.substring(start, end);
+                }
                 start = text.indexOf("proxyUrl=");
                 end = text.indexOf(";", start);
                 if (start > -1 && end > -1) {
                     start += "proxyUrl=".length();
                     TKConfig.sPROXY_URL = text.substring(start, end);
+                }
+                start = text.indexOf("hotelOrderHost=");
+                end = text.indexOf(";", start);
+                if (start > -1 && end > -1) {
+                    start += "hotelOrderHost=".length();
+                    TKConfig.sHOTEL_ORDER_HOST = text.substring(start, end);
                 }
                 start = text.indexOf("hotelOrderUrl=");
                 end = text.indexOf(";", start);
