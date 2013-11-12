@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root_view"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentBottom="true"
+    android:orientation="horizontal"
+    android:weightSum="4">
+    
+    <Button android:id="@+id/nearby_search_btn" 
+        android:layout_weight="1"
+        android:layout_width="fill_parent" 
+        android:layout_height="wrap_content"
+        android:background="@drawable/btn_bottom"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:drawableTop="@drawable/ic_nearby_search"
+        android:text="@string/nearby_search"
+        android:textSize="12sp"
+        android:gravity="center"/>
+                
+    <Button android:id="@+id/favorite_btn" 
+        android:layout_weight="1"
+        android:layout_width="fill_parent" 
+        android:layout_height="wrap_content"
+        android:background="@drawable/btn_bottom"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:drawableTop="@drawable/ic_favorite"
+        android:text="@string/add_favorite"
+        android:textSize="12sp"
+        android:gravity="center"/>
+    
+    <Button android:id="@+id/share_btn" 
+        android:layout_weight="1"
+        android:layout_width="fill_parent" 
+        android:layout_height="wrap_content"
+        android:background="@drawable/btn_bottom"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:drawableTop="@drawable/ic_share"
+        android:text="@string/send_friend"
+        android:textSize="12sp"
+        android:gravity="center"/>
+        
+    <Button android:id="@+id/error_recovery_btn" 
+        android:layout_weight="1"
+        android:layout_width="fill_parent" 
+        android:layout_height="wrap_content"
+        android:background="@drawable/btn_bottom"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:drawableTop="@drawable/ic_recovery_error"
+        android:text="@string/erreport_title"
+        android:textSize="12sp"
+        android:gravity="center"/>
+</LinearLayout>
+

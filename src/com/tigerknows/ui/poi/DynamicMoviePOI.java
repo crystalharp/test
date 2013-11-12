@@ -1,7 +1,6 @@
 package com.tigerknows.ui.poi;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
 
 import com.decarta.Globals;
@@ -34,32 +33,24 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
-public class DynamicMoviePOI extends POIDetailFragment.DynamicPOIView{
+public class DynamicMoviePOI extends DynamicPOIViewTemplate {
     
 	static final int SHOW_DYNAMIC_YINGXUN_MAX = 3;
     
-    List<DynamicPOIViewBlock> blockList = new ArrayList<DynamicPOIViewBlock>();
     LinearListAdapter dianyingListAdapter;
-    DynamicPOIViewBlock mViewBlock;
     List<Dianying> mShowingList = new ArrayList<Dianying>();
     List<Dianying> mAllList = new ArrayList<Dianying>();
-    
-    LinearLayout mDynamicDianyingView;
-    LinearLayout mDynamicDianyingListView;
-    LinearLayout mDynamicDianyingMoreView;
         
     public DynamicMoviePOI(POIDetailFragment poiFragment, LayoutInflater inflater){
-        mPOIDetailFragment = poiFragment;
-        mSphinx = mPOIDetailFragment.mSphinx;
-        mInflater = inflater;
-        mDynamicDianyingView = (LinearLayout) mInflater.inflate(R.layout.poi_dynamic_movie_poi, null);
-        mDynamicDianyingListView = (LinearLayout) mDynamicDianyingView.findViewById(R.id.dynamic_dianying_list_view);
-        mDynamicDianyingMoreView = (LinearLayout) mDynamicDianyingView.findViewById(R.id.dynamic_dianying_more_view);
-        mViewBlock = new DynamicPOIViewBlock(mPOIDetailFragment.mBelowAddressLayout, mDynamicDianyingView) {
+        super(poiFragment, inflater);
+        
+        mTitleTxv.setText(R.string.play_dianying);
+        mTitleRightTxv.setVisibility(View.GONE);
+        mMoreTxv.setText(R.string.more_dianying);
+        mViewBlock = new DynamicPOIViewBlock(mPOIDetailFragment.mBelowAddressLayout, mRootView) {
 
             @Override
             public void refresh() {
@@ -83,10 +74,10 @@ public class DynamicMoviePOI extends POIDetailFragment.DynamicPOIView{
                     for(int i = 0; i < SHOW_DYNAMIC_YINGXUN_MAX; i++) {
                         mShowingList.add(mAllList.get(i));
                     }
-                    mDynamicDianyingMoreView.setVisibility(View.VISIBLE);
+                    mMoreView.setVisibility(View.VISIBLE);
                 } else {
                     mShowingList.addAll(mAllList);
-                    mDynamicDianyingMoreView.setVisibility(View.GONE);
+                    mMoreView.setVisibility(View.GONE);
                 }
                 
                 dianyingListAdapter.refreshList(mShowingList);
@@ -94,7 +85,7 @@ public class DynamicMoviePOI extends POIDetailFragment.DynamicPOIView{
                 show();
             }
         };
-        dianyingListAdapter = new LinearListAdapter(mSphinx, mDynamicDianyingListView, R.layout.poi_dynamic_movie_list_item) {
+        dianyingListAdapter = new LinearListAdapter(mSphinx, mListView, R.layout.poi_dynamic_movie_list_item) {
 
             @Override
             public View getView(Object data, View child, int pos) {
@@ -141,7 +132,7 @@ public class DynamicMoviePOI extends POIDetailFragment.DynamicPOIView{
             }
 
         };
-        mDynamicDianyingMoreView.setOnClickListener(mMoreClickListener);
+        mMoreView.setOnClickListener(mMoreClickListener);
     }
     
     public DataQuery buildQuery(POI poi) {
@@ -156,18 +147,6 @@ public class DynamicMoviePOI extends POIDetailFragment.DynamicPOIView{
         dataQuery.setup(Globals.getCurrentCityInfo().getId(), mPOIDetailFragment.getId(), mPOIDetailFragment.getId(), null, false, false, poi);
         
         return dataQuery;
-    }
-
-    @Override
-    public void refresh() {
-        mViewBlock.refresh();
-    }
-    
-    @Override
-    public List<DynamicPOIViewBlock> getViewList() {
-        blockList.clear();
-        blockList.add(mViewBlock);
-        return blockList;
     }
     
     private OnClickListener mDynamicMovieListener = new View.OnClickListener() {
@@ -215,8 +194,8 @@ public class DynamicMoviePOI extends POIDetailFragment.DynamicPOIView{
     
     void refreshBackground(LinearListAdapter lsv, int size) {
         for(int i = 0; i < size; i++) {
-            View child = mDynamicDianyingListView.getChildAt(i);
-            if (i == (size-1) && mDynamicDianyingMoreView.getVisibility() == View.GONE) {
+            View child = mListView.getChildAt(i);
+            if (i == (size-1) && mMoreView.getVisibility() == View.GONE) {
                 child.setBackgroundResource(R.drawable.list_footer);
             } else {
                 child.setBackgroundResource(R.drawable.list_middle);
@@ -230,7 +209,7 @@ public class DynamicMoviePOI extends POIDetailFragment.DynamicPOIView{
         public void onClick(View v) {
             mPOIDetailFragment.mActionLog.addAction(mPOIDetailFragment.mActionTag+ActionLog.POIDetailDianyingMore);
             dianyingListAdapter.refreshList(mAllList);
-            mDynamicDianyingMoreView.setVisibility(View.GONE);
+            mMoreView.setVisibility(View.GONE);
             refreshBackground(dianyingListAdapter, mAllList.size());
             
         }
@@ -281,12 +260,6 @@ public class DynamicMoviePOI extends POIDetailFragment.DynamicPOIView{
                 }
             }
         }
-	}
-
-	@Override
-	public void onCancelled(TKAsyncTask tkAsyncTask) {
-		// TODO Auto-generated method stub
-		
 	}
 
     @Override

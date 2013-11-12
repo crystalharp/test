@@ -84,7 +84,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
 
     private Plan plan = null;
     
-    private LinearLayout mErrorRecoveryLayout = null;
+    private LinearLayout mBottomButtonsView;
     
     private int mChildLayoutId = R.layout.traffic_child_traffic;
     
@@ -132,7 +132,8 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
                 mRightBtn.setBackgroundResource(R.drawable.btn_view_map);
             	mRightBtn.setOnClickListener(this);
                 mTitleBtn.setText(mContext.getString(R.string.title_transfer_plan));
-                mErrorRecoveryLayout.setVisibility(View.VISIBLE);
+                mErrorRecoveryBtn.setVisibility(View.VISIBLE);
+                mBottomButtonsView.setWeightSum(3);
             	mSubTitleTxv.setText(this.plan.getTitle(mSphinx));
             	mLengthTxv.setVisibility(View.VISIBLE);
             	mLengthTxv.setText(plan.getLengthStr(mSphinx));
@@ -140,13 +141,15 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
             case SHOW_TYPE_DRVIE:
                 mTitleBtn.setText(mContext.getString(R.string.title_drive_plan));
                 mSubTitleTxv.setText(mSphinx.getString(R.string.length_str_title, plan.getLengthStr(mSphinx)));
-                mErrorRecoveryLayout.setVisibility(View.GONE);
+                mErrorRecoveryBtn.setVisibility(View.GONE);
+                mBottomButtonsView.setWeightSum(2);
             	mLengthTxv.setVisibility(View.GONE);
                 break;
             case SHOW_TYPE_WALK:
                 mTitleBtn.setText(mContext.getString(R.string.title_walk_plan));
                 mSubTitleTxv.setText(mSphinx.getString(R.string.length_str_title, plan.getLengthStr(mSphinx)));
-                mErrorRecoveryLayout.setVisibility(View.GONE);
+                mErrorRecoveryBtn.setVisibility(View.GONE);
+                mBottomButtonsView.setWeightSum(2);
             	mLengthTxv.setVisibility(View.GONE);
                 break;
             default:
@@ -167,7 +170,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
             }
         }
         
-        setFavoriteState(plan.checkFavorite(mContext));
+        Utility.setFavoriteBtn(mSphinx, mFavorateBtn, plan.checkFavorite(mContext));
 
         if (mDismissed) {
             setSelectionFromTop();
@@ -214,10 +217,11 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         mResultLsv = (ListView)mRootView.findViewById(R.id.result_lsv);
         mRootView.findViewById(R.id.traffic_detail_sub_title).setVisibility(View.VISIBLE);
         mRootView.findViewById(R.id.traffic_result_sub_title).setVisibility(View.GONE);
-        mErrorRecoveryLayout = (LinearLayout)mRootView.findViewById(R.id.error_recovery_layout);
+        mBottomButtonsView = (LinearLayout) mRootView.findViewById(R.id.bottom_buttons_view);
         mErrorRecoveryBtn = (Button)mRootView.findViewById(R.id.error_recovery_btn);
         mFavorateBtn = (Button)mRootView.findViewById(R.id.favorite_btn);
         mShareBtn = (Button)mRootView.findViewById(R.id.share_btn);
+        mBottomButtonsView.findViewById(R.id.nearby_search_btn).setVisibility(View.GONE);
     }
 
     protected void setListener() {
@@ -443,13 +447,13 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
                             @Override
                             public void onClick(DialogInterface arg0, int id) {
                                 if (id == DialogInterface.BUTTON_POSITIVE) {
-                                    setFavoriteState(false);
+                                    Utility.setFavoriteBtn(mSphinx, mFavorateBtn, false);
                                     data.deleteFavorite(mContext);
                                 }
                             }
                         });
 	        } else {
-	        	setFavoriteState(true);
+	            Utility.setFavoriteBtn(mSphinx, mFavorateBtn, true);
 				data.writeToDatabases(mContext, -1, Tigerknows.STORE_TYPE_FAVORITE);
                 Toast.makeText(mSphinx, R.string.favorite_toast, Toast.LENGTH_LONG).show();
 	        }
@@ -466,16 +470,6 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
     	Position position = TrafficOverlayHelper.panToViewWholeOverlay(plan, mSphinx.getMapView(), (Activity)mSphinx);
     	
     	ShareAPI.share(mSphinx, plan, position, mapScene, mActionTag);
-    }
-
-    private void setFavoriteState(boolean favoriteYet) {
-    	    	
-    	if (favoriteYet) {
-    		mFavorateBtn.setBackgroundResource(R.drawable.btn_cancel_favorite);
-    	} else {
-    		mFavorateBtn.setBackgroundResource(R.drawable.btn_favorite);
-    	}
-    	
     }
     
     public void viewMap() {

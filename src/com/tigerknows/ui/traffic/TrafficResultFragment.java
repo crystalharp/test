@@ -134,7 +134,7 @@ public class TrafficResultFragment extends BaseFragment {
         mEndTxv = (TextView)mRootView.findViewById(R.id.end_txv);
         mLengthTxv = (TextView)mRootView.findViewById(R.id.length_txv);
         mResultLsv = (ListView)mRootView.findViewById(R.id.result_lsv);
-        mFootLayout = (LinearLayout)mRootView.findViewById(R.id.traffic_detail_foot);
+        mFootLayout = (LinearLayout)mRootView.findViewById(R.id.bottom_buttons_view);
     }
 
     protected void setListener() {

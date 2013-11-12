@@ -1,7 +1,6 @@
 package com.tigerknows.ui.poi;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import android.content.res.Resources;
@@ -9,7 +8,6 @@ import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -20,11 +18,10 @@ import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.DataQuery.POIResponse;
 import com.tigerknows.model.POI;
 import com.tigerknows.ui.BaseActivity;
-import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIView;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIViewBlock;
 import com.tigerknows.widget.LinearListAdapter;
 
-public class ExtraSameTypePOI extends DynamicPOIView {
+public class ExtraSameTypePOI extends DynamicPOIViewTemplate {
     
     @Override
     public boolean isExist() {
@@ -36,13 +33,6 @@ public class ExtraSameTypePOI extends DynamicPOIView {
         }
         return false;
     }
-
-    DynamicPOIViewBlock mBlock;
-    
-    LinearLayout mRootView;
-    LinearLayout mListView;
-    LinearLayout mMoreView;
-    TextView mTitleTxv;
 
     LinearListAdapter mAdapter;
     
@@ -66,16 +56,12 @@ public class ExtraSameTypePOI extends DynamicPOIView {
     
     public ExtraSameTypePOI(POIDetailFragment poiFragment,
             LayoutInflater inflater) {
-        mPOIDetailFragment = poiFragment;
-        mSphinx = poiFragment.mSphinx;
-        mInflater = inflater;
-        mRootView = (LinearLayout) mInflater.inflate(R.layout.poi_dynamic_template, null);
-        mTitleTxv = (TextView) mRootView.findViewById(R.id.title_txv);
+        super(poiFragment, inflater);
+
         mTitleTxv.setText(R.string.dynamic_poi_title);
-        mListView = (LinearLayout) mRootView.findViewById(R.id.list_view);
-        mMoreView = (LinearLayout) mRootView.findViewById(R.id.more_view);
+        mTitleRightTxv.setVisibility(View.GONE);
         mMoreView.setVisibility(View.GONE);
-        mBlock = new DynamicPOIViewBlock(poiFragment.mBelowAddressLayout, mRootView) {
+        mViewBlock = new DynamicPOIViewBlock(poiFragment.mBelowAddressLayout, mRootView) {
 
             @Override
             public void refresh() {
@@ -142,6 +128,7 @@ public class ExtraSameTypePOI extends DynamicPOIView {
                     
                     @Override
                     public void onClick(View v) {
+                        mSphinx.getPOIDetailFragment().smoothScroolToTop();
                         mSphinx.getPOIDetailFragment().setData(target, pos);
                     }
                 });
@@ -178,23 +165,6 @@ public class ExtraSameTypePOI extends DynamicPOIView {
         }
         this.dataQuery= dataQuery;
         refresh();
-    }
-
-    @Override
-    public void onCancelled(TKAsyncTask tkAsyncTask) {
-
-    }
-
-    @Override
-    public List<DynamicPOIViewBlock> getViewList() {
-        List<DynamicPOIViewBlock> lst = new LinkedList<DynamicPOIViewBlock>();
-        lst.add(mBlock);
-        return lst;
-    }
-
-    @Override
-    public void refresh() {
-        mBlock.refresh();
     }
 
     @Override

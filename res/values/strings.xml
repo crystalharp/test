@@ -72,6 +72,9 @@
     <string name="category_search">分类搜索</string>
     <string name="precision_search">精确搜索</string>
     <string name="nearby_search">周边搜索</string>
+    <string name="add_favorite">添加收藏</string>
+    <string name="cancel_favorite">取消收藏</string>
+    <string name="send_friend">发给好友</string>
     
     <string name="select_action">选择操作</string>
     <string name="delete_map">删除地图</string>
@@ -194,7 +197,6 @@
     <string name="poi_detail_not_next_tip">已经是最后一个了</string>
     <string name="poi_detail_not_previous_tip">已经是最前一个了</string>
     <string name="back_what_city">回%1$s市</string>
-    <string name="favorite_yet">取消收藏</string>
     <string name="favorite_toast">已收藏到“更多-收藏夹”</string>
     <string name="delete">删除</string>
     <string name="view">查看</string>

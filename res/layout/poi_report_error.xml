@@ -103,7 +103,8 @@
         android:textColor="@color/orange"
         android:gravity="center"
         android:layout_alignParentBottom="true"
-        android:background="@drawable/bg_bottom_control"
+        android:background="@drawable/btn_bottom"
+        android:padding="12dp"
         android:visibility="gone"
         />
 </RelativeLayout>

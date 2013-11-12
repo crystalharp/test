@@ -11,6 +11,8 @@ import java.util.Date;
 import java.util.List;
 
 import android.content.DialogInterface;
+import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -99,8 +101,10 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
 	private View mNameView;
 	
 	private HotelVendor mHotelVendor;
-	
-   
+
+    Drawable icOrderAgain;
+    Drawable icOrderAgainDisabled;
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -110,6 +114,10 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {  
         LogWrapper.d(TAG, "onCreateView()"+mActionTag);
+        
+        Resources resources = mSphinx.getResources();
+        icOrderAgain = resources.getDrawable(R.drawable.ic_order_again);
+        icOrderAgainDisabled = resources.getDrawable(R.drawable.ic_order_again_disabled);
         
         mRootView = mLayoutInflater.inflate(R.layout.hotel_order_detail, container, false);
 
@@ -336,10 +344,12 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
 			});
         }
         if(mSphinx.uiStackContains(R.id.view_hotel_order_write)){
-        	mBtnOrderAgain.setBackgroundResource(R.drawable.btn_order_again_disable);
+            icOrderAgainDisabled.setBounds(0, 0, icOrderAgainDisabled.getIntrinsicWidth(), icOrderAgainDisabled.getIntrinsicHeight());
+        	mBtnOrderAgain.setCompoundDrawables(null, icOrderAgainDisabled, null, null);
         	mBtnOrderAgain.setEnabled(false);
         }else{
-        	mBtnOrderAgain.setBackgroundResource(R.drawable.btn_order_again);
+            icOrderAgain.setBounds(0, 0, icOrderAgain.getIntrinsicWidth(), icOrderAgain.getIntrinsicHeight());
+            mBtnOrderAgain.setCompoundDrawables(null, icOrderAgain, null, null);
         	mBtnOrderAgain.setEnabled(true);
         }
         updateCancelBtn();

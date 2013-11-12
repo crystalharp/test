@@ -22,6 +22,7 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -70,6 +71,8 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
     private TextView mTimeTxv = null;
     
     private ListView mResultLsv = null;
+    
+    private LinearLayout mBottomButtonsView;
     
     private Button mFavorateBtn = null;
     
@@ -160,7 +163,7 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
         	//不用顶部弹出切换
         	mTitleBtn.setText(mContext.getString(R.string.title_busline_line));
         }
-        setFavoriteState(mFavorateBtn, line.checkFavorite(mContext));
+        Utility.setFavoriteBtn(mSphinx, mFavorateBtn, line.checkFavorite(mContext));
 
         history();
 
@@ -196,6 +199,10 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
         mResultLsv = (ListView)mRootView.findViewById(R.id.result_lsv);
         mFavorateBtn = (Button)mRootView.findViewById(R.id.favorite_btn);
         mShareBtn = (Button)mRootView.findViewById(R.id.share_btn);
+        mBottomButtonsView = ((LinearLayout) (mRootView.findViewById(R.id.bottom_buttons_view)));
+        mBottomButtonsView.findViewById(R.id.nearby_search_btn).setVisibility(View.GONE);
+        mBottomButtonsView.findViewById(R.id.error_recovery_btn).setVisibility(View.GONE);
+        mBottomButtonsView.setWeightSum(2);
     }
 
     protected void setListener() {
@@ -358,13 +365,13 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
                             @Override
                             public void onClick(DialogInterface arg0, int id) {
                                 if (id == DialogInterface.BUTTON_POSITIVE) {
-                                    setFavoriteState(v, false);
+                                    Utility.setFavoriteBtn(mSphinx, mFavorateBtn, false);
                                     data.deleteFavorite(mContext);
                                 }
                             }
                         });
             } else {
-            	setFavoriteState(v, true);
+                Utility.setFavoriteBtn(mSphinx, mFavorateBtn, true);
                 data.writeToDatabases(mContext, -1, Tigerknows.STORE_TYPE_FAVORITE);
                 Toast.makeText(mSphinx, R.string.favorite_toast, Toast.LENGTH_LONG).show();
             }
@@ -387,15 +394,6 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
         Position position = BuslineOverlayHelper.panToViewWholeOverlay(line, mSphinx.getMapView(), (Activity)mSphinx);
         
         ShareAPI.share(mSphinx, line, position, mActionTag);
-    }
-    
-    private void setFavoriteState(View v, boolean favoriteYet) {
-    	    	
-    	if (favoriteYet) {
-    		mFavorateBtn.setBackgroundResource(R.drawable.btn_cancel_favorite);
-    	} else {
-    		mFavorateBtn.setBackgroundResource(R.drawable.btn_favorite);
-    	}
     }
     
     private void viewMap() {
