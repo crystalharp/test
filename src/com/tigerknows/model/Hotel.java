@@ -29,7 +29,7 @@ public class Hotel extends XMapData {
     
     public static final String NEED_FIELD_LIST = "525357";
     
-    public static final String NEED_FIELD_DETAIL = "545559";
+    public static final String NEED_FIELD_DETAIL = "54555859";
     
     public static final String NEED_FIELD_ROOM_INFO = "55";
     
