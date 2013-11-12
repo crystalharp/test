@@ -17,68 +17,16 @@
             android:id="@+id/navigation_widget"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentBottom="true"
             android:visibility="gone"
             tkandroid:navigationState="1"
             >
         </com.tigerknows.ui.hotel.NavigationWidget>
-        <LinearLayout 
-            android:id="@+id/tools_view"
+        <include 
+            android:id="@+id/bottom_buttons_view"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content" 
-            android:background="@drawable/bg_bottom_control"
-            android:orientation="horizontal"
-            android:weightSum="4"
-            android:gravity="center">
-            <LinearLayout
-                android:layout_width="fill_parent" 
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center">
-            <Button android:id="@+id/poi_btn" 
-                android:layout_width="wrap_content" 
-                android:layout_height="wrap_content"
-                android:background="@drawable/btn_search_nearby"
-                android:gravity="center"/>
-            </LinearLayout>
-                
-            <LinearLayout
-                android:layout_width="fill_parent" 
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center">
-            <Button android:id="@+id/favorite_btn" 
-                android:layout_width="wrap_content" 
-                android:layout_height="wrap_content"
-                android:background="@drawable/btn_favorite"
-                android:gravity="center"/>
-            </LinearLayout>
-            
-            <LinearLayout
-                android:layout_width="fill_parent" 
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center">
-            <Button android:id="@+id/share_btn" 
-                android:layout_width="wrap_content" 
-                android:layout_height="wrap_content"
-                android:background="@drawable/btn_share"
-                android:gravity="center"/>
-            </LinearLayout>
-                
-            <LinearLayout
-                android:layout_width="fill_parent" 
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center">
-            <Button android:id="@+id/error_recovery_btn" 
-                android:layout_width="wrap_content" 
-                android:layout_height="wrap_content"
-                android:background="@drawable/btn_recovery_error"
-                android:gravity="center"/>
-            </LinearLayout>
-        </LinearLayout>
+            android:layout_height="wrap_content"
+            layout="@layout/bottom_buttons_view">
+        </include>
                 
         <LinearLayout 
             android:id="@+id/weixin_view"
@@ -373,17 +321,14 @@
                 </LinearLayout>
                     
                 <LinearLayout 
-                    android:id="@+id/feature_txv" 
+                    android:id="@+id/feature_view" 
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content" 
                     android:layout_marginLeft="8dp"
                     android:layout_marginRight="8dp"
                     android:layout_marginBottom="12dp"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="8dp"
                     android:orientation="vertical"
                     android:gravity="left"
-                    android:background="@drawable/list_single_normal"
                     android:focusable="false"
                     >
                 </LinearLayout>

@@ -108,15 +108,15 @@
         android:layout_height="wrap_content" 
         android:background="#00AEFF"/> -->
 
-    <include android:id="@+id/traffic_detail_foot"
+    <include android:id="@+id/bottom_buttons_view"
         android:layout_alignParentBottom="true"
-        layout="@layout/traffic_fav_share" />
+        layout="@layout/bottom_buttons_view" />
 
     <ListView android:id="@+id/result_lsv"
         android:layout_width="fill_parent" 
         android:layout_height="fill_parent"
         android:layout_below="@id/top_view"
-        android:layout_above="@id/traffic_detail_foot"
+        android:layout_above="@id/bottom_buttons_view"
         android:fadingEdge="none"
         android:drawSelectorOnTop="false"
         android:scrollingCache="false"

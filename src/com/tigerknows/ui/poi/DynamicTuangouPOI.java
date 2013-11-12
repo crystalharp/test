@@ -29,37 +29,24 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class DynamicTuangouPOI extends POIDetailFragment.DynamicPOIView{
+public class DynamicTuangouPOI extends DynamicPOIViewTemplate{
     
 	static final int SHOW_DYNAMIC_COUNT = 3;
     
-    List<DynamicPOIViewBlock> blockList = new ArrayList<DynamicPOIViewBlock>();
     LinearListAdapter mListAdapter;
-    DynamicPOIViewBlock mViewBlock;
     List<DynamicPOI> mShowingList = new ArrayList<DynamicPOI>();
     List<DynamicPOI> mAllList = new ArrayList<DynamicPOI>();
-    
-    LinearLayout mRootView;
-    LinearLayout mListView;
-    LinearLayout mMoreView;
-    TextView mTitleTxv;
-    TextView mMoreTxv;
+
     String mRMB;
         
     public DynamicTuangouPOI(POIDetailFragment poiFragment, LayoutInflater inflater){
-        mPOIDetailFragment = poiFragment;
-        mSphinx = mPOIDetailFragment.mSphinx;
-        mInflater = inflater;
+        super(poiFragment, inflater);
+
         mRMB = mSphinx.getString(R.string.rmb_text);
-        mRootView = (LinearLayout) mInflater.inflate(R.layout.poi_dynamic_template, null);
-        mTitleTxv = (TextView) mRootView.findViewById(R.id.title_txv);
         mTitleTxv.setText(R.string.dynamic_tuangou_title);
-        mListView = (LinearLayout) mRootView.findViewById(R.id.list_view);
-        mMoreView = (LinearLayout) mRootView.findViewById(R.id.more_view);
-        mMoreTxv = (TextView) mMoreView.findViewById(R.id.more_txv);
+        mTitleRightTxv.setVisibility(View.GONE);
         mViewBlock = new DynamicPOIViewBlock(mPOIDetailFragment.mBelowAddressLayout, mRootView) {
 
             @Override
@@ -150,18 +137,6 @@ public class DynamicTuangouPOI extends POIDetailFragment.DynamicPOIView{
 
         };
         mMoreView.setOnClickListener(mMoreClickListener);
-    }
-
-    @Override
-    public void refresh() {
-        mViewBlock.refresh();
-    }
-    
-    @Override
-    public List<DynamicPOIViewBlock> getViewList() {
-        blockList.clear();
-        blockList.add(mViewBlock);
-        return blockList;
     }
     
     private OnClickListener mOnItemClickedListener = new View.OnClickListener() {
@@ -263,12 +238,6 @@ public class DynamicTuangouPOI extends POIDetailFragment.DynamicPOIView{
                 }
             }
         }
-	}
-
-	@Override
-	public void onCancelled(TKAsyncTask tkAsyncTask) {
-		// TODO Auto-generated method stub
-		
 	}
 
     @Override

@@ -6,68 +6,49 @@
     android:layout_height="fill_parent"
     android:background="@color/normal_background"
     >
-
-	<LinearLayout 
-	        android:id="@+id/panel_btns"
-	        android:layout_width="fill_parent"
+	<LinearLayout
+        android:id="@+id/panel_btns"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+	    android:weightSum="3">
+	    
+	    <Button android:id="@+id/btn_issue_comment" 
+	        android:layout_weight="1"
+	        android:layout_width="fill_parent" 
 	        android:layout_height="wrap_content"
-	        android:layout_alignParentBottom="true"
-	        android:orientation="vertical"
-	        >
-		
-	    <LinearLayout
-	        android:layout_width="fill_parent"
+	        android:background="@drawable/btn_bottom"
+	        android:paddingTop="8dp"
+	        android:paddingBottom="8dp"
+	        android:drawableTop="@drawable/ic_issue_comment"
+	        android:text="@string/issue_comment"
+	        android:textSize="12sp"
+	        android:gravity="center"/>
+	                
+	    <Button android:id="@+id/btn_order_again" 
+	        android:layout_weight="1"
+	        android:layout_width="fill_parent" 
 	        android:layout_height="wrap_content"
-	        android:gravity="center_vertical"
-	        android:orientation="horizontal"
-	        android:weightSum="3"
-            android:background="@drawable/bg_bottom_control"
-		    >
-		    <LinearLayout
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:gravity="center"
-		        android:orientation="horizontal"
-		        android:layout_weight="1"
-			    >
-		        <Button
-		            android:id="@+id/btn_issue_comment"
-				    android:layout_width="wrap_content"
-				    android:layout_height="wrap_content"
-				    android:background="@drawable/btn_issue_comment"
-		            />
-	        </LinearLayout>
-	        
-		    <LinearLayout
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:gravity="center"
-		        android:orientation="horizontal"
-		        android:layout_weight="1"
-			    >
-		        <Button
-		            android:id="@+id/btn_order_again"
-				    android:layout_width="wrap_content"
-				    android:layout_height="wrap_content"
-				    android:background="@drawable/btn_order_again"
-		            />
-	        </LinearLayout>
-	        
-		    <LinearLayout
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:gravity="center"
-		        android:orientation="horizontal"
-		        android:layout_weight="1"
-			    >
-		        <Button
-		            android:id="@+id/btn_delete_order"
-				    android:layout_width="wrap_content"
-				    android:layout_height="wrap_content"
-				    android:background="@drawable/btn_delete_order"
-		            />
-	        </LinearLayout>
-	    </LinearLayout>
+	        android:background="@drawable/btn_bottom"
+	        android:paddingTop="8dp"
+	        android:paddingBottom="8dp"
+	        android:drawableTop="@drawable/ic_order_again"
+	        android:text="@string/order_again"
+	        android:textSize="12sp"
+	        android:gravity="center"/>
+	    
+	    <Button android:id="@+id/btn_delete_order" 
+	        android:layout_weight="1"
+	        android:layout_width="fill_parent" 
+	        android:layout_height="wrap_content"
+	        android:background="@drawable/btn_bottom"
+	        android:paddingTop="8dp"
+	        android:paddingBottom="8dp"
+	        android:drawableTop="@drawable/ic_delete_order"
+	        android:text="@string/delete_order"
+	        android:textSize="12sp"
+	        android:gravity="center"/>
 	</LinearLayout>
     
     <RelativeLayout 

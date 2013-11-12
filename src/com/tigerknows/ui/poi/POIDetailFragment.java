@@ -154,7 +154,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
 
     private RatingBar mStartsRtb;
 
-    private LinearLayout mFeatureTxv;
+    private LinearLayout mFeatureView;
     
     private boolean needForceReloadPOI = false;
     
@@ -652,8 +652,12 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         }
         
         if (mDismissed) {
-            mBodyScv.smoothScrollTo(0, 0);
+            smoothScroolToTop();
         }
+    }
+    
+    public void smoothScroolToTop() {
+        mBodyScv.smoothScrollTo(0, 0);
     }
     
     @Override
@@ -677,7 +681,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             return;
         }
         String category = poi.getCategory().trim();
-        setFavoriteState(mFavoriteBtn, poi.checkFavorite(mContext));
+        Utility.setFavoriteBtn(mSphinx, mFavoriteBtn, poi.checkFavorite(mContext));
         mNameTxt.setText(poi.getName());
 
         float star = poi.getGrade();
@@ -889,7 +893,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         mDistanceTxv = (TextView)mRootView.findViewById(R.id.distance_txv);
         mDistanceFromTxv = (TextView) mRootView.findViewById(R.id.distance_from_txv);
         
-        mPOIBtn = (Button) mRootView.findViewById(R.id.poi_btn);
+        mPOIBtn = (Button) mRootView.findViewById(R.id.nearby_search_btn);
         mShareBtn = (Button)mRootView.findViewById(R.id.share_btn);
         mFavoriteBtn = (Button)mRootView.findViewById(R.id.favorite_btn);
         // Error Fix
@@ -897,7 +901,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         
         mBelowCommentLayout = (LinearLayout)mRootView.findViewById(R.id.below_comment);
         mBelowAddressLayout = (LinearLayout)mRootView.findViewById(R.id.below_address);
-        mFeatureTxv = (LinearLayout)mRootView.findViewById(R.id.feature_txv);
+        mFeatureView = (LinearLayout)mRootView.findViewById(R.id.feature_view);
 
         mCommentListView = (ViewGroup)mRootView.findViewById(R.id.comment_list_view);
         mCommentSumTotalView = (ViewGroup) mRootView.findViewById(R.id.comment_sum_total_view);
@@ -912,7 +916,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         mCommentTipEdt = (Button) mRootView.findViewById(R.id.comment_tip_btn);
         mLoadingView = mRootView.findViewById(R.id.loading_view);
         
-        mToolsView = mRootView.findViewById(R.id.tools_view);
+        mToolsView = mRootView.findViewById(R.id.bottom_buttons_view);
         mWeixinView = mRootView.findViewById(R.id.weixin_view);
         mWeixinBtn = (Button)mRootView.findViewById(R.id.weixin_btn);
         mDishBtn = (ImageButton)mRootView.findViewById(R.id.dish_btn);
@@ -1039,7 +1043,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         mActionLog.addAction(mActionTag +  ActionLog.CommonFavorite, String.valueOf(isFavorite));
         if (isFavorite) {
             Utility.showNormalDialog(mSphinx, 
-                    mContext.getString(R.string.favorite_yet), 
+                    mContext.getString(R.string.prompt), 
                     mContext.getString(R.string.cancel_favorite_tip),
                     mContext.getString(R.string.yes),
                     mContext.getString(R.string.no),
@@ -1049,30 +1053,14 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                         public void onClick(DialogInterface arg0, int id) {
                             if (id == DialogInterface.BUTTON_POSITIVE) {
                                 poi.deleteFavorite(mContext);
-                                setFavoriteState(mFavoriteBtn, false);
+                                Utility.setFavoriteBtn(mSphinx, mFavoriteBtn, false);
                             }
                         }
                     });
         } else {
             poi.writeToDatabases(mContext, -1, Tigerknows.STORE_TYPE_FAVORITE);
-            setFavoriteState(mFavoriteBtn, true);
+            Utility.setFavoriteBtn(mSphinx, mFavoriteBtn, true);
             Toast.makeText(mSphinx, R.string.favorite_toast, Toast.LENGTH_LONG).show();
-        }
-    }
-    
-    /**
-     * 设置收藏按钮的状态
-     * 1."未收藏"状态, 图标为'中空五角星', 文字为"未收藏"
-     * 2."收藏"状态, 图标为"实心五角星", 文字为"收藏"
-     * 
-     * @param button
-     * @param favoriteYet
-     */
-    private void setFavoriteState(Button button, boolean favoriteYet) {
-        if (favoriteYet) {
-            mFavoriteBtn.setBackgroundResource(R.drawable.btn_cancel_favorite);
-        } else {
-            mFavoriteBtn.setBackgroundResource(R.drawable.btn_favorite);
         }
     }
     
@@ -1203,107 +1191,94 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             return;
         }
         
-        int count = mFeatureTxv.getChildCount();
+        int count = mFeatureView.getChildCount();
         for(int i = 0; i < count; i++) {
-            mFeatureTxv.getChildAt(i).setVisibility(View.GONE);
+            mFeatureView.getChildAt(i).setVisibility(View.GONE);
         }
         
-        int margin = (int)(Globals.g_metrics.density*8);
-        LayoutParams layoutParamsTitle = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
-        layoutParamsTitle.topMargin = margin;
-        layoutParamsTitle.bottomMargin = 0;
-        LayoutParams layoutParamsBody = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
-        layoutParamsBody.topMargin = 0;
-        layoutParamsBody.bottomMargin = margin;
-        LayoutParams layoutParamsSplit = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
-        TextView titleTxv;
-        TextView bodyTxv;
-        ImageView splitImv = null;
+        List<String> nameList = new ArrayList<String>();
+        List<String> valueList = new ArrayList<String>();
         
         if (mDynamicHotelPOI.isExist()) {
             String hotelService = poi.getHotelService();
             if (hotelService != null) {
-                if (count > 0) {
-                    titleTxv = (TextView) mFeatureTxv.getChildAt(0);
-                    bodyTxv = (TextView) mFeatureTxv.getChildAt(1);
-                    splitImv = (ImageView) mFeatureTxv.getChildAt(2);
-                    titleTxv.setVisibility(View.VISIBLE);
-                    bodyTxv.setVisibility(View.VISIBLE);
-                    splitImv.setVisibility(View.GONE);
-                } else {
-                    titleTxv = new TextView(mContext);
-                    titleTxv.setGravity(Gravity.LEFT);
-                    int color = mSphinx.getResources().getColor(R.color.black_middle);
-                    titleTxv.setTextColor(color);
-                    mFeatureTxv.addView(titleTxv, layoutParamsTitle);
-                    bodyTxv = new TextView(mContext);
-                    bodyTxv.setGravity(Gravity.LEFT);
-                    bodyTxv.setLineSpacing(0f, 1.2f);
-                    color = mSphinx.getResources().getColor(R.color.black_light);
-                    bodyTxv.setTextColor(color);
-                    mFeatureTxv.addView(bodyTxv, layoutParamsBody);
-                    splitImv = new ImageView(mContext);
-                    splitImv.setBackgroundResource(R.drawable.bg_line_split);
-                    mFeatureTxv.addView(splitImv, layoutParamsSplit);
-                    splitImv.setVisibility(View.GONE);
+                nameList.add(mSphinx.getString(R.string.hotel_service_title));
+                valueList.add(hotelService);
+            }
+        } else {
+
+            byte[] showKeys = new byte[] {Description.FIELD_FEATURE, Description.FIELD_RECOMMEND, Description.FIELD_GUEST_CAPACITY, Description.FIELD_BUSINESS_HOURS,
+                        Description.FIELD_HOUSING_PRICE, Description.FIELD_SYNOPSIS, Description.FIELD_CINEMA_FEATURE, Description.FIELD_MEMBER_POLICY, Description.FIELD_FEATURE_SPECIALTY, 
+                        Description.FIELD_TOUR_DATE, Description.FIELD_TOUR_LIKE, Description.FIELD_POPEDOM_SCENERY, Description.FIELD_RECOMMEND_SCENERY,
+                        Description.FIELD_NEARBY_INFO, Description.FIELD_COMPANY_WEB, Description.FIELD_COMPANY_TYPE,
+                        Description.FIELD_COMPANY_SCOPE, Description.FIELD_INDUSTRY_INFO};
+    
+            for(int i = 0; i < showKeys.length; i++) {
+                
+                byte key = showKeys[i];
+                String value = poi.getDescriptionValue(key);
+                
+                if(!TextUtils.isEmpty(value)) {
+                    String name = poi.getDescriptionName(mContext, key);
+                    nameList.add(name.substring(0, name.length()-1));
+                    valueList.add(value);
                 }
-                titleTxv.setText(R.string.hotel_service_title);
-                bodyTxv.setText(hotelService);
-                mFeatureTxv.setVisibility(View.VISIBLE);
+            }
+        }
+        
+        int padding = Utility.dip2px(mSphinx, 8);
+        TextView titleTxv;
+        TextView bodyTxv;
+        for(int i = 0, size = nameList.size(); i < size; i++) {
+            if (i < count) {
+                ViewGroup child = (ViewGroup) mFeatureView.getChildAt(i);
+                titleTxv = (TextView) child.getChildAt(0);
+                bodyTxv = (TextView) child.getChildAt(1);
+                child.setVisibility(View.VISIBLE);
             } else {
-                mFeatureTxv.setVisibility(View.GONE);
+                LinearLayout child = new LinearLayout(mSphinx);
+                child.setOrientation(LinearLayout.VERTICAL);
+                titleTxv = new TextView(mContext);
+                child.addView(titleTxv);
+                titleTxv.setGravity(Gravity.LEFT);
+                int color = mSphinx.getResources().getColor(R.color.black_middle);
+                titleTxv.setTextColor(color);
+                titleTxv.setPadding(padding, padding, padding, padding);
+                bodyTxv = new TextView(mContext);
+                child.addView(bodyTxv);
+                bodyTxv.setGravity(Gravity.LEFT);
+                bodyTxv.setLineSpacing(0f, 1.2f);
+                bodyTxv.setPadding(padding, 0, padding, 0);
+                color = mSphinx.getResources().getColor(R.color.black_light);
+                bodyTxv.setTextColor(color);
+                mFeatureView.addView(child);
             }
-            return;
-        } else {
-            mFeatureTxv.setVisibility(View.VISIBLE);
+            titleTxv.setText(nameList.get(i));
+            bodyTxv.setText(valueList.get(i));
         }
-
-        splitImv = null;
-        byte[] showKeys = new byte[] {Description.FIELD_FEATURE, Description.FIELD_RECOMMEND, Description.FIELD_GUEST_CAPACITY, Description.FIELD_BUSINESS_HOURS,
-                    Description.FIELD_HOUSING_PRICE, Description.FIELD_SYNOPSIS, Description.FIELD_CINEMA_FEATURE, Description.FIELD_MEMBER_POLICY, Description.FIELD_FEATURE_SPECIALTY, 
-                    Description.FIELD_TOUR_DATE, Description.FIELD_TOUR_LIKE, Description.FIELD_POPEDOM_SCENERY, Description.FIELD_RECOMMEND_SCENERY,
-                    Description.FIELD_NEARBY_INFO, Description.FIELD_COMPANY_WEB, Description.FIELD_COMPANY_TYPE,
-                    Description.FIELD_COMPANY_SCOPE, Description.FIELD_INDUSTRY_INFO};
-
-        for(int i = 0; i < showKeys.length; i++) {
-            
-            byte key = showKeys[i];
-            String value = poi.getDescriptionValue(key);
-            
-            if(!TextUtils.isEmpty(value)) {
-                if (i*3 < count) {
-                    titleTxv = (TextView) mFeatureTxv.getChildAt(i*3);
-                    bodyTxv = (TextView) mFeatureTxv.getChildAt(i*3+1);
-                    splitImv = (ImageView) mFeatureTxv.getChildAt(i*3+2);
-                    titleTxv.setVisibility(View.VISIBLE);
-                    bodyTxv.setVisibility(View.VISIBLE);
-                    splitImv.setVisibility(View.VISIBLE);
+        
+        count = mFeatureView.getChildCount();
+        ViewGroup firstVisibleChild = null;
+        ViewGroup lastVisibleChild = null;
+        for(int i = 0; i < count; i++) {
+            ViewGroup child = (ViewGroup) mFeatureView.getChildAt(i);
+            if (child.getVisibility() == View.VISIBLE) {
+                if (firstVisibleChild == null) {
+                    firstVisibleChild = child;
+                    child.setBackgroundResource(R.drawable.list_header);
                 } else {
-                    titleTxv = new TextView(mContext);
-                    titleTxv.setGravity(Gravity.LEFT);
-                    int color = mSphinx.getResources().getColor(R.color.black_middle);
-                    titleTxv.setTextColor(color);
-                    mFeatureTxv.addView(titleTxv, layoutParamsTitle);
-                    bodyTxv = new TextView(mContext);
-                    bodyTxv.setGravity(Gravity.LEFT);
-                    bodyTxv.setLineSpacing(0f, 1.2f);
-                    color = mSphinx.getResources().getColor(R.color.black_light);
-                    bodyTxv.setTextColor(color);
-                    mFeatureTxv.addView(bodyTxv, layoutParamsBody);
-                    splitImv = new ImageView(mContext);
-                    splitImv.setBackgroundResource(R.drawable.bg_line_split);
-                    mFeatureTxv.addView(splitImv, layoutParamsSplit);
+                    child.setBackgroundResource(R.drawable.list_middle);
                 }
-                String name = poi.getDescriptionName(mContext, key);
-                titleTxv.setText(name.substring(0, name.length()-1));
-                bodyTxv.setText(value);
+                lastVisibleChild = child;
             }
         }
-        if (splitImv != null) {
-            mFeatureTxv.setVisibility(View.VISIBLE);
-            splitImv.setVisibility(View.GONE);
-        } else {
-            mFeatureTxv.setVisibility(View.GONE);
+        
+        if (firstVisibleChild != null && lastVisibleChild != null) {
+            if (firstVisibleChild == lastVisibleChild) {
+                firstVisibleChild.setBackgroundResource(R.drawable.list_single);
+            } else {
+                lastVisibleChild.setBackgroundResource(R.drawable.list_footer);
+            }
         }
     }
     

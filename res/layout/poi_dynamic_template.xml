@@ -5,20 +5,39 @@
     android:paddingBottom="12dp"
     android:orientation="vertical" >
     
-    <LinearLayout
+    <RelativeLayout
+        android:id="@+id/title_view" 
         android:layout_width="fill_parent" 
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:gravity="center_vertical"
         android:background="@drawable/list_header_title"
         >
+	    <TextView
+	        android:id="@+id/title_right_txv" 
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content" 
+	        android:layout_alignParentRight="true"
+	        android:layout_centerVertical="true"
+	        android:paddingRight="8dp"
+	        android:gravity="right|center_vertical"
+	        android:drawableRight="@drawable/icon_arrow_right"
+	        android:textColor="@color/text_gray"
+	        android:text="@string/app_name"
+	        android:textSize="14sp"
+	        android:clickable="false"
+	        android:focusable="false"
+	        android:focusableInTouchMode="false"
+	        />
         <TextView
             android:id="@+id/title_txv"
             android:layout_width="fill_parent" 
             android:layout_height="wrap_content"
-            android:text="@string/play_dianying"
-            android:textSize="18sp"
+            android:layout_toLeftOf="@id/title_right_txv"
+	        android:layout_centerVertical="true"
+            android:text="@string/app_name"
+            android:textSize="16sp"
             android:padding="8dp" />
-    </LinearLayout>
+    </RelativeLayout>
     <LinearLayout android:id="@+id/list_view"
         android:layout_width="fill_parent" 
         android:layout_height="wrap_content"
@@ -36,7 +55,8 @@
             android:id="@+id/more_txv"
             android:layout_width="wrap_content" 
             android:layout_height="wrap_content"
-            android:text="@string/more_dianying" />
+            android:text="@string/app_name"
+            android:drawableRight="@drawable/ic_arrow_down_hotel" />
     </LinearLayout>
 
 </LinearLayout>

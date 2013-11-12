@@ -1,6 +1,5 @@
 package com.tigerknows.ui.poi;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.tigerknows.R;
@@ -16,6 +15,7 @@ import com.tigerknows.model.POI.Description;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.common.BrowserActivity;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIViewBlock;
+import com.tigerknows.util.Utility;
 
 import android.content.Intent;
 import android.text.TextUtils;
@@ -23,30 +23,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class DynamicDishPOI extends POIDetailFragment.DynamicPOIView implements View.OnClickListener {
+public class DynamicDishPOI extends DynamicPOIViewTemplate implements View.OnClickListener {
     
-    List<DynamicPOIViewBlock> blockList = new ArrayList<DynamicPOIViewBlock>();
-    DynamicPOIViewBlock mViewBlock;
-    View mDishTitleView;
     TextView mContentTxv;
     Animation mAnimation;
-    BaseQuery mBaseQuery;
-    
-//    BlockRefresher mRefresher = new BlockRefresher() {
-//
-
-//    };
     
     public DynamicDishPOI(POIDetailFragment poiFragment, LayoutInflater inflater){
-        mPOIDetailFragment = poiFragment;
-        mSphinx = mPOIDetailFragment.mSphinx;
-        mInflater = inflater;
-        
-        LinearLayout layout = (LinearLayout) mInflater.inflate(R.layout.poi_dynamic_dish, null);
-        mViewBlock = new DynamicPOIViewBlock(mPOIDetailFragment.mBelowAddressLayout, layout){
+        super(poiFragment, inflater);
+
+        mTitleView.setClickable(true);
+        mTitleView.setOnClickListener(this);
+        mTitleTxv.setText(R.string.recommend_dish);
+        mTitleRightTxv.setText(R.string.i_am_shopkeeper);
+        mMoreView.setVisibility(View.GONE);
+        mViewBlock = new DynamicPOIViewBlock(mPOIDetailFragment.mBelowAddressLayout, mRootView){
         	
 	        @Override
 	        public void refresh() {
@@ -71,19 +63,19 @@ public class DynamicDishPOI extends POIDetailFragment.DynamicPOIView implements 
 	                                    s.append(dishes.get(i).getName());
 	                                    s.append("  ");
 	                                    }
+	                                    mListView.setClickable(true);
 	                                    mContentTxv.setText(s.toString());
-	                                    mContentTxv.setClickable(true);
 	                                    return;
 	                                }
 	                            }
 	                        }
 	                    }
-	                    mContentTxv.setClickable(false);
+	                    mListView.setClickable(false);
 	                    mContentTxv.setText(R.string.recommend_cook_empty);
 	                    return;
 	                }
 	   
-	                mContentTxv.setClickable(false);
+	                mListView.setClickable(false);
 	                String recommendCook = mPOI.getDescriptionValue(Description.FIELD_RECOMMEND_COOK);
 	                if(!TextUtils.isEmpty(recommendCook)) {
 	                    mContentTxv.setText(recommendCook);
@@ -93,11 +85,15 @@ public class DynamicDishPOI extends POIDetailFragment.DynamicPOIView implements 
 	            }
         };
         
-        mDishTitleView = layout.findViewById(R.id.dish_title_view);
-        mDishTitleView.setOnClickListener(this);
-        
-        mContentTxv = (TextView) layout.findViewById(R.id.content_txv);
-        mContentTxv.setOnClickListener(this);
+        mContentTxv = new TextView(mSphinx);
+        mContentTxv.setLineSpacing(0f, 1.2f);
+        mContentTxv.setPadding(Utility.dip2px(mSphinx, 8),
+                Utility.dip2px(mSphinx, 8),
+                Utility.dip2px(mSphinx, 8),
+                Utility.dip2px(mSphinx, 8));
+        mListView.addView(mContentTxv);
+        mListView.setOnClickListener(this);
+        mListView.setBackgroundResource(R.drawable.list_footer);
         
         mPOIDetailFragment.mDishBtn.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
         mAnimation = new TranslateAnimation(mPOIDetailFragment.mDishBtn.getMeasuredWidth(), 0, 0, 0);
@@ -113,18 +109,6 @@ public class DynamicDishPOI extends POIDetailFragment.DynamicPOIView implements 
             mPOIDetailFragment.mDishBtn.setVisibility(View.VISIBLE);
             mPOIDetailFragment.mDishBtn.startAnimation(mAnimation);
         }
-    }
-
-    @Override
-    public void refresh() {
-        mViewBlock.refresh();
-    }
-    
-    @Override
-    public List<DynamicPOIViewBlock> getViewList() {
-        blockList.clear();
-        blockList.add(mViewBlock);
-        return blockList;
     }
 
 	@Override
@@ -156,12 +140,6 @@ public class DynamicDishPOI extends POIDetailFragment.DynamicPOIView implements 
         refresh();
 	}
 
-	@Override
-	public void onCancelled(TKAsyncTask tkAsyncTask) {
-		// TODO Auto-generated method stub
-		
-	}
-
     @Override
     public void loadData(int fromType) {
         if (mBaseQuery != null) {
@@ -184,13 +162,13 @@ public class DynamicDishPOI extends POIDetailFragment.DynamicPOIView implements 
     @Override
     public void onClick(View v) {
         int id = v.getId();
-        if (id == R.id.dish_title_view) {
+        if (id == R.id.title_view) {
             mPOIDetailFragment.mActionLog.addAction(mPOIDetailFragment.mActionTag+ActionLog.POIDetailShopkeeper);
             Intent intent = new Intent();
             intent.putExtra(BrowserActivity.TITLE, mSphinx.getString(R.string.add_dish));
             intent.putExtra(BrowserActivity.URL, "http://dish.laohubaodian.net/dish/13");
             mSphinx.showView(R.id.activity_browser, intent);
-        } else if (id == R.id.content_txv) {
+        } else if (id == R.id.list_view) {
             mPOIDetailFragment.mActionLog.addAction(mPOIDetailFragment.mActionTag + ActionLog.POIDetailDishList);
             DishActivity.setPOI(mPOI);
             Intent intent = new Intent();
