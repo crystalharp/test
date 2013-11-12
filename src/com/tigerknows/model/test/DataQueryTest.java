@@ -328,11 +328,20 @@ public class DataQueryTest {
         return list;
     }
     
-    public static XMap launchFilterConfigResponse() {
+    public static XMap launchFilterConfigAreaResponse() {
         XMap data = new XMap();
         BaseQueryTest.launchResponse(data);
         XMap configResult = new XMap();
-        configResult.put(FilterConfigResponse.FIELD_AREA_FILTER, launchFilterArea());
+        configResult.put(FilterConfigResponse.FIELD_FILTER, launchFilterArea());
+        data.put(FilterConfigResponse.FIELD_RESULT, configResult);
+        return data;
+    }
+    
+    public static XMap launchFilterConfigPOICategoryOrderResponse() {
+        XMap data = new XMap();
+        BaseQueryTest.launchResponse(data);
+        XMap configResult = new XMap();
+        configResult.put(FilterConfigResponse.FIELD_FILTER, launchFilterCategoryOrder());
         data.put(FilterConfigResponse.FIELD_RESULT, configResult);
         return data;
     }

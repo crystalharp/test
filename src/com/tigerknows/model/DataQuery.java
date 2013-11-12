@@ -137,6 +137,10 @@ public final class DataQuery extends BaseQuery {
     
     // configinfo   String  true    JSON字符串，key标识config的类型，value标识版本号,具体定义见默认筛选项参数定义
     public static final String SERVER_PARAMETER_CONFIGINFO = "configinfo";
+
+    public static final String CONFIGINFO_AREA = "{\"0\":\"0.0.0\"}";
+    
+    public static final String CONFIGINFO_POI_CATEGORY_ORDER = "{\"1\":\"0.0.0\"}";
     
     // ext  String  true    扩展搜索，当前支持busline，表示支持优先展示公交线路搜索结果 
     public static final String SERVER_PARAMETER_EXT = "ext";
@@ -933,7 +937,14 @@ public final class DataQuery extends BaseQuery {
         } else if (DATA_TYPE_COUPON.equals(dataType)) {
             this.response = new CouponResponse(responseXMap);
         } else if (DATA_TYPE_FILTER.equals(dataType)) {
-            FilterConfigResponse response = new FilterConfigResponse(responseXMap);
+            byte key = 0;
+            String configInfo = getParameter(SERVER_PARAMETER_CONFIGINFO);
+            if (CONFIGINFO_AREA.equals(configInfo)) {
+                key = FilterResponse.FIELD_FILTER_AREA;
+            } else if (CONFIGINFO_POI_CATEGORY_ORDER.equals(configInfo)) {
+                key = FilterResponse.FIELD_FILTER_CATEGORY_ORDER;
+            }
+            FilterConfigResponse response = new FilterConfigResponse(responseXMap, key);
             translateFilter(response.getFilterResponse(), dataType, subDataType, filterList);
             this.response = response;
         } else if (DATA_TYPE_DISH.equals(dataType)) {
@@ -976,7 +987,12 @@ public final class DataQuery extends BaseQuery {
                     staticFilterDataArea = Filter_Area;
                     staticFilterDataCategoryOrder = Filter_Category_Order_Zhanlan;
                 } else if (DATA_TYPE_FILTER.equals(dataType)) {
-                    staticFilterDataArea = Filter_Area;
+                    String configInfo = getParameter(SERVER_PARAMETER_CONFIGINFO);
+                    if (CONFIGINFO_AREA.equals(configInfo)) {
+                        staticFilterDataArea = Filter_Area;
+                    } else if (CONFIGINFO_POI_CATEGORY_ORDER.equals(configInfo)) {
+                        staticFilterDataCategoryOrder = Filter_Category_Order_POI;
+                    }
                 }
                 // 将城市区域筛选数据写入相应文件夹
                 FilterArea filterDataArea = baseResponse.getFilterDataArea();
@@ -1046,7 +1062,12 @@ public final class DataQuery extends BaseQuery {
                     Filter_Area = staticFilterDataArea;
                     Filter_Category_Order_Zhanlan = staticFilterDataCategoryOrder;
                 } else if (DATA_TYPE_FILTER.equals(dataType)) {
-                    Filter_Area = staticFilterDataArea;
+                    String configInfo = getParameter(SERVER_PARAMETER_CONFIGINFO);
+                    if (CONFIGINFO_AREA.equals(configInfo)) {
+                        Filter_Area = staticFilterDataArea;
+                    } else if (CONFIGINFO_POI_CATEGORY_ORDER.equals(configInfo)) {
+                        Filter_Category_Order_POI = staticFilterDataCategoryOrder;
+                    }
                 }
             } catch (Exception e) {
                 throw new APIException(e);
@@ -2303,20 +2324,20 @@ public final class DataQuery extends BaseQuery {
         // 0x02     x_map<x_map>    配置文件的返回结果
         public static final byte FIELD_RESULT = 0x02;
         
-        // 0x00    x_map   根据城市id获取的地片筛选项 
-        public static final byte FIELD_AREA_FILTER = 0x0;
+        // 0x00    x_map   获取的筛选项 
+        public static final byte FIELD_FILTER = 0x0;
         
         private FilterResponse filterResponse;
 
-        public FilterConfigResponse(XMap data) throws APIException {
+        public FilterConfigResponse(XMap data, byte key) throws APIException {
             super(data);
             
             if (this.data.containsKey(FIELD_RESULT)) {
                 XMap xmap = this.data.getXMap(FIELD_RESULT);
-                if (xmap.containsKey(FIELD_AREA_FILTER)) {
-                    XMap filterArea = xmap.getXMap(FIELD_AREA_FILTER);
-                    xmap.remove(FIELD_AREA_FILTER);
-                    xmap.put(FilterResponse.FIELD_FILTER_AREA, filterArea);
+                if (xmap.containsKey(FIELD_FILTER)) {
+                    XMap filter = xmap.getXMap(FIELD_FILTER);
+                    xmap.remove(FIELD_FILTER);
+                    xmap.put(key, filter);
                     filterResponse = new FilterResponse(xmap);
                 }
             }
@@ -2866,12 +2887,17 @@ public final class DataQuery extends BaseQuery {
         } else if (DATA_TYPE_COUPON.equals(dataType)){
         	responseXMap = DataQueryTest.launchCouponResponse(168, "launchCouponResponse");
         } else if (DATA_TYPE_FILTER.equals(dataType)){
-            responseXMap = DataQueryTest.launchFilterConfigResponse();
+            String configInfo = getParameter(SERVER_PARAMETER_CONFIGINFO);
+            if (CONFIGINFO_AREA.equals(configInfo)) {
+                responseXMap = DataQueryTest.launchFilterConfigAreaResponse();
+            } else if (CONFIGINFO_POI_CATEGORY_ORDER.equals(configInfo)) {
+                responseXMap = DataQueryTest.launchFilterConfigPOICategoryOrderResponse();
+            }
         } else if (DATA_TYPE_DISH.equals(dataType)){
             responseXMap = DataQueryTest.launchDishResponse(256);
         } else if (DATA_TYPE_PICTURE.equals(dataType)){
             responseXMap = DataQueryTest.launchPictureResponse(168);
-        } else if (DATA_TYPE_SHANGJIA.equals(dataType)) {
+        } else if (DATA_TYPE_HOTELVENDOR.equals(dataType)) {
             responseXMap = DataQueryTest.launchHotelVendorResponse(context, 10);
         }
     }
