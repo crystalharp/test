@@ -675,7 +675,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             
             int hotelPicWidth = 0;
             Hotel hotel = poi.getHotel();
-            if (BaseQuery.SUB_DATA_TYPE_HOTEL.equals(subDataType) && hotel != null) {
+            if (BaseQuery.SUB_DATA_TYPE_HOTEL.equals(subDataType) && poi.getSubType() == POI.SUB_TYPE_HOTEL) {
                 TKDrawable tkDrawable = hotel.getImageThumb();
                 if (tkDrawable != null) {
                     Drawable drawable = tkDrawable.loadDrawable(activity, loadedDrawableRun, viewToken);

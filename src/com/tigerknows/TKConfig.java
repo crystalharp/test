@@ -1628,6 +1628,7 @@ public class TKConfig {
         File file = new File(mapPath+"config.txt");
         if (file.exists()) {
             try {
+            	// Warning: 这一段只能从尾部新增代码，不可删除或从中间插入
                 FileInputStream fis = new FileInputStream(file);
                 String text = Utility.readFile(fis);
                 fis.close();
@@ -1745,23 +1746,11 @@ public class TKConfig {
                     start += "alarmCheckDelayTime=".length();
                     AlarmCheckDelayTime = Integer.parseInt(text.substring(start, end));
                 }
-                start = text.indexOf("proxyQueryHost=");
-                end = text.indexOf(";", start);
-                if (start > -1 && end > -1) {
-                    start += "proxyQueryHost=".length();
-                    TKConfig.sPROXY_QUERY_HOST = text.substring(start, end);
-                }
                 start = text.indexOf("proxyUrl=");
                 end = text.indexOf(";", start);
                 if (start > -1 && end > -1) {
                     start += "proxyUrl=".length();
                     TKConfig.sPROXY_URL = text.substring(start, end);
-                }
-                start = text.indexOf("hotelOrderHost=");
-                end = text.indexOf(";", start);
-                if (start > -1 && end > -1) {
-                    start += "hotelOrderHost=".length();
-                    TKConfig.sHOTEL_ORDER_HOST = text.substring(start, end);
                 }
                 start = text.indexOf("hotelOrderUrl=");
                 end = text.indexOf(";", start);
@@ -1828,6 +1817,18 @@ public class TKConfig {
                 if (start > -1 && end > -1) {
                     start += "fileDownloadHost=".length();
                     TKConfig.sFILE_DOWNLOAD_HOST = text.substring(start, end);
+                }
+                start = text.indexOf("proxyQueryHost=");
+                end = text.indexOf(";", start);
+                if (start > -1 && end > -1) {
+                    start += "proxyQueryHost=".length();
+                    TKConfig.sPROXY_QUERY_HOST = text.substring(start, end);
+                }
+                start = text.indexOf("hotelOrderHost=");
+                end = text.indexOf(";", start);
+                if (start > -1 && end > -1) {
+                    start += "hotelOrderHost=".length();
+                    TKConfig.sHOTEL_ORDER_HOST = text.substring(start, end);
                 }
                 BaseQuery.initCommonParameters();
             } catch (Exception e) {

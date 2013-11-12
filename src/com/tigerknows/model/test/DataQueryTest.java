@@ -642,12 +642,16 @@ public class DataQueryTest {
         data.put(POIList.FIELD_LIST, list);
         return data;
     }
+    
+    protected static XMap launchPOI(String name){
+    	return launchPOI(name, 0);
+    }
 
-    protected static XMap launchPOI(String name) {
+    protected static XMap launchPOI(String name, long subType) {
         XMap data = new XMap();
+        data.put(POI.FIELD_SUBTYPE, subType);
         data.put(POI.FIELD_UUID, POI_UUID);
         data.put(POI.FIELD_NAME, name);
-        data.put(POI.FIELD_TYPE, 1);
         data.put(POI.FIELD_LONGITUDE, ((int) (116.397*100000)));
         data.put(POI.FIELD_LATITUDE, ((int) (39.904*100000)));
         data.put(POI.FIELD_DESCRIPTION, launchDynamicDescription());
@@ -764,7 +768,7 @@ public class DataQueryTest {
     }
 
     public static XMap launchHotelPOI(String name, int canReserve) {
-        XMap data = launchPOI(name);
+        XMap data = launchPOI(name, 1);
         data.put(Hotel.FIELD_BRAND, 8);
         data.put(Hotel.FIELD_IMAGE_THUMB, "FIELD_IMAGE_THUMB");
         XArray<XMap> xarray = new XArray<XMap>();

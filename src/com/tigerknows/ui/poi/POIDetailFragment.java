@@ -617,7 +617,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         }
         
         // Ugly
-        if (mPOI.getHotel() != null) {
+        if (mPOI.getSubType() == POI.SUB_TYPE_HOTEL) {
             mDynamicHotelPOI.refreshPicture();
         }
         refreshNavigation();
@@ -690,7 +690,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         }
 
         long money = poi.getPerCapity();
-        if (mDynamicHotelPOI.isExist() || poi.getHotel() != null) {
+        if (mDynamicHotelPOI.isExist() || poi.getSubType() == POI.SUB_TYPE_HOTEL) {
             mMoneyTxv.setVisibility(View.GONE);
         } else if (money > -1) {
             mMoneyTxv.setText(mContext.getString(R.string.yuan, money));

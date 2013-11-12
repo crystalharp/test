@@ -44,11 +44,11 @@ public class POI extends BaseData {
     
     static final String TAG = "POI";
     
+    // 0x00 x_int subtype，代表具体是哪种POI，默认为0，@since hotel
+    public static final byte FIELD_SUBTYPE = 0x00;
+    
     // 0x01 x_string    uuid,全局唯一 
     public static final byte FIELD_UUID = 0x01;
-    
-    // 0x02 x_int poi类型（若无则写入类型0，即全部类型），可能的值见这里
-    public static final byte FIELD_TYPE = 0x02;
 
     // 0x03 x_int poi所在经度, 是普通的度数 × 10万
     public static final byte FIELD_LONGITUDE = 0x03;
@@ -440,11 +440,14 @@ public class POI extends BaseData {
 
     public static final int FROM_LOCAL = 1;
     
-    public static final String NEED_FIELD = "0102030405060708090a0b12131415161756";
+    public static final int SUB_TYPE_POI = 0;
+    public static final int SUB_TYPE_HOTEL = 1;
+    
+    public static final String NEED_FIELD = "0001030405060708090a0b12131415161756";
+    
+    private long subType;
     
     private String uuid;
-    
-    private long type;
     
     private Position position = null;
 
@@ -578,6 +581,10 @@ public class POI extends BaseData {
                 }
             }
         }
+    }
+    
+    public long getSubType() {
+    	return subType;
     }
 
     public int getFrom() {
@@ -718,10 +725,6 @@ public class POI extends BaseData {
     public XMap getXDescription() {
         return description;
     }
-
-    public long getType() {
-        return type;
-    }
     
     public String getToCenterDistance() {
         return toCenterDistance;
@@ -844,9 +847,8 @@ public class POI extends BaseData {
     public void init(XMap data, boolean reset) throws APIException {
         super.init(data, reset);
 
+        this.subType = getLongFromData(FIELD_SUBTYPE, reset ? 0 : this.subType);
         this.uuid = getStringFromData(FIELD_UUID, reset ? null : this.uuid);
-        
-        this.type = getLongFromData(FIELD_TYPE, reset ? 0 : this.type);
         this.position = getPositionFromData(FIELD_LONGITUDE, FIELD_LATITUDE, reset ? null : this.position);
         this.name = getStringFromData(FIELD_NAME, reset ? null : this.name);
         if (this.data.containsKey(FIELD_DESCRIPTION)) {
@@ -958,7 +960,7 @@ public class POI extends BaseData {
                 data.put(FIELD_UUID, this.uuid);
             }
             
-            data.put(FIELD_TYPE, this.type);
+            data.put(FIELD_SUBTYPE, this.subType);
             
             if (this.position != null) {
                 data.put(FIELD_LONGITUDE, (long)(this.position.getLon()*TKConfig.LON_LAT_DIVISOR));

@@ -312,7 +312,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             
             @Override
             public void onClick(View v) {
-                if (mPOI.getHotel() != null) {
+                if (mPOI.getSubType() == POI.SUB_TYPE_HOTEL) {
                     mPOIDetailFragment.mActionLog.addAction(ActionLog.POIDetail + ActionLog.POIDetailHotelIntro);
                     Intent intent = new Intent();
                     intent.putExtra(HotelIntroActivity.EXTRA_NAME, mPOI.getName());
@@ -328,7 +328,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             @Override
             public void onClick(View v) {
                 Hotel hotel = mPOI.getHotel();
-                if (hotel != null && hotel.getHotelTKDrawableList() != null && hotel.getHotelTKDrawableList().size() > 0) {
+                if (mPOI.getSubType() == POI.SUB_TYPE_HOTEL && hotel.getHotelTKDrawableList() != null && hotel.getHotelTKDrawableList().size() > 0) {
                     mPOIDetailFragment.mActionLog.addAction(ActionLog.POIDetail + ActionLog.POIDetailHotelImage);
                     Intent intent = new Intent();
                     ArrayList<HotelTKDrawable> list = (ArrayList<HotelTKDrawable>)hotel.getHotelTKDrawableList();
@@ -544,7 +544,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             updateCanReserve = true;
         }
         String nf = Hotel.NEED_FIELD_DETAIL;
-        if (mHotel != null && mHotel.getRoomTypeList() == null) {
+        if (mPOI.getSubType() == POI.SUB_TYPE_HOTEL && mHotel.getRoomTypeList() == null) {
             if (updateCanReserve) {
                 nf += Util.byteToHexString(Hotel.FIELD_CAN_RESERVE);
             }
