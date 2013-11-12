@@ -206,7 +206,7 @@ public class TrafficCompassActivity extends BaseActivity implements SensorEventL
     		}
     		mLocationDetailTxv[i].setText(getString(mLocationDetailID[i], locationDetail[i]));
     	}
-    	if(false && mSensorManager != null){
+    	if(mSensorManager != null){
     		Sensor sensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
     		if(sensor != null){
     			mSensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_GAME);
