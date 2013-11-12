@@ -1459,6 +1459,10 @@ public abstract class BaseQuery {
             s.append(getParameter(SERVER_PARAMETER_REQUSET_SOURCE_TYPE));
         }
         s.append('@');
+        if (hasParameter(SERVER_PARAMETER_OPERATION_CODE)) {
+            s.append(getParameter(SERVER_PARAMETER_OPERATION_CODE));
+        }
+        s.append('@');
         
         return s.toString();
     }

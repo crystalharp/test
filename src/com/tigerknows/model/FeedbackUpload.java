@@ -93,11 +93,16 @@ public class FeedbackUpload extends BaseQuery {
             s.append(FeedbackUpload.SERVER_PARAMETER_LOCATION_IN_ANDROID);
         } else if (hasParameter(FeedbackUpload.SERVER_PARAMETER_ERROR_RECOVERY)) {
             s.append(FeedbackUpload.SERVER_PARAMETER_ERROR_RECOVERY);
+        } else if (hasParameter(FeedbackUpload.SERVER_PARAMETER_ADD_MERCHANT)) {
+            s.append(FeedbackUpload.SERVER_PARAMETER_ADD_MERCHANT);
+        } else if (hasParameter(FeedbackUpload.SERVER_PARAMETER_SATISFY_RATE)) {
+            s.append(FeedbackUpload.SERVER_PARAMETER_SATISFY_RATE);
         }
         s.append('@');
         if (hasParameter(SERVER_PARAMETER_REQUSET_SOURCE_TYPE)) {
             s.append(getParameter(SERVER_PARAMETER_REQUSET_SOURCE_TYPE));
         }
+        s.append('@');
         s.append('@');
         
         return s.toString();

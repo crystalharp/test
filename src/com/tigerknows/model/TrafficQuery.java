@@ -297,6 +297,7 @@ public final class TrafficQuery extends BaseQuery {
             s.append(getParameter(SERVER_PARAMETER_REQUSET_SOURCE_TYPE));
         }
         s.append('@');
+        s.append('@');
         
         return s.toString();
     }
