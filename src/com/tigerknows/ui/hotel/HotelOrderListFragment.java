@@ -23,13 +23,11 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
-import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
@@ -39,7 +37,6 @@ import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.HotelOrder;
 import com.tigerknows.model.HotelOrderOperation;
-import com.tigerknows.model.HotelVendor;
 import com.tigerknows.model.HotelOrderOperation.HotelOrderSyncResponse;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.HotelOrderOperation.HotelOrderStatesResponse;
@@ -54,7 +51,7 @@ import com.tigerknows.widget.SpringbackListView.OnRefreshListener;
 /**
  * @author Peng Wenyue
  */
-public class HotelOrderListFragment extends BaseFragment implements View.OnClickListener {
+public class HotelOrderListFragment extends BaseFragment{
     
     static final String TAG = "HotelOrderListFragment";
     
@@ -75,23 +72,11 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     
     private ImageView mEmptyImv = null;
 
-    /**
-     * View group containing {@link mServiceHotlineTitleTxv} and {@link mServiceHotlineTxv}
-     */
-    private View mServiceHotlineView;
-
-    /**
-     * Hotline number
-     */
-    private TextView mServiceHotlineTxv;
-
     private HotelOrderAdapter hotelOrderAdapter;
     
 	private int orderTotal = 0;
 	
 	private List<HotelOrder> orders = new ArrayList<HotelOrder>();
-	
-	private List<HotelVendor> mHotelVendorList = new ArrayList<HotelVendor>();
     
     /**
      * 需要查询状态的订单的buffer
@@ -154,13 +139,6 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
         mQueryingView = mRootView.findViewById(R.id.querying_view);
         View v = mLayoutInflater.inflate(R.layout.loading, null);
         mResultLsv.addFooterView(v);
-        v = mLayoutInflater.inflate(R.layout.hotel_hot_line, null);
-        LinearLayout.LayoutParams params = (LayoutParams) v.findViewById(R.id.service_hotline_view).getLayoutParams();//set(0, Util.dip2px(Globals.g_metrics.density, 8), 0, 0);
-        params.topMargin = Util.dip2px(Globals.g_metrics.density, 8);
-        v.findViewById(R.id.service_hotline_view).setLayoutParams(params);
-        mResultLsv.addHeaderView(v);
-        mServiceHotlineView = mRootView.findViewById(R.id.service_hotline_view);
-        mServiceHotlineTxv = (TextView) mRootView.findViewById(R.id.service_hotline_txv);
     }
 
     protected void setListener() {
@@ -183,13 +161,12 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				mActionLog.addAction(mActionTag+ActionLog.HotelOrderListItemClick, position);
-				mSphinx.getHotelOrderDetailFragment().setData(orders.get(position-1) , position-1);
+				mSphinx.getHotelOrderDetailFragment().setData(orders.get(position) , position);
 				mSphinx.getHotelOrderDetailFragment().setStageIndicatorVisible(false);
 				mSphinx.showView(R.id.view_hotel_order_detail);
 			}
         	
 		});
-        mServiceHotlineView.setOnClickListener(this);
     }
     
     private void reloadOrders(){
@@ -231,7 +208,6 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
         if(toSync){
         	logI("Anomaly could exists. Send list sync query.");
         	sendOrderSyncQuery();
-        	updateHotelVendorInfo();
         }
         toSync = false;
     }
@@ -247,11 +223,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     	logI("orderSubmited: " + orderSubmited);
 		return "yes".equals(orderSubmited);
     }
-    
-    private void updateHotelVendorInfo() {
-    	// TODO: unfinished method
-    	mHotelVendorList = HotelVendor.getHotelVendorList();
-    }
+
     
 	private void sendOrderSyncQuery(){
 		
@@ -269,7 +241,6 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     	hotelOrderOperation.setup(Globals.getCurrentCityInfo().getId(), getId(), getId(), mContext.getString(R.string.hotel_order_sync_tip));
     	mTkAsyncTasking = mSphinx.queryStart(hotelOrderOperation);
     	mBaseQuerying = mTkAsyncTasking.getBaseQueryList();
-		
 	}
 	
     public void removeOrder(HotelOrder order){
@@ -321,18 +292,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
         }
     }
 
-    @Override
-    public void onClick(final View view) {
-        switch (view.getId()) {
-            case R.id.service_hotline_view:
-            	mActionLog.addAction(mActionTag + ActionLog.HotelOrderListServiceTel);
-                Utility.telephone(mSphinx, mServiceHotlineTxv);
-                break;
-                
-            default:
-                break;
-        }
-    }
+
 
     public class HotelOrderAdapter extends ArrayAdapter<HotelOrder>{
         private static final int RESOURCE_ID = R.layout.hotel_order_list_item;

@@ -23,6 +23,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
@@ -48,6 +49,7 @@ import com.tigerknows.model.HotelOrderOperation.HotelOrderCreateResponse;
 import com.tigerknows.model.Hotel;
 import com.tigerknows.model.Hotel.RoomType;
 import com.tigerknows.model.HotelOrder;
+import com.tigerknows.model.HotelVendor;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.ProxyQuery.RoomTypeDynamic.DanbaoGuize;
 import com.tigerknows.model.ProxyQuery.RoomTypeDynamic.DanbaoGuize.RetentionTime;
@@ -148,8 +150,20 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     public void onResume(){
         super.onResume();
         mTitleBtn.setText(mSphinx.getString(R.string.hotel_room_title));
+        final HotelVendor hotelVendor = HotelVendor.getHotelVendorById(mRoomType.getVendorID(), mSphinx, null);
+        if(hotelVendor == null || TextUtils.isEmpty(hotelVendor.getReserveTel())){
+        	mRightBtn.setVisibility(View.GONE);
+        }else{
+        	mRightBtn.setBackgroundResource(R.drawable.ic_telephone_btn);
+        	mRightBtn.setVisibility(View.VISIBLE);
+        	mRightBtn.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					// TODO mActionLog.addAction(mActionTag + ActionLog.???);
+                    Utility.telephone(mSphinx, hotelVendor.getReserveTel());
+				}
+			});        }
         refreshData();
-
     }
     
     @Override

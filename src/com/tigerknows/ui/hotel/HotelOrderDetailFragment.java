@@ -98,16 +98,9 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
 
 	private View mNameView;
 	
-    /**
-     * View group containing {@link mServiceHotlineTitleTxv} and {@link mServiceHotlineTxv}
-     */
-    private View mServiceHotlineView;
+	private HotelVendor mHotelVendor;
 	
-	/**
-     * Hotline number
-     */
-    private TextView mServiceHotlineTxv;
-    
+   
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -164,9 +157,6 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
 		
 		mScrollView = (ScrollView) mRootView.findViewById(R.id.body_scv);
 		mNameView = mRootView.findViewById(R.id.name_view);
-        mServiceHotlineView = mRootView.findViewById(R.id.service_hotline_view);
-        mServiceHotlineTxv = (TextView) mRootView.findViewById(R.id.service_hotline_txv);
-		
     }
 
     protected void setListener() {
@@ -180,7 +170,6 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
     	mHotelTelView.setOnClickListener(this);
     	
     	mNameView.setOnClickListener(mJumpToPOIClickListener);
-    	mServiceHotlineView.setOnClickListener(this);
     }
     
     private OnClickListener mCancelOnClickListener = new OnClickListener() {
@@ -330,8 +319,22 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
         super.onResume();
         
         // set title fragment content
-        mRightBtn.setVisibility(View.GONE);
         mTitleBtn.setText(mContext.getString(R.string.hotel_order_detail));
+        
+        mHotelVendor = HotelVendor.getHotelVendorById(mOrder.getVendorID(), mSphinx, null);
+        if(mHotelVendor == null || TextUtils.isEmpty(mHotelVendor.getServiceTel())){
+        	mRightBtn.setVisibility(View.GONE);
+        }else{
+        	mRightBtn.setBackgroundResource(R.drawable.ic_telephone_btn);
+        	mRightBtn.setVisibility(View.VISIBLE);
+        	mRightBtn.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					// TODO mActionLog.addAction(mActionTag + ActionLog.???);
+                    Utility.telephone(mSphinx, mHotelVendor.getServiceTel());
+				}
+			});
+        }
         if(mSphinx.uiStackContains(R.id.view_hotel_order_write)){
         	mBtnOrderAgain.setBackgroundResource(R.drawable.btn_order_again_disable);
         	mBtnOrderAgain.setEnabled(false);
@@ -381,9 +384,9 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
                 Utility.queryTraffic(mSphinx, poi, mActionTag);
             	break;
             	
-            case R.id.service_hotline_view:
+            case R.id.right_btn:
             	mActionLog.addAction(mActionTag + ActionLog.HotelOrderDetailServiceTel);
-                Utility.telephone(mSphinx, mServiceHotlineTxv);
+                Utility.telephone(mSphinx, mRightBtn);
                 break;
             	
             default:

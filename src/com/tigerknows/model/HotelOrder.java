@@ -374,9 +374,6 @@ public class HotelOrder extends XMapData{
 	public long getCreateTime() {
 		return createTime;
 	}
-	public void setCreateTime(long createTime) {
-		this.createTime = createTime;
-	}
 	public int getState() {
 		return state;
 	}
@@ -392,87 +389,63 @@ public class HotelOrder extends XMapData{
 	public String getHotelName() {
 		return hotelName;
 	}
-	public void setHotelName(String hotelName) {
-		this.hotelName = hotelName;
-	}
+
 	public String getHotelAddress() {
 		return hotelAddress;
 	}
-	public void setHotelAddress(String hotelAddress) {
-		this.hotelAddress = hotelAddress;
-	}
+
 	public Position getPosition() {
 		return position;
 	}
-	public void setPosition(Position position) {
-		this.position = position;
-	}
+
 	public String getHotelTel() {
 		return hotelTel;
 	}
-	public void setHotelTel(String hotelTel) {
-		this.hotelTel = hotelTel;
-	}
+
 	public String getRoomType() {
 		return roomType;
 	}
-	public void setRoomType(String roomType) {
-		this.roomType = roomType;
-	}
+
 	public long getRoomNum() {
 		return roomNum;
 	}
-	public void setRoomNum(long roomNum) {
-		this.roomNum = roomNum;
-	}
+
 	public double getTotalFee() {
 		return totalFee;
 	}
-	public void setTotalFee(double totalFee) {
-		this.totalFee = totalFee;
+
+	public long getVendorID() {
+		return vendorID;
 	}
+	
 	public int getDayCount() {
 		return dayCount;
 	}
-	public void setDayCount(int dayCount) {
-		this.dayCount = dayCount;
-	}
+
 	public long getRetentionTime() {
 		return retentionTime;
 	}
-	public void setRetentionTime(long retentionTime) {
-		this.retentionTime = retentionTime;
-	}
+
 	public long getCheckinTime() {
 		return checkinTime;
 	}
-	public void setCheckinTime(long checkinTime) {
-		this.checkinTime = checkinTime;
-	}
+
 	public long getCheckoutTime() {
 		return checkoutTime;
 	}
-	public void setCheckoutTime(long checkoutTime) {
-		this.checkoutTime = checkoutTime;
-	}
+
 	public String getGuestName() {
 		return guestName;
 	}
-	public void setGuestName(String guestName) {
-		this.guestName = guestName;
-	}
+
 	public String getMobileNum() {
 		return mobileNum;
 	}
-	public void setMobileNum(String mobileNum) {
-		this.mobileNum = mobileNum;
-	}
+
 	public long getCancelDeadline() {
 		return cancelDeadline;
 	}
-	public void setCancelDeadline(long cancelDeadline) {
-		this.cancelDeadline = cancelDeadline;
-	}
+
 	public long getStateUpdateTime() {
 		return stateUpdateTime;
 	}

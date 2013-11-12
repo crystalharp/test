@@ -288,6 +288,9 @@ public class HotelVendor extends BaseData implements Parcelable {
     }
     
     public static HotelVendor getHotelVendorById(long id, Activity activity, Runnable runnable) {
+    	if(id == 0){
+    		return null;
+    	}
         synchronized (hotelVendorList) {
             for(HotelVendor hotelVendor : hotelVendorList) {
                 if (hotelVendor.id == id) {

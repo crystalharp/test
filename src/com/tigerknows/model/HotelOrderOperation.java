@@ -139,7 +139,6 @@ public class HotelOrderOperation extends BaseQuery {
                     SERVER_PARAMETER_VALID_MONTH, SERVER_PARAMETER_CARD_HOLDER_NAME,
                     SERVER_PARAMETER_IDCARD_TYPE, SERVER_PARAMETER_IDCARD_NO};
             String creditCardNo = getParameter(SERVER_PARAMETER_VERIFY_CODE);
-            LogWrapper.d("Trap", "s"+creditCardNo);
             if (creditCardNo != null && !TextUtils.isEmpty(creditCardNo)) {
                 debugCheckParameters(Utility.mergeArray(ekeys, ekeys_with_ccard), okeys);
             } else {

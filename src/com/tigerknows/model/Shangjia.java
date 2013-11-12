@@ -395,6 +395,9 @@ public class Shangjia extends BaseData implements Parcelable {
     }
     
     public static Shangjia getShangjiaById(long source, Activity activity, Runnable runnable) {
+    	if(source == 0){
+    		return null;
+    	}
         synchronized (shangjiaList) {
             for(Shangjia shangjia : shangjiaList) {
                 if (shangjia.source == source) {

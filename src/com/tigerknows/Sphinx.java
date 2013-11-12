@@ -94,6 +94,7 @@ import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.Dianying;
 import com.tigerknows.model.Hotel;
+import com.tigerknows.model.HotelVendor;
 import com.tigerknows.model.NoticeQuery.NoticeResultResponse;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.PullMessage.Message.PulledDynamicPOI;
@@ -588,6 +589,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     CalendarUtil.initExactTime(mContext);
 
                     Shangjia.readShangjiaList(Sphinx.this);
+                    HotelVendor.readHotelVendorList(Sphinx.this);
                     try {
                         Globals.getImageCache().init(Sphinx.this);
                     } catch (APIException e1) {

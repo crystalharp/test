@@ -1097,9 +1097,16 @@ public class Utility {
 
     }
     
-    public static void telephone(final Activity activity, TextView textView) {
-        String split = activity.getString(R.string.dunhao);
-        final String[] list = textView.getText().toString().split(split);
+    public static void telephone(final Activity activity, String telNumber){
+    	telephone(activity, telNumber.split(activity.getString(R.string.dunhao)));
+    }
+    
+    public static void telephone(final Activity activity, TextView textView){
+    	String split = activity.getString(R.string.dunhao);
+    	telephone(activity, textView.getText().toString().split(split));
+    }
+
+    private static void telephone(final Activity activity, final String[] list) {
         if (list.length == 1) {
             Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:"+list[0]));
             activity.startActivity(intent);
