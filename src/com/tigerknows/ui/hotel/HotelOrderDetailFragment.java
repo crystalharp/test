@@ -419,7 +419,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
     			mRootView.findViewById(R.id.address_view), mRootView.findViewById(R.id.telephone_view)
     			, mHotelAddressTxv, mHotelTelTxv, R.drawable.list_middle, R.drawable.list_footer, R.drawable.list_footer);
     	
-    	mOrderIdTxv.setText(order.getId());
+    	mOrderIdTxv.setText(order.getId().split("$")[0]);
     	mOrderStateTxv.setText(getOrderStateDesc(order.getState()));
     	mOrderTimeTxv.setText(formatOrderTime(order.getCreateTime()));
     	mTotalFeeTxv.setText(Utility.formatHotelPrice(order.getTotalFee()) + mContext.getString(R.string.rmb_text) );

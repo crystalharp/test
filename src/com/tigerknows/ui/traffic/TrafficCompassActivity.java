@@ -40,7 +40,7 @@ public class TrafficCompassActivity extends BaseActivity implements SensorEventL
 	
 	
 	private float mCurrentDegree = 0f;
-	private RotateImageView mCompassImv;
+	private ImageView mCompassImv;
 	private ImageView mCompassBgImv;
 	private SensorManager mSensorManager;
 	private Button mGPSBtn;
@@ -107,7 +107,7 @@ public class TrafficCompassActivity extends BaseActivity implements SensorEventL
     protected void findViews(){
     	super.findViews();
     	mBodyRly = (RelativeLayout)findViewById(R.id.body_rly);
-    	mCompassImv = (RotateImageView)findViewById(R.id.compass_imv);
+    	mCompassImv = (ImageView)findViewById(R.id.compass_imv);
     	mCompassBgImv = (ImageView)findViewById(R.id.compass_bg_imv);
     	mGPSBtn = (Button)findViewById(R.id.gps_btn);
     	mLocationDetailTxv[0] = (TextView)findViewById(R.id.longitude_txv);
@@ -171,7 +171,7 @@ public class TrafficCompassActivity extends BaseActivity implements SensorEventL
 		}
 		mCompassImv.setImageResource(R.drawable.ani_compass_sun);
 		mCompassBgImv.setImageResource(R.drawable.bg_compass_sun);
-		mCompassImv.setAngle((int)degree);
+		//mCompassImv.setAngle((int)degree);
     }
     
     public void refreshGPS(){
@@ -206,12 +206,12 @@ public class TrafficCompassActivity extends BaseActivity implements SensorEventL
     		}
     		mLocationDetailTxv[i].setText(getString(mLocationDetailID[i], locationDetail[i]));
     	}
-    	if(mSensorManager != null){
+    	if(TKConfig.UseSunCompassCheck == false && mSensorManager != null){
     		Sensor sensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
     		if(sensor != null){
     			mSensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_GAME);
     			mCompassImv.setImageResource(R.drawable.ani_compass);
-    			mCompassImv.setAngle(0);
+    			//mCompassImv.setAngle(0);
     			mCompassBgImv.setImageResource(R.drawable.bg_compass);
     		}else{
     			setSunCompass(location);
