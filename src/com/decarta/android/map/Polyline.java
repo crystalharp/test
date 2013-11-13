@@ -77,6 +77,7 @@ public class Polyline extends Shape implements EventSource{
     private List<Position> positions=null;
     private XYDouble[] mercXYs=null;
     List<XYZ> list = new ArrayList<XYZ>();
+    List<XYZ> drawRect = new ArrayList<XYZ>();
     /*
      * 在genLevel下, 经过过滤后的Position的index的集合
      * genLevel=20时, 不过滤
@@ -184,9 +185,17 @@ public class Polyline extends Shape implements EventSource{
 		
 		ArrayList<Short> idx=new ArrayList<Short>();
 		list.clear();
+		drawRect.clear();
 		
 		HashMap<XYZ,ArrayList<Short>> pointIdx=pointIdxs[idxLevel];
-		XYZ noContains = null;
+        
+		if (Shape.MEASURE_DISTANCE.equals(name)) {   // 倘若是测距，将所有的点全部绘制出来
+		    Iterator<Entry<XYZ, ArrayList<Short>>> iteratoer = pointIdx.entrySet().iterator();
+            for (; iteratoer.hasNext(); ) {
+                Entry<XYZ, ArrayList<Short>> currentEntry = iteratoer.next();
+                idx.addAll(currentEntry.getValue());
+            }
+		} else {
 		ArrayList<XYZ> overlapTiles=new ArrayList<XYZ>();
 		for(int i=0;i<tiles.size();i++){
 			Tile tile=tiles.get(i);
@@ -203,14 +212,11 @@ public class Polyline extends Shape implements EventSource{
 			if(pointIdx.containsKey(key)){
 				idx.addAll(pointIdx.get(key));
 				list.add(key);
-			} else {
-			    noContains = key;
 			}
 		}
 		
 		
-      if (noContains != null && overlapTiles.size() > 0) {
-          noContains = null;
+      if (overlapTiles.size() > 0) {
           int minx,miny,maxx,maxy;
           minx = overlapTiles.get(0).x;
           miny = overlapTiles.get(0).y;
@@ -230,16 +236,20 @@ public class Polyline extends Shape implements EventSource{
                   maxy = xyz.y;
               }
           }
-          noContains = new XYZ((minx+maxx)/2, (miny+maxy)/2, overlapTiles.get(0).z);
+          drawRect.add(new XYZ(minx, miny, overlapTiles.get(0).z));
+          drawRect.add(new XYZ(minx, maxy, overlapTiles.get(0).z));
+          drawRect.add(new XYZ(maxx, miny, overlapTiles.get(0).z));
+          drawRect.add(new XYZ(maxx, maxy, overlapTiles.get(0).z));
       }
       
         // FIXME: 当两个点跨越的距离过大时，会造成此两点线路不在屏幕内引起线路不会被绘制的问题
-		if (noContains != null) {
+		if (drawRect.size() > 0) {
+            for(int i = drawRect.size()-1; i >= 0; i--) {
+		    XYZ overlayTile=drawRect.get(i);
 		    Entry<XYZ, ArrayList<Short>> lt = null;
 		    Entry<XYZ, ArrayList<Short>> rb = null;
-            Entry<XYZ, ArrayList<Short>> rt = null;
-            Entry<XYZ, ArrayList<Short>> lb = null;
-		    XYZ overlayTile=noContains;
+		    Entry<XYZ, ArrayList<Short>> rt = null;
+		    Entry<XYZ, ArrayList<Short>> lb = null;
             int ltx = Integer.MAX_VALUE, lty = Integer.MIN_VALUE, rbx = Integer.MIN_VALUE, rby = Integer.MAX_VALUE;
             int ltx1 = Integer.MAX_VALUE, lty1 = Integer.MAX_VALUE, rbx1 = Integer.MIN_VALUE, rby1 = Integer.MIN_VALUE;
     		    Iterator<Entry<XYZ, ArrayList<Short>>> iteratoer = pointIdx.entrySet().iterator();
@@ -307,6 +317,8 @@ public class Polyline extends Shape implements EventSource{
                         list.add(xyz);
                     }
                 }
+            }
+		}
 		}
 
 		Collections.sort(idx);
