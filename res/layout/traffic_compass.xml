@@ -96,10 +96,10 @@
 	        android:padding="8dp"
 	        android:layout_marginBottom="16dp"
 	        />
-	    <com.tigerknows.widget.RotateImageView android:id="@+id/compass_imv"
+	    <ImageView android:id="@+id/compass_imv"
 	        android:layout_width="fill_parent"
 	        android:layout_height="fill_parent"
-	        android:src="@drawable/ani_compass"
+	        android:src="@drawable/ani_compass_sun"
 	        android:layout_above="@id/gps_btn"
 	        android:layout_alignParentTop="true"
 	        android:layout_margin="16dp"

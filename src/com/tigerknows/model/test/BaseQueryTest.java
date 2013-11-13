@@ -502,6 +502,10 @@ public class BaseQueryTest {
         layout.addView(unallowedAccessNetworkChb);
         final CheckBox closeSubwaymapDataCheckChb = new CheckBox(activity);
         layout.addView(closeSubwaymapDataCheckChb);
+        final CheckBox useSunCompassChb = new CheckBox(activity);
+        layout.addView(useSunCompassChb);
+        
+        // TODO: add new VIEW OF test options here before this comment 
         
         editConfigBtn.setText("View or Modify config.txt");
         editConfigBtn.setOnClickListener(new View.OnClickListener() {
@@ -530,7 +534,6 @@ public class BaseQueryTest {
                 try {
                     iPackageDataObserverClass = Class.forName("android.content.pm.IPackageDataObserver");
                 } catch (ClassNotFoundException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
 
@@ -552,13 +555,10 @@ public class BaseQueryTest {
                 try {
                     clearDataMethod.invoke(activityManager, activity.getApplicationInfo().packageName, iPackageDataObserverObject);
                 } catch (IllegalArgumentException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 } catch (IllegalAccessException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 } catch (InvocationTargetException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
             }
@@ -870,6 +870,18 @@ public class BaseQueryTest {
             
         });
         
+        useSunCompassChb.setChecked(TKConfig.UseSunCompassCheck);
+        useSunCompassChb.setText("use sun compass");
+        useSunCompassChb.setOnClickListener(new OnClickListener() {
+
+        	@Override
+			public void onClick(View v) {
+				TKConfig.UseSunCompassCheck = useSunCompassChb.isChecked();
+			}
+		});
+        
+        // TODO: add new test options here before this comment
+        
         ScrollView scrollView = new ScrollView(activity);
         scrollView.addView(layout);
         AlertDialog dialog = new AlertDialog.Builder(activity)
@@ -960,7 +972,6 @@ public class BaseQueryTest {
         try {
             throw new Exception("test1");
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
@@ -1009,7 +1020,6 @@ public class BaseQueryTest {
                           });
                           Thread.sleep(5*1000);
                       } catch (InterruptedException e) {
-                          // TODO Auto-generated catch block
                           e.printStackTrace();
                       }
                       
@@ -1054,7 +1064,6 @@ public class BaseQueryTest {
                       });
                       Thread.sleep(5 * 1000);
                   } catch (InterruptedException e) {
-                      // TODO Auto-generated catch block
                       e.printStackTrace();
                   }
               }

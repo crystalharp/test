@@ -836,6 +836,11 @@ public class TKConfig {
      * 是否关闭地铁图数据有效性检测
      */
     public static boolean CloseSubwayDataCheck = false;
+    
+    /**
+     * 是否使用太阳指南针的有效性检测
+     */
+    public static boolean UseSunCompassCheck = false;
 
     /**
      * 初始化ClientUid、共用的网络请求参数（imsi、imsi、mcc、mnc）
