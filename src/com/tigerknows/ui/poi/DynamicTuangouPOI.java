@@ -38,6 +38,23 @@ public class DynamicTuangouPOI extends DynamicPOIViewTemplate{
     LinearListAdapter mListAdapter;
     List<DynamicPOI> mShowingList = new ArrayList<DynamicPOI>();
     List<DynamicPOI> mAllList = new ArrayList<DynamicPOI>();
+    
+    private Runnable mLoadedDrawableRun = new Runnable() {
+        
+        @Override
+        public void run() {
+            mSphinx.getHandler().removeCallbacks(mActualLoadedDrawableRun);
+            mSphinx.getHandler().post(mActualLoadedDrawableRun);
+        }
+    };
+    
+    private Runnable mActualLoadedDrawableRun = new Runnable() {
+        
+        @Override
+        public void run() {
+            refresh();
+        }
+    };
 
     String mRMB;
         
@@ -111,9 +128,9 @@ public class DynamicTuangouPOI extends DynamicPOIViewTemplate{
                     TextView sourceTxv = (TextView) view.findViewById(R.id.source_txv);
                     TextView appointmentTxv = (TextView) view.findViewById(R.id.appointment_txv);
 
-                    Shangjia shangjia = Shangjia.getShangjiaById(tuangou.getSource(), mSphinx, null);
+                    Shangjia shangjia = Shangjia.getShangjiaById(tuangou.getSource(), mSphinx, mLoadedDrawableRun);
                     if (shangjia != null) {
-                        sourceTxv.setText(mSphinx.getString(R.string.come_from_colon, shangjia.getName()));
+                        sourceTxv.setText(mSphinx.getString(R.string.this_come_from_colon, shangjia.getName()));
                     } else {
                         sourceTxv.setText(null);
                     }
