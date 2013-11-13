@@ -156,6 +156,17 @@
 		        android:textSize="16sp" />
 	
 	    </RelativeLayout>
+	    <TextView
+	        android:id="@+id/come_from_txv"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+		    android:paddingLeft="8dp"
+		    android:paddingBottom="4dp"
+		    android:focusable="false"
+	        android:singleLine="true"
+	        android:text="本单来自："
+	        android:textColor="@color/orange"
+	        android:textSize="12sp" />	    
     </LinearLayout>
     
 </LinearLayout>
