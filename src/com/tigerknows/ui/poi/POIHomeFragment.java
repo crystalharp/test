@@ -255,7 +255,7 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
         stopQuery();
         DataQuery dataQuery = new DataQuery(mSphinx);
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_FILTER);
-        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_CONFIGINFO, "{\"0\":\"0.0.0\"}");
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_CONFIGINFO, DataQuery.CONFIGINFO_AREA);
         dataQuery.setup(Globals.getCurrentCityInfo(false).getId(), getId(), getId(), null, true);
         mSphinx.queryStart(dataQuery);
     }

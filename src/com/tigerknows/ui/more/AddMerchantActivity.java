@@ -10,7 +10,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -36,7 +35,6 @@ import com.tigerknows.R;
 import com.tigerknows.TKConfig;
 
 import com.decarta.Globals;
-import com.decarta.android.util.Util;
 import com.tigerknows.android.os.TKAsyncTask;
 import android.widget.Toast;
 import com.tigerknows.common.ActionLog;
@@ -119,6 +117,8 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
     
     private TextView mPhotoDescriptionTxv;
     
+    private Dialog mProgressDialog = null;
+    
 	static final String TAG = "AddMerchant";
 	
     protected void onCreate(Bundle savedInstanceState) {
@@ -170,6 +170,12 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
         });
         mHandler = new Handler();
         
+        setFilterCategoryOrder(true);
+        showSoftInput(mNameEdt);
+    }
+    
+    boolean setFilterCategoryOrder(boolean updateNameEdt) {
+        boolean result = false;
         DataQuery.initStaticField(BaseQuery.DATA_TYPE_POI, BaseQuery.SUB_DATA_TYPE_POI, Globals.getCurrentCityInfo().getId(), mThis);
         FilterCategoryOrder filterCategory = DataQuery.getPOIFilterCategoryOrder();
         Filter categoryFitler = null;
@@ -216,41 +222,45 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
             mFilterList = new ArrayList<Filter>();
             mFilterList.add(categoryFitler);
             mFilterListView.setData(mFilterList, FilterResponse.FIELD_FILTER_CATEGORY_INDEX, this, false, false, mActionTag);
+            
+            result = true;
         }
         
-        Intent intent = getIntent();
-        if (intent != null) {
-            String intputText = intent.getStringExtra(EXTRA_INPUT_TEXT);
-            if (intputText != null) {
-                intputText = intputText.trim();
-                if (categoryFitler != null) {
-                    List<Filter> list = categoryFitler.getChidrenFilterList();
-                    for(int i = 0, size = list.size(); i < size; i++) {
-                        Filter filter = list.get(i);
-                        List<Filter> chidrenList = filter.getChidrenFilterList();
-                        for(int j = 0, s = chidrenList.size(); j < s; j++) {
-                            if (chidrenList.get(j).getFilterOption().getName().equals(intputText)) {
+        if (updateNameEdt) {
+            Intent intent = getIntent();
+            if (intent != null) {
+                String intputText = intent.getStringExtra(EXTRA_INPUT_TEXT);
+                if (intputText != null) {
+                    intputText = intputText.trim();
+                    if (categoryFitler != null) {
+                        List<Filter> list = categoryFitler.getChidrenFilterList();
+                        for(int i = 0, size = list.size(); i < size; i++) {
+                            Filter filter = list.get(i);
+                            List<Filter> chidrenList = filter.getChidrenFilterList();
+                            for(int j = 0, s = chidrenList.size(); j < s; j++) {
+                                if (chidrenList.get(j).getFilterOption().getName().equals(intputText)) {
+                                    intputText = null;
+                                    break;
+                                }
+                            }
+                            
+                            if (filter.getFilterOption().getName().equals(intputText)) {
                                 intputText = null;
+                            }
+                            
+                            if (intputText == null) {
                                 break;
                             }
                         }
-                        
-                        if (filter.getFilterOption().getName().equals(intputText)) {
-                            intputText = null;
-                        }
-                        
-                        if (intputText == null) {
-                            break;
-                        }
                     }
-                }
-                if (TextUtils.isEmpty(intputText) == false) {
-                    mNameEdt.append(intputText);
+                    if (TextUtils.isEmpty(intputText) == false) {
+                        mNameEdt.append(intputText);
+                    }
                 }
             }
         }
         
-        showSoftInput(mNameEdt);
+        return result;
     }
     
     /**
@@ -560,10 +570,12 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
             case R.id.type_btn:
                 mActionLog.addAction(mActionTag +  ActionLog.AddMerchantType);
                 hideSoftInput(false);
-                mTitleBtn.setText(R.string.merchant_type);
-                mRightBtn.setVisibility(View.GONE);
-                mFilterListView.setData(mFilterList, FilterResponse.FIELD_FILTER_CATEGORY_INDEX, this, false, false, mActionTag);
-                mFilterListView.setVisibility(View.VISIBLE);
+                if (setFilterCategoryOrder(false)) {
+                    showFilterListView();
+                } else {
+                    queryFilter();
+                    showProgressDialog();
+                }
                 break;
                 
             case R.id.time_confirm_btn:
@@ -579,6 +591,52 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
             default:
                 
         }
+    }
+    
+    void showFilterListView() {
+        mTitleBtn.setText(R.string.merchant_type);
+        mRightBtn.setVisibility(View.GONE);
+        mFilterListView.setData(mFilterList, FilterResponse.FIELD_FILTER_CATEGORY_INDEX, this, false, false, mActionTag);
+        mFilterListView.setVisibility(View.VISIBLE);
+    }
+    
+    /**
+     * 显示进度对话框
+     * @param id
+     */
+    void showProgressDialog() {
+        if (mProgressDialog == null) {
+            View custom = mThis.getLayoutInflater().inflate(R.layout.loading, null);
+            TextView loadingTxv = (TextView)custom.findViewById(R.id.loading_txv);
+            loadingTxv.setText(mThis.getString(R.string.doing_and_wait));
+            mProgressDialog = Utility.showNormalDialog(mThis, custom);
+            mProgressDialog.setCancelable(true);
+            mProgressDialog.setCanceledOnTouchOutside(false);
+        }
+        if (mProgressDialog.isShowing() == false) {
+            mProgressDialog.show();
+        }
+        
+    }
+    
+    /**
+     * 关闭进度对话框
+     */
+    void dismissProgressDialog() {
+        if (mProgressDialog != null && mProgressDialog.isShowing()) {
+            mProgressDialog.dismiss();
+        }
+    }
+    
+    /**
+     * 查询筛选数据，在查询之前需要将之前的查询停止
+     */
+    private void queryFilter() {
+        DataQuery dataQuery = new DataQuery(mThis);
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_FILTER);
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_CONFIGINFO, DataQuery.CONFIGINFO_POI_CATEGORY_ORDER);
+        dataQuery.setup(Globals.getCurrentCityInfo(false).getId(), mId, mId, null, true);
+        mThis.queryStart(dataQuery);
     }
     
     void submit() {
@@ -704,6 +762,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
     @Override
     public void onPostExecute(TKAsyncTask tkAsyncTask) {
         super.onPostExecute(tkAsyncTask);
+        dismissProgressDialog();
         
         BaseQuery baseQuery = tkAsyncTask.getBaseQuery();
         if (BaseActivity.checkReLogin(baseQuery, mThis, mSourceUserHome, mId, mId, mId, mCancelLoginListener)) {
@@ -713,6 +772,12 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
             return;
         }
         
+        if (baseQuery instanceof DataQuery) {
+            if (setFilterCategoryOrder(false)) {
+                showFilterListView();
+            }
+            return;
+        }
         Toast.makeText(mThis, R.string.add_merchant_success, Toast.LENGTH_LONG).show();
         finish();
     }
