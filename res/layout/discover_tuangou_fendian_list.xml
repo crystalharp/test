@@ -28,7 +28,8 @@
         android:listSelector="@color/transparent"
         android:drawSelectorOnTop="false"
         android:scrollingCache="false"
-        android:fadingEdge="none" />
+        android:fadingEdge="none"
+        android:background="@color/normal_background" />
 	    
     <include layout="@layout/empty_view"
         android:id="@+id/empty_view"

@@ -17,7 +17,8 @@
         android:layout_below="@id/shadow1"
         android:layout_width="fill_parent" 
         android:layout_height="wrap_content"
-        android:orientation="vertical" >
+        android:orientation="vertical"
+        android:background="@color/gray_light" >
         <LinearLayout
 	        android:layout_width="fill_parent" 
 	        android:layout_height="wrap_content"
@@ -59,52 +60,6 @@
 	        android:scaleType="fitXY"
 	        android:src="@drawable/bg_line_split" />
     </LinearLayout>
-    <!-- 
-    <LinearLayout android:id="@+id/top_view"
-        android:layout_below="@id/title_view"
-        android:layout_width="fill_parent" 
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
-        android:paddingLeft="5dp"
-        android:paddingRight="5dp"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp"
-        >
-
-        <TextView android:id="@+id/name_txv"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:textSize="18sp"
-            android:gravity="center_vertical|left" >
-        </TextView>
-        
-        <TextView android:id="@+id/length_txv"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="5dp"
-            android:textColor="@color/black"
-            android:textSize="16sp"
-            android:singleLine="true"
-            android:ellipsize="end"
-            android:gravity="center_vertical|left" >
-        </TextView>
-		
-        <TextView android:id="@+id/time_txv"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="5dp"
-            android:textColor="@color/black"
-            android:textSize="16sp"
-            android:gravity="center_vertical|left" >
-        </TextView>
-        
-    </LinearLayout>
- 	-->
     
     <include android:id="@+id/bottom_buttons_view"
         android:layout_alignParentBottom="true"
