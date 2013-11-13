@@ -159,6 +159,7 @@ public class TrafficCompassActivity extends BaseActivity implements SensorEventL
     	if(location == null){
     		mCompassImv.setImageResource(R.drawable.ani_compass_notavailable);
     		mCompassBgImv.setImageResource(R.drawable.transparent_bg);
+    		setCompassAnimation(0, 0, LocationService.RETRY_INTERVAL * 3);
     		return;
     	}
     	Calendar calendar = Calendar.getInstance();
@@ -171,7 +172,13 @@ public class TrafficCompassActivity extends BaseActivity implements SensorEventL
 		}
 		mCompassImv.setImageResource(R.drawable.ani_compass_sun);
 		mCompassBgImv.setImageResource(R.drawable.bg_compass_sun);
-		//mCompassImv.setAngle((int)degree);
+		setCompassAnimation(-(float)degree, -(float)degree, LocationService.RETRY_INTERVAL * 3);
+    }
+    
+    private void setCompassAnimation(float fromDegree, float toDegree, long duration){
+    	RotateAnimation rotateAnimation = new RotateAnimation(fromDegree, toDegree, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+    	rotateAnimation.setDuration(duration);
+    	mCompassImv.startAnimation(rotateAnimation);
     }
     
     public void refreshGPS(){
@@ -228,9 +235,7 @@ public class TrafficCompassActivity extends BaseActivity implements SensorEventL
 			// 获取绕Z轴转过的角度。
 			float degree = event.values[0];
 			// 创建旋转动画（反向转过degree度）
-			RotateAnimation rotateAnimation = new RotateAnimation(mCurrentDegree, -degree, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-			rotateAnimation.setDuration(200);
-			mCompassImv.startAnimation(rotateAnimation);
+			setCompassAnimation(mCurrentDegree, -degree, 200);
 			mCurrentDegree = -degree;
 			break;
 		}
