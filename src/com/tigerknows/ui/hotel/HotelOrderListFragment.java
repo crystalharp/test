@@ -38,6 +38,7 @@ import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.HotelOrder;
 import com.tigerknows.model.HotelOrderOperation;
 import com.tigerknows.model.HotelOrderOperation.HotelOrderSyncResponse;
+import com.tigerknows.model.HotelVendor;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.HotelOrderOperation.HotelOrderStatesResponse;
 import com.tigerknows.provider.HotelOrderTable;
@@ -319,6 +320,7 @@ public class HotelOrderListFragment extends BaseFragment{
             TextView checkinDateTxv = (TextView) view.findViewById(R.id.checkin_date_txv);
             TextView checkoutDateTxv = (TextView) view.findViewById(R.id.checkout_date_txv);
             TextView dayCountView = (TextView) view.findViewById(R.id.day_count_txv);
+            TextView comeFromTxv = (TextView) view.findViewById(R.id.come_from_txv);
 
             nameTxv.setText(order.getHotelName());
             priceTxv.setText(Utility.formatHotelPrice(order.getTotalFee()));
@@ -326,6 +328,13 @@ public class HotelOrderListFragment extends BaseFragment{
             checkinDateTxv.setText(formatOrderListItemMonthDay(order.getCheckinTime() ) );
             checkoutDateTxv.setText(formatOrderListItemMonthDay(order.getCheckoutTime() ) );
             dayCountView.setText(mContext.getString(R.string.hotel_total_nights, Integer.valueOf(order.getDayCount())));
+            HotelVendor hotelVendor = HotelVendor.getHotelVendorById(order.getVendorID(), mSphinx, null);
+            if(hotelVendor != null){
+            	comeFromTxv.setText(mSphinx.getString(R.string.come_from_colon, hotelVendor.getName()));
+            	comeFromTxv.setVisibility(View.VISIBLE);
+            }else{
+            	comeFromTxv.setVisibility(View.GONE);
+            }
             view.findViewById(R.id.name_view).setOnClickListener(new GoThereListener(order));
             
             return view;

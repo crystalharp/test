@@ -85,6 +85,8 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
     private TextView mRoomTypeTxv;
     private TextView mCheckinPersonTxv;
     
+    private TextView mComeFromTxv;
+    
     private Button mBtnCancel;
     private Button mBtnOrderAgain;
     private Button mBtnIssueComment;
@@ -152,6 +154,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
 		mRetentionDateTxv = (TextView) mRootView.findViewById(R.id.retention_date_txv);
 		mRoomTypeTxv = (TextView) mRootView.findViewById(R.id.room_type_txv);
 		mCheckinPersonTxv = (TextView) mRootView.findViewById(R.id.checkin_person_txv);
+		mComeFromTxv = (TextView) mRootView.findViewById(R.id.come_from_txv);
 		
 		mHotelAddressView = mRootView.findViewById(R.id.address_view);
 		mHotelTelView = mRootView.findViewById(R.id.telephone_view);
@@ -328,8 +331,6 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
         
         // set title fragment content
         mTitleBtn.setText(mContext.getString(R.string.hotel_order_detail));
-        
-        mHotelVendor = HotelVendor.getHotelVendorById(mOrder.getVendorID(), mSphinx, null);
         if(mHotelVendor == null || TextUtils.isEmpty(mHotelVendor.getServiceTel())){
         	mRightBtn.setVisibility(View.GONE);
         }else{
@@ -342,7 +343,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
                     Utility.telephone(mSphinx, mHotelVendor.getServiceTel());
 				}
 			});
-        }
+        }        
         if(mSphinx.uiStackContains(R.id.view_hotel_order_write)){
             icOrderAgainDisabled.setBounds(0, 0, icOrderAgainDisabled.getIntrinsicWidth(), icOrderAgainDisabled.getIntrinsicHeight());
         	mBtnOrderAgain.setCompoundDrawables(null, icOrderAgainDisabled, null, null);
@@ -418,8 +419,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
     	DiscoverChildListFragment.showPOI(mContext, order.getHotelName(), null, order.getHotelAddress(), mOrder.getHotelTel(), mHotelNameTxv, mDistanceTxv, 
     			mRootView.findViewById(R.id.address_view), mRootView.findViewById(R.id.telephone_view)
     			, mHotelAddressTxv, mHotelTelTxv, R.drawable.list_middle, R.drawable.list_footer, R.drawable.list_footer);
-    	
-    	mOrderIdTxv.setText(order.getId().split("$")[0]);
+    	mOrderIdTxv.setText(order.getId().split("\\$")[0]);
     	mOrderStateTxv.setText(getOrderStateDesc(order.getState()));
     	mOrderTimeTxv.setText(formatOrderTime(order.getCreateTime()));
     	mTotalFeeTxv.setText(Utility.formatHotelPrice(order.getTotalFee()) + mContext.getString(R.string.rmb_text) );
@@ -429,7 +429,14 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
     	mRetentionDateTxv.setText(CalendarUtil.ymd8c_Hm4.format(new Date(order.getRetentionTime())));
     	mRoomTypeTxv.setText(order.getRoomType());
     	mCheckinPersonTxv.setText(order.getGuestName());
-
+    	
+        mHotelVendor = HotelVendor.getHotelVendorById(mOrder.getVendorID(), mSphinx, null);
+        if(mHotelVendor == null || TextUtils.isEmpty(mHotelVendor.getName())){
+        	mComeFromTxv.setVisibility(View.GONE);
+        }else{
+        	mComeFromTxv.setText(mSphinx.getString(R.string.come_from_colon, mHotelVendor.getName()));
+        	mComeFromTxv.setVisibility(View.VISIBLE);
+        }
     }
     
     private static int[] orderStateDescResId = new int[]{

@@ -466,7 +466,20 @@
 	                    android:singleLine="false"
 	                    android:focusable="false"
 	                    />
-	                
+	                <TextView
+	                    android:id="@+id/come_from_txv"
+	                    android:layout_width="wrap_content"
+	                    android:layout_height="wrap_content"
+	                    
+	                    android:layout_below="@id/checkin_person_txv"
+	                    android:layout_marginLeft="10dp"
+	                    android:layout_marginBottom="8dp"
+	                    android:textColor="@color/orange"
+	                    android:textSize="12sp"
+	                    android:text="@string/come_from_colon"
+	                    android:singleLine="false"
+	                    android:focusable="false"
+	                    />            
 	            </RelativeLayout>
 	             
 	         </LinearLayout>
