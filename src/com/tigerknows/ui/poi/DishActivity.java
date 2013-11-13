@@ -880,11 +880,11 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
         } else if (id == R.id.picture_imv) {
             Dish data = (Dish) v.getTag(R.id.picture_imv);
             if (data.getPicture() == null) {
-                Intent intent = new Intent(mThis, AddPictureActivity.class);
+                Intent intent = new Intent();
                 intent.putExtra(FileUpload.SERVER_PARAMETER_REF_DATA_TYPE, BaseQuery.DATA_TYPE_DISH);
                 intent.putExtra(FileUpload.SERVER_PARAMETER_REF_ID, String.valueOf(data.getDishId()));
                 intent.putExtra(AddPictureActivity.EXTRA_SUCCESS_TIP, getString(R.string.add_picture_success_for_dish));
-                startActivityForResult(intent, 0);
+                Utility.showTakePhotoDialog(mActionTag, mThis, intent);
                 return;
             }
             viewImage(data);

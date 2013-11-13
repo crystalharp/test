@@ -1392,8 +1392,7 @@ public class Utility {
     	});
     }
 
-    public static Dialog showTakePhotoDialog(final String actionTag, final Activity activity, final int pickRequestCode,
-            final int captureRequestCode, final Uri captureUri) {
+    public static Dialog showTakePhotoDialog(final String actionTag, final Activity activity, final Intent intent) {
         final List<String> textList = new ArrayList<String>();
         textList.add(activity.getString(R.string.capture_photo));
         textList.add(activity.getString(R.string.pick_photo));
@@ -1420,23 +1419,15 @@ public class Utility {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View arg1, int which, long arg3) {
                 ActionLog actionLog = ActionLog.getInstance(activity);
-                AddPictureActivity addPictureActivity = null;
-                if (activity instanceof AddPictureActivity) {
-                    addPictureActivity = (AddPictureActivity) activity;
-                }
+                    intent.setClass(activity, AddPictureActivity.class);
                 if (which == 0) {
                     actionLog.addAction(actionTag+ActionLog.CameraPhoto);
-                    capturePicture(activity, captureRequestCode, captureUri);
-                    if (addPictureActivity != null) {
-                        addPictureActivity.mSelected = true;
-                    }
+                    intent.putExtra(AddPictureActivity.EXTRA_REQUEST_CODE, AddPictureActivity.REQUEST_CODE_CAPTURE_PHOTO);
                 } else if (which == 1) {
                     actionLog.addAction(actionTag+ActionLog.PickPhoto);
-                    pickPicture(activity, pickRequestCode);
-                    if (addPictureActivity != null) {
-                        addPictureActivity.mSelected = true;
-                    }
+                    intent.putExtra(AddPictureActivity.EXTRA_REQUEST_CODE, AddPictureActivity.REQUEST_CODE_PICK_PHOTO);
                 }
+                activity.startActivity(intent);
                 dialog.dismiss();
             }
         });

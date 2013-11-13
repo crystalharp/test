@@ -429,10 +429,10 @@ public class ViewImageActivity extends BaseActivity implements RetryView.CallBac
 
     @Override
     public void onClick(View v) {
-        Intent intent = new Intent(mThis, AddPictureActivity.class);
+        Intent intent = new Intent();
         intent.putExtra(FileUpload.SERVER_PARAMETER_REF_DATA_TYPE, mRefDty);
         intent.putExtra(FileUpload.SERVER_PARAMETER_REF_ID, mRefId);
         intent.putExtra(AddPictureActivity.EXTRA_SUCCESS_TIP, getIntent().getStringExtra(AddPictureActivity.EXTRA_SUCCESS_TIP));
-        startActivityForResult(intent, 0);
+        Utility.showTakePhotoDialog(mActionTag, mThis, intent);
     }
 }

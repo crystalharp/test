@@ -41,6 +41,8 @@ public class AddPictureActivity extends BaseActivity implements View.OnClickList
     
     public static final String EXTRA_SUCCESS_TIP = "EXTRA_SUCCESS_TIP";
     
+    public static final String EXTRA_REQUEST_CODE = "EXTRA_REQUEST_CODE";
+    
     private String mSuccessTip;
     
     private String mCacheFilePath;
@@ -74,6 +76,9 @@ public class AddPictureActivity extends BaseActivity implements View.OnClickList
         mActionTag = ActionLog.AddPicture;
         setContentView(R.layout.common_add_picture);
         
+        mCacheFilePath = TKConfig.getDataPath(true) + "cache.jpg";
+        mCameraFilePath = TKConfig.getDataPath(true) + "camera.jpg";
+        
         findViews();
         setListener();
         
@@ -81,6 +86,18 @@ public class AddPictureActivity extends BaseActivity implements View.OnClickList
         mRefId = intent.getStringExtra(FileUpload.SERVER_PARAMETER_REF_ID);
         mRefDty = intent.getStringExtra(FileUpload.SERVER_PARAMETER_REF_DATA_TYPE);
         mSuccessTip = intent.getStringExtra(EXTRA_SUCCESS_TIP);
+        
+        int requestCode = intent.getIntExtra(EXTRA_REQUEST_CODE, -1);
+        if (requestCode == REQUEST_CODE_CAPTURE_PHOTO) {
+            File file = new File(mCameraFilePath);
+            file.delete();
+            mCaptureUri = Uri.fromFile(file);
+            Utility.capturePicture(mThis, requestCode, mCaptureUri);
+        } else if (requestCode == REQUEST_CODE_PICK_PHOTO) {
+            Utility.pickPicture(mThis, REQUEST_CODE_PICK_PHOTO);
+        } else {
+            finish();
+        }
         
         if (mRefDty == null) {
             finish();
@@ -93,10 +110,6 @@ public class AddPictureActivity extends BaseActivity implements View.OnClickList
         mTitleBtn.setText(R.string.add_picture);
         mRootView.setVisibility(View.INVISIBLE);
         
-        mCacheFilePath = TKConfig.getDataPath(true) + "cache.jpg";
-        mCameraFilePath = TKConfig.getDataPath(true) + "camera.jpg";
-        
-        showTakePhotoDialog();
     }
     
     /**
@@ -195,23 +208,6 @@ public class AddPictureActivity extends BaseActivity implements View.OnClickList
         finish();
     }
 
-    void showTakePhotoDialog() {
-        File file = new File(mCameraFilePath);
-        file.delete();
-        mCaptureUri = Uri.fromFile(file);
-        Dialog dialog = Utility.showTakePhotoDialog(mActionTag, this, REQUEST_CODE_PICK_PHOTO,
-                REQUEST_CODE_CAPTURE_PHOTO, mCaptureUri);
-        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            
-            @Override
-            public void onDismiss(DialogInterface dialog) {
-                if (mRootView.getVisibility() != View.VISIBLE && mSelected == false) {
-                    finish();
-                }
-            }
-        });
-    }
-    
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
