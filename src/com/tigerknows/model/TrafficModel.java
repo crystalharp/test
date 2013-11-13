@@ -729,6 +729,8 @@ public class TrafficModel extends XMapData {
         
         private POI end;
         
+        private List<Position> routeGeometry = new ArrayList<Position>();
+        
         /*
          * 交通方案类型, 解析返回的交通查询结果时, 从交通查询类TrafficQuery获得类型并设值
          */
@@ -796,12 +798,7 @@ public class TrafficModel extends XMapData {
          * @return
          */
         public List<Position> getRouteGeometry() {
-            List<Position> positions = new ArrayList<Position>();
-            for (int i = 0, size = stepList.size(); i < size; i++) {
-                Step step = stepList.get(i);
-                positions.addAll(step.getPositionList());
-            }
-            return positions;
+            return routeGeometry;
         }
 
         public Plan() {
@@ -821,6 +818,13 @@ public class TrafficModel extends XMapData {
             length = (int)getLongFromData(FIELD_LENGTH, reset ? 0 : length);
             stepList = getListFromData(FIELD_STEP_LIST, Step.Initializer, reset ? null : stepList);
             startOutOrientation = getStringFromData(FIELD_START_OUT_ORIENTATION, reset ? null : startOutOrientation);
+
+            if (stepList != null) {
+                for (int i = 0, size = stepList.size(); i < size; i++) {
+                    Step step = stepList.get(i);
+                    routeGeometry.addAll(step.getPositionList());
+                }
+            }
             
         }
         
