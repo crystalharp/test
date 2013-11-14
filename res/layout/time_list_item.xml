@@ -2,8 +2,7 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:padding="8dp"
+    android:layout_height="48dp"
     android:background="@drawable/list_selector_background_white">
     
     <ImageView 
@@ -21,9 +20,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:paddingLeft="12dp"
-        android:paddingTop="8dp"
         android:paddingRight="8dp"
-        android:paddingBottom="8dp"
         android:layout_centerVertical="true"
         android:layout_toLeftOf="@id/icon_imv"
         android:singleLine="true"
