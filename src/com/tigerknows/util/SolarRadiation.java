@@ -25,7 +25,8 @@ public class SolarRadiation {
 	
 	// 依据日角，计算太阳赤纬角(弧度值)
 	public static double chiWeiJiao(double rj){
-		return 0.3723 + 23.2567*sin(rj) + 0.1149*sin(2*rj) - 0.1712*sin(3*rj) - 0.758*cos(rj) + 0.3656*cos(2*rj) + 0.0201*cos(3*rj);
+		double angle = 0.3723 + 23.2567*sin(rj) + 0.1149*sin(2*rj) - 0.1712*sin(3*rj) - 0.758*cos(rj) + 0.3656*cos(2*rj) + 0.0201*cos(3*rj);
+		return angle * Math.PI / 180;
 	}
 	
 	// 依据日角，计算因太阳活动不均匀产生的时差(分钟)
@@ -59,7 +60,7 @@ public class SolarRadiation {
 		if(gdjzx == 1){
 			return 0;
 		}
-		double fwjyx = (gdjzx*sin(wd) - sin(cwj)) / (cos(wd) * Math.sqrt(1-gdjzx*gdjzx));
+		double fwjyx = (sin(cwj) - gdjzx*sin(wd)) / (cos(wd) * Math.sqrt(1-gdjzx*gdjzx));
 		if(Math.abs(fwjyx) > 1){
 			throw new APIException("FangWeiJiaoYuXian has invalid value: " + fwjyx);
 		}
