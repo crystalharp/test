@@ -527,15 +527,16 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             LogWrapper.d(TAG, "onCreate() uiStack="+uiStack);
 
             final boolean fristUse = TextUtils.isEmpty(TKConfig.getPref(mContext, TKConfig.PREFS_FIRST_USE));
+            final boolean upgrade = TextUtils.isEmpty(TKConfig.getPref(mContext, TKConfig.PREFS_UPGRADE));
+            mInstallFirstStart |= fristUse;
+            mInstallFirstStart |= upgrade;
+            mPreventShowChangeMyLocationDialog = mInstallFirstStart;
             checkFromThirdParty(true);
             if (uiStack != null) {
                 initView();
             } else {
                 mTitleView.setVisibility(View.INVISIBLE);
                 mMenuView.setVisibility(View.INVISIBLE);
-                final boolean upgrade = TextUtils.isEmpty(TKConfig.getPref(mContext, TKConfig.PREFS_UPGRADE));
-                mPreventShowChangeMyLocationDialog |= fristUse;
-                mPreventShowChangeMyLocationDialog |= upgrade;
                 mHandler.postDelayed(new Runnable() {
                     
                     @Override
@@ -2786,25 +2787,18 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         
         Dialog dialog;
         
-        if (id != R.id.dialog_prompt_choose_city) {
+        if (id == R.id.dialog_prompt_choose_city) {
             dialog = getDialog(R.id.dialog_prompt_choose_city);
             if (dialog.isShowing()) {
                 return false;
             }     
         }
         
-        if (id != R.id.dialog_prompt_setting_location_first) {
-            dialog = getDialog(R.id.dialog_prompt_setting_location_first);
-            if (dialog.isShowing()) {
+        if (id == R.id.dialog_prompt_setting_location_first || id == R.id.dialog_prompt_setting_location) {
+            
+            if (mInstallFirstStart && id == R.id.dialog_prompt_setting_location) {
                 return false;
-            }     
-            dialog = getDialog(R.id.dialog_prompt_setting_location);
-            if (dialog.isShowing()) {
-                return false;
-            }    
-        }
-        
-        if (id != R.id.dialog_prompt_setting_location) {
+            }
             dialog = getDialog(R.id.dialog_prompt_setting_location_first);
             if (dialog.isShowing()) {
                 return false;
@@ -2815,7 +2809,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             }     
         }
         
-        if (id != R.id.dialog_prompt_change_to_my_location_city) {
+        if (id == R.id.dialog_prompt_change_to_my_location_city) {
             dialog = getDialog(R.id.dialog_prompt_change_to_my_location_city);
             if (dialog.isShowing()) {
                 return false;
@@ -4220,6 +4214,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     // TODO: get fragment end
 
     // TODO: my location begin    
+    private boolean mInstallFirstStart = false;
     private boolean mPreventShowChangeMyLocationDialog = false;
     private MyLocation mMyLocation;
     private ItemizedOverlay mMyLocationOverlay;
@@ -4227,7 +4222,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         
         @Override
         public void run() {
-            checkLocationCity(true);
+            checkLocationCity(mInstallFirstStart==false);
         }
     };
     private Position lastMyPosition;
