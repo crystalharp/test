@@ -159,7 +159,7 @@ public class TrafficCompassActivity extends BaseActivity implements SensorEventL
     	if(location == null){
     		mCompassImv.setImageResource(R.drawable.ani_compass_notavailable);
     		mCompassBgImv.setImageResource(R.drawable.transparent_bg);
-    		setCompassAnimation(0, 0, LocationService.RETRY_INTERVAL * 3);
+    		setCompassAnimation(0, 0, LocationService.RETRY_INTERVAL * 30);
     		return;
     	}
     	Calendar calendar = Calendar.getInstance();
@@ -172,7 +172,7 @@ public class TrafficCompassActivity extends BaseActivity implements SensorEventL
 		}
 		mCompassImv.setImageResource(R.drawable.ani_compass_sun);
 		mCompassBgImv.setImageResource(R.drawable.bg_compass_sun);
-		setCompassAnimation(-(float)degree, -(float)degree, LocationService.RETRY_INTERVAL * 3);
+		setCompassAnimation(-(float)degree, -(float)degree, LocationService.RETRY_INTERVAL * 30);
     }
     
     private void setCompassAnimation(float fromDegree, float toDegree, long duration){

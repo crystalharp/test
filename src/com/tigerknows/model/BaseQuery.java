@@ -709,9 +709,9 @@ public abstract class BaseQuery {
                         Utility.writeFile(TKConfig.getTestDataPath() + getActionTag(), data, true);
                     }
                     if (data != null) {
-                        LogWrapper.i(TAG, "execute():at="+apiType+", response="+data.length);
+                        LogWrapper.i(TAG, "execute():at="+apiType+", responseLength="+data.length);
                     } else {
-                        LogWrapper.i(TAG, "execute():at="+apiType+", response="+data+", stop="+isStop);
+                        LogWrapper.i(TAG, "execute():at="+apiType+", responseLength="+data+", stop="+isStop);
                     }
                     translate(data);
                     break;
