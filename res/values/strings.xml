@@ -212,6 +212,7 @@
     <string name="compass_speed">速度：%1$s</string>
     <string name="compass_satellite">卫星个数：%1$s</string>
     <string name="compass_accuracy">精确度：%1$s</string>
+    <string name="compass_sun_hint">说明：将手机（箭头方向）指向太阳，罗盘上标明的方向即是实际方向</string>
         
     <string name="map_download">地图下载</string>
     <string name="change_city">切换城市</string>

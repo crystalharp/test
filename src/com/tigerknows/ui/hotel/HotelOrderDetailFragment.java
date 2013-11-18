@@ -18,6 +18,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -334,7 +335,11 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
         if(mHotelVendor == null || TextUtils.isEmpty(mHotelVendor.getServiceTel())){
         	mRightBtn.setVisibility(View.GONE);
         }else{
-        	mRightBtn.setBackgroundResource(R.drawable.ic_telephone_btn);
+        	mRightBtn.setBackgroundResource(R.drawable.btn_title);
+        	mRightBtn.setText(mHotelVendor.getName());
+        	Drawable drawable = mContext.getResources().getDrawable(R.drawable.ic_hotel_telephone);
+        	drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+        	mRightBtn.setCompoundDrawables(drawable, null, null, null);
         	mRightBtn.setVisibility(View.VISIBLE);
         	mRightBtn.setOnClickListener(new OnClickListener() {
 				@Override

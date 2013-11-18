@@ -12,6 +12,7 @@ import java.util.List;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputFilter;
@@ -154,7 +155,11 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         if(hotelVendor == null || TextUtils.isEmpty(hotelVendor.getReserveTel())){
         	mRightBtn.setVisibility(View.GONE);
         }else{
-        	mRightBtn.setBackgroundResource(R.drawable.ic_telephone_btn);
+        	mRightBtn.setBackgroundResource(R.drawable.btn_title);
+        	mRightBtn.setText(mSphinx.getString(R.string.hotel_btn_book));
+        	Drawable drawable = mContext.getResources().getDrawable(R.drawable.ic_hotel_telephone);
+        	drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+        	mRightBtn.setCompoundDrawables(drawable, null, null, null);
         	mRightBtn.setVisibility(View.VISIBLE);
         	mRightBtn.setOnClickListener(new OnClickListener() {
 				@Override
@@ -162,7 +167,8 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
 					// TODO mActionLog.addAction(mActionTag + ActionLog.???);
                     Utility.telephone(mSphinx, hotelVendor.getReserveTel());
 				}
-			});        }
+			});
+        }
         refreshData();
     }
     

@@ -45,6 +45,7 @@ public class TrafficCompassActivity extends BaseActivity implements SensorEventL
 	private SensorManager mSensorManager;
 	private Button mGPSBtn;
 	private RelativeLayout mBodyRly;
+	private TextView mSunCompassHintTxv;
 	
 	private TextView[] mLocationDetailTxv = new TextView[6];
 	private int[] mLocationDetailID = new int[]{
@@ -71,8 +72,32 @@ public class TrafficCompassActivity extends BaseActivity implements SensorEventL
         setContentView(R.layout.traffic_compass);
     	findViews();
     	setListener();
-        mRightBtn.setText(R.string.share);
-        mRightBtn.setVisibility(View.VISIBLE);
+    	mSensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
+    	mLocationListener = new MyLocationListener(mThis, new Runnable(){
+			@Override
+			public void run() {
+				refreshLocationAndCompass();
+			}
+    	});
+    }
+    
+    protected void findViews(){
+    	super.findViews();
+    	mBodyRly = (RelativeLayout)findViewById(R.id.body_rly);
+    	mCompassImv = (ImageView)findViewById(R.id.compass_imv);
+    	mCompassBgImv = (ImageView)findViewById(R.id.compass_bg_imv);
+    	mGPSBtn = (Button)findViewById(R.id.gps_btn);
+    	mSunCompassHintTxv = (TextView)findViewById(R.id.sun_compass_hint_txv);
+    	mLocationDetailTxv[0] = (TextView)findViewById(R.id.longitude_txv);
+    	mLocationDetailTxv[1] = (TextView)findViewById(R.id.latitude_txv);
+    	mLocationDetailTxv[2] = (TextView)findViewById(R.id.altitude_txv);
+    	mLocationDetailTxv[3] = (TextView)findViewById(R.id.speed_txv);
+    	mLocationDetailTxv[4] = (TextView)findViewById(R.id.satellite_txv);
+    	mLocationDetailTxv[5] = (TextView)findViewById(R.id.accuracy_txv);
+    }
+    
+    protected void setListener(){
+    	super.setListener();
         mRightBtn.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -94,32 +119,7 @@ public class TrafficCompassActivity extends BaseActivity implements SensorEventL
                 }
 			}
 		});
-        mRightBtn.setBackgroundResource(R.drawable.btn_title);
-    	mSensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
-    	mLocationListener = new MyLocationListener(mThis, new Runnable(){
-			@Override
-			public void run() {
-				refreshLocationAndCompass();
-			}
-    	});
-    }
-    
-    protected void findViews(){
-    	super.findViews();
-    	mBodyRly = (RelativeLayout)findViewById(R.id.body_rly);
-    	mCompassImv = (ImageView)findViewById(R.id.compass_imv);
-    	mCompassBgImv = (ImageView)findViewById(R.id.compass_bg_imv);
-    	mGPSBtn = (Button)findViewById(R.id.gps_btn);
-    	mLocationDetailTxv[0] = (TextView)findViewById(R.id.longitude_txv);
-    	mLocationDetailTxv[1] = (TextView)findViewById(R.id.latitude_txv);
-    	mLocationDetailTxv[2] = (TextView)findViewById(R.id.altitude_txv);
-    	mLocationDetailTxv[3] = (TextView)findViewById(R.id.speed_txv);
-    	mLocationDetailTxv[4] = (TextView)findViewById(R.id.satellite_txv);
-    	mLocationDetailTxv[5] = (TextView)findViewById(R.id.accuracy_txv);
-    }
-    
-    protected void setListener(){
-    	super.setListener();
+    	
     	mGPSBtn.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -149,7 +149,6 @@ public class TrafficCompassActivity extends BaseActivity implements SensorEventL
     @Override
     public void onResume(){
     	super.onResume();
-    	mTitleBtn.setText(getString(R.string.compass));
     	refreshLocationAndCompass();
     	refreshGPS();
     }
@@ -160,8 +159,10 @@ public class TrafficCompassActivity extends BaseActivity implements SensorEventL
     		mCompassImv.setImageResource(R.drawable.ani_compass_notavailable);
     		mCompassBgImv.setImageResource(R.drawable.transparent_bg);
     		setCompassAnimation(0, 0, LocationService.RETRY_INTERVAL * 30);
+    		mSunCompassHintTxv.setVisibility(View.GONE);
     		return;
     	}
+    	mSunCompassHintTxv.setVisibility(View.VISIBLE);
     	Calendar calendar = Calendar.getInstance();
     	calendar.setTimeInMillis(CalendarUtil.getExactTime(mThis));
     	double degree = 0;
@@ -220,6 +221,7 @@ public class TrafficCompassActivity extends BaseActivity implements SensorEventL
     			mCompassImv.setImageResource(R.drawable.ani_compass);
     			//mCompassImv.setAngle(0);
     			mCompassBgImv.setImageResource(R.drawable.bg_compass);
+    			mSunCompassHintTxv.setVisibility(View.GONE);
     		}else{
     			setSunCompass(location);
     		}
