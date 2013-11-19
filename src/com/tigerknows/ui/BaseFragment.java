@@ -282,6 +282,7 @@ public class BaseFragment extends LinearLayout {
             mLeftBtn.setBackgroundResource(R.drawable.btn_back);
             mLeftBtn.setOnClickListener(mLeftTxvOnClickListener);
             mRightBtn.setVisibility(View.VISIBLE);
+            mRightBtn.setCompoundDrawables(null, null, null, null);
             mRightBtn.setBackgroundDrawable(null);
             mRightBtn.setText(null);
             mRightBtn.setEnabled(true);
