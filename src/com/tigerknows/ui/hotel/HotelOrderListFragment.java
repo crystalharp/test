@@ -28,6 +28,7 @@ import android.widget.Toast;
 
 import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
+import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
@@ -78,6 +79,21 @@ public class HotelOrderListFragment extends BaseFragment{
 	private int orderTotal = 0;
 	
 	private List<HotelOrder> orders = new ArrayList<HotelOrder>();
+	
+	public final static int MSG_CANCEL_ORDER = 1;
+	
+	private Handler mHandler = new Handler(){
+		
+		@Override
+		public void handleMessage (Message msg){
+			switch(msg.what){
+			case MSG_CANCEL_ORDER:
+				if(orders != null && orders.size() > msg.arg1){
+					orders.get(msg.arg1).setState(HotelOrder.STATE_CANCELED);
+				}
+			}
+		}
+	};
     
     /**
      * 需要查询状态的订单的buffer
@@ -162,7 +178,7 @@ public class HotelOrderListFragment extends BaseFragment{
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				mActionLog.addAction(mActionTag+ActionLog.HotelOrderListItemClick, position);
-				mSphinx.getHotelOrderDetailFragment().setData(orders.get(position) , position);
+				mSphinx.getHotelOrderDetailFragment().setData(orders.get(position) , position, mHandler);
 				mSphinx.getHotelOrderDetailFragment().setStageIndicatorVisible(false);
 				mSphinx.showView(R.id.view_hotel_order_detail);
 			}

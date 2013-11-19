@@ -14,6 +14,8 @@ import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -104,6 +106,8 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
 	private View mNameView;
 	
 	private HotelVendor mHotelVendor;
+	
+	private Handler mHandler = null;
 
     Drawable icOrderAgain;
     Drawable icOrderAgainDisabled;
@@ -414,7 +418,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
      * Before showing the view, {@code setData()} first. 
      * @param order
      */
-    public void setData(HotelOrder order, int position){
+    public void setData(HotelOrder order, int position, Handler handler){
     	mOrder = order;
     	mPosition = position;
     	if(mOrder==null){
@@ -616,6 +620,16 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
             				mOrderStateTxv.setText(getOrderStateDesc(mOrder.getState()));
             				mBtnCancel.setVisibility(View.GONE);
                 			updateOrderStorage(mOrder);
+                			if(mHandler != null){
+                				new Thread(){
+                					public void run(){
+                        				Message msg = new Message();
+                        				msg.what = HotelOrderListFragment.MSG_CANCEL_ORDER;
+                        				msg.arg1 = mPosition;
+                        				mHandler.sendMessage(msg);                						
+                					}
+                				}.start();
+                			}
             				Toast.makeText(mContext, R.string.hotel_order_cancel_success, Toast.LENGTH_LONG).show(); 
             				
             			}else{
