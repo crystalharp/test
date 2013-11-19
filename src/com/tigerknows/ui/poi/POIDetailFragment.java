@@ -162,6 +162,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     public LinearLayout mBelowAddressLayout;
     
     public LinearLayout mBelowCommentLayout;
+    
+    public LinearLayout mBelowFeatureView;
 
     // Error Fix Button
     private Button mErrorFixBtn = null;
@@ -310,6 +312,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     private void clearDynamicView(List<DynamicPOIViewBlock> POIList) {
         mBelowCommentLayout.removeAllViews();
         mBelowAddressLayout.removeAllViews();
+        mBelowFeatureView.removeAllViews();
         POIList.clear();
     }
     
@@ -902,6 +905,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         mBelowCommentLayout = (LinearLayout)mRootView.findViewById(R.id.below_comment);
         mBelowAddressLayout = (LinearLayout)mRootView.findViewById(R.id.below_address);
         mFeatureView = (LinearLayout)mRootView.findViewById(R.id.feature_view);
+        mBelowFeatureView = (LinearLayout)mRootView.findViewById(R.id.layout_below_feature);
 
         mCommentListView = (ViewGroup)mRootView.findViewById(R.id.comment_list_view);
         mCommentSumTotalView = (ViewGroup) mRootView.findViewById(R.id.comment_sum_total_view);

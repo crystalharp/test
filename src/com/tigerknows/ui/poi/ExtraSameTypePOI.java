@@ -61,7 +61,7 @@ public class ExtraSameTypePOI extends DynamicPOIViewTemplate {
         mTitleTxv.setText(R.string.dynamic_poi_title);
         mTitleRightTxv.setVisibility(View.GONE);
         mMoreView.setVisibility(View.GONE);
-        mViewBlock = new DynamicPOIViewBlock(poiFragment.mBelowAddressLayout, mRootView) {
+        mViewBlock = new DynamicPOIViewBlock(poiFragment.mBelowFeatureView, mRootView) {
 
             @Override
             public void refresh() {

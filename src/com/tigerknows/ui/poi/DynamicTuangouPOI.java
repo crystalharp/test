@@ -134,7 +134,7 @@ public class DynamicTuangouPOI extends DynamicPOIViewTemplate{
                     } else {
                         sourceTxv.setText(null);
                     }
-                    nameTxv.setText(tuangou.getDescription());
+                    nameTxv.setText(tuangou.getShortDesc());
                     priceTxv.setText(tuangou.getPrice());
                     orgPriceTxv.setText(tuangou.getOrgPrice()+mRMB);
                     orgPriceTxv.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
