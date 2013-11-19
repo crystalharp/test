@@ -220,7 +220,7 @@ public class SubwayMapFragment extends BaseFragment implements RetryView.CallBac
     
     public class StationHandler {
         public void show(final String poiid) {
-            mActionLog.addAction(mActionTag, ActionLog.TrafficSubwayMapClickPOI);
+            mActionLog.addAction(mActionTag + ActionLog.TrafficSubwayMapClickPOI);
             Runnable run = new Runnable() {
 
                 @Override
@@ -237,7 +237,7 @@ public class SubwayMapFragment extends BaseFragment implements RetryView.CallBac
         
         public void search(final String poiid, final String x, final String y, final String name) {
             LogWrapper.d(TAG, "x:" + x + " y:" + y);
-            mActionLog.addAction(mActionTag, ActionLog.TrafficSubwayMapClickSearch);
+            mActionLog.addAction(mActionTag + ActionLog.TrafficSubwayMapClickSearch);
             if ((TextUtils.isEmpty(x) || x.length() < 1) ||
                     (TextUtils.isEmpty(y) || y.length() < 1)) {
                 mSphinx.showTip(R.string.subway_location_error, Toast.LENGTH_SHORT);

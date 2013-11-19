@@ -29,31 +29,18 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
+public class DynamicNormalPOI extends DynamicPOIViewTemplate {
     
     static DynamicNormalPOI instance = null;
-    DynamicPOIViewBlock mViewBlock;
     NormalDPOIClickListener clickListener = new NormalDPOIClickListener();
     LinearListAdapter listAdapter;
-    List<DynamicPOIViewBlock> blockList = new ArrayList<DynamicPOIViewBlock>();
     
-    LinearLayout mRootView;
-    LinearLayout mListView;
-    LinearLayout mMoreView;
-    TextView mTitleTxv;
-        
     public DynamicNormalPOI(POIDetailFragment poiFragment, LayoutInflater inflater){
-        mPOIDetailFragment = poiFragment;
-        mSphinx = mPOIDetailFragment.mSphinx;
-        mInflater = inflater;
-        mRootView = (LinearLayout) mInflater.inflate(R.layout.poi_dynamic_template, null);
-        mTitleTxv = (TextView) mRootView.findViewById(R.id.title_txv);
+        super(poiFragment, inflater);
         mTitleTxv.setText(R.string.dynamic_normal_title);
-        mListView = (LinearLayout) mRootView.findViewById(R.id.list_view);
-        mMoreView = (LinearLayout) mRootView.findViewById(R.id.more_view);
+        mTitleRightTxv.setVisibility(View.GONE);
         mMoreView.setVisibility(View.GONE);
         listAdapter = new LinearListAdapter(mSphinx, mListView, R.layout.poi_dynamic_normal_list_item) {
 
@@ -119,17 +106,6 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
         };
 
     }
-
-    @Override
-    public List<DynamicPOIViewBlock> getViewList() {
-        blockList.clear();
-        if (mPOI == null) {
-            return blockList;
-        }
-        
-        blockList.add(mViewBlock);
-        return blockList;
-    }
     
 
     private class NormalDPOIClickListener implements View.OnClickListener {
@@ -181,11 +157,6 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
         }
     }
 
-    @Override
-    public void refresh() {
-        mViewBlock.refresh();
-    }
-
 	@Override
 	public void onPostExecute(TKAsyncTask tkAsyncTask) {
         POI poi = mPOI;
@@ -227,11 +198,6 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
                 mSphinx.getCouponDetailFragment().setData(list, 0);
             }
         }
-		
-	}
-
-	@Override
-	public void onCancelled(TKAsyncTask tkAsyncTask) {
 		
 	}
 

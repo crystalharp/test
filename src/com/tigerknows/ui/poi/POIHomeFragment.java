@@ -826,7 +826,7 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
 			
 			//if user is not dragging the view and dragView not expanded already, expand it.
 			if(!isDragStarts && !mIsSubCategoryExpanded){
-			    mActionLog.addAction(mActionTag + ActionLog.POIHomeSubcategoryOpenedOnClick, mCategorylist.get(mCurrentCategoryIndex));
+			    mActionLog.addAction(mActionTag + ActionLog.POIHomeSubcategoryOpenedOnClick, mCategorylist.get(mCurrentCategoryIndex).name);
 			    
 				//set it visible to guard first show of the drag view
 				setUpDragView(position);
@@ -862,7 +862,7 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
 		@Override
 		public void onClick(View v) {
 			if(!isDragStarts){
-				mActionLog.addAction(mActionTag + ActionLog.POIHomeSubcategoryClosedOnClick, mCategorylist.get(mCurrentCategoryIndex));
+				mActionLog.addAction(mActionTag + ActionLog.POIHomeSubcategoryClosedOnClick, mCategorylist.get(mCurrentCategoryIndex).name);
 				closeDragView();
 			}
 		}
@@ -998,7 +998,7 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
 				mDragView.setVisibility(View.VISIBLE);
 				animateTranspadding(0, 1);
 				if(mIsSubCategoryExpanded == false){
-					mActionLog.addAction(mActionTag + ActionLog.POIHomeSubcategoryOpenedOnFling, mCategorylist.get(mCurrentCategoryIndex));
+					mActionLog.addAction(mActionTag + ActionLog.POIHomeSubcategoryOpenedOnFling, mCategorylist.get(mCurrentCategoryIndex).name);
 				}
 				mIsSubCategoryExpanded= true;
 			}else{
@@ -1006,7 +1006,7 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
 				mDragView.setVisibility(View.INVISIBLE);
 				mTransPaddingView.setBackgroundResource(R.color.transparent);
 				if(mIsSubCategoryExpanded == true){
-					mActionLog.addAction(mActionTag + ActionLog.POIHomeSubcategoryClosedOnFling, mCategorylist.get(mCurrentCategoryIndex));
+					mActionLog.addAction(mActionTag + ActionLog.POIHomeSubcategoryClosedOnFling, mCategorylist.get(mCurrentCategoryIndex).name);
 				}
 				mIsSubCategoryExpanded = false;
 			}
@@ -1268,7 +1268,7 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK &&
                 isSubCategoryExpanded()) {
-            mActionLog.addAction(mActionTag + ActionLog.POIHomeSubcategoryClosedOnBack, mCategorylist.get(mCurrentCategoryIndex));
+            mActionLog.addAction(mActionTag + ActionLog.POIHomeSubcategoryClosedOnBack, mCategorylist.get(mCurrentCategoryIndex).name);
             closeDragView();
             return true;
         }
