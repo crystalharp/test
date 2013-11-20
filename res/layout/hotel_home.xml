@@ -20,6 +20,7 @@
     </com.tigerknows.ui.hotel.NavigationWidget>
     
     <ScrollView 
+        android:id="@+id/scroll_view"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_above="@id/navigation_widget"

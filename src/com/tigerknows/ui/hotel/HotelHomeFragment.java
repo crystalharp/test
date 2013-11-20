@@ -44,6 +44,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
@@ -75,6 +76,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     
     List<Filter> mFilterList = new ArrayList<DataQuery.Filter>();
 
+    private ScrollView mScrollView;
     private View mCityView;
     private TextView mCityTxv;
     private View mCheckInTimeView;
@@ -178,6 +180,8 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         if (isReLogin()) {
             return;
         }
+        
+        smoothScrollToTop();
     }
     
     void refreshTitleRightBtn() {
@@ -225,9 +229,14 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     public void onPause() {
         super.onPause();
     }
+    
+    public void smoothScrollToTop() {
+        mScrollView.smoothScrollTo(0, 0);
+    }
 
     protected void findViews() {
         mPopupWindowContain = new LinearLayout(mSphinx);
+        mScrollView = (ScrollView) mRootView.findViewById(R.id.scroll_view);
         mCityView = mRootView.findViewById(R.id.city_view);
         mCityTxv = (TextView) mRootView.findViewById(R.id.city_txv);
         mCheckInTimeView = mRootView.findViewById(R.id.check_in_time_view);
