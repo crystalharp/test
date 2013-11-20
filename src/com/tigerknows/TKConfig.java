@@ -283,7 +283,7 @@ public class TKConfig {
             } else if (cellLocation instanceof GsmCellLocation) {
                 sSignalStrength = paramSignalStrength.getGsmSignalStrength();
             }
-            Log.d(TAG, "onSignalStrengthsChanged:"+sSignalStrength);
+            LogWrapper.d(TAG, "onSignalStrengthsChanged:"+sSignalStrength);
         }
     }
     

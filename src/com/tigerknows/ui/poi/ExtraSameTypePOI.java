@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.tigerknows.R;
 import com.tigerknows.android.os.TKAsyncTask;
+import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.DataQuery.POIResponse;
@@ -130,6 +131,7 @@ public class ExtraSameTypePOI extends DynamicPOIViewTemplate {
                     public void onClick(View v) {
                         mSphinx.getPOIDetailFragment().smoothScroolToTop();
                         mSphinx.getPOIDetailFragment().setData(target, pos);
+                        mPOIDetailFragment.mActionLog.addAction(mPOIDetailFragment.mActionTag + ActionLog.POIDetailSameCategory, target.getUUID(), target.getName());
                     }
                 });
                 return null;

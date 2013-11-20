@@ -164,7 +164,6 @@ public class DynamicTuangouPOI extends DynamicPOIViewTemplate{
             if (object == null) {
                 return;
             }
-            mPOIDetailFragment.mActionLog.addAction(mPOIDetailFragment.mActionTag+ActionLog.POIDetailDianying);
 
             DynamicPOI dynamicPOI = (DynamicPOI)view.getTag();
             final String dataType = dynamicPOI.getType();
@@ -215,7 +214,7 @@ public class DynamicTuangouPOI extends DynamicPOIViewTemplate{
         
         @Override
         public void onClick(View v) {
-            mPOIDetailFragment.mActionLog.addAction(mPOIDetailFragment.mActionTag+ActionLog.POIDetailDianyingMore);
+            mPOIDetailFragment.mActionLog.addAction(mPOIDetailFragment.mActionTag+ActionLog.POIDetailTuangouMore);
             mListAdapter.refreshList(mAllList);
             mMoreView.setVisibility(View.GONE);
             refreshBackground(mListAdapter, mAllList.size());
