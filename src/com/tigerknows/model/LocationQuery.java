@@ -169,6 +169,7 @@ public class LocationQuery extends BaseQuery {
     
     @Override
     protected void addCommonParameters() {
+        addParameter("phone_type", String.valueOf(TKConfig.getPhoneType()));
         addCommonParameters(Globals.getCurrentCityInfo(false).getId(), true);
         
         if (wifiManager != null) {

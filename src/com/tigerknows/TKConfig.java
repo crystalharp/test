@@ -35,6 +35,7 @@ import android.os.Parcelable;
 import android.telephony.CellLocation;
 import android.telephony.NeighboringCellInfo;
 import android.telephony.PhoneStateListener;
+import android.telephony.SignalStrength;
 import android.telephony.TelephonyManager;
 import android.telephony.cdma.CdmaCellLocation;
 import android.telephony.gsm.GsmCellLocation;
@@ -275,8 +276,14 @@ public class TKConfig {
     private static class MyPhoneStateListener extends PhoneStateListener {
         
         @Override
-        public void onSignalStrengthChanged(int asu) {
-            sSignalStrength = asu;
+        public void onSignalStrengthsChanged(SignalStrength paramSignalStrength) {
+            CellLocation cellLocation = sTelephonyManager.getCellLocation();
+            if (cellLocation instanceof CdmaCellLocation) {
+                sSignalStrength = paramSignalStrength.getCdmaDbm();
+            } else if (cellLocation instanceof GsmCellLocation) {
+                sSignalStrength = paramSignalStrength.getGsmSignalStrength();
+            }
+            Log.d(TAG, "onSignalStrengthsChanged:"+sSignalStrength);
         }
     }
     
@@ -887,7 +894,8 @@ public class TKConfig {
         sSignalStrength = Integer.MAX_VALUE;
         
         if (sTelephonyManager != null) {
-            sTelephonyManager.listen(new MyPhoneStateListener(), PhoneStateListener.LISTEN_SIGNAL_STRENGTH);
+            MyPhoneStateListener myPhoneStateListener = new MyPhoneStateListener();
+            sTelephonyManager.listen(myPhoneStateListener, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
             
             sIMEI = sTelephonyManager.getDeviceId();        
             sIMSI = sTelephonyManager.getSubscriberId();
@@ -1039,6 +1047,12 @@ public class TKConfig {
         }
         
         return result;
+    }
+    public static int getPhoneType() {
+        if (sTelephonyManager != null) {
+            return sTelephonyManager.getPhoneType();
+        }
+        return TelephonyManager.PHONE_TYPE_NONE;
     }
     
     /**
