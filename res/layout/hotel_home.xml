@@ -36,6 +36,18 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             >
+            <TextView
+                android:id="@+id/query_all_hotel_txv"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:textColor="@color/black_dark"
+                android:textSize="16sp"
+                android:text="@string/query_all_hotel"
+                android:gravity="center"
+                android:padding="8dp"
+                android:background="@drawable/list_single"
+                />
             <LinearLayout
                 android:id="@+id/query_view"
                 android:layout_width="fill_parent"
@@ -225,6 +237,15 @@
                     android:gravity="left|center_vertical"
                     />
             </LinearLayout>
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black_light"
+                android:textSize="14sp"
+                android:text="@string/hotel_home_tip"
+                android:gravity="left"
+                android:padding="8dp"
+                />
         </LinearLayout>
         
     </ScrollView>

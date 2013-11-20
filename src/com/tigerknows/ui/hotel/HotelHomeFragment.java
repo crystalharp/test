@@ -28,6 +28,7 @@ import com.tigerknows.provider.HotelOrderTable;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.ui.more.ChangeCityActivity;
+import com.tigerknows.ui.poi.POIHomeFragment;
 import com.tigerknows.ui.poi.POIResultFragment;
 import com.tigerknows.util.Utility;
 import com.tigerknows.widget.FilterListView;
@@ -89,6 +90,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     private ImageView mDingdanImv;
     private TextView mDingdanTxv;
     private POI mPOI;
+    private TextView mQueryAllHotelTxv;
     
     private FilterListView mFilterCategoryListView = null;
     
@@ -238,6 +240,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         mDingdanView = mRootView.findViewById(R.id.dingdan_view);
         mDingdanImv = (ImageView) mRootView.findViewById(R.id.dingdan_imv);
         mDingdanTxv = (TextView) mRootView.findViewById(R.id.dingdan_txv);
+        mQueryAllHotelTxv = (TextView) mRootView.findViewById(R.id.query_all_hotel_txv);
     }
 
     protected void setListener() {
@@ -247,6 +250,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         mPriceView.setOnClickListener(this);
         mQueryBtn.setOnClickListener(this);
         mDingdanView.setOnClickListener(this);
+        mQueryAllHotelTxv.setOnClickListener(this);
     }
         
     @Override
@@ -305,6 +309,19 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                 if (tel != null) {
                     Utility.telephone(mSphinx, tel);
                 }
+                break;
+                
+            case R.id.query_all_hotel_txv:
+                mActionLog.addAction(mActionTag + ActionLog.HotelQueryAll);
+                DataQuery dataQuery = mSphinx.getPOIHomeFragment().getDataQuery(POIHomeFragment.HOTEL_INDEX);
+                dataQuery.setup(Globals.getCurrentCityInfo(true).getId(), getId(), mSphinx.getPOIResultFragmentID(), null, false, false, mSphinx.getPOI());
+                BaseFragment baseFragment = mSphinx.getFragment(dataQuery.getTargetViewId());
+                
+                if (baseFragment != null && baseFragment instanceof POIResultFragment) {
+                    mSphinx.queryStart(dataQuery);
+                    ((POIResultFragment)mSphinx.getFragment(dataQuery.getTargetViewId())).setup();
+                    mSphinx.showView(dataQuery.getTargetViewId());
+                 }                
                 break;
                 
             default:

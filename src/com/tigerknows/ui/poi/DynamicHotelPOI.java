@@ -186,6 +186,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
 
                 String tel = mReserveTelTxv.getTag().toString();
                 if (tel != null) {
+                    mPOIDetailFragment.mActionLog.addAction(ActionLog.POIDetail + ActionLog.POIDetailHotelReserveTel);
                     Utility.telephone(mSphinx, tel);
                 }
             }

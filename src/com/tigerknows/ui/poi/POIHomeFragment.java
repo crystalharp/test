@@ -98,7 +98,7 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
     /**
      * 酒店在列表中的下标
      */
-    static final int HOTEL_INDEX = 1;
+    public static final int HOTEL_INDEX = 1;
     
     /**
      * 交通在列表中的下标
@@ -1169,8 +1169,12 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
     	   mSphinx.showView(poiQuery.getTargetViewId());
        	}
 	}
+    
+    public DataQuery getDataQuery() {
+        return getDataQuery(-1);
+    }
 	
-	public DataQuery getDataQuery() {
+	public DataQuery getDataQuery(int catetoryIndex) {
 	       POI requestPOI = mSphinx.getPOI();
 	       DataQuery poiQuery = new DataQuery(mContext);
 	       poiQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_POI);
@@ -1202,6 +1206,11 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
 	               poiQuery.addParameter(DataQuery.SERVER_PARAMETER_FILTER_STRING, s.toString());
 	           }
 	       }
+
+	        if (catetoryIndex >= 0 && catetoryIndex < mCategorylist.size()) {
+	            poiQuery.addParameter(DataQuery.SERVER_PARAMETER_KEYWORD, mCategorylist.get(catetoryIndex).name);
+	            poiQuery.addParameter(DataQuery.SERVER_PARAMETER_INFO, DataQuery.INFO_TYPE_TAG);
+	        }
 	       
 	       return poiQuery;
 	}
