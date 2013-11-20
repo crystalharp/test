@@ -1334,6 +1334,6 @@
     <string name="this_come_from_colon">本单来自：%1$s</string>
     <string name="tel_reserve">电话预订</string>
     <string name="tel_reserve_hotel">拨打电话预订酒店</string>
-    <string name="query_all_hotel">查询全部酒店</string>
+    <string name="query_all_hotel">查找全部酒店</string>
     <string name="hotel_home_tip">小贴士：线上预订享低价！</string>
 </resources>
