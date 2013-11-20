@@ -5,7 +5,6 @@
 package com.tigerknows.android.app;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
 
 import com.decarta.Globals;
@@ -247,21 +246,6 @@ public class TKActivity extends Activity implements TKAsyncTask.EventListener {
     };
     
     /**
-     * 网络出错的广播接收器
-     */
-    private final BroadcastReceiver mNetworkStatusReportReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if (action.equals(BaseQuery.ACTION_NETWORK_STATUS_REPORT)) {
-                if (isFinishing() == false) {
-                    Toast.makeText(mThis, R.string.network_error, Toast.LENGTH_LONG).show();
-                }
-            }
-        }
-    };
-    
-    /**
      * 扩展存储卡挂载广播接收器
      */
     BroadcastReceiver mExternalStorageMountReceiver = new BroadcastReceiver() {
@@ -468,9 +452,6 @@ public class TKActivity extends Activity implements TKAsyncTask.EventListener {
         intentFilter.addAction(Intent.ACTION_MEDIA_UNMOUNTED);
         registerReceiver(mExternalStorageMountReceiver, intentFilter);
         
-        intentFilter = new IntentFilter(BaseQuery.ACTION_NETWORK_STATUS_REPORT);
-        registerReceiver(mNetworkStatusReportReceiver, intentFilter);
-        
         intentFilter = new IntentFilter("android.intent.action.SERVICE_STATE"); // "android.intent.action.SERVICE_STATE" Intent.ACTION_AIRPLANE_MODE_CHANGED Intent.ACTION_SERVICE_STATE_CHANGED
         registerReceiver(mAirPlaneModeReceiver, intentFilter);
 
@@ -495,7 +476,6 @@ public class TKActivity extends Activity implements TKAsyncTask.EventListener {
         mTKLocationManager.removeUpdates();
 
         unregisterReceiver(mExternalStorageMountReceiver);
-        unregisterReceiver(mNetworkStatusReportReceiver);
         unregisterReceiver(mAirPlaneModeReceiver);
         unregisterReceiver(mConnectivityReceiver);
         

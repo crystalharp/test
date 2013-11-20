@@ -27,7 +27,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
-import android.content.Intent;
 import android.text.TextUtils;
 import android.view.ViewGroup;
 import android.widget.ScrollView;
@@ -77,8 +76,6 @@ public abstract class BaseQuery {
     
     static final String TAG = "BaseQuery";
     
-    public static final String ACTION_NETWORK_STATUS_REPORT = "ACTION_NETWORK_STATUS_REPORT";
-
     // 交通查询
     public static final String API_TYPE_TRAFFIC_QUERY = "t";
     
@@ -772,8 +769,6 @@ public abstract class BaseQuery {
             if (needReconntection && !isStop) {
                 try {
                     Thread.sleep(RECONNECTION_WAIT_TIMES);
-                    Intent intent = new Intent(ACTION_NETWORK_STATUS_REPORT);
-                    context.sendBroadcast(intent);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
