@@ -192,6 +192,7 @@ public class ActionLog extends LogUpload {
     public static final String POIDetailShopkeeper = "CH";
     public static final String POIDetailDishList = "CI";
     public static final String POIDetailHotelReserveTel = "CJ";
+    public static final String POIDetailTuangouMore = "CK";
 
     // POI点评列表页
     public static final String POICommentList = "AE";
