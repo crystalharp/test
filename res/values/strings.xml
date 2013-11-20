@@ -1332,4 +1332,6 @@
     <string name="view_poi_result">查看商户搜索结果</string>
     <string name="come_from_colon">来自：%1$s</string>
     <string name="this_come_from_colon">本单来自：%1$s</string>
+    <string name="tel_reserve">电话预订</string>
+    <string name="tel_reserve_hotel">拨打电话预订酒店</string>
 </resources>

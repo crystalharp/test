@@ -1147,4 +1147,8 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     public DataQuery getDataQuery() {
         return mDataQuery;
     }
+    
+    public List<Filter> getFilterList() {
+        return mFilterList;
+    }
 }

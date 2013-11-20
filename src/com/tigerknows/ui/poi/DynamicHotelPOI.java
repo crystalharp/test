@@ -99,6 +99,9 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     
     //记录现在缓存的日期所属的POI的id
     public String mInitDatePOIid;
+    
+    private View mReserveTelView;
+    private TextView mReserveTelTxv;
         
     DateListView getDateListView() {
         if (mDateListView == null) {
@@ -174,6 +177,20 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         upperView = mInflater.inflate(R.layout.poi_dynamic_hotel_upper, null);
         lowerView = mInflater.inflate(R.layout.poi_dynamic_hotel_lower, null);
         findViews();
+        mReserveTelView.setVisibility(View.GONE);
+        
+        View.OnClickListener reserveTelListener = new OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+
+                String tel = mReserveTelTxv.getTag().toString();
+                if (tel != null) {
+                    Utility.telephone(mSphinx, tel);
+                }
+            }
+        };
+        mReserveTelView.setOnClickListener(reserveTelListener);
         
         mUpperBlock = new DynamicPOIViewBlock(poiFragment.mBelowAddressLayout, upperView) {
 
@@ -205,6 +222,14 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
                 }
                 roomTypeAdapter.refreshList(mShowingRoomList);
                 refreshBackground(roomTypeAdapter, mShowingRoomList);
+                
+                HotelVendor hotelVendor = HotelVendor.getHotelVendorById(HotelVendor.SOURCE_DEFAULT, mSphinx, null);
+                if (hotelVendor != null && hotelVendor.getReserveTel() != null) {
+                    mReserveTelTxv.setTag(hotelVendor.getReserveTel());
+                    mReserveTelView.setVisibility(View.VISIBLE);
+                } else {
+                    mReserveTelView.setVisibility(View.GONE);
+                }
                 show();
             }
             
@@ -355,6 +380,8 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         mCheckInTimeView = upperView.findViewById(R.id.check_in_time_view);
         hotelSummaryBlock = (LinearLayout) lowerView.findViewById(R.id.hotel_summary);
         mCheckInTimeTxv = (TextView) upperView.findViewById(R.id.check_in_time_txv);
+        mReserveTelView = upperView.findViewById(R.id.reserve_tel_view);
+        mReserveTelTxv = (TextView)upperView.findViewById(R.id.reserve_tel_txv);
     }
     
     class MoreRoomTypeClickListener implements View.OnClickListener{

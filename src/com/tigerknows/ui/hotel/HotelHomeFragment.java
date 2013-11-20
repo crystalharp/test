@@ -15,6 +15,7 @@ import com.tigerknows.map.MapEngine;
 import com.tigerknows.map.MapEngine.CityInfo;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataQuery;
+import com.tigerknows.model.HotelVendor;
 import com.tigerknows.model.DataQuery.Filter;
 import com.tigerknows.model.DataQuery.FilterArea;
 import com.tigerknows.model.DataQuery.FilterCategoryOrder;
@@ -143,6 +144,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     public void onResume() {
         super.onResume();
         mTitleBtn.setText(R.string.hotel_reserve);
+        refreshTitleRightBtn();
         refreshDate();
         
         HotelOrderTable hotelOrderTable = new HotelOrderTable(mContext);
@@ -173,6 +175,18 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         }
         if (isReLogin()) {
             return;
+        }
+    }
+    
+    void refreshTitleRightBtn() {
+        HotelVendor hotelVendor = HotelVendor.getHotelVendorById(HotelVendor.SOURCE_DEFAULT, mSphinx, null);
+        if (hotelVendor != null && hotelVendor.getReserveTel() != null) {
+            mRightBtn.setText(R.string.tel_reserve);
+            mRightBtn.setTag(hotelVendor.getReserveTel());
+            mRightBtn.setOnClickListener(this);
+        } else {
+            mRightBtn.setText(null);
+            mRightBtn.setOnClickListener(null);
         }
     }
     
@@ -284,6 +298,14 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
             	mSphinx.getHotelOrderListFragment().syncOrder();
                 mSphinx.showView(R.id.view_hotel_order_list);
             	break;
+                
+            case R.id.right_btn:
+                mActionLog.addAction(mActionTag + ActionLog.TitleRightButton);
+                String tel = mRightBtn.getTag().toString();
+                if (tel != null) {
+                    Utility.telephone(mSphinx, tel);
+                }
+                break;
                 
             default:
                 break;

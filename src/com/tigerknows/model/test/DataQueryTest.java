@@ -1040,7 +1040,7 @@ public class DataQueryTest {
         if (data == null) {
             data = new XMap();
         }
-        data.put(HotelVendor.FIELD_ID, HotelVendor.SOURCE_TEST + message);
+        data.put(HotelVendor.FIELD_ID, HotelVendor.SOURCE_DEFAULT + message);
         data.put(HotelVendor.FIELD_NAME, "虚拟商家" + message);
         data.put(HotelVendor.FIELD_SERVICE_TEL, "400000" + message * 1111);
         data.put(HotelVendor.FIELD_RESERVE_TEL, message == 2 ? "12588888888" : "");

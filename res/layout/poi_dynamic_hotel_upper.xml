@@ -67,6 +67,23 @@
                 android:layout_height="wrap_content"
                  />
         </LinearLayout>
+        <LinearLayout android:id="@+id/reserve_tel_view"
+            android:layout_marginTop="12dp"
+            android:layout_width="fill_parent" 
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@drawable/list_single"
+            android:gravity="center"
+            android:visibility="visible"
+            >
+            <TextView
+                android:id="@+id/reserve_tel_txv"
+                android:layout_width="fill_parent" 
+                android:layout_height="fill_parent"
+                android:text="@string/tel_reserve_hotel"
+                android:gravity="center"
+                 />
+        </LinearLayout>
     </LinearLayout>
 
 </LinearLayout>

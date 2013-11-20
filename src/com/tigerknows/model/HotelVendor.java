@@ -38,7 +38,7 @@ public class HotelVendor extends BaseData implements Parcelable {
     public static final String ALL = "all";
     
     // 测试 1999
-    public static final int SOURCE_TEST = 1999;
+    public static final int SOURCE_DEFAULT = 1999;
     
     // 艺龙
     public static final int SOURCE_ELONG = 2000;
