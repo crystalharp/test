@@ -962,7 +962,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                 Utility.queryTraffic(mSphinx, poi, mActionTag);
                 break;
                 
-            case R.id.poi_btn:
+            case R.id.nearby_search_btn:
                 mActionLog.addAction(mActionTag +  ActionLog.POIDetailSearch);
                 mSphinx.getPOINearbyFragment().setData(poi);
                 mSphinx.showView(R.id.view_poi_nearby_search);
