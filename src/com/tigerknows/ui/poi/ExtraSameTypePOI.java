@@ -26,7 +26,7 @@ public class ExtraSameTypePOI extends DynamicPOIViewTemplate {
     
     @Override
     public boolean isExist() {
-        if (mPOI == null) {
+        if (mPOI == null || mPOI.isOnlyAPOI()) {
             return false;
         }
         if (TextUtils.isEmpty(mPOI.getCategory()) == false && (mSphinx.uiStackContains(R.id.view_poi_result) || mSphinx.uiStackContains(R.id.view_poi_result2))) {
@@ -68,6 +68,7 @@ public class ExtraSameTypePOI extends DynamicPOIViewTemplate {
             public void refresh() {
                 if (mPOI == null || mList.size() == 0) {
                     clear();
+                    return;
                 }
                 mAdapter.refreshList(mList);
                 refreshBackground(mAdapter, mList.size());
@@ -198,6 +199,7 @@ public class ExtraSameTypePOI extends DynamicPOIViewTemplate {
         int cityId = dataQuery.getCityId();
         poiQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
         poiQuery.addParameter(DataQuery.SERVER_PARAMETER_SIZE, "3");
+        poiQuery.addParameter(DataQuery.SERVER_PARAMETER_KEYWORD, mPOI.getCategory().split(" ")[0]);
         poiQuery.addParameter(DataQuery.SERVER_PARAMETER_POI_ID, mPOI.getUUID());
         poiQuery.setup(cityId, mPOIDetailFragment.getId(), mPOIDetailFragment.getId(), null, false, false, requestPOI);
         queryStart(poiQuery);
