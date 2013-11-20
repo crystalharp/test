@@ -20,7 +20,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="16sp"
-            android:text="@string/subway_preset_time" />
+            android:text="@string/subway_preset_time"
+            android:textColor="@color/blue_title" />
         
 	    <ImageView
 	        android:background="@drawable/bg_line_split"
@@ -54,7 +55,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="16sp"
-            android:text="@string/subway_exits" />
+            android:text="@string/subway_exits"
+            android:textColor="@color/blue_title" />
         
 	    <ImageView
 	        android:background="@drawable/bg_line_split"

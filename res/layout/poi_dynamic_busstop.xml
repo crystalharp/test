@@ -17,6 +17,7 @@
 	        android:background="@drawable/list_header_title"
 	        android:padding="8dp"
 	        android:text="@string/busline_passing_by"
+	        android:textColor="@color/blue_title"
 	        />
            
     </LinearLayout>

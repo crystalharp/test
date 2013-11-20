@@ -268,7 +268,7 @@
                             android:layout_alignParentLeft="true"
                             android:layout_centerVertical="true"
                             android:layout_marginLeft="8dp"
-                            android:textColor="@color/black"
+                            android:textColor="@color/blue_title"
                             android:textSize="16sp"
                             android:gravity="left|center_vertical"
                             android:text="@string/comment"

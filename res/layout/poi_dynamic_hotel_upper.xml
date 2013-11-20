@@ -43,7 +43,8 @@
                 android:id="@+id/more_txv"
                 android:layout_width="wrap_content" 
                 android:layout_height="wrap_content"
-                android:text="@string/hotel_expand_roomtype" />
+                android:text="@string/hotel_expand_roomtype"
+                android:textColor="@color/blue_title" />
 
             <ImageView
                 android:id="@+id/more_imv"
