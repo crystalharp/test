@@ -78,7 +78,13 @@ public class MyCommentListFragment extends BaseFragment {
                     poiQuery.addParameter(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
                     poiQuery.addParameter(DataOperation.SERVER_PARAMETER_DATA_UID, poi.getUUID());
                     poiQuery.addParameter(DataOperation.SERVER_PARAMETER_NEED_FIELD, POI.NEED_FIELD);
-                    poiQuery.setup(Integer.parseInt(comment.getPoiCityId()), getId(), getId(), mSphinx.getString(R.string.doing_and_wait));
+                    int cityId = Globals.getCurrentCityInfo().getId();
+                    try {
+                        cityId = Integer.parseInt(comment.getPoiCityId());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    poiQuery.setup(cityId, getId(), getId(), mSphinx.getString(R.string.doing_and_wait));
                     mSphinx.queryStart(poiQuery);
                 }
             } else {
