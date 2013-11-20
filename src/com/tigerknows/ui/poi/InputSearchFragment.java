@@ -207,6 +207,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
             }
             DataQuery poiQuery = mSphinx.getPOIHomeFragment().getDataQuery();
             poiQuery.addParameter(DataQuery.SERVER_PARAMETER_KEYWORD, keyword);
+            poiQuery.addParameter(DataQuery.SERVER_PARAMETER_EXT, DataQuery.EXT_BUSLINE);
             poiQuery.setup(cityId, getId(), mSphinx.getPOIResultFragmentID(), null, false, false, requestPOI);
             mSphinx.queryStart(poiQuery);
             ((POIResultFragment)mSphinx.getFragment(poiQuery.getTargetViewId())).setup(keyword);

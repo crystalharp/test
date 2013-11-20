@@ -318,6 +318,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
             } else {
                 poiQuery.addParameter(DataQuery.SERVER_PARAMETER_INFO, DataQuery.INFO_TYPE_TAG);
             }
+            poiQuery.addParameter(DataQuery.SERVER_PARAMETER_EXT, DataQuery.EXT_BUSLINE);
             poiQuery.setup(cityId, getId(), mSphinx.getPOIResultFragmentID(), null, false, false, requestPOI);
             mSphinx.queryStart(poiQuery);
             ((POIResultFragment)mSphinx.getFragment(poiQuery.getTargetViewId())).setup(isInput ? keyword : null);

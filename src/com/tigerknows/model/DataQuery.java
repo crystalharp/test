@@ -145,7 +145,7 @@ public final class DataQuery extends BaseQuery {
     // ext  String  true    扩展搜索，当前支持busline，表示支持优先展示公交线路搜索结果 
     public static final String SERVER_PARAMETER_EXT = "ext";
     
-    static final String EXT_BUSLINE = "busline";
+    public static final String EXT_BUSLINE = "busline";
     
     // 评论版本 
     public static final String COMMENT_VERSION = "1";
@@ -684,7 +684,6 @@ public final class DataQuery extends BaseQuery {
                     addParameter(SERVER_PARAMETER_NEED_FIELD, POI.NEED_FIELD);
                     addParameter(SERVER_PARAMETER_COMMENT_VERSION, COMMENT_VERSION);
                 }
-                addParameter(SERVER_PARAMETER_EXT, EXT_BUSLINE);
             } else if (SUB_DATA_TYPE_HOTEL.equals(subDataType)) {
                 String appendaction = getParameter(SERVER_PARAMETER_APPENDACTION);
                 if (appendaction == null) {

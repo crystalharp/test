@@ -191,6 +191,7 @@ public class ActionLog extends LogUpload {
     public static final String POIDetailDish = "CG";
     public static final String POIDetailShopkeeper = "CH";
     public static final String POIDetailDishList = "CI";
+    public static final String POIDetailHotelReserveTel = "CJ";
 
     // POI点评列表页
     public static final String POICommentList = "AE";
@@ -516,6 +517,7 @@ public class ActionLog extends LogUpload {
 
     // 交通线路列表页显示
     public static final String TrafficBusline = "BI";
+    public static final String TrafficBuslineViewPOI = "BA";
 
     // 交通站点列表页显示
     public static final String TrafficStation = "BJ";
@@ -673,6 +675,7 @@ public class ActionLog extends LogUpload {
     public static final String HotelQueryCategory = "BD";
     public static final String HotelQuerySubmit = "BE";
     public static final String HotelQueryOrder = "BF";
+    public static final String HotelQueryAll = "BG";
     
     public static final String HotelPickLocation = "GB";
     public static final String HotelPickLocationInput = "BA";

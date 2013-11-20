@@ -998,6 +998,12 @@ public abstract class BaseQuery {
         }
     }
     
+    public final void removeParameter(String key) {
+        if (key != null && !key.equals("")) {
+            requestParameters.remove(key);
+        }
+    }
+    
     public final void setParameter(String key, String value) {
         if (key != null && !key.equals("")) {
             requestParameters.add(key, value);

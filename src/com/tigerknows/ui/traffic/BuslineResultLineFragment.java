@@ -152,12 +152,15 @@ public class BuslineResultLineFragment extends BaseFragment {
 					mSphinx.getBuslineDetailFragment().setData(mLineList.get(position), position, mBuslineQuery.getKeyword());
 					mSphinx.showView(R.id.view_traffic_busline_detail);
 				} else if (mResultLsv.isFooterSpringback() == false && mDataQuery != null) {
+                    mActionLog.addAction(mActionTag + ActionLog.TrafficBuslineViewPOI);
 		            mSphinx.uiStackRemove(R.id.view_traffic_busline_line_result);
                     mSphinx.uiStackRemove(R.id.view_traffic_busline_station_result);
-				    int poiResultFragmentId = mSphinx.getPOIResultFragmentID();
-				    POIResultFragment poiResultFragment = (POIResultFragment) mSphinx.getFragment(poiResultFragmentId);
-				    poiResultFragment.setData(mDataQuery);
-                    mSphinx.showView(poiResultFragmentId);
+                    DataQuery poiQuery = new DataQuery(mDataQuery);
+                    poiQuery.removeParameter(DataQuery.SERVER_PARAMETER_EXT);
+                    poiQuery.setup(Globals.getCurrentCityInfo().getId(), getId(), mSphinx.getPOIResultFragmentID(), null, false, false, mDataQuery.getPOI());
+                    mSphinx.queryStart(poiQuery);
+                    ((POIResultFragment)mSphinx.getFragment(poiQuery.getTargetViewId())).setup(mDataQuery.getParameter(DataQuery.SERVER_PARAMETER_KEYWORD));
+                    mSphinx.showView(poiQuery.getTargetViewId());
                 }
 			}
 
