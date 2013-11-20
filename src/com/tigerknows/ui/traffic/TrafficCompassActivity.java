@@ -220,7 +220,7 @@ public class TrafficCompassActivity extends BaseActivity implements SensorEventL
     			mSensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_GAME);
     			mCompassImv.setImageResource(R.drawable.ani_compass);
     			//mCompassImv.setAngle(0);
-    			mCompassBgImv.setImageResource(R.drawable.bg_compass);
+    			mCompassBgImv.setImageResource(R.drawable.transparent_bg);
     			mSunCompassHintTxv.setVisibility(View.GONE);
     		}else{
     			setSunCompass(location);

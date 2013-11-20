@@ -952,8 +952,8 @@ public final class DataQuery extends BaseQuery {
         } else if (DATA_TYPE_PICTURE.equals(dataType)) {
             PictureResponse response = new PictureResponse(responseXMap);
             this.response = response;
-        } else if (DATA_TYPE_SHANGJIA.equals(dataType)) {
-            ShangjiaResponse response = new ShangjiaResponse(responseXMap);
+        } else if (DATA_TYPE_HOTELVENDOR.equals(dataType)) {
+        	HotelVendorResponse response = new HotelVendorResponse(responseXMap);
             this.response = response;
         }
     }
