@@ -923,12 +923,12 @@ public class Utility {
             Drawable icCancelFavorite = context.getResources().getDrawable(R.drawable.ic_cancel_favorite);
             icCancelFavorite.setBounds(0, 0, icCancelFavorite.getIntrinsicWidth(), icCancelFavorite.getIntrinsicHeight());
             button.setCompoundDrawables(null, icCancelFavorite, null, null);
-            button.setText(R.string.add_favorite);
+            button.setText(R.string.cancel_favorite);
         } else {
             Drawable icAddFavorite = context.getResources().getDrawable(R.drawable.ic_add_favorite);
             icAddFavorite.setBounds(0, 0, icAddFavorite.getIntrinsicWidth(), icAddFavorite.getIntrinsicHeight());
             button.setCompoundDrawables(null, icAddFavorite, null, null);
-            button.setText(R.string.cancel_favorite);
+            button.setText(R.string.add_favorite);
         }
     }
 
@@ -1393,6 +1393,10 @@ public class Utility {
     }
 
     public static Dialog showTakePhotoDialog(final String actionTag, final Activity activity, final Intent intent) {
+        return showTakePhotoDialog(actionTag, activity, intent, 0);
+    }
+
+    public static Dialog showTakePhotoDialog(final String actionTag, final Activity activity, final Intent intent, final int requestCode) {
         final List<String> textList = new ArrayList<String>();
         textList.add(activity.getString(R.string.capture_photo));
         textList.add(activity.getString(R.string.pick_photo));
@@ -1427,7 +1431,7 @@ public class Utility {
                     actionLog.addAction(actionTag+ActionLog.PickPhoto);
                     intent.putExtra(AddPictureActivity.EXTRA_REQUEST_CODE, AddPictureActivity.REQUEST_CODE_PICK_PHOTO);
                 }
-                activity.startActivity(intent);
+                activity.startActivityForResult(intent, requestCode);
                 dialog.dismiss();
             }
         });

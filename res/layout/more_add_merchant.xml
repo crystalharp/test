@@ -304,7 +304,7 @@
                             android:layout_height="fill_parent" 
                             android:layout_margin="8dp"
                             android:background="@drawable/btn_take_photo"
-                            android:scaleType="fitXY"
+                            android:scaleType="centerInside"
                             />
                         <Button  
                             android:id="@+id/delete_photo_btn"

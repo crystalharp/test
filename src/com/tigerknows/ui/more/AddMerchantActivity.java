@@ -8,7 +8,6 @@ import java.util.List;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -26,7 +25,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.PopupWindow;
 import android.widget.TextView;
-import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
 import android.widget.ScrollView;
@@ -436,7 +434,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
 
                     Intent intent = new Intent(mThis, AddPictureActivity.class);
                     intent.putExtra(FileUpload.SERVER_PARAMETER_REF_DATA_TYPE, BaseQuery.DATA_TYPE_POI);
-                    startActivityForResult(intent, REQUEST_CODE_PICK_PICTURE);
+                    Utility.showTakePhotoDialog(mActionTag, mThis, intent, REQUEST_CODE_PICK_PICTURE);
                 }
                 break;
                 
@@ -450,12 +448,11 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
                         public void onClick(DialogInterface dialog, int which) {
                             if (which == DialogInterface.BUTTON_POSITIVE) {
                                 mPhotoMD5 = null;
-                                mTakePhotoBtn.setScaleType(ScaleType.FIT_XY);
-                                mTakePhotoBtn.setImageResource(R.drawable.btn_take_photo);
+                                mTakePhotoBtn.setImageBitmap(null);
+                                mTakePhotoBtn.setBackgroundResource(R.drawable.btn_take_photo);
                                 mDeletePhotoBtn.setVisibility(View.GONE);
                                 mPhotoTitleTxv.setText(R.string.add_merchant_upload_photo);
                                 mPhotoDescriptionTxv.setText(R.string.add_merchant_upload_photo_not_added);
-                                mTakePhotoBtn.setBackgroundResource(R.drawable.btn_take_photo);
                             }
                         }
                     });
@@ -813,10 +810,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
         
         String fileName = Utility.imageUri2FilePath(mThis, uri);
         mPhotoMD5 = Utility.md5sum(fileName);
-        mTakePhotoBtn.setScaleType(ScaleType.CENTER_INSIDE);
-        int wh = Utility.dip2px(mThis, 72);
-        Bitmap bm = Utility.getBitmapByUri(mThis, uri, wh, wh);
-        mTakePhotoBtn.setImageBitmap(bm);
+        mTakePhotoBtn.setImageURI(uri);
         mTakePhotoBtn.setBackgroundDrawable(null);
         mDeletePhotoBtn.setVisibility(View.VISIBLE);
         mPhotoTitleTxv.setText(R.string.add_merchant_upload_photo_added);
