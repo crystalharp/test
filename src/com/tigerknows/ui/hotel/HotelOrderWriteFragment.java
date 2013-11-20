@@ -164,7 +164,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         	mRightBtn.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					// TODO mActionLog.addAction(mActionTag + ActionLog.???);
+					mActionLog.addAction(mActionTag + ActionLog.HotelOrderWriteReserveTel);
                     Utility.telephone(mSphinx, hotelVendor.getReserveTel());
 				}
 			});

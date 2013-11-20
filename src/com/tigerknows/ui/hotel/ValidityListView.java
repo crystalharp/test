@@ -191,7 +191,7 @@ public class ValidityListView extends LinearLayout {
                 
                 childFilterList.clear();
                 for(int i = (selectedParentPosition == 0 ? now.get(Calendar.MONTH) : 0); i < 12; i++) {
-                    childFilterList.add((i+1)+"月");
+                    childFilterList.add((i+1)+mSphinx.getString(R.string.month));
                 }
                 selectedChildPosition = 0;
                 childAdapter.notifyDataSetChanged();

@@ -698,6 +698,7 @@ public class ActionLog extends LogUpload {
     public static final String HotelOrderWriteMobile = "BE";
     //public static final String HotelOrderWriteIdCard = "BF";
     public static final String HOTELOrderWriteSubmit = "BG";
+    public static final String HotelOrderWriteReserveTel = "BH";
 
     // 信用卡担保页
     public static final String HotelOrderCredit = "GF";

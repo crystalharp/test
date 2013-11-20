@@ -348,7 +348,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
         	mRightBtn.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					// TODO mActionLog.addAction(mActionTag + ActionLog.???);
+					mActionLog.addAction(mActionTag + ActionLog.HotelOrderDetailServiceTel);
                     Utility.telephone(mSphinx, mHotelVendor.getServiceTel());
 				}
 			});
