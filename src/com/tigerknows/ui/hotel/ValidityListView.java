@@ -195,13 +195,13 @@ public class ValidityListView extends LinearLayout {
                 }
                 selectedChildPosition = 0;
                 childAdapter.notifyDataSetChanged();
-                resizeLsv();
                 childLsv.post(new Runnable() {
                     @Override
                     public void run() {
                         childLsv.smoothScrollToPosition(0, 0);
                     }
                 });
+                resizeLsv();
             }
         });
         childLsv.setOnItemClickListener(new OnItemClickListener() {
