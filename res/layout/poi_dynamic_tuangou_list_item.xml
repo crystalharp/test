@@ -77,8 +77,8 @@
         android:layout_toRightOf="@id/org_price_txv"
         android:layout_alignBottom="@id/price_txv"
         android:background="@drawable/bg_need_guarantee"
-        android:textSize="12sp"
-        android:textColor="@color/orange"
+        android:textSize="10sp"
+        android:textColor="@color/white"
         android:text="@string/mian_yu_yue"
         />
 
