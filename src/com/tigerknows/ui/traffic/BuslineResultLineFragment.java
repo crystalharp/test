@@ -284,6 +284,7 @@ public class BuslineResultLineFragment extends BaseFragment {
                     mResultLsv.addFooterView(mLoadingView);
                     mCurrentFootView = mLoadingView;
                     mResultLsv.changeHeaderViewByState(false, state);
+                    mResultLsv.setFooterSpringback(false);
                 }
             }
         } else {
@@ -295,6 +296,7 @@ public class BuslineResultLineFragment extends BaseFragment {
                 mResultLsv.addFooterView(mLoadingView);
                 mCurrentFootView = mLoadingView;
                 mResultLsv.changeHeaderViewByState(false, state);
+                mResultLsv.setFooterSpringback(true);
             }
             mSphinx.getHandler().postDelayed(mTurnPageRun, 1000);
         }
