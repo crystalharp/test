@@ -51,7 +51,7 @@ public class Shangjia extends BaseData implements Parcelable {
     // 糯米 1001
     public static final int SOURCE_NUOMI = 1001;
     
-    
+    // 美团 1002
     public static final int SOURCE_MEITUAN = 1002;
     
     public static final List<Shangjia> shangjiaList = new ArrayList<Shangjia>();
@@ -264,18 +264,6 @@ public class Shangjia extends BaseData implements Parcelable {
                 xmap.put(FIELD_NAME, context.getString(R.string.wowotuan_name));
                 
                 Shangjia shangjia = new Shangjia();
-                shangjia.init(xmap, true);
-                list.add(shangjia);
-                
-                xmap = new XMap();
-                xmap.put(FIELD_SOURCE, SOURCE_NUOMI);
-                xmap.put(FIELD_SERVICE_TEL, "4006888887");
-                xmap.put(FIELD_MARKER, Utility.getDrawableResource(context, R.drawable.ic_nuomi_marker));
-                xmap.put(FIELD_NAME, context.getString(R.string.nuomi_name));
-                xmap.put(FIELD_MESSAGE, context.getString(R.string.nuomi_message));
-                xmap.put(FIELD_REFUND_SERVICE, context.getString(R.string.nuomi_refund_service));
-                
-                shangjia = new Shangjia();
                 shangjia.init(xmap, true);
                 list.add(shangjia);
                 
