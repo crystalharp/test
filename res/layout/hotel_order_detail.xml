@@ -430,7 +430,7 @@
 	                    android:textColor="@color/black_dark"
 	                    android:textSize="16sp"
 	                    android:text="入住房型"
-	                    android:singleLine="true"
+	                    android:singleLine="false"
 	                    android:focusable="false"
 	                    />
 	                
