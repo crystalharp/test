@@ -447,7 +447,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     final public void refreshDate() {
         DateListView dateListView = getDateListView();
         dateListView.refresh(checkin, checkout);
-        mCheckInTimeTxv.setText(dateListView.getCheckDescription().toString());
+        mCheckInTimeTxv.setText(dateListView.getCheckDescription(true).toString());
     }
 
     public List<DynamicPOIViewBlock> getViewList() {

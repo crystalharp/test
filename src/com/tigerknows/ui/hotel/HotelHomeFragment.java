@@ -863,7 +863,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         DateListView dateListView = getDateListView();
         mCheckInDat = dateListView.getCheckin();
         mCheckOutDat = dateListView.getCheckout();
-        mCheckInTimeTxv.setText(dateListView.getCheckDescription().toString());
+        mCheckInTimeTxv.setText(dateListView.getCheckDescription(true).toString());
     }
     
     public Calendar getCheckin(){
