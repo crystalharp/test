@@ -346,7 +346,7 @@ public class HotelOrderListFragment extends BaseFragment{
             dayCountView.setText(mContext.getString(R.string.hotel_total_nights, Integer.valueOf(order.getDayCount())));
             HotelVendor hotelVendor = HotelVendor.getHotelVendorById(order.getVendorID(), mSphinx, null);
             if(hotelVendor != null){
-            	comeFromTxv.setText(mSphinx.getString(R.string.come_from_colon, hotelVendor.getName()));
+            	comeFromTxv.setText(mSphinx.getString(R.string.this_come_from_colon, hotelVendor.getName()));
             	comeFromTxv.setVisibility(View.VISIBLE);
             }else{
             	comeFromTxv.setVisibility(View.GONE);
