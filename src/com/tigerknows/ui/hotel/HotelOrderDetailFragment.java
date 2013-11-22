@@ -336,14 +336,11 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
         
         // set title fragment content
         mTitleBtn.setText(mContext.getString(R.string.hotel_order_detail));
-        if(mHotelVendor == null || TextUtils.isEmpty(mHotelVendor.getServiceTel())){
+        if(mHotelVendor == null || TextUtils.isEmpty(mHotelVendor.getServiceName())){
         	mRightBtn.setVisibility(View.GONE);
         }else{
         	mRightBtn.setBackgroundResource(R.drawable.btn_title);
-        	mRightBtn.setText(mHotelVendor.getName());
-        	Drawable drawable = mContext.getResources().getDrawable(R.drawable.ic_hotel_telephone);
-        	drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
-        	mRightBtn.setCompoundDrawables(drawable, null, null, null);
+        	mRightBtn.setText(mHotelVendor.getServiceName());
         	mRightBtn.setVisibility(View.VISIBLE);
         	mRightBtn.setOnClickListener(new OnClickListener() {
 				@Override

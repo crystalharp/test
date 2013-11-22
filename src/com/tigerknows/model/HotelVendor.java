@@ -24,6 +24,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.TextUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -66,6 +67,7 @@ public class HotelVendor extends BaseData implements Parcelable {
     private String name;
     private String serviceTel;
     private String reserveTel;
+    private String serviceName;
     
     private HotelVendor() {
         
@@ -92,8 +94,22 @@ public class HotelVendor extends BaseData implements Parcelable {
         super.init(data, reset);
         this.id = getLongFromData(FIELD_ID, reset ? 0 : this.id);
         this.name = getStringFromData(FIELD_NAME, reset ? null : this.name);
-        this.serviceTel = getStringFromData(FIELD_SERVICE_TEL, reset ? null : this.serviceTel);
         this.reserveTel = getStringFromData(FIELD_RESERVE_TEL, reset ? null : this.reserveTel);
+
+        String serviceTelSource = getStringFromData(FIELD_SERVICE_TEL, reset ? null : this.serviceTel);
+        if(TextUtils.isEmpty(serviceTelSource)){
+        	this.serviceName = "";
+        	this.serviceTel = "";
+        }else{
+        	String source[] = serviceTelSource.split("\\$");
+        	if(source.length == 1){
+        		this.serviceName = this.name + "客服";
+        		this.serviceTel = source[0];
+        	}else{
+        		this.serviceName = source[0];
+        		this.serviceTel = source[1];
+        	}
+        }
     }
 
     public static final Parcelable.Creator<HotelVendor> CREATOR
@@ -184,7 +200,7 @@ public class HotelVendor extends BaseData implements Parcelable {
             try {
                 XMap xmap = new XMap();
                 xmap.put(FIELD_ID, SOURCE_ELONG);
-                xmap.put(FIELD_SERVICE_TEL, "4009333333");
+                xmap.put(FIELD_SERVICE_TEL, context.getString(R.string.elong) + "$4009333333");
                 xmap.put(FIELD_NAME, context.getString(R.string.elong));
                 xmap.put(FIELD_RESERVE_TEL, "");
                 
@@ -194,7 +210,7 @@ public class HotelVendor extends BaseData implements Parcelable {
                 
                 xmap = new XMap();
                 xmap.put(FIELD_ID, SOURCE_CTRIP);
-                xmap.put(FIELD_SERVICE_TEL, "4009210661");
+                xmap.put(FIELD_SERVICE_TEL, context.getString(R.string.ctrip) + "$4009210661");
                 xmap.put(FIELD_NAME, context.getString(R.string.ctrip));
                 xmap.put(FIELD_RESERVE_TEL, "");
                 
@@ -320,6 +336,10 @@ public class HotelVendor extends BaseData implements Parcelable {
     
     public String getReserveTel() {
         return reserveTel;
+    }
+    
+    public String getServiceName() {
+    	return serviceName;
     }
 
     public static XMapInitializer<HotelVendor> Initializer = new XMapInitializer<HotelVendor>() {
