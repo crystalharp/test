@@ -162,7 +162,7 @@ public class ProxyQuery extends BaseQuery {
             this.danbaoGuize = getObjectFromData(FIELD_DANBAO_GUIZE, DanbaoGuize.Initializer);
             this.guestType = getStringFromData(FIELD_GUEST_TYPE);
             this.firstNightPrice = getDoubleFromData(FIELD_FIRST_NIGHT_PRICE);
-            this.minimum = getLongFromData(FIELD_MINIMUM);
+            this.minimum = getLongFromData(FIELD_MINIMUM, 1);
         }
 
         public static class DanbaoGuize extends XMapData {
