@@ -61,7 +61,7 @@ public class BuslineResultLineFragment extends BaseFragment {
         public void run() {
             if (mResultLsv.getLastVisiblePosition() >= mResultLsv.getCount()-2 &&
                     mResultLsv.getFirstVisiblePosition() == 0) {
-                mResultLsv.getView(false).performClick();
+                turnPage();
             }
         }
     };
@@ -173,9 +173,6 @@ public class BuslineResultLineFragment extends BaseFragment {
                 if (isHeader || mBuslineModel == null) {
                     return;
                 }
-            	if (mLineList.size() >= mBuslineModel.getTotal()) {
-                    return;
-                }
                 turnPage();
             }
         });
@@ -221,6 +218,9 @@ public class BuslineResultLineFragment extends BaseFragment {
     private void turnPage() {
     	synchronized (this) {
         if (mBuslineModel == null) {
+            return;
+        }
+        if (mLineList.size() >= mBuslineModel.getTotal()) {
             return;
         }
         mResultLsv.changeHeaderViewByState(false, SpringbackListView.REFRESHING);
