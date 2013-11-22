@@ -4226,6 +4226,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         }
     };
     private Position lastMyPosition;
+    private String lastMyPositionName;
     private Runnable mLocationChangedRun = new Runnable() {
         
         @Override
@@ -4237,11 +4238,14 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             if (myLocationCityInfo != null) {
                 myPosition = myLocationCityInfo.getPosition();
             }
+
+            String name = MapEngine.getPositionName(myPosition);
             
-            if (lastMyPosition == myPosition || (lastMyPosition != null && lastMyPosition.equals(myPosition))) {
+            if (lastMyPosition == myPosition || (lastMyPosition != null && lastMyPosition.equals(myPosition) && lastMyPositionName != null && lastMyPositionName.equals(name))) {
                 return;
             }
             lastMyPosition = myPosition;
+            lastMyPositionName = name;
 
             LogWrapper.d(TAG, "mLocationChangedRun refresh");
             if (uiStackPeek() == R.id.view_poi_home || uiStackPeek() == R.id.view_discover_home) {
@@ -4266,12 +4270,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     
     public void updateMyLocation() {
         LogWrapper.d(TAG, "updateMyLocation");
-        Position myLocationPosition = null;
-        CityInfo myLocationCityInfo = Globals.g_My_Location_City_Info;
-        if (myLocationCityInfo != null) {
-            myLocationPosition = myLocationCityInfo.getPosition();
-        }
-        final Position myPosition = myLocationPosition;
+        final Position myPosition = lastMyPosition;
         if (myPosition != null) {
             if (MyLocation.MODE_NONE == mMyLocation.mode) {
                 updateLoactionButtonState(MyLocation.MODE_NAVIGATION);
@@ -4358,12 +4357,13 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     myLocationRadiusCircle.setRadius(new Length(myLocation.getAccuracy(),UOM.M));
                 }
                 
-                if(!myLocation.equals(mMyLocation.getPosition())){
+                String lastPositionName = mMyLocation.getMessage();
+                String positionName = MapEngine.getPositionName(myLocation);
+                if(!myLocation.equals(mMyLocation.getPosition()) || (lastPositionName != null && lastPositionName.endsWith("\n"+positionName) == false)){
                     boolean refreshMap = false;
                     mMyLocation.setPosition(myLocation);
                     
                     String msg=getString(R.string.my_location);
-                    String positionName = MapEngine.getPositionName(myLocation);
                     if (positionName != null && positionName.length() > 0) {
                         msg += "\n" + positionName;
                     }
