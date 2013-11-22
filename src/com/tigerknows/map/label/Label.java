@@ -92,8 +92,8 @@ public abstract class Label {
     	tilePText = new Paint();
     	tilePText.setAntiAlias(true); //设置是否使用抗锯齿功能，会消耗较大资源，绘制图形速度会变慢。  
     	//    tilePText.setDither(true); //设定是否使用图像抖动处理，会使绘制出来的图片颜色更加平滑和饱满，图像更加清晰  
-    	tilePText.setTypeface(Typeface.DEFAULT_BOLD); //设置字体Typeface包含了字体的类型，粗细，还有倾斜、颜色
-//    	tilePText.setTypeface(Typeface.DEFAULT)
+//    	tilePText.setTypeface(Typeface.DEFAULT_BOLD); //设置字体Typeface包含了字体的类型，粗细，还有倾斜、颜色
+    	tilePText.setTypeface(Typeface.DEFAULT);
     	float strokeWidth = 2f * Globals.g_metrics.density;
 //    	if(strokeWidth > 2f) 
 //    		strokeWidth = 4f;
