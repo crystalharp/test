@@ -295,6 +295,9 @@ public abstract class BaseQuery {
     // 团购分店 16
     public static final String DATA_TYPE_FENDIAN = "16";
     
+    // 消息推送 18
+    public static final String DATA_TYPE_PULL_MESSAGE = "18";
+    
     // 用户调研 21
     public static final String DATA_TYPE_DIAOYAN = "21";
     
@@ -316,9 +319,6 @@ public abstract class BaseQuery {
     // 发现首页动态数据统计 100
     public static final String DATA_TYPE_DISCOVER = "100";
 
-    // 消息推送 18
-    public static final String DATA_TYPE_PULL_MESSAGE = "18";
-    
     // 数据子类型:
     // POI 0
     public static final String SUB_DATA_TYPE_POI = "0";
