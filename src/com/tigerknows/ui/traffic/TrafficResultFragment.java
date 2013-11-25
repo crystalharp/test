@@ -159,7 +159,7 @@ public class TrafficResultFragment extends BaseFragment {
             	if (downView != null) {
             		PlanViewHolder viewHandler = (PlanViewHolder)downView.getTag();
                 	if (viewHandler.position != focusedIndex) {
-                		viewHandler.index.setBackgroundResource(R.drawable.btn_index);
+//                		viewHandler.index.setBackgroundResource(R.drawable.btn_index);
                 	}
             	}
             }
@@ -178,7 +178,7 @@ public class TrafficResultFragment extends BaseFragment {
 					if (downView.isSelected() || downView.isFocused() || downView.isPressed()) {
 						LogWrapper.d(TAG, "set index bg: " + "bg_index_focused");
 						PlanViewHolder planHolder = (PlanViewHolder)downView.getTag();
-		        		planHolder.index.setBackgroundResource(R.drawable.bg_index_focused);
+//		        		planHolder.index.setBackgroundResource(R.drawable.bg_index_focused);
 					}
 				}
 				return false;
@@ -251,10 +251,10 @@ public class TrafficResultFragment extends BaseFragment {
         	
         	if (focusedIndex == position) {
 				LogWrapper.d(TAG, "position: " + position + "bg_index_focused");
-        		planHolder.index.setBackgroundResource(R.drawable.bg_index_focused);
+//        		planHolder.index.setBackgroundResource(R.drawable.bg_index_focused);
 			} else {
 				LogWrapper.d(TAG, "position: " + position + "bg_index");
-				planHolder.index.setBackgroundResource(R.drawable.btn_index);
+//				planHolder.index.setBackgroundResource(R.drawable.btn_index);
 			}
         	
         	planHolder.position = position;

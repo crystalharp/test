@@ -18,7 +18,7 @@
   		android:textSize="14sp"
   		android:focusable="false"
       	android:focusableInTouchMode="false"
-        android:background="@drawable/btn_index" />
+        android:background="@drawable/bg_index" />
       	
   	<TextView
   	    android:id="@+id/text2"

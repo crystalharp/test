@@ -167,7 +167,7 @@ public class BuslineResultStationFragment extends BaseFragment {
             	if (downView != null) {
                 	ViewHolder viewHandler = (ViewHolder)downView.getTag();
     				if (viewHandler.position != focusedIndex) {
-                		viewHandler.index.setBackgroundResource(R.drawable.btn_index);
+//                		viewHandler.index.setBackgroundResource(R.drawable.btn_index);
                 	}
             	}
             }
@@ -186,7 +186,7 @@ public class BuslineResultStationFragment extends BaseFragment {
  					if (downView.isSelected() || downView.isFocused() || downView.isPressed()) {
  						LogWrapper.d(TAG, "set index bg: " + "bg_index_focused");
  						ViewHolder viewHandler = (ViewHolder)downView.getTag();
- 						viewHandler.index.setBackgroundResource(R.drawable.bg_index_focused);
+// 						viewHandler.index.setBackgroundResource(R.drawable.bg_index_focused);
  					}
  				}
  				return false;
@@ -313,9 +313,9 @@ public class BuslineResultStationFragment extends BaseFragment {
             stationHolder.index.setText(String.valueOf(position+1));
             
             if (focusedIndex == position) {
-            	stationHolder.index.setBackgroundResource(R.drawable.bg_index_focused);
+//            	stationHolder.index.setBackgroundResource(R.drawable.bg_index_focused);
 			} else {
-				stationHolder.index.setBackgroundResource(R.drawable.btn_index);
+//				stationHolder.index.setBackgroundResource(R.drawable.btn_index);
 			}
             
             stationHolder.position = position;
