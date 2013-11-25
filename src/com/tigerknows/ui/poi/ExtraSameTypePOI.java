@@ -12,6 +12,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.tigerknows.R;
+import com.tigerknows.android.location.Position;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BaseQuery;
@@ -192,13 +193,18 @@ public class ExtraSameTypePOI extends DynamicPOIViewTemplate {
         
         DataQuery poiQuery = new DataQuery(dataQuery);
 
-        POI requestPOI = dataQuery.getPOI();
         int cityId = dataQuery.getCityId();
+        poiQuery.removeParameter(DataQuery.SERVER_PARAMETER_INFO);
         poiQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
         poiQuery.addParameter(DataQuery.SERVER_PARAMETER_SIZE, "3");
         poiQuery.addParameter(DataQuery.SERVER_PARAMETER_KEYWORD, mPOI.getCategory().split(" ")[0]);
         poiQuery.addParameter(DataQuery.SERVER_PARAMETER_POI_ID, mPOI.getUUID());
-        poiQuery.setup(cityId, mPOIDetailFragment.getId(), mPOIDetailFragment.getId(), null, false, false, requestPOI);
+        Position position = mPOI.getPosition();
+        if (position != null) {
+            poiQuery.addParameter(DataQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
+            poiQuery.addParameter(DataQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
+        }
+        poiQuery.setup(cityId, mPOIDetailFragment.getId(), mPOIDetailFragment.getId(), null, false, false, mPOI);
         queryStart(poiQuery);
         
         mPOIDetailFragment.addLoadingView();
