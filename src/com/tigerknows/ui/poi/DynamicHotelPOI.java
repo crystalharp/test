@@ -197,6 +197,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
 
             @Override
             public void refresh() {
+                show();
                 refreshDate();
                 if (!mUpperBlock.mLoadSucceed
                         || mHotel == null || mHotel.getRoomTypeList() == null) {
@@ -231,7 +232,6 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
                 } else {
                     mReserveTelView.setVisibility(View.GONE);
                 }
-                show();
             }
             
         };
