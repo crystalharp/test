@@ -391,6 +391,15 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
     @Override
     public void onResume() {
         super.onResume();
+        mWebWbv.resumeTimers();
+        WebView.enablePlatformNotifications();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mWebWbv.pauseTimers();
+        WebView.disablePlatformNotifications();
     }
 
     @Override

@@ -65,7 +65,7 @@ public class SingleRectLabel extends Label {
         R.drawable.ic_map_library, 
         R.drawable.ic_map_bank,
         R.drawable.ic_map_tv_tower, 
-        R.drawable.ic_map_other, 
+        R.drawable.ic_map_residential, 
         R.drawable.ic_map_research,
         R.drawable.ic_map_hi_tech_park, 
         R.drawable.ic_map_golf, 

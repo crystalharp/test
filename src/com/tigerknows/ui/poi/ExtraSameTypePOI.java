@@ -191,9 +191,6 @@ public class ExtraSameTypePOI extends DynamicPOIViewTemplate {
         }
         
         DataQuery poiQuery = new DataQuery(dataQuery);
-        if (dataQuery.hasParameter(DataQuery.SERVER_PARAMETER_FILTER) == false) {
-            poiQuery.addParameter(DataQuery.SERVER_PARAMETER_FILTER, DataQuery.makeFilterRequest(poiResultFragment.getFilterList()));
-        }
 
         POI requestPOI = dataQuery.getPOI();
         int cityId = dataQuery.getCityId();
