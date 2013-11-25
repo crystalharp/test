@@ -91,6 +91,16 @@ public class BrowserFragment extends BaseFragment implements View.OnClickListene
 
         mRightBtn.setVisibility(View.GONE);
         mWebWbv.requestFocusFromTouch();
+        
+        mWebWbv.resumeTimers();
+        WebView.enablePlatformNotifications();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mWebWbv.pauseTimers();
+        WebView.disablePlatformNotifications();
     }
     
     public void setData(String title, String url, String tip){
