@@ -683,10 +683,10 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
             break;
         case R.id.type_btn:
             mActionLog.addAction(mActionTag + ActionLog.POINameErrorType);
-            hideSoftInput();
             mTitleBtn.setText(R.string.merchant_type);
             mFilterListView.setData(mFilterList, FilterResponse.FIELD_FILTER_CATEGORY_INDEX, this, false, false, mActionTag);
             mFilterListView.setVisibility(View.VISIBLE);
+            postHideSoftInput();
             break;
         default:
             break;
