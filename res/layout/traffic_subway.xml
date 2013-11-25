@@ -22,6 +22,7 @@
         android:id="@+id/empty_view"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
+        android:visibility="gone"
         />
     <com.tigerknows.widget.RetryView
         android:id="@+id/retry_view"
