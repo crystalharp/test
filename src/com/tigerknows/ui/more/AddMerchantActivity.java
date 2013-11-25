@@ -177,50 +177,55 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
         DataQuery.initStaticField(BaseQuery.DATA_TYPE_POI, BaseQuery.SUB_DATA_TYPE_POI, Globals.getCurrentCityInfo().getId(), mThis);
         FilterCategoryOrder filterCategory = DataQuery.getPOIFilterCategoryOrder();
         Filter categoryFitler = null;
-        if (filterCategory != null) {
-            List<FilterOption> filterOptionList = new ArrayList<DataQuery.FilterOption>();
-            List<FilterOption> online = filterCategory.getCategoryFilterOption();
-            if (online != null) {
-                for(int i = 0, size = online.size(); i < size; i++) {
-                    filterOptionList.add(online.get(i).clone());
+        if (mFilterList == null || mFilterList.size() <= 0) {
+            if (filterCategory != null) {
+                List<FilterOption> filterOptionList = new ArrayList<DataQuery.FilterOption>();
+                List<FilterOption> online = filterCategory.getCategoryFilterOption();
+                if (online != null) {
+                    for(int i = 0, size = online.size(); i < size; i++) {
+                        filterOptionList.add(online.get(i).clone());
+                    }
                 }
-            }
-            List<Long> indexList = new ArrayList<Long>();
-            indexList.add(0l);
-            for(int i = 0, size = filterOptionList.size(); i < size; i++) {
-                long id = filterOptionList.get(i).getId();
-                indexList.add(id);
-            }
-            
-            // 每个分类下面添加其他
-            String otherText = getString(R.string.other);
-            
-            categoryFitler = DataQuery.makeFilterResponse(mThis, indexList, filterCategory.getVersion(), filterOptionList, FilterCategoryOrder.FIELD_LIST_CATEGORY, false);
-            Filter other = categoryFitler.getChidrenFilterList().remove(0);
-            other.getFilterOption().setName(otherText);
-            
-            List<Filter> list = categoryFitler.getChidrenFilterList();
-            int endId = Integer.MIN_VALUE;
-            for(int i = 0, size = list.size(); i < size; i++) {
-                Filter filter = list.get(i);
-                List<Filter> chidrenList = filter.getChidrenFilterList();
-                if (chidrenList.size() > 0) {
-                    Filter end = chidrenList.get(chidrenList.size()-1);
-                    Filter other1 = end.clone();
-                    FilterOption filterOption = other1.getFilterOption();
-                    filterOption.setName(otherText);
-                    filterOption.setId(endId+i+1);
-                    chidrenList.add(other1);
+                List<Long> indexList = new ArrayList<Long>();
+                indexList.add(0l);
+                for(int i = 0, size = filterOptionList.size(); i < size; i++) {
+                    long id = filterOptionList.get(i).getId();
+                    indexList.add(id);
                 }
+                
+                // 每个分类下面添加其他
+                String otherText = getString(R.string.other);
+                
+                categoryFitler = DataQuery.makeFilterResponse(mThis, indexList, filterCategory.getVersion(), filterOptionList, FilterCategoryOrder.FIELD_LIST_CATEGORY, false);
+                Filter other = categoryFitler.getChidrenFilterList().remove(0);
+                other.getFilterOption().setName(otherText);
+                
+                List<Filter> list = categoryFitler.getChidrenFilterList();
+                int endId = Integer.MIN_VALUE;
+                for(int i = 0, size = list.size(); i < size; i++) {
+                    Filter filter = list.get(i);
+                    List<Filter> chidrenList = filter.getChidrenFilterList();
+                    if (chidrenList.size() > 0) {
+                        Filter end = chidrenList.get(chidrenList.size()-1);
+                        Filter other1 = end.clone();
+                        FilterOption filterOption = other1.getFilterOption();
+                        filterOption.setName(otherText);
+                        filterOption.setId(endId+i+1);
+                        chidrenList.add(other1);
+                    }
+                }
+                
+                other.setSelected(false);
+                list.add(other);
+                
+                mFilterList = new ArrayList<Filter>();
+                mFilterList.add(categoryFitler);
+                mFilterListView.setData(mFilterList, FilterResponse.FIELD_FILTER_CATEGORY_INDEX, this, false, false, mActionTag);
+                
+                result = true;
             }
-            
-            other.setSelected(false);
-            list.add(other);
-            
-            mFilterList = new ArrayList<Filter>();
-            mFilterList.add(categoryFitler);
-            mFilterListView.setData(mFilterList, FilterResponse.FIELD_FILTER_CATEGORY_INDEX, this, false, false, mActionTag);
-            
+        } else {
+            categoryFitler = mFilterList.get(0);
             result = true;
         }
         
