@@ -440,7 +440,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
         if(mHotelVendor == null || TextUtils.isEmpty(mHotelVendor.getName())){
         	mComeFromTxv.setVisibility(View.GONE);
         }else{
-        	mComeFromTxv.setText(mSphinx.getString(R.string.come_from_colon, mHotelVendor.getName()));
+        	mComeFromTxv.setText(mSphinx.getString(R.string.this_come_from_colon, mHotelVendor.getName()));
         	mComeFromTxv.setVisibility(View.VISIBLE);
         }
     }

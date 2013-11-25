@@ -77,7 +77,17 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     public static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
     public static final SimpleDateFormat SIMPLE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     
-    private static final int[] idArray = {R.id.room_person_edt, R.id.room_person_edt_2, R.id.room_person_edt_3, R.id.room_person_edt_4, R.id.room_person_edt_5};
+    private static final int[] idArray = {R.id.room_person_edt, 
+    	R.id.room_person_edt_2, 
+    	R.id.room_person_edt_3, 
+    	R.id.room_person_edt_4, 
+    	R.id.room_person_edt_5, 
+    	R.id.room_person_edt_6, 
+    	R.id.room_person_edt_7, 
+    	R.id.room_person_edt_8, 
+    	R.id.room_person_edt_9, 
+    	R.id.room_person_edt_A
+    	};
     
     private ScrollView mHotelOrderWriteScv;
     private LinearLayout mHotelOrderWriteLly;
@@ -104,7 +114,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     private Calendar mCheckIn;
     private Calendar mCheckOut;
 
-    private static final long MAX_ROOM_HOWMANY = 5;
+    private static final long MAX_ROOM_HOWMANY = 10;
     private static final long MAX_NAME_LENGTH = 50;
     
     // 酒店订单相关数据
@@ -142,8 +152,6 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         
         findViews();
         setListener();
-        mRoomHowmany = 1;
-        mRTimeWhich = 0;
         return mRootView;
     }
     
@@ -381,7 +389,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         mNights = CalendarUtil.dateInterval(mCheckIn, mCheckOut);
         mRoomNightsTxv.setText(mSphinx.getString(R.string.hotel_total_nights, mNights));
         mRoomTypeComeFromTxv.setText(mSphinx.getString(R.string.this_come_from_colon, mRoomType.getVendorName()));
-        mRoomHowmany = 1;
+        mRoomHowmany = mRoomtypeDynamic.getMinimum();
         mRTimeWhich = 0;
         mHotelOrderWriteScv.smoothScrollTo(0, 0);
     }
@@ -481,7 +489,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         public View getView(final int position, View convertView, ViewGroup parent){
             View view = super.getView(position, convertView, parent);
             ImageView singleIconImv = (ImageView)view.findViewById(R.id.single_icon_imv);
-            if(position == (int)mRoomHowmany - 1){
+            if(position == (int)mRoomHowmany - mRoomtypeDynamic.getMinimum()){
                 singleIconImv.setImageDrawable(getResources().getDrawable(R.drawable.rdb_recovery_checked));
             }else{
                 singleIconImv.setImageDrawable(getResources().getDrawable(R.drawable.rdb_recovery_default));
@@ -544,7 +552,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         
         long listsize = (mRoomtypeDynamic.getNum() > MAX_ROOM_HOWMANY) ? MAX_ROOM_HOWMANY : mRoomtypeDynamic.getNum();
         String listitem;
-        for(long i = 1; i <= listsize; i++){
+        for(long i = mRoomtypeDynamic.getMinimum(); i <= listsize; i++){
             listitem = mSphinx.getString(R.string.room_howmany_item, i, Utility.formatHotelPrice(mRoomtypeDynamic.getPrice()*i));
             list.add(listitem);
         }
@@ -568,7 +576,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int which, long arg3){
                 listView.setAdapter(adapter);
-                mRoomHowmany = which + 1;
+                mRoomHowmany = which + mRoomtypeDynamic.getMinimum();
                 mActionLog.addAction(mActionTag + ActionLog.HotelOrderWriteHowmanyChoose, mRoomHowmany);
                 mRTimeWhich = 0;
                 refreshData();
