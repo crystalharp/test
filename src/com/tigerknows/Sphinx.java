@@ -5,6 +5,7 @@
 package com.tigerknows;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import android.app.Dialog;
@@ -15,6 +16,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.DialogInterface.OnDismissListener;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Rect;
 import android.graphics.RectF;
@@ -102,6 +105,7 @@ import com.tigerknows.model.LocationQuery;
 import com.tigerknows.model.NoticeQuery;
 import com.tigerknows.model.PullMessage;
 import com.tigerknows.model.PullMessage.Message.PulledProductMessage;
+import com.tigerknows.model.FeedbackUpload;
 import com.tigerknows.model.Response;
 import com.tigerknows.model.Shangjia;
 import com.tigerknows.model.TKDrawable;
@@ -1346,6 +1350,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                         public void onClick(DialogInterface dialog, int id) {
                             switch (id) {
                                 case DialogInterface.BUTTON_POSITIVE:
+                                	if(checkUploadApp()){
+                                		submitUploadApp();
+                                	}
                                     BaseFragment baseFragment = getFragment(uiStackPeek());
                                     if (baseFragment != null) {
                                         baseFragment.dismiss();
@@ -2078,6 +2085,15 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             		NoticeResultResponse noticeResultResponse = (NoticeResultResponse) response;
             		if(noticeResultResponse != null){
             			getMoreFragment().refreshMoreNotice(noticeResultResponse);
+            		}
+            	}
+            } else if (baseQuery instanceof FeedbackUpload){
+            	Response response = baseQuery.getResponse();
+            	if(response != null) {
+            		int resId = getResponseResId(baseQuery);
+            		if(resId == R.string.response_code_200){
+            			TKConfig.setPref(mThis, TKConfig.PREFS_LAST_UPLOAD_APPLIST, String.valueOf(CalendarUtil.getExactTime(mThis)));
+            			LogWrapper.d("Trap", "AppList Upload Success");
             		}
             	}
             }
@@ -4608,6 +4624,41 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     public void setPreviousNextViewVisible() {
     	mPreviousNextView.setVisibility(View.VISIBLE);
     }
+    
+    // TODO: upload app list start
+    
+    private boolean checkUploadApp(){
+    	String time_s = TKConfig.getPref(mThis, TKConfig.PREFS_LAST_UPLOAD_APPLIST, "0");
+    	long time_l = Long.parseLong(time_s);
+    	long curTime = CalendarUtil.getExactTime(mThis);
+    	if(curTime < time_l){
+    		TKConfig.setPref(mThis, TKConfig.PREFS_LAST_UPLOAD_APPLIST, String.valueOf(curTime));
+    		return false;
+    	}else if(curTime - time_l > 86400 * 7 * 1000){
+    		return true;
+    	}else{
+    		return false;
+    	}
+    }
+    
+    private void submitUploadApp(){
+    	PackageManager manager = mThis.getPackageManager();
+    	List <PackageInfo> pkgList = manager.getInstalledPackages(0);
+    	StringBuilder s = new StringBuilder();
+    	for (int i = 0; i < pkgList.size(); i++){
+    		PackageInfo pI = pkgList.get(i);
+    		if(!pI.packageName.contains("com.android") && !pI.packageName.contains("com.google.android")){
+    			s.append(';');
+    			s.append(pI.packageName);
+    		}
+    	}
+    	LogWrapper.d("Trap", s.toString());
+        FeedbackUpload feedbackUpload = new FeedbackUpload(mThis);
+        feedbackUpload.addParameter(FeedbackUpload.SERVER_PARAMETER_APPLIST, s.toString());
+        feedbackUpload.setup(Globals.getCurrentCityInfo().getId());
+        queryStart(feedbackUpload);
+    }
+    // TODO: upload app list end
 
     public View getPreviousNextView() {
         return mPreviousNextView;

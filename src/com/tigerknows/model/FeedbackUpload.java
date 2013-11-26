@@ -28,6 +28,9 @@ public class FeedbackUpload extends BaseQuery {
     // sat String false 满意度评分
     public static final String SERVER_PARAMETER_SATISFY_RATE = "sat";
     
+    // applist String false 应用列表
+    public static final String SERVER_PARAMETER_APPLIST = "applist";
+    
     public static final String SERVER_PARAMETER_POI_RANK = "poirank";
     
     // POI纠错页区分
@@ -45,7 +48,7 @@ public class FeedbackUpload extends BaseQuery {
                 new String[]{SERVER_PARAMETER_ACTION_LOG, DataQuery.SERVER_PARAMETER_POI_ID, 
                 SERVER_PARAMETER_LOCATION, SERVER_PARAMETER_LOCATION_IN_ANDROID,
                 SERVER_PARAMETER_ERROR_RECOVERY, SERVER_PARAMETER_ADD_MERCHANT,
-                SERVER_PARAMETER_SATISFY_RATE, SERVER_PARAMETER_POI_RANK, 
+                SERVER_PARAMETER_SATISFY_RATE, SERVER_PARAMETER_APPLIST, SERVER_PARAMETER_POI_RANK, 
                 SERVER_PARAMETER_DATA_TYPE, SERVER_PARAMETER_SUB_DATA_TYPE, 
                 SERVER_PARAMETER_REQUSET_SOURCE_TYPE, SERVER_PARAMETER_FEEDBACK});
     }
@@ -97,6 +100,8 @@ public class FeedbackUpload extends BaseQuery {
             s.append(FeedbackUpload.SERVER_PARAMETER_ADD_MERCHANT);
         } else if (hasParameter(FeedbackUpload.SERVER_PARAMETER_SATISFY_RATE)) {
             s.append(FeedbackUpload.SERVER_PARAMETER_SATISFY_RATE);
+        } else if (hasParameter(FeedbackUpload.SERVER_PARAMETER_APPLIST)) {
+            s.append(FeedbackUpload.SERVER_PARAMETER_APPLIST);
         }
         s.append('@');
         if (hasParameter(SERVER_PARAMETER_REQUSET_SOURCE_TYPE)) {

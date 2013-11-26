@@ -467,7 +467,12 @@ public class TKConfig {
     /**
      * 是否采用支付宝快捷支付逻辑
      */
-    public static final String PREFS_CLIENT_GO_ALIPAY = "prefs_client_go_alipay"; 
+    public static final String PREFS_CLIENT_GO_ALIPAY = "prefs_client_go_alipay";
+    
+    /**
+     * 上次上传applist的时间戳
+     */
+    public static final String PREFS_LAST_UPLOAD_APPLIST = "prefs_last_upload_applist";
     
     /**
      * 离开软件时地图上的经度，且此经度一定在选择城市范围内
