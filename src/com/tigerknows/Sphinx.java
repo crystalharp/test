@@ -1351,7 +1351,12 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                             switch (id) {
                                 case DialogInterface.BUTTON_POSITIVE:
                                 	if(checkUploadApp()){
-                                		submitUploadApp();
+                                		mHandler.post(new Runnable(){
+											@Override
+											public void run() {
+												submitUploadApp();
+											}
+                                		});
                                 	}
                                     BaseFragment baseFragment = getFragment(uiStackPeek());
                                     if (baseFragment != null) {
