@@ -297,7 +297,7 @@ public class LocationQuery extends BaseQuery {
             }
     
             
-            if (location == null || PROVIDER_ERROR.equals(location.getProvider())) {
+            if (location == null) {
                 checkLocationTable();
                 if (offlineLocationCache.isEmpty()) {
                     locationTable.read(offlineLocationCache, LocationTable.Provider_List_Cache);
