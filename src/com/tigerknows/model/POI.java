@@ -306,6 +306,9 @@ public class POI extends BaseData {
     // 0x56 x_string 酒店设施服务
     public static final byte FIELD_HOTEL_SERVICE = 0x56;
     
+    // 0x58 x_string 房间服务设施
+    public static final byte FIELD_ROOM_DESCRIPTION = 0x58;
+    
     public static class DynamicPOI extends XMapData {
         
         // 0x01 x_int 动态poi的类型
@@ -443,7 +446,7 @@ public class POI extends BaseData {
     public static final int SUB_TYPE_POI = 0;
     public static final int SUB_TYPE_HOTEL = 1;
     
-    public static final String NEED_FIELD = "0001030405060708090a0b12131415161756";
+    public static final String NEED_FIELD = "0001030405060708090a0b1213141516175658";
     
     private long subType;
     
@@ -502,6 +505,9 @@ public class POI extends BaseData {
 
     // 0x56 x_string 酒店设施服务
     private String hotelService;
+    
+    // 0x58 x_string 房间服务设施
+    private String roomDescription;
     
     public String getPrice() {
         return this.price;
@@ -766,6 +772,10 @@ public class POI extends BaseData {
     public String getHotelService() {
         return hotelService;
     }
+    
+    public String getRoomDescription(){
+        return roomDescription;
+    }
 
     public String getEnvironment() {
     	return envrionment;
@@ -946,6 +956,7 @@ public class POI extends BaseData {
         this.hotel.init(this.data, reset);
         this.price = getStringFromData(FIELD_PRICE, reset ? null : this.price);
         this.hotelService = getStringFromData(FIELD_HOTEL_SERVICE, reset ? null : this.hotelService);
+        this.roomDescription = getStringFromData(FIELD_ROOM_DESCRIPTION, reset ? null : this.roomDescription);
         
         if (reset == false) {
             this.data = null;
@@ -1010,6 +1021,12 @@ public class POI extends BaseData {
             }
             if (!TextUtils.isEmpty(this.price)) {
                 data.put(FIELD_PRICE, this.price);
+            }
+            if (hotelService != null) {
+                data.put(FIELD_HOTEL_SERVICE, service);
+            }
+            if (roomDescription != null) {
+                data.put(FIELD_ROOM_DESCRIPTION, roomDescription);
             }
             
             this.data = data;

@@ -19,11 +19,61 @@
         >
     </com.tigerknows.ui.hotel.NavigationWidget>
     
+    <LinearLayout
+        android:id="@+id/top_view"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:orientation="horizontal"
+        android:weightSum="2"
+        >
+        <LinearLayout
+            android:id="@+id/query_all_hotel_view"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/btn_search_hotel_home"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black_dark"
+                android:singleLine="true"
+                android:textSize="14sp"
+                android:text="@string/query_all_hotel"
+                android:gravity="center"
+                android:padding="8dp"
+                android:drawablePadding="4dp"
+                android:drawableLeft="@drawable/ic_search_hotel_home"
+                />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/dingdan_view"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/btn_search_hotel_home"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black_dark"
+                android:singleLine="true"
+                android:textSize="14sp"
+                android:text="@string/hotel_ordered"
+                android:gravity="center"
+                android:padding="8dp"
+                android:drawablePadding="4dp"
+                android:drawableLeft="@drawable/ic_order_hotel"
+                />
+        </LinearLayout>
+    </LinearLayout>
     <ScrollView 
         android:id="@+id/scroll_view"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_above="@id/navigation_widget"
+        android:layout_below="@id/top_view"
         android:gravity="center"
         android:orientation="vertical"
         android:paddingLeft="8dp"
@@ -37,18 +87,6 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             >
-            <TextView
-                android:id="@+id/query_all_hotel_txv"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:textColor="@color/black_dark"
-                android:textSize="18sp"
-                android:text="@string/query_all_hotel"
-                android:gravity="center"
-                android:padding="8dp"
-                android:background="@drawable/list_single"
-                />
             <LinearLayout
                 android:id="@+id/query_view"
                 android:layout_width="fill_parent"
@@ -210,33 +248,6 @@
                         android:shadowRadius="1"
                         />
                 </RelativeLayout>
-            </LinearLayout>
-            
-            <LinearLayout
-                android:id="@+id/dingdan_view"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:orientation="horizontal"
-                android:gravity="center"
-                android:background="@drawable/list_single"
-                >
-                <ImageView
-                    android:id="@+id/dingdan_imv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/ic_order_hotel"
-                    />
-                <TextView
-                    android:id="@+id/dingdan_txv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="8dp"
-                    android:textColor="@color/black_dark"
-                    android:textSize="18sp"
-                    android:text="@string/hotel_ordered"
-                    android:gravity="left|center_vertical"
-                    />
             </LinearLayout>
             <TextView
                 android:layout_width="fill_parent"

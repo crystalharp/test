@@ -89,10 +89,8 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     private TextView mPriceTxv;
     private Button mQueryBtn;
     private View mDingdanView;
-    private ImageView mDingdanImv;
-    private TextView mDingdanTxv;
     private POI mPOI;
-    private TextView mQueryAllHotelTxv;
+    private View mQueryAllHotelView;
     
     private FilterListView mFilterCategoryListView = null;
     
@@ -150,17 +148,6 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         mTitleBtn.setText(R.string.hotel_reserve);
         refreshTitleRightBtn();
         refreshDate();
-        
-        HotelOrderTable hotelOrderTable = new HotelOrderTable(mContext);
-        int count = hotelOrderTable.count();
-        hotelOrderTable.close();
-        if (count > 0) {
-            mDingdanImv.setBackgroundResource(R.drawable.ic_order_hotel);
-            mDingdanTxv.setTextColor(TKConfig.COLOR_BLACK_DARK);
-        } else {
-            mDingdanImv.setBackgroundResource(R.drawable.ic_order_hotel_empty);
-            mDingdanTxv.setTextColor(TKConfig.COLOR_BLACK_LIGHT);
-        }
         
         if (mPOI != null) {
             FilterListView.selectedFilter(getFilter(getFilterList(), FilterArea.FIELD_LIST), -1);
@@ -249,9 +236,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         mPriceTxv = (TextView) mRootView.findViewById(R.id.price_txv);
         mQueryBtn = (Button) mRootView.findViewById(R.id.query_btn);
         mDingdanView = mRootView.findViewById(R.id.dingdan_view);
-        mDingdanImv = (ImageView) mRootView.findViewById(R.id.dingdan_imv);
-        mDingdanTxv = (TextView) mRootView.findViewById(R.id.dingdan_txv);
-        mQueryAllHotelTxv = (TextView) mRootView.findViewById(R.id.query_all_hotel_txv);
+        mQueryAllHotelView = mRootView.findViewById(R.id.query_all_hotel_view);
     }
 
     protected void setListener() {
@@ -261,7 +246,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         mPriceView.setOnClickListener(this);
         mQueryBtn.setOnClickListener(this);
         mDingdanView.setOnClickListener(this);
-        mQueryAllHotelTxv.setOnClickListener(this);
+        mQueryAllHotelView.setOnClickListener(this);
     }
         
     @Override
@@ -322,7 +307,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                 }
                 break;
                 
-            case R.id.query_all_hotel_txv:
+            case R.id.query_all_hotel_view:
                 mActionLog.addAction(mActionTag + ActionLog.HotelQueryAll);
                 DataQuery dataQuery = mSphinx.getPOIHomeFragment().getDataQuery(POIHomeFragment.HOTEL_INDEX);
                 dataQuery.setup(Globals.getCurrentCityInfo(true).getId(), getId(), mSphinx.getPOIResultFragmentID(), null, false, false, mSphinx.getPOI());
