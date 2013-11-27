@@ -344,7 +344,6 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
                     intent.putExtra(HotelIntroActivity.EXTRA_NAME, mPOI.getName());
                     Hotel hotel = mPOI.getHotel();
                     intent.putExtra(HotelIntroActivity.EXTRA_LONG_DESCRIPTION, hotel.getLongDescription());
-                    intent.putExtra(HotelIntroActivity.EXTRA_ROOM_DESCRIPTION, hotel.getRoomDescription());
                     mSphinx.showView(R.id.activity_hotel_intro, intent);
                 }
             }

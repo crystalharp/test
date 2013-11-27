@@ -29,7 +29,7 @@ public class Hotel extends XMapData {
     
     public static final String NEED_FIELD_LIST = "525357";
     
-    public static final String NEED_FIELD_DETAIL = "54555859";
+    public static final String NEED_FIELD_DETAIL = "545559";
     
     public static final String NEED_FIELD_ROOM_INFO = "55";
     
@@ -49,9 +49,6 @@ public class Hotel extends XMapData {
 
     // 0x57 x_int 是否可预订，0为否，大于0为是
     public static final byte FIELD_CAN_RESERVE = 0x57;
-    
-    // 0x58 x_string 房间服务设施
-    public static final byte FIELD_ROOM_DESCRIPTION = 0x58;
     
     // 0x59 x_string 长简介
     public static final byte FIELD_LONG_DESCRIPTION = 0x59;
@@ -78,9 +75,6 @@ public class Hotel extends XMapData {
 
     // 0x57 x_int 是否可预订，0为否，大于0为是
     private long canReserve;
-    
-    // 0x58 x_string 房间服务设施
-    private String roomDescription;
     
     // 0x59 x_string 长简介
     private String longDescription;
@@ -128,7 +122,6 @@ public class Hotel extends XMapData {
         this.roomTypeList = getListFromData(FIELD_ROOM_TYPE_LIST, RoomType.Initializer, reset ? null : this.roomTypeList);
         this.canReserve = getLongFromData(FIELD_CAN_RESERVE, reset ? 0 : this.canReserve);
         this.longDescription = getStringFromData(FIELD_LONG_DESCRIPTION, reset ? null : this.longDescription);
-        this.roomDescription = getStringFromData(FIELD_ROOM_DESCRIPTION, reset ? null : this.roomDescription);
         
         if (reset == false) {
             this.data = null;
@@ -165,9 +158,6 @@ public class Hotel extends XMapData {
             if (longDescription != null) {
                 data.put(FIELD_LONG_DESCRIPTION, longDescription);
             }
-            if (roomDescription != null) {
-                data.put(FIELD_ROOM_DESCRIPTION, roomDescription);
-            }
             this.data = data;
         }
         return data;
@@ -203,10 +193,6 @@ public class Hotel extends XMapData {
     
     public long getCanReserve() {
         return canReserve;
-    }
-    
-    public String getRoomDescription(){
-        return roomDescription;
     }
     
     public String getLongDescription(){

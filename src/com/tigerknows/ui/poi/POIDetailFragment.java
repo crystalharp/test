@@ -1202,32 +1202,38 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         
         List<String> nameList = new ArrayList<String>();
         List<String> valueList = new ArrayList<String>();
-        
-        if (mDynamicHotelPOI.isExist()) {
-            String hotelService = poi.getHotelService();
-            if (hotelService != null) {
-                nameList.add(mSphinx.getString(R.string.hotel_service_title));
-                valueList.add(hotelService);
-            }
-        } else {
 
-            byte[] showKeys = new byte[] {Description.FIELD_FEATURE, Description.FIELD_RECOMMEND, Description.FIELD_GUEST_CAPACITY, Description.FIELD_BUSINESS_HOURS,
-                        Description.FIELD_HOUSING_PRICE, Description.FIELD_SYNOPSIS, Description.FIELD_CINEMA_FEATURE, Description.FIELD_MEMBER_POLICY, Description.FIELD_FEATURE_SPECIALTY, 
-                        Description.FIELD_TOUR_DATE, Description.FIELD_TOUR_LIKE, Description.FIELD_POPEDOM_SCENERY, Description.FIELD_RECOMMEND_SCENERY,
-                        Description.FIELD_NEARBY_INFO, Description.FIELD_COMPANY_WEB, Description.FIELD_COMPANY_TYPE,
-                        Description.FIELD_COMPANY_SCOPE, Description.FIELD_INDUSTRY_INFO};
-    
+        byte[] showKeys = new byte[] {Description.FIELD_FEATURE, Description.FIELD_RECOMMEND, Description.FIELD_GUEST_CAPACITY, Description.FIELD_BUSINESS_HOURS,
+                Description.FIELD_HOUSING_PRICE, Description.FIELD_SYNOPSIS, Description.FIELD_CINEMA_FEATURE, Description.FIELD_MEMBER_POLICY, Description.FIELD_FEATURE_SPECIALTY, 
+                Description.FIELD_TOUR_DATE, Description.FIELD_TOUR_LIKE, Description.FIELD_POPEDOM_SCENERY, Description.FIELD_RECOMMEND_SCENERY,
+                Description.FIELD_NEARBY_INFO, Description.FIELD_COMPANY_WEB, Description.FIELD_COMPANY_TYPE,
+                Description.FIELD_COMPANY_SCOPE, Description.FIELD_INDUSTRY_INFO};
+
+        if (!mDynamicHotelPOI.isExist()) {
             for(int i = 0; i < showKeys.length; i++) {
-                
                 byte key = showKeys[i];
                 String value = poi.getDescriptionValue(key);
-                
+
                 if(!TextUtils.isEmpty(value)) {
                     String name = poi.getDescriptionName(mContext, key);
                     nameList.add(name.substring(0, name.length()-1));
                     valueList.add(value);
                 }
             }
+        }
+        
+        /**
+         * 酒店部分特殊处理，要求所有酒店显示设施服务，可预订酒店不显示description里的简介
+         */
+        String hotelService = poi.getHotelService();
+        String roomDescription = poi.getRoomDescription();
+        if (hotelService != null) {
+            nameList.add(mSphinx.getString(R.string.hotel_service_title));
+            valueList.add(hotelService);
+        }
+        if (roomDescription != null) {
+            nameList.add(mSphinx.getString(R.string.hotel_room_description_title));
+            valueList.add(roomDescription);
         }
         
         int padding = Utility.dip2px(mSphinx, 8);

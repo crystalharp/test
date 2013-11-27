@@ -20,9 +20,7 @@ public class HotelIntroActivity extends BaseActivity {
     
     TextView hotelNameTxv;
     TextView longDescriptionTxv;
-    TextView roomDescriptionTxv;
     View longDescriptionBlock;
-    View roomDescriptionBlock;
     ScrollView hotelScrollView;
     
 	@Override
@@ -42,28 +40,17 @@ public class HotelIntroActivity extends BaseActivity {
         hotelNameTxv.setText(intent.getStringExtra(EXTRA_NAME));
         hotelScrollView.scrollTo(0, 0);
         String longDescription = intent.getStringExtra(EXTRA_LONG_DESCRIPTION);
-        String roomDescription = intent.getStringExtra(EXTRA_ROOM_DESCRIPTION);
         if (longDescription == null){
-            longDescriptionBlock.setVisibility(View.GONE);
-        } else {
-            longDescriptionTxv.setText(longDescription);
-            longDescriptionBlock.setVisibility(View.VISIBLE);
+            longDescription = getBaseContext().getString(R.string.hotel_no_summary);
         }
-        if (roomDescription == null) {
-            roomDescriptionBlock.setVisibility(View.GONE);
-        } else {
-            roomDescriptionBlock.setVisibility(View.VISIBLE);
-            roomDescriptionTxv.setText(roomDescription);
-        }
+        longDescriptionTxv.setText(longDescription);
 	}
 	
 	protected void findViews() {
 	    super.findViews();
 		hotelNameTxv = (TextView) findViewById(R.id.hotel_head);
 		longDescriptionTxv = (TextView) findViewById(R.id.hotel_long_description);
-		roomDescriptionTxv = (TextView) findViewById(R.id.hotel_room_description);
 		longDescriptionBlock = findViewById(R.id.hotel_long_desc_block);
-		roomDescriptionBlock = findViewById(R.id.hotel_room_desc_block);
 		hotelScrollView = (ScrollView) findViewById(R.id.hotel_scrollView);
 	}
 	 
