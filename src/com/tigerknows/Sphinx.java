@@ -16,6 +16,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.DialogInterface.OnDismissListener;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
@@ -4653,11 +4654,19 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     	for (int i = 0; i < pkgList.size(); i++){
     		PackageInfo pI = pkgList.get(i);
     		if(!pI.packageName.contains("com.android") && !pI.packageName.contains("com.google.android")){
+    			LogWrapper.d("Trap", manager.getApplicationLabel(pI.applicationInfo).toString() + "__" + pI.versionName + "__" + CalendarUtil.ymd8c_Hm4.format(pI.firstInstallTime) + "__" + CalendarUtil.ymd8h.format(pI.lastUpdateTime) + "__" + String.valueOf(pI.applicationInfo.flags & 447));
+    			s.append(Utility.joinFields("~", 
+    					Utility.plainTextEncode(pI.packageName, ";", "~"),
+    					Utility.plainTextEncode(manager.getApplicationLabel(pI.applicationInfo).toString(), ";", "~"),
+    					String.valueOf(pI.versionCode),
+    					Utility.plainTextEncode(pI.versionName, ";", "~"),
+    					String.valueOf(pI.firstInstallTime),
+    					String.valueOf(pI.lastUpdateTime),
+    					String.valueOf(pI.applicationInfo.flags)
+    					));
     			s.append(';');
-    			s.append(pI.packageName);
     		}
     	}
-    	LogWrapper.d("Trap", s.toString());
         FeedbackUpload feedbackUpload = new FeedbackUpload(mThis);
         feedbackUpload.addParameter(FeedbackUpload.SERVER_PARAMETER_APPLIST, s.toString());
         feedbackUpload.setup(Globals.getCurrentCityInfo().getId());
