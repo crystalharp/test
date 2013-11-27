@@ -21,6 +21,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import android.content.Context;
+import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -33,6 +34,7 @@ import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.decarta.android.util.LogWrapper;
@@ -70,6 +72,8 @@ public class ValidityListView extends LinearLayout {
     private ActionLog mActionLog;
     
     private boolean mScrolling = false;
+    private int mScrollState = 0;
+    private int mRecentFirstVisibleItem = 0;
 
     public void setData(Calendar calendar, CallBack callBack, String actionTag) {
         mActionTag = actionTag;
@@ -226,6 +230,7 @@ public class ValidityListView extends LinearLayout {
 			@Override
 			public void onScrollStateChanged(AbsListView view, int scrollState) {
 				LogWrapper.d("Trap", "scrollState " + scrollState);
+				mScrollState = scrollState;
 				if(mScrolling && scrollState == SCROLL_STATE_IDLE){
 					childLsv.setSelectionFromTop(0, 0);
 					mScrolling = false;
@@ -235,10 +240,15 @@ public class ValidityListView extends LinearLayout {
 			@Override
 			public void onScroll(AbsListView view, int firstVisibleItem,
 					int visibleItemCount, int totalItemCount) {
-				LogWrapper.d("Trap", "firstVisibleItem " + firstVisibleItem);
-				if(firstVisibleItem == 0){
+				LogWrapper.d("Trap", "firstVisibleItem " + firstVisibleItem + " " + visibleItemCount + " " + totalItemCount + " " + (mScrolling==true ? "true" : "false"));
+				if(mScrolling == true && firstVisibleItem == 0){
 					mScrolling = false;
+				}else if(mScrollState == SCROLL_STATE_FLING && mRecentFirstVisibleItem == 0 && firstVisibleItem >= 4){
+					childLsv.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_CANCEL, 0, 0, 0));
+					childLsv.smoothScrollToPosition(0, 11);
+					childLsv.setSelectionFromTop(0, 0);
 				}
+				mRecentFirstVisibleItem = firstVisibleItem;
 			}
 		});
     }

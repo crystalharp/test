@@ -1856,4 +1856,14 @@ public class Utility {
             return s.substring(0, s.length() - sep.length()).trim();
         }
     }
+    /**
+     * 
+     */
+    public static String plainTextEncode(String source, String ...escapes){
+    	String newString = source.replace("\\", "\\\\");
+    	for(String escape : escapes){
+    		newString = newString.replace(escape, "\\"+escape);
+    	}
+    	return newString;
+    }
 }
