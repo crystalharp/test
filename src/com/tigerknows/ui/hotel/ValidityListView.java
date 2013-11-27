@@ -26,13 +26,16 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.common.ActionLog;
@@ -65,6 +68,8 @@ public class ValidityListView extends LinearLayout {
     
     private String mActionTag;
     private ActionLog mActionLog;
+    
+    private boolean mScrolling = false;
 
     public void setData(Calendar calendar, CallBack callBack, String actionTag) {
         mActionTag = actionTag;
@@ -140,8 +145,8 @@ public class ValidityListView extends LinearLayout {
             
             @Override
             public void run() {
-                setLsvHeigth(parentLsv, R.layout.hotel_validity_list_item, 5);
-                setLsvHeigth(childLsv, R.layout.hotel_validity_list_item, 5);
+        		setLsvHeigth(parentLsv, R.layout.hotel_validity_list_item, 5);
+        		setLsvHeigth(childLsv, R.layout.hotel_validity_list_item, 5);
             }
         });
     }
@@ -195,13 +200,14 @@ public class ValidityListView extends LinearLayout {
                 }
                 selectedChildPosition = 0;
                 childAdapter.notifyDataSetChanged();
-                childLsv.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        childLsv.smoothScrollToPosition(0, 0);
-                    }
-                });
-                resizeLsv();
+            	childLsv.post(new Runnable() {
+            		@Override
+            		public void run() {
+            			mScrolling = true;
+            			childLsv.smoothScrollToPosition(0, 0);
+            		}
+            	});
+            	resizeLsv();
             }
         });
         childLsv.setOnItemClickListener(new OnItemClickListener() {
@@ -215,6 +221,26 @@ public class ValidityListView extends LinearLayout {
                 selected();
             }
         });
+        childLsv.setOnScrollListener(new OnScrollListener() {
+			
+			@Override
+			public void onScrollStateChanged(AbsListView view, int scrollState) {
+				LogWrapper.d("Trap", "scrollState " + scrollState);
+				if(mScrolling && scrollState == SCROLL_STATE_IDLE){
+					childLsv.setSelectionFromTop(0, 0);
+					mScrolling = false;
+				}
+			}
+			
+			@Override
+			public void onScroll(AbsListView view, int firstVisibleItem,
+					int visibleItemCount, int totalItemCount) {
+				LogWrapper.d("Trap", "firstVisibleItem " + firstVisibleItem);
+				if(firstVisibleItem == 0){
+					mScrolling = false;
+				}
+			}
+		});
     }
     
     private void selected() {
