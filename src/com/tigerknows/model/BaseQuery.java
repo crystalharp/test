@@ -665,7 +665,8 @@ public abstract class BaseQuery {
                             || apiType.equals(API_TYPE_NOTICE)
                             || apiType.equals(API_TYPE_FEEDBACK_UPLOAD)
                             || apiType.equals(API_TYPE_FILE_UPLOAD)
-                            || apiType.equals(API_TYPE_FILE_DOWNLOAD)) {
+                            || apiType.equals(API_TYPE_FILE_DOWNLOAD)
+                            || apiType.equals(API_TYPE_BOOTSTRAP)) {
                         launchTest();
                         if (responseXMap != null) {
                             byte[] data = ByteUtil.xobjectToByte(responseXMap);

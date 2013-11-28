@@ -4,8 +4,15 @@
 package com.tigerknows.model;
 
 import com.decarta.android.exception.APIException;
+import com.tigerknows.TKConfig;
 import com.tigerknows.model.xobject.XMap;
+import com.tigerknows.util.ByteUtil;
+import com.tigerknows.util.Utility;
 
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -15,25 +22,29 @@ import java.util.List;
  */
 public class BootstrapModel extends XMapData {
     // 0x01 x_map 软件升级结果   
-    private static final byte FIELD_SOFTWARE_UPDATE = 0x01;
+    public static final byte FIELD_SOFTWARE_UPDATE = 0x01;
 
     // 0x02 x_map 域名信息 
-    private static final byte FIELD_DOMAIN_NAME = 0x02;
+    public static final byte FIELD_DOMAIN_NAME = 0x02;
 
     // 0x03 x_map 推广结果  
-    private static final byte FIELD_RECOMMEND = 0x03;
+    public static final byte FIELD_RECOMMEND = 0x03;
 
     // 0x04 String 是否上传日志，值为on或off   
-    private static final byte FIELD_UPLOAD_LOG = 0x04;
+    public static final byte FIELD_UPLOAD_LOG = 0x04;
     
     // 0x05 String 是否更改web支付为客户端支付，值为on或off
-    private static final byte FIELD_GO_ALIPAY = 0x05;
+    public static final byte FIELD_GO_ALIPAY = 0x05;
+    
+    // 0x06  x_map  参见启动展示内容  
+    public static final byte FIELD_STARTUP_DISPLAY = 0x06;
     
     private SoftwareUpdate softwareUpdate;
     private DomainName domainName;
     private Recommend recommend;
     private String uploadLog;
     private String goAlipay;
+    private StartupDisplay startupDisplay;
 
     public SoftwareUpdate getSoftwareUpdate() {
         return softwareUpdate;
@@ -63,6 +74,10 @@ public class BootstrapModel extends XMapData {
     	return goAlipay;
     }
     
+    public StartupDisplay getStartupDisplay() {
+        return startupDisplay;
+    }
+
     public BootstrapModel(XMap data) throws APIException {
         super(data);
         
@@ -80,6 +95,19 @@ public class BootstrapModel extends XMapData {
         
         this.uploadLog = getStringFromData(FIELD_UPLOAD_LOG);
         this.goAlipay = getStringFromData(FIELD_GO_ALIPAY);
+        
+        if (this.data.containsKey(FIELD_STARTUP_DISPLAY)) {
+            XMap xmap = this.data.getXMap(FIELD_STARTUP_DISPLAY);
+            this.startupDisplay = new StartupDisplay(xmap);
+            if (this.startupDisplay != null) {
+                try {
+                    Utility.writeFile(TKConfig.getDataPath(true)+StartupDisplay.FILE_NAME, ByteUtil.xobjectToByte(xmap), true);
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+        }
      }
     
     public static class SoftwareUpdate extends XMapData {
@@ -244,6 +272,68 @@ public class BootstrapModel extends XMapData {
                     return new RecommendApp(data);
                 }
             };
+        }
+    }
+    
+    public static class StartupDisplay extends XMapData {
+        
+        public static final String FILE_NAME = "StartupDisplay";
+        
+        public static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        
+        // 0x01  String  图片url  
+        public static final byte FIELD_URL = 0x01;
+        // 0x02  String  图片MD5  
+        public static final byte FIELD_MD5 = 0x02;
+        // 0x03  String  图片展示起始时间，格式为1970-01-01 00：00：00 
+        public static final byte FIELD_BEGIN = 0x03;
+        // 0x04  String  图片展示结束时间，格式为1970-01-01 00：00：00  
+        public static final byte FIELD_END = 0x04;
+        
+        private String url;
+        private String md5;
+        private Date begin;
+        private Date end;
+
+        public String getUrl() {
+            return url;
+        }
+
+        public String getMd5() {
+            return md5;
+        }
+
+        public StartupDisplay(XMap data) throws APIException {
+            super(data);
+            url = getStringFromData(FIELD_URL);
+            md5 = getStringFromData(FIELD_MD5);
+            begin = getDateFromData(FIELD_BEGIN);
+            end = getDateFromData(FIELD_END);
+        }
+        
+        Date getDateFromData(byte key) {
+            Date date = null;
+            if (this.data.containsKey(key)) {
+                String str = getStringFromData(key);
+                try {
+                    date = simpleDateFormat.parse(str);
+                } catch (ParseException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+            return date;
+        }
+        
+        public boolean isAvailably() {
+            boolean result = false;
+            if (url != null && md5 != null && begin != null && end != null) {
+                long time = System.currentTimeMillis();
+                if (time >= begin.getTime() && time <= end.getTime()) {
+                    result = true;
+                }
+            }
+            return result;
         }
     }
 }

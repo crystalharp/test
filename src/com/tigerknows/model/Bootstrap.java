@@ -5,6 +5,7 @@ package com.tigerknows.model;
 import com.decarta.android.exception.APIException;
 import com.tigerknows.TKConfig;
 import com.tigerknows.model.BootstrapModel.DomainName;
+import com.tigerknows.model.test.BootstrapTest;
 
 import android.content.Context;
 import android.text.TextUtils;
@@ -72,5 +73,10 @@ public final class Bootstrap extends BaseQuery {
         if (!TextUtils.isEmpty(goAlipay)) {
         	TKConfig.setPref(context, TKConfig.PREFS_CLIENT_GO_ALIPAY, goAlipay);
         }
+    }
+
+    @Override
+    protected void launchTest() {
+        responseXMap = BootstrapTest.launchRespnose();
     }
 }
