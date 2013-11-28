@@ -87,6 +87,9 @@ public class SubwayMapFragment extends BaseFragment implements RetryView.CallBac
     public void onResume() {
         super.onResume();
         
+        if (!mDismissed) {
+            return;
+        }
         subwayPath = MapEngine.getSubwayDataPath(mSphinx, mCityInfo.getId());
         LogWrapper.d(TAG, "subway path:" + subwayPath);
         if (subwayPath == null) {
@@ -269,7 +272,7 @@ public class SubwayMapFragment extends BaseFragment implements RetryView.CallBac
         super.onPostExecute(tkAsyncTask);
         LogWrapper.d(TAG, "onPostExecute()");
         FileDownload fileDownload = (FileDownload) tkAsyncTask.getBaseQuery();
-        int stat = STAT_NODATA;
+        int stat = STAT_QUERY_FAILED;
         Response response = fileDownload.getResponse();
         if (response != null) {
             if (BaseActivity.checkResponseCode(fileDownload, mSphinx, new int[]{953}, false, this, false) == false) {
@@ -280,10 +283,10 @@ public class SubwayMapFragment extends BaseFragment implements RetryView.CallBac
                         mURL = Uri.fromFile(new File(subwayPath)).toString();
                         showSubwayMap(mURL);
                     }
+                } else {
+                    stat = STAT_NODATA;
                 }
             }
-        } else {
-            stat = STAT_QUERY_FAILED;
         }
         if (mOriginStat != STAT_MAP) {
             setStatus(stat);
