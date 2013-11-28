@@ -31,6 +31,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -4660,8 +4661,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     					Utility.plainTextEncode(manager.getApplicationLabel(pI.applicationInfo).toString(), ";", "~"),
     					String.valueOf(pI.versionCode),
     					Utility.plainTextEncode(pI.versionName, ";", "~"),
-    					String.valueOf(pI.firstInstallTime),
-    					String.valueOf(pI.lastUpdateTime),
+    					(Build.VERSION.SDK_INT >= 9) ? String.valueOf(pI.firstInstallTime) : "null",
+    					(Build.VERSION.SDK_INT >= 9) ? String.valueOf(pI.lastUpdateTime) : "null",
     					String.valueOf(pI.applicationInfo.flags)
     					));
     			s.append(';');
