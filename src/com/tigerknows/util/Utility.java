@@ -1860,6 +1860,9 @@ public class Utility {
      * 
      */
     public static String plainTextEncode(String source, String ...escapes){
+    	if(TextUtils.isEmpty(source)){
+    		return "";
+    	}
     	String newString = source.replace("\\", "\\\\");
     	for(String escape : escapes){
     		newString = newString.replace(escape, "\\"+escape);

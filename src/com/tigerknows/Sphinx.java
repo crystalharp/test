@@ -4655,7 +4655,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     	for (int i = 0; i < pkgList.size(); i++){
     		PackageInfo pI = pkgList.get(i);
     		if(!pI.packageName.contains("com.android") && !pI.packageName.contains("com.google.android")){
-    			LogWrapper.d("Trap", manager.getApplicationLabel(pI.applicationInfo).toString() + "__" + pI.versionName + "__" + CalendarUtil.ymd8c_Hm4.format(pI.firstInstallTime) + "__" + CalendarUtil.ymd8h.format(pI.lastUpdateTime) + "__" + String.valueOf(pI.applicationInfo.flags & 447));
+    			//LogWrapper.d("Trap", manager.getApplicationLabel(pI.applicationInfo).toString() + "__" + pI.versionName + "__" + CalendarUtil.ymd8c_Hm4.format(pI.firstInstallTime) + "__" + CalendarUtil.ymd8h.format(pI.lastUpdateTime) + "__" + String.valueOf(pI.applicationInfo.flags & 447));
     			s.append(Utility.joinFields("~", 
     					Utility.plainTextEncode(pI.packageName, ";", "~"),
     					Utility.plainTextEncode(manager.getApplicationLabel(pI.applicationInfo).toString(), ";", "~"),
