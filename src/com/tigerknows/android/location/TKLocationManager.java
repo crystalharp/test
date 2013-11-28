@@ -215,7 +215,9 @@ public class TKLocationManager {
     public void addLocationListener(TKLocationListener listener) {
         synchronized (locationChangeLock) {
             lastLocation = null;
-            locationListenerList.add(listener);
+            if (listener != null) {
+                locationListenerList.add(listener);
+            }
         }
     }
 
