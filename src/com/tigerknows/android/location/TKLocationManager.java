@@ -7,6 +7,7 @@ package com.tigerknows.android.location;
 
 import com.tigerknows.TKConfig;
 import com.tigerknows.common.LocationUpload;
+import com.tigerknows.model.FeedbackUpload;
 import com.tigerknows.model.LocationQuery;
 import com.tigerknows.model.LocationQuery.TKCellLocation;
 import com.tigerknows.service.TigerknowsLocationManager;
@@ -21,6 +22,7 @@ import android.location.LocationProvider;
 import android.os.Bundle;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 
@@ -54,9 +56,11 @@ public class TKLocationManager {
     
     public static boolean UnallowedLocation = false;
     
+    private Context context;
     private LocationManager locationManager;
     private LocationListener locationListener;
     private TigerknowsLocationManager networkLocationManager;
+    private Location lastGpsLocation = null;
     private TKLocation lastGpsTKLocation = null;
     private TKLocation lastNetworkTKLocation = null;
     private TKLocation lastTigerknowsTKLocation = null;
@@ -77,6 +81,7 @@ public class TKLocationManager {
     }
     
     public TKLocationManager(Context context) {
+        this.context = context;
         gpsLocationUpload = LocationUpload.getGpsInstance(context);
         networkLocationUpload = LocationUpload.getNetworkInstance(context);
         locationQuery = LocationQuery.getInstance(context);
@@ -233,6 +238,26 @@ public class TKLocationManager {
             int lac = tkCellLocation.lac;
             int cid = tkCellLocation.cid;
             if (location.getProvider().equals(LocationManager.GPS_PROVIDER) && location.getAccuracy() < GPS_AVAILABLY_ACCURACY) { 
+                Location lastGpsLocation = TKLocationManager.this.lastGpsLocation;
+                if (lastGpsLocation == null || lastGpsLocation.distanceTo(location) > 5000) {
+                    TKLocationManager.this.lastGpsLocation = location;
+                } else if (lastGpsLocation.distanceTo(location) > 500) {
+                    TKLocationManager.this.lastGpsLocation = location;
+                    final FeedbackUpload feedbackUpload = new FeedbackUpload(context);
+                    // lip=2013-11-25:23:47:04,39.160395,106.700049,12.0
+                    String lip = LocationQuery.SIMPLE_DATE_FORMAT.format(Calendar.getInstance().getTime()) + 
+                            "," + location.getLatitude() + 
+                            "," + location.getLongitude() + 
+                            "," + location.getAccuracy();
+                    feedbackUpload.addParameter(FeedbackUpload.SERVER_PARAMETER_LOCATION_IP, lip);
+                    new Thread(new Runnable() {
+                        
+                        @Override
+                        public void run() {
+                            feedbackUpload.query();
+                        }
+                    }).start();
+                }
                 lastGpsTKLocation = new TKLocation(location, lac, cid, System.currentTimeMillis());   
                 locationChanged(LOCATION_GPS);
                 gpsLocationUpload.recordLocation(location);
