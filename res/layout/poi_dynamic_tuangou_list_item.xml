@@ -26,74 +26,77 @@
         android:focusable="false"
         />
 
-    <TextView
-        android:id="@+id/price_txv"
-        android:layout_width="wrap_content"
+    <RelativeLayout 
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_marginLeft="8dp"
         android:layout_below="@id/name_txv"
-        android:textColor="@color/orange"
-        android:textStyle="bold"
-        android:textSize="14sp"
-        android:text="@string/distance"
-        android:singleLine="true"
-        android:includeFontPadding="false"
-        android:focusable="false"
-        />
-
-    <TextView
-        android:id="@+id/rmb_text_txv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/price_txv"
-        android:layout_alignBottom="@id/price_txv"
-        android:textColor="@color/orange"
-        android:textSize="14sp"
-        android:text="@string/rmb_text"
-        android:singleLine="true"
-        android:focusable="false"
-        />
-
-    <TextView
-        android:id="@+id/org_price_txv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/rmb_text_txv"
-        android:layout_alignBottom="@id/price_txv"
-        android:layout_marginLeft="8dp"
-        android:textColor="@color/black_light"
-        android:textSize="12sp"
-        android:text="@string/app_name"
-        android:singleLine="true"
-        android:focusable="false"
-        />
-    
-    <TextView
-        android:id="@+id/appointment_txv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_toRightOf="@id/org_price_txv"
-        android:layout_alignBottom="@id/price_txv"
-        android:background="@drawable/bg_need_guarantee"
-        android:textSize="10sp"
-        android:textColor="@color/white"
-        android:text="@string/mian_yu_yue"
-        />
-
-    <TextView
-        android:id="@+id/source_txv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignBottom="@id/price_txv"
-        android:layout_marginTop="4dp"
-        android:layout_marginRight="8dp"
-        android:textColor="@color/black_light"
-        android:textSize="12sp"
-        android:text="@string/app_name"
-        android:singleLine="true"
-        android:focusable="false"
-        />
+        android:layout_centerVertical="true"
+        android:paddingBottom="8dp"
+        >
+        
+	    <TextView
+	        android:id="@+id/price_txv"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:layout_marginLeft="8dp"
+	        android:textColor="@color/orange"
+	        android:textStyle="bold"
+	        android:textSize="14sp"
+	        android:text="@string/distance"
+	        android:singleLine="true"
+	        android:focusable="false"
+	        />
+	
+	    <TextView
+	        android:id="@+id/rmb_text_txv"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_toRightOf="@id/price_txv"
+	        android:textColor="@color/orange"
+	        android:textSize="14sp"
+	        android:text="@string/rmb_text"
+	        android:singleLine="true"
+	        android:focusable="false"
+	        />
+	
+	    <TextView
+	        android:id="@+id/org_price_txv"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_toRightOf="@id/rmb_text_txv"
+	        android:layout_marginLeft="8dp"
+	        android:textColor="@color/black_light"
+	        android:textSize="12sp"
+	        android:text="@string/app_name"
+	        android:singleLine="true"
+	        android:focusable="false"
+	        />
+	    
+	    <TextView
+	        android:id="@+id/appointment_txv"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_marginLeft="8dp"
+	        android:layout_toRightOf="@id/org_price_txv"
+	        android:background="@drawable/bg_need_guarantee"
+	        android:textSize="10sp"
+	        android:textColor="@color/white"
+	        android:text="@string/mian_yu_yue"
+	        />
+	
+	    <TextView
+	        android:id="@+id/source_txv"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentRight="true"
+	        android:layout_marginTop="4dp"
+	        android:layout_marginRight="8dp"
+	        android:textColor="@color/black_light"
+	        android:textSize="12sp"
+	        android:text="@string/app_name"
+	        android:singleLine="true"
+	        android:focusable="false"
+	        />
+    </RelativeLayout>
 </RelativeLayout>
