@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:orientation="horizontal"
+        android:background="@color/normal_background"
 	    android:weightSum="3">
 	    
 	    <Button android:id="@+id/btn_issue_comment" 
@@ -58,6 +59,7 @@
         android:layout_alignParentTop="true"
         android:layout_above="@id/panel_btns"
         
+        android:background="@color/normal_background"
         android:orientation="vertical">
 	    
 	    <com.tigerknows.ui.hotel.NavigationWidget
