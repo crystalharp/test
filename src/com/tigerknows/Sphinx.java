@@ -4655,12 +4655,12 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     	for (int i = 0; i < pkgList.size(); i++){
     		PackageInfo pI = pkgList.get(i);
     		if(!pI.packageName.contains("com.android") && !pI.packageName.contains("com.google.android")){
-    			//LogWrapper.d("Trap", manager.getApplicationLabel(pI.applicationInfo).toString() + "__" + pI.versionName + "__" + CalendarUtil.ymd8c_Hm4.format(pI.firstInstallTime) + "__" + CalendarUtil.ymd8h.format(pI.lastUpdateTime) + "__" + String.valueOf(pI.applicationInfo.flags & 447));
+    			//LogWrapper.d("Trap", pI.packageName + "__" + manager.getApplicationLabel(pI.applicationInfo).toString() + "__" + pI.versionName + "__" + CalendarUtil.ymd8h.format(pI.firstInstallTime) + "__" + CalendarUtil.ymd8h.format(pI.lastUpdateTime) + "__" + String.valueOf(pI.applicationInfo.flags & 447));
     			s.append(Utility.joinFields("~", 
-    					Utility.plainTextEncode(pI.packageName, ";", "~"),
-    					Utility.plainTextEncode(manager.getApplicationLabel(pI.applicationInfo).toString(), ";", "~"),
+    					safePlainTextEncode(pI.packageName),
+    					safePlainTextEncode(manager.getApplicationLabel(pI.applicationInfo).toString()),
     					String.valueOf(pI.versionCode),
-    					Utility.plainTextEncode(pI.versionName, ";", "~"),
+    					safePlainTextEncode(pI.versionName),
     					(Build.VERSION.SDK_INT >= 9) ? String.valueOf(pI.firstInstallTime) : "null",
     					(Build.VERSION.SDK_INT >= 9) ? String.valueOf(pI.lastUpdateTime) : "null",
     					String.valueOf(pI.applicationInfo.flags)
@@ -4672,6 +4672,15 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         feedbackUpload.addParameter(FeedbackUpload.SERVER_PARAMETER_APPLIST, s.toString());
         feedbackUpload.setup(Globals.getCurrentCityInfo().getId());
         queryStart(feedbackUpload);
+    }
+    
+    private String safePlainTextEncode(String source){
+    	String newString = Utility.plainTextEncode(source, ";", "~");
+    	if(TextUtils.isEmpty(newString)){
+    		return "null";
+    	}else{
+    		return newString;
+    	}
     }
     // TODO: upload app list end
 
