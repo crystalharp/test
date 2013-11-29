@@ -17,6 +17,7 @@ import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.AccountManage;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.Response;
+import com.tigerknows.model.AccountManage.VerifyCodeResponse;
 import com.tigerknows.util.Utility;
 
 public class UserUpdatePhoneActivity extends UserBaseActivity {
@@ -193,6 +194,10 @@ public class UserUpdatePhoneActivity extends UserBaseActivity {
 			// 200, 400, 503
 			switch(accountManage.getResponse().getResponseCode()){
 			case Response.RESPONSE_CODE_OK:
+				VerifyCodeResponse verifyCodeResponse = (VerifyCodeResponse)accountManage.getResponse();
+				if(!TextUtils.isEmpty(verifyCodeResponse.getDialogMessage())){
+					Utility.showNormalDialog(UserUpdatePhoneActivity.this, verifyCodeResponse.getDialogMessage());
+				}
 				showToast(R.string.request_validcode_success);
 				break;
 			case Response.RESPONSE_CODE_MOBILE_PHONE_EXIST:
