@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
 import android.content.DialogInterface.OnDismissListener;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 
@@ -15,6 +16,7 @@ import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.AccountManage;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.Response;
+import com.tigerknows.model.AccountManage.VerifyCodeResponse;
 import com.tigerknows.util.Utility;
 
 public class UserResetPasswordActivity extends UserBaseActivity {
@@ -168,6 +170,10 @@ public class UserResetPasswordActivity extends UserBaseActivity {
 			// 200, 403, 503
 			switch(accountManage.getResponse().getResponseCode()){
 			case Response.RESPONSE_CODE_OK:
+				VerifyCodeResponse verifyCodeResponse = (VerifyCodeResponse)accountManage.getResponse();
+				if(!TextUtils.isEmpty(verifyCodeResponse.getDialogMessage())){
+					Utility.showNormalDialog(UserResetPasswordActivity.this, verifyCodeResponse.getDialogMessage());
+				}
 				showToast(R.string.request_validcode_success);
 				break;
 			case Response.RESPONSE_CODE_NO_MOBILE_PHONE:

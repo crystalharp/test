@@ -88,33 +88,24 @@ int tk_is_point_in_polygon(const tk_point_t *polygon, int point_num, const tk_po
 tk_bool_t tk_is_point_in_region(int rid, const tk_point_t *point) {
     int i, buf_idx = 0;
     tk_bool_t inside;
+    tk_bool_t start = 1;
     tk_point_t pt = *point;
-    tk_point_t p1, p2;
+    tk_point_t p0, p1, p2;
     const unsigned char *buf = tk_global_info.region_polygon_buf + tk_global_info.reg_bounds[rid].offset;
     int point_num = buf[buf_idx ++];
-    //    if (rid == 103) {
-    //        LOG_INFO("in debug");
-    //    }
+
     // y轴向下，x轴向右
     inside = 0;
-    //    if (rid == 103) {
-    //        LOG_INFO("p[%i].x = %i, p[%i].y = %i", 0, p1.x, 0, p1.y);
-    //    }
     for (i = 0; i < point_num; i++) {
         p2.level_code = (buf[buf_idx] >> 7) & 0x1f;
         p2.x = ((buf[buf_idx] & 0x7f) << 24) + (buf[buf_idx + 1] << 16) + (buf[buf_idx + 2] << 8) + buf[buf_idx + 3];
         p2.y = (buf[buf_idx + 4] << 24) + (buf[buf_idx + 5] << 16) + (buf[buf_idx + 6] << 8) + buf[buf_idx + 7];
         buf_idx += 8;
         if (p2.level_code) {
-//            if (inside) {
-//                return inside;
-//            }
+            start = 1;
             p1 = p2;
             continue;
         }
-        //        if (rid == 103) {
-        //            LOG_INFO("p[%i].x = %i, p[%i].y = %i", i, p2.x, i, p2.y);
-        //        }
         if (p1.y < p2.y && p1.y < pt.y && pt.y < p2.y) {
             if (pt.x >= p1.x || pt.x >= p2.x) {
                 int clock = tk_vector_cross(&p1, &pt, &p2);
@@ -144,20 +135,32 @@ tk_bool_t tk_is_point_in_region(int rid, const tk_point_t *point) {
                      return TK_YES;
                  }
         else if (p1.y != p2.y) {
-            if( (pt.y == p1.y && pt.x > p1.x)){   // 交点在顶点上
-                inside = !inside;
-                if (pt.y > p2.y) {
-                    --pt.y;
+            if((pt.y == p1.y && pt.x > p1.x)){   // 交点在顶点上
+                if(start) {
+                    inside = !inside;
+                    if (pt.y > p2.y) {
+                        --pt.y;
+                    }
+                    else {
+                        ++pt.y;
+                    }
                 }
                 else {
-                    ++pt.y;
+                    if (!(p1.y > p0.y && p1.y > p2.y)) {
+                        inside = !inside;
+                    }
                 }
             }
         }
+        if (start) {
+            start = 0;
+        }
+        p0 = p1;
         p1 = p2;
     }
     return inside;
 }
+
 
 tk_bool_t tk_vector_rect_cross(const tk_point_t *p1, const tk_point_t *p2, const tk_envelope_t *rect) {
     tk_point_t rect_point;

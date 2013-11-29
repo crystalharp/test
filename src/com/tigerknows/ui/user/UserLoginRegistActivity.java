@@ -18,6 +18,7 @@ import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.AccountManage;
+import com.tigerknows.model.AccountManage.VerifyCodeResponse;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.Response;
 import com.tigerknows.model.AccountManage.UserRespnose;
@@ -427,6 +428,10 @@ public class UserLoginRegistActivity extends UserBaseActivity implements View.On
 				// 200, 400, 503
 				switch(accountManage.getResponse().getResponseCode()){
 				case Response.RESPONSE_CODE_OK:
+					VerifyCodeResponse verifyCodeResponse = (VerifyCodeResponse)accountManage.getResponse();
+					if(!TextUtils.isEmpty(verifyCodeResponse.getDialogMessage())){
+						Utility.showNormalDialog(UserLoginRegistActivity.this, verifyCodeResponse.getDialogMessage());
+					}
 					showToast(R.string.request_validcode_success);
 					break;
 				case Response.RESPONSE_CODE_MOBILE_PHONE_EXIST:

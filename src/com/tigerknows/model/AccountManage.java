@@ -17,6 +17,7 @@ import com.tigerknows.model.xobject.XMap;
 import com.tigerknows.util.Utility;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 public class AccountManage extends BaseQuery {
 
@@ -128,6 +129,12 @@ public class AccountManage extends BaseQuery {
         } else if (OPERATION_CODE_LOGIN.equals(operationCode)) {
             UserRespnose userResponse = new UserRespnose(responseXMap);
             this.response = userResponse;
+        } else if (OPERATION_CODE_BIND_TELEPHONE.equals(operationCode)) {
+        	VerifyCodeResponse verifyCodeResponse = new VerifyCodeResponse(responseXMap);
+            this.response = verifyCodeResponse;
+        } else if (OPERATION_CODE_GET_VALIDATE_CODE.equals(operationCode)) {
+        	VerifyCodeResponse verifyCodeResponse = new VerifyCodeResponse(responseXMap);
+            this.response = verifyCodeResponse;
         } else {
             response = new Response(responseXMap);
         }
@@ -204,6 +211,33 @@ public class AccountManage extends BaseQuery {
 		}
         
     }
+
+    public static class VerifyCodeResponse extends Response {
+
+        // 0x02 x_string DIALOG_MESSAGE
+        public static final byte FIELD_DIALOG_MESSAGE = 0x02;
+
+        private String dialogMessage;
+
+        public VerifyCodeResponse(XMap data) throws APIException {
+            super(data);
+            this.dialogMessage = getStringFromData(FIELD_DIALOG_MESSAGE);
+        }
+
+        public String getDialogMessage() {
+            return dialogMessage;
+        }
+
+		@Override
+		public String toString() {
+			if(TextUtils.isEmpty(dialogMessage)){
+				return super.toString();
+			}else{
+				return super.toString() + " dialogMessage: " + dialogMessage ;
+			}
+		}
+    }
+
     
     public String getOperationCode() {
     	return getParameter(BaseQuery.SERVER_PARAMETER_OPERATION_CODE);
@@ -216,6 +250,10 @@ public class AccountManage extends BaseQuery {
             responseXMap = AccountManageTest.launchUserRespnose(context);
         } else if (OPERATION_CODE_LOGIN.equals(operationCode)) {
             responseXMap = AccountManageTest.launchUserRespnose(context);
+        } else if (OPERATION_CODE_BIND_TELEPHONE.equals(operationCode)) {
+            responseXMap = AccountManageTest.launchVerifyCodeResponse(context);
+        } else if (OPERATION_CODE_GET_VALIDATE_CODE.equals(operationCode)) {
+            responseXMap = AccountManageTest.launchVerifyCodeResponse(context);
         } else {
             responseXMap = BaseQueryTest.launchResponse();
         }

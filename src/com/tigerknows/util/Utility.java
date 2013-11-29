@@ -741,7 +741,7 @@ public class Utility {
     }
     
     public static Dialog showNormalDialog(Activity activity, String title, View custom, DialogInterface.OnClickListener onClickListener) {
-        return showNormalDialog(activity, title, null, custom, activity.getString(R.string.confirm), activity.getString(R.string.cancel), onClickListener);
+        return showNormalDialog(activity, title, null, custom, null, null, onClickListener);
     }
 
     public static Dialog showNormalDialog(Activity activity, String message) {
@@ -1860,6 +1860,9 @@ public class Utility {
      * 
      */
     public static String plainTextEncode(String source, String ...escapes){
+    	if(TextUtils.isEmpty(source)){
+    		return "";
+    	}
     	String newString = source.replace("\\", "\\\\");
     	for(String escape : escapes){
     		newString = newString.replace(escape, "\\"+escape);
