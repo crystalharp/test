@@ -70,7 +70,7 @@ public class XMapData {
      * @return
      * @throws APIException
      */
-    <T> List<T> getListFromData(XMap data, byte filedKey, XMapInitializer<T> initer, List<T> defaultValue) throws APIException{
+    public static <T> List<T> getListFromData(XMap data, byte filedKey, XMapInitializer<T> initer, List<T> defaultValue) throws APIException{
 
         List<T> result = null;
         if (data.containsKey(filedKey)) {

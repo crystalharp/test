@@ -35,6 +35,9 @@ public class FeedbackUpload extends BaseQuery {
 
     // lip=时间，纬度坐标，经度坐标，精度范围
     public static final String SERVER_PARAMETER_LOCATION_IP = "lip";
+
+    // display  string  false   启动展示内容
+    public static final String SERVER_PARAMETER_DISPLAY = "display";
     
     // POI纠错页区分
     public static final String LOCAL_PARAMETER_POIERROR_IGNORE = "ignore";
@@ -52,7 +55,7 @@ public class FeedbackUpload extends BaseQuery {
                 SERVER_PARAMETER_SATISFY_RATE, SERVER_PARAMETER_APPLIST, SERVER_PARAMETER_POI_RANK, 
                 SERVER_PARAMETER_DATA_TYPE, SERVER_PARAMETER_SUB_DATA_TYPE, 
                 SERVER_PARAMETER_REQUSET_SOURCE_TYPE, SERVER_PARAMETER_FEEDBACK,
-                SERVER_PARAMETER_LOCATION_IP});
+                SERVER_PARAMETER_LOCATION_IP, SERVER_PARAMETER_DISPLAY});
     }
     
     @Override
@@ -106,6 +109,8 @@ public class FeedbackUpload extends BaseQuery {
             s.append(FeedbackUpload.SERVER_PARAMETER_APPLIST);
         } else if (hasParameter(FeedbackUpload.SERVER_PARAMETER_LOCATION_IP)) {
             s.append(FeedbackUpload.SERVER_PARAMETER_LOCATION_IP);
+        } else if (hasParameter(FeedbackUpload.SERVER_PARAMETER_DISPLAY)) {
+            s.append(FeedbackUpload.SERVER_PARAMETER_DISPLAY);
         }
         s.append('@');
         if (hasParameter(SERVER_PARAMETER_REQUSET_SOURCE_TYPE)) {

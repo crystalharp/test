@@ -5,6 +5,7 @@ package com.tigerknows.model;
 
 import com.decarta.android.exception.APIException;
 import com.tigerknows.TKConfig;
+import com.tigerknows.model.xobject.XArray;
 import com.tigerknows.model.xobject.XMap;
 import com.tigerknows.util.ByteUtil;
 import com.tigerknows.util.Utility;
@@ -39,12 +40,15 @@ public class BootstrapModel extends XMapData {
     // 0x06  x_map  参见启动展示内容  
     public static final byte FIELD_STARTUP_DISPLAY = 0x06;
     
+    // 0x01     XArray<XMap>    推广信息列表，参见单个推广信息
+    public static final byte FIELD_STARTUP_DISPLAY_LIST = 0x01;
+    
     private SoftwareUpdate softwareUpdate;
     private DomainName domainName;
     private Recommend recommend;
     private String uploadLog;
     private String goAlipay;
-    private StartupDisplay startupDisplay;
+    private List<StartupDisplay> startupDisplayList;
 
     public SoftwareUpdate getSoftwareUpdate() {
         return softwareUpdate;
@@ -74,8 +78,8 @@ public class BootstrapModel extends XMapData {
     	return goAlipay;
     }
     
-    public StartupDisplay getStartupDisplay() {
-        return startupDisplay;
+    public List<StartupDisplay> getStartupDisplayList() {
+        return startupDisplayList;
     }
 
     public BootstrapModel(XMap data) throws APIException {
@@ -98,15 +102,14 @@ public class BootstrapModel extends XMapData {
         
         if (this.data.containsKey(FIELD_STARTUP_DISPLAY)) {
             XMap xmap = this.data.getXMap(FIELD_STARTUP_DISPLAY);
-            this.startupDisplay = new StartupDisplay(xmap);
-            if (this.startupDisplay != null) {
-                try {
-                    Utility.writeFile(TKConfig.getDataPath(true)+StartupDisplay.FILE_NAME, ByteUtil.xobjectToByte(xmap), true);
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
+            try {
+                Utility.writeFile(TKConfig.getDataPath(true)+StartupDisplay.FILE_NAME, ByteUtil.xobjectToByte(xmap), true);
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
             }
+
+            this.startupDisplayList = getListFromData(xmap, FIELD_STARTUP_DISPLAY_LIST, StartupDisplay.Initializer, null);
         }
      }
     
@@ -283,15 +286,12 @@ public class BootstrapModel extends XMapData {
         
         // 0x01  String  图片url  
         public static final byte FIELD_URL = 0x01;
-        // 0x02  String  图片MD5  
-        public static final byte FIELD_MD5 = 0x02;
-        // 0x03  String  图片展示起始时间，格式为1970-01-01 00：00：00 
-        public static final byte FIELD_BEGIN = 0x03;
-        // 0x04  String  图片展示结束时间，格式为1970-01-01 00：00：00  
-        public static final byte FIELD_END = 0x04;
+        // 0x02  String  图片展示起始时间，格式为1970-01-01 00：00：00 
+        public static final byte FIELD_BEGIN = 0x02;
+        // 0x03  String  图片展示结束时间，格式为1970-01-01 00：00：00  
+        public static final byte FIELD_END = 0x03;
         
         private String url;
-        private String md5;
         private Date begin;
         private Date end;
 
@@ -299,14 +299,9 @@ public class BootstrapModel extends XMapData {
             return url;
         }
 
-        public String getMd5() {
-            return md5;
-        }
-
         public StartupDisplay(XMap data) throws APIException {
             super(data);
             url = getStringFromData(FIELD_URL);
-            md5 = getStringFromData(FIELD_MD5);
             begin = getDateFromData(FIELD_BEGIN);
             end = getDateFromData(FIELD_END);
         }
@@ -327,7 +322,7 @@ public class BootstrapModel extends XMapData {
         
         public boolean isAvailably() {
             boolean result = false;
-            if (url != null && md5 != null && begin != null && end != null) {
+            if (url != null && begin != null && end != null) {
                 long time = System.currentTimeMillis();
                 if (time >= begin.getTime() && time <= end.getTime()) {
                     result = true;
@@ -335,5 +330,13 @@ public class BootstrapModel extends XMapData {
             }
             return result;
         }
+
+        public static XMapInitializer<StartupDisplay> Initializer = new XMapInitializer<StartupDisplay>() {
+
+            @Override
+            public StartupDisplay init(XMap data) throws APIException {
+                return new StartupDisplay(data);
+            }
+        };
     }
 }
