@@ -1098,7 +1098,7 @@
     <string name="know_la">知道啦</string>
 
     <string name="credit_assure_title">信用卡担保信息</string>
-    <string name="credit_bank">发卡银行：</string>
+    <string name="credit_bank">发卡银行</string>
     <string name="credit_bank_hint">选择银行</string>
     <string name="credit_code">信用卡号</string>
     <string name="credit_code_hint">输入卡号</string>

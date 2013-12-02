@@ -510,6 +510,8 @@ public class TrafficModel extends XMapData {
 
                 type = (int)getLongFromData(FIELD_TYPE);
                 distance = (int)getLongFromData(FIELD_DISTANCE);
+                //服务器数据过滤不完全导致出现0米的路段，为了兼容将其改为1米
+                if (distance == 0) { distance = 1; }
 
                 if (this.data.containsKey(FIELD_X) && this.data.containsKey(FIELD_Y)) {
                     this.x = this.data.getXArray(FIELD_X).toIntList();

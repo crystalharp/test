@@ -132,6 +132,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     // 信用卡担保相关数据
     private long mNeedCreditAssure;
     private long mTypeCreditAssure;
+    private String mBankName;
     private String mCreditCardNo;
     private String mVerifyCode;
     private String mValidYear;
@@ -634,6 +635,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         hotelOrderOperation.addParameter(HotelOrderOperation.SERVER_PARAMETER_GUESTTYPE, mRoomtypeDynamic.getGuesttype());
         hotelOrderOperation.addParameter(HotelOrderOperation.SERVER_PARAMETER_VENDORID, String.valueOf(mRoomType.getVendorID()));
         if(HasCreditInfo){
+        	hotelOrderOperation.addParameter(HotelOrderOperation.SERVER_PARAMETER_BANK_NAME, mBankName);
             hotelOrderOperation.addParameter(HotelOrderOperation.SERVER_PARAMETER_CREDIT_CARD_NO, mCreditCardNo);
             hotelOrderOperation.addParameter(HotelOrderOperation.SERVER_PARAMETER_VERIFY_CODE, mVerifyCode);
             hotelOrderOperation.addParameter(HotelOrderOperation.SERVER_PARAMETER_VALID_YEAR, mValidYear);
@@ -773,13 +775,14 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     }
 
     public void setCredit(List<String> credit) {
-        mCreditCardNo = credit.get(0);
-        mVerifyCode = credit.get(2);
-        mValidYear = credit.get(3);
-        mValidMonth = credit.get(4);
-        mCardHoldName = credit.get(1);
-        mIdCardType = credit.get(5);
-        mIdCardNo = credit.get(6);
+    	mBankName = credit.get(0);
+        mCreditCardNo = credit.get(1);
+        mVerifyCode = credit.get(3);
+        mValidYear = credit.get(4);
+        mValidMonth = credit.get(5);
+        mCardHoldName = credit.get(2);
+        mIdCardType = credit.get(6);
+        mIdCardNo = credit.get(7);
         submit(true);
     }
         

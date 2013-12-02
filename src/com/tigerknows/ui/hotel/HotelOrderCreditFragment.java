@@ -48,6 +48,7 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
     static final String TAG = "HotelOrderCreditFragment";
     
     private ScrollView mCreditAssureScv;
+    private Button mCreditBankBtn;
     private EditText mCreditCodeEdt;
     private EditText mCreditOwnerEdt;
     private EditText mCreditVerifyEdt;
@@ -97,6 +98,7 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
     
     protected void findViews() {
         mCreditAssureScv = (ScrollView) mRootView.findViewById(R.id.credit_assure_scv);
+        mCreditBankBtn = (Button) mRootView.findViewById(R.id.credit_bank_btn);
         mCreditCodeEdt = (EditText) mRootView.findViewById(R.id.credit_code_edt);
         mCreditOwnerEdt = (EditText) mRootView.findViewById(R.id.credit_owner_edt);
         mCreditVerifyEdt = (EditText) mRootView.findViewById(R.id.credit_verify_edt);
@@ -110,6 +112,7 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
 
     protected void setListener() {
         mCreditAssureScv.setOnClickListener(this);
+        mCreditBankBtn.setOnClickListener(this);
         mCreditValidityBtn.setOnClickListener(this);
         mCreditCertTypeBtn.setOnClickListener(this);
         mCreditConfirmBtn.setOnClickListener(this);
@@ -148,6 +151,10 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         switch(id){
         case R.id.left_btn:
             break;
+        case R.id.credit_bank_btn:
+            mActionLog.addAction(mActionTag + ActionLog.HotelOrderCreditBank);
+            showCreditBankDialog();
+            break;
         case R.id.credit_validity_btn:
             mActionLog.addAction(mActionTag + ActionLog.HotelOrderCreditValidate);
             showValidDialog();
@@ -158,10 +165,17 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
             break;
         case R.id.credit_confirm_btn:
             mActionLog.addAction(mActionTag + ActionLog.HotelOrderCreditSubmit);
-            String str = mCreditCodeEdt.getText().toString();
+            String str = mCreditBankBtn.getText().toString();
             List<String> list = new ArrayList<String>();
+            // 判断选择银行
+            if(TextUtils.isEmpty(str) || TextUtils.equals(str, mSphinx.getString(R.string.credit_bank_hint))){
+                Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.credit_bank_empty_tip));
+                return;
+            }
+            list.add(str);
             
             // 判断银行卡号
+            str = mCreditCodeEdt.getText().toString();
             if(TextUtils.isEmpty(str)){
                 Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.credit_code_empty_tip), mCreditCodeEdt);
                 return;
@@ -262,7 +276,29 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
             return view;
         }
     }
-    
+    public void showCreditBankDialog(){
+        final ArrayAdapter<String> adapter = new CreditBankAdapter(mSphinx, mBankList);
+        View alterListView = mSphinx.getLayoutInflater().inflate(R.layout.alert_listview, null, false);
+        final ListView listView = (ListView)alterListView.findViewById(R.id.listview);
+        listView.setAdapter(adapter);
+        final Dialog dialog = Utility.getChoiceDialog(mSphinx, alterListView, R.style.AlterChoiceDialog);
+        TextView titleTxv = (TextView)alterListView.findViewById(R.id.title_txv);
+        titleTxv.setText(R.string.choose_credit_bank);
+        Button button = (Button)alterListView.findViewById(R.id.confirm_btn);
+        button.setVisibility(View.GONE);
+        dialog.show();
+        listView.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, int which, long arg3){
+                listView.setAdapter(adapter);
+                mGetBankPosition = which;
+                mCreditBankBtn.setText(mBankList.get(which));
+                mActionLog.addAction(mActionTag + ActionLog.HotelOrderCreditBankChoose, mBankList.get(which));
+                mCreditBankBtn.setTextColor(getResources().getColor(R.color.black_dark));
+                dialog.dismiss();
+            }
+        });
+    }    
     public void showValidDialog() {
         if (mValidityListView == null) {
             mValidityListView = new ValidityListView(mSphinx);
@@ -296,8 +332,6 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
     public void showCertTypeDialog(){
         final List<String> list = new ArrayList<String>(Arrays.asList(getResources().getStringArray(R.array.cert_type)));
         final ArrayAdapter<String> adapter = new CertTypeAdapter(mSphinx, list);
-        //TODO: ActionLog
-        
         View alterListView = mSphinx.getLayoutInflater().inflate(R.layout.alert_listview, null, false);
         
         final ListView listView = (ListView) alterListView.findViewById(R.id.listview);
