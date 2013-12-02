@@ -73,6 +73,9 @@ public class HotelOrderOperation extends BaseQuery {
     // 第三方商家id，若不提交则默认为艺龙
     public static final String SERVER_PARAMETER_VENDORID = "vendorid";
     
+    // 发卡银行名称
+    public static final String SERVER_PARAMETER_BANK_NAME = "bankname";
+    
     // 信用卡号
     public static final String SERVER_PARAMETER_CREDIT_CARD_NO = "creditcardno";
 
@@ -134,12 +137,12 @@ public class HotelOrderOperation extends BaseQuery {
                 SERVER_PARAMETER_MOBILE, SERVER_PARAMETER_GUESTS,
                 SERVER_PARAMETER_GUESTTYPE, SERVER_PARAMETER_HOTEL_ID, SERVER_PARAMETER_VENDORID};
             String[] okeys = new String[] {SERVER_PARAMETER_BRAND};
-            String[] ekeys_with_ccard = new String[]{SERVER_PARAMETER_CREDIT_CARD_NO,
+            String[] ekeys_with_ccard = new String[]{SERVER_PARAMETER_BANK_NAME, SERVER_PARAMETER_CREDIT_CARD_NO,
                     SERVER_PARAMETER_VERIFY_CODE, SERVER_PARAMETER_VALID_YEAR,
                     SERVER_PARAMETER_VALID_MONTH, SERVER_PARAMETER_CARD_HOLDER_NAME,
                     SERVER_PARAMETER_IDCARD_TYPE, SERVER_PARAMETER_IDCARD_NO};
             String creditCardNo = getParameter(SERVER_PARAMETER_VERIFY_CODE);
-            if (creditCardNo != null && !TextUtils.isEmpty(creditCardNo)) {
+            if (!TextUtils.isEmpty(creditCardNo)) {
                 debugCheckParameters(Utility.mergeArray(ekeys, ekeys_with_ccard), okeys);
             } else {
                 debugCheckParameters(ekeys, okeys);
