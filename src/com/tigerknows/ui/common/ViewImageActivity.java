@@ -105,12 +105,10 @@ public class ViewImageActivity extends BaseActivity implements RetryView.CallBac
         
         @Override
         public void run() {
-            if (isFinishing() == false) {
-                if (mState == STATE_GRID) {
-                    mGridAdapter.notifyDataSetChanged();
-                } else if (mState == STATE_GALLERY) {
-                    mGalleryAdapter.notifyDataSetChanged();
-                }
+            if (mState == STATE_GRID) {
+                mGridAdapter.notifyDataSetChanged();
+            } else if (mState == STATE_GALLERY) {
+                mGalleryAdapter.notifyDataSetChanged();
             }
         }
     };

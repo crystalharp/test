@@ -83,9 +83,7 @@ public class CouponListFragment extends BaseFragment implements RetryView.CallBa
         
         @Override
         public void run() {
-            if (mSphinx.uiStackPeek() == getId() && mSphinx.isFinishing() == false) {
-                mCouponAdapter.notifyDataSetChanged();
-            }
+            mCouponAdapter.notifyDataSetChanged();
         }
     };
     

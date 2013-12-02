@@ -61,9 +61,7 @@ public class AppRecommendActivity extends BaseActivity {
         
         @Override
         public void run() {
-            if (isFinishing() == false) {
-                mRecommdAppAdapter.notifyDataSetChanged();
-            }
+            mRecommdAppAdapter.notifyDataSetChanged();
         }
     };
     

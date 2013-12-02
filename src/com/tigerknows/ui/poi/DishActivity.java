@@ -93,16 +93,14 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
         
         @Override
         public void run() {
-            if (isFinishing() == false) {
-                if (mMode == 0) {
-                    if (mTab == 0) {
-                        mMyLikeAdapter.notifyDataSetChanged();
-                    } else {
-                        mRecommendAdapter.notifyDataSetChanged();
-                    }
+            if (mMode == 0) {
+                if (mTab == 0) {
+                    mMyLikeAdapter.notifyDataSetChanged();
                 } else {
-                    mSelectedAdapter.notifyDataSetChanged();
+                    mRecommendAdapter.notifyDataSetChanged();
                 }
+            } else {
+                mSelectedAdapter.notifyDataSetChanged();
             }
         }
     };

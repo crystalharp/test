@@ -149,9 +149,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         
         @Override
         public void run() {
-            if (mSphinx.uiStackPeek() == getId() && mSphinx.isFinishing() == false) {
-                mResultAdapter.notifyDataSetChanged();
-            }
+            mResultAdapter.notifyDataSetChanged();
         }
     };
     

@@ -217,11 +217,9 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         
         @Override
         public void run() {
-            if (mSphinx.uiStackPeek() == getId() && mSphinx.isFinishing() == false) {
-                ArrayAdapter adapter = getAdapter();
-                if (adapter != null) {
-                    adapter.notifyDataSetChanged();
-                }
+            ArrayAdapter adapter = getAdapter();
+            if (adapter != null) {
+                adapter.notifyDataSetChanged();
             }
         }
     };
