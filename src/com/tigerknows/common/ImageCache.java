@@ -25,6 +25,15 @@ import com.tigerknows.TKConfig;
  * 如果扩展存储卡不可用，则不缓存
  */
 public class ImageCache {
+    
+    private static ImageCache sInstance = null;
+    
+    public static ImageCache getInstance() {
+        if (sInstance == null) {
+            sInstance = new ImageCache();
+        }
+        return sInstance;
+    }
 	
 	private class ImageData{
 		String name=null;
@@ -46,7 +55,7 @@ public class ImageCache {
 	
 	private LinkedHashMap<String,Boolean> cacheTileFileNames=new LinkedHashMap<String,Boolean>(TKConfig.IMAGE_CACHE_SIZE_SDCARD,0.75f,true);
 	
-	public ImageCache(){
+	private ImageCache(){
 	}
 	
 	public void init (Context context) throws APIException{
@@ -58,16 +67,19 @@ public class ImageCache {
 		}
 		if (externalStorage) {
 			try {
-				appPath = Environment.getExternalStorageDirectory()+ "/Android/data/" + context.getPackageName() + "/files";
-				File appFile = new File(appPath);
-				if (!appFile.exists() || !appFile.isDirectory()) {
-					appFile.mkdirs();
-				}
-				new File(appPath, "try.txt").createNewFile();
-				new File(appPath, "try.txt").delete();
-				
-				stopRemoveCache=true;
-				startWritingThread();
+                String path = Environment.getExternalStorageDirectory()+ "/Android/data/" + context.getPackageName() + "/files";
+                if (path.equals(appPath) == false) {
+    				File appFile = new File(path);
+    				if (!appFile.exists() || !appFile.isDirectory()) {
+    					appFile.mkdirs();
+    				}
+    				new File(path, "try.txt").createNewFile();
+    				new File(path, "try.txt").delete();
+    				
+    				appPath = path;
+    				stopRemoveCache=true;
+    				startWritingThread();
+                }
 			} catch (Exception e) {
 				externalStorage=false;
 				throw new APIException("Can't write/read cache. Please Grand permission");
@@ -117,6 +129,11 @@ public class ImageCache {
 				while (true) {
 					if(stopWriting){
 						LogWrapper.i("TileTable","writing thread break at beginning");
+						break;
+					}
+					
+					if(stopWriting){
+						LogWrapper.i("TileTable","writing thread break after drawingLock");
 						break;
 					}
 					

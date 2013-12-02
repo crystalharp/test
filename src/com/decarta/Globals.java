@@ -5,6 +5,8 @@ import android.content.Context;
 import android.location.Location;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
+import android.view.Display;
+import android.view.WindowManager;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -18,7 +20,6 @@ import com.tigerknows.R;
 import com.tigerknows.TKConfig;
 import com.tigerknows.android.location.Position;
 import com.tigerknows.common.AsyncImageLoader;
-import com.tigerknows.common.ImageCache;
 import com.tigerknows.map.MapEngine;
 import com.tigerknows.map.MapEngine.CityInfo;
 import com.tigerknows.model.BootstrapModel;
@@ -121,8 +122,6 @@ public class Globals {
     public static CityInfo g_My_Location_City_Info = null;
     public static int g_My_Location_State = 0;
     public static BootstrapModel g_Bootstrap_Model = null;
-    private static AsyncImageLoader sAsyncImageLoader = new AsyncImageLoader();
-    private static ImageCache sImageCache = new ImageCache();
     /**
      * 当前数据网络的传输速度是否为快速
      */
@@ -195,6 +194,7 @@ public class Globals {
         pic.put(TKConfig.PICTURE_MORE_NOTICE, new XYInteger(688, 80));
         pic.put(TKConfig.PICTURE_DISH_ALL, new XYInteger(144, 144));
         pic.put(TKConfig.PICTURE_DISH_RECOMMEND, new XYInteger(300, 162));
+        pic.put(TKConfig.PICTURE_STARTUP_DISPLAY, new XYInteger(480, 800));
     	sScreenAdaptPic.put(new XYInteger(800, 1280), pic);
 
         sOptimalAdaptive.put(TKConfig.PICTURE_DISCOVER_HOME, new XYInteger(322, 286));
@@ -213,6 +213,7 @@ public class Globals {
         sOptimalAdaptive.put(TKConfig.PICTURE_MORE_NOTICE, new XYInteger(412, 48));
         sOptimalAdaptive.put(TKConfig.PICTURE_DISH_ALL, new XYInteger(96, 96));
         sOptimalAdaptive.put(TKConfig.PICTURE_DISH_RECOMMEND, new XYInteger(200, 108));
+        sOptimalAdaptive.put(TKConfig.PICTURE_STARTUP_DISPLAY, new XYInteger(480, 800));
         sScreenAdaptPic.put(new XYInteger(480, 800), sOptimalAdaptive);
         
         pic = new HashMap<Integer, XYInteger>();
@@ -232,11 +233,12 @@ public class Globals {
         pic.put(TKConfig.PICTURE_MORE_NOTICE, new XYInteger(276, 32));
         pic.put(TKConfig.PICTURE_DISH_ALL, new XYInteger(64, 64));
         pic.put(TKConfig.PICTURE_DISH_RECOMMEND, new XYInteger(134, 72));
+        pic.put(TKConfig.PICTURE_STARTUP_DISPLAY, new XYInteger(720, 1280));
         sScreenAdaptPic.put(new XYInteger(320, 480), pic);
     }
     
     /**
-     * 重置当前所选城市、定位信息
+     * 重置当前所选城市、定位信息、图片尺寸
      * @param context
      */
     public static void init(Context context) {
@@ -247,14 +249,14 @@ public class Globals {
         
         Globals.readSessionAndUser(context);
         Globals.setConnectionFast(Utility.isConnectionFast(context));
-    }
 
-    public static AsyncImageLoader getAsyncImageLoader() {
-        return sAsyncImageLoader;
-    }
-
-    public static ImageCache getImageCache() {
-        return sImageCache;
+        // 读取屏幕参数，如高宽、密度
+        WindowManager winMan=(WindowManager)context.getSystemService(Context.WINDOW_SERVICE);
+        Display display=winMan.getDefaultDisplay();
+        display.getMetrics(Globals.g_metrics);
+        
+        initOptimalAdaptiveScreenSize();
+        AsyncImageLoader.getInstance().onCreate(context);
     }
 
     public static boolean isConnectionFast() {
@@ -265,7 +267,7 @@ public class Globals {
         Globals.sConnectionFast = isConnectionFast;
     }    
     
-    public static void initOptimalAdaptiveScreenSize() {
+    static void initOptimalAdaptiveScreenSize() {
         int diff320 = Math.abs(Globals.g_metrics.widthPixels-320);
         int diff480 = Math.abs(Globals.g_metrics.widthPixels-480);
         int diff800 = Math.abs(Globals.g_metrics.widthPixels-800);

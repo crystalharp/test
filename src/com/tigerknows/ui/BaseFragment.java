@@ -12,6 +12,7 @@ import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
+import com.tigerknows.common.AsyncImageLoader;
 import com.tigerknows.model.BaseQuery;
 
 import android.app.Activity;
@@ -294,7 +295,7 @@ public class BaseFragment extends LinearLayout {
             
             mMenuFragment.hide();
         	mTitleFragment.display();
-            Globals.getAsyncImageLoader().setViewToken(toString());
+            AsyncImageLoader.getInstance().setViewToken(toString());
         	mSphinx.getMapView().setStopRefreshMyLocation(true);
         }
         correctUIStack();

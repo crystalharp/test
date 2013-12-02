@@ -12,6 +12,7 @@ import com.decarta.android.exception.APIException;
 import com.decarta.android.util.LogWrapper;
 import com.tencent.tauth.TAuthView;
 import com.tendcloud.tenddata.TCAgent;
+import com.tigerknows.LauncherActivity;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
@@ -22,6 +23,8 @@ import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.android.view.inputmethod.TKInputMethodManager;
 import android.widget.Toast;
 import com.tigerknows.common.ActionLog;
+import com.tigerknows.common.AsyncImageLoader;
+import com.tigerknows.common.ImageCache;
 import com.tigerknows.map.MapEngine;
 import com.tigerknows.map.MapEngine.CityInfo;
 import com.tigerknows.model.BaseQuery;
@@ -94,6 +97,10 @@ public class TKActivity extends Activity implements TKAsyncTask.EventListener {
     protected WakeLock mWakeLock;
     
     protected ActionLog mActionLog;
+    
+    protected String mActionTag;
+    
+    protected Intent mIntent;
     
     protected MapEngine mMapEngine;
     
@@ -268,16 +275,18 @@ public class TKActivity extends Activity implements TKAsyncTask.EventListener {
         service = new Intent(mThis, MapDownloadService.class);
         stopService(service);
         
+        initDataPath(getApplicationContext());
+    }
+    
+    protected void initDataPath(Context context) {
         try {
-            mMapEngine.initMapDataPath(getApplicationContext());
-            Globals.getImageCache().init(mThis);
+            mMapEngine.initMapDataPath(context);
+            ImageCache.getInstance().init(context);
         } catch (APIException e) {
             e.printStackTrace();
             Utility.showDialogAcitvity(mThis, getString(R.string.not_enough_space_and_please_clear));
             finish();
-            return;
         }
-        
     }
 
     protected ConnectivityManager mConnectivityManager;
@@ -418,7 +427,10 @@ public class TKActivity extends Activity implements TKAsyncTask.EventListener {
 
         mPowerManager = (PowerManager) getSystemService(POWER_SERVICE);
         mWakeLock = mPowerManager.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK, getClass().getName()); //处理屏幕防止锁屏
+        mLocationListener = new MyLocationListener(this, null);
         mTKLocationManager = new TKLocationManager(TKApplication.getInstance());
+        
+        mIntent = getIntent();
         
         mActionLog = ActionLog.getInstance(mThis);
     }
@@ -427,6 +439,12 @@ public class TKActivity extends Activity implements TKAsyncTask.EventListener {
     protected void onResume() {
         super.onResume();
         LogWrapper.d(TAG, "onResume()");
+        LauncherActivity.LastActivityClassName = this.getLocalClassName();
+        
+        if (!TextUtils.isEmpty(mActionTag)) {
+            mActionLog.addAction(mActionTag);
+        }
+        AsyncImageLoader.getInstance().setViewToken(mThis.toString());
         
         if (TextUtils.isEmpty(TKConfig.getPref(mThis, TKConfig.PREFS_ACQUIRE_WAKELOCK))) {
             if (mWakeLock.isHeld() == false) {
@@ -469,6 +487,10 @@ public class TKActivity extends Activity implements TKAsyncTask.EventListener {
     @Override
     protected void onPause() {
         LogWrapper.d(TAG, "onPause()");
+        if (!TextUtils.isEmpty(mActionTag)) {
+            mActionLog.addAction(mActionTag + ActionLog.Dismiss);
+        }
+        
         if (mWakeLock.isHeld()) {
             mWakeLock.release();
         }

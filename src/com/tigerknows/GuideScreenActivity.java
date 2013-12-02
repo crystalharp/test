@@ -1,5 +1,5 @@
 
-package com.tigerknows.ui.more;
+package com.tigerknows;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,11 +23,15 @@ import android.widget.LinearLayout.LayoutParams;
 import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
+import com.tigerknows.android.app.TKActivity;
+import com.tigerknows.android.app.TKApplication;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.ui.BaseActivity;
 
 @SuppressWarnings("deprecation")
-public class HelpActivity extends BaseActivity {
+public class GuideScreenActivity extends TKActivity {
+    
+    static final String TAG = "GuideScreenActivity";
     
     public static final String APP_FIRST_START = "AppFirstStart";
     
@@ -51,12 +55,13 @@ public class HelpActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         
         mActionTag = ActionLog.Help;
-        if (mIntent != null) {
-            mAppFirstStart = mIntent.getBooleanExtra(APP_FIRST_START, false); 
-            mAppUpgrade = mIntent.getBooleanExtra(APP_UPGRADE, false); 
+        Intent intent = getIntent();
+        if (intent != null) {
+            mAppFirstStart = intent.getBooleanExtra(APP_FIRST_START, false); 
+            mAppUpgrade = intent.getBooleanExtra(APP_UPGRADE, false); 
         }
 
-        setContentView(R.layout.more_help);
+        setContentView(R.layout.guide_screen);
         
         findViews();
         setListener();
@@ -72,77 +77,76 @@ public class HelpActivity extends BaseActivity {
 	}
 
     // 动画的配置，只要抓住几个关键帧就能够计算出各个参数。
-	HelpAnimateItem[] animItems = new HelpAnimateItem[]{
-    		new HelpAnimateItem("cloud", 			0.21f, 0.15f, 	0.0f, 0.15f, 	0.0f, 0.5f, R.drawable.help_cloud),
+	GuideScreenAnimateItem[] animItems = new GuideScreenAnimateItem[]{
+    		new GuideScreenAnimateItem("cloud", 			0.21f, 0.15f, 	0.0f, 0.15f, 	0.0f, 0.5f, R.drawable.help_cloud),
 //    		new HelpAnimateItem("house",	 		0.5f, 0.5f, 	0.0f, 0.5f, 	0.0f, 0.5f, R.drawable.help_house),
-    		new HelpAnimateItem("bubble_red",	 	0.6f, 0.6f, 	1.8f, 0.6f, 	0.0f, 0.5f, R.drawable.help_bubble_red),
-    		new HelpAnimateItem("bubble_green", 	0.1f, 0.41f, 	1.8f, 0.41f, 	0.0f, 0.5f, R.drawable.help_bubble_green),
-    		new HelpAnimateItem("bubble_blue", 		0.75f, 0.25f, 	1.8f, 0.25f, 	0.0f, 0.5f, R.drawable.help_bubble_blue),
-    		new HelpAnimateItem("bubble_yellow", 	0.8f, 0.45f, 	1.8f, 0.45f, 	0.0f, 0.5f, R.drawable.help_bubble_yellow),
-    		new HelpAnimateItem("near_by_hot", 		0.5f, 0.75f, 	-0.5f, 0.75f, 	0.0f, 0.6f, R.drawable.help_near_by_hot),
+    		new GuideScreenAnimateItem("bubble_red",	 	0.6f, 0.6f, 	1.8f, 0.6f, 	0.0f, 0.5f, R.drawable.help_bubble_red),
+    		new GuideScreenAnimateItem("bubble_green", 	0.1f, 0.41f, 	1.8f, 0.41f, 	0.0f, 0.5f, R.drawable.help_bubble_green),
+    		new GuideScreenAnimateItem("bubble_blue", 		0.75f, 0.25f, 	1.8f, 0.25f, 	0.0f, 0.5f, R.drawable.help_bubble_blue),
+    		new GuideScreenAnimateItem("bubble_yellow", 	0.8f, 0.45f, 	1.8f, 0.45f, 	0.0f, 0.5f, R.drawable.help_bubble_yellow),
+    		new GuideScreenAnimateItem("near_by_hot", 		0.5f, 0.75f, 	-0.5f, 0.75f, 	0.0f, 0.6f, R.drawable.help_near_by_hot),
     		
-    		new HelpAnimateItem("cloud2", 			1.6f, 0.15f, 	1.8f, 0.15f, 	0.5f, 2.0f, R.drawable.help_cloud),
+    		new GuideScreenAnimateItem("cloud2", 			1.6f, 0.15f, 	1.8f, 0.15f, 	0.5f, 2.0f, R.drawable.help_cloud),
 //    		new HelpAnimateItem("hotel", 			1.6f, 0.5f, 	1.5f, 0.5f, 	0.0f, 1.0f, R.drawable.help_hotel),
     		// 旗子进入
-    		new HelpAnimateItem("order_flag",	 	0.35f, 0.33f, 	1.3f, 0.33f, 	0.5f, 1.0f, R.drawable.help_order_flag),
+    		new GuideScreenAnimateItem("order_flag",	 	0.35f, 0.33f, 	1.3f, 0.33f, 	0.5f, 1.0f, R.drawable.help_order_flag),
 
-    		new HelpAnimateItem("order_hotel", 		1.7f, 0.75f, 	1.3f, 0.75f, 	0.5f, 1.5f, R.drawable.help_order_hotel),
+    		new GuideScreenAnimateItem("order_hotel", 		1.7f, 0.75f, 	1.3f, 0.75f, 	0.5f, 1.5f, R.drawable.help_order_hotel),
     		
     		// 移入速度和移出速度不一样，所以使用两段来实现。
     		// 云慢慢进入
-    		new HelpAnimateItem("cloud3_in", 			2.6f, 0.30f, 	2.8f, 0.30f, 	1.5f, 2.0f, R.drawable.help_cloud),
-    		new HelpAnimateItem("cloud4_in", 			2.2f, 0.15f, 	2.3f, 0.15f, 	1.0f, 2.0f, R.drawable.help_cloud_big),
+    		new GuideScreenAnimateItem("cloud3_in", 			2.6f, 0.30f, 	2.8f, 0.30f, 	1.5f, 2.0f, R.drawable.help_cloud),
+    		new GuideScreenAnimateItem("cloud4_in", 			2.2f, 0.15f, 	2.3f, 0.15f, 	1.0f, 2.0f, R.drawable.help_cloud_big),
     		
     		// 此处旗子放在下边是为了防止云挡住旗子。
     		// 旗子移出
-    		new HelpAnimateItem("order_flag",	 	1.3f, 0.33f, 	2.7f, 0.33f, 	1.0f, 1.5f, R.drawable.help_order_flag),
+    		new GuideScreenAnimateItem("order_flag",	 	1.3f, 0.33f, 	2.7f, 0.33f, 	1.0f, 1.5f, R.drawable.help_order_flag),
     		
     		// 云随屏幕移动出
-    		new HelpAnimateItem("cloud3_out", 		2.8f, 0.30f, 	2.8f, 0.30f, 	2.0f, 3.0f, R.drawable.help_cloud),
-    		new HelpAnimateItem("cloud4_out", 		2.3f, 0.15f, 	2.8f, 0.15f, 	2.0f, 3.0f, R.drawable.help_cloud_big),
+    		new GuideScreenAnimateItem("cloud3_out", 		2.8f, 0.30f, 	2.8f, 0.30f, 	2.0f, 3.0f, R.drawable.help_cloud),
+    		new GuideScreenAnimateItem("cloud4_out", 		2.3f, 0.15f, 	2.8f, 0.15f, 	2.0f, 3.0f, R.drawable.help_cloud_big),
     		
-    		new HelpAnimateItem("tuangou_coupon", 	2.8f, 0.75f, 	2.2f, 0.75f, 	1.5f, 2.5f, R.drawable.help_tuangou_coupon),
+    		new GuideScreenAnimateItem("tuangou_coupon", 	2.8f, 0.75f, 	2.2f, 0.75f, 	1.5f, 2.5f, R.drawable.help_tuangou_coupon),
     		
 
-    		new HelpAnimateItem("maze", 			3.5f, 0.4f, 	3.5f, 0.4f, 	2.0f, 3.0f, R.drawable.help_maze),
+    		new GuideScreenAnimateItem("maze", 			3.5f, 0.4f, 	3.5f, 0.4f, 	2.0f, 3.0f, R.drawable.help_maze),
     		
     		// 从不可见进入该屏的视野中心，横移1.5， 纵移0.5， 移出亦然。 保证在（1.3， 2.7） 中间的位置的时候（即2.0）箭头达到希望位置
 //    		new HelpAnimateItem("arrow1", 			0.85f, 1.25f, 	2.35f, 0.35f, 	1.5f, 2.0f, R.drawable.help_arrow1),
-    		new HelpAnimateItem("arrow1", 			0.84f, 0.8f, 	3.76f, -0.12f, 	1.3f, 2.7f, R.drawable.help_arrow1),
+    		new GuideScreenAnimateItem("arrow1", 			0.84f, 0.8f, 	3.76f, -0.12f, 	1.3f, 2.7f, R.drawable.help_arrow1),
 //    		new HelpAnimateItem("arrow2", 			0.8f, 0.95f, 	2.5f, 0.38f, 	1.3f, 2.0f, R.drawable.help_arrow2),
 //    		new HelpAnimateItem("arrow3", 			1.05f, 1.0f, 	2.7f, 0.45f, 	1.3f, 2.0f, R.drawable.help_arrow3),
-    		new HelpAnimateItem("arrow2", 			0.8f, 0.95f, 	4.2f, -0.19f, 	1.3f, 2.7f, R.drawable.help_arrow2),
-    		new HelpAnimateItem("arrow3", 			1.05f, 1.0f, 	4.35f, -0.10f, 	1.3f, 2.7f, R.drawable.help_arrow3),
+    		new GuideScreenAnimateItem("arrow2", 			0.8f, 0.95f, 	4.2f, -0.19f, 	1.3f, 2.7f, R.drawable.help_arrow2),
+    		new GuideScreenAnimateItem("arrow3", 			1.05f, 1.0f, 	4.35f, -0.10f, 	1.3f, 2.7f, R.drawable.help_arrow3),
     		
 //    		new HelpAnimateItem("order_hotel", 		1.9f, 0.75f, 	1.5f, 0.75f, 	0.84f, 1.0f, R.drawable.help_order_hotel),
 //    		new HelpAnimateItem("order_hotel", 		1.9f, 0.75f, 	1.5f, 0.75f, 	0.84f, 1.0f, R.drawable.help_order_hotel),
 //    		new HelpAnimateItem("order_hotel", 		1.9f, 0.75f, 	1.5f, 0.75f, 	0.84f, 1.0f, R.drawable.help_order_hotel)
     		
 
-    		new HelpAnimateItem("cloud3", 			3.6f, 0.10f, 	3.2f, 0.10f, 	2.5f, 3.0f, R.drawable.help_cloud),
+    		new GuideScreenAnimateItem("cloud3", 			3.6f, 0.10f, 	3.2f, 0.10f, 	2.5f, 3.0f, R.drawable.help_cloud),
     		
-    		new HelpAnimateItem("target_red", 		2.5f, 0.4f, 	3.5f, 0.4f, 	2.5f, 3.0f, R.drawable.help_target_red),
-    		new HelpAnimateItem("target_red", 		3.5f, 0.0f, 	3.5f, 0.4f, 	2.5f, 3.0f, R.drawable.help_arrow_traffic),
+    		new GuideScreenAnimateItem("target_red", 		2.5f, 0.4f, 	3.5f, 0.4f, 	2.5f, 3.0f, R.drawable.help_target_red),
+    		new GuideScreenAnimateItem("target_red", 		3.5f, 0.0f, 	3.5f, 0.4f, 	2.5f, 3.0f, R.drawable.help_arrow_traffic),
 
-    		new HelpAnimateItem("traffic_go", 		3.7f, 0.75f, 	3.3f, 0.75f, 	2.5f, 3.5f, R.drawable.help_traffic_go),
+    		new GuideScreenAnimateItem("traffic_go", 		3.7f, 0.75f, 	3.3f, 0.75f, 	2.5f, 3.5f, R.drawable.help_traffic_go),
 
-    		new HelpAnimateItem("progress_line1",	0.35f, 0.96f, 	3.35f, 0.96f, 	0.0f, 3.0f, R.drawable.help_progress_line),
-    		new HelpAnimateItem("progress_line2",	0.45f, 0.96f, 	3.45f, 0.96f, 	0.0f, 3.0f, R.drawable.help_progress_line),
-    		new HelpAnimateItem("progress_line3",	0.55f, 0.96f, 	3.55f, 0.96f, 	0.0f, 3.0f, R.drawable.help_progress_line),
-    		new HelpAnimateItem("progress_line4",	0.65f, 0.96f, 	3.65f, 0.96f, 	0.0f, 3.0f, R.drawable.help_progress_line),
+    		new GuideScreenAnimateItem("progress_line1",	0.35f, 0.96f, 	3.35f, 0.96f, 	0.0f, 3.0f, R.drawable.help_progress_line),
+    		new GuideScreenAnimateItem("progress_line2",	0.45f, 0.96f, 	3.45f, 0.96f, 	0.0f, 3.0f, R.drawable.help_progress_line),
+    		new GuideScreenAnimateItem("progress_line3",	0.55f, 0.96f, 	3.55f, 0.96f, 	0.0f, 3.0f, R.drawable.help_progress_line),
+    		new GuideScreenAnimateItem("progress_line4",	0.65f, 0.96f, 	3.65f, 0.96f, 	0.0f, 3.0f, R.drawable.help_progress_line),
 
-    		new HelpAnimateItem("progress_car",		0.35f, 0.95f, 	3.65f, 0.95f, 	0.0f, 3.0f, R.drawable.help_car),
+    		new GuideScreenAnimateItem("progress_car",		0.35f, 0.95f, 	3.65f, 0.95f, 	0.0f, 3.0f, R.drawable.help_car),
 
-    		new HelpAnimateItem("progress_car",		2.3f, 0.95f, 	3.88f, 0.95f, 	2.5f, 3.0f, R.drawable.btn_start_now)
+    		new GuideScreenAnimateItem("progress_car",		2.3f, 0.95f, 	3.88f, 0.95f, 	2.5f, 3.0f, R.drawable.btn_start_now)
     		
     };
     
-    private List<HelpAnimateItem> visibleItems = new ArrayList<HelpAnimateItem>();
+    private List<GuideScreenAnimateItem> visibleItems = new ArrayList<GuideScreenAnimateItem>();
     
     private ImageView startExperience;
     
     protected void findViews() {
-        super.findViews();
         rootView = (LinearLayout) findViewById(R.id.root_view);
         mViewPager = (ViewPager) findViewById(R.id.view_pager);
         
@@ -171,7 +175,7 @@ public class HelpActivity extends BaseActivity {
         @Override
         public void onPageSelected(int index) {
             mActionLog.addAction(mActionTag+ActionLog.ViewPageSelected, index);
-            LogWrapper.i("HelpActivity", "Page selected: " + index);
+            LogWrapper.i(TAG, "Page selected: " + index);
         }
         
         @Override
@@ -180,10 +184,10 @@ public class HelpActivity extends BaseActivity {
         	int screenHeight= Globals.g_metrics.heightPixels;
         	float curPosition = position + positionOffset;
         	
-        	LogWrapper.i("HelpActivity", "Page scrolled. Position: " + position + " offset: " + positionOffset );
+        	LogWrapper.i(TAG, "Page scrolled. Position: " + position + " offset: " + positionOffset );
         	
         	for (int i = 0; i < animItems.length; i++) {
-        		HelpAnimateItem item = animItems[i];
+        		GuideScreenAnimateItem item = animItems[i];
         		if(item.scrollStartX <= curPosition && item.scrollEndX>= curPosition){
         			
         			int left = 0;
@@ -218,14 +222,14 @@ public class HelpActivity extends BaseActivity {
     	
     	for (int i = 0; i < animItems.length; i++) {
     		View view = container.getChildAt(i);
-    		HelpAnimateItem item = animItems[i];
+    		GuideScreenAnimateItem item = animItems[i];
     		if(item.visible){
     			android.widget.AbsoluteLayout.LayoutParams params = (android.widget.AbsoluteLayout.LayoutParams) view.getLayoutParams();
     			
     			params.x = item.x - item.width/2;
     			params.y = item.y - item.height/2;
     			
-    			LogWrapper.i("HelpActivity", (i+1) + "/" + animItems.length + " " + params.x + ", " + params.y + " View width: " + view.getMeasuredWidth() + " Height: " + view.getMeasuredHeight() + " Tag: " + item.tag);
+    			LogWrapper.i(TAG, (i+1) + "/" + animItems.length + " " + params.x + ", " + params.y + " View width: " + view.getMeasuredWidth() + " Height: " + view.getMeasuredHeight() + " Tag: " + item.tag);
     			
     			view.setLayoutParams(params);
     			view.setVisibility(View.VISIBLE);
@@ -237,7 +241,6 @@ public class HelpActivity extends BaseActivity {
     }
     
     protected void setListener() {
-        super.setListener();
 
         mViewPager.setOnPageChangeListener(pageChangeListener);
         
@@ -285,10 +288,12 @@ public class HelpActivity extends BaseActivity {
     
     @Override
     public void finish() {
-        Intent intent = new Intent();
-        intent.putExtra(APP_FIRST_START, mAppFirstStart);
-        intent.putExtra(APP_UPGRADE, mAppUpgrade);
-        setResult(RESULT_OK, intent);
+        if (mAppFirstStart || mAppUpgrade) {
+            Intent newIntent = new Intent();
+            newIntent.putExtra(APP_FIRST_START, mAppFirstStart);
+            newIntent.setClass(getBaseContext(), Sphinx.class);
+            startActivity(newIntent);
+        }
         super.finish();
     }
     

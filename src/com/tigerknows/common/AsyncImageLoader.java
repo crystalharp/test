@@ -2,6 +2,7 @@
 package com.tigerknows.common;
 
 import com.decarta.Globals;
+import com.decarta.android.exception.APIException;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.TKConfig;
 import com.tigerknows.android.net.HttpManager;
@@ -28,6 +29,8 @@ public class AsyncImageLoader {
     
     static final int THREAD_COUNT = 3;
     
+    public static String SUPER_VIEW_TOKEN = "SUPER_VIEW_TOKEN";
+    
     // 为了加快速度，在内存中开启缓存（主要应用于重复图片较多时，或者同一个图片要多次被访问，比如在ListView时来回滚动）
     public LinkedHashMap<String, SoftReference<BitmapDrawable>> imageCache = new LinkedHashMap<String, SoftReference<BitmapDrawable>>(TKConfig.IMAGE_CACHE_SIZE_MEMORY,0.75f,true);
 
@@ -43,6 +46,20 @@ public class AsyncImageLoader {
     private List<HttpClient> mHttpClientList = new ArrayList<HttpClient>();
     
     private String viewToken = "";
+    
+    private static AsyncImageLoader sInstance = null;
+    
+    public static AsyncImageLoader getInstance() {
+        if (sInstance == null) {
+            sInstance = new AsyncImageLoader();
+        }
+        
+        return sInstance;
+    }
+    
+    private AsyncImageLoader() {
+        
+    }
 
     class CallbackBitmapRunnable implements Runnable{
     	
@@ -71,7 +88,7 @@ public class AsyncImageLoader {
                 }
             }
         }
-        final ImageCache imageCache1 = Globals.getImageCache();
+        final ImageCache imageCache1 = ImageCache.getInstance();
         final String name = imageUrl.url.substring(imageUrl.url.lastIndexOf("/")+1);
         Bitmap bitmap = null;
         try {
@@ -102,7 +119,7 @@ public class AsyncImageLoader {
     		return b;
     	}
 
-        if (viewToken.equals(imageUrl.viewToken) == false || executorService == null || executorService.isShutdown() || context == null || callback == null) {
+        if ((viewToken.equals(imageUrl.viewToken) == false && SUPER_VIEW_TOKEN.equals(imageUrl.viewToken) == false) || executorService == null || executorService.isShutdown() || context == null || callback == null) {
             return null;
         }
         
@@ -184,7 +201,7 @@ public class AsyncImageLoader {
     // 从网络上取数据方法
     protected BitmapDrawable loadImageFromUrl(Context context, TKURL imageUrl) {
         try {
-            if (viewToken.equals(imageUrl.viewToken) == false) {
+            if (viewToken.equals(imageUrl.viewToken) == false && SUPER_VIEW_TOKEN.equals(imageUrl.viewToken) == false) {
                 return null;
             }
             
@@ -202,7 +219,7 @@ public class AsyncImageLoader {
                 synchronized (mHttpClientList) {
                     mHttpClientList.add(mHttpClient);
                 }
-				ImageCache imageCache1 = Globals.getImageCache();
+				ImageCache imageCache1 = ImageCache.getInstance();
 				final String name = imageUrl.url.substring(imageUrl.url.lastIndexOf("/")+1);
 				imageCache1.putImage(name, data);
 				BitmapDrawable bm = (BitmapDrawable) BitmapDrawable.createFromStream(new ByteArrayInputStream(data), "image.png");
@@ -234,13 +251,24 @@ public class AsyncImageLoader {
         public void imageLoaded(BitmapDrawable imageDrawable);
     }
     
-    public void onResume() {
+    public void onCreate(Context context) {
+        
+        try {
+            ImageCache.getInstance().init(context);
+        } catch (APIException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
         if (executorService == null || executorService.isShutdown()) {
             executorService = Executors.newFixedThreadPool(THREAD_COUNT);
         }
     }
     
     public void onDestory() {
+
+        ImageCache.getInstance().stopWritingAndRemoveOldTiles();
+        
         setViewToken("");
         synchronized (mHttpClientList) {
             for(int i = mHttpClientList.size()-1; i >=0 ; i--) {

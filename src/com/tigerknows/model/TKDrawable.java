@@ -1,7 +1,7 @@
 package com.tigerknows.model;
 
-import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
+import com.tigerknows.common.AsyncImageLoader;
 import com.tigerknows.common.ImageCache;
 import com.tigerknows.common.AsyncImageLoader.ImageCallback;
 import com.tigerknows.common.AsyncImageLoader.TKURL;
@@ -38,7 +38,7 @@ public class TKDrawable extends XMapData implements Parcelable {
         this.url = getStringFromData(FIELD_URL);
         byte[] image = getBytesFromData(FIELD_DATA);
         if (image != null) {
-            ImageCache imageCache1 = Globals.getImageCache();
+            ImageCache imageCache1 = ImageCache.getInstance();
             final String name = url.substring(url.lastIndexOf("/")+1);
             try {
                 imageCache1.putImage(name, image);
@@ -47,7 +47,7 @@ public class TKDrawable extends XMapData implements Parcelable {
                 e.printStackTrace();
             }
             BitmapDrawable bitmapDrawable = (BitmapDrawable) BitmapDrawable.createFromStream(new ByteArrayInputStream(image), "image.png");
-            Globals.getAsyncImageLoader().put(url, bitmapDrawable);
+            AsyncImageLoader.getInstance().put(url, bitmapDrawable);
         }
     }
 
@@ -76,11 +76,11 @@ public class TKDrawable extends XMapData implements Parcelable {
             return null;
         }
         // 如果缓存过就会从缓存中取出图像，ImageCallback接口中方法也不会被执行
-        BitmapDrawable cacheImage = Globals.getAsyncImageLoader().loadDrawable(activity, new TKURL(url, viewToken),
+        BitmapDrawable cacheImage = AsyncImageLoader.getInstance().loadDrawable(activity, new TKURL(url, viewToken),
                 new ImageCallback() {
                     // 请参见实现：如果第一次加载url时下面方法会执行
                     public void imageLoaded(BitmapDrawable imageDrawable) {
-                        if (activity != null && action != null && viewToken.contains(Globals.getAsyncImageLoader().getViewToken())) {
+                        if (activity != null && action != null && viewToken.contains(AsyncImageLoader.getInstance().getViewToken())) {
                             activity.runOnUiThread(action);
                         }
                     }

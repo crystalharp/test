@@ -12,6 +12,7 @@ import com.tencent.mm.sdk.openapi.WXAppExtendObject;
 import com.tencent.mm.sdk.openapi.WXMediaMessage;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.LauncherActivity;
 
 import net.sourceforge.simcpux.Constants;
 
@@ -51,7 +52,7 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler{
         case ConstantsAPI.COMMAND_GETMESSAGE_FROM_WX:
         	Intent intent = getIntent();
         	if (intent != null) {
-	            Intent sphinx = new Intent(this, Sphinx.class);
+	            Intent sphinx = new Intent(this, LauncherActivity.class);
 	            sphinx.putExtra(Sphinx.EXTRA_WEIXIN, true);
 	            sphinx.putExtras(intent.getExtras());
 	            startActivity(sphinx);

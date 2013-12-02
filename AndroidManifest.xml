@@ -16,20 +16,65 @@
       <!-- <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" /> -->
       
     <application android:name="com.tigerknows.android.app.TKApplication" android:icon="@drawable/icon" android:label="@string/app_name"
-        android:theme="@style/Theme.NoTitleBar.Fullscreen" android:debuggable="true">
+        android:theme="@style/Theme.NoTitleBar.Fullscreen" android:debuggable="true" android:allowBackup="false">
         <provider android:name="com.tigerknows.provider.TigerknowsProvider"
             android:authorities="com.tigerknows.provider.Tigerknows" />
         
-        <activity android:name="com.tigerknows.Sphinx"
-                  android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
-                  android:windowSoftInputMode="adjustPan|stateHidden"
-                  android:label="@string/app_name"
-                  android:launchMode="singleTop"
-                  android:screenOrientation="portrait">
+        <activity
+            android:theme="@style/Launcher" 
+            android:name="com.tigerknows.LauncherActivity"
+            android:label="@string/app_name"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|fontScale"
+            android:noHistory="true"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.APP_MAPS" />
             </intent-filter>
+            <intent-filter android:label="@string/app_name" >
+                <action android:name="android.intent.action.VIEW"></action>
+                <category android:name="android.intent.category.DEFAULT"></category>
+                <category android:name="android.intent.category.BROWSABLE"></category>
+                <data android:scheme="geo"></data>
+            </intent-filter>
+            <intent-filter android:label="@string/app_name">
+                <action android:name="android.intent.action.VIEW"></action>
+                <category android:name="android.intent.category.DEFAULT"></category>
+                <category android:name="android.intent.category.BROWSABLE"></category>
+                <data android:scheme="latitude"></data>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"></action>
+                <category android:name="android.intent.category.DEFAULT"></category>
+                <category android:name="android.intent.category.BROWSABLE"></category>
+                <data android:scheme="http"
+                    android:host="maps.tigerknows.com"
+                    android:pathPrefix="/"
+                    >
+                </data>
+            </intent-filter>
+            
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"></action>
+                <category android:name="android.intent.category.DEFAULT"></category>
+                <category android:name="android.intent.category.BROWSABLE"></category>
+                <data android:scheme="tigerknows"
+                    >
+                </data>
+            </intent-filter>
+        </activity>
+        
+        <activity android:name="com.tigerknows.Sphinx"
+            android:theme="@style/Sphinx" 
+            android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|fontScale"
+            android:windowSoftInputMode="adjustPan|stateHidden"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait">
         </activity>
         
         <service android:name="com.tigerknows.service.LocationService" android:enabled="true"></service>
@@ -42,173 +87,173 @@
         
         <service android:name="com.tigerknows.service.download.DownloadService" android:enabled="true"></service>
         
-        <activity android:name="com.tigerknows.ui.more.HelpActivity"
-            android:theme="@style/Help" 
-            android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
+        <activity android:name="com.tigerknows.GuideScreenActivity"
+            android:theme="@style/GuideScreen" 
+            android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|fontScale"
             android:windowSoftInputMode="adjustResize|stateHidden"
             android:screenOrientation="portrait" />
         
         <activity android:name="com.tigerknows.ui.more.AboutUsActivity"
             android:theme="@style/Theme.NoTitleBar" 
-            android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
+            android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|fontScale"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden"
             android:screenOrientation="portrait" />
         
         <activity android:name="com.tigerknows.ui.more.AppRecommendActivity"
             android:theme="@style/Theme.NoTitleBar" 
-            android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
+            android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|fontScale"
             android:windowSoftInputMode="adjustResize|stateHidden"
             android:screenOrientation="portrait" />
         
         <activity android:name="com.tigerknows.ui.poi.POIReportErrorActivity"
             android:theme="@style/Theme.NoTitleBar" 
-            android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
+            android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|fontScale"
             android:windowSoftInputMode="adjustResize|stateHidden"
             android:screenOrientation="portrait" />
         
         <activity android:name="com.tigerknows.ui.more.SatisfyRateActivity"
             android:theme="@style/Theme.NoTitleBar" 
-            android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
+            android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|fontScale"
             android:windowSoftInputMode="adjustPan|stateAlwaysHidden"
             android:screenOrientation="portrait" />
         
         <activity android:name="com.tigerknows.ui.more.FeedbackActivity"
             android:theme="@style/Theme.NoTitleBar" 
-            android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
+            android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|fontScale"
             android:windowSoftInputMode="adjustPan|stateVisible"
             android:screenOrientation="portrait" />
         
         <activity android:name="com.tigerknows.ui.more.ChangeCityActivity"
             android:theme="@style/Theme.NoTitleBar" 
-            android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
+            android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|fontScale"
             android:windowSoftInputMode="adjustPan|stateHidden"
             android:screenOrientation="portrait" />
         
         <activity android:name="com.tigerknows.ui.more.SettingActivity"
             android:theme="@style/Theme.NoTitleBar" 
-            android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
+            android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|fontScale"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden"
             android:screenOrientation="portrait" />
         
         <activity android:name="com.tigerknows.ui.poi.EditCommentActivity"
             android:theme="@style/Theme.NoTitleBar" 
-            android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
+            android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|fontScale"
             android:windowSoftInputMode="adjustResize|stateVisible"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         
         <activity android:name="com.tigerknows.ui.more.MapDownloadActivity"
             android:theme="@style/Theme.NoTitleBar" 
-            android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
+            android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|fontScale"
             android:windowSoftInputMode="adjustPan|stateHidden"
             android:screenOrientation="portrait" />
         
         <activity android:name="com.tigerknows.ui.poi.CommentListActivity"
             android:theme="@style/Theme.NoTitleBar" 
-            android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
+            android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|fontScale"
             android:windowSoftInputMode="adjustResize|stateHidden"
             android:screenOrientation="portrait" />
         
         <activity android:name="com.tigerknows.ui.traffic.TrafficReportErrorActivity"
             android:theme="@style/Theme.NoTitleBar" 
-            android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
+            android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|fontScale"
             android:windowSoftInputMode="adjustResize|stateHidden"
             android:screenOrientation="portrait" />
 
         <activity android:name="com.tigerknows.ui.traffic.TrafficCompassActivity"
             android:theme="@style/Theme.NoTitleBar" 
-            android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
+            android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|fontScale"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden"
             android:screenOrientation="portrait" />
                 
 		<!-- User Module -->
         <activity android:name="com.tigerknows.ui.user.UserHomeActivity"
             android:theme="@style/Theme.NoTitleBar" 
-            android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
+            android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|fontScale"
             android:windowSoftInputMode="adjustResize"
             android:screenOrientation="portrait" />
         
         <activity android:name="com.tigerknows.ui.user.UserLoginRegistActivity"
             android:theme="@style/Theme.NoTitleBar" 
-            android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
+            android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|fontScale"
             android:windowSoftInputMode="adjustPan|stateHidden"
             android:screenOrientation="portrait" />
         
         <activity android:name="com.tigerknows.ui.user.UserResetPasswordActivity"
             android:theme="@style/Theme.NoTitleBar" 
-            android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
+            android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|fontScale"
             android:windowSoftInputMode="adjustResize|stateVisible"
             android:screenOrientation="portrait" />
          
         <activity android:name="com.tigerknows.ui.user.UserUpdateNickNameActivity"
             android:theme="@style/Theme.NoTitleBar" 
-            android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
+            android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|fontScale"
             android:windowSoftInputMode="adjustResize|stateVisible"
             android:screenOrientation="portrait" />
          
         <activity android:name="com.tigerknows.ui.user.UserUpdatePasswordActivity"
             android:theme="@style/Theme.NoTitleBar" 
-            android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
+            android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|fontScale"
             android:windowSoftInputMode="adjustResize|stateVisible"
             android:screenOrientation="portrait" />
          
         <activity android:name="com.tigerknows.ui.user.UserUpdatePhoneActivity"
             android:theme="@style/Theme.NoTitleBar" 
-            android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
+            android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|fontScale"
             android:windowSoftInputMode="adjustResize|stateVisible"
             android:screenOrientation="portrait" />
          
         <activity android:name="com.tigerknows.ui.common.HintActivity"
             android:theme="@style/Hit" 
-            android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
+            android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|fontScale"
             android:windowSoftInputMode="adjustResize|stateHidden"
             android:screenOrientation="portrait" />
          
         <activity android:name="com.tigerknows.ui.common.BrowserActivity"
             android:theme="@style/Theme.NoTitleBar" 
-            android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
+            android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|fontScale"
             android:windowSoftInputMode="adjustResize|stateHidden"
             android:screenOrientation="portrait" />
          
         <activity android:name="com.tigerknows.ui.discover.ShangjiaListActivity"
             android:theme="@style/Theme.NoTitleBar" 
-            android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
+            android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|fontScale"
             android:windowSoftInputMode="adjustResize|stateHidden"
             android:screenOrientation="portrait" />
          
         <activity android:name="com.tigerknows.ui.more.AddMerchantActivity"
             android:theme="@style/AddMerchant" 
-            android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
+            android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|fontScale"
             android:windowSoftInputMode="adjustResize|stateHidden"
             android:screenOrientation="portrait" />
          
         <activity android:name="com.tigerknows.ui.poi.DishActivity"
             android:theme="@style/Theme.NoTitleBar" 
-            android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
+            android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|fontScale"
             android:windowSoftInputMode="adjustResize|stateHidden"
             android:screenOrientation="portrait" />
         
         <activity android:name="com.tigerknows.ui.common.ViewImageActivity"
             android:theme="@style/Theme.NoTitleBar" 
-            android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
+            android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|fontScale"
             android:windowSoftInputMode="adjustResize|stateHidden"
             android:screenOrientation="portrait" />
         
         <activity android:name="com.tigerknows.ui.hotel.HotelIntroActivity"
             android:theme="@style/Theme.NoTitleBar" 
-            android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
+            android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|fontScale"
             android:windowSoftInputMode="adjustResize|stateHidden"
             android:screenOrientation="portrait" />
         
         <activity android:name="com.tigerknows.ui.common.TakeScreenshotActivity"
             android:theme="@style/Theme.NoTitleBar" 
-            android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
+            android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|fontScale"
             android:windowSoftInputMode="adjustResize|stateHidden"
             android:screenOrientation="portrait" />
         
         <activity android:name="com.tigerknows.ui.common.AddPictureActivity"
             android:theme="@style/Transparent" 
-            android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
+            android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|fontScale"
             android:windowSoftInputMode="adjustResize|stateHidden"
             android:screenOrientation="portrait" />
         
@@ -240,7 +285,7 @@
 
 		<activity android:name="com.tigerknows.ui.common.ExceptionDialogActivity" 
             android:theme="@style/Theme.NoTitleBar" 
-            android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
+            android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|fontScale"
             android:windowSoftInputMode="adjustResize|stateHidden"
             android:screenOrientation="portrait" />
 
@@ -293,53 +338,6 @@
                 <data android:scheme="sdksample"/>
             </intent-filter>
         </activity>
-        
-        <activity
-            android:theme="@style/Theme.NoTitleBar" 
-            android:name=".FromThirdPartyActivity"
-            android:label="@string/app_name"
-            android:exported="true">
-            <intent-filter android:label="@string/app_name" >
-                <action android:name="android.intent.action.VIEW"></action>
-                <category android:name="android.intent.category.DEFAULT"></category>
-                <category android:name="android.intent.category.BROWSABLE"></category>
-                <data android:scheme="geo"></data>
-            </intent-filter>
-            <intent-filter android:label="@string/app_name">
-                <action android:name="android.intent.action.VIEW"></action>
-                <category android:name="android.intent.category.DEFAULT"></category>
-                <category android:name="android.intent.category.BROWSABLE"></category>
-                <data android:scheme="latitude"></data>
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW"></action>
-                <category android:name="android.intent.category.DEFAULT"></category>
-                <category android:name="android.intent.category.BROWSABLE"></category>
-                <data android:scheme="http"
-                    android:host="maps.tigerknows.com"
-                    android:pathPrefix="/"
-                    >
-                </data>
-            </intent-filter>
-            
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW"></action>
-                <category android:name="android.intent.category.DEFAULT"></category>
-                <category android:name="android.intent.category.BROWSABLE"></category>
-                <data android:scheme="tigerknows"
-                    >
-                </data>
-            </intent-filter>
-            
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW"></action>
-                <category android:name="android.intent.category.DEFAULT"></category>
-                <category android:name="android.intent.category.BROWSABLE"></category>
-                <data android:scheme="tigerknows"
-                    >
-                </data>
-            </intent-filter>
-        </activity>
 
         <meta-data android:name="TD_APP_ID" android:value="01311C44FE74E468F73E72C43CD1B60D"/>
         <!--老虎宝典测试 68DDE7CB7E1AC79BA446D291FFAB79B0 -->
@@ -347,7 +345,7 @@
         <meta-data android:name="TD_CHANNEL_ID" android:value="TigerMapTest"/>
         <!-- TigerMapTest tieshusai jiangzhenzhen lidaobei edeni dongjuan peiguojuan liujiahe liuhaijing zhaihuihui -->
     </application>
-    <supports-screens android:anyDensity="true" android:resizeable="true" android:largeScreens="true" android:smallScreens="true"></supports-screens>
+    <supports-screens android:anyDensity="true" android:resizeable="true" android:normalScreens="true" android:largeScreens="true" android:smallScreens="true"></supports-screens>
     <uses-sdk android:minSdkVersion="5" />
 
 </manifest> 

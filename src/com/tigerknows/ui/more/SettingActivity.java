@@ -10,6 +10,7 @@ import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
 import com.tigerknows.common.ActionLog;
+import com.tigerknows.common.ImageCache;
 import com.tigerknows.model.HelpQuery;
 import com.tigerknows.radar.AlarmInitReceiver;
 import com.tigerknows.radar.Alarms;
@@ -198,9 +199,9 @@ public class SettingActivity extends BaseActivity {
 
 								@Override
 								public void run() {
-									// TODO Auto-generated method stub
+									ImageCache imageCache = ImageCache.getInstance();
 									try {
-										Globals.getImageCache().init(mContext);
+									    imageCache.init(mContext);
 									} catch (APIException e) {
 										// TODO Auto-generated catch block
 										e.printStackTrace();
@@ -213,9 +214,7 @@ public class SettingActivity extends BaseActivity {
 									msg[1].what = HandlerMessage.AFTER_CLEAR_CACHE;
 									msg[2].what = HandlerMessage.CLEAR_CACHE_SUCCESS;
 									mHandler.sendMessage(msg[0]);
-									if(Globals.getImageCache() != null){
-										Globals.getImageCache().clearImages();
-									}
+									imageCache.clearImages();
 									mHandler.sendMessage(msg[1]);
 									mHandler.sendMessage(msg[2]);
 								}

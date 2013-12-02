@@ -34,8 +34,6 @@ public class BaseActivity extends TKActivity implements TKAsyncTask.EventListene
     
     protected boolean mSourceUserHome = false;
     
-    protected String mActionTag;
-    
     protected Button mTitleBtn;
     
     protected Button mLeftBtn;
@@ -43,8 +41,6 @@ public class BaseActivity extends TKActivity implements TKAsyncTask.EventListene
     protected Button mRightBtn;
     
     protected Button mRight2Btn;
-    
-    protected Intent mIntent;
     
     protected int mId;
     
@@ -75,10 +71,7 @@ public class BaseActivity extends TKActivity implements TKAsyncTask.EventListene
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);        
-        mThis = this;
-        mIntent = getIntent();
         getViewId(mIntent);
-        mLocationListener = new MyLocationListener(this, null);
         
         mHandler = new Handler();
     }
@@ -107,19 +100,12 @@ public class BaseActivity extends TKActivity implements TKAsyncTask.EventListene
     protected void onResume() {
         super.onResume();
         LogWrapper.d(TAG, "onResume()");
-        if (!TextUtils.isEmpty(mActionTag)) {
-            mActionLog.addAction(mActionTag);
-        }
-        Globals.getAsyncImageLoader().setViewToken(mThis.toString());
     }
 
     @Override
     protected void onPause() {
         LogWrapper.d(TAG, "onPause()");
         super.onPause();
-        if (!TextUtils.isEmpty(mActionTag)) {
-            mActionLog.addAction(mActionTag + ActionLog.Dismiss);
-        }
     }
     
     @Override

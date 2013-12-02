@@ -1,6 +1,6 @@
-package com.tigerknows.ui.more;
+package com.tigerknows;
 
-public class HelpAnimateItem {
+public class GuideScreenAnimateItem {
 	
 	String tag;
 	int x;
@@ -17,7 +17,7 @@ public class HelpAnimateItem {
 	int width = 0;
 	int height = 0;
 	
-	public HelpAnimateItem(String tag, float startX, float startY, float endX, float endY,
+	public GuideScreenAnimateItem(String tag, float startX, float startY, float endX, float endY,
 			float scrollStartX, float scrollEndX, int resId) {
 		super();
 		this.tag = tag;
