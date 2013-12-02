@@ -29,6 +29,8 @@ public class LocationService extends TKNetworkService {
     
     public static Location LOCATION_FOR_TEST;
     
+    long lastScanTime = 0;
+    
     @Override
     public void onCreate() {
         super.onCreate();
@@ -130,6 +132,12 @@ public class LocationService extends TKNetworkService {
         if (locationQuery == null) {
             onStatusChanged(TigerknowsLocationManager.TIGERKNOWS_PROVIDER, LocationProvider.OUT_OF_SERVICE, null);
             return;
+        }
+        
+        long time = System.currentTimeMillis();
+        if (time - this.lastScanTime > 20*1000) {
+            this.lastScanTime = time;
+            locationQuery.startScanWifi();
         }
         //TODO:获取当前位置信息
         Location location = locationQuery.getLocation();

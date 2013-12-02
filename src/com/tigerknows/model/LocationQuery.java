@@ -128,6 +128,13 @@ public class LocationQuery extends BaseQuery {
         onlineLocationCache.clear();
         offlineLocationCache.clear();
     }
+    
+    public boolean startScanWifi() {
+        if (wifiManager != null) {
+            return wifiManager.startScan();
+        }
+        return false;
+    }
 
     private LocationQuery(Context context) {
         super(context, API_TYPE_LOCATION_QUERY, VERSION);

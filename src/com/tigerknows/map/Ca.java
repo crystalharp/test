@@ -5,6 +5,7 @@ import com.tigerknows.map.label.Label;
 
 public class Ca {
     static {
+        //System.load("tkengine");
         System.load(TKApplication.getInstance().getFilesDir().getParent() + "/lib/libtkengine.so");
         cai();
     }
