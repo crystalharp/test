@@ -35,7 +35,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@drawable/list_header"
+                android:background="@color/white"
                 >
                 <TextView android:id="@+id/hotel_name_txv"
                     android:layout_width="wrap_content"
