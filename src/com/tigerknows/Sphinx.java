@@ -1118,6 +1118,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 	
 	@Override
 	protected void onDestroy() {
+	    LauncherActivity.LastActivityClassName = null;
         AsyncImageLoader.getInstance().onDestory();
         mTKLocationManager.onDestroy();
         TKWeixin.getInstance(this).onDestory();

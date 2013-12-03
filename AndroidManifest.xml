@@ -13,6 +13,7 @@
       <uses-permission android:name="android.permission.WAKE_LOCK" />
       <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" />
       <uses-permission android:name="com.android.launcher.permission.UNINSTALL_SHORTCUT" />  
+      <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
       <!-- <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" /> -->
       
     <application android:name="com.tigerknows.android.app.TKApplication" android:icon="@drawable/icon" android:label="@string/app_name"
@@ -89,79 +90,91 @@
         
         <activity android:name="com.tigerknows.GuideScreenActivity"
             android:theme="@style/GuideScreen" 
+            android:launchMode="singleTop"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|fontScale"
             android:windowSoftInputMode="adjustResize|stateHidden"
             android:screenOrientation="portrait" />
         
         <activity android:name="com.tigerknows.ui.more.AboutUsActivity"
             android:theme="@style/Theme.NoTitleBar" 
+            android:launchMode="singleTop"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|fontScale"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden"
             android:screenOrientation="portrait" />
         
         <activity android:name="com.tigerknows.ui.more.AppRecommendActivity"
             android:theme="@style/Theme.NoTitleBar" 
+            android:launchMode="singleTop"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|fontScale"
             android:windowSoftInputMode="adjustResize|stateHidden"
             android:screenOrientation="portrait" />
         
         <activity android:name="com.tigerknows.ui.poi.POIReportErrorActivity"
             android:theme="@style/Theme.NoTitleBar" 
+            android:launchMode="singleTop"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|fontScale"
             android:windowSoftInputMode="adjustResize|stateHidden"
             android:screenOrientation="portrait" />
         
         <activity android:name="com.tigerknows.ui.more.SatisfyRateActivity"
             android:theme="@style/Theme.NoTitleBar" 
+            android:launchMode="singleTop"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|fontScale"
             android:windowSoftInputMode="adjustPan|stateAlwaysHidden"
             android:screenOrientation="portrait" />
         
         <activity android:name="com.tigerknows.ui.more.FeedbackActivity"
             android:theme="@style/Theme.NoTitleBar" 
+            android:launchMode="singleTop"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|fontScale"
             android:windowSoftInputMode="adjustPan|stateVisible"
             android:screenOrientation="portrait" />
         
         <activity android:name="com.tigerknows.ui.more.ChangeCityActivity"
             android:theme="@style/Theme.NoTitleBar" 
+            android:launchMode="singleTop"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|fontScale"
             android:windowSoftInputMode="adjustPan|stateHidden"
             android:screenOrientation="portrait" />
         
         <activity android:name="com.tigerknows.ui.more.SettingActivity"
             android:theme="@style/Theme.NoTitleBar" 
+            android:launchMode="singleTop"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|fontScale"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden"
             android:screenOrientation="portrait" />
         
         <activity android:name="com.tigerknows.ui.poi.EditCommentActivity"
             android:theme="@style/Theme.NoTitleBar" 
+            android:launchMode="singleTop"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|fontScale"
             android:windowSoftInputMode="adjustResize|stateVisible"
-            android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         
         <activity android:name="com.tigerknows.ui.more.MapDownloadActivity"
             android:theme="@style/Theme.NoTitleBar" 
+            android:launchMode="singleTop"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|fontScale"
             android:windowSoftInputMode="adjustPan|stateHidden"
             android:screenOrientation="portrait" />
         
         <activity android:name="com.tigerknows.ui.poi.CommentListActivity"
             android:theme="@style/Theme.NoTitleBar" 
+            android:launchMode="singleTop"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|fontScale"
             android:windowSoftInputMode="adjustResize|stateHidden"
             android:screenOrientation="portrait" />
         
         <activity android:name="com.tigerknows.ui.traffic.TrafficReportErrorActivity"
             android:theme="@style/Theme.NoTitleBar" 
+            android:launchMode="singleTop"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|fontScale"
             android:windowSoftInputMode="adjustResize|stateHidden"
             android:screenOrientation="portrait" />
 
         <activity android:name="com.tigerknows.ui.traffic.TrafficCompassActivity"
             android:theme="@style/Theme.NoTitleBar" 
+            android:launchMode="singleTop"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|fontScale"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden"
             android:screenOrientation="portrait" />
@@ -169,90 +182,105 @@
 		<!-- User Module -->
         <activity android:name="com.tigerknows.ui.user.UserHomeActivity"
             android:theme="@style/Theme.NoTitleBar" 
+            android:launchMode="singleTop"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|fontScale"
             android:windowSoftInputMode="adjustResize"
             android:screenOrientation="portrait" />
         
         <activity android:name="com.tigerknows.ui.user.UserLoginRegistActivity"
             android:theme="@style/Theme.NoTitleBar" 
+            android:launchMode="singleTop"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|fontScale"
             android:windowSoftInputMode="adjustPan|stateHidden"
             android:screenOrientation="portrait" />
         
         <activity android:name="com.tigerknows.ui.user.UserResetPasswordActivity"
             android:theme="@style/Theme.NoTitleBar" 
+            android:launchMode="singleTop"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|fontScale"
             android:windowSoftInputMode="adjustResize|stateVisible"
             android:screenOrientation="portrait" />
          
         <activity android:name="com.tigerknows.ui.user.UserUpdateNickNameActivity"
             android:theme="@style/Theme.NoTitleBar" 
+            android:launchMode="singleTop"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|fontScale"
             android:windowSoftInputMode="adjustResize|stateVisible"
             android:screenOrientation="portrait" />
          
         <activity android:name="com.tigerknows.ui.user.UserUpdatePasswordActivity"
             android:theme="@style/Theme.NoTitleBar" 
+            android:launchMode="singleTop"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|fontScale"
             android:windowSoftInputMode="adjustResize|stateVisible"
             android:screenOrientation="portrait" />
          
         <activity android:name="com.tigerknows.ui.user.UserUpdatePhoneActivity"
             android:theme="@style/Theme.NoTitleBar" 
+            android:launchMode="singleTop"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|fontScale"
             android:windowSoftInputMode="adjustResize|stateVisible"
             android:screenOrientation="portrait" />
          
         <activity android:name="com.tigerknows.ui.common.HintActivity"
             android:theme="@style/Hit" 
+            android:launchMode="singleTop"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|fontScale"
             android:windowSoftInputMode="adjustResize|stateHidden"
             android:screenOrientation="portrait" />
          
         <activity android:name="com.tigerknows.ui.common.BrowserActivity"
             android:theme="@style/Theme.NoTitleBar" 
+            android:launchMode="singleTop"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|fontScale"
             android:windowSoftInputMode="adjustResize|stateHidden"
             android:screenOrientation="portrait" />
          
         <activity android:name="com.tigerknows.ui.discover.ShangjiaListActivity"
             android:theme="@style/Theme.NoTitleBar" 
+            android:launchMode="singleTop"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|fontScale"
             android:windowSoftInputMode="adjustResize|stateHidden"
             android:screenOrientation="portrait" />
          
         <activity android:name="com.tigerknows.ui.more.AddMerchantActivity"
             android:theme="@style/AddMerchant" 
+            android:launchMode="singleTop"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|fontScale"
             android:windowSoftInputMode="adjustResize|stateHidden"
             android:screenOrientation="portrait" />
          
         <activity android:name="com.tigerknows.ui.poi.DishActivity"
             android:theme="@style/Theme.NoTitleBar" 
+            android:launchMode="singleTop"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|fontScale"
             android:windowSoftInputMode="adjustResize|stateHidden"
             android:screenOrientation="portrait" />
         
         <activity android:name="com.tigerknows.ui.common.ViewImageActivity"
             android:theme="@style/Theme.NoTitleBar" 
+            android:launchMode="singleTop"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|fontScale"
             android:windowSoftInputMode="adjustResize|stateHidden"
             android:screenOrientation="portrait" />
         
         <activity android:name="com.tigerknows.ui.hotel.HotelIntroActivity"
             android:theme="@style/Theme.NoTitleBar" 
+            android:launchMode="singleTop"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|fontScale"
             android:windowSoftInputMode="adjustResize|stateHidden"
             android:screenOrientation="portrait" />
         
         <activity android:name="com.tigerknows.ui.common.TakeScreenshotActivity"
             android:theme="@style/Theme.NoTitleBar" 
+            android:launchMode="singleTop"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|fontScale"
             android:windowSoftInputMode="adjustResize|stateHidden"
             android:screenOrientation="portrait" />
         
         <activity android:name="com.tigerknows.ui.common.AddPictureActivity"
             android:theme="@style/Transparent" 
+            android:launchMode="singleTop"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|fontScale"
             android:windowSoftInputMode="adjustResize|stateHidden"
             android:screenOrientation="portrait" />
@@ -261,11 +289,13 @@
         
         <activity android:name="com.tigerknows.share.WeiboSendActivity" 
             android:theme="@style/Theme.NoTitleBar" 
+            android:launchMode="singleTop"
             android:configChanges="orientation|keyboardHidden" 
             android:windowSoftInputMode="adjustResize|stateVisible"
             android:screenOrientation="portrait" />
         <activity android:name="com.tigerknows.share.QZoneSendActivity" 
             android:theme="@style/Theme.NoTitleBar" 
+            android:launchMode="singleTop"
             android:configChanges="orientation|keyboardHidden" 
             android:windowSoftInputMode="adjustPan|stateVisible"
             android:screenOrientation="portrait" />
@@ -285,6 +315,7 @@
 
 		<activity android:name="com.tigerknows.ui.common.ExceptionDialogActivity" 
             android:theme="@style/Theme.NoTitleBar" 
+            android:launchMode="singleTop"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|fontScale"
             android:windowSoftInputMode="adjustResize|stateHidden"
             android:screenOrientation="portrait" />
@@ -328,6 +359,7 @@
         
         <activity
             android:theme="@style/Theme.NoTitleBar" 
+            android:launchMode="singleTop"
             android:name=".wxapi.WXEntryActivity"
             android:label="@string/app_name"
             android:exported="true">

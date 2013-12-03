@@ -82,12 +82,8 @@ public class LauncherActivity extends TKActivity {
         Intent intent = getIntent();
         if (Intent.ACTION_MAIN.equals(intent.getAction())) {
             
-            Intent newIntent = new Intent();
-            String packageName = getPackageName();
             String lastActivityClassName = LastActivityClassName;
             if (lastActivityClassName != null && lastActivityClassName.equals(this.getLocalClassName()) == false) {
-                newIntent.setClassName(packageName, packageName+"."+lastActivityClassName);
-                startActivity(newIntent);
                 finish();
                 return;
             }
