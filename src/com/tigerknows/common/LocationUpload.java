@@ -110,7 +110,7 @@ public class LocationUpload extends LogUpload {
                 }
                 
                 // 记录当前wifi队列
-                if (wifiManager != null) {
+                if (wifiManager != null && wifiManager.isWifiEnabled()) {
                     List<ScanResult> scanResultList = wifiManager.getScanResults();
                     if (scanResultList != null) {
                         for (ScanResult scanResult : scanResultList) {

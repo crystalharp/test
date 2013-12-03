@@ -2,6 +2,8 @@
 package com.tigerknows.model;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -128,10 +130,32 @@ public class LocationQuery extends BaseQuery {
         onlineLocationCache.clear();
         offlineLocationCache.clear();
     }
+    private Object wifiManagerClass = null;
+    private Method startScanMethod = null;
+    private boolean startScanMethodArg = true;
     
     public boolean startScanWifi() {
-        if (wifiManager != null) {
-            return wifiManager.startScan();
+        try
+        {
+          if (this.wifiManager.isWifiEnabled())
+          {
+            if ((this.startScanMethod != null) && (this.wifiManagerClass != null))
+              try
+              {
+                this.startScanMethod.invoke(this.wifiManagerClass, new Object[] { Boolean.valueOf(this.startScanMethodArg) });
+              }
+              catch (Exception localException1)
+              {
+                localException1.printStackTrace();
+                this.wifiManager.startScan();
+              }
+            else
+              this.wifiManager.startScan();
+            return true;
+          }
+        }
+        catch (Exception localException2)
+        {
         }
         return false;
     }
@@ -140,6 +164,22 @@ public class LocationQuery extends BaseQuery {
         super(context, API_TYPE_LOCATION_QUERY, VERSION);
         this.requestParameters = new ListRequestParameters();
         this.wifiManager = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
+        try {
+            Class localClass1 = Class.forName("android.net.wifi.WifiManager");
+            Field mService = localClass1.getDeclaredField("mService");
+            if (mService == null)
+                return;
+            mService.setAccessible(true);
+            this.wifiManagerClass = mService.get(this.wifiManager);
+            Class localClass2 = this.wifiManagerClass.getClass();
+            this.startScanMethod = localClass2.getDeclaredMethod("startScan", new Class[] { Boolean.TYPE });
+            if (this.startScanMethod == null)
+                return;
+            this.startScanMethod.setAccessible(true);
+        }
+        catch (Exception localException2)
+        {
+        }
     }
 
     @Override
@@ -179,7 +219,7 @@ public class LocationQuery extends BaseQuery {
         addParameter("phone_type", String.valueOf(TKConfig.getPhoneType()));
         addCommonParameters(Globals.getCurrentCityInfo(false).getId(), true);
         
-        if (wifiManager != null) {
+        if (wifiManager != null && wifiManager.isWifiEnabled()) {
             List<ScanResult> scanResults = wifiManager.getScanResults();
             if (scanResults != null) {
                 for (ScanResult sr : scanResults) {
@@ -261,7 +301,7 @@ public class LocationQuery extends BaseQuery {
                 locationParameter.neighboringCellInfoList.add(new TKNeighboringCellInfo(neighboringCellList.get(i)));
             }
         }
-        if (wifiManager != null) {
+        if (wifiManager != null && wifiManager.isWifiEnabled()) {
             List<ScanResult> scanResults = wifiManager.getScanResults();
             if (scanResults != null) {
                 for(int i = scanResults.size() - 1; i >= 0; i--) {
