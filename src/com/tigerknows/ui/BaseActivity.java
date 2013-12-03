@@ -112,9 +112,6 @@ public class BaseActivity extends TKActivity implements TKAsyncTask.EventListene
 	protected void onStop() {
 		// TODO Auto-generated method stub
 		super.onStop();
-        if (null != mTkAsyncTasking) {
-            mTkAsyncTasking.stop();
-        }
 	}
 
 	@Override
