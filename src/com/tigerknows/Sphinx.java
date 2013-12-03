@@ -509,10 +509,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 
                 @Override
                 public void run() {
-                    // 初始化存储历史词的数据库表结构，读取历史词数据
-                    int cityId = Globals.getCurrentCityInfo().getId();
-                    HistoryWordTable.readHistoryWord(mContext, cityId, HistoryWordTable.TYPE_POI);
-                    TrafficQueryFragment.TrafficOnCityChanged(Sphinx.this, cityId);
                     
                     try {
                         Thread.sleep(6*1000);
@@ -520,6 +516,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
+                    
+                    // 初始化存储历史词的数据库表结构，读取历史词数据
+                    int cityId = Globals.getCurrentCityInfo().getId();
+                    readHistoryWord(cityId);
 
                     if (isFinishing() == false) {
                         mHandler.post(new Runnable() {
@@ -1870,15 +1870,31 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             TKConfig.setPref(mContext, TKConfig.PREFS_LAST_LON, String.valueOf(position.getLon()));
             TKConfig.setPref(mContext, TKConfig.PREFS_LAST_LAT, String.valueOf(position.getLat()));
             TKConfig.setPref(mContext, TKConfig.PREFS_LAST_ZOOM_LEVEL, String.valueOf(cityInfo.getLevel()));
+            
+            // 打开软件时不立即读取历史词
             if (mPOIHomeFragment != null) {
-                HistoryWordTable.readHistoryWord(mContext, cityId, HistoryWordTable.TYPE_POI);
-                TrafficQueryFragment.TrafficOnCityChanged(this, cityId);
+                readHistoryWord(cityId);
             }
             
             Intent service = new Intent(MapStatsService.ACTION_STATS_CURRENT_DOWNLOAD_CITY);
             service.setClass(mThis, MapStatsService.class);
             startService(service);
         }    
+    }
+    
+    public void readHistoryWord(int cityId) {
+        synchronized (this) {
+            reloadTrafficHistoryWord(cityId);
+            HistoryWordTable.readHistoryWord(mContext, cityId, HistoryWordTable.TYPE_POI);
+            HistoryWordTable.readHistoryWord(this, cityId, HistoryWordTable.TYPE_BUSLINE);
+        }
+    }
+    
+    public void reloadTrafficHistoryWord(int cityId) {
+        synchronized (this) {
+            MapEngine.getInstance().suggestwordCheck(this, cityId);
+            HistoryWordTable.readHistoryWord(this, cityId, HistoryWordTable.TYPE_TRAFFIC);
+        }
     }
         
     public void showTip(int resId, int duration) {
@@ -2867,8 +2883,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                             id == R.id.view_hotel_home) {
                         Globals.setHotelCityInfo(null);
                         int cityId = Globals.getCurrentCityInfo().getId();
-                        mMapEngine.suggestwordCheck(this, cityId);
-                        HistoryWordTable.readHistoryWord(this, cityId, HistoryWordTable.TYPE_TRAFFIC);
+                        reloadTrafficHistoryWord(cityId);
                     }
                 }
 

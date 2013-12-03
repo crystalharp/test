@@ -1135,10 +1135,4 @@ public class TrafficQueryFragment extends BaseFragment {
             }
         }
     }
-
-    public static void TrafficOnCityChanged(Sphinx sphinx, int cityId) {
-        MapEngine.getInstance().suggestwordCheck(sphinx, cityId);
-        HistoryWordTable.readHistoryWord(sphinx, cityId, HistoryWordTable.TYPE_TRAFFIC);
-        HistoryWordTable.readHistoryWord(sphinx, cityId, HistoryWordTable.TYPE_BUSLINE);
-    }
 }

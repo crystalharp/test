@@ -389,9 +389,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         mPOI = null;
 
         int cityId = Globals.getCurrentCityInfo().getId();
-        MapEngine.getInstance().suggestwordCheck(mSphinx, cityId);
-        HistoryWordTable.readHistoryWord(mSphinx, cityId, HistoryWordTable.TYPE_TRAFFIC);
-        
+        mSphinx.reloadTrafficHistoryWord(cityId);
     }
     
     void refreshFilterCategory() {
