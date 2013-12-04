@@ -29,6 +29,8 @@ public class LocationService extends TKNetworkService {
     
     public static Location LOCATION_FOR_TEST;
     
+    public static final long SCAN_WIFI_INTERVAL = 32 * 1000;
+    
     long lastScanTime = 0;
     
     @Override
@@ -135,7 +137,7 @@ public class LocationService extends TKNetworkService {
         }
         
         long time = System.currentTimeMillis();
-        if (time - this.lastScanTime > 20*1000) {
+        if (time - this.lastScanTime > SCAN_WIFI_INTERVAL) {
             this.lastScanTime = time;
             locationQuery.startScanWifi();
         }

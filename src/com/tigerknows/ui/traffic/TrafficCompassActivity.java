@@ -7,7 +7,10 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.location.GpsSatellite;
+import android.location.GpsStatus;
 import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -21,7 +24,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Iterator;
+import java.util.List;
 
 import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
@@ -46,6 +52,28 @@ public class TrafficCompassActivity extends BaseActivity implements SensorEventL
 	private Button mGPSBtn;
 	private RelativeLayout mBodyRly;
 	private TextView mSunCompassHintTxv;
+    private LocationManager mLocationManager;
+    private boolean mAddGpsStatusListener = false;
+    private List<GpsSatellite> mSatelliteList = new ArrayList<GpsSatellite>();
+    private GpsStatus.Listener mGpsStatusListener = new GpsStatus.Listener() {
+        
+        @Override
+        public void onGpsStatusChanged(int event) {
+            if (event == GpsStatus.GPS_EVENT_SATELLITE_STATUS){
+                GpsStatus status = mLocationManager.getGpsStatus(null);
+                if(status != null){
+                    int maxSatellites = status.getMaxSatellites();
+                    Iterator<GpsSatellite> it = status.getSatellites().iterator();
+                    mSatelliteList.clear();
+                    int count = 0;
+                    while (it.hasNext() && count <= maxSatellites){
+                        mSatelliteList.add(it.next());
+                        count++;
+                    }
+                }
+            }
+        }
+    };
 	
 	private TextView[] mLocationDetailTxv = new TextView[6];
 	private int[] mLocationDetailID = new int[]{
@@ -79,6 +107,8 @@ public class TrafficCompassActivity extends BaseActivity implements SensorEventL
 				refreshLocationAndCompass();
 			}
     	});
+
+    	mLocationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
     }
     
     protected void findViews(){
@@ -132,6 +162,10 @@ public class TrafficCompassActivity extends BaseActivity implements SensorEventL
     
     @Override
     public void onPause(){
+        if (mAddGpsStatusListener) {
+            mLocationManager.removeGpsStatusListener(mGpsStatusListener);
+        }
+        mAddGpsStatusListener = false; 
     	if(mSensorManager != null){
     		mSensorManager.unregisterListener(this);
     	}
@@ -149,6 +183,11 @@ public class TrafficCompassActivity extends BaseActivity implements SensorEventL
     @Override
     public void onResume(){
     	super.onResume();
+        List<String> providers = mLocationManager.getAllProviders();
+        if (providers.contains(LocationManager.GPS_PROVIDER)) {
+            mAddGpsStatusListener = true;
+            mLocationManager.addGpsStatusListener(mGpsStatusListener);
+        }
     	refreshLocationAndCompass();
     	refreshGPS();
     }
@@ -203,7 +242,7 @@ public class TrafficCompassActivity extends BaseActivity implements SensorEventL
     		locationDetail[1] = String.valueOf(Utility.doubleKeep(location.getLatitude(), 6));
     		locationDetail[2] = location.hasAltitude() ? String.valueOf(Utility.doubleKeep(location.getAltitude(), 1)) : EMPTY;
     		locationDetail[3] = location.hasSpeed() ? String.valueOf(Utility.doubleKeep(location.getSpeed()*3.6, 1)) : EMPTY;
-    		locationDetail[4] = location.hasAltitude() ? String.valueOf(mTKLocationManager.getSatelliteSize()) : EMPTY;
+    		locationDetail[4] = location.hasAltitude() ? String.valueOf(mSatelliteList.size()) : EMPTY;
     		locationDetail[5] = location.hasAccuracy() ? String.valueOf(Utility.doubleKeep(location.getAccuracy(), 1)) : EMPTY;
     		//Toast.makeText(mThis, location.getProvider(), Toast.LENGTH_SHORT).show();
     	}

@@ -25,7 +25,10 @@ import com.tigerknows.service.TigerknowsLocationManager;
 import com.tigerknows.util.Utility;
 import com.tigerknows.util.ParserUtil;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.location.Location;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
@@ -120,6 +123,10 @@ public class LocationQuery extends BaseQuery {
     private HashMap<LocationParameter, Location> offlineLocationCache = new HashMap<LocationParameter, Location>();
     
     private LocationTable locationTable = null;
+    
+    private ScanWifiBroadcastReceiver scanWifiBroadcastReceiver = new ScanWifiBroadcastReceiver();
+    
+    private List<ScanResult> scanResults;
 
     /**
      * 清除所有缓存的定位信息
@@ -164,6 +171,7 @@ public class LocationQuery extends BaseQuery {
         super(context, API_TYPE_LOCATION_QUERY, VERSION);
         this.requestParameters = new ListRequestParameters();
         this.wifiManager = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
+            
         try {
             Class localClass1 = Class.forName("android.net.wifi.WifiManager");
             Field mService = localClass1.getDeclaredField("mService");
@@ -190,7 +198,7 @@ public class LocationQuery extends BaseQuery {
             this.requestParameters.clear();
             super.query();
             if (locationResponseCode == LOCATION_RESPONSE_CODE_FAILED || locationResponseCode == LOCATION_RESPONSE_CODE_SUCCEED) {
-                LogWrapper.i("LocationQuery", "query():location="+location);
+                LogWrapper.i(TAG, "query():location="+location);
                 
                 if (locationParameter == null) {
                     locationParameter = makeLocationParameter();
@@ -219,8 +227,7 @@ public class LocationQuery extends BaseQuery {
         addParameter("phone_type", String.valueOf(TKConfig.getPhoneType()));
         addCommonParameters(Globals.getCurrentCityInfo(false).getId(), true);
         
-        if (wifiManager != null && wifiManager.isWifiEnabled()) {
-            List<ScanResult> scanResults = wifiManager.getScanResults();
+        if (wifiManager.isWifiEnabled()) {
             if (scanResults != null) {
                 for (ScanResult sr : scanResults) {
                     addParameter("wifi_mac[]", sr.BSSID);
@@ -301,8 +308,7 @@ public class LocationQuery extends BaseQuery {
                 locationParameter.neighboringCellInfoList.add(new TKNeighboringCellInfo(neighboringCellList.get(i)));
             }
         }
-        if (wifiManager != null && wifiManager.isWifiEnabled()) {
-            List<ScanResult> scanResults = wifiManager.getScanResults();
+        if (wifiManager.isWifiEnabled()) {
             if (scanResults != null) {
                 for(int i = scanResults.size() - 1; i >= 0; i--) {
                     ScanResult scanResult = scanResults.get(i);
@@ -449,6 +455,14 @@ public class LocationQuery extends BaseQuery {
     public void onCreate() {
     }
     
+    public void onResume() {
+        context.registerReceiver(scanWifiBroadcastReceiver, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+    }
+    
+    public void onPasue() {
+        context.unregisterReceiver(scanWifiBroadcastReceiver);
+    }
+    
     /**
      * 释放资源
      */
@@ -492,6 +506,8 @@ public class LocationQuery extends BaseQuery {
         public String time;
         
         private volatile int hashCode = 0;
+        
+        public List<ScanResult> scanResults;
         
         public LocationParameter() {
             time = SIMPLE_DATE_FORMAT.format(Calendar.getInstance().getTime());
@@ -853,5 +869,17 @@ public class LocationQuery extends BaseQuery {
         public String toString() {
             return BSSID+","+level;
         }
+    }
+    
+    private class ScanWifiBroadcastReceiver extends BroadcastReceiver
+    {
+
+      public void onReceive(Context paramContext, Intent paramIntent)
+      {
+          LogWrapper.d(TAG, "ScanWifiBroadcastReceiver onReceive()");
+          if (wifiManager.isWifiEnabled()) {
+              scanResults = wifiManager.getScanResults();
+          }
+      }
     }
 }

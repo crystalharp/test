@@ -13,8 +13,6 @@ import com.tigerknows.model.LocationQuery.TKCellLocation;
 import com.tigerknows.service.TigerknowsLocationManager;
 
 import android.content.Context;
-import android.location.GpsSatellite;
-import android.location.GpsStatus;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -23,7 +21,6 @@ import android.os.Bundle;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -69,7 +66,6 @@ public class TKLocationManager {
     private LocationQuery locationQuery;
     private ArrayList<TKLocationListener> locationListenerList = new ArrayList<TKLocationListener>();
     private Object locationChangeLock = new Object();
-    private List<GpsSatellite> mSatelliteList = new ArrayList<GpsSatellite>();
     private Location lastLocation;
     
     public LocationUpload getGPSLocationUpload() {
@@ -89,49 +85,19 @@ public class TKLocationManager {
         networkLocationManager = new TigerknowsLocationManager(context); 
         networkLocationManager.addLocationListener(new TigerknowsLocationListener());
         locationManager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
+        
+        locationListener = new AndroidLocationListener();
     }
     
     public void prepareLocation() {
         List<String> providers = locationManager.getAllProviders();
-        locationListener = new AndroidLocationListener();
         if (providers.contains(LocationManager.GPS_PROVIDER)) {
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, REQUEST_MIN_TIME, REQUEST_MIN_DISTANCE, locationListener);
-            locationManager.addGpsStatusListener(new GpsStatus.Listener() {
-				@Override
-				public void onGpsStatusChanged(int event) {
-					if (event == GpsStatus.GPS_EVENT_SATELLITE_STATUS){
-						GpsStatus status = locationManager.getGpsStatus(null);
-						if(status != null){
-							int maxSatellites = status.getMaxSatellites();
-							Iterator<GpsSatellite> it = status.getSatellites().iterator();
-							mSatelliteList.clear();
-							int count = 0;
-							while (it.hasNext() && count <= maxSatellites){
-								mSatelliteList.add(it.next());							
-								count++;
-							}
-						}
-					}
-				}
-			});
         }
         if (providers.contains(LocationManager.NETWORK_PROVIDER)) {
             locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, REQUEST_MIN_TIME, REQUEST_MIN_DISTANCE, locationListener);
         }
         networkLocationManager.bindService();
-    }
-    
-    public void prepareLocation(long minTime, float minInstance) {
-        if (locationManager != null && locationListener != null) {
-            locationManager.removeUpdates(locationListener);
-            List<String> providers = locationManager.getAllProviders();
-            if (providers.contains(LocationManager.GPS_PROVIDER)) {
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTime, minInstance, locationListener);
-            }
-            if (providers.contains(LocationManager.NETWORK_PROVIDER)) {
-                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, minTime, minInstance, locationListener);
-            }
-        }
     }
     
     public void removeUpdates() {
@@ -152,6 +118,14 @@ public class TKLocationManager {
         gpsLocationUpload.onCreate();
         networkLocationUpload.onCreate();
         locationQuery.onCreate();
+    }
+    
+    public void onResume() {
+        locationQuery.onResume();
+    }
+    
+    public void onPause() {
+        locationQuery.onPasue();
     }
     
     public void onDestroy() {
@@ -329,9 +303,5 @@ public class TKLocationManager {
         public String toString() {
             return "TKLocation[lac=" + lac + ", cid=" + cid + ", time=" + time + ", location=" + location+"]";
         }
-    }
-    
-    public int getSatelliteSize(){
-    	return mSatelliteList.size();
     }
 }

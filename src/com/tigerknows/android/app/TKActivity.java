@@ -465,6 +465,7 @@ public class TKActivity extends Activity implements TKAsyncTask.EventListener {
         
         mTKLocationManager.addLocationListener(mLocationListener);
         mTKLocationManager.prepareLocation();
+        mTKLocationManager.onResume();
         
         IntentFilter intentFilter = new IntentFilter(Intent.ACTION_MEDIA_MOUNTED);
         intentFilter.addAction(Intent.ACTION_MEDIA_UNMOUNTED);
@@ -496,6 +497,7 @@ public class TKActivity extends Activity implements TKAsyncTask.EventListener {
         }
         
         mTKLocationManager.removeUpdates();
+        mTKLocationManager.onPause();
 
         unregisterReceiver(mExternalStorageMountReceiver);
         unregisterReceiver(mAirPlaneModeReceiver);
