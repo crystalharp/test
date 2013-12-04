@@ -121,7 +121,6 @@ public class DiscoverCategoryView extends LinearLayout {
         mNearbyNumTxv.setText(formatStr(mSphinx.getString(R.string.nearby_, "12")));
         mNearbyNumTxv.setVisibility(View.INVISIBLE);
         mCityNumTxv.setText(" ");
-        layoutBubbleImv();
         mProgressBar.setVisibility(View.VISIBLE);
     }
     
@@ -144,14 +143,7 @@ public class DiscoverCategoryView extends LinearLayout {
             mCityNumTxv.setText(" ");
         }
         mNearbyNumTxv.setVisibility(View.VISIBLE);
-        layoutBubbleImv();
         mProgressBar.setVisibility(View.INVISIBLE);
-    }
-    
-    private void layoutBubbleImv() {
-        mNearbyNumTxv.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-        int width = mNearbyNumTxv.getMeasuredWidth();
-        ((RelativeLayout.LayoutParams) mBubbleImv.getLayoutParams()).leftMargin = width+Util.dip2px(Globals.g_metrics.density, 20);
     }
     
     private SpannableStringBuilder formatStr(String str) {
