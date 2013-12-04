@@ -22,6 +22,7 @@ import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
+import com.tigerknows.android.app.TKActivity;
 import com.tigerknows.android.location.Position;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
@@ -87,6 +88,7 @@ public class SubwayMapFragment extends BaseFragment implements RetryView.CallBac
     public void onResume() {
         super.onResume();
         
+        mTitleBtn.setText(mTitle);
         if (!mDismissed) {
             return;
         }
@@ -154,31 +156,29 @@ public class SubwayMapFragment extends BaseFragment implements RetryView.CallBac
             mWebWbv.setVisibility(View.VISIBLE);
             mQueryingView.setVisibility(View.GONE);
             mEmptyView.setVisibility(View.GONE);
-            mTitleBtn.setText(mCityInfo.getCName() + mTitle);
+            mTitle = mCityInfo.getCName() + mTitle;
             mRetryView.setVisibility(View.GONE);
             break;
         case STAT_QUERY:
             mWebWbv.setVisibility(View.GONE);
             mQueryingView.setVisibility(View.VISIBLE);
             mEmptyView.setVisibility(View.GONE);
-            mTitleBtn.setText(mTitle);
             mRetryView.setVisibility(View.GONE);
             break;
         case STAT_NODATA:
             mWebWbv.setVisibility(View.GONE);
             mQueryingView.setVisibility(View.GONE);
             mEmptyView.setVisibility(View.VISIBLE);
-            mTitleBtn.setText(mTitle);
             mRetryView.setVisibility(View.GONE);
             break;
         case STAT_QUERY_FAILED:
             mWebWbv.setVisibility(View.GONE);
             mQueryingView.setVisibility(View.GONE);
             mEmptyView.setVisibility(View.GONE);
-            mTitleBtn.setText(mTitle);
             mRetryView.setVisibility(View.VISIBLE);
             break;
         }
+        mTitleBtn.setText(mTitle);
     }
     
     private void setListener() {
@@ -275,7 +275,7 @@ public class SubwayMapFragment extends BaseFragment implements RetryView.CallBac
         int stat = STAT_QUERY_FAILED;
         Response response = fileDownload.getResponse();
         if (response != null) {
-            if (BaseActivity.checkResponseCode(fileDownload, mSphinx, new int[]{953}, false, this, false) == false) {
+            if (BaseActivity.checkResponseCode(fileDownload, mSphinx, new int[]{953}, TKActivity.SHOW_ERROR_MSG_NO, this, false, true) == false) {
                 if (response.getResponseCode() != 953) {
                     subwayPath = MapEngine.getSubwayDataPath(mSphinx, mCityInfo.getId());
                     if (subwayPath != null) {
