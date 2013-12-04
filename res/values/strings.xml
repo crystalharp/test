@@ -432,7 +432,7 @@
     <string name="feedback_success">我们已经收到你的建议，感谢你的支持！</string>
     <string name="feedback_failure">提交失败！</string>
     <string name="your_feedback">感谢你使用老虎地图，请输入你的意见！</string>
-    <string name="your_mobile_number">请输入你的手机号码(选填)</string>
+    <string name="your_mobile_number">请输入你的手机或QQ号(选填)</string>
     <string name="mobile_number_">手机号码：</string>
 
     <string name="this_is_fresh_version">本软件已经是最新版本了！</string>
