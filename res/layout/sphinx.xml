@@ -5,6 +5,7 @@
     android:id="@+id/root_view"
     android:gravity="top|left"
     android:orientation="vertical"
+    android:background="@color/normal_background"
     >
 
     <com.tigerknows.map.MapView

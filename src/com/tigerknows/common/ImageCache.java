@@ -310,6 +310,8 @@ public class ImageCache {
 		if(appPath==null || appPath.equals("")){
 			return;
 		}
+		
+		appPath = "";
 
 		LogWrapper.d("TileTable", "stopWritingAndRemoveOldTiles begin");
 		new Thread(){

@@ -200,12 +200,6 @@ public class SettingActivity extends BaseActivity {
 								@Override
 								public void run() {
 									ImageCache imageCache = ImageCache.getInstance();
-									try {
-									    imageCache.init(mContext);
-									} catch (APIException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-									}
 									Message msg[] = new Message[3];
 									for (int i=0; i<msg.length; i++){
 										msg[i] = new Message();

@@ -2,7 +2,6 @@
 package com.tigerknows.common;
 
 import com.decarta.Globals;
-import com.decarta.android.exception.APIException;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.TKConfig;
 import com.tigerknows.android.net.HttpManager;
@@ -113,6 +112,7 @@ public class AsyncImageLoader {
      * @return 返回内存中缓存的图像，第一次加载返回null
      */
     public BitmapDrawable loadDrawable(final Context context, final TKURL imageUrl, final ImageCallback callback) {
+        LogWrapper.d(TAG, "loadDrawable() url="+imageUrl.url);
         
     	BitmapDrawable b = checkMemoryAndDisk(context, imageUrl);
     	if (b != null) {
@@ -251,23 +251,13 @@ public class AsyncImageLoader {
         public void imageLoaded(BitmapDrawable imageDrawable);
     }
     
-    public void onCreate(Context context) {
-        
-        try {
-            ImageCache.getInstance().init(context);
-        } catch (APIException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        
+    public void onCreate(Context context) {        
         if (executorService == null || executorService.isShutdown()) {
             executorService = Executors.newFixedThreadPool(THREAD_COUNT);
         }
     }
     
     public void onDestory() {
-
-        ImageCache.getInstance().stopWritingAndRemoveOldTiles();
         
         setViewToken("");
         synchronized (mHttpClientList) {

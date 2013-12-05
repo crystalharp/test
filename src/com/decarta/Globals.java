@@ -1,6 +1,7 @@
 package com.decarta;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.location.Location;
 import android.text.TextUtils;
@@ -20,6 +21,7 @@ import com.tigerknows.R;
 import com.tigerknows.TKConfig;
 import com.tigerknows.android.location.Position;
 import com.tigerknows.common.AsyncImageLoader;
+import com.tigerknows.common.ImageCache;
 import com.tigerknows.map.MapEngine;
 import com.tigerknows.map.MapEngine.CityInfo;
 import com.tigerknows.model.BootstrapModel;
@@ -132,6 +134,8 @@ public class Globals {
 
     public static String g_ClientUID = null; 
     
+    public static boolean init = false;
+    
     /**
      * Gets the number of cores available in this device, across all processors.
      * Requires: Ability to peruse the filesystem at "/sys/devices/system/cpu"
@@ -239,24 +243,44 @@ public class Globals {
     
     /**
      * 重置当前所选城市、定位信息、图片尺寸
-     * @param context
+     * @param activity
      */
-    public static void init(Context context) {
+    public static void init(Activity activity) {
+        
+        initDataPath(activity);
+        
+        AsyncImageLoader.getInstance().onCreate(activity);
+        
+        if (init) {
+            return;
+        }
+        init = true;
+        
         Globals.g_Current_City_Info = null;
         Globals.g_My_Location_City_Info = null;
         Globals.g_My_Location = null;
         Globals.g_My_Location_State = LOCATION_STATE_NONE;
         
-        Globals.readSessionAndUser(context);
-        Globals.setConnectionFast(Utility.isConnectionFast(context));
+        Globals.readSessionAndUser(activity);
+        Globals.setConnectionFast(Utility.isConnectionFast(activity));
 
         // 读取屏幕参数，如高宽、密度
-        WindowManager winMan=(WindowManager)context.getSystemService(Context.WINDOW_SERVICE);
+        WindowManager winMan=(WindowManager)activity.getSystemService(Context.WINDOW_SERVICE);
         Display display=winMan.getDefaultDisplay();
         display.getMetrics(Globals.g_metrics);
         
         initOptimalAdaptiveScreenSize();
-        AsyncImageLoader.getInstance().onCreate(context);
+    }
+    
+    public static void initDataPath(Activity activity) {
+        try {
+            MapEngine.getInstance().initMapDataPath(activity);
+            ImageCache.getInstance().init(activity);
+        } catch (APIException e) {
+            e.printStackTrace();
+            Utility.showDialogAcitvity(activity, activity.getString(R.string.not_enough_space_and_please_clear));
+            activity.finish();
+        }
     }
 
     public static boolean isConnectionFast() {
@@ -267,7 +291,7 @@ public class Globals {
         Globals.sConnectionFast = isConnectionFast;
     }    
     
-    static void initOptimalAdaptiveScreenSize() {
+    private static void initOptimalAdaptiveScreenSize() {
         int diff320 = Math.abs(Globals.g_metrics.widthPixels-320);
         int diff480 = Math.abs(Globals.g_metrics.widthPixels-480);
         int diff800 = Math.abs(Globals.g_metrics.widthPixels-800);
@@ -368,16 +392,10 @@ public class Globals {
 
             Position lastPosition = new Position(lastLat, lastLon);
             if(Util.inChina(lastPosition)) {
-                MapEngine mapEngine = MapEngine.getInstance();
-                try {
-                    mapEngine.initMapDataPath(context);
-                    int cityId = MapEngine.getCityId(lastPosition);
-                    cityInfo = MapEngine.getCityInfo(cityId);
-                    cityInfo.setPosition(lastPosition);
-                    cityInfo.setLevel(lastZoomLevel);
-                } catch (APIException e) {
-                    e.printStackTrace();
-                }
+                int cityId = MapEngine.getCityId(lastPosition);
+                cityInfo = MapEngine.getCityInfo(cityId);
+                cityInfo.setPosition(lastPosition);
+                cityInfo.setLevel(lastZoomLevel);
             }
         }
         return cityInfo;

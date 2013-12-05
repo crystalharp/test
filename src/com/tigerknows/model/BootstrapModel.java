@@ -8,7 +8,10 @@ import com.tigerknows.TKConfig;
 import com.tigerknows.model.xobject.XArray;
 import com.tigerknows.model.xobject.XMap;
 import com.tigerknows.util.ByteUtil;
+import com.tigerknows.util.CalendarUtil;
 import com.tigerknows.util.Utility;
+
+import android.content.Context;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -320,10 +323,10 @@ public class BootstrapModel extends XMapData {
             return date;
         }
         
-        public boolean isAvailably() {
+        public boolean isAvailably(Context context) {
             boolean result = false;
             if (url != null && begin != null && end != null) {
-                long time = System.currentTimeMillis();
+                long time = CalendarUtil.getExactTime(context);
                 if (time >= begin.getTime() && time <= end.getTime()) {
                     result = true;
                 }

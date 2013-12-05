@@ -2822,6 +2822,9 @@ public class TilesView extends GLSurfaceView {
 		}
 
 	    public void clearTextTexture() {
+	        if (textTexturePool == null) {
+	            return;
+	        }
 	        Iterator<Texture> iterator4=textTexturePool.values().iterator();
 	        while(iterator4.hasNext()){
 	            Texture texture = iterator4.next();
@@ -2838,6 +2841,9 @@ public class TilesView extends GLSurfaceView {
 	    }
 	    
 	    public void clearIconTexture() {
+            if (mapWordIconPool == null) {
+                return;
+            }
 	    	//清空纹理
 	        Iterator<Texture> iterator5 = mapWordIconPool.values().iterator();
 	        while(iterator5.hasNext()){
@@ -3795,6 +3801,9 @@ public class TilesView extends GLSurfaceView {
 		}
 		
 		private void clearIconPool() {
+            if (iconPool == null) {
+                return;
+            }
 			LogWrapper.i("TilesView", "clean iconPool total texture num:" + iconPool.size());
 			Iterator<Integer> iterator2 = iconPool.values().iterator();
 			while (iterator2.hasNext()) {
@@ -3805,6 +3814,9 @@ public class TilesView extends GLSurfaceView {
 		}
 		
 		private void clearClusterTextPool() {
+            if (clusterTextPool == null) {
+                return;
+            }
 			LogWrapper.i("TilesView", "clean clusterTextPool total texture num:" + clusterTextPool.size());
 			Iterator<Integer> iterator3 = clusterTextPool.values().iterator();
 			while (iterator3.hasNext()) {
@@ -3826,7 +3838,9 @@ public class TilesView extends GLSurfaceView {
 //			Label.clearTextTexture();
 
 //			compass.clearTextureRef(gl);
-			compass.clearTextureRef();
+			if (compass != null) {
+			    compass.clearTextureRef();
+			}
 		}
 
 		private int genTextureRef(GL10 gl) {

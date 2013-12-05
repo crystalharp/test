@@ -9,7 +9,6 @@ import com.tigerknows.common.ActionLog;
 import com.tigerknows.common.AsyncImageLoader;
 import com.tigerknows.common.AsyncImageLoader.ImageCallback;
 import com.tigerknows.common.AsyncImageLoader.TKURL;
-import com.tigerknows.map.label.Label;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.Bootstrap;
 import com.tigerknows.model.BootstrapModel;
@@ -67,20 +66,9 @@ public class LauncherActivity extends TKActivity {
 
         mActionTag = ActionLog.Launcher;
         
-        
         TKConfig.readConfig();
-        Globals.init(mThis);
         
-        initDataPath(getApplicationContext());
-//        CONFIG.TILE_SIZE = (int) (256 * Globals.g_metrics.density);
-//        if(CONFIG.TILE_SIZE > 256)
-//          CONFIG.TILE_SIZE = 512;
-//        else 
-//          CONFIG.TILE_SIZE = 256;
-        Label.init(Globals.g_metrics.widthPixels, Globals.g_metrics.heightPixels);
-        
-        Intent intent = getIntent();
-        if (Intent.ACTION_MAIN.equals(intent.getAction())) {
+        if (Intent.ACTION_MAIN.equals(mIntent.getAction())) {   // 从快捷方式启动老虎时，老虎正在运行但不在前台的情况
             
             String lastActivityClassName = LastActivityClassName;
             if (lastActivityClassName != null && lastActivityClassName.equals(this.getLocalClassName()) == false) {
@@ -96,6 +84,7 @@ public class LauncherActivity extends TKActivity {
         mStartupDisplayLogPath = TKConfig.getDataPath(true)+"startupDisplayLog";
         
         AsyncImageLoader.SUPER_VIEW_TOKEN = mThis.toString();
+        
         File startupDisplayFile = new File(TKConfig.getDataPath(true)+StartupDisplay.FILE_NAME);
         if (startupDisplayFile.exists() && startupDisplayFile.isFile()) {
             try {
@@ -163,31 +152,31 @@ public class LauncherActivity extends TKActivity {
     
     void launch(boolean fristUse, boolean upgrade) {
 
-        if (fristUse || upgrade) {
+        Intent intent = getIntent();
+        Intent newIntent = new Intent();
+        newIntent.setData(intent.getData());
+        newIntent.putExtra(Sphinx.EXTRA_WEIXIN, intent.getBooleanExtra(Sphinx.EXTRA_WEIXIN, false));
+        newIntent.putExtra(Sphinx.EXTRA_PULL_MESSAGE, intent.getParcelableExtra(Sphinx.EXTRA_PULL_MESSAGE));
+        newIntent.putExtra(Sphinx.EXTRA_SNAP_TYPE, intent.getIntExtra(Sphinx.EXTRA_SNAP_TYPE, -1));
+        if (fristUse || upgrade) {   // 首次安装或升级安装使用的情况
             sendFirstStartupBroadcast();
-            Intent intent = new Intent();
-            intent.setClass(mThis, GuideScreenActivity.class);
-            intent.putExtra(GuideScreenActivity.APP_FIRST_START, fristUse);
-            intent.putExtra(GuideScreenActivity.APP_UPGRADE, upgrade);
-            startActivity(intent);
+            newIntent.setClass(mThis, GuideScreenActivity.class);
+            newIntent.putExtra(GuideScreenActivity.APP_FIRST_START, fristUse);
+            newIntent.putExtra(GuideScreenActivity.APP_UPGRADE, upgrade);
+            startActivity(newIntent);
             
             TKConfig.setPref(mThis, TKConfig.PREFS_FIRST_USE, "1");
             TKConfig.setPref(mThis, TKConfig.PREFS_UPGRADE, "1");
             
         } else {
-            Intent intent = getIntent();
-            if (Intent.ACTION_MAIN.equals(intent.getAction())) {
-                Intent newIntent = new Intent();
-                newIntent.setClass(getBaseContext(), Sphinx.class);
+            newIntent.setClass(mThis, Sphinx.class);
+            if (Intent.ACTION_MAIN.equals(intent.getAction())) {   // 从快捷方式启动老虎
                 startActivity(newIntent);
-            } else {
-                Intent sphinx = (Intent) intent.clone();
-                sphinx.setClass(getBaseContext(), Sphinx.class);
-                sphinx.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(sphinx);
+            } else {   // 来自第三方的调用
+                newIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(newIntent);
             }
         }
-        
         
         finish();
     }
@@ -245,7 +234,7 @@ public class LauncherActivity extends TKActivity {
     void showStartupDisplay(List<StartupDisplay> startupDisplayList) {
         if (startupDisplayList != null && startupDisplayList.size() > 0) {
             StartupDisplay startupDisplay = startupDisplayList.get(0);
-            if (startupDisplay.isAvailably()) {
+            if (startupDisplay.isAvailably(mThis)) {
                 final String url = startupDisplay.getUrl();
                 LogWrapper.d(TAG, "url:"+url);
                 BitmapDrawable bitmapDrawable = AsyncImageLoader.getInstance().loadDrawable(mThis,
@@ -269,7 +258,7 @@ public class LauncherActivity extends TKActivity {
             mStartupImv.setImageDrawable(bitmapDrawable);
             int beginIndex = url.lastIndexOf("/");
             int endIndex = url.lastIndexOf(".");
-            String md5 = url.substring(beginIndex+1, endIndex)+"_"+SIMPLE_DATE_FORMAT.format(Calendar.getInstance());
+            String md5 = url.substring(beginIndex+1, endIndex)+"_"+SIMPLE_DATE_FORMAT.format(Calendar.getInstance().getTime());
             LogWrapper.d(TAG, "StartupDisplay md5:"+md5);
             synchronized (mStartupDisplayLogPath) {
                 Utility.writeFile(mStartupDisplayLogPath, (";"+md5).getBytes(), false);

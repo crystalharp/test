@@ -85,6 +85,7 @@ import com.tigerknows.android.os.TKAsyncTask;
 import android.widget.Toast;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.common.AsyncImageLoader;
+import com.tigerknows.common.ImageCache;
 import com.tigerknows.common.LogUpload;
 import com.tigerknows.map.MapEngine;
 import com.tigerknows.map.MapView;
@@ -94,6 +95,7 @@ import com.tigerknows.map.MapEngine.CityInfo;
 import com.tigerknows.map.MapView.DownloadEventListener;
 import com.tigerknows.map.MapView.MapScene;
 import com.tigerknows.map.MapView.SnapMap;
+import com.tigerknows.map.label.Label;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.Dianying;
@@ -445,16 +447,15 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         mContext = getBaseContext();
         mSensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
         mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
+
+//        CONFIG.TILE_SIZE = (int) (256 * Globals.g_metrics.density);
+//        if(CONFIG.TILE_SIZE > 256)
+//          CONFIG.TILE_SIZE = 512;
+//        else 
+//          CONFIG.TILE_SIZE = 256;
+        Label.init(Globals.g_metrics.widthPixels, Globals.g_metrics.heightPixels);
         
         mMapEngine = MapEngine.getInstance();
-        try {
-            mMapEngine.initMapDataPath(getApplicationContext());
-        } catch (APIException exception) {
-            exception.printStackTrace();
-            Utility.showDialogAcitvity(mThis, getString(R.string.not_enough_space_and_please_clear));
-            finish();
-            return;
-        }
         
         CityInfo cityInfo = MapEngine.getCityInfo(MapEngine.CITY_ID_BEIJING);
         if (cityInfo.isAvailably() == false) {
@@ -796,14 +797,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             return;
         }
 
-        List<BaseQuery> list = new ArrayList<BaseQuery>();
-        
-        LocationQuery locationQuery = LocationQuery.getInstance(mThis);
-        list.add(locationQuery);
-        
         TKConfig.setPref(mContext, TKConfig.PREFS_VERSION_NAME, TKConfig.getClientSoftVersion());
-        
-        queryStart(list);
         
         initWeibo(false, false);
 	}
@@ -1119,6 +1113,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 	@Override
 	protected void onDestroy() {
 	    LauncherActivity.LastActivityClassName = null;
+        ImageCache.getInstance().stopWritingAndRemoveOldTiles();
         AsyncImageLoader.getInstance().onDestory();
         mTKLocationManager.onDestroy();
         TKWeixin.getInstance(this).onDestory();

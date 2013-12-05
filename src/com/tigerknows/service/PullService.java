@@ -147,15 +147,9 @@ public class PullService extends Service {
                 Location location = locationQuery.getLocation();
                 Position position = null;
                 if (location != null) {
-                    MapEngine mapEngine = MapEngine.getInstance();
-                    try {
-                        mapEngine.initMapDataPath(getApplicationContext());
-                        position = mapEngine.latlonTransform(new Position(location.getLatitude(), location.getLongitude()));
-                        int cityId = MapEngine.getCityId(position);
-                        locationCityInfo = MapEngine.getCityInfo(cityId);
-                    } catch (APIException e) {
-                        e.printStackTrace();
-                    }
+                    position = MapEngine.getInstance().latlonTransform(new Position(location.getLatitude(), location.getLongitude()));
+                    int cityId = MapEngine.getCityId(position);
+                    locationCityInfo = MapEngine.getCityInfo(cityId);
                 } else {
                     mActionLog.addAction(ActionLog.RadarPushFailed, mTriggerMode, FAIL_NO_LOCATION);
                     exitService(STAT_NORMAL_FAIL, requestCal);

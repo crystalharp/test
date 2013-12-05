@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.decarta.Globals;
-import com.decarta.android.exception.APIException;
 import com.decarta.android.util.LogWrapper;
 import com.tencent.tauth.TAuthView;
 import com.tendcloud.tenddata.TCAgent;
@@ -24,7 +23,6 @@ import com.tigerknows.android.view.inputmethod.TKInputMethodManager;
 import android.widget.Toast;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.common.AsyncImageLoader;
-import com.tigerknows.common.ImageCache;
 import com.tigerknows.map.MapEngine;
 import com.tigerknows.map.MapEngine.CityInfo;
 import com.tigerknows.model.BaseQuery;
@@ -275,18 +273,7 @@ public class TKActivity extends Activity implements TKAsyncTask.EventListener {
         service = new Intent(mThis, MapDownloadService.class);
         stopService(service);
         
-        initDataPath(getApplicationContext());
-    }
-    
-    protected void initDataPath(Context context) {
-        try {
-            mMapEngine.initMapDataPath(context);
-            ImageCache.getInstance().init(context);
-        } catch (APIException e) {
-            e.printStackTrace();
-            Utility.showDialogAcitvity(mThis, getString(R.string.not_enough_space_and_please_clear));
-            finish();
-        }
+        Globals.initDataPath(mThis);
     }
 
     protected ConnectivityManager mConnectivityManager;
@@ -418,19 +405,22 @@ public class TKActivity extends Activity implements TKAsyncTask.EventListener {
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);        
+        super.onCreate(savedInstanceState);
         mThis = this;
         mLayoutInflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mConnectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         mSoftInputManager = new TKInputMethodManager(mThis);  
-        mMapEngine = MapEngine.getInstance();
-
         mPowerManager = (PowerManager) getSystemService(POWER_SERVICE);
         mWakeLock = mPowerManager.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK, getClass().getName()); //处理屏幕防止锁屏
-        mLocationListener = new MyLocationListener(this, null);
-        mTKLocationManager = new TKLocationManager(TKApplication.getInstance());
         
         mIntent = getIntent();
+        
+        Globals.init(mThis);
+        
+        mMapEngine = MapEngine.getInstance();
+
+        mLocationListener = new MyLocationListener(this, null);
+        mTKLocationManager = new TKLocationManager(TKApplication.getInstance());
         
         mActionLog = ActionLog.getInstance(mThis);
     }
