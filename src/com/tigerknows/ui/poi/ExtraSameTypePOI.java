@@ -3,8 +3,6 @@ package com.tigerknows.ui.poi;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.content.res.Resources;
-import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,8 +38,6 @@ public class ExtraSameTypePOI extends DynamicPOIViewTemplate {
     
     List<POI> mList = new ArrayList<POI>();
     
-    private Drawable icAPOI;
-    private String distanceA;
     private DataQuery dataQuery;
             
     void refreshBackground(LinearListAdapter lsv, int size) {
@@ -84,29 +80,10 @@ public class ExtraSameTypePOI extends DynamicPOIViewTemplate {
                 final POI target = (POI) data;
                 
                 TextView nameTxv = (TextView) child.findViewById(R.id.name_txv);
-                TextView distanceTxv = (TextView) child.findViewById(R.id.distance_txv);
-                TextView distanceFromTxv = (TextView) child.findViewById(R.id.distance_from_txv);
                 TextView moneyTxv = (TextView) child.findViewById(R.id.money_txv);
                 RatingBar startsRtb = (RatingBar) child.findViewById(R.id.stars_rtb);
                 
                 nameTxv.setText(target.getName());
-                String distance = target.getToCenterDistance();
-                if (!TextUtils.isEmpty(distance)) {
-                    if (distance.startsWith(distanceA)) {
-                        icAPOI.setBounds(0, 0, icAPOI.getIntrinsicWidth(), icAPOI.getIntrinsicHeight());
-                        distanceFromTxv.setCompoundDrawables(null, null, icAPOI, null);
-                        distanceFromTxv.setText(mSphinx.getString(R.string.distance));
-                        distanceTxv.setText(distance.replace(distanceA, ""));
-                    } else {
-                        distanceFromTxv.setText("");
-                        distanceFromTxv.setCompoundDrawables(null, null, null, null);
-                        distanceTxv.setText(distance);
-                    }
-                } else {
-                    distanceFromTxv.setText("");
-                    distanceFromTxv.setCompoundDrawables(null, null, null, null);
-                    distanceTxv.setText("");
-                }
                 
                 if (BaseQuery.SUB_DATA_TYPE_HOTEL.equals(ExtraSameTypePOI.this.dataQuery.getParameter(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE))) {
                     String price = target.getPrice();
@@ -140,9 +117,6 @@ public class ExtraSameTypePOI extends DynamicPOIViewTemplate {
             }
             
         };
-        Resources resources = mSphinx.getResources();
-        icAPOI = resources.getDrawable(R.drawable.ic_location_nearby);
-        distanceA = mSphinx.getString(R.string.distanceA);
     }
 
     @Override
