@@ -24,9 +24,7 @@ import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.android.app.TKActivity;
-import com.tigerknows.android.app.TKApplication;
 import com.tigerknows.common.ActionLog;
-import com.tigerknows.ui.BaseActivity;
 
 @SuppressWarnings("deprecation")
 public class GuideScreenActivity extends TKActivity {
@@ -51,6 +49,8 @@ public class GuideScreenActivity extends TKActivity {
     
     private AbsoluteLayout animContainer;
     
+    boolean mOnResume = false;
+    
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
@@ -70,11 +70,18 @@ public class GuideScreenActivity extends TKActivity {
 		pageChangeListener.onPageScrolled(0, 0, 0);
 		
     }
-    
+
     @Override
-	protected void onResume() {
-		super.onResume();
-	}
+    protected void onResume() {
+        mOnResume = true;
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        mOnResume = false;
+        super.onPause();
+    }
 
     // 动画的配置，只要抓住几个关键帧就能够计算出各个参数。
 	GuideScreenAnimateItem[] animItems = new GuideScreenAnimateItem[]{
@@ -288,9 +295,11 @@ public class GuideScreenActivity extends TKActivity {
     
     @Override
     public void finish() {
-        if (mAppFirstStart || mAppUpgrade) {
+        if (mOnResume) {
+            Intent intent = getIntent();
             Intent newIntent = new Intent();
-            newIntent.putExtra(APP_FIRST_START, mAppFirstStart);
+            newIntent.setData(intent.getData());
+            newIntent.putExtras(intent);
             newIntent.setClass(getBaseContext(), Sphinx.class);
             startActivity(newIntent);
         }

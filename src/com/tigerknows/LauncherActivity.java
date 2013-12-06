@@ -59,6 +59,8 @@ public class LauncherActivity extends TKActivity {
     String mStartupDisplayLogPath;
     
     String mStartupDisplayLog = null;
+    
+    boolean mOnResume = false;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -152,29 +154,29 @@ public class LauncherActivity extends TKActivity {
     
     void launch(boolean fristUse, boolean upgrade) {
 
-        Intent intent = getIntent();
-        Intent newIntent = new Intent();
-        newIntent.setData(intent.getData());
-        newIntent.putExtra(Sphinx.EXTRA_WEIXIN, intent.getBooleanExtra(Sphinx.EXTRA_WEIXIN, false));
-        newIntent.putExtra(Sphinx.EXTRA_PULL_MESSAGE, intent.getParcelableExtra(Sphinx.EXTRA_PULL_MESSAGE));
-        newIntent.putExtra(Sphinx.EXTRA_SNAP_TYPE, intent.getIntExtra(Sphinx.EXTRA_SNAP_TYPE, -1));
-        if (fristUse || upgrade) {   // 首次安装或升级安装使用的情况
-            sendFirstStartupBroadcast();
-            newIntent.setClass(mThis, GuideScreenActivity.class);
-            newIntent.putExtra(GuideScreenActivity.APP_FIRST_START, fristUse);
-            newIntent.putExtra(GuideScreenActivity.APP_UPGRADE, upgrade);
-            startActivity(newIntent);
-            
-            TKConfig.setPref(mThis, TKConfig.PREFS_FIRST_USE, "1");
-            TKConfig.setPref(mThis, TKConfig.PREFS_UPGRADE, "1");
-            
-        } else {
-            newIntent.setClass(mThis, Sphinx.class);
-            if (Intent.ACTION_MAIN.equals(intent.getAction())) {   // 从快捷方式启动老虎
+        if (mOnResume) {
+            Intent intent = getIntent();
+            Intent newIntent = new Intent();
+            newIntent.setData(intent.getData());
+            newIntent.putExtras(intent);
+            if (fristUse || upgrade) {   // 首次安装或升级安装使用的情况
+                sendFirstStartupBroadcast();
+                newIntent.setClass(mThis, GuideScreenActivity.class);
+                newIntent.putExtra(GuideScreenActivity.APP_FIRST_START, fristUse);
+                newIntent.putExtra(GuideScreenActivity.APP_UPGRADE, upgrade);
                 startActivity(newIntent);
-            } else {   // 来自第三方的调用
-                newIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(newIntent);
+                
+                TKConfig.setPref(mThis, TKConfig.PREFS_FIRST_USE, "1");
+                TKConfig.setPref(mThis, TKConfig.PREFS_UPGRADE, "1");
+                
+            } else {
+                newIntent.setClass(mThis, Sphinx.class);
+                if (Intent.ACTION_MAIN.equals(intent.getAction())) {   // 从快捷方式启动老虎
+                    startActivity(newIntent);
+                } else {   // 来自第三方的调用
+                    newIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(newIntent);
+                }
             }
         }
         
@@ -195,6 +197,18 @@ public class LauncherActivity extends TKActivity {
     private void sendFirstStartupBroadcast() {
         Intent intent = new Intent(ACTION_FIRST_STARTUP);
         sendBroadcast(intent);
+    }
+
+    @Override
+    protected void onResume() {
+        mOnResume = true;
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        mOnResume = false;
+        super.onPause();
     }
 
     @Override
