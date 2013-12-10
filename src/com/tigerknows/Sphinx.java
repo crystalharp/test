@@ -2867,7 +2867,11 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     }
                 } else if (uiStackPeek() == R.id.view_poi_detail) {
                     if (id == R.id.view_hotel_order_detail) {
-                        uiStackClearTop(R.id.view_poi_detail);
+                    	if(uiStackContains(R.id.view_hotel_order_list)){
+                    		uiStackClearTop(R.id.view_hotel_order_list);
+                    	}else{
+                    		uiStackClearTop(R.id.view_poi_detail);
+                    	}
                     }
                 } else if (uiStackPeek() == R.id.view_hotel_order_list) {
                     if (id == R.id.view_hotel_order_detail && !uiStackContains(R.id.view_hotel_order_write)) {
@@ -3015,10 +3019,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 result = true;
             }
 
-            for(int i = mUIStack.size()-1; i >= 1; i--) {
-                if (mUIStack.get(i) == preferTop && mUIStack.get(i).equals(mUIStack.get(i-1))) {
-                    mUIStack.remove(i);
-                }
+            for(int i = mUIStack.size()-1; i > index; i--) {
+                mUIStack.remove(i);
             }
             
             LogWrapper.d(TAG, "mUIStack after cleartop: " + mUIStack);
