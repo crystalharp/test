@@ -466,6 +466,13 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     }
     
     public void refreshPicture() {
+        if (mPOI == null) {
+            return;
+        }
+        mHotel = mPOI.getHotel();
+        if (mHotel == null) {
+            return;
+        }
         List<HotelTKDrawable> picList = mHotel.getHotelTKDrawableList();
         int picNum = (picList == null ? 0 : picList.size());
         imageNumTxv.setText(mSphinx.getString(R.string.pictures, picNum));
