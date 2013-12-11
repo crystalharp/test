@@ -133,6 +133,7 @@ public class ActionLog extends LogUpload {
     public static final String PickPhoto = "YD";
     public static final String CameraPhoto = "YF";
     public static final String FilterAreaChar = "YG";
+    public static final String StatsCurrentCityMap = "YH";
     
     public static final String Launcher = "FI";
     
@@ -260,6 +261,8 @@ public class ActionLog extends LogUpload {
     public static final String DishTigerRecommend = "BD";
     public static final String DishLike = "BE";
     public static final String DishCancelLike = "BF";
+    public static final String DishAddImage = "BG";
+    public static final String DishViewImage = "BH";
     
     // 优惠券列表页
     public static final String CouponList = "AM";

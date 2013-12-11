@@ -877,6 +877,7 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
         } else if (id == R.id.picture_imv) {
             Dish data = (Dish) v.getTag(R.id.picture_imv);
             if (data.getPicture() == null) {
+                mActionLog.addAction(mActionTag + ActionLog.DishAddImage);
                 Intent intent = new Intent();
                 intent.putExtra(FileUpload.SERVER_PARAMETER_REF_DATA_TYPE, BaseQuery.DATA_TYPE_DISH);
                 intent.putExtra(FileUpload.SERVER_PARAMETER_REF_ID, String.valueOf(data.getDishId()));
@@ -1286,6 +1287,7 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
         if (dish == null) {
             return;
         }
+        mActionLog.addAction(mActionTag + ActionLog.DishViewImage);
         Intent intent = new Intent();
         intent.setClass(mThis, ViewImageActivity.class);
         intent.putExtra(ViewImageActivity.EXTRA_TITLE, dish.getName());
