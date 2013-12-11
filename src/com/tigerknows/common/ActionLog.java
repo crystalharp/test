@@ -479,6 +479,8 @@ public class ActionLog extends LogUpload {
     public static final String RadarClick = Radar + "BB";
     public static final String RadarPushFailed = Radar + "BC";
     public static final String RadarPushSucceeded = Radar + "BD";
+    public static final String RadarPushStateCode = Radar + "BE";
+    public static final String RadarPushEmptyMsg = Radar + "BF";
     
     // 交通模块通用
     public static final String TrafficTransferTab = "AA";

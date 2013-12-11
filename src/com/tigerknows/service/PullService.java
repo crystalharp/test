@@ -179,12 +179,15 @@ public class PullService extends Service {
                     dataQuery.setup(currentCityInfo.getId());
                     dataQuery.query();
                     Response response = dataQuery.getResponse();
-                    if (response != null && response.getResponseCode() == 200 && response instanceof PullMessage) {
-                        PullMessage pullMessage = (PullMessage) response;
-                        processPullMessage(context, pullMessage, requestCal);
-                        mActionLog.addAction(ActionLog.RadarPushSucceeded, mTriggerMode);
-                        exitService(STAT_SUCCESS, requestCal);
-                        return;
+                    if (response != null && response instanceof PullMessage) {
+                        int resCode = response.getResponseCode();
+                        mActionLog.addAction(ActionLog.RadarPushStateCode, mTriggerMode, resCode);
+                        if (resCode == 200) {
+                            PullMessage pullMessage = (PullMessage) response;
+                            processPullMessage(context, pullMessage, requestCal);
+                            exitService(STAT_SUCCESS, requestCal);
+                            return;
+                        }
                     }
                     mActionLog.addAction(ActionLog.RadarPushFailed, mTriggerMode, FAIL_NETWORK_FAILED);
                 } else {
@@ -212,6 +215,7 @@ public class PullService extends Service {
 
         //由于产品还没想好怎么处理多条数据，目前message只显示列表中第一条。
         if (messageList != null && messageList.size() > 0) {
+            mActionLog.addAction(ActionLog.RadarPushSucceeded, mTriggerMode);
             Message message = messageList.get(0);
             s.append(message.getId());
             //如果这次的消息有id，则添加上此id，并写入配置文件
@@ -236,6 +240,8 @@ public class PullService extends Service {
                 TKConfig.setPref(context, TKConfig.PREFS_RADAR_RECORD_MESSAGE_ID_LIST, messageIdList);
             }
             TKNotificationManager.notify(context, message);
+        } else {
+            mActionLog.addAction(ActionLog.RadarPushEmptyMsg, mTriggerMode);
         }
     }
 
