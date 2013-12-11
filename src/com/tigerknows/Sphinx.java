@@ -4,8 +4,10 @@
 
 package com.tigerknows;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import android.app.Dialog;
@@ -16,7 +18,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.DialogInterface.OnDismissListener;
-import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
@@ -104,7 +105,6 @@ import com.tigerknows.model.HotelVendor;
 import com.tigerknows.model.NoticeQuery.NoticeResultResponse;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.PullMessage.Message.PulledDynamicPOI;
-import com.tigerknows.model.LocationQuery;
 import com.tigerknows.model.NoticeQuery;
 import com.tigerknows.model.PullMessage;
 import com.tigerknows.model.PullMessage.Message.PulledProductMessage;
@@ -118,6 +118,7 @@ import com.tigerknows.model.BootstrapModel;
 import com.tigerknows.model.User;
 import com.tigerknows.model.Yanchu;
 import com.tigerknows.model.Zhanlan;
+import com.tigerknows.model.BootstrapModel.StartupDisplay;
 import com.tigerknows.model.DataQuery.POIResponse;
 import com.tigerknows.model.test.BaseQueryTest;
 import com.tigerknows.provider.HistoryWordTable;
@@ -464,8 +465,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             return;
         }
         
-        mActionLog.onCreate();
-        
         try{
             setContentView(R.layout.sphinx);
             findViews();
@@ -502,7 +501,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             changeCity(cityInfo, false);
             
             Intent intent = getIntent();
-            mFirstStartup |= intent.getBooleanExtra(GuideScreenActivity.APP_FIRST_START, false);
+            mFirstStartup = intent.getBooleanExtra(GuideScreenActivity.APP_FIRST_START, false);
+            mUpgrade = intent.getBooleanExtra(GuideScreenActivity.APP_UPGRADE, false);
             checkFromThirdParty(true);
             initView();
             
@@ -511,16 +511,16 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 @Override
                 public void run() {
                     
+                    // 初始化存储历史词的数据库表结构，读取历史词数据
+                    int cityId = Globals.getCurrentCityInfo().getId();
+                    readHistoryWord(cityId);
+                    
                     try {
                         Thread.sleep(6*1000);
                     } catch (InterruptedException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
-                    
-                    // 初始化存储历史词的数据库表结构，读取历史词数据
-                    int cityId = Globals.getCurrentCityInfo().getId();
-                    readHistoryWord(cityId);
 
                     if (isFinishing() == false) {
                         mHandler.post(new Runnable() {
@@ -541,7 +541,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             
             mHandler.postDelayed(new StartUpDelayRunnable(this), 20000);
 
-            mTKLocationManager.onCreate();
             mLocationListener = new MyLocationListener(this, mLocationChangedRun);
             
             mZoomView.setVisibility(View.INVISIBLE);
@@ -800,6 +799,42 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         TKConfig.setPref(mContext, TKConfig.PREFS_VERSION_NAME, TKConfig.getClientSoftVersion());
         
         initWeibo(false, false);
+        
+        List<BaseQuery> list = new ArrayList<BaseQuery>();
+        
+        Bootstrap bootstrap = new Bootstrap(this);
+        if (getIntent().getBooleanExtra(Sphinx.EXTRA_WEIXIN, false)) {
+            bootstrap.addParameter(BaseQuery.SERVER_PARAMETER_REQUSET_SOURCE_TYPE, BaseQuery.REQUSET_SOURCE_TYPE_WEIXIN);
+        }
+        if (mFirstStartup) {
+            bootstrap.addParameter(Bootstrap.SERVER_PARAMETER_FIRST_LOGIN, Bootstrap.FIRST_LOGIN_NEW);
+        } else if (mUpgrade) {
+            bootstrap.addParameter(Bootstrap.SERVER_PARAMETER_FIRST_LOGIN, Bootstrap.FIRST_LOGIN_UPGRADE);
+        }
+        list.add(bootstrap);
+        try {
+            synchronized (Globals.StartupDisplayLogFile) {
+                File startupDisplayLogFile = new File(Globals.StartupDisplayLogFile);
+                if (startupDisplayLogFile.exists() && startupDisplayLogFile.isFile() && startupDisplayLogFile.length() > 0) {
+                    String startupDisplayLog = Utility.readFile(new FileInputStream(startupDisplayLogFile));
+                    
+                    if (startupDisplayLog != null && startupDisplayLog.length() > 0) {
+                        FeedbackUpload feedbackUpload = new FeedbackUpload(mThis);
+                        feedbackUpload.addParameter(FeedbackUpload.SERVER_PARAMETER_DISPLAY, startupDisplayLog.substring(1));
+                        list.add(feedbackUpload);
+                    }
+                }
+            }
+            
+        } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
+        queryStart(list);
 	}
 	
 	void resetShowInPreferZoom() {
@@ -882,7 +917,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         mCompassView.setVisibility(View.VISIBLE);
         mControlView.setVisibility(View.VISIBLE);
         Sphinx.this.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        Sphinx.this.getWindow().setBackgroundDrawable(null);
+        Sphinx.this.getWindow().setBackgroundDrawableResource(R.drawable.startup);
         
         checkFromThirdParty(false);
     }
@@ -1117,7 +1152,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         AsyncImageLoader.getInstance().onDestory();
         mTKLocationManager.onDestroy();
         TKWeixin.getInstance(this).onDestory();
-        HistoryWordTable.onDestroy();
+        synchronized (this) {
+            HistoryWordTable.onDestroy();
+        }
 		LogWrapper.i("Sphinx","onDestroy()");
         if(DiscoverChildListFragment.viewQueueForChangciItems!=null){
         	DiscoverChildListFragment.viewQueueForChangciItems.clear();
@@ -1131,12 +1168,12 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         service = new Intent(Sphinx.this, MapDownloadService.class);
         stopService(service);
         super.onDestroy();
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+//        try {
+//            Thread.sleep(500);
+//        } catch (InterruptedException e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        }
 //        ActivityManager am = (ActivityManager)getSystemService(
 //                Context.ACTIVITY_SERVICE);
 //        am.restartPackage("com.tigerknows");
@@ -1984,12 +2021,19 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 BootstrapModel bootstrapModel = ((Bootstrap) baseQuery).getBootstrapModel();
                 if (bootstrapModel != null) {
                     Globals.g_Bootstrap_Model = bootstrapModel;
+                    
+                    List<StartupDisplay> startupDisplayList = bootstrapModel.getStartupDisplayList();
+                    TKDrawable tkDrawable = LauncherActivity.getStartupDisplayDrawable(mThis, startupDisplayList);
+                    if (tkDrawable != null) {
+                        tkDrawable.loadDrawable(mThis, null, AsyncImageLoader.SUPER_VIEW_TOKEN);
+                    }
                 }
                 if (uiStackPeek() == R.id.view_more_home) {
                     getMoreFragment().refreshBootStrapData(true);
                 }else{
                 	getMoreFragment().refreshBootStrapData(false);
                 }
+                
             } else if (baseQuery instanceof NoticeQuery) {
             	Response response = baseQuery.getResponse();
             	if (response instanceof NoticeResultResponse) {
@@ -2003,8 +2047,12 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             	if(response != null) {
             		int resId = getResponseResId(baseQuery);
             		if(resId == R.string.response_code_200){
-            			TKConfig.setPref(mThis, TKConfig.PREFS_LAST_UPLOAD_APPLIST, String.valueOf(CalendarUtil.getExactTime(mThis)));
-            			LogWrapper.d("Trap", "AppList Upload Success");
+            		    if (baseQuery.hasParameter(FeedbackUpload.SERVER_PARAMETER_DISPLAY)) {
+            		        
+            		    } else {
+            			    TKConfig.setPref(mThis, TKConfig.PREFS_LAST_UPLOAD_APPLIST, String.valueOf(CalendarUtil.getExactTime(mThis)));
+            			    LogWrapper.d("Trap", "AppList Upload Success");
+            		    }
             		}
             	}
             }
@@ -4136,6 +4184,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 
     // TODO: my location begin    
     private boolean mFirstStartup = false;
+    private boolean mUpgrade = false;
     private boolean mPreventShowChangeMyLocationDialog = false;
     private MyLocation mMyLocation;
     private ItemizedOverlay mMyLocationOverlay;

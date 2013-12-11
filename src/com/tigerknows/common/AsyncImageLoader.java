@@ -28,7 +28,7 @@ public class AsyncImageLoader {
     
     static final int THREAD_COUNT = 3;
     
-    public static String SUPER_VIEW_TOKEN = "SUPER_VIEW_TOKEN";
+    public final static String SUPER_VIEW_TOKEN = "SUPER_VIEW_TOKEN";
     
     // 为了加快速度，在内存中开启缓存（主要应用于重复图片较多时，或者同一个图片要多次被访问，比如在ListView时来回滚动）
     public LinkedHashMap<String, SoftReference<BitmapDrawable>> imageCache = new LinkedHashMap<String, SoftReference<BitmapDrawable>>(TKConfig.IMAGE_CACHE_SIZE_MEMORY,0.75f,true);
@@ -162,7 +162,9 @@ public class AsyncImageLoader {
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 } finally {
-                    handler.post(new CallbackBitmapRunnable(callback, bitmapDrawable));
+                    if (callback != null) {
+                        handler.post(new CallbackBitmapRunnable(callback, bitmapDrawable));
+                    }
                 }
             }
         });

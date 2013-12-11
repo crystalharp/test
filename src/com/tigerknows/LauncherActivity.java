@@ -4,36 +4,30 @@ import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.Sphinx;
 import com.tigerknows.android.app.TKActivity;
-import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
-import com.tigerknows.common.AsyncImageLoader;
-import com.tigerknows.common.AsyncImageLoader.ImageCallback;
-import com.tigerknows.common.AsyncImageLoader.TKURL;
-import com.tigerknows.model.BaseQuery;
-import com.tigerknows.model.Bootstrap;
 import com.tigerknows.model.BootstrapModel;
-import com.tigerknows.model.FeedbackUpload;
-import com.tigerknows.model.Response;
+import com.tigerknows.model.TKDrawable;
 import com.tigerknows.model.BootstrapModel.StartupDisplay;
 import com.tigerknows.model.XMapData;
 import com.tigerknows.model.xobject.XMap;
 import com.tigerknows.util.ByteUtil;
 import com.tigerknows.util.Utility;
 
+import android.app.Activity;
 import android.content.Intent;
-import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.ImageView;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -56,12 +50,10 @@ public class LauncherActivity extends TKActivity {
     
     ImageView mStartupImv;
     
-    String mStartupDisplayLogPath;
-    
-    String mStartupDisplayLog = null;
-    
     boolean mOnResume = false;
-	
+    
+    Animation mAnimation = new AlphaAnimation(0.3f, 1.0f);
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,20 +75,25 @@ public class LauncherActivity extends TKActivity {
         
         mStartupImv = (ImageView) mRootView.findViewById(R.id.startup_imv);
         
-        mStartupDisplayLogPath = TKConfig.getDataPath(true)+"startupDisplayLog";
-        
-        AsyncImageLoader.SUPER_VIEW_TOKEN = mThis.toString();
-        
-        File startupDisplayFile = new File(TKConfig.getDataPath(true)+StartupDisplay.FILE_NAME);
-        if (startupDisplayFile.exists() && startupDisplayFile.isFile()) {
-            try {
-                byte[] data = Utility.readFileToByte(new FileInputStream(startupDisplayFile));
-                XMap xmap = (XMap) ByteUtil.byteToXObject(data);
-                List<StartupDisplay> list = XMapData.getListFromData(xmap, BootstrapModel.FIELD_STARTUP_DISPLAY_LIST, StartupDisplay.Initializer, null);
-                showStartupDisplay(list);
-            } catch (Exception e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+        synchronized (Globals.StartupDisplayFile) {
+            File startupDisplayFile = new File(Globals.StartupDisplayFile);
+            if (startupDisplayFile.exists() && startupDisplayFile.isFile()) {
+                try {
+                    byte[] data = Utility.readFileToByte(new FileInputStream(startupDisplayFile));
+                    XMap xmap = (XMap) ByteUtil.byteToXObject(data);
+                    List<StartupDisplay> list = XMapData.getListFromData(xmap, BootstrapModel.FIELD_STARTUP_DISPLAY_LIST, StartupDisplay.Initializer, null);
+                    TKDrawable tkDrawable = getStartupDisplayDrawable(mThis, list);
+                    
+                    if (tkDrawable != null) {
+                        Drawable drawable = tkDrawable.loadDrawable(mThis, null, tkDrawable.toString());
+                        if (drawable != null) {
+                            setImageDrawable(tkDrawable.getUrl(), drawable);
+                        }
+                    }
+                } catch (Exception e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
             }
         }
 
@@ -105,6 +102,7 @@ public class LauncherActivity extends TKActivity {
         
         mHandler = new Handler();
         setContentView(mRootView);
+        
         mHandler.postDelayed(new Runnable() {
             
             @Override
@@ -112,43 +110,6 @@ public class LauncherActivity extends TKActivity {
                 launch(fristUse, upgrade);
             }
         }, AD_ANIMATION_TIME);
-        
-        List<BaseQuery> list = new ArrayList<BaseQuery>();
-        
-        Bootstrap bootstrap = new Bootstrap(this);
-        if (getIntent().getBooleanExtra(Sphinx.EXTRA_WEIXIN, false)) {
-            bootstrap.addParameter(BaseQuery.SERVER_PARAMETER_REQUSET_SOURCE_TYPE, BaseQuery.REQUSET_SOURCE_TYPE_WEIXIN);
-        }
-        if (fristUse) {
-            bootstrap.addParameter(Bootstrap.SERVER_PARAMETER_FIRST_LOGIN, Bootstrap.FIRST_LOGIN_NEW);
-        } else if (upgrade) {
-            bootstrap.addParameter(Bootstrap.SERVER_PARAMETER_FIRST_LOGIN, Bootstrap.FIRST_LOGIN_UPGRADE);
-        }
-        list.add(bootstrap);
-        try {
-            synchronized (mStartupDisplayLogPath) {
-                File startupDisplayLogFile = new File(mStartupDisplayLogPath);
-                if (startupDisplayLogFile.exists() && startupDisplayLogFile.isFile() && startupDisplayLogFile.length() > 0) {
-                    mStartupDisplayLog = Utility.readFile(new FileInputStream(startupDisplayLogFile));
-                    
-                    if (mStartupDisplayLog != null && mStartupDisplayLog.length() > 0) {
-                        FeedbackUpload feedbackUpload = new FeedbackUpload(mThis);
-                        feedbackUpload.addParameter(FeedbackUpload.SERVER_PARAMETER_DISPLAY, mStartupDisplayLog.substring(1));
-                        
-                        list.add(feedbackUpload);
-                    }
-                }
-            }
-            
-        } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        
-        queryStart(list);
         
     }
     
@@ -210,72 +171,42 @@ public class LauncherActivity extends TKActivity {
         mOnResume = false;
         super.onPause();
     }
-
-    @Override
-    public void onPostExecute(TKAsyncTask tkAsyncTask) {
-        super.onPostExecute(tkAsyncTask);
-        List<BaseQuery> list = tkAsyncTask.getBaseQueryList();
-        for(BaseQuery baseQuery : list) {
-            if (baseQuery instanceof Bootstrap) {
-                BootstrapModel bootstrapModel = ((Bootstrap) baseQuery).getBootstrapModel();
-                if (bootstrapModel != null) {
-                    Globals.g_Bootstrap_Model = bootstrapModel;
-                    showStartupDisplay(bootstrapModel.getStartupDisplayList());
-                }
-            } else if (baseQuery instanceof FeedbackUpload) {
-                Response response = baseQuery.getResponse();
-                if (response != null && response.getResponseCode() == Response.RESPONSE_CODE_OK) {
-                    synchronized (mStartupDisplayLogPath) {
-                        File file = new File(mStartupDisplayLogPath);
-                        try {
-                            String startupDisplayLog = Utility.readFile(new FileInputStream(file));
-                            if (startupDisplayLog != null && mStartupDisplayLog != null && mStartupDisplayLog.length() > 0) {
-                                Utility.writeFile(mStartupDisplayLogPath, startupDisplayLog.replace(mStartupDisplayLog, "").getBytes(), true);
-                            }
-                        } catch (FileNotFoundException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        } catch (Exception e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }
-        }
-    }
     
-    void showStartupDisplay(List<StartupDisplay> startupDisplayList) {
+    public static TKDrawable getStartupDisplayDrawable(Activity activity, List<StartupDisplay> startupDisplayList) {
+        TKDrawable tkDrawable = null;
         if (startupDisplayList != null && startupDisplayList.size() > 0) {
             StartupDisplay startupDisplay = startupDisplayList.get(0);
-            if (startupDisplay.isAvailably(mThis)) {
-                final String url = startupDisplay.getUrl();
+            if (startupDisplay.isAvailably(activity)) {
+                String url = startupDisplay.getUrl();
+                url = Utility.getPictureUrlByWidthHeight(url, Globals.getPicWidthHeight(TKConfig.PICTURE_STARTUP_DISPLAY));
                 LogWrapper.d(TAG, "url:"+url);
-                BitmapDrawable bitmapDrawable = AsyncImageLoader.getInstance().loadDrawable(mThis,
-                        new TKURL(Utility.getPictureUrlByWidthHeight(url, Globals.getPicWidthHeight(TKConfig.PICTURE_STARTUP_DISPLAY)), mThis.toString()),
-                        new ImageCallback() {
-                            
-                            @Override
-                            public void imageLoaded(BitmapDrawable imageDrawable) {
-                                setImageDrawable(url, imageDrawable);
-                            }
-                        });
-                
-                setImageDrawable(url, bitmapDrawable);
+                tkDrawable = new TKDrawable();
+                tkDrawable.setUrl(url);
             }
         }
+        
+        return tkDrawable;
     }
     
-    void setImageDrawable(String url, BitmapDrawable bitmapDrawable) {
-        if (bitmapDrawable != null &&
+    void setImageDrawable(String url, Drawable drawable) {
+        if (drawable != null &&
                 isFinishing() == false) {
-            mStartupImv.setImageDrawable(bitmapDrawable);
+            
+            mStartupImv.setImageDrawable(drawable);
+            
+            if (mAnimation != null) {
+                mAnimation.setDuration(1000);
+                mStartupImv.setAnimation(mAnimation);
+                mAnimation.startNow();
+                mAnimation = null;
+            }
+            
             int beginIndex = url.lastIndexOf("/");
             int endIndex = url.lastIndexOf(".");
             String md5 = url.substring(beginIndex+1, endIndex)+"_"+SIMPLE_DATE_FORMAT.format(Calendar.getInstance().getTime());
             LogWrapper.d(TAG, "StartupDisplay md5:"+md5);
-            synchronized (mStartupDisplayLogPath) {
-                Utility.writeFile(mStartupDisplayLogPath, (";"+md5).getBytes(), false);
+            synchronized (Globals.StartupDisplayLogFile) {
+                Utility.writeFile(Globals.StartupDisplayLogFile, (";"+md5).getBytes(), false);
             }
         }
     }

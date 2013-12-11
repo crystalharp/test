@@ -7,6 +7,7 @@ package com.tigerknows.service;
 import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.TKConfig;
+import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.LocalRegionDataInfo;
 import com.tigerknows.map.MapEngine;
 import com.tigerknows.map.MapEngine.CityInfo;
@@ -386,6 +387,31 @@ public class MapStatsService extends Service {
             HashMap<Integer, ServerRegionDataInfo> regionVersionMap = mapVersionQuery.getServerRegionDataInfoMap();
             DownloadCity downloadCity = new DownloadCity(cityInfo);
             statsDownloadCity(downloadCity, regionVersionMap);
+            
+            // 行为日志记录
+            if (downloadCity.state == DownloadCity.STATE_CAN_BE_UPGRADE) {
+                ActionLog actionLog = ActionLog.getInstance(context);
+                List<Integer> list = MapEngine.getRegionIdList(cityInfo.getCName());
+                for (int j = list.size()-1; j >= 0; j--) {
+                    int id = list.get(j);
+                    // 检查是否可升级
+                    if (regionVersionMap != null && regionVersionMap.containsKey(id)) {
+                        RegionMetaVersion regionMetaVersion = MapEngine.getRegionMetaVersion(id);
+                        ServerRegionDataInfo serverRegionDataInfo = regionVersionMap.get(id); 
+                        if (regionMetaVersion != null && serverRegionDataInfo != null) {
+                            String localVersion = regionMetaVersion.toString();
+                            String serverVersion = serverRegionDataInfo.getRegionVersion();
+                            
+                            if (TextUtils.isEmpty(localVersion) == false
+                                    && TextUtils.isEmpty(localVersion) == false
+                                    && localVersion.equalsIgnoreCase(RegionMetaVersion.NONE) == false
+                                    && serverVersion.equalsIgnoreCase(localVersion) == false) {
+                                actionLog.addAction(ActionLog.StatsCurrentCityMap, id, localVersion, serverVersion);
+                            }
+                        }
+                    }
+                }
+            }
             return downloadCity;
         }
         return null;
