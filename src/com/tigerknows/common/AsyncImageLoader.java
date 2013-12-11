@@ -119,7 +119,7 @@ public class AsyncImageLoader {
     		return b;
     	}
 
-        if ((viewToken.equals(imageUrl.viewToken) == false && SUPER_VIEW_TOKEN.equals(imageUrl.viewToken) == false) || executorService == null || executorService.isShutdown() || context == null || callback == null) {
+        if ((viewToken.equals(imageUrl.viewToken) == false && SUPER_VIEW_TOKEN.equals(imageUrl.viewToken) == false) || executorService == null || executorService.isShutdown() || context == null) {
             return null;
         }
         
