@@ -134,6 +134,10 @@ public class Globals {
 
     public static String g_ClientUID = null; 
     
+    public static String StartupDisplayFile;
+    
+    public static String StartupDisplayLogFile;
+    
     public static boolean init = false;
     
     /**
@@ -276,6 +280,8 @@ public class Globals {
         try {
             MapEngine.getInstance().initMapDataPath(activity);
             ImageCache.getInstance().init(activity);
+            StartupDisplayFile = TKConfig.getDataPath(true)+"StartupDisplay";
+            StartupDisplayLogFile = TKConfig.getDataPath(true)+"StartupDisplayLog";
         } catch (APIException e) {
             e.printStackTrace();
             Utility.showDialogAcitvity(activity, activity.getString(R.string.not_enough_space_and_please_clear));

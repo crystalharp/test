@@ -199,6 +199,9 @@ public class LocationUpload extends LogUpload {
     @Override
     public void onCreate() {
         synchronized (mLock) {
+            if (onCreate) {
+                return;
+            }
             super.onCreate();
             reset();
         }

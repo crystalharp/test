@@ -421,8 +421,10 @@ public class TKActivity extends Activity implements TKAsyncTask.EventListener {
 
         mLocationListener = new MyLocationListener(this, null);
         mTKLocationManager = new TKLocationManager(TKApplication.getInstance());
+        mTKLocationManager.onCreate();
         
         mActionLog = ActionLog.getInstance(mThis);
+        mActionLog.onCreate();
     }
 
     @Override

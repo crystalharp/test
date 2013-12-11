@@ -3,9 +3,8 @@
  */
 package com.tigerknows.model;
 
+import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
-import com.tigerknows.TKConfig;
-import com.tigerknows.model.xobject.XArray;
 import com.tigerknows.model.xobject.XMap;
 import com.tigerknows.util.ByteUtil;
 import com.tigerknows.util.CalendarUtil;
@@ -105,11 +104,13 @@ public class BootstrapModel extends XMapData {
         
         if (this.data.containsKey(FIELD_STARTUP_DISPLAY)) {
             XMap xmap = this.data.getXMap(FIELD_STARTUP_DISPLAY);
-            try {
-                Utility.writeFile(TKConfig.getDataPath(true)+StartupDisplay.FILE_NAME, ByteUtil.xobjectToByte(xmap), true);
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+            synchronized (Globals.StartupDisplayFile) {
+                try {
+                    Utility.writeFile(Globals.StartupDisplayFile, ByteUtil.xobjectToByte(xmap), true);
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
             }
 
             this.startupDisplayList = getListFromData(xmap, FIELD_STARTUP_DISPLAY_LIST, StartupDisplay.Initializer, null);
@@ -282,8 +283,6 @@ public class BootstrapModel extends XMapData {
     }
     
     public static class StartupDisplay extends XMapData {
-        
-        public static final String FILE_NAME = "StartupDisplay";
         
         public static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         

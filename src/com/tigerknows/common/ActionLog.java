@@ -866,8 +866,11 @@ public class ActionLog extends LogUpload {
 
     @Override
     public void onCreate() {
-        super.onCreate();
         synchronized (mLock) {
+            if (onCreate) {
+                return;
+            }
+            super.onCreate();
             mStartMillis = System.currentTimeMillis();
             addAction(SEPARATOR_STAET+simpleDateFormat.format(CalendarUtil.getExactTime(mContext))+SEPARATOR_MIDDLE+LifecycleCreate+SEPARATOR_MIDDLE+TKConfig.getClientSoftVersion(), false);
         }

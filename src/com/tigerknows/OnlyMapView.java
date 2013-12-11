@@ -78,7 +78,6 @@ public class OnlyMapView extends TKActivity {
         // add zoom controller to zoom view
         mZoomView.addView(zoomControls);
 
-        mTKLocationManager.onCreate();
         mLocationListener = new MyLocationListener(mThis, null);
     }
 

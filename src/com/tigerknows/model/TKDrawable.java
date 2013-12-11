@@ -75,16 +75,22 @@ public class TKDrawable extends XMapData implements Parcelable {
         if (TextUtils.isEmpty(url)) {
             return null;
         }
+        ImageCallback imageCallback;
+        if (activity != null && action != null) {
+            imageCallback = new ImageCallback() {
+                // 请参见实现：如果第一次加载url时下面方法会执行
+                public void imageLoaded(BitmapDrawable imageDrawable) {
+                    if (activity.isFinishing() == false && viewToken.contains(AsyncImageLoader.getInstance().getViewToken())) {
+                        activity.runOnUiThread(action);
+                    }
+                }
+            };
+        } else {
+            imageCallback = null;
+        }
         // 如果缓存过就会从缓存中取出图像，ImageCallback接口中方法也不会被执行
         BitmapDrawable cacheImage = AsyncImageLoader.getInstance().loadDrawable(activity, new TKURL(url, viewToken),
-                new ImageCallback() {
-                    // 请参见实现：如果第一次加载url时下面方法会执行
-                    public void imageLoaded(BitmapDrawable imageDrawable) {
-                        if (activity != null && action != null && viewToken.contains(AsyncImageLoader.getInstance().getViewToken())) {
-                            activity.runOnUiThread(action);
-                        }
-                    }
-                });
+                imageCallback);
         drawable = cacheImage;
         return drawable;
     }

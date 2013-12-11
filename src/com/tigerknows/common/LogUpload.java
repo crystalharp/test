@@ -97,6 +97,8 @@ public class LogUpload {
      */
     protected long mLastUploadTime = 0;
     
+    protected boolean onCreate = false;
+    
     /**
      * 构造函数
      * @param context
@@ -159,22 +161,6 @@ public class LogUpload {
     }
     
     /**
-     * 获取最近一次上传日志的时间截
-     * @return
-     */
-    long getLastUploadTime() {
-        return mLastUploadTime;
-    }
-    
-    /**
-     * 设置最近一次上传日志的时间截
-     * @param lastUploadTime
-     */
-    void setLastUploadTime(long lastUploadTime) {
-        mLastUploadTime = lastUploadTime;
-    }
-    
-    /**
      * 获取日志文件的文本内容
      * @return
      */
@@ -233,9 +219,9 @@ public class LogUpload {
                 for(int i = 0, length = logUploadArray.length; i < length; i++) {
                     LogUpload logUpload = logUploadArray[i];
                     String logText = logUpload.getLogText();
-                    long lastUploadTime = logUpload.getLastUploadTime();
+                    long lastUploadTime = logUpload.mLastUploadTime;
                     if (lastUploadTime != 0 && currentTime - lastUploadTime > UPLOAD_TIME_OUT && TextUtils.isEmpty(logText) == false) {
-                        logUpload.setLastUploadTime(currentTime);
+                        logUpload.mLastUploadTime = currentTime;
                         feedbackUpload.addParameter(logUpload.mServerParameterKey, logText);
                         logUploadList.add(logUpload);
                     }
@@ -284,6 +270,7 @@ public class LogUpload {
                 final String log = logText + getLogOutToken();
                 
                 if (canUpload()) {
+                    mLastUploadTime = System.currentTimeMillis();
                     new Thread(new Runnable() {
                         
                         @Override
@@ -361,10 +348,10 @@ public class LogUpload {
      */
     public void onCreate() {
         synchronized (mLock) {
-            mLastUploadTime = 0;
-            if (mStringBuilder == null) {
+            if (onCreate) {
                 return;
             }
+            onCreate = true;
             
             File file = new File(mLogFilePath);
             long lastModified = file.lastModified();
@@ -382,10 +369,8 @@ public class LogUpload {
      */
     public void onDestroy() {
         synchronized (mLock) {
-            if (mStringBuilder == null) {
-                return;
-            }
             write();
+            onCreate = false;
         }
     }
     
@@ -394,10 +379,8 @@ public class LogUpload {
      */
     public void onTerminate() {
         synchronized (mLock) {
-            if (mStringBuilder == null) {
-                return;
-            }
             write();
+            onCreate = false;
         }
     }
     
