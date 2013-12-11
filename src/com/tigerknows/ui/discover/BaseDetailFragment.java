@@ -101,6 +101,16 @@ public class BaseDetailFragment extends DiscoverBaseFragment implements View.OnC
             return;
         }
         
+        if (mDismissed == false) {
+            for(int i = mCyclePagerAdapter.viewList.size()-1; i >= 0; i--) {
+                BaseDetailView view = (BaseDetailView) mCyclePagerAdapter.viewList.get(i);
+                if (view.mPosition == position) {
+                    view.refreshDescription(true);
+                    break;
+                }
+            }
+        }
+        
         mNextImageView.setVisibility(View.GONE);
         mPrevImageView.setVisibility(View.GONE);
     }
