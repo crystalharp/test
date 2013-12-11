@@ -33,7 +33,7 @@ public class OnlyMapView extends TKActivity {
         super.onCreate(savedInstanceState);
         mMapEngine = MapEngine.getInstance();
         try {
-            mMapEngine.initMapDataPath(getApplicationContext());
+            mMapEngine.initMapDataPath(mThis);
         } catch (APIException exception) {
             exception.printStackTrace();
             Utility.showDialogAcitvity(mThis, getString(R.string.not_enough_space_and_please_clear));

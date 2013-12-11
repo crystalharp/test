@@ -16,9 +16,11 @@ import com.tigerknows.util.Utility;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -32,6 +34,7 @@ import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Environment;
 import android.os.Parcelable;
+import android.os.StatFs;
 import android.telephony.CellLocation;
 import android.telephony.NeighboringCellInfo;
 import android.telephony.PhoneStateListener;
@@ -40,6 +43,7 @@ import android.telephony.TelephonyManager;
 import android.telephony.cdma.CdmaCellLocation;
 import android.telephony.gsm.GsmCellLocation;
 import android.text.TextUtils;
+import android.widget.Toast;
 
 /**
  * 配置应用程序中的通用参数
@@ -48,6 +52,9 @@ import android.text.TextUtils;
 public class TKConfig {
     
     private static final String TAG = "TKConfig";
+    
+    public static final int NO_STORAGE_ERROR = -1;
+    public static final int CANNOT_STAT_ERROR = -2;
     
     /**
      * 是否开启缓存图片到内存
@@ -1183,6 +1190,86 @@ public class TKConfig {
             }
         }
         return path;
+    }
+    
+    private static boolean hasExternalStorage(boolean requireWriteAccess) {
+        String state = Environment.getExternalStorageState();
+
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+            if (requireWriteAccess) {
+                boolean writable = checkExternalStorageFsWritable();
+                return writable;
+            } else {
+                return true;
+            }
+        } else if (!requireWriteAccess
+                && Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
+            return true;
+        }
+        return false;
+    }
+
+    private static boolean checkExternalStorageFsWritable() {
+        // Create a temporary file to see whether a volume is really writeable.
+        // It's important not to put it in the root directory which may have a
+        // limit on the number of files.
+        String directoryName =
+                Environment.getExternalStorageDirectory().toString() + "/tigermap";
+        File directory = new File(directoryName);
+        if (!directory.isDirectory()) {
+            if (!directory.mkdirs()) {
+                return false;
+            }
+        }
+        File f = new File(directoryName, ".probe");
+        try {
+            // Remove stale file if any
+            if (f.exists()) {
+                f.delete();
+            }
+            if (!f.createNewFile()) {
+                return false;
+            }
+            f.delete();
+            return true;
+        } catch (IOException ex) {
+            return false;
+        }
+    }
+    
+    private static int calculateExternalStorageRemaining() {
+        try {
+            if (!hasExternalStorage(true)) {
+                return NO_STORAGE_ERROR;
+            } else {
+                String storageDirectory =
+                        Environment.getExternalStorageDirectory().toString();
+                StatFs stat = new StatFs(storageDirectory);
+                final int MIN_BYTES = 2 * 1024 * 1024;
+                float remaining = ((float) stat.getAvailableBlocks()
+                        * (float) stat.getBlockSize()) / MIN_BYTES;
+                return (int) remaining;
+            }
+        } catch (Exception ex) {
+            // if we can't stat the filesystem then we don't know how many
+            // pictures are remaining.  it might be zero but just leave it
+            // blank since we really don't know.
+            return CANNOT_STAT_ERROR;
+        }
+    }
+
+    public static int checkStorageSize(final Activity activity) {
+        final int remaining = calculateExternalStorageRemaining();
+        if (activity != null && remaining >= 0 && remaining <= 8) {
+            activity.runOnUiThread(new Runnable() {
+    
+                @Override
+                public void run() {
+                    Toast.makeText(activity, R.string.sd_not_enough_space, 10*1000).show();
+                }
+            });
+        }
+        return remaining;
     }
     
     /**

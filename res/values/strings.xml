@@ -417,6 +417,7 @@
     
     <string name="not_enough_space_and_please_clear">"存储空间不够，请清理出空间再运行！"</string>
     <string name="not_enough_space">"存储空间不够，请插入SD卡。"</string>
+    <string name="sd_not_enough_space">"SD 卡已满，请清理出空间后再启动老虎宝典。"</string>
     
     <string name="clear_all">"一键清空"</string>
     <string name="delete_a_favorite_poi">"确定删除此条收藏地点？"</string>

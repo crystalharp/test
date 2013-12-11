@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
@@ -463,7 +464,7 @@ public class MapEngine {
     /**
      * 设置地图引擎数据文件夹路径，仅在初始化或扩展存储卡插拔时才设置并重启地图引擎
      */
-    public void initMapDataPath(Context context) throws APIException{
+    public void initMapDataPath(Activity activity) throws APIException{
         String appPath = TKConfig.getDataPath(true);
         if (!appPath.equals(mapPath)) {
             try {
@@ -473,6 +474,7 @@ public class MapEngine {
                 }
                 new File(appPath, "try.txt").createNewFile();
                 new File(appPath, "try.txt").delete();
+                TKConfig.checkStorageSize(activity);
                 initEngine(context, appPath);
                 LogWrapper.i(TAG, "setupDataPath() app path:"+ appPath + " map path:"+ mapPath + ",exist:" + new File(appPath).exists());
             } catch (Exception e) {
