@@ -1,9 +1,15 @@
 package com.tigerknows.model;
 
+import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
 import com.tigerknows.TKConfig;
+import com.tigerknows.util.Utility;
 
 import android.content.Context;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 
 public class FeedbackUpload extends BaseQuery {
     
@@ -75,6 +81,26 @@ public class FeedbackUpload extends BaseQuery {
     protected void translateResponse(byte[] data) throws APIException {
         super.translateResponse(data);
         this.response = new Response(responseXMap);
+        
+        if (hasParameter(SERVER_PARAMETER_DISPLAY)) {
+            synchronized (Globals.StartupDisplayLogFile) {
+                File file = new File(Globals.StartupDisplayLogFile);
+                try {
+                    String uploadLog = getParameter(FeedbackUpload.SERVER_PARAMETER_DISPLAY);
+                    String startupDisplayLog = Utility.readFile(new FileInputStream(file));
+                    if (startupDisplayLog != null && uploadLog != null) {
+                        startupDisplayLog = startupDisplayLog.replace(uploadLog, "");
+                        Utility.writeFile(Globals.StartupDisplayLogFile, startupDisplayLog.getBytes(), true);
+                    }
+                } catch (FileNotFoundException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+        }
     }
     
     @Override
