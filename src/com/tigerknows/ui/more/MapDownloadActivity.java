@@ -51,8 +51,8 @@ import com.decarta.Globals;
 import com.tigerknows.android.widget.TKEditText;
 import android.widget.Toast;
 import com.tigerknows.common.ActionLog;
+import com.tigerknows.map.CityInfo;
 import com.tigerknows.map.MapEngine;
-import com.tigerknows.map.MapEngine.CityInfo;
 import com.tigerknows.service.MapDownloadService;
 import com.tigerknows.service.MapStatsService;
 import com.tigerknows.ui.BaseActivity;
@@ -564,7 +564,7 @@ public class MapDownloadActivity extends BaseActivity implements View.OnClickLis
             sAllAddCityInfoList.add(7, provinceTitle);
             
             // 全国
-            CityInfo quanguo = MapEngine.getCityInfo(MapEngine.CITY_ID_QUANGUO);
+            CityInfo quanguo = MapEngine.getCityInfo(CityInfo.CITY_ID_QUANGUO);
             
             // 生成全国标题
             CityInfo quanguoTitle = quanguo.clone();
@@ -1317,7 +1317,7 @@ public class MapDownloadActivity extends BaseActivity implements View.OnClickLis
             ProgressBar progressBar = (ProgressBar) cityView.findViewById(R.id.progress_prb);
             String size = (downloadCity.totalSize > 0 ? mThis.getString(R.string.brackets, mThis.getString(R.string._m, downloadCity.getTotalSizeTip())) : "");
             String name = cityInfo.getCName();
-            if (cityInfo.getId() == MapEngine.CITY_ID_QUANGUO) {
+            if (cityInfo.getId() == CityInfo.CITY_ID_QUANGUO) {
                 name = getString(R.string.quanguo_map);
             }
             nameTxv.setText(name+size);
@@ -1663,7 +1663,7 @@ public class MapDownloadActivity extends BaseActivity implements View.OnClickLis
         TextView statusTxv = (TextView)view.findViewById(R.id.status_txv);
         
         if (cityInfo.getType() == CityInfo.TYPE_CITY) {
-            textTxv.setText((appendSpace ? "    " : "")+(cityInfo.getId() == MapEngine.CITY_ID_QUANGUO ? getString(R.string.quanguo_map) : cname));
+            textTxv.setText((appendSpace ? "    " : "")+(cityInfo.getId() == CityInfo.CITY_ID_QUANGUO ? getString(R.string.quanguo_map) : cname));
             DownloadCity downloadCity = getDownloadCity(mDownloadCityList, cityInfo);
             if (downloadCity != null) {
                 textTxv.setTextColor(mColorBlackLight);

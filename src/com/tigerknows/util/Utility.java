@@ -90,8 +90,8 @@ import android.widget.Toast;
 
 import com.tigerknows.android.app.TKActivity;
 import com.tigerknows.common.ActionLog;
+import com.tigerknows.map.CityInfo;
 import com.tigerknows.map.MapEngine;
-import com.tigerknows.map.MapEngine.CityInfo;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.TrafficQuery;
 import com.tigerknows.provider.HistoryWordTable;

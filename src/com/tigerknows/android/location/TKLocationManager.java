@@ -9,7 +9,7 @@ import com.tigerknows.TKConfig;
 import com.tigerknows.common.LocationUpload;
 import com.tigerknows.model.FeedbackUpload;
 import com.tigerknows.model.LocationQuery;
-import com.tigerknows.model.LocationQuery.TKCellLocation;
+import com.tigerknows.model.TKCellLocation;
 import com.tigerknows.service.TigerknowsLocationManager;
 
 import android.content.Context;

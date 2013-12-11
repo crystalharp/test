@@ -9,10 +9,10 @@ import com.tigerknows.TKConfig;
 import com.tigerknows.android.location.TKLocationManager;
 import android.widget.Toast;
 
+import com.tigerknows.map.CityInfo;
 import com.tigerknows.map.LocalRegionDataInfo;
 import com.tigerknows.map.MapEngine;
 import com.tigerknows.map.MapView;
-import com.tigerknows.map.MapEngine.CityInfo;
 import com.tigerknows.map.MapEngine.RegionMetaVersion;
 import com.tigerknows.model.AccountManage;
 import com.tigerknows.model.BaseQuery;

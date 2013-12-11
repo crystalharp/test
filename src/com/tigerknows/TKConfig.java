@@ -11,7 +11,7 @@ import com.tigerknows.R;
 import com.tigerknows.android.app.TKApplication;
 import com.tigerknows.map.MapEngine;
 import com.tigerknows.model.BaseQuery;
-import com.tigerknows.model.LocationQuery.TKCellLocation;
+import com.tigerknows.model.TKCellLocation;
 import com.tigerknows.util.Utility;
 
 import java.io.File;

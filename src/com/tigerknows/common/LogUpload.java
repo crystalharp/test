@@ -6,8 +6,7 @@ package com.tigerknows.common;
 import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.TKConfig;
-import com.tigerknows.map.MapEngine;
-import com.tigerknows.map.MapEngine.CityInfo;
+import com.tigerknows.map.CityInfo;
 import com.tigerknows.model.FeedbackUpload;
 import com.tigerknows.util.Utility;
 
@@ -232,7 +231,7 @@ public class LogUpload {
                 }
                 
                 CityInfo cityInfo = Globals.getCurrentCityInfo();
-                int cityId = MapEngine.CITY_ID_BEIJING;
+                int cityId = CityInfo.CITY_ID_BEIJING;
                 if (cityInfo != null) {
                     cityId = cityInfo.getId();
                 }
@@ -281,7 +280,7 @@ public class LogUpload {
                             feedbackUpload.addParameter(mServerParameterKey, log);
                             
                             CityInfo cityInfo = Globals.getCurrentCityInfo();
-                            int cityId = MapEngine.CITY_ID_BEIJING;
+                            int cityId = CityInfo.CITY_ID_BEIJING;
                             if (cityInfo != null) {
                                 cityId = cityInfo.getId();
                             }

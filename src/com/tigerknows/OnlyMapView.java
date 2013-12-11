@@ -2,9 +2,9 @@ package com.tigerknows;
 
 import com.decarta.android.exception.APIException;
 import com.tigerknows.android.app.TKActivity;
+import com.tigerknows.map.CityInfo;
 import com.tigerknows.map.MapEngine;
 import com.tigerknows.map.MapView;
-import com.tigerknows.map.MapEngine.CityInfo;
 import com.tigerknows.map.label.Label;
 import com.tigerknows.util.Utility;
 import com.tigerknows.widget.ZoomControls;
@@ -44,7 +44,7 @@ public class OnlyMapView extends TKActivity {
         Display display=winMan.getDefaultDisplay();
         Label.init(display.getWidth(), display.getHeight());
         
-        CityInfo cityInfo = MapEngine.getCityInfo(MapEngine.CITY_ID_BEIJING);
+        CityInfo cityInfo = MapEngine.getCityInfo(CityInfo.CITY_ID_BEIJING);
         if (cityInfo.isAvailably() == false) {
             Utility.showDialogAcitvity(mThis, getString(R.string.not_enough_space_and_please_clear));
             finish();

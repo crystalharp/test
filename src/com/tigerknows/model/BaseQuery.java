@@ -38,9 +38,8 @@ import com.tigerknows.TKConfig;
 import com.tigerknows.android.location.Position;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.crypto.DataEncryptor;
+import com.tigerknows.map.CityInfo;
 import com.tigerknows.map.MapEngine;
-import com.tigerknows.map.MapEngine.CityInfo;
-import com.tigerknows.model.LocationQuery.TKCellLocation;
 import com.tigerknows.model.response.Appendix;
 import com.tigerknows.model.response.DataPackage;
 import com.tigerknows.model.response.DownloadDomainCake;
@@ -384,8 +383,8 @@ public abstract class BaseQuery {
     public void addCommonParameters(int cityId, boolean isLocateMe) {
         requestParameters.add(sCommonParameters);
 
-        if (cityId < MapEngine.CITY_ID_BEIJING && isLocateMe == false) {
-            cityId = MapEngine.CITY_ID_BEIJING;
+        if (cityId < CityInfo.CITY_ID_BEIJING && isLocateMe == false) {
+            cityId = CityInfo.CITY_ID_BEIJING;
         }
         requestParameters.add("c", String.valueOf(cityId));
 
@@ -442,7 +441,7 @@ public abstract class BaseQuery {
     
     protected String actionTag;
     
-    protected int cityId = MapEngine.CITY_ID_BEIJING;
+    protected int cityId = CityInfo.CITY_ID_BEIJING;
 
     protected int sourceViewId = -1;
     

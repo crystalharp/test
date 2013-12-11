@@ -9,6 +9,7 @@ import com.decarta.android.db.PrefTable;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
 import com.tigerknows.android.location.Position;
+import com.tigerknows.map.CityInfo;
 import com.tigerknows.map.MapEngine;
 import com.tigerknows.model.TKWord;
 
@@ -41,9 +42,9 @@ public class HistoryWordTable {
     public static final LinkedList<TKWord> History_Word_Traffic = new LinkedList<TKWord>();
     public static final LinkedList<TKWord> History_Word_Busline = new LinkedList<TKWord>();
     
-    public static long POI_CityId = MapEngine.CITY_ID_INVALID;
-    public static long Traffic_CityId = MapEngine.CITY_ID_INVALID;
-    public static long Busline_CityId = MapEngine.CITY_ID_INVALID;
+    public static long POI_CityId = CityInfo.CITY_ID_INVALID;
+    public static long Traffic_CityId = CityInfo.CITY_ID_INVALID;
+    public static long Busline_CityId = CityInfo.CITY_ID_INVALID;
     
     static final String TAG = "HistoryWordTable";
     
@@ -425,8 +426,8 @@ public class HistoryWordTable {
         History_Word_POI.clear();
         History_Word_Traffic.clear();
         History_Word_Busline.clear();
-        POI_CityId = MapEngine.CITY_ID_INVALID;
-        Traffic_CityId = MapEngine.CITY_ID_INVALID;
-        Busline_CityId = MapEngine.CITY_ID_INVALID;
+        POI_CityId = CityInfo.CITY_ID_INVALID;
+        Traffic_CityId = CityInfo.CITY_ID_INVALID;
+        Busline_CityId = CityInfo.CITY_ID_INVALID;
     }
 }

@@ -40,6 +40,7 @@ import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
 import com.tigerknows.common.ActionLog;
+import com.tigerknows.map.CityInfo;
 import com.tigerknows.map.MapEngine;
 import com.tigerknows.model.Bootstrap;
 import com.tigerknows.model.BootstrapModel;
@@ -428,7 +429,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         DownloadCity currentDownloadCity = CurrentDownloadCity;
         if (currentDownloadCity != null
                 && currentDownloadCity.state == DownloadCity.STATE_CAN_BE_UPGRADE
-                && currentDownloadCity.cityInfo.getId() != MapEngine.CITY_ID_QUANGUO) {
+                && currentDownloadCity.cityInfo.getId() != CityInfo.CITY_ID_QUANGUO) {
         	mUpgradeMap = true;
         }
         if (mUpgradeMap) {

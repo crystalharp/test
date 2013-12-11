@@ -16,8 +16,9 @@ import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.android.os.TKAsyncTask;
 import android.widget.Toast;
+
+import com.tigerknows.map.CityInfo;
 import com.tigerknows.map.MapEngine;
-import com.tigerknows.map.MapEngine.CityInfo;
 import com.tigerknows.model.AccountManage;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.Response;
@@ -139,7 +140,7 @@ public abstract class UserBaseFragment extends BaseFragment {
 	 * @return
 	 */
 	private int getCityParameter() {
-		int cityId = MapEngine.CITY_ID_INVALID;
+		int cityId = CityInfo.CITY_ID_INVALID;
 		
 		CityInfo mylocaCityInfo = Globals.g_My_Location_City_Info;
 		if (mylocaCityInfo != null) {
@@ -147,7 +148,7 @@ public abstract class UserBaseFragment extends BaseFragment {
 		}
 		
 		CityInfo myCurrentCityInfo = Globals.getCurrentCityInfo();
-		if (cityId == MapEngine.CITY_ID_INVALID && myCurrentCityInfo != null) {
+		if (cityId == CityInfo.CITY_ID_INVALID && myCurrentCityInfo != null) {
 			cityId = myCurrentCityInfo.getId();
 		}
 		LogWrapper.d(TAG, "cityId: " + cityId);

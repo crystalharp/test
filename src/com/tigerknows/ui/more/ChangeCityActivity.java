@@ -39,8 +39,8 @@ import com.tigerknows.R;
 import com.tigerknows.TKConfig;
 import com.tigerknows.android.widget.TKEditText;
 import com.tigerknows.common.ActionLog;
+import com.tigerknows.map.CityInfo;
 import com.tigerknows.map.MapEngine;
-import com.tigerknows.map.MapEngine.CityInfo;
 import com.tigerknows.ui.BaseActivity;
 
 /**

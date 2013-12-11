@@ -13,8 +13,8 @@ import com.tigerknows.TKConfig;
 import com.tigerknows.android.location.Position;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
+import com.tigerknows.map.CityInfo;
 import com.tigerknows.map.MapEngine;
-import com.tigerknows.map.MapEngine.CityInfo;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.POI;
@@ -131,7 +131,7 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
     private int mCategoryTop;
     private int mMyLocationViewHeight;
     private int mCategoryPadding = 0;
-    private int mCityId = MapEngine.CITY_ID_INVALID;
+    private int mCityId = CityInfo.CITY_ID_INVALID;
 
     private View mSubwayMapView;
     private Button mSubwayMapBtn;
@@ -601,7 +601,7 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
                 TKConfig.setPref(mSphinx, TKConfig.PREFS_SUBWAY_MAP, "1");
                 mSphinx.getSubwayMapFragment().setData(Globals.getCurrentCityInfo());
                 mSphinx.showView(R.id.view_subway_map);
-            } else if (mCurrentCategoryIndex == FOOD_INDEX && mCityId == MapEngine.CITY_ID_BEIJING) {
+            } else if (mCurrentCategoryIndex == FOOD_INDEX && mCityId == CityInfo.CITY_ID_BEIJING) {
                 mActionLog.addAction(mActionTag + ActionLog.POIHomeDish);
                 TKConfig.setPref(mSphinx, TKConfig.PREFS_DISH, "1");
                 
@@ -1083,7 +1083,7 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
             } else {
                 mSubwayMapImv.setVisibility(View.GONE);
             }
-		} else if (position == FOOD_INDEX && mCityId == MapEngine.CITY_ID_BEIJING) {
+		} else if (position == FOOD_INDEX && mCityId == CityInfo.CITY_ID_BEIJING) {
 		    mSubwayMapBtn.setText(R.string.dish_merchant);
 		    Drawable drawable = mSphinx.getResources().getDrawable(R.drawable.ic_dish);
 		    drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());

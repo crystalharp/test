@@ -19,7 +19,7 @@ import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
 import com.tigerknows.android.location.Position;
-import com.tigerknows.map.MapEngine;
+import com.tigerknows.map.CityInfo;
 import com.tigerknows.model.TrafficModel.Plan;
 import com.tigerknows.model.TrafficModel.Plan.Step;
 
@@ -278,7 +278,7 @@ public final class TrafficQuery extends BaseQuery {
 
     @Override
     protected void checkRequestParameters() throws APIException {
-        if (cityId < MapEngine.CITY_ID_BEIJING) {
+        if (cityId < CityInfo.CITY_ID_BEIJING) {
             throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_CITY);
         }
     }

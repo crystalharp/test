@@ -45,14 +45,11 @@ public class MapEngine {
      */
     public static final String EXTRA_CITY_ID = "extra_city_id";
     public static final int DEFAULT_CITY_LEVEL = 15;
-    
-    public static int CITY_ID_INVALID = -1;
-    public static int CITY_ID_QUANGUO = -3;
-    public static int CITY_ID_BEIJING = 1;
+
     public static int SW_ID_QUANGUO = 9999;
     public static int TILE_SIZE_BIT = 8;
     
-    private int suggestCityId = CITY_ID_INVALID;  // 联想词引擎所属城市Id
+    private int suggestCityId = CityInfo.CITY_ID_INVALID;  // 联想词引擎所属城市Id
     private List<Integer> suggestDownloaded = new ArrayList<Integer>(); // 记录被下载更新过的城市Id
     
     private String mapPath = null;
@@ -109,7 +106,7 @@ public class MapEngine {
     }
 
     public static int getCityId(Position position) {
-        int cityId = CITY_ID_INVALID;
+        int cityId = CityInfo.CITY_ID_INVALID;
         if (position == null) {
             return cityId;
         }
@@ -136,7 +133,7 @@ public class MapEngine {
         if (cityId <= 0) {
             return;
         }
-        if (cityId == SW_ID_QUANGUO || cityId == CITY_ID_QUANGUO) {
+        if (cityId == SW_ID_QUANGUO || cityId == CityInfo.CITY_ID_QUANGUO) {
             return;
         } 
         if (hasCorrectSW(cityId)) {
@@ -156,7 +153,7 @@ public class MapEngine {
     private byte[] getwordslist(String searchword, int type) {
         synchronized (this) {
         byte[] data = null;
-        if (suggestCityId == CITY_ID_INVALID) {
+        if (suggestCityId == CityInfo.CITY_ID_INVALID) {
             return data;
         }
         try {
@@ -177,8 +174,8 @@ public class MapEngine {
     
     public void suggestwordDestroy() {
         synchronized (this) {
-        if (suggestCityId != CITY_ID_INVALID) {
-            suggestCityId = CITY_ID_INVALID;
+        if (suggestCityId != CityInfo.CITY_ID_INVALID) {
+            suggestCityId = CityInfo.CITY_ID_INVALID;
             Ca.tk_suggestword_destroy();
         }
         }
@@ -187,7 +184,7 @@ public class MapEngine {
     //返回当前城市的联想词版本
     public int getrevision(int cityId) {
         synchronized (this) {
-        if (suggestCityId == CITY_ID_INVALID) {
+        if (suggestCityId == CityInfo.CITY_ID_INVALID) {
             return -1;
         }
         String path = cityId2Floder(cityId);
@@ -307,7 +304,7 @@ public class MapEngine {
     }
 
     public static CityInfo getCityInfo(int cityId) {
-    	if(cityId == CITY_ID_INVALID) {
+    	if(cityId == CityInfo.CITY_ID_INVALID) {
     		LogWrapper.e("MapEngine", "get city info of invalid city id");
     		return null;
     	}
@@ -547,7 +544,7 @@ public class MapEngine {
     public static ArrayList<Integer> getRegionIdList(String cityName) {
         int cityId = getCityid(cityName);
         ArrayList<Integer> regionIdList = new ArrayList<Integer>();
-        if(cityId == CITY_ID_INVALID) {
+        if(cityId == CityInfo.CITY_ID_INVALID) {
         	LogWrapper.e("MapEngine", "got invalid city id, cityName: " + cityName);
         	return regionIdList;
         }
@@ -559,7 +556,7 @@ public class MapEngine {
     }
 
     public void suggestwordCheck(Sphinx sphinx, int cityId) {
-        if (cityId < CITY_ID_BEIJING) {
+        if (cityId < CityInfo.CITY_ID_BEIJING) {
             return;
         }
         // 在新线程中停止下载的联想词，开始下载当前城市的联想词
@@ -593,7 +590,7 @@ public class MapEngine {
     
     public void suggestDownloadEnd(int cityId) {
         synchronized (this) {
-            if (cityId == suggestCityId || suggestCityId == CITY_ID_INVALID) {
+            if (cityId == suggestCityId || suggestCityId == CityInfo.CITY_ID_INVALID) {
                 suggestwordInit(cityId);
             }
         }
@@ -601,7 +598,7 @@ public class MapEngine {
     
     //根据用户输入的词searchword及type进行联想，返回前x()个联想词，联想词在源文件TKSuggestWords.c全局变量Suggest_Word suggestwords[10]中；type为poi或者位置--对应不同搜索框
     public List<String> getwordslistString(String searchword, int type) {
-        if (suggestCityId == CITY_ID_INVALID) {
+        if (suggestCityId == CityInfo.CITY_ID_INVALID) {
             return new ArrayList<String>();
         }
         if (TextUtils.isEmpty(searchword)) {
@@ -616,7 +613,7 @@ public class MapEngine {
     
     public Position getwordslistStringWithPosition(String searchword, int type) {
         Position point = null;
-        if (suggestCityId == CITY_ID_INVALID) {
+        if (suggestCityId == CityInfo.CITY_ID_INVALID) {
             return null;
         }
         byte[] data = getwordslist(searchword, type);
@@ -633,7 +630,7 @@ public class MapEngine {
     }
     
     public boolean isSuggestWordsInitSuccess() {
-        return suggestCityId != CITY_ID_INVALID;
+        return suggestCityId != CityInfo.CITY_ID_INVALID;
     }
     
     public static class RegionMetaVersion {
@@ -766,236 +763,6 @@ public class MapEngine {
                     +  "\t cCityName" + cCityName + "\t cityId: " + cityId;
         }
     }
-
-    public static class CityInfo implements Parcelable {
-        // "城市中文名字, City english name, latitude, longitude, level, 省份中文名字, city
-        // Province english name" such as
-        // "北京,beijing,39.90415599,116.397772995,11, 北京,beijing"
-        public static int TYPE_CITY = 0;
-        public static int TYPE_PROVINCE = 1;
-        
-        private int id = CITY_ID_INVALID;
-        private int type = TYPE_CITY;
-        private List<CityInfo> cityInfoList = new ArrayList<CityInfo>();
-        
-        private String cName;
-        private String eName;
-        private Position position;
-        private int level;
-        private String cProvinceName;
-        private String eProvinceName;
-        public int order;
-        
-        public CityInfo() {
-        }
-        
-        public int getType() {
-            return type;
-        }
-        public void setType(int type) {
-            this.type = type;
-        }
-        
-        public List<CityInfo> getCityList() {
-            return cityInfoList;
-        }
-        
-        public String getCName() {
-            return cName;
-        }
-        public void setCName(String cName) {
-            this.cName = cName;
-        }
-        public String getEName() {
-            return eName;
-        }
-        public void setEName(String eName) {
-            this.eName = eName;
-        }
-        public int getLevel() {
-            return level;
-        }
-        public void setLevel(int level) {
-            this.level = level;
-        }
-        public String getCProvinceName() {
-            return cProvinceName;
-        }
-        public void setCProvinceName(String cProvinceName) {
-            this.cProvinceName = cProvinceName;
-        }
-        public String getEProvinceName() {
-            return eProvinceName;
-        }
-        public void setEProvinceName(String eProvinceName) {
-            this.eProvinceName = eProvinceName;
-        }
-        
-        public void setPosition(Position position) {
-            this.position = position;
-        }
-        
-        public int getId() {
-            return id;
-        }
-        public void setId(int id) {
-            this.id = id;
-        }
-        
-        public Position getPosition() {
-            return position;
-        }
-        
-        @Override
-        public String toString() {
-            return "CityInfo[id:=" + id +", cName: " + cName + ", eName: " + eName + ", level: " + level + ", cProvinceName: "
-                    + cProvinceName + ", eProvinceName: " + eProvinceName  + ", position: " + position +"]";
-        }
-        
-        public CityInfo clone() {
-            CityInfo cityInfo = new CityInfo();
-            cityInfo.id = id;
-            cityInfo.cName = cName;
-            cityInfo.cProvinceName = cProvinceName;
-            cityInfo.eName = eName;
-            cityInfo.eProvinceName = eProvinceName;
-            cityInfo.type = type;
-            if (position != null) {
-                cityInfo.position = position.clone();
-            } else {
-                cityInfo.position = null;
-            }
-            cityInfo.level = level;
-            List<CityInfo> cityInfoList1 = new ArrayList<CityInfo>();
-            for(CityInfo cityInfo1 : cityInfoList) {
-                cityInfoList1.add(cityInfo1.clone());
-            }
-            cityInfo.cityInfoList = cityInfoList1;
-            return cityInfo;
-        }
-        
-        public boolean isAvailably() {
-            return id != CITY_ID_INVALID && !TextUtils.isEmpty(cName);
-        }
-        
-        public boolean equals(Object object) {
-            if (this == object) {
-                return true;
-            }
-            if (object instanceof CityInfo) {
-                CityInfo other = (CityInfo) object;
-                if (this.id != other.id) {
-                    return false;
-//                } else if((null != this.cName && !this.cName.equals(other.cName)) || (null == this.cName && this.cName != other.cName)) {
-//                    return false;
-//                } else if((null != this.cProvinceName && !this.cProvinceName.equals(other.cProvinceName)) || (null == this.cProvinceName && this.cProvinceName != other.cProvinceName)) {
-//                    return false;
-//                } else if((null != this.eName && !this.eName.equals(other)) || (null == this.eName && this.eName != other.eName)) {
-//                    return false;
-//                } else if((null != this.eProvinceName && !this.eProvinceName.equals(other.eProvinceName)) || (null == this.eProvinceName && this.eProvinceName != other.eProvinceName)) {
-//                    return false;
-                } else if (this.type != other.type) {
-                    return false;
-//                } else if((null != this.position && !this.position.equals(other.position)) || (null == this.position && this.position != other.position)) {
-//                    return false;
-//                } else if (this.level != other.level) {
-//                    return false;
-//                } else {
-//                    if (cityInfoList.size() != other.cityInfoList.size()) {
-//                        return false;
-//                    } else {
-//                        int i = 0;
-//                        for(CityInfo cityInfo : cityInfoList) {
-//                            if (!cityInfo.equals(other.cityInfoList.get(i++))) {
-//                                return false;
-//                            }
-//                        }
-//                    }
-                }
-            } else {
-                return false;
-            }
-            
-            return true;
-        }
-        
-        private volatile int hashCode = 0;
-        @Override
-        public int hashCode() {
-            if (hashCode == 0) {
-                int hash = 29 * id;
-                if (cName != null) {
-                    hash += cName.hashCode();
-                }
-//                if (cProvinceName != null) {
-//                    hashCode += cProvinceName.hashCode();
-//                }
-//                if (eName != null) {
-//                    hashCode += eName.hashCode();
-//                }
-//                if (eProvinceName != null) {
-//                    hashCode += eProvinceName.hashCode();
-//                }
-//                hashCode += type * id;
-//                hashCode += level * id;
-//                hashCode += position.hashCode();
-//                for(int i = cityInfoList.size()-1; i >= 0; i--) {
-//                    CityInfo cityInfo = cityInfoList.get(i);
-//                    hashCode += cityInfo.hashCode();
-//                }
-                hashCode = hash;
-            }
-            return hashCode;
-        }
-
-        @Override
-        public int describeContents() {
-            return 0;
-        }
-
-        @Override
-        public void writeToParcel(Parcel parcel, int arg1) {
-            parcel.writeInt(id);
-            parcel.writeInt(type);
-            parcel.writeString(cName);
-            parcel.writeString(eName);
-            parcel.writeInt(level);
-            parcel.writeString(cProvinceName);
-            parcel.writeString(eProvinceName);
-            parcel.writeInt(order);    
-            double[] pos = new double[2];
-            if (position != null) {
-                pos[0] = position.getLat();
-                pos[1] = position.getLon();
-            }
-            parcel.writeDoubleArray(pos);
-        }
-
-        public static final Parcelable.Creator<CityInfo> CREATOR
-                = new Parcelable.Creator<CityInfo>() {
-            public CityInfo createFromParcel(Parcel in) {
-                return new CityInfo(in);
-            }
-
-            public CityInfo[] newArray(int size) {
-                return new CityInfo[size];
-            }
-        };
-        
-        private CityInfo(Parcel in) {
-            id = in.readInt();
-            type = in.readInt();
-            cName = in.readString();
-            eName = in.readString();
-            level = in.readInt();
-            cProvinceName = in.readString();
-            eProvinceName = in.readString();
-            order = in.readInt();
-            double[] pos = new double[2];
-            in.readDoubleArray(pos);
-            position = new Position(pos[0], pos[1]);
-        }
-    }
     
     /**
      * 找到cityId地图、联想词等数据所在的文件夹；如果不存在则创建该文件夹
@@ -1005,7 +772,7 @@ public class MapEngine {
     public static String cityId2Floder(int cityId) {
         //联想词全国id以MapEngine.QUANGUO_SW_ID表示，在此做一次转换
         if (cityId == MapEngine.SW_ID_QUANGUO) {
-            cityId = MapEngine.CITY_ID_QUANGUO;
+            cityId = CityInfo.CITY_ID_QUANGUO;
         }
         StringBuilder filePath = new StringBuilder();
         MapEngine mapEngine = MapEngine.getInstance();

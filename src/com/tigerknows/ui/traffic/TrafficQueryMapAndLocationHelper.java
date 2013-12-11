@@ -7,8 +7,8 @@ import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.android.location.Position;
+import com.tigerknows.map.CityInfo;
 import com.tigerknows.map.MapEngine;
-import com.tigerknows.map.MapEngine.CityInfo;
 import com.tigerknows.model.POI;
 
 /**
@@ -56,8 +56,8 @@ public class TrafficQueryMapAndLocationHelper {
 	 * @return
 	 */
 	public boolean isMyLocationLocateCurrentCity() {
-    	int currentCityId = MapEngine.CITY_ID_INVALID;
-    	int myPositionCityId = MapEngine.CITY_ID_INVALID - 1;
+    	int currentCityId = CityInfo.CITY_ID_INVALID;
+    	int myPositionCityId = CityInfo.CITY_ID_INVALID - 1;
     	
     	if (Globals.g_My_Location_City_Info != null) {
     		myPositionCityId = Globals.g_My_Location_City_Info.getId();
@@ -119,7 +119,7 @@ public class TrafficQueryMapAndLocationHelper {
     	CityInfo lastCityInfo = mMapCityInfo;
     	CityInfo targetCityInfo = mTargetCityInfo;
     	
-    	int locationId = MapEngine.CITY_ID_INVALID;
+    	int locationId = CityInfo.CITY_ID_INVALID;
         if (locationCityInfo != null) {
             locationId = locationCityInfo.getId();
         }

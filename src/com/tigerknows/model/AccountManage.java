@@ -10,7 +10,7 @@ package com.tigerknows.model;
 
 import com.decarta.android.exception.APIException;
 import com.tigerknows.TKConfig;
-import com.tigerknows.map.MapEngine;
+import com.tigerknows.map.CityInfo;
 import com.tigerknows.model.test.AccountManageTest;
 import com.tigerknows.model.test.BaseQueryTest;
 import com.tigerknows.model.xobject.XMap;
@@ -69,7 +69,7 @@ public class AccountManage extends BaseQuery {
 
     @Override
     protected void checkRequestParameters() throws APIException {
-        if (cityId < MapEngine.CITY_ID_BEIJING) {
+        if (cityId < CityInfo.CITY_ID_BEIJING) {
             throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_CITY);
         }
         String operationCode = getParameter(SERVER_PARAMETER_OPERATION_CODE);

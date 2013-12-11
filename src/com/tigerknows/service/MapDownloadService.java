@@ -5,10 +5,10 @@
 package com.tigerknows.service;
 
 import com.decarta.android.util.LogWrapper;
+import com.tigerknows.map.CityInfo;
 import com.tigerknows.map.LocalRegionDataInfo;
 import com.tigerknows.map.MapEngine;
 import com.tigerknows.map.TileDownload;
-import com.tigerknows.map.MapEngine.CityInfo;
 import com.tigerknows.map.MapEngine.RegionMetaVersion;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.MapMetaFileDownload;

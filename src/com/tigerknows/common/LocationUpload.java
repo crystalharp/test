@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.tigerknows.TKConfig;
 import com.tigerknows.model.FeedbackUpload;
-import com.tigerknows.model.LocationQuery.TKCellLocation;
+import com.tigerknows.model.TKCellLocation;
 import com.tigerknows.util.Utility;
 
 import android.content.Context;

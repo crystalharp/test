@@ -88,11 +88,11 @@ import com.tigerknows.common.ActionLog;
 import com.tigerknows.common.AsyncImageLoader;
 import com.tigerknows.common.ImageCache;
 import com.tigerknows.common.LogUpload;
+import com.tigerknows.map.CityInfo;
 import com.tigerknows.map.MapEngine;
 import com.tigerknows.map.MapView;
 import com.tigerknows.map.PinOverlayHelper;
 import com.tigerknows.map.TrafficOverlayHelper;
-import com.tigerknows.map.MapEngine.CityInfo;
 import com.tigerknows.map.MapView.DownloadEventListener;
 import com.tigerknows.map.MapView.MapScene;
 import com.tigerknows.map.MapView.SnapMap;
@@ -458,7 +458,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         
         mMapEngine = MapEngine.getInstance();
         
-        CityInfo cityInfo = MapEngine.getCityInfo(MapEngine.CITY_ID_BEIJING);
+        CityInfo cityInfo = MapEngine.getCityInfo(CityInfo.CITY_ID_BEIJING);
         if (cityInfo.isAvailably() == false) {
             Utility.showDialogAcitvity(mThis, getString(R.string.not_enough_space_and_please_clear));
             finish();
@@ -1217,7 +1217,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         public void onReceive(Context context, Intent intent) { 
             if (intent != null
                     && intent.hasExtra(MapEngine.EXTRA_CITY_ID)) {
-                int cityId = intent.getIntExtra(MapEngine.EXTRA_CITY_ID, MapEngine.CITY_ID_INVALID);
+                int cityId = intent.getIntExtra(MapEngine.EXTRA_CITY_ID, CityInfo.CITY_ID_INVALID);
                 if (Globals.getCurrentCityInfo().getId()==cityId || mViewedCityInfoList.contains(cityId)) {
                     if (mMapView != null) {
                         mMapView.clearTileTextures();
@@ -1634,7 +1634,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 String[] parms = uriStr.substring(uriStr.indexOf("?")+1).split("&");
                 if (parms.length >= 2) {
                     String[] keyValue = parms[0].split("=");
-                    int cityId = MapEngine.CITY_ID_INVALID;
+                    int cityId = CityInfo.CITY_ID_INVALID;
                     if (keyValue.length == 2) {
                         if (keyValue[0].equals("c")) {
                             cityId = Integer.parseInt(keyValue[1]);

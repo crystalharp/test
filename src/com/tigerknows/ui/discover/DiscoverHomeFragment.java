@@ -28,7 +28,7 @@ import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
-import com.tigerknows.map.MapEngine.CityInfo;
+import com.tigerknows.map.CityInfo;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.Response;

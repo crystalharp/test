@@ -15,7 +15,7 @@ import java.io.IOException;
 import com.decarta.android.exception.APIException;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.TKConfig;
-import com.tigerknows.map.MapEngine;
+import com.tigerknows.map.CityInfo;
 import com.tigerknows.util.ByteUtil;
 import com.tigerknows.util.Utility;
 
@@ -75,7 +75,7 @@ public final class BuslineQuery extends BaseQuery {
     
     @Override
     protected void checkRequestParameters() throws APIException {
-        if (cityId < MapEngine.CITY_ID_BEIJING) {
+        if (cityId < CityInfo.CITY_ID_BEIJING) {
             throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_CITY);
         }
     }
