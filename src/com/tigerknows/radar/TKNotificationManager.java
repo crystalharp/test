@@ -1,6 +1,7 @@
 package com.tigerknows.radar;
 
 import com.decarta.android.util.LogWrapper;
+import com.tigerknows.LauncherActivity;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.common.ActionLog;
@@ -129,21 +130,21 @@ public class TKNotificationManager {
             case Message.TYPE_ACTIVITY:
 			case Message.TYPE_PRODUCT_INFOMATION:
 				if(checkProdcutInfo(msg)){
-					intent = new Intent(context, Sphinx.class)
+					intent = new Intent(context, LauncherActivity.class)
                     .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                     .putExtra(Sphinx.EXTRA_PULL_MESSAGE, msg);
 				}
 				break;
 			case Message.TYPE_HOLIDAY:
 				if(checkZhanlanYanchu(msg)){
-					intent = new Intent(context, Sphinx.class)
+					intent = new Intent(context, LauncherActivity.class)
                     .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                     .putExtra(Sphinx.EXTRA_PULL_MESSAGE, msg);
 				}
 				break;
 			case Message.TYPE_FILM:
 				if(checkFilminfo(msg)){
-					intent = new Intent(context, Sphinx.class)
+					intent = new Intent(context, LauncherActivity.class)
                     .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                     .putExtra(Sphinx.EXTRA_PULL_MESSAGE, msg);
 				}
@@ -151,7 +152,7 @@ public class TKNotificationManager {
 				
 			case Message.TYPE_INTERVAL:
 				if((checkInterval(msg))){
-					intent = new Intent(context, Sphinx.class)
+					intent = new Intent(context, LauncherActivity.class)
                     .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                     .putExtra(Sphinx.EXTRA_PULL_MESSAGE, msg);
 				}
