@@ -508,8 +508,12 @@ public final class DataQuery extends BaseQuery {
      */
     @Override
     protected void addMyLocationParameters() {
+        String dataType = getParameter(SERVER_PARAMETER_DATA_TYPE);
+        /*FIXME:推送的请求已经有定位信息，不再走这个逻辑，下版本改掉这个做法*/
+        if (DATA_TYPE_PULL_MESSAGE.equals(dataType)) {
+            return;
+        }
         if (isTurnPage == false) {
-            String dataType = getParameter(SERVER_PARAMETER_DATA_TYPE);
             if (DATA_TYPE_FENDIAN.equals(dataType) || DATA_TYPE_YINGXUN.equals(dataType) ||
                     (SUB_DATA_TYPE_HOTEL.equals(getParameter(SERVER_PARAMETER_SUB_DATA_TYPE)) && hasParameter(SERVER_PARAMETER_LOCATION_CITY))) {
 //                if (criteria.containsKey(SERVER_PARAMETER_LOCATION_CITY)
