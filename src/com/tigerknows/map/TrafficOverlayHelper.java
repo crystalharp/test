@@ -118,7 +118,6 @@ public class TrafficOverlayHelper {
                 
                 // 更新地图, 并显示"上下按钮"
                 mapView.addOverlay(overlay);
-	            mainThreadHandler.sendEmptyMessage(Sphinx.PREVIOUS_NEXT_SHOW);
 
                 mapView.showOverlay(ItemizedOverlay.MY_LOCATION_OVERLAY, false);
 	        }

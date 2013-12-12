@@ -118,7 +118,7 @@ public class SubwayMapFragment extends BaseFragment implements RetryView.CallBac
         super(sphinx);
     }
 
-    private void findViews() {
+    protected void findViews() {
         mWebWbv = (WebView)mRootView.findViewById(R.id.web_wbv);
         mRetryView = (RetryView) mRootView.findViewById(R.id.retry_view);
         mQueryingView = (QueryingView)mRootView.findViewById(R.id.querying_view);
@@ -181,7 +181,7 @@ public class SubwayMapFragment extends BaseFragment implements RetryView.CallBac
         mTitleBtn.setText(mTitle);
     }
     
-    private void setListener() {
+    protected void setListener() {
         mWebWbv.addJavascriptInterface(new StationHandler(), "station");
         mWebWbv.getSettings().setJavaScriptEnabled(true);
         mWebWbv.setWebViewClient(new WebViewClient() {

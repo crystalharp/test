@@ -138,7 +138,7 @@ public class ActionLog extends LogUpload {
     public static final String Launcher = "FI";
     
     // POI主页 
-    public static final String POIHome = "AA";
+    public static final String Home = "AA";
     public static final String POIHomeChangeCityBtn = "BA";
     public static final String POIHomeInputEdt = "BB";
     public static final String POIHomeCategory = "BC";    

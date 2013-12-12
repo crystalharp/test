@@ -41,7 +41,6 @@ import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.CityInfo;
-import com.tigerknows.map.MapEngine;
 import com.tigerknows.model.Bootstrap;
 import com.tigerknows.model.BootstrapModel;
 import com.tigerknows.model.BootstrapModel.Recommend;
@@ -287,12 +286,8 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     @Override
     public void onResume() {
         super.onResume();
-        mMenuFragment.updateMenuStatus(R.id.more_btn);
-        mLeftBtn.setVisibility(View.INVISIBLE);
         mTitleBtn.setText(R.string.more);
         mRightBtn.setOnClickListener(this);
-        mRightBtn.setVisibility(View.VISIBLE);
-        mRightBtn.setEnabled(true);
         mRightBtn.setBackgroundDrawable(getResources().getDrawable(R.drawable.btn_settings));
         if (mDismissed) {
             //mListLsv.setSelection(0);
@@ -305,7 +300,6 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         		R.color.black_light, 
         		mSphinx.getString(R.string.order) + mSphinx.getString(R.string.order_hint), 
         		mSphinx.getString(R.string.order_hint)));
-        mMenuFragment.display();
 
         refreshUserEntrance();
         refreshBootStrapData(true);
@@ -329,15 +323,6 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         super.onPause();
         mHandler.removeCallbacks(mNoticeNextRun);
         mHandler.removeCallbacks(mReloadAppRecommend);
-    }
-    
-    @Override
-    public void correctUIStack(){
-    	if(R.id.view_more_home == mSphinx.uiStackPeek()){
-			int toRemove;
-			while(R.id.view_more_home != (toRemove = mSphinx.uiStackPeekBottom()))
-			mSphinx.uiStackRemove(toRemove);
-    	}    	
     }
     
     @Override
@@ -441,10 +426,8 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     
     public void refreshMenuFragment() {
         if(mUpgradeMap || TextUtils.equals(TKConfig.getPref(mContext, TKConfig.PREFS_MORE_OPENED, ""), "no")){
-        	mSphinx.getMenuFragment().setFragmentMessage(View.VISIBLE);
         	return;
         }else{
-        	mSphinx.getMenuFragment().setFragmentMessage(View.GONE);
         }
     }
     

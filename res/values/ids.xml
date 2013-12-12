@@ -2,10 +2,7 @@
 <resources>
    
     <item type="id" name="dialog_traffic_alternatives" />
-    <item type="id" name="dialog_prompt_change_to_my_location_city" />
     <item type="id" name="dialog_prompt_setting_location" />
-    <item type="id" name="dialog_prompt_setting_location_first" />
-    <item type="id" name="dialog_prompt_choose_city" />
     
     <item type="id" name="dialog_share_doing" />
     
@@ -22,7 +19,7 @@
     <item type="id" name="activity_hint" />
     <item type="id" name="activity_tencent"/>
     
-    <item type="id" name="view_poi_home" />
+    <item type="id" name="view_home" />
     <item type="id" name="view_poi_input_search" />
     <item type="id" name="view_poi_result" />
     <item type="id" name="view_poi_result2" />
@@ -49,7 +46,6 @@
     <item type="id" name="activity_more_app_recommend" />
     <item type="id" name="view_more_my_order" />
     
-    <item type="id" name="view_discover_home" />
     <item type="id" name="view_discover_list" />
     <item type="id" name="view_discover_tuangou_detail" />
     <item type="id" name="view_discover_child_list" />

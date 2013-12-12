@@ -226,6 +226,7 @@ public class MapView extends RelativeLayout implements
 	 * 
 	 */
 	public static class EventType extends com.decarta.android.event.EventType {
+        public static int DRAWFRAME = 1;
 		public static int SURFACECREATED = 2;
 		public static int MOVEEND = 3;
 		public static int ZOOMEND = 4;
@@ -239,6 +240,10 @@ public class MapView extends RelativeLayout implements
         public static int TOUCHDOWN = 11;
         public static int MULTITOUCHZOOM = 12;
 	}
+	
+    public interface DrawFrameEventListener extends EventListener{
+        public void onDrawFrameEvent();
+    }
 	
 	/**
 	 * listener for touchdown event
@@ -281,6 +286,11 @@ public class MapView extends RelativeLayout implements
         public static final int STATE_DOWNLOADED = 200;
         public static final int STATE_DOWNLOAD_ERROR = 400;
         public void onDownloadEvent(int state);
+    }
+    
+    public interface MapEventListener extends
+            com.decarta.android.event.EventListener {
+        public void onShowedEvent();
     }
 
 	/**
@@ -368,6 +378,8 @@ public class MapView extends RelativeLayout implements
                 && (listener instanceof MultiTouchZoomEventListener)
                 || eventType == EventType.SURFACECREATED
                 && (listener instanceof SurfaceCreatedEventListener)
+                || eventType == EventType.DRAWFRAME
+                && (listener instanceof DrawFrameEventListener)
 				)
 			return true;
 		else
@@ -392,6 +404,16 @@ public class MapView extends RelativeLayout implements
 			eventListeners.get(eventType).remove(listener);
 		}
 	}
+    
+    public void executeDrawFrameListeners() {
+        if (eventListeners.containsKey(MapView.EventType.DRAWFRAME)) {
+            ArrayList<EventListener> listeners = eventListeners
+                    .get(MapView.EventType.DRAWFRAME);
+            for (int i = 0; i < listeners.size(); i++) {
+                ((DrawFrameEventListener) (listeners.get(i))).onDrawFrameEvent();
+            }
+        }
+    }
 	
 	public void executeSurfaceCreatedListeners() {
 		if (eventListeners.containsKey(MapView.EventType.SURFACECREATED)) {

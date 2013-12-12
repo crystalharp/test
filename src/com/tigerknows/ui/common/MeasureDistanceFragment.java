@@ -40,7 +40,6 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
 
     private MapView mMapView;
     private int mVisibilityLocation;
-    private int mVisibilityPreviousNext;
     private OverlayItem mOtherOverlayItem;
     private OverlayItem mLastOverlayItem;
     private TouchMode mTouchMode;
@@ -210,7 +209,7 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         
-        mRootView = mLayoutInflater.inflate(R.layout.result_map, container, false);
+        mRootView = mLayoutInflater.inflate(R.layout.home, container, false);
         
         findViews();
         setListener();
@@ -221,7 +220,6 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
     public void setData() {
         Sphinx.TouchMode touchMode = mSphinx.getTouchMode();
         if (touchMode != Sphinx.TouchMode.MEASURE_DISTANCE) {
-            mVisibilityPreviousNext = mSphinx.getPreviousNextView().getVisibility();
             mVisibilityLocation = mSphinx.getLocationView().getVisibility();
             MapView mapView = mSphinx.getMapView();
             InfoWindow infoWindow = mapView.getInfoWindow();
@@ -242,20 +240,16 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
         super.onResume();
         mSphinx.getMapView().setStopRefreshMyLocation(false);
         mTitleBtn.setText(R.string.measure);
-        mRootView.setOnTouchListener(null);
+        setOnTouchListener(null);
         
         mRight2Btn.setText(R.string.revocation);
         mRight2Btn.setVisibility(View.VISIBLE);
         mRight2Btn.setOnClickListener(this);
         mRight2Btn.setBackgroundResource(R.drawable.btn_title);
         mRightBtn.setText(R.string.clear);
-        mRightBtn.setVisibility(View.VISIBLE);
         mRightBtn.setOnClickListener(this);
         mRightBtn.setBackgroundResource(R.drawable.btn_title);
         
-        mSphinx.layoutTopViewPadding(0, Util.dip2px(Globals.g_metrics.density, 18), 0, 0);
-
-        mSphinx.getPreviousNextView().setVisibility(View.INVISIBLE);
         mSphinx.getLocationView().setVisibility(View.INVISIBLE);
         
         mSphinx.setTouchMode(TouchMode.MEASURE_DISTANCE);
@@ -305,7 +299,6 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
         clearLine();
         mSphinx.setTouchMode(mTouchMode);
         
-        mSphinx.getPreviousNextView().setVisibility(mVisibilityPreviousNext);
         mSphinx.getLocationView().setVisibility(mVisibilityLocation);
         mSphinx.showInfoWindow(mOtherOverlayItem);
     }

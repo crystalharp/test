@@ -46,19 +46,13 @@ public class TrafficQueryAnimationHelper {
 
 	public void hideBlockAndMenuAnimation() {
 		setAnimation(mQueryFragment.mBlock, new NormalToMapUpAnimation());
-		setAnimation(mQueryFragment.mMenuFragment, new NormalToMapDownAnimation());
-		setAnimation(mQueryFragment.mSphinx.getControlView(), new NormalToMapDownAnimation2());
 		mQueryFragment.mSphinx.getHandler().sendEmptyMessage(Sphinx.ROOT_VIEW_INVALIDATE);
     }
 	
 	public void showBlockAndMenuAnimation() {
 
 		setAnimation(mQueryFragment.mBlock, new MapToNormalDownAnimation());
-		setAnimation(mQueryFragment.mMenuFragment, new MapToNormalUpAnimation());
-		setAnimation(mQueryFragment.mSphinx.getControlView(), new MapToNormalUpAnimation());
 		
-		mQueryFragment.mMenuFragment.setVisibility(View.VISIBLE);
-		mQueryFragment.mSphinx.getControlView().setPadding(0, 0, 0, mQueryFragment.mMenuFragment.getMeasuredHeight());
 		mQueryFragment.getContentView().setVisibility(View.VISIBLE);
 		
 		mQueryFragment.mSphinx.getHandler().sendEmptyMessage(Sphinx.ROOT_VIEW_INVALIDATE);
@@ -115,7 +109,7 @@ public class TrafficQueryAnimationHelper {
 		public NormalToMapDownAnimation() {
 			super(Animation.RELATIVE_TO_SELF, 0.0f, 
 	    			Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF, 0.0f, 
-	    			Animation.ABSOLUTE, mQueryFragment.mMenuFragment.getBottom() - mQueryFragment.mMenuFragment.getTop());
+	    			Animation.ABSOLUTE, 0);
 			setDuration(ANIMATION_TIME);
 			setInterpolator(new AccelerateInterpolator());
 			setAnimationListener(interceptTouchListener);
@@ -128,7 +122,7 @@ public class TrafficQueryAnimationHelper {
 		public NormalToMapDownAnimation2() {
 			super(Animation.RELATIVE_TO_SELF, 0.0f, 
 	    			Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF, 0.0f, 
-	    			Animation.ABSOLUTE, mQueryFragment.mMenuFragment.getBottom() - mQueryFragment.mMenuFragment.getTop());
+	    			Animation.ABSOLUTE, 0);
 			setDuration(ANIMATION_TIME);
 			setInterpolator(new AccelerateInterpolator());
 			setAnimationListener(new AnimationListener() {
@@ -151,8 +145,6 @@ public class TrafficQueryAnimationHelper {
 						@Override
 						public void run() {
 							// TODO Auto-generated method stub
-							mQueryFragment.mSphinx.getControlView().setPadding(0, 0, 0, 0);
-							mQueryFragment.mMenuFragment.setVisibility(View.GONE);
                             mQueryFragment.mSphinx.interceptTouchEnd();
 						}
 					});
@@ -179,7 +171,7 @@ public class TrafficQueryAnimationHelper {
 
 		public MapToNormalUpAnimation() {
 			super(Animation.RELATIVE_TO_SELF, 0.0f, 
-	    			Animation.RELATIVE_TO_SELF, 0.0f, Animation.ABSOLUTE, mQueryFragment.mMenuFragment.getBottom() - mQueryFragment.mMenuFragment.getTop(), 
+	    			Animation.RELATIVE_TO_SELF, 0.0f, Animation.ABSOLUTE, 0, 
 	    			Animation.RELATIVE_TO_SELF, 0.0f);
 	        setDuration(ANIMATION_TIME);
 			setInterpolator(new AccelerateInterpolator());

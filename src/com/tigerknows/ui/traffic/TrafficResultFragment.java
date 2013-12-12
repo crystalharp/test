@@ -102,7 +102,6 @@ public class TrafficResultFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        mRightBtn.setVisibility(View.INVISIBLE);
         mEndTxv.setVisibility(View.VISIBLE);
         
         mStartTxv.setText(mSphinx.getString(R.string.start_text, mTrafficModel.getStart().getName()));

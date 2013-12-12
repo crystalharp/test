@@ -14,6 +14,7 @@ import com.tigerknows.TKConfig;
 import com.tigerknows.android.location.Position;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.BuslineOverlayHelper;
+import com.tigerknows.map.MapEngine;
 import com.tigerknows.map.TrafficOverlayHelper;
 import com.tigerknows.map.MapView.SnapMap;
 import com.tigerknows.model.POI;
@@ -25,6 +26,7 @@ import com.tigerknows.ui.BaseFragment;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -52,53 +54,6 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
     private Button mCancelBtn;
     private Button mConfirmBtn;
     
-    private TitlePopupArrayAdapter mTitlePopupArrayAdapter;
-    
-    private List<String> mTitlePopupList = new ArrayList<String>();
-    
-    private OnItemClickListener mTitlePopupOnItemClickListener = new OnItemClickListener() {
-
-        @Override
-        public void onItemClick(AdapterView<?> adapterView, View view, int position, long arg3) {
-            mTitleFragment.dismissPopupWindow();
-            mTitlePopupArrayAdapter.mSelectedItem = mTitlePopupArrayAdapter.getItem(position);
-            mActionLog.addAction(mActionTag + ActionLog.PopupWindowTitle + ActionLog.ListViewItem, position);
-            if (mActionTag.equals(ActionLog.TrafficBuslineMap)) {
-                List<Line> list = mSphinx.getBuslineResultLineFragment().getData();
-                for(int i = 0, size = list.size(); i < size; i++) {
-                    Line line = list.get(i);
-                    if (mTitlePopupArrayAdapter.mSelectedItem.equals(mSphinx.getString(R.string.title_popup_content, i + 1, line.getName()))) {
-                        mSphinx.clearMap();
-                        BuslineOverlayHelper.drawOverlay(mSphinx, mSphinx.getHandler(), mSphinx.getMapView(), line);
-                        mSphinx.setPreviousNextViewVisible();
-                        mSphinx.resetLoactionButtonState();
-                        mSphinx.getBuslineDetailFragment().setData(line, position);
-                        mTitleBtn.setText(mSphinx.getString(R.string.title_busline_line_popup, 
-                                TrafficQuery.numToStr(mSphinx, mSphinx.getBuslineDetailFragment().getCurLine() + 1)));
-                        BuslineOverlayHelper.panToViewWholeOverlay(line, mSphinx.getMapView(), (Activity)mSphinx);
-                        break;
-                    }
-                }
-            } else if (mActionTag.equals(ActionLog.TrafficTransferMap)) {
-                List<Plan> list = mSphinx.getTrafficResultFragment().getData();
-                for(int i = 0, size = list.size(); i < size; i++) {
-                    Plan plan = list.get(i);
-                    if (mTitlePopupArrayAdapter.mSelectedItem.equals(mSphinx.getString(R.string.title_popup_content, i + 1, plan.getTitle(mSphinx)))) {
-                        mSphinx.clearMap();
-                        TrafficOverlayHelper.drawOverlay(mSphinx, mSphinx.getHandler(), mSphinx.getMapView(), plan, plan.getType());
-                        mSphinx.setPreviousNextViewVisible();
-                        mSphinx.resetLoactionButtonState();
-                        mSphinx.getTrafficDetailFragment().setData(plan, position);
-                        mTitleBtn.setText(mSphinx.getString(R.string.title_transfer_plan_popup, 
-                                TrafficQuery.numToStr(mSphinx, mSphinx.getTrafficDetailFragment().getCurLine() + 1)));
-                        TrafficOverlayHelper.panToViewWholeOverlay(plan, mSphinx.getMapView(), (Activity)mSphinx);
-                        break;
-                    }
-                }
-            }
-        }
-    };
-    
     public ResultMapFragment(Sphinx sphinx) {
         super(sphinx);
     }
@@ -118,8 +73,6 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
         findViews();
         setListener();
         
-        mTitlePopupArrayAdapter = new TitlePopupArrayAdapter(mSphinx, mTitlePopupList);
-        
         return mRootView;
     }
 
@@ -128,8 +81,8 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
         super.onResume();
         mSphinx.getMapView().setStopRefreshMyLocation(false);
         mTitleBtn.setText(mTitle);
-        mRightBtn.setVisibility(View.INVISIBLE);
-        mRootView.setOnTouchListener(null);
+        setOnTouchListener(null);
+        
         int fromThirdPartye = mSphinx.getFromThirdParty();
         if (fromThirdPartye == Sphinx.THIRD_PARTY_SONY_MY_LOCATION ||
                 fromThirdPartye == Sphinx.THIRD_PARTY_SONY_QUERY_POI) {
@@ -137,32 +90,19 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
         } else {
             mSnapView.setVisibility(View.GONE);
         }
-        mSphinx.layoutTopViewPadding(0, Util.dip2px(Globals.g_metrics.density, 18), 0, 0);
-        mSphinx.getMapView().getPadding().top = mSphinx.getTitleViewHeight() + Util.dip2px(Globals.g_metrics.density, 18);
         
-        //如果顶端切换list不为空，设置切换列表
-        if (mTitlePopupList.size() > 0) {
-            if (mActionTag.equals(ActionLog.TrafficBuslineMap)) {
-                mTitleBtn.setText(mSphinx.getString(R.string.title_busline_line_popup, 
-                        TrafficQuery.numToStr(mSphinx, mSphinx.getBuslineDetailFragment().getCurLine() + 1)));
-            } else if (mActionTag.equals(ActionLog.TrafficTransferMap)) {
-                mTitleBtn.setText(mSphinx.getString(R.string.title_transfer_plan_popup, 
-                        TrafficQuery.numToStr(mSphinx, mSphinx.getTrafficDetailFragment().getCurLine() + 1)));
-			}
-            if (mTitlePopupList.size() > 1) {
-                mTitleBtn.setBackgroundResource(R.drawable.btn_title_popup);
-                mTitleBtn.setOnClickListener(this);
-            }
-        }
+        Rect padding = mSphinx.getMapView().getPadding();
+        padding.top = mTitleFragment.mTitleFramentHeight;
+        padding.bottom = mBottomFramentHeight;
+        
         //如果是驾车和步行，需要在这里可以切换到详情页
         if (mActionTag == ActionLog.TrafficDriveMap || mActionTag == ActionLog.TrafficWalkMap) {
-        	mRightBtn.setVisibility(View.VISIBLE);
-        	mRightBtn.setBackgroundResource(R.drawable.btn_view_detail);
-        	mRightBtn.setOnClickListener(this);
+            mRightBtn.setBackgroundResource(R.drawable.btn_view_detail);
+            mRightBtn.setOnClickListener(this);
         	if (mActionTag == ActionLog.TrafficDriveMap) {
-        		mTitleBtn.setText(mSphinx.getString(R.string.title_type_drive));
+        	    mTitleBtn.setText(mSphinx.getString(R.string.title_type_drive));
         	} else {
-        		mTitleBtn.setText(mSphinx.getString(R.string.title_type_walk));
+        	    mTitleBtn.setText(mSphinx.getString(R.string.title_type_walk));
         	}
         }
         mSphinx.showHint(TKConfig.PREFS_HINT_LOCATION, R.layout.hint_location_map);
@@ -171,7 +111,6 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
     @Override
     public void onPause() {
         super.onPause();
-        mSphinx.getMapView().getPadding().top = mSphinx.getTitleViewHeight() + mSphinx.getCityViewHeight() + Util.dip2px(Globals.g_metrics.density, 18);
     }
     
     public void setData(String title, String actionTag) {
@@ -183,28 +122,6 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
          * 此时请重置定位点状态
          */
         mSphinx.resetLoactionButtonState();
-        
-        mTitlePopupArrayAdapter.mSelectedItem = null;
-        mTitlePopupList.clear();
-        
-        if (mSphinx.uiStackContains(R.id.view_more_favorite) == false
-                && mSphinx.uiStackContains(R.id.view_more_history) == false) {
-            if (mActionTag.equals(ActionLog.TrafficBuslineMap)) {
-                mTitlePopupArrayAdapter.mSelectedItem = mSphinx.getString(R.string.title_popup_content,
-                        mSphinx.getBuslineDetailFragment().getCurLine() + 1, mSphinx.getBuslineDetailFragment().getData().getName());
-                List<Line> list = mSphinx.getBuslineResultLineFragment().getData();
-                for(int i = 0, size = list.size(); i < size; i++) {
-                    mTitlePopupList.add(mSphinx.getString(R.string.title_popup_content, i + 1, list.get(i).getName()));
-                }
-            } else if (mActionTag.equals(ActionLog.TrafficTransferMap)) {
-                mTitlePopupArrayAdapter.mSelectedItem = mSphinx.getString(R.string.title_popup_content,
-                        mSphinx.getTrafficDetailFragment().getCurLine() + 1, mSphinx.getTrafficDetailFragment().getData().getTitle(mSphinx));
-                List<Plan> list = mSphinx.getTrafficResultFragment().getData();
-                for(int i = 0, size = list.size(); i < size; i++) {
-                    mTitlePopupList.add(mSphinx.getString(R.string.title_popup_content, i + 1, list.get(i).getTitle(mSphinx)));
-                }
-            }
-        }
     }
     
     protected void findViews() {
@@ -222,12 +139,7 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
     public void onClick(View view) {
         int id = view.getId();
         switch (id) {
-        case R.id.title_btn:
-        	if (mTitlePopupList.size() > 0) {
-        		mTitleFragment.showPopupWindow(mTitlePopupArrayAdapter, mTitlePopupOnItemClickListener, mActionTag);
-        		mTitlePopupArrayAdapter.notifyDataSetChanged();
-        	}
-        	break;
+
         case R.id.confirm_btn:
 	        mSphinx.snapMapView(new SnapMap() {
 	        	
@@ -256,7 +168,7 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
 	        				}
 	        			} else {
 	        				position = mSphinx.getMapView().getCenterPosition();
-	        				description = mSphinx.getMapEngine().getPositionName(position);
+	        				description = MapEngine.getPositionName(position);
 	        				if (TextUtils.isEmpty(description)) {
 	        					description = mContext.getString(R.string.select_point);
 	        				}
@@ -288,46 +200,5 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
     public void dismiss() {
         super.dismiss();
         mSphinx.clearMap();
-    }
-    
-    public static class TitlePopupArrayAdapter extends ArrayAdapter<String> {
-        
-        private static final int TEXTVIEW_RESOURCE_ID = R.layout.result_map_title_popup_list_item;
-        
-        private LayoutInflater mLayoutInflater;
-        
-        public String mSelectedItem;
-
-        public TitlePopupArrayAdapter(Context context, List<String> list) {
-            super(context, TEXTVIEW_RESOURCE_ID, list);
-            mLayoutInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View view;
-            if (convertView == null) {
-                view = mLayoutInflater.inflate(TEXTVIEW_RESOURCE_ID, parent, false);
-            } else {
-                view = convertView;
-            }
-            
-            ImageView iconTxv = (ImageView)view.findViewById(R.id.icon_imv);
-            TextView textTxv = (TextView)view.findViewById(R.id.name_txv);
-            
-            String name = getItem(position);
-            if (name.equals(mSelectedItem)) {
-                view.setBackgroundResource(R.drawable.list_selector_background_gray_light);
-                iconTxv.setVisibility(View.VISIBLE);
-                textTxv.setTextColor(TKConfig.COLOR_ORANGE);
-            } else {
-                view.setBackgroundResource(R.drawable.list_selector_background_gray_dark);
-                iconTxv.setVisibility(View.INVISIBLE);
-                textTxv.setTextColor(TKConfig.COLOR_BLACK_DARK);
-            }            
-            textTxv.setText(name);
-
-            return view;
-        }
     }
 }

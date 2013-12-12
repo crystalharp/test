@@ -4,7 +4,6 @@
 
 package com.tigerknows.ui.discover;
 
-import com.decarta.Globals;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
@@ -27,7 +26,6 @@ import com.tigerknows.model.DataQuery.FilterCategoryOrder;
 import com.tigerknows.model.DataQuery.TuangouResponse;
 import com.tigerknows.model.DataQuery.YanchuResponse;
 import com.tigerknows.model.DataQuery.ZhanlanResponse;
-import com.tigerknows.model.DataQuery.DiscoverResponse.DiscoverCategoryList.DiscoverCategory;
 import com.tigerknows.model.Yingxun.Changci;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.util.Utility;
@@ -56,7 +54,6 @@ import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.RatingBar;
 import android.widget.TextView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.PopupWindow.OnDismissListener;
 
 import java.util.ArrayList;
@@ -158,41 +155,6 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     
     private String mDataType;
     
-    /**
-     * 发现分类列表
-     */
-    private List<DiscoverCategory> mDiscoverCategoryList = new ArrayList<DiscoverCategory>();
-    
-    /**
-     * Adapter used to choose between different discover categroy in list fragmenti
-     */
-    private TitlePopupArrayAdapter mTitlePopupArrayAdapter;
-    
-    private OnItemClickListener mTitlePopupOnItemClickListener = new OnItemClickListener() {
-
-        @Override
-        public void onItemClick(AdapterView<?> adapterView, View view, int position, long arg3) {
-        	//close the popup window
-            mTitleFragment.dismissPopupWindow();
-            
-            TitlePopupArrayAdapter titlePopupArrayAdapter = (TitlePopupArrayAdapter) adapterView.getAdapter();
-            DiscoverCategory discoverCategory = titlePopupArrayAdapter.getItem(position);
-            
-            //Build the query
-            DataQuery dataQuery = new DataQuery(mSphinx);
-            dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, discoverCategory.getType());
-            dataQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
-            dataQuery.setup(Globals.getCurrentCityInfo().getId(),
-                    R.id.view_discover_home, R.id.view_discover_list, null, false, false,
-                    mSphinx.getPOI());
-            mSphinx.queryStart(dataQuery);
-            
-            setup();
-            onResume();
-            mActionLog.addAction(mActionTag + ActionLog.PopupWindowTitle + ActionLog.ListViewItem, position, discoverCategory.getType());
-        }
-    };
-    
     private Runnable mTurnPageRun = new Runnable() {
         
         @Override
@@ -289,9 +251,6 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
 
         findViews();
         setListener();
-        
-        //mResultLsv.setDivider(mSphinx.getResources().getDrawable(R.drawable.bg_broken_line));
-        mTitlePopupArrayAdapter = new TitlePopupArrayAdapter(mSphinx, mDiscoverCategoryList);
         
         return mRootView;
     }
@@ -465,30 +424,20 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         mIPagerListCallBack = null;
         if (BaseQuery.DATA_TYPE_TUANGOU.equals(mDataType)) {
             mTitleBtn.setText(R.string.tuangou_list);
-            mRightBtn.setVisibility(View.VISIBLE);
+            mRightBtn.setBackgroundResource(R.drawable.btn_view_map);
+            mRightBtn.setOnClickListener(this);
         } else if (BaseQuery.DATA_TYPE_DIANYING.equals(mDataType)) {
             mTitleBtn.setText(R.string.dianying_list);
-            mRightBtn.setVisibility(View.GONE);
         } else if (BaseQuery.DATA_TYPE_YANCHU.equals(mDataType)) {
             mTitleBtn.setText(R.string.yanchu_list);
-            mRightBtn.setVisibility(View.VISIBLE);
+            mRightBtn.setBackgroundResource(R.drawable.btn_view_map);
+            mRightBtn.setOnClickListener(this);
         } else if (BaseQuery.DATA_TYPE_ZHANLAN.equals(mDataType)) {
             mTitleBtn.setText(R.string.zhanlan_list);
-            mRightBtn.setVisibility(View.VISIBLE);
+            mRightBtn.setBackgroundResource(R.drawable.btn_view_map);
+            mRightBtn.setOnClickListener(this);
         }
-        mRightBtn.setBackgroundResource(R.drawable.btn_view_map);
-        mRightBtn.setOnClickListener(this);
         
-        List<DiscoverCategory> list = mSphinx.getDiscoverFragment().getDiscoverCategoryList();
-        mDiscoverCategoryList.clear();
-        for(int i = 0, size=list.size(); i < size; i++) {
-            DiscoverCategory discoverCategory = list.get(i);
-            if (discoverCategory.getNumCity() > 0 || discoverCategory.getNumNearby() > 0) {
-                if (mDiscoverCategoryList.contains(discoverCategory) == false) {
-                    mDiscoverCategoryList.add(discoverCategory);
-                }
-            }
-        }
         mTitleBtn.setBackgroundResource(R.drawable.btn_title_popup);
         mTitleBtn.setOnClickListener(this);
 
@@ -516,7 +465,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
      * In state querying, the button shouldn't be clickable 
      */
     private void updateTitleButtonState(){
-    	if(mTitleBtn == null || mSphinx.uiStackPeek() != getId()){
+    	if(mSphinx.uiStackPeek() != getId()){
     		return;
     	}
         if (mState == STATE_QUERYING) {
@@ -537,44 +486,39 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             mRetryView.setVisibility(View.GONE);
             mEmptyView.setVisibility(View.GONE);
             mResultLsv.setVisibility(View.GONE);
-            if (mRightBtn != null)
-                mRightBtn.setVisibility(View.GONE);
+            mRightBtn.setVisibility(View.GONE);
         } else if (mState == STATE_ERROR) {
             mQueryingView.setVisibility(View.GONE);
             mRetryView.setVisibility(View.VISIBLE);
             mEmptyView.setVisibility(View.GONE);
             mResultLsv.setVisibility(View.GONE);
-            if (mRightBtn != null)
-                mRightBtn.setVisibility(View.GONE);
+            mRightBtn.setVisibility(View.GONE);
         } else if (mState == STATE_EMPTY){
             mQueryingView.setVisibility(View.GONE);
             mRetryView.setVisibility(View.GONE);
             mEmptyView.setVisibility(View.VISIBLE);
             mResultLsv.setVisibility(View.GONE);
-            if (mRightBtn != null)
-                mRightBtn.setVisibility(View.GONE);
+            mRightBtn.setVisibility(View.GONE);
         } else {
             mQueryingView.setVisibility(View.GONE);
             mRetryView.setVisibility(View.GONE);
             mEmptyView.setVisibility(View.GONE);
             mResultLsv.setVisibility(View.VISIBLE);
-            if (mRightBtn != null) {
-                if (getList().size() > 0) {
-                    if (BaseQuery.DATA_TYPE_DIANYING.equals(mDataType) && mSphinx.uiStackPeek() == R.id.view_discover_list) {
-                        mRightBtn.setVisibility(View.GONE);
-                    }else{
-                    	mRightBtn.setVisibility(View.VISIBLE);
-                    }
-                    if (mSphinx.getFromThirdParty() == 0) {
-                        if (BaseQuery.DATA_TYPE_TUANGOU.equals(mDataType)) {
-                            if (TKConfig.getPref(mSphinx, TKConfig.PREFS_HINT_DISCOVER_TUANGOU_DINGDAN) == null) {
-                                mSphinx.showHint(TKConfig.PREFS_HINT_DISCOVER_TUANGOU_DINGDAN, R.layout.hint_discover_tuangou_dingdan);
-                            }
+            if (getList().size() > 0) {
+                if (BaseQuery.DATA_TYPE_DIANYING.equals(mDataType) && mSphinx.uiStackPeek() == R.id.view_discover_list) {
+                    mRightBtn.setVisibility(View.GONE);
+                }else{
+                    mRightBtn.setVisibility(View.VISIBLE);
+                }
+                if (mSphinx.getFromThirdParty() == 0) {
+                    if (BaseQuery.DATA_TYPE_TUANGOU.equals(mDataType)) {
+                        if (TKConfig.getPref(mSphinx, TKConfig.PREFS_HINT_DISCOVER_TUANGOU_DINGDAN) == null) {
+                            mSphinx.showHint(TKConfig.PREFS_HINT_DISCOVER_TUANGOU_DINGDAN, R.layout.hint_discover_tuangou_dingdan);
                         }
                     }
-                } else {
-                    mRightBtn.setVisibility(View.GONE);
                 }
+            } else {
+                mRightBtn.setVisibility(View.GONE);
             }
         }
     }
@@ -685,14 +629,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     @Override
     public void onClick(final View view) {
         switch (view.getId()) {
-            case R.id.title_btn:
-                if (mDiscoverCategoryList.size() > 0) {
-                    mTitlePopupArrayAdapter.mSelectDataType = mDataType;
-                    mTitleFragment.showPopupWindow(mTitlePopupArrayAdapter, mTitlePopupOnItemClickListener, mActionTag);
-                    mTitlePopupArrayAdapter.notifyDataSetChanged();
-                }
-                break;
-                
+            
             case R.id.right_btn:
                 if (mDataQuery == null || mState != STATE_LIST) {
                     return;
@@ -1268,64 +1205,6 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         }
         mPopupWindow.showAsDropDown(parent, 0, 0);
 
-    }
-    
-    public class TitlePopupArrayAdapter extends ArrayAdapter<DiscoverCategory> {
-        
-        private static final int TEXTVIEW_RESOURCE_ID = R.layout.discover_title_popup_list_item;
-        
-        private LayoutInflater mLayoutInflater;
-        
-        public String mSelectDataType;
-
-        public TitlePopupArrayAdapter(Context context, List<DiscoverCategory> list) {
-            super(context, TEXTVIEW_RESOURCE_ID, list);
-            mLayoutInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View view;
-            if (convertView == null) {
-                view = mLayoutInflater.inflate(TEXTVIEW_RESOURCE_ID, parent, false);
-            } else {
-                view = convertView;
-            }
-            
-            ImageView iconTxv = (ImageView)view.findViewById(R.id.icon_imv);
-            TextView textTxv = (TextView)view.findViewById(R.id.name_txv);
-            TextView numTxv = (TextView)view.findViewById(R.id.num_txv);
-            
-            DiscoverCategory discoverCategory = getItem(position);
-            if (discoverCategory.getType().equals(mSelectDataType)) {
-                view.setBackgroundResource(R.drawable.list_selector_background_gray_light);
-                iconTxv.setVisibility(View.VISIBLE);
-                textTxv.setTextColor(TKConfig.COLOR_ORANGE);
-                numTxv.setTextColor(TKConfig.COLOR_ORANGE);
-            } else {
-                view.setBackgroundResource(R.drawable.list_selector_background_gray_dark);
-                iconTxv.setVisibility(View.INVISIBLE);
-                textTxv.setTextColor(TKConfig.COLOR_BLACK_DARK);
-                numTxv.setTextColor(TKConfig.COLOR_BLACK_DARK);
-            }
-            
-            String name = null;
-            String dataType = discoverCategory.getType();
-            if (BaseQuery.DATA_TYPE_TUANGOU.equals(dataType)) {
-                name = mSphinx.getString(R.string.tuangou);
-            } else if (BaseQuery.DATA_TYPE_DIANYING.equals(dataType)) {
-                name = mSphinx.getString(R.string.dianying);
-            } else if (BaseQuery.DATA_TYPE_YANCHU.equals(dataType)) {
-                name = mSphinx.getString(R.string.yanchu);
-            } else if (BaseQuery.DATA_TYPE_ZHANLAN.equals(dataType)) {
-                name = mSphinx.getString(R.string.zhanlan);
-            }
-            
-            textTxv.setText(name);
-            numTxv.setText(String.valueOf(discoverCategory.getNumCity()));
-
-            return view;
-        }
     }
 
     @Override

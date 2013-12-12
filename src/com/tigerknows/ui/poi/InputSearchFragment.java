@@ -4,8 +4,6 @@
 
 package com.tigerknows.ui.poi;
 
-import java.util.Hashtable;
-
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -17,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -27,7 +24,6 @@ import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
-import com.tigerknows.android.widget.TKEditText;
 import android.widget.Toast;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.POI;
@@ -48,9 +44,28 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         // TODO Auto-generated constructor stub
     }
 
-    private Button mQueryBtn = null;
-
-    private TKEditText mKeywordEdt = null;
+    private OnEditorActionListener mOnEditorActionListener = new OnEditorActionListener() {
+        
+        @Override
+        public boolean onEditorAction(TextView arg0, int actionId, KeyEvent event) {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
+                submitQuery();
+                return true;
+            }
+            return false;
+        }
+    };
+    
+    private OnTouchListener mOnTouchListener = new OnTouchListener() {
+        
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                mSphinx.showSoftInput(mKeywordEdt.getInput());
+            }
+            return false;
+        }
+    };
 
     private ListView mSuggestLsv = null;
     
@@ -66,9 +81,9 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
 
         public void afterTextChanged(Editable s) {
             if (s.toString().trim().length() > 0) {
-                mQueryBtn.setEnabled(true);
+                mRightBtn.setText(R.string.confirm);
             } else {
-                mQueryBtn.setEnabled(false);
+                mRightBtn.setText(R.string.cancel);
             }
         }
     };
@@ -85,7 +100,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         LogWrapper.d(TAG, "onCreateView()"+mActionTag);
         
         mRootView = mLayoutInflater.inflate(R.layout.poi_input_search, container, false);
-
+        
         findViews();
         setListener();
         
@@ -104,49 +119,40 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
     @Override
     public void onResume() {
         super.onResume();
-        mTitleBtn.setText(R.string.search);
-        mRightBtn.setVisibility(View.INVISIBLE);
+        
+        mTitleBtn.setVisibility(View.GONE);
+        mKeywordEdt.setVisibility(View.VISIBLE);
+        
+        mKeywordEdt.mActionTag = mActionTag;
+        mKeywordEdt.setOnEditorActionListener(mOnEditorActionListener);
+        mKeywordEdt.addTextChangedListener(mFindEdtWatcher);
+        mKeywordEdt.setOnTouchListener(mOnTouchListener);
+        
+        mRightBtn.setBackgroundResource(R.drawable.btn_title);
+        mRightBtn.setOnClickListener(this);
+        
         mSphinx.showSoftInput(mKeywordEdt.getInput());
         mKeywordEdt.getInput().requestFocus();
+        
+        if (mKeywordEdt.getText().toString().trim().length() > 0) {
+            mRightBtn.setText(R.string.confirm);
+        } else {
+            mRightBtn.setText(R.string.cancel);
+        }
     }
 
     @Override
     public void onPause() {
         super.onPause();
         mKeywordEdt.clearFocus();
+        mKeywordEdt.removeTextChangedListener(mFindEdtWatcher);
     }
 
     protected void findViews() {
-        mQueryBtn = (Button)mRootView.findViewById(R.id.query_btn);
-        mKeywordEdt = (TKEditText)mRootView.findViewById(R.id.keyword_edt);
-        mKeywordEdt.mActionTag = mActionTag;
         mSuggestLsv = (ListView)mRootView.findViewById(R.id.suggest_lsv);
-        mKeywordEdt.setOnEditorActionListener(new OnEditorActionListener() {
-            
-            @Override
-            public boolean onEditorAction(TextView arg0, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
-                    submitQuery();
-                    return true;
-                }
-                return false;
-            }
-        });
     }
 
     protected void setListener() {
-        mQueryBtn.setOnClickListener(this);
-        mKeywordEdt.addTextChangedListener(mFindEdtWatcher);
-        mKeywordEdt.setOnTouchListener(new OnTouchListener() {
-            
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    mSphinx.showSoftInput(mKeywordEdt.getInput());
-                }
-                return false;
-            }
-        });
         
         mSuggestLsv.setOnItemClickListener(new OnItemClickListener() {
 
@@ -184,8 +190,12 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
     public void onClick(View view) {
         switch (view.getId()) {
                 
-            case R.id.query_btn:
-                submitQuery();
+            case R.id.right_btn:
+                if (mKeywordEdt.getText().toString().trim().length() > 0) {
+                    submitQuery();
+                } else {
+                    dismiss();
+                }
                 break;
             default:
         }
@@ -201,12 +211,11 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
             mActionLog.addAction(mActionTag +  ActionLog.POIHomeInputQueryBtn, keyword);
 
             POI requestPOI = mSphinx.getPOI();
-            POI poi = mSphinx.getPOIHomeFragment().getPOI();
+            POI poi = mSphinx.getPOI();
             if (poi != null) {
                 requestPOI = poi;
             }
-            DataQuery poiQuery = mSphinx.getPOIHomeFragment().getDataQuery();
-            poiQuery.addParameter(DataQuery.SERVER_PARAMETER_KEYWORD, keyword);
+            DataQuery poiQuery = mSphinx.getHomeFragment().getDataQuery(keyword);
             poiQuery.addParameter(DataQuery.SERVER_PARAMETER_EXT, DataQuery.EXT_BUSLINE);
             poiQuery.setup(cityId, getId(), mSphinx.getPOIResultFragmentID(), null, false, false, requestPOI);
             mSphinx.queryStart(poiQuery);
@@ -220,7 +229,6 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
     //还原为第一次进入的状态
     public void reset() {
         mKeywordEdt.setText(null);
-        mQueryBtn.setEnabled(false);
     }
     
 }

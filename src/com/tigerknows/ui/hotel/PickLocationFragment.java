@@ -22,7 +22,6 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -30,7 +29,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.TextView.OnEditorActionListener;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
 
 import com.decarta.Globals;
@@ -84,10 +82,6 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
     
     private FilterListView mFilterListView = null;
     
-    private Button mQueryBtn = null;
-
-    private TKEditText mKeywordEdt = null;
-
     private ListView mSuggestLsv = null;
     
     private ListView mAlternativeLsv = null;
@@ -117,11 +111,36 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
         }
 
         public void afterTextChanged(Editable s) {
-//            if (s.toString().trim().length() > 0) {
-//                mQueryBtn.setEnabled(true);
-//            } else {
-//                mQueryBtn.setEnabled(false);
-//            }
+            if (s.toString().trim().length() > 0) {
+                mRightBtn.setText(R.string.confirm);
+            } else {
+                mRightBtn.setText(R.string.cancel);
+            }
+        }
+    };
+    
+    private OnTouchListener mOnTouchListener = new OnTouchListener() {
+        
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                mActionLog.addAction(mActionTag+ActionLog.HotelPickLocationInput);
+                mSuggestWordListManager.refresh();
+                mViewPager.setCurrentItem(1);
+            }
+            return false;
+        }
+    };
+    
+    private OnEditorActionListener mOnEditorActionListener = new OnEditorActionListener() {
+        
+        @Override
+        public boolean onEditorAction(TextView arg0, int actionId, KeyEvent event) {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
+                submit();
+                return true;
+            }
+            return false;
         }
     };
     
@@ -142,6 +161,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
             Bundle savedInstanceState) {
         
         mRootView = mLayoutInflater.inflate(R.layout.poi_nearby_search, container, false);
+        
         findViews();
         setListener();
                 
@@ -157,7 +177,6 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
 
         mKeywordEdt.getInput().setFilters(new InputFilter[] { new InputFilter.LengthFilter(Integer.MAX_VALUE) });
         mSuggestWordListManager = new SuggestWordListManager(mSphinx, mSuggestLsv, mKeywordEdt, a, HistoryWordTable.TYPE_TRAFFIC);
-        mQueryBtn.setBackgroundResource(R.drawable.btn_confirm_hotel_normal);
         
         return mRootView;
     }
@@ -165,21 +184,34 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
     @Override
     public void onResume() {
         super.onResume();
-        mTitleBtn.setText(mTitle);
-        mRightBtn.setVisibility(View.INVISIBLE);
+        
+        mTitleBtn.setVisibility(View.GONE);
+        mKeywordEdt.setVisibility(View.VISIBLE);
+        
+        mKeywordEdt.addTextChangedListener(mKeywordEdtWatcher);
+        mKeywordEdt.setOnTouchListener(mOnTouchListener);
+        mKeywordEdt.setOnEditorActionListener(mOnEditorActionListener);
+        
+        mRightBtn.setBackgroundResource(R.drawable.btn_title);
+        mRightBtn.setOnClickListener(this);
+        
+        if (mKeywordEdt.getText().toString().trim().length() > 0) {
+            mRightBtn.setText(R.string.confirm);
+        } else {
+            mRightBtn.setText(R.string.cancel);
+        }
     }
 
     @Override
     public void onPause() {
         super.onPause();
         mKeywordEdt.getInput().clearFocus();
+        mKeywordEdt.removeTextChangedListener(mKeywordEdtWatcher);
     }
 
     protected void findViews() {
         mRootView.findViewById(R.id.location_txv).setVisibility(View.GONE);
         mViewPager = (ViewPager) mRootView.findViewById(R.id.view_pager);
-        mQueryBtn = (Button)mRootView.findViewById(R.id.query_btn);
-        mKeywordEdt = (TKEditText)mRootView.findViewById(R.id.keyword_edt);
         
         mFilterListView = new FilterListView(mSphinx);
         mFilterListView.findViewById(R.id.body_view).setPadding(0, 0, 0, 0);
@@ -213,33 +245,6 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
             
             @Override
             public void onPageScrollStateChanged(int arg0) {
-            }
-        });
-        
-        mQueryBtn.setOnClickListener(this);
-        mKeywordEdt.addTextChangedListener(mKeywordEdtWatcher);
-        mKeywordEdt.setOnTouchListener(new OnTouchListener() {
-            
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    mActionLog.addAction(mActionTag+ActionLog.HotelPickLocationInput);
-                    mSuggestWordListManager.refresh();
-                    mViewPager.setCurrentItem(1);
-                }
-                return false;
-            }
-        });
-        
-        mKeywordEdt.setOnEditorActionListener(new OnEditorActionListener() {
-            
-            @Override
-            public boolean onEditorAction(TextView arg0, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
-                    submit();
-                    return true;
-                }
-                return false;
             }
         });
         
@@ -301,12 +306,12 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
     public void onClick(View view) {
         switch (view.getId()) {
                 
-            case R.id.query_btn:
+            case R.id.right_btn:
                 mActionLog.addAction(mActionTag + ActionLog.HotelPickLocationSubmit);
-                if (TextUtils.isEmpty(mKeywordEdt.getText().toString())) {
-                    mSphinx.showTip(R.string.search_input_keyword, Toast.LENGTH_SHORT);
-                } else {
+                if (mKeywordEdt.getText().toString().trim().length() > 0) {
                     submit();
+                } else {
+                    dismiss();
                 }
                 break;
 
@@ -346,7 +351,6 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
         mKeywordEdt.setText(null);
         mKeywordEdt.clearFocus();
         mViewPager.setCurrentItem(0);
-//        mQueryBtn.setEnabled(false);
         mViewPager.requestFocus();
         mSuggestLsv.setVisibility(View.VISIBLE);
         mAlternativeLsv.setVisibility(View.GONE);

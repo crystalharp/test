@@ -72,18 +72,6 @@ public class UserHomeFragment extends UserBaseFragment {
 	}
 	
 	protected void setListener() {
-		
-		if (mLeftBtn != null) {
-            mLeftBtn.setOnClickListener(new View.OnClickListener() {
-                
-                @Override
-                public void onClick(View arg0) {
-                    mActionLog.addAction(mActionTag + ActionLog.TitleLeftButton);
-                    onBack();
-                }
-            });
-        }
-		
 		updatePhoneBtn.setOnClickListener(new android.view.View.OnClickListener(){
 
 			@Override
@@ -175,7 +163,6 @@ public class UserHomeFragment extends UserBaseFragment {
 		super.onResume();
 		LogWrapper.d(TAG, "onResume()");
 		
-        mRightBtn.setVisibility(View.GONE);
         mTitleBtn.setText(mContext.getString(R.string.title_user_home));
         
 		if (Globals.g_User != null) {
@@ -185,16 +172,14 @@ public class UserHomeFragment extends UserBaseFragment {
 		    dismiss();
 		}
         
-        if (mLeftBtn != null) {
-            mLeftBtn.setOnClickListener(new View.OnClickListener() {
-                
-                @Override
-                public void onClick(View arg0) {
-                    mActionLog.addAction(mActionTag + ActionLog.TitleLeftButton);
-                    onBack();
-                }
-            });
-        }
+        mLeftBtn.setOnClickListener(new View.OnClickListener() {
+            
+            @Override
+            public void onClick(View arg0) {
+                mActionLog.addAction(mActionTag + ActionLog.TitleLeftButton);
+                onBack();
+            }
+        });
 	}
 
 	@Override

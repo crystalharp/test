@@ -38,7 +38,6 @@ import android.widget.Button;
 import android.widget.AdapterView.OnItemClickListener;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
 
 /**
@@ -111,7 +110,6 @@ public class GoCommentFragment extends BaseFragment implements View.OnClickListe
     public void onResume() {
         super.onResume();
         mTitleBtn.setText(R.string.go_comment);
-        mRightBtn.setVisibility(View.GONE);
         if (isReLogin()) {
             return;
         }

@@ -1338,4 +1338,6 @@
     <string name="tel_reserve_hotel">拨打电话预订酒店</string>
     <string name="query_all_hotel">查找附近酒店</string>
     <string name="hotel_home_tip">免费预订，享受低价。小虎承诺：若预订价高于酒店门市价，3倍差额赔付！</string>
+    
+    <string name="hotel">酒店</string>
 </resources>

@@ -27,8 +27,8 @@ import com.tigerknows.provider.HistoryWordTable;
 import com.tigerknows.provider.HotelOrderTable;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
+import com.tigerknows.ui.HomeFragment;
 import com.tigerknows.ui.more.ChangeCityActivity;
-import com.tigerknows.ui.poi.POIHomeFragment;
 import com.tigerknows.ui.poi.POIResultFragment;
 import com.tigerknows.util.Utility;
 import com.tigerknows.widget.FilterListView;
@@ -162,7 +162,6 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         }
         
         if (TKConfig.getPref(mSphinx, TKConfig.PREFS_HINT_POI_HOME_HOTEL_RESERVE) == null) {
-            mSphinx.getPOIHomeFragment().getCategoryAdapter().notifyDataSetChanged();
         }
         if (isReLogin()) {
             return;
@@ -309,7 +308,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                 
             case R.id.query_all_hotel_view:
                 mActionLog.addAction(mActionTag + ActionLog.HotelQueryAll);
-                DataQuery dataQuery = mSphinx.getPOIHomeFragment().getDataQuery(POIHomeFragment.HOTEL_INDEX);
+                DataQuery dataQuery = mSphinx.getHomeFragment().getDataQuery(mSphinx.getString(R.string.hotel));
                 dataQuery.setup(Globals.getCurrentCityInfo(true).getId(), getId(), mSphinx.getPOIResultFragmentID(), null, false, false, mSphinx.getPOI());
                 BaseFragment baseFragment = mSphinx.getFragment(dataQuery.getTargetViewId());
                 

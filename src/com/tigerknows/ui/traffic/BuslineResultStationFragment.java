@@ -102,11 +102,9 @@ public class BuslineResultStationFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
         
-        mRightBtn.setVisibility(View.GONE);
-
         mCommentTxv.setText(mContext.getString(R.string.busline_result_title, mBuslineQuery.getKeyword(), 
         		mBuslineModel.getTotal()));
-    	mTitleBtn.setText(mContext.getString(R.string.title_station_result));
+        mTitleBtn.setText(mContext.getString(R.string.title_station_result));
     	
         if (mResultLsv.isFooterSpringback()) {
             mSphinx.getHandler().postDelayed(mTurnPageRun, 1000);

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root_view" 
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content"
+    android:gravity="top|left" 
+    android:orientation="horizontal">
+        
+    <RelativeLayout
+        android:id="@+id/more_view" 
+        android:layout_width="wrap_content" 
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true">
+        
+        <Button android:id="@+id/more_btn" 
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content"
+            android:background="@drawable/menu_more"
+            android:layout_centerInParent="true"
+            android:gravity="center"/>
+        
+        <ImageView android:id="@+id/upgrade_imv" 
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content"
+            android:background="@drawable/menu_upgrade"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:visibility="visible" />
+    </RelativeLayout>
+           
+    <LinearLayout
+        android:layout_width="fill_parent" 
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@id/more_view"
+        android:weightSum="2"> 
+	    <RelativeLayout
+	        android:layout_width="wrap_content" 
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1"
+	        android:gravity="center"> 
+	        
+	    <Button android:id="@+id/poi_btn" 
+	        android:layout_width="wrap_content" 
+	        android:layout_height="wrap_content"
+	        android:background="@drawable/menu_poi"
+	        android:layout_centerInParent="true"
+	        android:gravity="center"/>
+	    </RelativeLayout>
+	           
+	    <RelativeLayout
+	        android:layout_width="wrap_content" 
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1"
+	        android:gravity="center"> 
+	    <Button android:id="@+id/traffic_btn" 
+	        android:layout_width="wrap_content" 
+	        android:layout_height="wrap_content"
+	        android:background="@drawable/menu_traffic"
+	        android:layout_centerInParent="true"
+	        android:gravity="center"/>
+	    </RelativeLayout>
+    </LinearLayout>
+</RelativeLayout>

@@ -148,6 +148,7 @@ public class TilesView extends GLSurfaceView {
 	private Timer drawMyLocationTimer;
 	boolean isMyLocation = false;
 	public boolean stopRefreshMyLocation = false;
+	boolean executeDrawFrameListeners = false;
 
 	public void setRefreshMapText(boolean refresh) {
 	}
@@ -2985,6 +2986,10 @@ public class TilesView extends GLSurfaceView {
 					float bgb = (CONFIG.BACKGROUND_COLOR_OPENGL & 0x000000ff) / 255.0f;
 					gl.glClearColor(bgr, bgg, bgb, 1);
 					
+					if (executeDrawFrameListeners == false) {
+					    executeDrawFrameListeners = true;
+					    mParentMapView.executeDrawFrameListeners();
+					}
 					if (paused || stopRefreshMyLocation) {
 						LogWrapper.i("Sequence", "onDrawFrame paused");
 					    return;
@@ -3667,7 +3672,7 @@ public class TilesView extends GLSurfaceView {
 					gl.glVertexPointer(2, GL_FLOAT, 0, mVertexBuffer);
 					float density = Globals.g_metrics.density;
 			        Position centerPos = getCenterPosition();
-			        XYFloat leftTop = new XYFloat(10 * density, displaySize.y - 50 * density);
+			        XYFloat leftTop = new XYFloat(8 * density, displaySize.y - 24 * density - padding.bottom);
 					scaleView.renderGL(leftTop, zoomLevel, (float)centerPos.getLat(), centerXYZ.z, TEXTURE_COORDS);
 					gl.glPopMatrix();
 					

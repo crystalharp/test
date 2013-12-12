@@ -56,7 +56,6 @@ public class TakeScreenshotActivity extends BaseActivity implements View.OnClick
         mRight2Btn.setOnClickListener(this);
         mRight2Btn.setBackgroundResource(R.drawable.btn_title);
         mRightBtn.setText(R.string.save);
-        mRightBtn.setVisibility(View.VISIBLE);
         mRightBtn.setOnClickListener(this);
         mRightBtn.setBackgroundResource(R.drawable.btn_title);
         

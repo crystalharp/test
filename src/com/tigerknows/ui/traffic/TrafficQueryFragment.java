@@ -317,13 +317,9 @@ public class TrafficQueryFragment extends BaseFragment {
             }
 		}
 		
-		MapView mapView = mSphinx.getMapView();
-        mapView.setStopRefreshMyLocation(false);
-      
         LogWrapper.d("eric", "TrafficQueryView.show() currentState: " + currentState);
 
         if (currentState == TrafficViewSTT.State.Input) {
-            mMenuFragment.hide();
             if (mode == TRAFFIC_MODE) {
                 mSphinx.showSoftInput(mSelectedEdt.getEdt().getInput());
             } else {
@@ -337,15 +333,11 @@ public class TrafficQueryFragment extends BaseFragment {
             mSphinx.setTouchMode(TouchMode.LONG_CLICK);
             
             mSphinx.clearMap();
-            mMenuFragment.updateMenuStatus(R.id.traffic_btn);
-            mMenuFragment.display();
             /**
              * 从测距回来，左上的指南针位置不正确。
              */
-            mSphinx.layoutTopViewPadding(0, Util.dip2px(Globals.g_metrics.density, 182), 0, 0);
         } else if (currentState == TrafficViewSTT.State.Map) {
         	mSphinx.setTouchMode(TouchMode.LONG_CLICK);
-            mSphinx.layoutTopViewPadding(0, Util.dip2px(Globals.g_metrics.density, 78), 0, 0);
         } else if (currentState == TrafficViewSTT.State.SelectPoint) {
 			mSphinx.setTouchMode(R.id.start_edt == mSelectedEdt.getEdt().getId() ? 
 					TouchMode.CHOOSE_ROUTING_START_POINT : TouchMode.CHOOSE_ROUTING_END_POINT);
@@ -923,19 +915,9 @@ public class TrafficQueryFragment extends BaseFragment {
 	}
 	
 	public void hideCommonTitle() {
-		/*
-		 * 在结果地图时, 若地图卡住了(比如多次放大缩小时), 此时点数次返回键, 
-		 * 会多次dismiss页面, 使得栈被清空. 
-		 * 在BaseFragment中加了对只有左上角返回按钮可见时才响应点击事件, 
-		 * 避开了这个问题.
-		 */
-        mLeftBtn.setVisibility(View.INVISIBLE);
-		mTitleFragment.hide();
 	}
 	
 	public void displayCommonTitle() {
-        mLeftBtn.setVisibility(View.VISIBLE);
-		mTitleFragment.display();
 	}
 	
 	@Override

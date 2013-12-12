@@ -23,7 +23,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -75,10 +74,6 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     
     private ListView mCategoryLsv = null;
     
-    private Button mQueryBtn = null;
-
-    private TKEditText mKeywordEdt = null;
-
     private ListView mSuggestLsv = null;
     
     private SuggestWordListManager mSuggestWordListManager;
@@ -117,10 +112,35 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
 
         public void afterTextChanged(Editable s) {
             if (s.toString().trim().length() > 0) {
-                mQueryBtn.setEnabled(true);
+                mRightBtn.setText(R.string.confirm);
             } else {
-                mQueryBtn.setEnabled(false);
+                mRightBtn.setText(R.string.cancel);
             }
+        }
+    };
+    
+    private OnTouchListener mOnTouchListener = new OnTouchListener() {
+        
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                mActionLog.addAction(mActionTag +  ActionLog.POINearbySearchInput);
+                mSuggestWordListManager.refresh();
+                mViewPager.setCurrentItem(1);
+            }
+            return false;
+        }
+    };
+    
+    private OnEditorActionListener mOnEditorActionListener = new OnEditorActionListener() {
+        
+        @Override
+        public boolean onEditorAction(TextView arg0, int actionId, KeyEvent event) {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
+                submitQuery(mKeywordEdt.getText().toString().trim(), true);
+                return true;
+            }
+            return false;
         }
     };
 
@@ -136,6 +156,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         LogWrapper.d(BaseFragment.TAG, "onCreateView()"+mActionTag);
         
         mRootView = mLayoutInflater.inflate(R.layout.poi_nearby_search, container, false);
+        
         findViews();
         setListener();
                 
@@ -159,7 +180,22 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     @Override
     public void onResume() {
         super.onResume();
-        mTitleBtn.setText(mSphinx.getString(R.string.nearby_search));
+        
+        mTitleBtn.setVisibility(View.GONE);
+        mKeywordEdt.setVisibility(View.VISIBLE);
+        mKeywordEdt.addTextChangedListener(mKeywordEdtWatcher);
+        mKeywordEdt.setOnTouchListener(mOnTouchListener);
+        mKeywordEdt.setOnEditorActionListener(mOnEditorActionListener);
+
+        if (mKeywordEdt.getText().toString().trim().length() > 0) {
+            mRightBtn.setText(R.string.confirm);
+        } else {
+            mRightBtn.setText(R.string.cancel);
+        }
+        
+        mRightBtn.setBackgroundResource(R.drawable.btn_title);
+        mRightBtn.setOnClickListener(this);
+        
         String name = mPOI.getName();
         String title = mSphinx.getString(R.string.at_where_search, name);
         SpannableStringBuilder style = new SpannableStringBuilder(title);
@@ -167,20 +203,18 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         style.setSpan(new ForegroundColorSpan(focusedColor), 0, 2, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
         style.setSpan(new ForegroundColorSpan(focusedColor), 2+name.length(), title.length(), Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
         mLocationTxv.setText(style);
-        mRightBtn.setVisibility(View.INVISIBLE);
     }
 
     @Override
     public void onPause() {
         super.onPause();
         mKeywordEdt.getInput().clearFocus();
+        mKeywordEdt.removeTextChangedListener(mKeywordEdtWatcher);
     }
 
     protected void findViews() {
         mLocationTxv = (TextView) mRootView.findViewById(R.id.location_txv);
         mViewPager = (ViewPager) mRootView.findViewById(R.id.view_pager);
-        mQueryBtn = (Button)mRootView.findViewById(R.id.query_btn);
-        mKeywordEdt = (TKEditText)mRootView.findViewById(R.id.keyword_edt);
         
         mCategoryLsv = Utility.makeListView(mSphinx, R.drawable.bg_line_split);
         mViewList.add(mCategoryLsv);
@@ -218,33 +252,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
                 submitQuery(mCategoryNames[position], false);                
             }
         });
-        mQueryBtn.setOnClickListener(this);
-        mKeywordEdt.addTextChangedListener(mKeywordEdtWatcher);
-        mKeywordEdt.setOnTouchListener(new OnTouchListener() {
-            
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    mActionLog.addAction(mActionTag +  ActionLog.POINearbySearchInput);
-                    mSuggestWordListManager.refresh();
-                    mViewPager.setCurrentItem(1);
-                }
-                return false;
-            }
-        });
-        
-        mKeywordEdt.setOnEditorActionListener(new OnEditorActionListener() {
-            
-            @Override
-            public boolean onEditorAction(TextView arg0, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
-                    submitQuery(mKeywordEdt.getText().toString().trim(), true);
-                    return true;
-                }
-                return false;
-            }
-        });
-        
+                
         mSuggestLsv.setOnItemClickListener(new OnItemClickListener() {
 
             @Override
@@ -282,9 +290,13 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     public void onClick(View view) {
         switch (view.getId()) {
                 
-            case R.id.query_btn:
+            case R.id.right_btn:
                 mActionLog.addAction(mActionTag +  ActionLog.POINearbySearchSubimt, mKeywordEdt.getText().toString().trim());
-                submitQuery(mKeywordEdt.getText().toString().trim(), true);
+                if (mKeywordEdt.getText().toString().trim().length() > 0) {
+                    submitQuery(mKeywordEdt.getText().toString().trim(), true);
+                } else {
+                    dismiss();
+                }
                 break;
 
             default:
@@ -342,7 +354,6 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         mKeywordEdt.setText(null);
         mKeywordEdt.clearFocus();
         mViewPager.setCurrentItem(0);
-        mQueryBtn.setEnabled(false);
         mViewPager.requestFocus();
     }
     

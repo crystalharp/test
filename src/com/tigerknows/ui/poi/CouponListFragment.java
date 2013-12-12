@@ -141,7 +141,6 @@ public class CouponListFragment extends BaseFragment implements RetryView.CallBa
         super.onResume();
         
         mTitleBtn.setText(R.string.coupon_list);
-        mRightBtn.setVisibility(View.INVISIBLE);
         
         if (isReLogin()) {
             return;

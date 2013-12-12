@@ -45,7 +45,6 @@ import com.tigerknows.model.POI;
 import com.tigerknows.provider.Tigerknows;
 import com.tigerknows.share.ShareAPI;
 import com.tigerknows.ui.BaseFragment;
-import com.tigerknows.ui.common.ResultMapFragment.TitlePopupArrayAdapter;
 import com.tigerknows.util.Utility;
 
 public class BuslineDetailFragment extends BaseFragment implements View.OnClickListener {
@@ -81,32 +80,6 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
     private Line line = null;
 
 	private List<Line> mLineList = new ArrayList<Line>();
-	
-	private List<String> mTitlePopupList = new ArrayList<String>();
-    
-    private TitlePopupArrayAdapter mTitlePopupArrayAdapter;
-    
-    private OnItemClickListener mTitlePopupOnItemClickListener = new OnItemClickListener() {
-
-        @Override
-        public void onItemClick(AdapterView<?> adapterView, View view, int position, long arg3) {
-            mTitleFragment.dismissPopupWindow();
-            Line clickedLine = mLineList.get(position);
-            mActionLog.addAction(mActionTag + ActionLog.PopupWindowTitle + ActionLog.ListViewItem, position);
-            if (clickedLine.equals(line)) {
-            	return;
-            } else {
-            	setData(clickedLine, position, highlightStation);
-            	onResume();           
-            	if (highlightStation == null) {
-            	    setSelectionFromTop(0, 0);
-            	} else {
-            	    highlightStation(highlightIndex);
-            	}
-            }
-
-        }
-    };
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -122,8 +95,6 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
         mRootView = mLayoutInflater.inflate(R.layout.traffic_busline_result_detail, container, false);
         findViews();
         setListener();
-        
-        mTitlePopupArrayAdapter = new TitlePopupArrayAdapter(mSphinx, mTitlePopupList);
         
         mResultAdapter = new StringListAdapter(mContext);
         mResultLsv.setAdapter(mResultAdapter);
@@ -148,20 +119,10 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
         }
         
         if (mLineList != null && curLineNum != -1) {
-        	mTitleBtn.setText(mSphinx.getString(R.string.title_busline_line_popup, TrafficQuery.numToStr(mSphinx, curLineNum + 1)));
-        	if (mLineList.size() > 1) {
-    	        mTitleBtn.setBackgroundResource(R.drawable.btn_title_popup);
-    	        mTitleBtn.setOnClickListener(new View.OnClickListener(){
-    				@Override
-    				public void onClick(View v) {
-    			        mTitleFragment.showPopupWindow(mTitlePopupArrayAdapter, mTitlePopupOnItemClickListener, mActionTag);
-    			        mTitlePopupArrayAdapter.notifyDataSetChanged();
-    				}
-    	        });
-        	}
+            mTitleBtn.setText(mSphinx.getString(R.string.title_busline_line_popup, TrafficQuery.numToStr(mSphinx, curLineNum + 1)));
         } else {
         	//不用顶部弹出切换
-        	mTitleBtn.setText(mContext.getString(R.string.title_busline_line));
+            mTitleBtn.setText(mContext.getString(R.string.title_busline_line));
         }
         Utility.setFavoriteBtn(mSphinx, mFavorateBtn, line.checkFavorite(mContext));
 
@@ -241,14 +202,6 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
         this.curLineNum = position;
         
         setHighlightStation(highlightStation);
-        
-        mTitlePopupList.clear();
-        if (this.mLineList != null && curLineNum != -1) {
-            mTitlePopupArrayAdapter.mSelectedItem = mSphinx.getString(R.string.title_popup_content, curLineNum + 1, this.line.getName());
-            for(int i = 0, size = mLineList.size(); i < size; i++) {
-                mTitlePopupList.add(mSphinx.getString(R.string.title_popup_content,i + 1, mLineList.get(i).getName()));
-            }
-        }
         
         mStrList.clear();
         List<Station> stationList = line.getStationList();
@@ -404,7 +357,6 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
 
         mSphinx.clearMap();
         BuslineOverlayHelper.drawOverlay(mSphinx, mSphinx.getHandler(), mSphinx.getMapView(), line);
-        mSphinx.setPreviousNextViewVisible();
         
         mSphinx.getResultMapFragment().setData(mContext.getString(R.string.title_busline_result_map), ActionLog.TrafficBuslineMap);
         mSphinx.showView(R.id.view_result_map);

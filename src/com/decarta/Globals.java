@@ -54,11 +54,6 @@ public class Globals {
     public static final int LOCATION_STATE_FAILED = 3;
     
     /**
-     * 定位成功后，已经显示出切换城市对话框
-     */
-    public static final int LOCATION_STATE_SHOW_CHANGE_CITY_DIALOG = 4;
-    
-    /**
      * 屏幕相关参数
      */
 	public static DisplayMetrics g_metrics=new DisplayMetrics();

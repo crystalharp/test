@@ -42,7 +42,6 @@ import com.tigerknows.model.TrafficQuery;
 import com.tigerknows.provider.Tigerknows;
 import com.tigerknows.share.ShareAPI;
 import com.tigerknows.ui.BaseFragment;
-import com.tigerknows.ui.common.ResultMapFragment.TitlePopupArrayAdapter;
 import com.tigerknows.util.Utility;
 import com.tigerknows.util.NavigationSplitJointRule;
 
@@ -90,10 +89,6 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
     
     private List<Plan> mPlanList = new ArrayList<TrafficModel.Plan>();
     
-    private List<String> mTitlePopupList = new ArrayList<String>();
-    
-    private TitlePopupArrayAdapter mTitlePopupArrayAdapter;
-    
     private int curLineNum = -1;
     
     @Override
@@ -115,8 +110,6 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         mShareBtn.setOnClickListener(new ResultOnClickListener());
         mErrorRecoveryBtn.setOnClickListener(new ResultOnClickListener());
         
-        mTitlePopupArrayAdapter = new TitlePopupArrayAdapter(mSphinx, mTitlePopupList);
-        
         mResultAdapter = new StringListAdapter(mContext);
         mResultLsv.setAdapter(mResultAdapter);
         
@@ -130,7 +123,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         switch(mShowType) {
             case SHOW_TYPE_TRANSFER:
                 mRightBtn.setBackgroundResource(R.drawable.btn_view_map);
-            	mRightBtn.setOnClickListener(this);
+                mRightBtn.setOnClickListener(this);
                 mTitleBtn.setText(mContext.getString(R.string.title_transfer_plan));
                 mErrorRecoveryBtn.setVisibility(View.VISIBLE);
                 mBottomButtonsView.setWeightSum(3);
@@ -158,16 +151,6 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         if (mPlanList.size() > 0) {
             //有内容，需要弹出顶部切换菜单
             mTitleBtn.setText(mContext.getString(R.string.title_transfer_plan_popup, TrafficQuery.numToStr(mSphinx, curLineNum + 1)));
-            if (mPlanList.size() > 1) {
-                mTitleBtn.setBackgroundResource(R.drawable.btn_title_popup);
-                mTitleBtn.setOnClickListener(new View.OnClickListener(){
-                    @Override
-                    public void onClick(View v) {
-                        mTitleFragment.showPopupWindow(mTitlePopupArrayAdapter, mTitlePopupOnItemClickListener, mActionTag);
-                        mTitlePopupArrayAdapter.notifyDataSetChanged();
-                    }
-                });
-            }
         }
         
         Utility.setFavoriteBtn(mSphinx, mFavorateBtn, plan.checkFavorite(mContext));
@@ -187,24 +170,6 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
             }
         }, 200);
     }
-    
-    private OnItemClickListener mTitlePopupOnItemClickListener = new OnItemClickListener() {
-
-        @Override
-        public void onItemClick(AdapterView<?> adapterView, View view, int position, long arg3) {
-            mTitleFragment.dismissPopupWindow();
-            Plan clickedPlan = mPlanList.get(position);
-            mActionLog.addAction(mActionTag + ActionLog.PopupWindowTitle + ActionLog.ListViewItem, position);
-            if (clickedPlan.equals(plan)) {
-            	return;
-            } else {
-            	setData(clickedPlan, position);
-            	onResume();       
-                setSelectionFromTop();     	
-            }
-
-        }
-    };
 
     @Override
     public void onPause() {
@@ -264,16 +229,11 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         mShowType = plan.getType();
         this.curLineNum = curLine;
 
-        mTitlePopupList.clear();
         mPlanList.clear();
         if (mShowType == SHOW_TYPE_TRANSFER) {
             List<Plan> list = mSphinx.getTrafficResultFragment().getData();
             if (list != null) {
             	this.mPlanList.addAll(list);
-            	mTitlePopupArrayAdapter.mSelectedItem = mSphinx.getString(R.string.title_popup_content, curLineNum + 1, this.plan.getTitle(mSphinx));
-            	for(int i = 0, size = mPlanList.size(); i < size; i++) {
-            	    mTitlePopupList.add(mSphinx.getString(R.string.title_popup_content, i+1 ,mPlanList.get(i).getTitle(mSphinx)));
-            	}
             }
         }
 
@@ -492,7 +452,6 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
 
         	mSphinx.clearMap();
         	TrafficOverlayHelper.drawOverlay(mSphinx, mSphinx.getHandler(), mSphinx.getMapView(), plan, mShowType);
-        	mSphinx.setPreviousNextViewVisible();
         	
             mSphinx.getResultMapFragment().setData(mContext.getString(R.string.title_traffic_result_map), actionTag);
             String resultMapActionTag = mSphinx.getResultMapFragment().mActionTag;

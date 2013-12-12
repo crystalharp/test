@@ -6,11 +6,11 @@ package com.tigerknows.ui;
 
 import java.util.List;
 
-import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.android.os.TKAsyncTask;
+import com.tigerknows.android.widget.TKEditText;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.common.AsyncImageLoader;
 import com.tigerknows.model.BaseQuery;
@@ -23,7 +23,6 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.TypedValue;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -37,7 +36,6 @@ import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
-import android.widget.TextView;
 
 /**
  * @author Peng Wenyue
@@ -58,11 +56,22 @@ public class BaseFragment extends LinearLayout {
     
     public View mRootView = null;
     
-    public TitleFragment mTitleFragment;
+    public TitleFragment mTitleFragment = null;
     
-    public MenuFragment mMenuFragment;
+    public BaseFragment mBottomFrament = null;
     
-    public TextView mTitleBtn;
+    public int mTitleFramentHeight = 0;
+    
+    public int mBottomFramentHeight = 0;
+    
+    /**
+     * 此是标题栏中间的ViewGroup，可以用自定义的View替换此ViewGroup的内容
+     */
+    public ViewGroup mTitleView;
+    
+    public TKEditText mKeywordEdt;
+    
+    public Button mTitleBtn;
     
     public Button mLeftBtn;
     
@@ -70,6 +79,9 @@ public class BaseFragment extends LinearLayout {
     
     public Button mRight2Btn;
     
+    /**
+     * 最顶的View，其高度为0
+     */
     public View mSkylineView;
     
     public boolean isReLogin = false;
@@ -112,17 +124,13 @@ public class BaseFragment extends LinearLayout {
         return isRelogin;
     }
     
-    private View.OnClickListener mLeftTxvOnClickListener = new View.OnClickListener() {
+    private View.OnClickListener mLeftBtnOnClickListener = new View.OnClickListener() {
         
         @Override
         public void onClick(View arg0) {
             synchronized (mSphinx.mUILock) {
-                if (!mSphinx.mUIProcessing) {
-                	if (arg0.getVisibility() == View.VISIBLE) {
-                	    mActionLog.addAction(mActionTag + ActionLog.TitleLeftButton);
-	                	dismiss();
-                	}
-                }
+        	    mActionLog.addAction(mActionTag + ActionLog.TitleLeftButton);
+            	dismiss();
             }
         }
     };
@@ -138,6 +146,19 @@ public class BaseFragment extends LinearLayout {
         mContext = mSphinx.getBaseContext();
         mActionLog = ActionLog.getInstance(mContext);
         mLayoutInflater = mSphinx.getLayoutInflater();
+        
+        int id = getId();
+        if (id != R.id.view_invalid) {
+            mTitleFragment = mSphinx.getTitleFragment();            
+            mTitleView = mTitleFragment.mTitleView;
+            mTitleBtn = mTitleFragment.mTitleBtn;
+            mKeywordEdt = mTitleFragment.mKeywordEdt;
+            mLeftBtn = mTitleFragment.mLeftBtn;
+            mRightBtn = mTitleFragment.mRightBtn;
+            mRight2Btn = mTitleFragment.mRight2Btn;
+            mSkylineView = mTitleFragment.mSkylineView;
+        }
+        
         onCreateView(null, this, null);
         if (mRootView != null) {
             addView(mRootView);
@@ -182,6 +203,19 @@ public class BaseFragment extends LinearLayout {
             Bundle savedInstanceState) {
         LogWrapper.d(TAG, "onCreateView()"+mActionTag);
         return null;
+    }
+    
+    protected void findViews() {
+    }
+
+    protected void setListener() {
+        setOnTouchListener(new OnTouchListener() {
+            
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return true;
+            }
+        });
     }
 
     public void onAttach(Activity activity) {
@@ -263,57 +297,16 @@ public class BaseFragment extends LinearLayout {
             if (!TextUtils.isEmpty(mActionTag)) {
                 mActionLog.addAction(mActionTag);
             }
-            mSphinx.replace(this);   
             
-            mTitleFragment = mSphinx.getTitleFragment();
-            mMenuFragment = mSphinx.getMenuFragment();
-
-            mTitleBtn = mTitleFragment.mTitleBtn;
-            mLeftBtn = mTitleFragment.mLeftBtn;
-            mRightBtn = mTitleFragment.mRightBtn;
-            mRight2Btn = mTitleFragment.mRight2Btn;
-            mSkylineView = mTitleFragment.mSkylineView;
-
-            mTitleBtn.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
-            mTitleBtn.setText(null);
-            mTitleBtn.setBackgroundDrawable(null);
-            mTitleBtn.setOnClickListener(null);
-            mLeftBtn.setVisibility(View.VISIBLE);
-            mLeftBtn.setText(null);
-            mLeftBtn.setBackgroundResource(R.drawable.btn_back);
-            mLeftBtn.setOnClickListener(mLeftTxvOnClickListener);
-            mRightBtn.setVisibility(View.VISIBLE);
-            mRightBtn.setCompoundDrawables(null, null, null, null);
-            mRightBtn.setBackgroundDrawable(null);
-            mRightBtn.setText(null);
-            mRightBtn.setEnabled(true);
-            mRight2Btn.setVisibility(View.GONE);
-            mRight2Btn.setBackgroundDrawable(null);
-            mRight2Btn.setText(null);
-            mRight2Btn.setEnabled(true);
-            mRight2Btn.setOnClickListener(null);
+            mSphinx.replaceUI(this);
+            mTitleFragment.reset();
+            mTitleFragment.mLeftBtn.setOnClickListener(mLeftBtnOnClickListener);
             
-            mMenuFragment.hide();
-        	mTitleFragment.display();
             AsyncImageLoader.getInstance().setViewToken(toString());
         	mSphinx.getMapView().setStopRefreshMyLocation(true);
         }
-        correctUIStack();
-        if (mRootView != null) {
-            mRootView.setOnTouchListener(new OnTouchListener() {
-                
-                @Override
-                public boolean onTouch(View arg0, MotionEvent arg1) {
-                    return true;
-                }
-            });
-        }
     }
     
-    public void correctUIStack(){
-    	// DO NOT DELETE virtual method
-    }
-
     public void onSaveInstanceState(Bundle outState) {
         LogWrapper.d(TAG, "onSaveInstanceState()"+mActionTag);
     }

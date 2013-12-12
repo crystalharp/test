@@ -63,7 +63,6 @@ public class CouponDetailFragment extends BaseDetailFragment implements View.OnC
     public void onResume() {
         super.onResume();
         mTitleBtn.setText(R.string.coupon_detail);
-        mRightBtn.setVisibility(View.INVISIBLE);
     }
     
     public void setData(Coupon data) {

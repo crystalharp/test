@@ -162,12 +162,10 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         mTitleBtn.setText(mSphinx.getString(R.string.hotel_room_title));
         final HotelVendor hotelVendor = HotelVendor.getHotelVendorById(mRoomType.getVendorID(), mSphinx, null);
         if(hotelVendor == null || TextUtils.isEmpty(hotelVendor.getReserveTel())){
-        	mRightBtn.setVisibility(View.GONE);
         }else{
-        	mRightBtn.setBackgroundResource(R.drawable.btn_title);
-        	mRightBtn.setText(mSphinx.getString(R.string.tel_reserve));
-        	mRightBtn.setVisibility(View.VISIBLE);
-        	mRightBtn.setOnClickListener(new OnClickListener() {
+            mRightBtn.setBackgroundResource(R.drawable.btn_title);
+            mRightBtn.setText(mSphinx.getString(R.string.tel_reserve));
+            mRightBtn.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
 					mActionLog.addAction(mActionTag + ActionLog.HotelOrderWriteReserveTel);

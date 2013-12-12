@@ -85,7 +85,6 @@ public class TrafficQueryStateHelper {
                 
                 mQueryFragment.mCityView.setVisibility(View.VISIBLE);
                 mQueryFragment.mShadowWhite.setVisibility(View.GONE);
-                mQueryFragment.mSphinx.getControlView().setPadding(0, 0, 0, 0);
             }
             applyInnateProperty(TrafficViewSTT.State.Map);
         }
@@ -127,7 +126,6 @@ public class TrafficQueryStateHelper {
                 mQueryFragment.mAnimationHelper.showBlockAndMenuAnimation();
 
             }
-            mQueryFragment.mMenuFragment.display();
             applyInnateProperty(TrafficViewSTT.State.Normal);
         }
 	    
@@ -177,7 +175,6 @@ public class TrafficQueryStateHelper {
         public void enterFrom(State oldState) {
             //以下为normal和input模式的共同操作
             mQueryFragment.displayCommonTitle();
-            mQueryFragment.mRightBtn.setVisibility(View.GONE);
             mQueryFragment.mTitleBtn.setText(R.string.title_click_map);
             mQueryFragment.mTitle.setVisibility(View.GONE);
             mQueryFragment.mSphinx.getMoreBtn().setVisibility(View.INVISIBLE);
@@ -246,7 +243,6 @@ public class TrafficQueryStateHelper {
         mQueryFragment.mShadowWhite.setVisibility(View.GONE);
         mQueryFragment.mBackBtn.setVisibility(View.GONE);
         mQueryFragment.mSuggestLnl.setVisibility(View.GONE);
-        mQueryFragment.mSphinx.layoutTopViewPadding(0, Util.dip2px(Globals.g_metrics.density, 182), 0, 0);
     }
     
     public void applyInputInnateProperty() {
@@ -254,7 +250,6 @@ public class TrafficQueryStateHelper {
         mQueryFragment.mSphinx.setTouchMode(TouchMode.NORMAL);
         
         mQueryFragment.mSuggestLnl.setVisibility(View.VISIBLE);
-        mQueryFragment.mSphinx.getMenuFragment().setVisibility(View.GONE);
         mQueryFragment.mCityView.setVisibility(View.GONE);
         mQueryFragment.mShadowWhite.setVisibility(View.VISIBLE);
         mQueryFragment.mBackBtn.setVisibility(View.VISIBLE);
@@ -271,7 +266,6 @@ public class TrafficQueryStateHelper {
         mQueryFragment.enableQueryBtn(mQueryFragment.mBuslineQueryBtn, false);
         //clearCheck会触发RadioCheckedChangedListener，导致输入框又重现，所以这个要放在clearCheck后面
         mQueryFragment.getContentView().setVisibility(View.GONE);
-        mQueryFragment.mSphinx.layoutTopViewPadding(0, Util.dip2px(Globals.g_metrics.density, 78), 0, 0);
     }
     
     public void applySelectPointInnateProperty() {
@@ -279,10 +273,7 @@ public class TrafficQueryStateHelper {
         mQueryFragment.getContentView().setVisibility(View.GONE);
         mQueryFragment.mCityView.setVisibility(View.VISIBLE);
         mQueryFragment.mShadowWhite.setVisibility(View.GONE);
-        mQueryFragment.mMenuFragment.hide();
         mQueryFragment.mSuggestLnl.setVisibility(View.GONE);
 
-        mQueryFragment.mSphinx.getControlView().setPadding(0, 0, 0, 0);
-        mQueryFragment.mSphinx.layoutTopViewPadding(0, Util.dip2px(Globals.g_metrics.density, 38), 0, 0);
     }
 }

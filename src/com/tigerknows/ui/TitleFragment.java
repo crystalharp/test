@@ -7,27 +7,19 @@ package com.tigerknows.ui;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
-import com.tigerknows.common.ActionLog;
+import com.tigerknows.android.widget.TKEditText;
 
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ListAdapter;
-import android.widget.ListView;
-import android.widget.PopupWindow;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.PopupWindow.OnDismissListener;
 
 /**
  * @author Peng Wenyue
  */
 public class TitleFragment extends BaseFragment {
-    
-    ListView mListView = null;
     
     public TitleFragment(Sphinx sphinx) {
         super(sphinx);
@@ -40,84 +32,58 @@ public class TitleFragment extends BaseFragment {
         LogWrapper.d(TAG, "onCreateView()"+mActionTag);
         
         mRootView = mLayoutInflater.inflate(R.layout.title, container, false);
+        
+        mRootView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        mTitleFramentHeight = mRootView.getMeasuredHeight();
+        
         findViews();
         setListener();
         return mRootView;
     }
     
     protected void findViews() {
+        mTitleView = (ViewGroup) mRootView.findViewById(R.id.center_view);
         mTitleBtn = (Button) mRootView.findViewById(R.id.title_btn);
+        mKeywordEdt = (TKEditText) mRootView.findViewById(R.id.keyword_edt);
         mLeftBtn = (Button) mRootView.findViewById(R.id.left_btn);
         mRightBtn = (Button) mRootView.findViewById(R.id.right_btn);
         mRight2Btn = (Button) mRootView.findViewById(R.id.right2_btn);
         mSkylineView = mRootView.findViewById(R.id.skyline_view);
     }
-
-    protected void setListener() {
-        setOnTouchListener(new OnTouchListener() {
-            
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                // TODO Auto-generated method stub
-                return true;
-            }
-        });
-    }
     
-    public void showPopupWindow(ListAdapter adapter, OnItemClickListener listener, String actionTag) {
-    	this.mActionTag = actionTag;
-        mActionLog.addAction(this.mActionTag + ActionLog.PopupWindowTitle);
-        if (mPopupWindow == null) {
-            View view  = mLayoutInflater.inflate(R.layout.title_popup_list, this, false);
-            mListView = (ListView) view.findViewById(R.id.listview);
-            //在padding区域点击关掉窗口
-            View titlePopupView = view.findViewById(R.id.title_popup_view);
-            titlePopupView.setOnTouchListener(new View.OnTouchListener() {
-
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    dismissPopupWindow();
-                    return true;
-                }
-            });
-
-            mPopupWindow = new PopupWindow(view);
-            mPopupWindow.setWindowLayoutMode(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-            mPopupWindow.setFocusable(true);
-            // 设置允许在外点击消失
-            mPopupWindow.setOutsideTouchable(true);
-
-            // 这个是为了点击“返回Back”也能使其消失，并且并不会影响你的背景
-            mPopupWindow.setBackgroundDrawable(new BitmapDrawable());
-            mPopupWindow.setAnimationStyle(-1);
-            mPopupWindow.update();
-            mPopupWindow.setOnDismissListener(new OnDismissListener() {
-                
-                @Override
-                public void onDismiss() {
-                    mActionLog.addAction(mActionTag+ActionLog.PopupWindowTitle+ActionLog.Dismiss);
-                }
-            });
-        }
-        if (mListView != null) {
-            mListView.setOnItemClickListener(listener);
-            mListView.setAdapter(adapter);
+    public void reset() {
+        
+        mRootView.setBackgroundResource(R.drawable.bg_title);
+        
+        if (mTitleView.getChildAt(0) != mTitleBtn || mTitleView.getChildAt(1) != mKeywordEdt) {
+            mTitleView.removeAllViews();
+            mTitleView.addView(mTitleBtn);
+            mTitleView.addView(mKeywordEdt);
         }
         
-        mPopupWindow.showAsDropDown(this, 0, 0);
+        mTitleBtn.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+        mTitleBtn.setText(null);
+        mTitleBtn.setBackgroundDrawable(null);
+        mTitleBtn.setOnClickListener(null);
+        mTitleBtn.setVisibility(View.VISIBLE);
+        
+        mKeywordEdt.setVisibility(View.GONE);
+        
+        mLeftBtn.setText(null);
+        mLeftBtn.setBackgroundResource(R.drawable.btn_back);
+        mLeftBtn.setOnClickListener(null);
+        mLeftBtn.setVisibility(View.VISIBLE);
+        
+        mRightBtn.setBackgroundDrawable(null);
+        mRightBtn.setText(null);
+        mRightBtn.setEnabled(true);
+        mRightBtn.setOnClickListener(null);
+        mRightBtn.setVisibility(View.VISIBLE);
+        
+        mRight2Btn.setBackgroundDrawable(null);
+        mRight2Btn.setText(null);
+        mRight2Btn.setOnClickListener(null);
+        mRight2Btn.setVisibility(View.VISIBLE);
     }
     
-    public void dismissPopupWindow() {
-        if (mPopupWindow != null && mPopupWindow.isShowing()) {
-            mPopupWindow.dismiss();
-        }
-    }
-    
-    @Override
-    public void onResume() {
-    }
-    
-    @Override
-    public void onPause() {
-    }
 }

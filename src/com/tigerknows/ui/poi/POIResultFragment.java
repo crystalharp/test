@@ -322,7 +322,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             }
         }
         
-        if (mTitleBtn != null && getId() == mSphinx.uiStackPeek()) {
+        if (getId() == mSphinx.uiStackPeek()) {
             mTitleBtn.setText(mTitleText);
         }
 
@@ -379,24 +379,21 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             mEmptyView.setVisibility(View.GONE);
             mResultLsv.setVisibility(View.GONE);
             mNavigationWidget.setVisibility(View.GONE);
-            if (mRightBtn != null)
-                mRightBtn.setVisibility(View.GONE);
+            mRightBtn.setVisibility(View.GONE);
             mAddMerchantView.setVisibility(View.GONE);
         } else if (mState == STATE_ERROR) {
             mQueryingView.setVisibility(View.GONE);
             mRetryView.setVisibility(View.VISIBLE);
             mEmptyView.setVisibility(View.GONE);
             mResultLsv.setVisibility(View.GONE);
-            if (mRightBtn != null)
-                mRightBtn.setVisibility(View.GONE);
+            mRightBtn.setVisibility(View.GONE);
             mAddMerchantView.setVisibility(View.GONE);
         } else if (mState == STATE_EMPTY){
             mQueryingView.setVisibility(View.GONE);
             mRetryView.setVisibility(View.GONE);
             mEmptyView.setVisibility(View.VISIBLE);
             mResultLsv.setVisibility(View.GONE);
-            if (mRightBtn != null)
-                mRightBtn.setVisibility(View.GONE);
+            mRightBtn.setVisibility(View.GONE);
             
             if (BaseQuery.SUB_DATA_TYPE_POI.equals(mResultAdapter.getSubDataType())) {
                 mAddMerchantView.setVisibility(View.VISIBLE);
@@ -419,8 +416,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             mRetryView.setVisibility(View.GONE);
             mEmptyView.setVisibility(View.GONE);
             mResultLsv.setVisibility(View.VISIBLE);
-            if (mRightBtn != null)
-                mRightBtn.setVisibility(mPOIList.size() > 0 ? View.VISIBLE : View.GONE);
+            mRightBtn.setVisibility(mPOIList.size() > 0 ? View.VISIBLE : View.GONE);
             
             boolean footerSpringback = mResultLsv.isFooterSpringback();
             View v = mCurrentFootView;
@@ -1081,9 +1077,9 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             } else if (this.mSphinx.uiStackContains(R.id.view_more_history)) {
                 mSphinx.uiStackClose(new int[]{R.id.view_more_home, R.id.view_more_history, getId()});
             } else {
-                mSphinx.uiStackClose(new int[]{R.id.view_poi_home, R.id.view_poi_input_search, getId()});
-                if (mSphinx.uiStackContains(R.id.view_poi_home) == false) {
-                    mSphinx.uiStackInsert(R.id.view_poi_home, 0);
+                mSphinx.uiStackClose(new int[]{R.id.view_home, R.id.view_poi_input_search, getId()});
+                if (mSphinx.uiStackContains(R.id.view_home) == false) {
+                    mSphinx.uiStackInsert(R.id.view_home, 0);
                 }
             }
         }
