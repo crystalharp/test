@@ -803,7 +803,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         List<BaseQuery> list = new ArrayList<BaseQuery>();
         
         Bootstrap bootstrap = new Bootstrap(this);
-        if (getIntent().getBooleanExtra(Sphinx.EXTRA_WEIXIN, false)) {
+        if (mIntent != null && mIntent.getBooleanExtra(Sphinx.EXTRA_WEIXIN, false)) {
             bootstrap.addParameter(BaseQuery.SERVER_PARAMETER_REQUSET_SOURCE_TYPE, BaseQuery.REQUSET_SOURCE_TYPE_WEIXIN);
         }
         if (mFirstStartup) {
