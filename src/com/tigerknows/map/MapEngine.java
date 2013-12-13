@@ -472,14 +472,14 @@ public class MapEngine {
                 if (!appFile.exists() || !appFile.isDirectory()) {
                     appFile.mkdirs();
                 }
+                initEngine(context, appPath);
+                TKConfig.checkStorageSize(activity);
                 new File(appPath, "try.txt").createNewFile();
                 new File(appPath, "try.txt").delete();
-                TKConfig.checkStorageSize(activity);
-                initEngine(context, appPath);
                 LogWrapper.i(TAG, "setupDataPath() app path:"+ appPath + " map path:"+ mapPath + ",exist:" + new File(appPath).exists());
             } catch (Exception e) {
                 mapPath = null;
-                throw new APIException("Can't write/read cache. Please Grand permission");
+                e.printStackTrace();
             }
         }
     }

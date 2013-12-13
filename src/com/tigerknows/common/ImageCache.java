@@ -73,16 +73,16 @@ public class ImageCache {
     				if (!appFile.exists() || !appFile.isDirectory()) {
     					appFile.mkdirs();
     				}
-    				new File(path, "try.txt").createNewFile();
-    				new File(path, "try.txt").delete();
     				
     				appPath = path;
     				stopRemoveCache=true;
     				startWritingThread();
+    				new File(path, "try.txt").createNewFile();
+    				new File(path, "try.txt").delete();
                 }
 			} catch (Exception e) {
 				externalStorage=false;
-				throw new APIException("Can't write/read cache. Please Grand permission");
+				e.printStackTrace();
 			}
 
 		}
