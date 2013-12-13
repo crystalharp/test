@@ -220,8 +220,8 @@ public class TKLocationManager {
                     final FeedbackUpload feedbackUpload = new FeedbackUpload(context);
                     // lip=2013-11-25:23:47:04,39.160395,106.700049,12.0
                     String lip = LocationQuery.SIMPLE_DATE_FORMAT.format(Calendar.getInstance().getTime()) + 
-                            "," + location.getLatitude() + 
                             "," + location.getLongitude() + 
+                            "," + location.getLatitude() + 
                             "," + location.getAccuracy();
                     feedbackUpload.addParameter(FeedbackUpload.SERVER_PARAMETER_LOCATION_IP, lip);
                     new Thread(new Runnable() {

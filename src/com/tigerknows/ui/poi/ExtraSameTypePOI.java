@@ -169,6 +169,8 @@ public class ExtraSameTypePOI extends DynamicPOIViewTemplate {
 
         int cityId = dataQuery.getCityId();
         poiQuery.removeParameter(DataQuery.SERVER_PARAMETER_INFO);
+        poiQuery.removeParameter(DataQuery.SERVER_PARAMETER_FILTER);
+        poiQuery.removeParameter(DataQuery.SERVER_PARAMETER_FILTER_STRING);
         poiQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
         poiQuery.addParameter(DataQuery.SERVER_PARAMETER_SIZE, "3");
         poiQuery.addParameter(DataQuery.SERVER_PARAMETER_KEYWORD, mPOI.getCategory().split(" ")[0]);
