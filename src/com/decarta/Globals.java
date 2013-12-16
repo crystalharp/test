@@ -398,10 +398,19 @@ public class Globals {
 
             Position lastPosition = new Position(lastLat, lastLon);
             if(Util.inChina(lastPosition)) {
-                int cityId = MapEngine.getCityId(lastPosition);
-                cityInfo = MapEngine.getCityInfo(cityId);
-                cityInfo.setPosition(lastPosition);
-                cityInfo.setLevel(lastZoomLevel);
+                MapEngine mapEngine = MapEngine.getInstance();
+                try {
+                    mapEngine.initMapDataPath(context);
+                    int cityId = MapEngine.getCityId(lastPosition);
+                    CityInfo cityInfoTmp = MapEngine.getCityInfo(cityId);
+                    if (cityInfoTmp != null) {
+                        cityInfo = cityInfoTmp;
+                        cityInfo.setPosition(lastPosition);
+                        cityInfo.setLevel(lastZoomLevel);
+                    }
+                } catch (APIException e) {
+                    e.printStackTrace();
+                }
             }
         }
         return cityInfo;
