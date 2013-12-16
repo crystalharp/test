@@ -447,6 +447,7 @@ public class TKActivity extends Activity implements TKAsyncTask.EventListener {
         }
         
         try {
+            TKConfig.checkStorageSize(mThis);
             mMapEngine.initMapDataPath(mThis);
         } catch (Exception exception){
             exception.printStackTrace();
