@@ -13,6 +13,7 @@ import com.tigerknows.map.MapView;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.POI;
+import com.tigerknows.ui.poi.InputSearchFragment;
 
 import android.annotation.SuppressLint;
 import android.graphics.Rect;
@@ -113,6 +114,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         mSphinx.getPOIQueryFragment().reset();
+        mSphinx.getPOIQueryFragment().setMode(InputSearchFragment.MODE_POI);
         mSphinx.showView(R.id.view_poi_input_search);
     }
 }

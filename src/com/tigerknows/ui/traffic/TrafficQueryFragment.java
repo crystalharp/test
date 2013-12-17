@@ -51,6 +51,7 @@ import com.tigerknows.model.TrafficModel.Station;
 import com.tigerknows.model.TrafficQuery;
 import com.tigerknows.provider.HistoryWordTable;
 import com.tigerknows.ui.BaseFragment;
+import com.tigerknows.ui.poi.InputSearchFragment;
 //import com.tigerknows.ui.traffic.TrafficViewSTT.Event;
 //import com.tigerknows.ui.traffic.TrafficViewSTT.State;
 import com.tigerknows.util.Utility;
@@ -142,6 +143,8 @@ public class TrafficQueryFragment extends BaseFragment {
 	LinearLayout mQueryHistory;
 	
 	LinearLayout mQueryHistoryLst;
+	
+	View mTitleBar;
 	
 	//TODO:添加resid
 	LinearListAdapter mFavPlaceAdapter = new LinearListAdapter(mSphinx, mFavPlaceLst, 0) {
@@ -334,7 +337,8 @@ public class TrafficQueryFragment extends BaseFragment {
     	mBackBtn = (Button)mRootView.findViewById(R.id.back_btn);
     	mTrafficQueryBtn = (Button)mRootView.findViewById(R.id.traffic_query_btn);
     	mBuslineQueryBtn = (Button)mRootView.findViewById(R.id.busline_query_btn);
-    	mRadioGroup = (RadioGroup)mRootView.findViewById(R.id.traffic_rgp);
+        mTitleBar = mLayoutInflater.inflate(R.layout.traffic_query_bar, null);
+    	mRadioGroup = (RadioGroup)mTitleBar.findViewById(R.id.traffic_rgp);
     	
     	Button startBtn, endBtn;
     	startBtn = (Button)mRootView.findViewById(R.id.start_btn);
@@ -388,6 +392,16 @@ public class TrafficQueryFragment extends BaseFragment {
             public void onClick(View v) {
                 // TODO Auto-generated method stub
                 //转到起终点输入页
+                mSphinx.getPOIQueryFragment().reset();
+                mSphinx.getPOIQueryFragment().setMode(InputSearchFragment.MODE_TRANSFER);
+                mSphinx.getPOIQueryFragment().setConfirmedCallback(new InputSearchFragment.Callback() {
+                    
+                    @Override
+                    public void onConfirmed(POI p) {
+                        mStart.setPOI(p);
+                    }
+                });
+                mSphinx.showView(R.id.view_poi_input_search);
             }
         });
 	    
@@ -397,6 +411,16 @@ public class TrafficQueryFragment extends BaseFragment {
             public void onClick(View v) {
                 // TODO Auto-generated method stub
                 //转到起终点输入页，怎么做个通用接口来返回POI？
+                mSphinx.getPOIQueryFragment().reset();
+                mSphinx.getPOIQueryFragment().setMode(InputSearchFragment.MODE_TRANSFER);
+                mSphinx.getPOIQueryFragment().setConfirmedCallback(new InputSearchFragment.Callback() {
+                    
+                    @Override
+                    public void onConfirmed(POI p) {
+                        mEnd.setPOI(p);
+                    }
+                });
+                mSphinx.showView(R.id.view_poi_input_search);
             }
         });
 	   
@@ -435,6 +459,9 @@ public class TrafficQueryFragment extends BaseFragment {
                 // TODO Auto-generated method stub
                 // 弹出三个按钮或者编程确定
                 makeToast("right btn clicked");
+                mSphinx.getPOIQueryFragment().reset();
+                mSphinx.getPOIQueryFragment().setMode(InputSearchFragment.MODE_BUELINE);
+                mSphinx.showView(R.id.view_poi_input_search);
             }
         });
         /*
@@ -448,7 +475,7 @@ public class TrafficQueryFragment extends BaseFragment {
         }
         
         mTitleView.removeAllViews();
-        mTitleView.addView(mLayoutInflater.inflate(R.layout.traffic_query_bar, null));
+        mTitleView.addView(mTitleBar);
         mRightBtn.setBackgroundResource(R.drawable.btn_view_detail);
         if (!mStart.textEmpty() 
                 && !mEnd.textEmpty()
@@ -790,8 +817,6 @@ public class TrafficQueryFragment extends BaseFragment {
 		BaseQuery baseQuery = tkAsyncTask.getBaseQuery();
 		if (BaseQuery.API_TYPE_TRAFFIC_QUERY.equals(baseQuery.getAPIType())) {
             this.queryTrafficEnd((TrafficQuery)baseQuery);
-        } else if (BaseQuery.API_TYPE_BUSLINE_QUERY.equals(baseQuery.getAPIType())) {
-            this.queryBuslineEnd((BuslineQuery)baseQuery);
         } 
 	}
 
@@ -945,85 +970,7 @@ public class TrafficQueryFragment extends BaseFragment {
         }
     }
     
-    /*FIXME: NO USE*/
-    public void queryBuslineEnd(BuslineQuery buslineQuery) {
-    	
-        BuslineModel buslineModel = buslineQuery.getBuslineModel();
-        
-        if (buslineModel == null) {
-            mActionLog.addAction(mActionTag + ActionLog.TrafficResultBusline, -1);
-        	if (buslineQuery.getStatusCode() == BaseQuery.STATUS_CODE_NONE) {
-        		mSphinx.showTip(R.string.network_failed, Toast.LENGTH_SHORT);
-        	} else {
-        		mSphinx.showTip(R.string.busline_non_tip, Toast.LENGTH_SHORT);
-        	}
-        } else if (buslineModel.getType() == BuslineModel.TYPE_EMPTY) {
-            mActionLog.addAction(mActionTag + ActionLog.TrafficResultBusline, -2);
-        	mSphinx.showTip(R.string.busline_non_tip, Toast.LENGTH_SHORT);
-        } else if (buslineModel.getType() == BuslineModel.TYPE_UNSUPPORT) {
-            mActionLog.addAction(mActionTag + ActionLog.TrafficResultBusline, -3);
-        	mSphinx.showTip(R.string.busline_not_support, Toast.LENGTH_SHORT);
-        } else if (buslineModel.getType() == BuslineModel.TYPE_BUSLINE 
-        		|| buslineModel.getType() == BuslineModel.TYPE_STATION){
-        	if (((buslineModel.getLineList() == null || buslineModel.getLineList().size() <= 0) && 
-            (buslineModel.getStationList() == null || buslineModel.getStationList().size() <= 0))) {
-        		mSphinx.showTip(R.string.busline_non_tip, Toast.LENGTH_SHORT);
-                mActionLog.addAction(mActionTag + ActionLog.TrafficResultBusline, 0);
-        	} else {
-        		if (buslineModel.getType() == BuslineModel.TYPE_BUSLINE) {
-        		    mActionLog.addAction(mActionTag + ActionLog.TrafficResultBusline, buslineQuery.getBuslineModel().getLineList().size());
-        			mSphinx.getBuslineResultLineFragment().setData(buslineQuery);
-        			mSphinx.showView(R.id.view_traffic_busline_line_result);
-        		} else if (buslineModel.getType() == BuslineModel.TYPE_STATION) {
-                    mActionLog.addAction(mActionTag + ActionLog.TrafficResultBusline, buslineQuery.getBuslineModel().getStationList().size());
-        			mSphinx.getBuslineResultStationFragment().setData(buslineQuery);
-        			mSphinx.showView(R.id.view_traffic_busline_station_result);
-        		}        		
-        	}
-        }
-    }
-    
-    public static void submitBuslineQuery(Sphinx sphinx, String key) {
-        submitBuslineQuery(sphinx, key, Globals.getCurrentCityInfo().getId());
-    }
-    
-    /*TODO:移到输入框页里*/
-    public static void submitBuslineQuery(Sphinx sphinx, String key, int cityId) {
-        
-        if (key == null) {
-            return;
-        }
-        
-        POI poi = new POI();
-        poi.setName(key);
-        sphinx.getTrafficQueryFragment().addHistoryWord(poi, HistoryWordTable.TYPE_BUSLINE);
-        BuslineQuery buslineQuery = new BuslineQuery(sphinx);
-        buslineQuery.setup(cityId, key, 0, false, R.id.view_traffic_home, sphinx.getString(R.string.doing_and_wait));
-        
-//        mActionLog.addAction(mActionTag +  ActionLog.TrafficBuslineBtn, key);
-        sphinx.queryStart(buslineQuery);
 
-    }
-		
-	/**
-	 * TODO:移到路线查询中
-	 */
-//	public void submitBuslineQuery() {
-//		
-//		String searchword = mBusline.getEdt().getText().toString().trim();
-//		if (TextUtils.isEmpty(searchword)){
-//			mSphinx.showTip(R.string.busline_name_, Toast.LENGTH_SHORT);
-//			return;
-//		}
-//
-//		int cityId = mMapLocationHelper.getQueryCityInfo().getId();
-//        addHistoryWord(mBusline, HistoryWordTable.TYPE_BUSLINE);
-//        BuslineQuery buslineQuery = new BuslineQuery(mContext);
-//        buslineQuery.setup(cityId, searchword, 0, false, getId(), mContext.getString(R.string.doing_and_wait));
-//        
-//        mActionLog.addAction(mActionTag +  ActionLog.TrafficBuslineBtn, searchword);
-//        mSphinx.queryStart(buslineQuery);
-//    }
 		
 	/*TODO:扔到输入页去*/
 	public class QueryEditText {

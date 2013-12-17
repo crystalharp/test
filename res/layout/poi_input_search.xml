@@ -5,6 +5,33 @@
     android:orientation="vertical"
     android:background="@color/gray_dark"
     >
+
+    <LinearLayout
+        android:id="@+id/traffic_btn_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" 
+        android:visibility="gone"
+        >
+
+        <Button
+            android:id="@+id/btn_my_position"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="my pos" />
+
+        <Button
+            android:id="@+id/btn_fav_position"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="fav pos" />
+
+        <Button
+            android:id="@+id/btn_map_position"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="map pos" />
+        
+    </LinearLayout>
         
     <ListView
         android:id="@+id/suggest_lsv"

@@ -129,7 +129,7 @@ public class ExtraSubwayPOI extends DynamicPOIView {
                         public void onClick(View v) {
                             mPOIDetailFragment.mActionLog.addAction(mPOIDetailFragment.mActionTag+ActionLog.POIDetailBusstop, busstopTxv.getText().toString());
                             int cityId = MapEngine.getCityId(mPOI.getPosition());
-                            TrafficQueryFragment.submitBuslineQuery(mSphinx, busstopTxv.getText().toString(), cityId);
+                            InputSearchFragment.submitBuslineQuery(mSphinx, busstopTxv.getText().toString(), cityId);
 
                         }
                     });

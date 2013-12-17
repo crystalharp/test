@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -25,10 +26,17 @@ import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import android.widget.Toast;
+
+import com.tigerknows.android.location.Position;
+import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
+import com.tigerknows.model.BaseQuery;
+import com.tigerknows.model.BuslineModel;
+import com.tigerknows.model.BuslineQuery;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.TKWord;
+import com.tigerknows.model.TrafficQuery;
 import com.tigerknows.provider.HistoryWordTable;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.widget.SuggestArrayAdapter.BtnEventHandler;
@@ -39,9 +47,27 @@ import com.tigerknows.widget.SuggestWordListManager;
  */
 public class InputSearchFragment extends BaseFragment implements View.OnClickListener {
     
+    final public static int MODE_POI = HistoryWordTable.TYPE_POI;
+    final public static int MODE_TRANSFER = HistoryWordTable.TYPE_TRAFFIC;
+    final public static int MODE_BUELINE = HistoryWordTable.TYPE_BUSLINE;
+    
+    private int mCurMode;
+    private int mCurHisWordType;
+
+    private ListView mSuggestLsv = null;
+    private LinearLayout mTrafficBtnGroup;
+    
+    private SuggestWordListManager mSuggestWordListManager;
+    
+    private Callback callback;
+    
+    //页面的数据输出回调接口，这个页面主要用来获取一个POI，所以用POI来做参数
+    public interface Callback {
+        public void onConfirmed(POI p);
+    }
+    
     public InputSearchFragment(Sphinx sphinx) {
         super(sphinx);
-        // TODO Auto-generated constructor stub
     }
 
     private OnEditorActionListener mOnEditorActionListener = new OnEditorActionListener() {
@@ -49,7 +75,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         @Override
         public boolean onEditorAction(TextView arg0, int actionId, KeyEvent event) {
             if (actionId == EditorInfo.IME_ACTION_SEARCH || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
-                submitQuery();
+                onConfirmed(mKeywordEdt.getText().toString().trim());
                 return true;
             }
             return false;
@@ -66,17 +92,13 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
             return false;
         }
     };
-
-    private ListView mSuggestLsv = null;
-    
-    private SuggestWordListManager mSuggestWordListManager;
     
     private final TextWatcher mFindEdtWatcher = new TextWatcher() {
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
         }
 
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            mSuggestWordListManager.refresh();
+            mSuggestWordListManager.refresh(mKeywordEdt, mCurHisWordType);
         }
 
         public void afterTextChanged(Editable s) {
@@ -91,6 +113,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //TODO:这个也可能会变
         mActionTag = ActionLog.POIHomeInputQuery;
     }
 
@@ -104,7 +127,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         findViews();
         setListener();
         
-        BtnEventHandler a = new BtnEventHandler() {
+        BtnEventHandler btnHandler = new BtnEventHandler() {
             
             @Override
             public void onBtnClicked(TKWord tkWord, int position) {
@@ -112,7 +135,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                 mActionLog.addAction(mActionTag + ActionLog.HistoryWordInput, position, tkWord.word, tkWord.attribute);
             }
         };
-        mSuggestWordListManager = new SuggestWordListManager(mSphinx, mSuggestLsv, mKeywordEdt, a, HistoryWordTable.TYPE_POI);
+        mSuggestWordListManager = new SuggestWordListManager(mSphinx, mSuggestLsv, mKeywordEdt, btnHandler, HistoryWordTable.TYPE_POI);
         return mRootView;
     }
 
@@ -139,6 +162,17 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         } else {
             mRightBtn.setText(R.string.cancel);
         }
+        switch (mCurMode) {
+        case MODE_BUELINE:
+            mTrafficBtnGroup.setVisibility(View.GONE);
+            break;
+        case MODE_TRANSFER:
+            mTrafficBtnGroup.setVisibility(View.VISIBLE);
+            break;
+        case MODE_POI:
+            mTrafficBtnGroup.setVisibility(View.GONE);
+            break;
+        }
     }
 
     @Override
@@ -147,9 +181,19 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         mKeywordEdt.clearFocus();
         mKeywordEdt.removeTextChangedListener(mFindEdtWatcher);
     }
+    
+    public void setMode(int m) {
+        mCurMode = m;
+        mCurHisWordType = m;
+    }
+    
+    public void setConfirmedCallback(Callback c) {
+        callback = c;
+    }
 
     protected void findViews() {
         mSuggestLsv = (ListView)mRootView.findViewById(R.id.suggest_lsv);
+        mTrafficBtnGroup = (LinearLayout) mRootView.findViewById(R.id.traffic_btn_group);
     }
 
     protected void setListener() {
@@ -161,8 +205,8 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                 TKWord tkWord = (TKWord) arg0.getAdapter().getItem(position);
                 if (tkWord.attribute == TKWord.ATTRIBUTE_CLEANUP) {
                     mActionLog.addAction(mActionTag + ActionLog.ListViewItemHistoryClear);
-                    HistoryWordTable.clearHistoryWord(mSphinx, Globals.getCurrentCityInfo().getId(), HistoryWordTable.TYPE_POI);
-                    mSuggestWordListManager.refresh();
+                    HistoryWordTable.clearHistoryWord(mSphinx, Globals.getCurrentCityInfo().getId(), mCurHisWordType);
+                    mSuggestWordListManager.refresh(mKeywordEdt, mCurHisWordType);
                 } else {
                     if (tkWord.attribute == TKWord.ATTRIBUTE_HISTORY) {
                         mActionLog.addAction(mActionTag + ActionLog.ListViewItemHistory, position, tkWord.word);
@@ -170,7 +214,14 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                         mActionLog.addAction(mActionTag + ActionLog.ListViewItemSuggest, position, tkWord.word);
                     }
                     mKeywordEdt.setText(tkWord.word); //处理光标问题
-                    submitQuery();
+                    if (mCurMode == MODE_TRANSFER) {
+                        POI poi = new POI();
+                        poi.setName(tkWord.word);
+                        poi.setPosition(tkWord.position);
+                        onConfirmed(poi);
+                    } else {
+                        onConfirmed(tkWord.word);
+                    }
                 }
             }
         });
@@ -192,7 +243,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                 
             case R.id.right_btn:
                 if (mKeywordEdt.getText().toString().trim().length() > 0) {
-                    submitQuery();
+                    onConfirmed(mKeywordEdt.getText().toString().trim());
                 } else {
                     dismiss();
                 }
@@ -201,8 +252,35 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         }
     }
     
-    private void submitQuery() {
-        String keyword = mKeywordEdt.getText().toString().trim();
+    private void onConfirmed(String key) {
+        switch (mCurMode) {
+        case MODE_BUELINE:
+            submitBuslineQuery(key);
+            break;
+        case MODE_TRANSFER:
+            //TODO:提交公交站点查询，并且返回原页面
+            POI poi = new POI();
+            poi.setName(key);
+            callback.onConfirmed(poi);
+            mSphinx.getTrafficQueryFragment().autoStartQuery(true);
+            dismiss();
+            break;
+        case MODE_POI:
+            submitPOIQuery(key);
+            break;
+        default:
+            break;
+        }
+    }
+    
+    private void onConfirmed(POI poi) {
+        if (mCurMode == MODE_TRANSFER) {
+            callback.onConfirmed(poi);
+        }
+    }
+    
+    private void submitPOIQuery(String keyword) {
+//        String keyword = mKeywordEdt.getText().toString().trim();
         if (!TextUtils.isEmpty(keyword)) {
             mSphinx.hideSoftInput(mKeywordEdt.getInput());
             int cityId = Globals.getCurrentCityInfo().getId();
@@ -225,10 +303,103 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
             mSphinx.showTip(R.string.search_input_keyword, Toast.LENGTH_SHORT);
         }
     }
+
+    /*TODO:放个合适的地方*/
+    public static void submitBuslineQuery(Sphinx sphinx, String key) {
+        submitBuslineQuery(sphinx, key, Globals.getCurrentCityInfo().getId());
+    }
     
+    public static void submitBuslineQuery(Sphinx sphinx, String key, int cityId) {
+        
+        if (key == null) {
+            return;
+        }
+        
+        POI poi = new POI();
+        poi.setName(key);
+        sphinx.getTrafficQueryFragment().addHistoryWord(poi, HistoryWordTable.TYPE_BUSLINE);
+        BuslineQuery buslineQuery = new BuslineQuery(sphinx);
+        buslineQuery.setup(cityId, key, 0, false, R.id.view_traffic_home, sphinx.getString(R.string.doing_and_wait));
+        
+//        mActionLog.addAction(mActionTag +  ActionLog.TrafficBuslineBtn, key);
+        sphinx.queryStart(buslineQuery);
+
+    }
+        
+    public void submitBuslineQuery(String searchword) {
+
+//        String searchword = mKeywordEdt.getText().toString().trim();
+        if (TextUtils.isEmpty(searchword)){
+            mSphinx.showTip(R.string.busline_name_, Toast.LENGTH_SHORT);
+            return;
+        }
+
+        int cityId = Globals.getCurrentCityInfo().getId();
+        addHistoryWord(searchword, HistoryWordTable.TYPE_BUSLINE);
+        BuslineQuery buslineQuery = new BuslineQuery(mContext);
+        buslineQuery.setup(cityId, searchword, 0, false, getId(), mContext.getString(R.string.doing_and_wait));
+
+        mActionLog.addAction(mActionTag +  ActionLog.TrafficBuslineBtn, searchword);
+        mSphinx.queryStart(buslineQuery);
+    }
+        
+    private void addHistoryWord(String name, int type) {
+        if (TextUtils.isEmpty(name)) {
+            return;
+        }
+        int cityId = Globals.getCurrentCityInfo().getId();
+        HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, name), cityId, type);
+    }
+
     //还原为第一次进入的状态
     public void reset() {
         mKeywordEdt.setText(null);
+    }
+    
+    @Override
+    public void onPostExecute(TKAsyncTask tkAsyncTask) {
+        super.onPostExecute(tkAsyncTask);
+        BaseQuery baseQuery = tkAsyncTask.getBaseQuery();
+        if (BaseQuery.API_TYPE_BUSLINE_QUERY.equals(baseQuery.getAPIType())) {
+            this.queryBuslineEnd((BuslineQuery)baseQuery);
+        } 
+    }
+    
+    public void queryBuslineEnd(BuslineQuery buslineQuery) {
+        
+        BuslineModel buslineModel = buslineQuery.getBuslineModel();
+        
+        if (buslineModel == null) {
+            mActionLog.addAction(mActionTag + ActionLog.TrafficResultBusline, -1);
+            if (buslineQuery.getStatusCode() == BaseQuery.STATUS_CODE_NONE) {
+                mSphinx.showTip(R.string.network_failed, Toast.LENGTH_SHORT);
+            } else {
+                mSphinx.showTip(R.string.busline_non_tip, Toast.LENGTH_SHORT);
+            }
+        } else if (buslineModel.getType() == BuslineModel.TYPE_EMPTY) {
+            mActionLog.addAction(mActionTag + ActionLog.TrafficResultBusline, -2);
+            mSphinx.showTip(R.string.busline_non_tip, Toast.LENGTH_SHORT);
+        } else if (buslineModel.getType() == BuslineModel.TYPE_UNSUPPORT) {
+            mActionLog.addAction(mActionTag + ActionLog.TrafficResultBusline, -3);
+            mSphinx.showTip(R.string.busline_not_support, Toast.LENGTH_SHORT);
+        } else if (buslineModel.getType() == BuslineModel.TYPE_BUSLINE 
+                || buslineModel.getType() == BuslineModel.TYPE_STATION){
+            if (((buslineModel.getLineList() == null || buslineModel.getLineList().size() <= 0) && 
+            (buslineModel.getStationList() == null || buslineModel.getStationList().size() <= 0))) {
+                mSphinx.showTip(R.string.busline_non_tip, Toast.LENGTH_SHORT);
+                mActionLog.addAction(mActionTag + ActionLog.TrafficResultBusline, 0);
+            } else {
+                if (buslineModel.getType() == BuslineModel.TYPE_BUSLINE) {
+                    mActionLog.addAction(mActionTag + ActionLog.TrafficResultBusline, buslineQuery.getBuslineModel().getLineList().size());
+                    mSphinx.getBuslineResultLineFragment().setData(buslineQuery);
+                    mSphinx.showView(R.id.view_traffic_busline_line_result);
+                } else if (buslineModel.getType() == BuslineModel.TYPE_STATION) {
+                    mActionLog.addAction(mActionTag + ActionLog.TrafficResultBusline, buslineQuery.getBuslineModel().getStationList().size());
+                    mSphinx.getBuslineResultStationFragment().setData(buslineQuery);
+                    mSphinx.showView(R.id.view_traffic_busline_station_result);
+                }               
+            }
+        }
     }
     
 }
