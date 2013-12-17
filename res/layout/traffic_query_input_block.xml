@@ -12,63 +12,45 @@
 	        android:layout_height="wrap_content"
 	        android:padding="12dp"
 	        android:background="@color/traffic_input_background_gray">
+	        
+	        <Button android:id="@+id/traffic_query_btn"
+	            android:layout_alignParentLeft="true"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_marginRight="8dp"
+	            android:background="@drawable/btn_traffic_query"
+	            android:layout_centerVertical="true" />
+
 	        <LinearLayout android:id="@+id/traffic_lsv"
 	            android:layout_width="fill_parent" 
 	            android:layout_height="wrap_content"
 	            android:orientation="vertical"
-	            android:layout_toLeftOf="@+id/traffic_query_btn"
+	            android:layout_toRightOf="@+id/traffic_query_btn"
 	            android:layout_alignParentTop="true">
 	            <LinearLayout 
 			        android:layout_width="fill_parent" 
 			        android:layout_height="wrap_content"
 			        android:orientation="horizontal" >
 			        <Button
-			            android:id="@+id/select_start_btn"
-			            style="?android:attr/buttonStyleSmall"
-			            android:background="@drawable/btn_traffic_select_start_end"
+			            android:id="@+id/start_btn"
 			            android:layout_gravity="center_vertical"
-			            android:layout_width="wrap_content"
+			            android:background="@drawable/btn_input_home"
+			            android:layout_width="fill_parent"
 			            android:layout_height="wrap_content"
 			            android:focusable="true" />
-
-			        <com.tigerknows.android.widget.TKEditText
-			            android:id="@+id/start_edt"
-			            android:layout_marginLeft="-4dp"
-			            android:layout_width="fill_parent" 
-			            android:layout_height="44dp"
-			            tkandroid:height="44dp"
-			            tkandroid:imeOptions="actionNext">
-			         </com.tigerknows.android.widget.TKEditText>
         		</LinearLayout>
 	            <LinearLayout 
 	                android:layout_marginTop="6dp"
 			        android:layout_width="fill_parent"
 			        android:layout_height="wrap_content">
 			        <Button
-			            android:id="@+id/select_end_btn"
-			            style="?android:attr/buttonStyleSmall"
-			            android:background="@drawable/btn_traffic_select_start_end"
+			            android:id="@+id/end_btn"
 			            android:layout_gravity="center_vertical"
-			            android:layout_width="wrap_content"
+			            android:background="@drawable/btn_input_home"
+			            android:layout_width="fill_parent"
 			            android:layout_height="wrap_content" />
-			        <com.tigerknows.android.widget.TKEditText
-			            android:id="@+id/end_edt"
-			            android:layout_marginLeft="-4dp"
-			            android:layout_width="fill_parent" 
-			            android:layout_height="44dp"
-			            tkandroid:height="44dp"
-			            tkandroid:imeOptions="actionSearch">
-			         </com.tigerknows.android.widget.TKEditText>
         		</LinearLayout>
 	        </LinearLayout>
-	        <Button android:id="@+id/traffic_query_btn"
-	            android:layout_alignParentRight="true"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:layout_marginLeft="8dp"
-	            android:background="@drawable/btn_traffic_query"
-	            android:layout_centerVertical="true" />
-
 	    </RelativeLayout>
 
 	    <RelativeLayout android:id="@+id/busline_rll"
@@ -98,7 +80,7 @@
 	            android:layout_centerVertical="true" />
 	    </RelativeLayout>
 		
-	    <RelativeLayout
+	    <!-- <RelativeLayout
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
 	        android:orientation="vertical" >
@@ -138,5 +120,14 @@
 	            android:layout_alignParentTop="true"
 	            android:background="@drawable/bg_shadow_white" />
 		        
-	    </RelativeLayout>
+      <com.tigerknows.android.widget.TKEditText
+          android:id="@+id/start_edt"
+          android:layout_marginLeft="-4dp"
+          android:layout_width="fill_parent" 
+          android:layout_height="44dp"
+          tkandroid:height="44dp"
+          tkandroid:imeOptions="actionNext">
+       </com.tigerknows.android.widget.TKEditText>
+
+	    </RelativeLayout> -->
     </LinearLayout>

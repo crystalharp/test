@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root_view"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#f9f9f9" >
+
+    <!-- <include android:id="@+id/title_lnl" 
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true" 
+        layout="@layout/traffic_query_bar" />-->
+    
+    <FrameLayout android:id="@+id/content_frl" 
+    	android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+    	<include android:id="@+id/content_lnl" layout="@layout/traffic_query_input_block" />
+    </FrameLayout>
+    
+    <LinearLayout 
+  	    android:id="@+id/fav_place_lst"
+  	    android:orientation="vertical"
+        android:layout_width="fill_parent" 
+        android:layout_height="wrap_content"
+        android:layout_below="@id/content_frl" >
+   	</LinearLayout>
+    <LinearLayout 
+  	    android:id="@+id/add_fav_place"
+  	    android:orientation="vertical"
+        android:layout_width="fill_parent" 
+        android:layout_height="wrap_content"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:layout_below="@id/fav_place_lst" >
+    	<TextView 
+	        android:layout_width="fill_parent" 
+	        android:layout_height="wrap_content"
+	        android:text="add fav place"
+    	    />
+   	</LinearLayout>
+
+    <LinearLayout 
+  	    android:id="@+id/query_history_title"
+  	    android:orientation="vertical"
+        android:layout_width="fill_parent" 
+        android:layout_height="wrap_content"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_below="@id/add_fav_place" >
+    	<TextView 
+	        android:layout_width="fill_parent" 
+	        android:layout_height="20dp"
+	        android:text="search history"
+    	    />
+   	</LinearLayout>
+    <LinearLayout 
+  	    android:id="@+id/query_history_lst"
+  	    android:orientation="vertical"
+        android:layout_width="fill_parent" 
+        android:layout_height="wrap_content"
+        android:layout_below="@id/query_history_title" >
+   	</LinearLayout>
+   	
+  	<!--扔到输入框页 
+  	<LinearLayout 
+  	    android:id="@+id/suggest_lnl"
+        android:layout_width="fill_parent" 
+        android:layout_height="fill_parent"
+        android:layout_below="@id/content_frl"
+	    android:background="#f9f9f9"
+	    android:visibility="gone" >
+  	    <ListView android:id="@+id/suggest_lsv"
+	        android:layout_width="fill_parent" 
+	        android:layout_height="fill_parent"
+	        android:scrollingCache="false"
+	        android:fadingEdge="none"
+	        android:padding="0dp"
+	        android:divider="@drawable/bg_line_split" />
+  	</LinearLayout> -->
+   
+</RelativeLayout>

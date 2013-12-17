@@ -172,16 +172,16 @@ public class TrafficQueryMapAndLocationHelper {
     	/*
     	 * 显示"全国"
     	 */
-    	if (zoomLevel <= ZOOM_LEVEL_QUANGUO) {
-    		mQueryFragment.setCurrentCity(mQueryFragment.mContext.getString(R.string.quanguo));
-    	} else {
-        	if (cityInfo != null && !TextUtils.isEmpty(cityInfo.getCName())) {
-        		mQueryFragment.setCurrentCity(cityInfo.getCName());	
-        	}
-        	else {
-        		mQueryFragment.setCurrentCity(mQueryFragment.mSphinx.getString(R.string.location_unknown));
-        	}
-    	}
+//    	if (zoomLevel <= ZOOM_LEVEL_QUANGUO) {
+//    		mQueryFragment.setCurrentCity(mQueryFragment.mContext.getString(R.string.quanguo));
+//    	} else {
+//        	if (cityInfo != null && !TextUtils.isEmpty(cityInfo.getCName())) {
+//        		mQueryFragment.setCurrentCity(cityInfo.getCName());	
+//        	}
+//        	else {
+//        		mQueryFragment.setCurrentCity(mQueryFragment.mSphinx.getString(R.string.location_unknown));
+//        	}
+//    	}
 
     }
 	
