@@ -19,6 +19,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
@@ -29,6 +31,10 @@ import com.tigerknows.map.MapEngine;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.DataQuery;
+import com.tigerknows.model.DataQuery.Filter;
+import com.tigerknows.model.DataQuery.FilterCategoryOrder;
+import com.tigerknows.model.DataQuery.FilterOption;
+import com.tigerknows.model.DataQuery.FilterResponse;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.widget.FilterListView;
 
@@ -70,7 +76,13 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     	R.id.hospital_category
     };
     
+    private static final int NUM_OF_SUB_CATEGORY = 5;
+    
     private View[] mCategoryViews;
+
+    private FilterListView mFilterListView;
+    private List<Filter> mFilterList;
+    
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -89,6 +101,8 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         
         findViews();
         setListener();
+        
+        setFilterListView();
                 
         mLocationTxv.setVisibility(View.VISIBLE);
 
@@ -120,7 +134,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         mCategoryViews = new View[CATEGORY_ID.length];
         for(int i = 0; i < CATEGORY_ID.length; i++){
         	mCategoryViews[i] = (View)mRootView.findViewById(CATEGORY_ID[i]);
-        	mCategoryBtns[i] = new Button[7];
+        	mCategoryBtns[i] = new Button[NUM_OF_SUB_CATEGORY + 2];
         	mCategoryBtns[i][0] = (Button) mCategoryViews[i].findViewById(R.id.category_btn);
         	mCategoryBtns[i][1] = (Button) mCategoryViews[i].findViewById(R.id.sub_1_btn);
         	mCategoryBtns[i][2] = (Button) mCategoryViews[i].findViewById(R.id.sub_2_btn);
@@ -133,11 +147,61 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
 
     protected void setListener() {
     	for(int i = 0; i < CATEGORY_ID.length; i++){
-    		for(int j = 0; j < 7; j++){
+    		for(int j = 0; j < NUM_OF_SUB_CATEGORY + 2; j++){
     			mCategoryBtns[i][j].setOnClickListener(this);
     		}
     	}
- 
+    }
+    
+    private void setFilterListView() {
+        //mFilterListView = (FilterListView) findViewById(R.id.filter_list_view);
+        //mFilterListView.findViewById(R.id.body_view).setPadding(0, 0, 0, 0);    	
+        if (mFilterList != null) {
+            FilterListView.selectedFilter(mFilterList.get(0), -1);
+        } else {
+            DataQuery.initStaticField(BaseQuery.DATA_TYPE_POI, BaseQuery.SUB_DATA_TYPE_POI, Globals.getCurrentCityInfo().getId(), mContext);
+            FilterCategoryOrder filterCategory = DataQuery.getPOIFilterCategoryOrder();
+            if (filterCategory != null) {
+                List<FilterOption> filterOptionList = new ArrayList<DataQuery.FilterOption>();
+                List<FilterOption> online = filterCategory.getCategoryFilterOption();
+                if (online != null) {
+                    for(int i = 0, size = online.size(); i < size; i++) {
+                        filterOptionList.add(online.get(i).clone());
+                    }
+                }
+                List<Long> indexList = new ArrayList<Long>();
+                indexList.add(0l);
+                for(int i = 0, size = filterOptionList.size(); i < size; i++) {
+                    long id = filterOptionList.get(i).getId();
+                    indexList.add(id);
+                }
+                Filter categoryFilter = DataQuery.makeFilterResponse(mContext, indexList, filterCategory.getVersion(), filterOptionList, FilterCategoryOrder.FIELD_LIST_CATEGORY, false);
+                List<Filter> list = categoryFilter.getChidrenFilterList();
+                for(int i = 0 ; i < CATEGORY_ID.length; i++){
+                	int position = -1;
+                	for(int k = 0; k < list.size(); k++){
+                		if(TextUtils.equals(mCategoryNames[i], list.get(k).getFilterOption().getName())){
+                			position = k;
+                			break;
+                		}
+                	}
+                	if(position >= 0){
+                		mCategoryBtns[i][0].setText(list.get(position).getFilterOption().getName());
+                		Filter filter = list.get(position);
+                		List<Filter> childrenList = filter.getChidrenFilterList();
+                		for(int j = 0, size = childrenList.size(); j < NUM_OF_SUB_CATEGORY && j < size; j++){
+                			mCategoryBtns[i][j+1].setText(childrenList.get(j).getFilterOption().getName());
+                		}
+                	}else{
+                		mCategoryViews[i].setVisibility(View.GONE);
+                	}
+                }
+                
+                mFilterList = new ArrayList<Filter>();
+                mFilterList.add(categoryFilter);
+            }
+            //mFilterListView.setData(mFilterList, FilterResponse.FIELD_FILTER_CATEGORY_INDEX, this, false, false, mActionTag);
+        }
     }
 
     @Override
@@ -148,6 +212,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         case R.id.sub_3_btn:
         case R.id.sub_4_btn:
         case R.id.sub_5_btn:
+        	submitQuery(((Button)view).getText().toString());
         	break;
         case R.id.sub_more_btn:
         	break;

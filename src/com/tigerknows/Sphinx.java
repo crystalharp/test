@@ -1865,6 +1865,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             CityInfo cityInfo = Globals.getCurrentCityInfo();
             poi.setSourceType(POI.SOURCE_TYPE_CITY_CENTER);
             poi.setName(cityInfo.getCName());
+            poi.setPosition(mMapView.getCenterPosition());
         }
         return poi;
     }
