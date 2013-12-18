@@ -239,22 +239,22 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
                 // 每个分类下面添加其他
                 String otherText = getString(R.string.other);
                 
-                Filter categoryFitler = DataQuery.makeFilterResponse(mThis, indexList, filterCategory.getVersion(), filterOptionList, FilterCategoryOrder.FIELD_LIST_CATEGORY, false);
-                Filter other = categoryFitler.getChidrenFilterList().remove(0);
+                Filter categoryFilter = DataQuery.makeFilterResponse(mThis, indexList, filterCategory.getVersion(), filterOptionList, FilterCategoryOrder.FIELD_LIST_CATEGORY, false);
+                Filter other = categoryFilter.getChidrenFilterList().remove(0);
                 other.getFilterOption().setName(otherText);
                 
-                List<Filter> list = categoryFitler.getChidrenFilterList();
+                List<Filter> list = categoryFilter.getChidrenFilterList();
                 int endId = Integer.MIN_VALUE;
                 for(int i = 0, size = list.size(); i < size; i++) {
                     Filter filter = list.get(i);
-                    List<Filter> chidrenList = filter.getChidrenFilterList();
-                    if (chidrenList.size() > 0) {
-                        Filter end = chidrenList.get(chidrenList.size()-1);
+                    List<Filter> childrenList = filter.getChidrenFilterList();
+                    if (childrenList.size() > 0) {
+                        Filter end = childrenList.get(childrenList.size()-1);
                         Filter other1 = end.clone();
                         FilterOption filterOption = other1.getFilterOption();
                         filterOption.setName(otherText);
                         filterOption.setId(endId+i+1);
-                        chidrenList.add(other1);
+                        childrenList.add(other1);
                     }
                 }
                 
@@ -262,7 +262,7 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
                 list.add(other);
                 
                 mFilterList = new ArrayList<Filter>();
-                mFilterList.add(categoryFitler);
+                mFilterList.add(categoryFilter);
             }
             mFilterListView.setData(mFilterList, FilterResponse.FIELD_FILTER_CATEGORY_INDEX, this, false, false, mActionTag);
         }
