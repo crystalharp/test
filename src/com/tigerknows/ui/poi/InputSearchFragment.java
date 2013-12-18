@@ -113,8 +113,6 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //TODO:这个也可能会变
-        mActionTag = ActionLog.POIHomeInputQuery;
     }
 
     @Override
@@ -163,6 +161,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
             mRightBtn.setText(R.string.cancel);
         }
         switch (mCurMode) {
+        //TODO:add actiontag
         case MODE_BUELINE:
             mTrafficBtnGroup.setVisibility(View.GONE);
             break;
@@ -171,6 +170,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
             break;
         case MODE_POI:
             mTrafficBtnGroup.setVisibility(View.GONE);
+            mActionTag = ActionLog.POIHomeInputQuery;
             break;
         }
     }

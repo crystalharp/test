@@ -209,7 +209,7 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
         if (mDismissed) {
             total = readPOI(mPOIList, Long.MAX_VALUE, 0, false);
             mPOILsv.setFooterSpringback(total > mPOIList.size());
-            total = readTraffic(mTrafficList, Long.MAX_VALUE, 0, false);
+            total = readTraffic(mContext, mTrafficList, Long.MAX_VALUE, 0, false);
             mTrafficLsv.setFooterSpringback(total > mTrafficList.size());
             if (mPOIList.isEmpty() && mTrafficList.isEmpty() == false) {
                 mLayerType = ItemizedOverlay.TRAFFIC_OVERLAY;
@@ -305,7 +305,7 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
                     History traffic = (History) adapterView.getAdapter().getItem(position);
                     if (traffic != null) {
                         mActionLog.addAction(mActionTag + ActionLog.ListViewItem + ActionLog.HistoryTraffic, position);
-                        showTrafficDetail(traffic);
+                        showTrafficDetail(mSphinx, traffic);
                     }
                 }
             }
@@ -486,22 +486,22 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
         }
     }
     
-    private void showTrafficDetail(History traffic) {
+    public static void showTrafficDetail(Sphinx sphinx, History traffic) {
         int type = traffic.getHistoryType();
         switch (type) {
             case Tigerknows.History.HISTORY_BUSLINE:
-            	mSphinx.getBuslineDetailFragment().setData(traffic.getBuslineQuery().getBuslineModel().getLineList().get(0));
-                mSphinx.showView(R.id.view_traffic_busline_detail);
+                sphinx.getBuslineDetailFragment().setData(traffic.getBuslineQuery().getBuslineModel().getLineList().get(0));
+                sphinx.showView(R.id.view_traffic_busline_detail);
                 break;
                 
             case Tigerknows.History.HISTORY_TRANSFER:
-                mSphinx.getTrafficDetailFragment().setData(traffic.getTrafficQuery().getTrafficModel().getPlanList().get(0));
-                mSphinx.showView(R.id.view_traffic_result_detail);
+                sphinx.getTrafficDetailFragment().setData(traffic.getTrafficQuery().getTrafficModel().getPlanList().get(0));
+                sphinx.showView(R.id.view_traffic_result_detail);
                 break;
             case Tigerknows.History.HISTORY_DRIVE:
             case Tigerknows.History.HISTORY_WALK:
-                mSphinx.getTrafficDetailFragment().setData(traffic.getTrafficQuery().getTrafficModel().getPlanList().get(0));
-                mSphinx.getTrafficDetailFragment().viewPlanMap();
+                sphinx.getTrafficDetailFragment().setData(traffic.getTrafficQuery().getTrafficModel().getPlanList().get(0));
+                sphinx.getTrafficDetailFragment().viewPlanMap();
                 break;
 
             default:
@@ -543,10 +543,10 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
         return total;
     }
     
-    private int readTraffic(List<History> list, long maxId, long minId, boolean next){
+    public static int readTraffic(Context context, List<History> list, long maxId, long minId, boolean next){
         int total = 0;
         int count;
-        Cursor c = SqliteWrapper.query(mContext, mContext.getContentResolver(), Tigerknows.History.CONTENT_URI, null, "(" + com.tigerknows.provider.Tigerknows.History.DATETIME + ">" + minId+")" + " AND (" + com.tigerknows.provider.Tigerknows.History.DATETIME + "<" + maxId+")", null, "_datetime DESC");
+        Cursor c = SqliteWrapper.query(context, context.getContentResolver(), Tigerknows.History.CONTENT_URI, null, "(" + com.tigerknows.provider.Tigerknows.History.DATETIME + ">" + minId+")" + " AND (" + com.tigerknows.provider.Tigerknows.History.DATETIME + "<" + maxId+")", null, "_datetime DESC");
         if (c != null) {
             count = c.getCount();
             if (count > 0) {
@@ -554,7 +554,7 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
                 c.moveToFirst();
                 maxId = 0;
                 for(int i = 0; i<count; i++) {
-                    traffic = History.readFromCursor(mContext, c);
+                    traffic = History.readFromCursor(context, c);
                     if (traffic != null) {
                         if (list.contains(traffic)) {
                             list.remove(traffic);
@@ -565,9 +565,9 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
                     c.moveToNext();
                 }
                 if (next) {
-                    readTraffic(list, maxId, minId, next);
+                    readTraffic(context, list, maxId, minId, next);
                 }
-                Cursor c1 = SqliteWrapper.query(mContext, mContext.getContentResolver(), Tigerknows.History.CONTENT_URI_COUNT, null, null, null, null);
+                Cursor c1 = SqliteWrapper.query(context, context.getContentResolver(), Tigerknows.History.CONTENT_URI_COUNT, null, null, null, null);
                 if (c1 != null) {
                     total = c1.getCount();
                     c1.close();
@@ -617,7 +617,7 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
         }
     }
     
-    private String getTrafficName(History traffic) {
+    public static String getTrafficName(History traffic) {
         StringBuilder s = new StringBuilder();
         if (traffic.getHistoryType() == com.tigerknows.provider.Tigerknows.History.HISTORY_BUSLINE) {
             BuslineQuery buslineQuery = traffic.getBuslineQuery();
@@ -729,7 +729,7 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
                 msg.arg1 = total;
             } else {
                 List<History> trafficList = new ArrayList<History>();
-                int total = readTraffic(trafficList, maxId, 0, false);
+                int total = readTraffic(mContext, trafficList, maxId, 0, false);
                 type = 1;
                 msg.obj = trafficList;
                 msg.arg1 = total;
@@ -813,7 +813,7 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
             if (mTrafficList.size() > 0) {
 //                readTraffic(mTrafficList, Long.MAX_VALUE, mTrafficList.get(0).getDateTime(), true);
             } else {
-                int total = readTraffic(mTrafficList, Long.MAX_VALUE, 0, false);
+                int total = readTraffic(mContext, mTrafficList, Long.MAX_VALUE, 0, false);
                 mTrafficLsv.setFooterSpringback(total > mTrafficList.size());
             }
 //            Collections.sort(mTrafficList, mComparator);

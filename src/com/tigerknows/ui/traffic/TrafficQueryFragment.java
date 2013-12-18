@@ -43,6 +43,7 @@ import com.tigerknows.map.MapView;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.BuslineModel;
 import com.tigerknows.model.BuslineQuery;
+import com.tigerknows.model.History;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.TKWord;
 import com.tigerknows.model.TrafficModel;
@@ -51,6 +52,7 @@ import com.tigerknows.model.TrafficModel.Station;
 import com.tigerknows.model.TrafficQuery;
 import com.tigerknows.provider.HistoryWordTable;
 import com.tigerknows.ui.BaseFragment;
+import com.tigerknows.ui.more.HistoryFragment;
 import com.tigerknows.ui.poi.InputSearchFragment;
 //import com.tigerknows.ui.traffic.TrafficViewSTT.Event;
 //import com.tigerknows.ui.traffic.TrafficViewSTT.State;
@@ -146,14 +148,9 @@ public class TrafficQueryFragment extends BaseFragment {
 	
 	View mTitleBar;
 	
+	LinearListAdapter mQueryHistoryAdapter;
 	//TODO:添加resid
-	LinearListAdapter mFavPlaceAdapter = new LinearListAdapter(mSphinx, mFavPlaceLst, 0) {
-
-        @Override
-        public View getView(Object data, View child, int pos) {
-            // TODO Auto-generated method stub
-            return null;
-        }};
+	LinearListAdapter mFavPlaceAdapter;
         
     class FavPlace {
         String alias;
@@ -166,15 +163,8 @@ public class TrafficQueryFragment extends BaseFragment {
     }
     
     List<FavPlace> mFavPlaces = new LinkedList<FavPlace>();
-	
-	LinearListAdapter mQueryHistoryAdapter = new LinearListAdapter(mSphinx, mQueryHistoryLst, 0) {
 
-        @Override
-        public View getView(Object data, View child, int pos) {
-            // TODO Auto-generated method stub
-            return null;
-        }};
-
+    List<History> mQueryHistorys = new LinkedList<History>();
 //	int oldCheckButton;
 
 	String[] KEYWORDS;
@@ -374,7 +364,7 @@ public class TrafficQueryFragment extends BaseFragment {
             public void onClick(View v) {
                 // TODO Auto-generated method stub
                 //跳转到查询线路历史
-                makeToast("showView query history");
+                mSphinx.showView(mSphinx.getHistoryFragment().getId());
             }
         });
 	    
@@ -424,6 +414,40 @@ public class TrafficQueryFragment extends BaseFragment {
             }
         });
 	   
+	//---------------------history start-----------------------//
+	    final OnClickListener historyItemListener = new View.OnClickListener() {
+
+	        @Override
+	        public void onClick(View v) {
+	            // TODO Auto-generated method stub
+	            History h = (History) v.getTag();
+	            HistoryFragment.showTrafficDetail(mSphinx, h);
+	        }
+	    };
+	    mQueryHistoryAdapter = new LinearListAdapter(mSphinx, mQueryHistoryLst, R.layout.traffic_transfer_his_item) {
+
+	        @Override
+	        public View getView(Object data, View child, int pos) {
+	            // TODO Auto-generated method stub
+	            History h = (History)data;
+	            TextView t = (TextView) child.findViewById(R.id.his_text);
+	            child.setTag(data);
+	            t.setText(HistoryFragment.getTrafficName(h));
+	            child.setOnClickListener(historyItemListener);
+	            return null;
+	        }
+	    };
+
+    //----------------------history end------------------------//
+
+	    mFavPlaceAdapter = new LinearListAdapter(mSphinx, mFavPlaceLst, 0) {
+
+	        @Override
+	        public View getView(Object data, View child, int pos) {
+	            // TODO Auto-generated method stub
+	            return null;
+	        }
+	    };
 	}
     /**
      * 退出该页面时, 发生于从交通输入页返回POI详情页时
@@ -477,6 +501,8 @@ public class TrafficQueryFragment extends BaseFragment {
         mTitleView.removeAllViews();
         mTitleView.addView(mTitleBar);
         mRightBtn.setBackgroundResource(R.drawable.btn_view_detail);
+        HistoryFragment.readTraffic(mContext, mQueryHistorys, Long.MAX_VALUE, 0, false);
+        mQueryHistoryAdapter.refreshList(mQueryHistorys);
         if (!mStart.textEmpty() 
                 && !mEnd.textEmpty()
                 && autoStartQuery) {

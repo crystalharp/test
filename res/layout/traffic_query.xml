@@ -31,6 +31,7 @@
         android:layout_height="wrap_content"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
+        android:background="@drawable/list_footer"
         android:layout_below="@id/fav_place_lst" >
     	<TextView 
 	        android:layout_width="fill_parent" 
@@ -46,6 +47,7 @@
         android:layout_height="wrap_content"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
+        android:background="@drawable/list_header"
         android:layout_marginTop="16dp"
         android:layout_below="@id/add_fav_place" >
     	<TextView 
