@@ -178,6 +178,7 @@ import com.tigerknows.ui.traffic.BuslineResultLineFragment;
 import com.tigerknows.ui.traffic.BuslineResultStationFragment;
 import com.tigerknows.ui.traffic.FetchFavoriteFragment;
 import com.tigerknows.ui.traffic.SubwayMapFragment;
+import com.tigerknows.ui.traffic.TrafficCommonPlaceFragment;
 import com.tigerknows.ui.traffic.TrafficCompassActivity;
 import com.tigerknows.ui.traffic.TrafficDetailFragment;
 import com.tigerknows.ui.traffic.TrafficQueryFragment;
@@ -3197,6 +3198,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     private NearbySearchFragment mPOINearbyFragment;
     private TrafficDetailFragment mTrafficDetailFragment = null;
     private TrafficResultFragment mTrafficResultFragment = null;
+    private TrafficCommonPlaceFragment mTrafficCommonAddressFragment = null;
     private BuslineResultLineFragment mBuslineResultLineFragment = null;
     private BuslineResultStationFragment mBuslineResultStationFragment = null;
     private BuslineDetailFragment mBuslineDetailFragment = null;
@@ -3301,6 +3303,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             case R.id.view_traffic_home:
                 baseFragment = getTrafficQueryFragment();
                 break;    
+                
+            case R.id.view_traffic_common_places:
+                baseFragment = getTrafficCommonAddressFragment();
+                break;
                 
             case R.id.view_traffic_fetch_favorite_poi:
                 baseFragment = getFetchFavoriteFragment();
@@ -3563,6 +3569,18 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 mTrafficDetailFragment = trafficDetailFragment;
             }
             return mTrafficDetailFragment;
+        }
+    }
+    
+    public TrafficCommonPlaceFragment getTrafficCommonAddressFragment() {
+        synchronized (mUILock) {
+            if (mTrafficCommonAddressFragment == null) {
+                TrafficCommonPlaceFragment f = new TrafficCommonPlaceFragment(Sphinx.this);
+                f.setId(R.id.view_traffic_common_places);
+                f.onCreate(null);
+                mTrafficCommonAddressFragment = f;
+            }
+            return mTrafficCommonAddressFragment;
         }
     }
 

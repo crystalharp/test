@@ -18,25 +18,25 @@
     </FrameLayout>
     
     <LinearLayout 
-  	    android:id="@+id/fav_place_lst"
+  	    android:id="@+id/common_place_lst"
   	    android:orientation="vertical"
         android:layout_width="fill_parent" 
         android:layout_height="wrap_content"
         android:layout_below="@id/content_frl" >
    	</LinearLayout>
     <LinearLayout 
-  	    android:id="@+id/add_fav_place"
+  	    android:id="@+id/add_common_place"
   	    android:orientation="vertical"
         android:layout_width="fill_parent" 
         android:layout_height="wrap_content"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
         android:background="@drawable/list_footer"
-        android:layout_below="@id/fav_place_lst" >
+        android:layout_below="@id/common_place_lst" >
     	<TextView 
 	        android:layout_width="fill_parent" 
 	        android:layout_height="wrap_content"
-	        android:text="add fav place"
+	        android:text="add common place"
     	    />
    	</LinearLayout>
 
@@ -49,7 +49,7 @@
         android:paddingRight="8dp"
         android:background="@drawable/list_header"
         android:layout_marginTop="16dp"
-        android:layout_below="@id/add_fav_place" >
+        android:layout_below="@id/add_common_place" >
     	<TextView 
 	        android:layout_width="fill_parent" 
 	        android:layout_height="20dp"

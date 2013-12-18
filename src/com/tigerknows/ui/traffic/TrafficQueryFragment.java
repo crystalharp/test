@@ -138,9 +138,9 @@ public class TrafficQueryFragment extends BaseFragment {
 
 	RelativeLayout mBuslineLayout;
 	
-	LinearLayout mAddFavPlace;
+	LinearLayout mAddCommonPlace;
 	
-	LinearLayout mFavPlaceLst;
+	LinearLayout mCommonPlaceLst;
 	
 	LinearLayout mQueryHistory;
 	
@@ -149,20 +149,27 @@ public class TrafficQueryFragment extends BaseFragment {
 	View mTitleBar;
 	
 	LinearListAdapter mQueryHistoryAdapter;
-	//TODO:添加resid
-	LinearListAdapter mFavPlaceAdapter;
+	LinearListAdapter mCommonPlaceAdapter;
         
-    class FavPlace {
+    class CommonPlace {
         String alias;
+        boolean empty;
         POI poi;
         
-        public FavPlace(String a, POI p) {
+        public CommonPlace(String a, POI p) {
             alias = a;
             poi = p;
+            empty = false;
+        }
+        
+        public CommonPlace(String a, POI p, boolean b) {
+            alias = a;
+            poi = p;
+            empty = b;
         }
     }
     
-    List<FavPlace> mFavPlaces = new LinkedList<FavPlace>();
+    List<CommonPlace> mCommonPlaces = new LinkedList<CommonPlace>();
 
     List<History> mQueryHistorys = new LinkedList<History>();
 //	int oldCheckButton;
@@ -338,8 +345,8 @@ public class TrafficQueryFragment extends BaseFragment {
     	
     	mQueryHistory = (LinearLayout) mRootView.findViewById(R.id.query_history_title);
     	mQueryHistoryLst = (LinearLayout)mRootView.findViewById(R.id.query_history_lst);
-    	mAddFavPlace = (LinearLayout)mRootView.findViewById(R.id.add_fav_place);
-    	mFavPlaceLst = (LinearLayout)mRootView.findViewById(R.id.fav_place_lst);
+    	mAddCommonPlace = (LinearLayout)mRootView.findViewById(R.id.add_common_place);
+    	mCommonPlaceLst = (LinearLayout)mRootView.findViewById(R.id.common_place_lst);
 		
 //		mSuggestLnl = (LinearLayout)mRootView.findViewById(R.id.suggest_lnl);
 //		mSuggestLsv = (ListView)mRootView.findViewById(R.id.suggest_lsv);
@@ -347,14 +354,12 @@ public class TrafficQueryFragment extends BaseFragment {
     }
 	
 	void setListeners() {
-	    mAddFavPlace.setOnClickListener(new View.OnClickListener() {
+	    mAddCommonPlace.setOnClickListener(new View.OnClickListener() {
             
             @Override
             public void onClick(View v) {
-                // TODO Auto-generated method stub
-//                showView();
-                //跳转到添加常用地址
-                makeToast("showView add fav place");
+                mSphinx.showView(R.id.view_traffic_common_places);
+                makeToast("showView add common place");
             }
         });
 	    
@@ -380,8 +385,6 @@ public class TrafficQueryFragment extends BaseFragment {
             
             @Override
             public void onClick(View v) {
-                // TODO Auto-generated method stub
-                //转到起终点输入页
                 mSphinx.getPOIQueryFragment().reset();
                 mSphinx.getPOIQueryFragment().setMode(InputSearchFragment.MODE_TRANSFER);
                 mSphinx.getPOIQueryFragment().setConfirmedCallback(new InputSearchFragment.Callback() {
@@ -399,8 +402,6 @@ public class TrafficQueryFragment extends BaseFragment {
             
             @Override
             public void onClick(View v) {
-                // TODO Auto-generated method stub
-                //转到起终点输入页，怎么做个通用接口来返回POI？
                 mSphinx.getPOIQueryFragment().reset();
                 mSphinx.getPOIQueryFragment().setMode(InputSearchFragment.MODE_TRANSFER);
                 mSphinx.getPOIQueryFragment().setConfirmedCallback(new InputSearchFragment.Callback() {
@@ -439,12 +440,37 @@ public class TrafficQueryFragment extends BaseFragment {
 	    };
 
     //----------------------history end------------------------//
+	    
+	    final OnClickListener placeItemListener = new View.OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                CommonPlace c = (CommonPlace) v.getTag();
+                if (c.empty) {
+                    mSphinx.showView(R.id.view_traffic_common_places);
+                } else {
+                    //发起查询
+                }
+            }
+        };
 
-	    mFavPlaceAdapter = new LinearListAdapter(mSphinx, mFavPlaceLst, 0) {
+	    mCommonPlaceAdapter = new LinearListAdapter(mSphinx, mCommonPlaceLst, R.layout.traffic_common_places_item) {
 
 	        @Override
 	        public View getView(Object data, View child, int pos) {
-	            // TODO Auto-generated method stub
+	            //FIXME:进行严格检查
+	            TextView aliasTxv = (TextView) child.findViewById(R.id.alias_text);
+	            TextView descTxv = (TextView) child.findViewById(R.id.description_text);
+	            child.setTag(data);
+	            child.setOnClickListener(placeItemListener);
+	            CommonPlace c = (CommonPlace) data;
+	            aliasTxv.setText(c.alias);
+	            if (c.empty) {
+	                descTxv.setText("click to set");
+	            } else {
+	                descTxv.setText(c.poi.getName());
+	            }
 	            return null;
 	        }
 	    };
@@ -503,6 +529,7 @@ public class TrafficQueryFragment extends BaseFragment {
         mRightBtn.setBackgroundResource(R.drawable.btn_view_detail);
         HistoryFragment.readTraffic(mContext, mQueryHistorys, Long.MAX_VALUE, 0, false);
         mQueryHistoryAdapter.refreshList(mQueryHistorys);
+        updateCommonPlace();
         if (!mStart.textEmpty() 
                 && !mEnd.textEmpty()
                 && autoStartQuery) {
@@ -996,7 +1023,17 @@ public class TrafficQueryFragment extends BaseFragment {
         }
     }
     
-
+    private void updateCommonPlace() {
+        mAddCommonPlace.setVisibility(View.VISIBLE);
+        if (mCommonPlaces.size() == 0) {
+            //没有设置
+            mCommonPlaces.add(new CommonPlace("home", null, true));
+        } else if (mCommonPlaces.size() >= 2) {
+            //有两条以上，不再显示入口
+            mAddCommonPlace.setVisibility(View.GONE);
+        } 
+        mCommonPlaceAdapter.refreshList(mCommonPlaces);
+    }
 		
 	/*TODO:扔到输入页去*/
 	public class QueryEditText {
