@@ -397,17 +397,11 @@ public abstract class BaseQuery {
         int mnc = TKConfig.getMNC();
         int lac = tkCellLocation.lac;
         int cid = tkCellLocation.cid;
-        if (isLocateMe && !Utility.mccMncLacCidValid(mcc, mnc, lac, cid)) {
-            simAvailably = false;
-        }
-        
-        if (simAvailably) {
             requestParameters.add("mcc", String.valueOf(mcc));
             requestParameters.add("mnc", String.valueOf(mnc));
             requestParameters.add("lac", String.valueOf(lac));
             requestParameters.add("ci", String.valueOf(cid));
             requestParameters.add("ss", String.valueOf(TKConfig.getSignalStrength()));
-        }
         
         //服务器的约定，这些类别的请求不能含有at
         if (API_TYPE_PROXY.equals(apiType) == false 
