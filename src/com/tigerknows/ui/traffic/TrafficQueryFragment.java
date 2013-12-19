@@ -54,6 +54,7 @@ import com.tigerknows.provider.HistoryWordTable;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.ui.more.HistoryFragment;
 import com.tigerknows.ui.poi.InputSearchFragment;
+import com.tigerknows.ui.traffic.TrafficCommonPlaceFragment.CommonPlace;
 //import com.tigerknows.ui.traffic.TrafficViewSTT.Event;
 //import com.tigerknows.ui.traffic.TrafficViewSTT.State;
 import com.tigerknows.util.Utility;
@@ -150,25 +151,7 @@ public class TrafficQueryFragment extends BaseFragment {
 	
 	LinearListAdapter mQueryHistoryAdapter;
 	LinearListAdapter mCommonPlaceAdapter;
-        
-    class CommonPlace {
-        String alias;
-        boolean empty;
-        POI poi;
-        
-        public CommonPlace(String a, POI p) {
-            alias = a;
-            poi = p;
-            empty = false;
-        }
-        
-        public CommonPlace(String a, POI p, boolean b) {
-            alias = a;
-            poi = p;
-            empty = b;
-        }
-    }
-    
+            
     List<CommonPlace> mCommonPlaces = new LinkedList<CommonPlace>();
 
     List<History> mQueryHistorys = new LinkedList<History>();
@@ -346,7 +329,7 @@ public class TrafficQueryFragment extends BaseFragment {
     	mQueryHistory = (LinearLayout) mRootView.findViewById(R.id.query_history_title);
     	mQueryHistoryLst = (LinearLayout)mRootView.findViewById(R.id.query_history_lst);
     	mAddCommonPlace = (LinearLayout)mRootView.findViewById(R.id.add_common_place);
-    	mCommonPlaceLst = (LinearLayout)mRootView.findViewById(R.id.common_place_lst);
+    	mCommonPlaceLst = (LinearLayout)mRootView.findViewById(R.id.common_place_lsv);
 		
 //		mSuggestLnl = (LinearLayout)mRootView.findViewById(R.id.suggest_lnl);
 //		mSuggestLsv = (ListView)mRootView.findViewById(R.id.suggest_lsv);
@@ -445,11 +428,11 @@ public class TrafficQueryFragment extends BaseFragment {
             
             @Override
             public void onClick(View v) {
-                // TODO Auto-generated method stub
                 CommonPlace c = (CommonPlace) v.getTag();
                 if (c.empty) {
                     mSphinx.showView(R.id.view_traffic_common_places);
                 } else {
+                // TODO Auto-generated method stub
                     //发起查询
                 }
             }
@@ -460,8 +443,8 @@ public class TrafficQueryFragment extends BaseFragment {
 	        @Override
 	        public View getView(Object data, View child, int pos) {
 	            //FIXME:进行严格检查
-	            TextView aliasTxv = (TextView) child.findViewById(R.id.alias_text);
-	            TextView descTxv = (TextView) child.findViewById(R.id.description_text);
+	            TextView aliasTxv = (TextView) child.findViewById(R.id.alias_txv);
+	            TextView descTxv = (TextView) child.findViewById(R.id.description_txv);
 	            child.setTag(data);
 	            child.setOnClickListener(placeItemListener);
 	            CommonPlace c = (CommonPlace) data;
