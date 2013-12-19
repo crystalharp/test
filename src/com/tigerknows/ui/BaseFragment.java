@@ -60,10 +60,6 @@ public class BaseFragment extends LinearLayout {
     
     public BaseFragment mBottomFrament = null;
     
-    public int mTitleFramentHeight = 0;
-    
-    public int mBottomFramentHeight = 0;
-    
     /**
      * 此是标题栏中间的ViewGroup，可以用自定义的View替换此ViewGroup的内容
      */
@@ -93,6 +89,8 @@ public class BaseFragment extends LinearLayout {
     protected PopupWindow mPopupWindow;
     
     public boolean mDismissed = true;
+    
+    public int mHeight;
     
     public PopupWindow getPopupWindow() {
         return mPopupWindow;
@@ -161,6 +159,8 @@ public class BaseFragment extends LinearLayout {
         
         onCreateView(null, this, null);
         if (mRootView != null) {
+            mRootView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+            mHeight = mRootView.getMeasuredHeight();
             addView(mRootView);
         }
     }
@@ -280,6 +280,7 @@ public class BaseFragment extends LinearLayout {
         if (id != R.id.view_invalid) {
             dismissPopupWindow();
             mSphinx.hideSoftInput();
+            mSphinx.resetLoactionButtonState();
             if (!TextUtils.isEmpty(mActionTag)) {
                 mActionLog.addAction(mActionTag + ActionLog.Dismiss);
             }
@@ -298,7 +299,8 @@ public class BaseFragment extends LinearLayout {
                 mActionLog.addAction(mActionTag);
             }
             
-            mSphinx.replaceUI(this);
+            mSphinx.replaceBodyUI(this);
+            mSphinx.replaceBottomUI(this);
             mTitleFragment.reset();
             mTitleFragment.mLeftBtn.setOnClickListener(mLeftBtnOnClickListener);
             

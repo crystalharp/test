@@ -9,6 +9,7 @@ import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
+import com.tigerknows.map.ItemizedOverlayHelper;
 import com.tigerknows.model.BaseData;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.Dianying;
@@ -587,7 +588,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             name = R.string.zhanlan_ditu;
             actionTag = ActionLog.ResultMapZhanlanList;
         }
-        mSphinx.showPOI(dataList, page[2]);
+        ItemizedOverlayHelper.drawPOIOverlay(mSphinx, dataList, page[2]);
         mSphinx.getResultMapFragment().setData(mContext.getString(name), actionTag);
         mSphinx.showView(R.id.view_result_map);   
     }

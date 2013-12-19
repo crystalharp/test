@@ -431,9 +431,9 @@ public class POI extends BaseData {
 
     public static final int SOURCE_TYPE_ZHANLAN = 11;
 
-    public static final int SOURCE_TYPE_CLICK_SELECT_POINT = 12;
+    public static final int SOURCE_TYPE_CLICKED_SELECT_POINT = 12;
 
-    public static final int SOURCE_TYPE_LONG_CLICK_SELECT_POINT = 13;
+    public static final int SOURCE_TYPE_LONG_CLICKED_SELECT_POINT = 13;
 
     public static final int SOURCE_TYPE_HOTEL = 14;
     
@@ -455,7 +455,7 @@ public class POI extends BaseData {
     private Position position = null;
 
     private String name;
-
+    
     private XMap description;
 
     private String telephone;
@@ -1656,6 +1656,11 @@ public class POI extends BaseData {
         }
         
         return result;
+    }
+    
+    @Override
+    public POI getPOI() {
+        return this;
     }
 
     public static XMapInitializer<POI> Initializer = new XMapInitializer<POI>() {

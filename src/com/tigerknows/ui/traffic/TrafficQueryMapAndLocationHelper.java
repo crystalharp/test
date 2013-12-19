@@ -108,7 +108,6 @@ public class TrafficQueryMapAndLocationHelper {
     public void resetMapCenter(boolean priorityMyLocation) {
     	
         LogWrapper.d(TAG, "resetMapCenter() priorityMyLocation:"+priorityMyLocation);
-        mQueryFragment.mSphinx.resetLoactionButtonState();
         CityInfo currentCityInfo = Globals.getCurrentCityInfo();
     	CityInfo locationCityInfo = Globals.g_My_Location_City_Info;
     	Position currentPosition = mQueryFragment.mSphinx.getMapView().getCenterPosition();
@@ -198,6 +197,5 @@ public class TrafficQueryMapAndLocationHelper {
     		mMapCityInfo.setLevel((int)mQueryFragment.mSphinx.getMapView().getZoomLevel());
     	}
     	
-    	mQueryFragment.mSphinx.resetLoactionButtonState();
 	}
 }

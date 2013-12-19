@@ -17,6 +17,7 @@ import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.MapEngine;
+import com.tigerknows.map.ItemizedOverlayHelper;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.Dianying;
 import com.tigerknows.model.FeedbackUpload;
@@ -103,7 +104,7 @@ public class DianyingDetailFragment extends BaseDetailFragment
         List<POI> list = new ArrayList<POI>();
         POI poi = data.getPOI();
         list.add(poi);
-        mSphinx.showPOI(list, 0);
+        ItemizedOverlayHelper.drawPOIOverlay(mSphinx, list, 0);
         mSphinx.getResultMapFragment().setData(mContext.getString(R.string.dianying_ditu), ActionLog.ResultMapDianyingDetail);
         super.viewMap();
     }

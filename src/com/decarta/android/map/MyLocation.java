@@ -12,16 +12,14 @@ public class MyLocation extends OverlayItem {
     public static final double REFRESH_TIME = 1000000000*1.5;
     
     public int mode = MODE_NORMAL;
-    public Icon focused;
     public long refreshTime;
     public Icon faceToNormal;
     public Icon faceToFocused;
     private Position position;
     
-    public MyLocation(Position position, Icon icon, Icon focused, Icon faceToNormal, Icon faceToFocused, String message, RotationTilt rotationTilt)
+    public MyLocation(Position position, Icon icon, Icon iconFocused, Icon faceToNormal, Icon faceToFocused, String message, RotationTilt rotationTilt)
             throws APIException {
-        super(position, icon, message, rotationTilt);
-        this.focused = focused;
+        super(position, icon, iconFocused, message, rotationTilt);
         this.faceToNormal = faceToNormal;
         this.faceToFocused = faceToFocused;
     }

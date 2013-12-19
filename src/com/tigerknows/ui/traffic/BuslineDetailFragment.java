@@ -176,7 +176,7 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
                 // 绘制线路图层
                 viewMap();
                 // 将地图平移到某一坐标点, 并缩放至某一级别
-                BuslineOverlayHelper.panToPosition(mSphinx.getHandler(), position, mSphinx.getMapView());
+                BuslineOverlayHelper.panToPosition(mSphinx, position, mSphinx.getMapView());
             }
         });
         mFavorateBtn.setOnClickListener(new ResultOnClickListener());
@@ -342,8 +342,7 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
             poiList.add(station.toPOI());
         }
 
-        mSphinx.clearMap();
-        BuslineOverlayHelper.drawOverlay(mSphinx, mSphinx.getHandler(), mSphinx.getMapView(), line);
+        BuslineOverlayHelper.drawOverlay(mSphinx, mSphinx.getMapView(), line);
         Position position = BuslineOverlayHelper.panToViewWholeOverlay(line, mSphinx.getMapView(), (Activity)mSphinx);
         
         ShareAPI.share(mSphinx, line, position, mActionTag);
@@ -355,8 +354,7 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
             return;
         }
 
-        mSphinx.clearMap();
-        BuslineOverlayHelper.drawOverlay(mSphinx, mSphinx.getHandler(), mSphinx.getMapView(), line);
+        BuslineOverlayHelper.drawOverlay(mSphinx, mSphinx.getMapView(), line);
         
         mSphinx.getResultMapFragment().setData(mContext.getString(R.string.title_busline_result_map), ActionLog.TrafficBuslineMap);
         mSphinx.showView(R.id.view_result_map);

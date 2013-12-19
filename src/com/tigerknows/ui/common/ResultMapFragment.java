@@ -4,45 +4,28 @@
 
 package com.tigerknows.ui.common;
 
-import com.decarta.Globals;
 import com.decarta.android.map.ItemizedOverlay;
 import com.decarta.android.map.OverlayItem;
-import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
 import com.tigerknows.android.location.Position;
 import com.tigerknows.common.ActionLog;
-import com.tigerknows.map.BuslineOverlayHelper;
 import com.tigerknows.map.MapEngine;
-import com.tigerknows.map.TrafficOverlayHelper;
 import com.tigerknows.map.MapView.SnapMap;
 import com.tigerknows.model.POI;
-import com.tigerknows.model.BuslineModel.Line;
-import com.tigerknows.model.TrafficModel.Plan;
-import com.tigerknows.model.TrafficQuery;
 import com.tigerknows.ui.BaseFragment;
+import com.tigerknows.ui.InfoWindowFragment;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
-
-import android.widget.AdapterView.OnItemClickListener;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Peng Wenyue
@@ -53,6 +36,7 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
     private View mSnapView;
     private Button mCancelBtn;
     private Button mConfirmBtn;
+    private ItemizedOverlay mItemizedOverlay;
     
     public ResultMapFragment(Sphinx sphinx) {
         super(sphinx);
@@ -69,6 +53,8 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
             Bundle savedInstanceState) {
         
         mRootView = mLayoutInflater.inflate(R.layout.result_map, container, false);
+        
+        mBottomFrament = mSphinx.getInfoWindowFragment();
         
         findViews();
         setListener();
@@ -91,10 +77,6 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
             mSnapView.setVisibility(View.GONE);
         }
         
-        Rect padding = mSphinx.getMapView().getPadding();
-        padding.top = mTitleFragment.mTitleFramentHeight;
-        padding.bottom = mBottomFramentHeight;
-        
         //如果是驾车和步行，需要在这里可以切换到详情页
         if (mActionTag == ActionLog.TrafficDriveMap || mActionTag == ActionLog.TrafficWalkMap) {
             mRightBtn.setBackgroundResource(R.drawable.btn_view_detail);
@@ -115,13 +97,8 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
     
     public void setData(String title, String actionTag) {
         mTitle = title;
+        mItemizedOverlay = mSphinx.getMapView().getCurrentOverlay();
         mActionTag = actionTag;
-        
-        /*
-         * setData方法被调用时, 表明将要进入结果地图, 
-         * 此时请重置定位点状态
-         */
-        mSphinx.resetLoactionButtonState();
     }
     
     protected void findViews() {
@@ -194,6 +171,10 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
     		break;
         }
 
+    }
+    
+    public ItemizedOverlay getItemizedOverlay() {
+        return mItemizedOverlay;
     }
     
     @Override

@@ -20,7 +20,11 @@ public class CycleViewPager {
         public List<View> viewList;
         public int count = 0;
         
+        public CyclePagerAdapter() {
+        }
+        
         public CyclePagerAdapter(List<View> viewList) {
+            this();
             this.viewList = viewList;
         }
         

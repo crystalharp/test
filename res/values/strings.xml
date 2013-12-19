@@ -271,7 +271,7 @@
 
     <string name="are_you_sure_download_this_software">确定下载此软件？</string>
     <string name="my_location">当前位置</string>
-    <string name="my_location_with_accuracy">当前位置\n精确到%1$s</string>
+    <string name="my_location_with_accuracy">当前位置（精确到%1$s）</string>
     <string name="pop_categories">热门搜索</string>
     <string name="pop_location">热门地点</string>
     <string name="search_location_me_failure_and_select">暂时无法获取当前位置，请选择具体位置或在地图上指定位置！</string>
@@ -1340,4 +1340,5 @@
     <string name="hotel_home_tip">免费预订，享受低价。小虎承诺：若预订价高于酒店门市价，3倍差额赔付！</string>
     
     <string name="hotel">酒店</string>
+    <string name="qi">起</string>
 </resources>

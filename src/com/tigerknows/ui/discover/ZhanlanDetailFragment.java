@@ -17,6 +17,7 @@ import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.MapEngine;
+import com.tigerknows.map.ItemizedOverlayHelper;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.FeedbackUpload;
 import com.tigerknows.model.POI;
@@ -104,7 +105,7 @@ public class ZhanlanDetailFragment extends BaseDetailFragment
         poi.setName(data.getPlaceName());
         poi.setAddress(data.getAddress());
         list.add(poi);
-        mSphinx.showPOI(list, 0);
+        ItemizedOverlayHelper.drawPOIOverlay(mSphinx, list, 0);
         mSphinx.getResultMapFragment().setData(mContext.getString(R.string.zhanlan_didian_ditu), ActionLog.ResultMapZhanlanDetail);
         super.viewMap();
     }

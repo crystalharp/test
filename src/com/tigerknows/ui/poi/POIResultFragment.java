@@ -11,6 +11,7 @@ import com.tigerknows.Sphinx;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.MapEngine;
+import com.tigerknows.map.ItemizedOverlayHelper;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.BuslineModel;
 import com.tigerknows.model.BuslineQuery;
@@ -507,7 +508,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         if (mAPOI != null) {
             firstIndex++;
         }
-        mSphinx.showPOI(poiList, firstIndex);
+        ItemizedOverlayHelper.drawPOIOverlay(mSphinx, poiList, firstIndex);
         mSphinx.getResultMapFragment().setData(mContext.getString(R.string.result_map), BaseQuery.SUB_DATA_TYPE_HOTEL.equals(mResultAdapter.getSubDataType()) ? ActionLog.POIHotelListMap : ActionLog.POIListMap);
         mSphinx.showView(R.id.view_result_map);   
     }

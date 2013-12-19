@@ -6,8 +6,6 @@ import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.view.animation.Animation.AnimationListener;
 
-import com.tigerknows.Sphinx;
-
 /**
  * 负责“交通频道首页”TrafficQueryFragment的[[动画效果]]
  * @author linqingzu
@@ -23,7 +21,6 @@ public class TrafficQueryAnimationHelper {
         
         @Override
         public void onAnimationStart(Animation animation) {
-            mQueryFragment.mSphinx.interceptTouchBegin();
         }
         
         @Override
@@ -34,7 +31,6 @@ public class TrafficQueryAnimationHelper {
         
         @Override
         public void onAnimationEnd(Animation animation) {
-            mQueryFragment.mSphinx.interceptTouchEnd();
         }
     };
     InterceptTouchListener interceptTouchListener = new InterceptTouchListener();
@@ -46,7 +42,6 @@ public class TrafficQueryAnimationHelper {
 
 	public void hideBlockAndMenuAnimation() {
 		setAnimation(mQueryFragment.mBlock, new NormalToMapUpAnimation());
-		mQueryFragment.mSphinx.getHandler().sendEmptyMessage(Sphinx.ROOT_VIEW_INVALIDATE);
     }
 	
 	public void showBlockAndMenuAnimation() {
@@ -55,7 +50,6 @@ public class TrafficQueryAnimationHelper {
 		
 		mQueryFragment.getContentView().setVisibility(View.VISIBLE);
 		
-		mQueryFragment.mSphinx.getHandler().sendEmptyMessage(Sphinx.ROOT_VIEW_INVALIDATE);
     }
 	
 	public void setAnimation(View target, Animation a) {
@@ -78,7 +72,6 @@ public class TrafficQueryAnimationHelper {
 
 				@Override
 				public void onAnimationStart(Animation animation) {
-                    mQueryFragment.mSphinx.interceptTouchBegin();
 				}
 
 				@Override
@@ -90,7 +83,6 @@ public class TrafficQueryAnimationHelper {
 						public void run() {
 							// TODO Auto-generated method stub
 							mQueryFragment.getContentView().setVisibility(View.GONE);
-							mQueryFragment.mSphinx.interceptTouchEnd();
 						}
 					});
 				}
@@ -129,7 +121,6 @@ public class TrafficQueryAnimationHelper {
 				
 				@Override
 				public void onAnimationStart(Animation animation) {
-                    mQueryFragment.mSphinx.interceptTouchBegin();
 				}
 				
 				@Override
@@ -145,7 +136,6 @@ public class TrafficQueryAnimationHelper {
 						@Override
 						public void run() {
 							// TODO Auto-generated method stub
-                            mQueryFragment.mSphinx.interceptTouchEnd();
 						}
 					});
 				}

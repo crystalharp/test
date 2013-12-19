@@ -11,6 +11,7 @@ import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
+import com.tigerknows.map.ItemizedOverlayHelper;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.Dianying;
 import com.tigerknows.model.Fendian;
@@ -305,7 +306,7 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
     }
     
     private void viewMap(List<POI> poiList, int index) {
-        mSphinx.showPOI(poiList, index);
+        ItemizedOverlayHelper.drawPOIOverlay(mSphinx, poiList, index);
         boolean yingxun = BaseQuery.DATA_TYPE_YINGXUN.equals(mDataType);
         mSphinx.getResultMapFragment().setData(mContext.getString(yingxun ? R.string.dianying_ditu : R.string.shanghu_ditu), yingxun ? ActionLog.ResultMapDianyingBranchList : ActionLog.ResultMapTuangouBranchList);
         mSphinx.showView(R.id.view_result_map);   

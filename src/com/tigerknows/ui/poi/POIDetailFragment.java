@@ -53,6 +53,7 @@ import android.widget.Toast;
 
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.MapEngine;
+import com.tigerknows.map.ItemizedOverlayHelper;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.Comment;
 import com.tigerknows.model.DataOperation;
@@ -1033,7 +1034,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         }
         List<POI> pois = new ArrayList<POI>();
         pois.add(poi);
-        mSphinx.showPOI(pois, 0);
+        ItemizedOverlayHelper.drawPOIOverlay(mSphinx, pois, 0);
         mSphinx.getResultMapFragment().setData(mContext.getString(R.string.result_map), poi.getSourceType() == POI.SOURCE_TYPE_HOTEL ? ActionLog.POIHotelDetailMap : ActionLog.POIDetailMap);
         mSphinx.showView(R.id.view_result_map);
     }
@@ -1094,7 +1095,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         List<POI> pois = new ArrayList<POI>();
         pois.add(poi);
 
-        mSphinx.showPOI(pois, 0);
+        ItemizedOverlayHelper.drawPOIOverlay(mSphinx, pois, 0);
         ShareAPI.share(mSphinx, poi, poi.getPosition(), mActionTag);
     }
     

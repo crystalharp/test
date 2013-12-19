@@ -18,6 +18,7 @@ import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.MapEngine;
+import com.tigerknows.map.ItemizedOverlayHelper;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataOperation;
 import com.tigerknows.model.DataQuery;
@@ -176,7 +177,7 @@ public class TuangouDetailFragment extends BaseDetailFragment
         list.add(poi);
 
         //Show it on map
-        mSphinx.showPOI(list, 0);
+        ItemizedOverlayHelper.drawPOIOverlay(mSphinx, list, 0);
         mSphinx.getResultMapFragment().setData(mContext.getString(R.string.shanghu_ditu), ActionLog.ResultMapTuangouDetail);
         super.viewMap();
     }

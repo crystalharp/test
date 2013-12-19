@@ -200,7 +200,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
 				// 绘制交通图层
                 viewMap();
                 // 将地图平移到某一item index, 并缩放至某一级别
-            	TrafficOverlayHelper.panToPosition(mSphinx.getHandler(), position, mSphinx.getMapView());
+            	TrafficOverlayHelper.panToPosition(mSphinx, position, mSphinx.getMapView());
             }
         });
     }
@@ -425,8 +425,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
             return;
     	
     	MapScene mapScene = mSphinx.getMapView().getCurrentMapScene();
-    	mSphinx.clearMap();
-    	TrafficOverlayHelper.drawOverlay(mSphinx, mSphinx.getHandler(), mSphinx.getMapView(), plan, mShowType);
+    	TrafficOverlayHelper.drawOverlay(mSphinx, mSphinx.getMapView(), plan, mShowType);
     	Position position = TrafficOverlayHelper.panToViewWholeOverlay(plan, mSphinx.getMapView(), (Activity)mSphinx);
     	
     	ShareAPI.share(mSphinx, plan, position, mapScene, mActionTag);
@@ -450,8 +449,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         			
         	}
 
-        	mSphinx.clearMap();
-        	TrafficOverlayHelper.drawOverlay(mSphinx, mSphinx.getHandler(), mSphinx.getMapView(), plan, mShowType);
+        	TrafficOverlayHelper.drawOverlay(mSphinx, mSphinx.getMapView(), plan, mShowType);
         	
             mSphinx.getResultMapFragment().setData(mContext.getString(R.string.title_traffic_result_map), actionTag);
             String resultMapActionTag = mSphinx.getResultMapFragment().mActionTag;

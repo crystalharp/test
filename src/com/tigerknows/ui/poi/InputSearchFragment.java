@@ -26,18 +26,18 @@ import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+
 import android.widget.Toast;
 
-import com.tigerknows.android.location.Position;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
+import com.tigerknows.map.ItemizedOverlayHelper;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.BuslineModel;
 import com.tigerknows.model.BuslineQuery;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.TKWord;
-import com.tigerknows.model.TrafficQuery;
 import com.tigerknows.provider.HistoryWordTable;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.widget.SuggestArrayAdapter.BtnEventHandler;
@@ -57,6 +57,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
 
     private ListView mSuggestLsv = null;
     private LinearLayout mTrafficBtnGroup;
+    private View mMapSelectPointBtn;
     private Button mFavBtn;
     
     private SuggestWordListManager mSuggestWordListManager;
@@ -196,6 +197,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
     protected void findViews() {
         mSuggestLsv = (ListView)mRootView.findViewById(R.id.suggest_lsv);
         mTrafficBtnGroup = (LinearLayout) mRootView.findViewById(R.id.traffic_btn_group);
+        mMapSelectPointBtn = mTrafficBtnGroup.findViewById(R.id.btn_map_position);
         mFavBtn = (Button) mRootView.findViewById(R.id.btn_fav_position);
     }
 
@@ -240,6 +242,8 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
             }
         });
         
+        mMapSelectPointBtn.setOnClickListener(this);
+        
         mFavBtn.setOnClickListener(new View.OnClickListener() {
             
             @Override
@@ -252,6 +256,10 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
 
     public void onClick(View view) {
         switch (view.getId()) {
+            
+            case R.id.btn_map_position:
+                ItemizedOverlayHelper.drawClickOverlay(mSphinx, mSphinx.getTouchMode());
+                break;
                 
             case R.id.right_btn:
                 if (mKeywordEdt.getText().toString().trim().length() > 0) {

@@ -32,7 +32,6 @@ import com.decarta.CONFIG;
 import com.decarta.android.event.EventListener;
 import com.decarta.android.event.EventSource;
 import com.decarta.android.exception.APIException;
-import com.decarta.android.location.BoundingBox;
 import com.decarta.android.map.Compass;
 import com.decarta.android.map.Icon;
 import com.decarta.android.map.InfoWindow;
@@ -52,7 +51,6 @@ import com.tigerknows.TKConfig;
 import com.tigerknows.android.location.Position;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.util.Utility;
-import com.tigerknows.util.XYInteger;
 import com.tigerknows.widget.ZoomControls;
 
 /**
@@ -97,10 +95,6 @@ public class MapView extends RelativeLayout implements
 	private float xRotation = 0;
 	
 	private Sphinx sphinx;
-
-	public Sphinx getSphinx() {
-        return sphinx;
-    }
 
     public void setSphinx(Sphinx sphinx) {
         this.sphinx = sphinx;
@@ -237,7 +231,7 @@ public class MapView extends RelativeLayout implements
 		public static int TILTEND=8;
         public static int DOWNLOAD = 10;
 
-        public static int TOUCHDOWN = 11;
+        public static int TOUCHUP = 11;
         public static int MULTITOUCHZOOM = 12;
 	}
 	
@@ -250,13 +244,6 @@ public class MapView extends RelativeLayout implements
 	 */
 	public interface SurfaceCreatedEventListener extends EventListener{
 		public void onSurfaceCreatedEvent();
-	}
-	
-	/**
-	 * listener for touchdown event
-	 */
-	public interface TouchDownEventListener extends EventListener{
-		public void onTouchDownEvent(EventSource eventSource, Position pos);
 	}
 	
 	/**
@@ -274,11 +261,6 @@ public class MapView extends RelativeLayout implements
 			com.decarta.android.event.EventListener {
 		public void onMoveEndEvent(MapView mapView, Position position);
 	}
-	
-    public interface ClickEventListener extends
-            com.decarta.android.event.EventListener {
-        public void onClickEvent();
-    }
     
     public interface DownloadEventListener extends
             com.decarta.android.event.EventListener {
@@ -372,8 +354,8 @@ public class MapView extends RelativeLayout implements
 				&& (listener instanceof RotateEndEventListener)
 				|| eventType == EventType.TILTEND
 				&& (listener instanceof TiltEndEventListener)
-				|| eventType == EventType.TOUCHDOWN
-				&& (listener instanceof TouchDownEventListener)
+				|| eventType == EventType.TOUCHUP
+				&& (listener instanceof TouchEventListener)
                 || eventType == EventType.MULTITOUCHZOOM
                 && (listener instanceof MultiTouchZoomEventListener)
                 || eventType == EventType.SURFACECREATED
@@ -486,11 +468,11 @@ public class MapView extends RelativeLayout implements
 		}
 	}
 	
-	public void executeTouchDownListeners(Position position) {
-		if (eventListeners.containsKey(MapView.EventType.TOUCHDOWN)) {
-			ArrayList<EventListener> listeners = eventListeners.get(MapView.EventType.TOUCHDOWN);
+	public void executeTouchUpListeners(Position position) {
+		if (eventListeners.containsKey(MapView.EventType.TOUCHUP)) {
+			ArrayList<EventListener> listeners = eventListeners.get(MapView.EventType.TOUCHUP);
 			for (int i = 0; i < listeners.size(); i++) {
-				((TouchDownEventListener) (listeners.get(i))).onTouchDownEvent(this,
+				((TouchEventListener) (listeners.get(i))).onTouchEvent(this,
 						position);
 			}
 		}
@@ -1131,7 +1113,7 @@ public class MapView extends RelativeLayout implements
             if (mapScene.position != null) {
                 centerOnPosition(mapScene.position, mapScene.zoomLevel);
             }
-            sphinx.showInfoWindow(mapScene.overlayItem);
+            sphinx.showInfoWindow(sphinx.uiStackPeek(), mapScene.overlayItem);
         } catch (APIException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

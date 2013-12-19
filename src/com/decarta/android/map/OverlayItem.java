@@ -29,6 +29,10 @@ public class OverlayItem implements com.decarta.android.event.EventSource{
 	 * 在该Item位置要绘制的图标
 	 */
 	protected Icon icon;
+    /*
+     * 在该Item位置要绘制的图标
+     */
+    protected Icon iconFocused;
 	/*
 	 * 此Item所在墨卡托坐标点
 	 */
@@ -70,14 +74,15 @@ public class OverlayItem implements com.decarta.android.event.EventSource{
 	
 	private int preferZoomLevel = -1;
 	
-	private OverlayItem(Position position, Icon icon, String message) throws APIException{
+	private OverlayItem(Position position, Icon icon, Icon iconFocused, String message) throws APIException{
 		this.setPosition(position);
 		this.icon=icon;
+		this.iconFocused=iconFocused;
 		this.message=message;
 	}
 	
-	public OverlayItem(Position position, Icon icon, String message,RotationTilt rotationTilt)throws APIException{
-		this(position,icon,message);
+	public OverlayItem(Position position, Icon icon, Icon iconFocused, String message,RotationTilt rotationTilt)throws APIException{
+		this(position,icon,iconFocused,message);
 		
 		this.rotationTilt=rotationTilt;
 	}
@@ -166,13 +171,15 @@ public class OverlayItem implements com.decarta.android.event.EventSource{
 	public Icon getIcon() {
 		return icon;
 	}
-	/**
-	 * set Icon associated with this Pin
-	 */
-	public void setIcon(Icon icon) {
-		this.icon = icon;
-		
-	}
+    
+    /**
+     * get Icon focused associated with this Pin
+     * 
+     */
+    public Icon getIconFocused() {
+        return iconFocused;
+    }
+    
 	/**
 	 * Position of pin
 	 */

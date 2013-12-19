@@ -29,8 +29,9 @@ public class ItemizedOverlay {
     public static String MY_LOCATION_OVERLAY = "my_location";
     public static String POI_OVERLAY = "poi";
     public static String TRAFFIC_OVERLAY = "traffic";
-    public static String LINE_OVERLAY = "line";
-    public static String PIN_OVERLAY = "pin";
+    public static String BUSLINE_OVERLAY = "busline";
+    public static String CLICKED_OVERLAY = "clicked";
+    public static String LONG_CLICKED_OVERLAY = "long_clicked";
     public static String MEASURE_DISTANCE_OVERLAY = "measure_distance";
     
 	public static final int ZOOM_LEVEL=13;
@@ -540,6 +541,18 @@ public class ItemizedOverlay {
 		this.clusterBorderColor = clusterBorderColor;
 	}
 
+    public int getPositionByFocused() {
+        synchronized(idxLock){
+        int size = overlayItems.size();
+        for(int i = 0; i < size; i++) {
+            if (overlayItems.get(i).isFoucsed) {
+                return i;
+            }
+        }
+        
+        return 0;
+        }
+    }
 
 	public OverlayItem getItemByFocused() {
         synchronized(idxLock){

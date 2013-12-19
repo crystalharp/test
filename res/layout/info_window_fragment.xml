@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/body_view"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:gravity="left|top"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:id="@+id/title_txv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:text="@string/app_name"
+            android:textColor="@color/black_dark"
+            android:textSize="14sp" >
+        </TextView>
+
+        <TextView
+            android:id="@+id/name_txv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/title_txv"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:text="@string/app_name"
+            android:textColor="@color/black_dark"
+            android:textSize="14sp" >
+        </TextView>
+
+        <Button
+            android:id="@+id/detail_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_gravity="center_vertical"
+            android:text="@string/detail" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/hotel_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/hotel_price_txv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:singleLine="true"
+            android:text="@string/app_name"
+            android:textColor="@color/orange"
+            android:textSize="16sp"
+            android:textStyle="bold" >
+        </TextView>
+
+        <TextView
+            android:id="@+id/hotel_rmb_text_txv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/hotel_price_txv"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@id/hotel_price_txv"
+            android:focusable="false"
+            android:singleLine="true"
+            android:text="@string/qi"
+            android:textColor="@color/black_light"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/hotel_can_reserve_txv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:background="#99000000"
+            android:focusable="false"
+            android:gravity="left"
+            android:singleLine="true"
+            android:text="@string/can_not_reserve"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/poi_view"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+
+        <RatingBar
+            android:id="@+id/poi_stars_rtb"
+            style="@style/RatingBar.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginRight="8dp"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:numStars="5"
+            android:progressDrawable="@drawable/ratingbar_small" />
+
+        <TextView
+            android:id="@+id/poi_price_txv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@id/poi_stars_rtb"
+            android:singleLine="true"
+            android:text="@string/app_name"
+            android:textColor="@color/orange"
+            android:textSize="12sp" >
+        </TextView>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/tuangou_view"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:id="@+id/tuangou_price_txv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:singleLine="true"
+            android:text="@string/app_name"
+            android:textColor="@color/orange"
+            android:textSize="16sp"
+            android:textStyle="bold" >
+        </TextView>
+
+        <TextView
+            android:id="@+id/tuangou_rmb_text_txv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@id/tuangou_price_txv"
+            android:focusable="false"
+            android:singleLine="true"
+            android:text="@string/rmb_text"
+            android:textColor="@color/black_light"
+            android:textSize="14sp" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/bottom_view"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="2" >
+
+        <Button
+            android:id="@+id/poi_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:text="@string/nearby_search" />
+
+        <Button
+            android:id="@+id/traffic_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:text="@string/traffic" />
+    </LinearLayout>
+
+</LinearLayout>

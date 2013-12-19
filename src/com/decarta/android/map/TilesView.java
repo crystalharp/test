@@ -60,8 +60,6 @@ import android.graphics.Paint.Align;
 import android.graphics.Paint.Style;
 import android.graphics.RectF;
 import android.opengl.GLES10;
-import android.opengl.GLES11;
-import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLUtils;
 import android.view.Display;
@@ -94,7 +92,6 @@ import com.tigerknows.map.ScaleView;
 import com.tigerknows.map.TexturePool;
 import com.tigerknows.map.TileDownload;
 import com.tigerknows.map.MapView.MapType;
-import com.tigerknows.map.MapView.MoveEndEventListener;
 import com.tigerknows.map.TileInfo;
 import com.tigerknows.map.label.Label;
 import com.tigerknows.map.label.SingleRectLabel;
@@ -824,10 +821,6 @@ public class TilesView extends GLSurfaceView {
 				lastTouch.x = event.getX(0);
 				lastTouch.y = event.getY(0);
 
-				// tigerknows add begin
-				Position position = screenXYConvToPos(xy0Conv.x, xy0Conv.y);
-				mParentMapView.executeTouchDownListeners(position);
-				// tigerknows add end
 				if (infoWindow.isVisible() && infoWindow.getMercXY() != null) {
 					XYFloat relativeXY = new XYFloat(0, 0);
 					if (snapToInfoWindow(event.getX(0), event.getY(0),
@@ -1090,6 +1083,12 @@ public class TilesView extends GLSurfaceView {
 
 			isTouchBegin = false;
 			resetLongTouchTimer();
+			
+			// LongClick事件派发出去之后就不再派发TouchUp事件
+			if (longClicked == false) {
+    			Position pos = screenXYConvToPos(xy0Conv.x, xy0Conv.y);
+    			mParentMapView.executeTouchUpListeners(pos);
+			}
 
 			if (!multiTouch && pCount == 1) {
 				synchronized (longTouchLock) {
@@ -1174,7 +1173,7 @@ public class TilesView extends GLSurfaceView {
 						}
 					}
 
-					if (cluster != null && !mParentMapView.getSphinx().getTouchMode().equals(TouchMode.MEASURE_DISTANCE)) {
+					if (cluster != null) {
 						// Log.i("TilesView","onTouchEvent snap to:"+overlayItem.getPosition()+","+overlayItem.getMessage());
 						if (cluster.size() == 0) {
 							LogWrapper.e("TilesView", "onTouchEvent touchUp cluster size is 0");
@@ -1208,19 +1207,9 @@ public class TilesView extends GLSurfaceView {
 						}
 
 					} else {
-						/*
-						 * 点击第一次InfoWindow消失, 第二次大头针消失
-						 */
-						if (infoWindow.isVisible()) {
-							infoWindow.setVisible(false);
-						} else if (mParentMapView.getCurrentOverlay() == mParentMapView
-								.getOverlaysByName(ItemizedOverlay.PIN_OVERLAY) && !mParentMapView.getSphinx().getTouchMode().equals(TouchMode.MEASURE_DISTANCE)) {
-							mParentMapView
-									.deleteOverlaysByName(ItemizedOverlay.PIN_OVERLAY);
-						}
-
-						mParentMapView.executeTouchListeners(position);
-
+                        infoWindow.setVisible(false);
+                        mParentMapView.executeTouchListeners(position);
+                        
 						if (lastTouchUpTime != 0
 								&& (touchUpTime - lastTouchUpTime) < DOUBLE_CLICK_INTERVAL_TIME_MAX
 								&& (Math.abs(event.getX(0) - lastTouchUp.x) + Math
@@ -1636,7 +1625,6 @@ public class TilesView extends GLSurfaceView {
 			// centerDelta.y = resp.getFixedGridPixelOffset().y;
 			// }
 			// } catch (APIException e) {
-			// // TODO Auto-generated catch block
 			// e.printStackTrace();
 			// }
 
@@ -2541,7 +2529,6 @@ public class TilesView extends GLSurfaceView {
 			@Override
 			protected boolean removeEldestEntry(
 					java.util.Map.Entry<String, Integer> eldest) {
-				// TODO Auto-generated method stub
 				if (size() > MAX_CLUSTER_TEXT_SIZE) {
 					int textureRef = eldest.getValue();
 					if (textureRef != 0) {
@@ -3626,8 +3613,8 @@ public class TilesView extends GLSurfaceView {
 
 					}
 					gl.glDisable(GL10.GL_BLEND);
-					gl.glBlendFunc(GL10.GL_SRC_ALPHA,
-							GL10.GL_ONE_MINUS_SRC_ALPHA);
+					gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+					
 					// draw the info window
 					if (infoWindow.isVisible()
 							&& infoWindow.getMercXY() != null) {
@@ -4014,9 +4001,11 @@ public class TilesView extends GLSurfaceView {
 					}
 				} else {
 					if (pin.isFoucsed) {
-						icon = myLocation.focused;
+						icon = myLocation.getIconFocused();
 					}
 				}
+			} else if (pin.isFoucsed) {
+			    icon = pin.getIconFocused();
 			}
 
 			XYInteger size = icon.getSize();

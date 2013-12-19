@@ -33,9 +33,6 @@ public class TitleFragment extends BaseFragment {
         
         mRootView = mLayoutInflater.inflate(R.layout.title, container, false);
         
-        mRootView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-        mTitleFramentHeight = mRootView.getMeasuredHeight();
-        
         findViews();
         setListener();
         return mRootView;

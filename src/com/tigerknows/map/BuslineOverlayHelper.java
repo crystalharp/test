@@ -4,8 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
-import android.content.Context;
-import android.os.Handler;
+import android.view.View;
 
 import com.decarta.Globals;
 import com.decarta.android.event.EventSource;
@@ -24,7 +23,7 @@ import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
-import com.tigerknows.TKConfig;
+import com.tigerknows.Sphinx.TouchMode;
 import com.tigerknows.android.location.Position;
 import com.tigerknows.model.BuslineModel.Line;
 import com.tigerknows.model.BuslineModel.Station;
@@ -44,17 +43,20 @@ public class BuslineOverlayHelper {
 	 * @param mapView
 	 * @param line
 	 */
-	public static void drawOverlay(final Context context, final Handler mainThreadHandler, final MapView mapView, Line line) {
+	public static void drawOverlay(final Sphinx sphinx, final MapView mapView, Line line) {
+	    
+	    sphinx.clearMap();
+	    
 		try {
 			if (line != null) {
-				mapView.getMapPreference().setRouteId(ItemizedOverlay.LINE_OVERLAY);
+				mapView.getMapPreference().setRouteId(ItemizedOverlay.BUSLINE_OVERLAY);
 				
 				// 线路所经过的路径
 				Polyline routeLine = new Polyline(line.getPositionList(), Shape.LINE_SHAPE);
 				mapView.addShape(routeLine);
 				
 				// 线路图层
-				ItemizedOverlay overlay = new ItemizedOverlay(ItemizedOverlay.LINE_OVERLAY);
+				ItemizedOverlay overlay = new ItemizedOverlay(ItemizedOverlay.BUSLINE_OVERLAY);
 				
 				// 站点集合
 				List<POI> poiList = new ArrayList<POI>();
@@ -65,9 +67,9 @@ public class BuslineOverlayHelper {
 		        RotationTilt rt = new RotationTilt(RotateReference.SCREEN, TiltReference.SCREEN);
 				
 		        // 绘制每一个站点图标及起点终点图标
-		        Icon busStartIc = Icon.getIcon(context.getResources(), R.drawable.icon_start_pin, Icon.OFFSET_LOCATION_CENTER_BOTTOM);
-                Icon busEndIc = Icon.getIcon(context.getResources(), R.drawable.icon_end_pin, Icon.OFFSET_LOCATION_CENTER_BOTTOM);
-		        Icon busStationIc = Icon.getIcon(context.getResources(), R.drawable.icon_map_bus);
+		        Icon busStartIc = Icon.getIcon(sphinx.getResources(), R.drawable.icon_start_pin, Icon.OFFSET_LOCATION_CENTER_BOTTOM);
+                Icon busEndIc = Icon.getIcon(sphinx.getResources(), R.drawable.icon_end_pin, Icon.OFFSET_LOCATION_CENTER_BOTTOM);
+		        Icon busStationIc = Icon.getIcon(sphinx.getResources(), R.drawable.icon_map_bus);
 		        Icon busIc = null;
 		        int i = 0;
 		        final int startIndex = 0;
@@ -83,11 +85,11 @@ public class BuslineOverlayHelper {
 					}
 					i++;
 					
-					OverlayItem overlayItem = new OverlayItem(poi.getPosition(), busIc, context.getString(R.string.busline_map_bubble_content, i, poi.getName()), rt);
+					OverlayItem overlayItem = new OverlayItem(poi.getPosition(), busIc, busIc, sphinx.getString(R.string.busline_map_bubble_content, i, poi.getName()), rt);
 					
 					overlayItem.setPreferZoomLevel(DEFAULT_SHOW_STEP_ZOOMLEVEL);
 	                
-					addTouchEventListenerToOverlayItem(mainThreadHandler, mapView, overlayItem);
+					addTouchEventListenerToOverlayItem(sphinx, mapView, overlayItem);
 					overlay.addOverlayItem(overlayItem);
 				}
 				
@@ -95,6 +97,11 @@ public class BuslineOverlayHelper {
 				mapView.addOverlay(overlay);
 				
                 mapView.showOverlay(ItemizedOverlay.MY_LOCATION_OVERLAY, false);
+                
+                sphinx.getCenterTokenView().setVisibility(View.INVISIBLE);
+                sphinx.getMoreBtn().setVisibility(View.VISIBLE);
+                sphinx.getClearMapBtn().setVisibility(View.VISIBLE);
+                sphinx.getLocationView().setVisibility(View.VISIBLE);
 			}
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -108,14 +115,17 @@ public class BuslineOverlayHelper {
 	 * @param mapView
 	 * @param overlayItem
 	 */
-	private static void addTouchEventListenerToOverlayItem(final Handler mainThreadHandler, final MapView mapView, OverlayItem overlayItem) {
+	private static void addTouchEventListenerToOverlayItem(final Sphinx sphinx, final MapView mapView, OverlayItem overlayItem) {
 		try {
 			overlayItem.addEventListener(EventType.TOUCH, new OverlayItem.TouchEventListener() {
 			    @Override
 			    public void onTouchEvent(EventSource eventSource) {
+                    if (sphinx.getTouchMode().equals(TouchMode.MEASURE_DISTANCE)) {
+                        return;
+                    }
 			        OverlayItem overlayItem=(OverlayItem) eventSource; 
 			        overlayItem.getOwnerOverlay().focuseOverlayItem(overlayItem);
-			        panToPosition(mainThreadHandler, overlayItem, mapView);
+			        panToPosition(sphinx, overlayItem, mapView);
 			    }
 			});
 		} catch (APIException e) {
@@ -134,7 +144,7 @@ public class BuslineOverlayHelper {
 			return position;
 		}
 		
-		mapview.getOverlaysByName(ItemizedOverlay.LINE_OVERLAY).isShowInPreferZoom = true;
+		mapview.getOverlaysByName(ItemizedOverlay.BUSLINE_OVERLAY).isShowInPreferZoom = true;
 		
 		List<Position> positions = new ArrayList<Position>();
 		for (Station s : line.getStationList()) {
@@ -201,22 +211,22 @@ public class BuslineOverlayHelper {
 	 * @param mapview
 	 * @param positon
 	 */
-	public static void panToPosition(final Handler mainThreadHandler, OverlayItem overlayItem, MapView mapview) {
+	public static void panToPosition(Sphinx sphinx, OverlayItem overlayItem, MapView mapview) {
 //		mapview.zoomTo(DEFAULT_SHOW_STEP_ZOOMLEVEL, position);
 		
-		mapview.getOverlaysByName(ItemizedOverlay.LINE_OVERLAY).isShowInPreferZoom = true;
+		mapview.getOverlaysByName(ItemizedOverlay.BUSLINE_OVERLAY).isShowInPreferZoom = true;
 		
 		// 将地图平移到某一坐标点
 		mapview.getCurrentOverlay().focuseOverlayItem(overlayItem);
-		mainThreadHandler.sendEmptyMessage(Sphinx.CENTER_SHOW_FOCUSED_OVERLAYITEM);
+		ItemizedOverlayHelper.centerShowCurrentOverlayFocusedItem(sphinx);
 	}
-	public static void panToPosition(final Handler mainThreadHandler, int position, MapView mapview) {
+	public static void panToPosition(Sphinx sphinx, int position, MapView mapview) {
 //		mapview.zoomTo(DEFAULT_SHOW_STEP_ZOOMLEVEL, position);
 		
-		mapview.getOverlaysByName(ItemizedOverlay.LINE_OVERLAY).isShowInPreferZoom = true;
+		mapview.getOverlaysByName(ItemizedOverlay.BUSLINE_OVERLAY).isShowInPreferZoom = true;
 		
 		// 将地图平移到某一坐标点
 		mapview.getCurrentOverlay().focuseOverlayItem(position);
-		mainThreadHandler.sendEmptyMessage(Sphinx.CENTER_SHOW_FOCUSED_OVERLAYITEM);
+        ItemizedOverlayHelper.centerShowCurrentOverlayFocusedItem(sphinx);
 	}
 }

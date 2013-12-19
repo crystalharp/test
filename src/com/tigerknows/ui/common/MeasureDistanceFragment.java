@@ -4,9 +4,7 @@
 
 package com.tigerknows.ui.common;
 
-import com.decarta.Globals;
 import com.decarta.android.map.Icon;
-import com.decarta.android.map.InfoWindow;
 import com.decarta.android.map.ItemizedOverlay;
 import com.decarta.android.map.OverlayItem;
 import com.decarta.android.map.Polyline;
@@ -14,12 +12,12 @@ import com.decarta.android.map.RotationTilt;
 import com.decarta.android.map.Shape;
 import com.decarta.android.map.RotationTilt.RotateReference;
 import com.decarta.android.map.RotationTilt.TiltReference;
-import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.Sphinx.TouchMode;
 import com.tigerknows.android.location.Position;
 import com.tigerknows.common.ActionLog;
+import com.tigerknows.map.InfoWindowHelper;
 import com.tigerknows.map.MapView;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.util.Utility;
@@ -29,6 +27,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,9 +39,19 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
 
     private MapView mMapView;
     private int mVisibilityLocation;
-    private OverlayItem mOtherOverlayItem;
-    private OverlayItem mLastOverlayItem;
+    private int mVisibilityCleanMap;
     private TouchMode mTouchMode;
+    private ViewGroup mInfoWindowView;
+    private TextView mInfoWindowTxv;
+    
+    private ViewGroup getInfoWindowView() {
+        if (mInfoWindowView == null) {
+            mInfoWindowView = (ViewGroup) mSphinx.getLayoutInflater().inflate(R.layout.info_window, null);
+            mInfoWindowTxv = (TextView)mInfoWindowView.findViewById(R.id.name_txv);
+        }
+        
+        return mInfoWindowView;
+    }
     
     /**
      * 添加一个点
@@ -64,8 +73,7 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
             Resources resources = mContext.getResources();
             Icon icon = Icon.getIcon(resources, R.drawable.icon_map_drive, Icon.OFFSET_LOCATION_CENTER);
             RotationTilt rt=new RotationTilt(RotateReference.SCREEN,TiltReference.SCREEN);
-            OverlayItem overlayItem=new OverlayItem(position, icon, null,rt);
-            overlayItem.setAssociatedObject(TouchMode.MEASURE_DISTANCE);
+            OverlayItem overlayItem=new OverlayItem(position, icon, icon, null,rt);
             
             overlay= mMapView.getOverlaysByName(overlayName);
             Shape shape = mMapView.getShapesByName(shapeName);
@@ -103,11 +111,9 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
                 length += Position.distanceBetween(prev, cur);
                 prev = cur;
             }
-            overlayItem.setMessage(Utility.formatMeterString(length));
-            mLastOverlayItem = overlayItem;
-            if (mSphinx.showInfoWindow(overlayItem) == false) {
-                mMapView.refreshMap();
-            }
+            ViewGroup viewGroup = getInfoWindowView();
+            mInfoWindowTxv.setText(Utility.formatMeterString(length));
+            InfoWindowHelper.showInfoWindow(mMapView, overlayItem, viewGroup);
             result = true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -139,9 +145,7 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
             if (overlay.size() == 0) {
                 mMapView.deleteOverlaysByName(overlayName);
                 mMapView.deleteShapeByName(shapeName);
-                mMapView.getInfoWindow().setVisible(false);
-                mMapView.refreshMap();
-                mLastOverlayItem = null;
+                InfoWindowHelper.hideInfoWindow(mMapView);
                 return result;
             }
             
@@ -170,11 +174,9 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
             }
             
             OverlayItem overlayItem = overlay.get(overlay.size()-1);
-            overlayItem.setMessage(Utility.formatMeterString(length));
-            mLastOverlayItem = overlayItem;
-            if (mSphinx.showInfoWindow(overlayItem) == false) {
-                mMapView.refreshMap();
-            }
+            ViewGroup viewGroup = getInfoWindowView();
+            mInfoWindowTxv.setText(Utility.formatMeterString(length));
+            InfoWindowHelper.showInfoWindow(mMapView, overlayItem, viewGroup);
             result = true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -186,12 +188,10 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
     /**
      * 清空测距生成的overylay和shape
      */
-    public void clearLine() {
+    public void clean() {
         mMapView.deleteOverlaysByName(ItemizedOverlay.MEASURE_DISTANCE_OVERLAY);
         mMapView.deleteShapeByName(Shape.MEASURE_DISTANCE );
-        mLastOverlayItem = null;
-        mMapView.getInfoWindow().setVisible(false);
-        mMapView.refreshMap();
+        InfoWindowHelper.hideInfoWindow(mMapView);
     }
     
     public MeasureDistanceFragment(Sphinx sphinx) {
@@ -220,17 +220,9 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
     public void setData() {
         Sphinx.TouchMode touchMode = mSphinx.getTouchMode();
         if (touchMode != Sphinx.TouchMode.MEASURE_DISTANCE) {
+            mVisibilityCleanMap = mSphinx.getClearMapBtn().getVisibility();
             mVisibilityLocation = mSphinx.getLocationView().getVisibility();
-            MapView mapView = mSphinx.getMapView();
-            InfoWindow infoWindow = mapView.getInfoWindow();
-            if (infoWindow.isVisible()) {
-                mOtherOverlayItem = infoWindow.getAssociatedOverlayItem();
-                infoWindow.setVisible(false);
-                mapView.refreshMap();
-            } else {
-                mOtherOverlayItem = null;
-            }
-            mLastOverlayItem = null;
+            InfoWindowHelper.hideInfoWindow(mMapView);
             mTouchMode = touchMode;
         }
     }
@@ -238,7 +230,7 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
     @Override
     public void onResume() {
         super.onResume();
-        mSphinx.getMapView().setStopRefreshMyLocation(false);
+        mMapView.setStopRefreshMyLocation(false);
         mTitleBtn.setText(R.string.measure);
         setOnTouchListener(null);
         
@@ -250,27 +242,10 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
         mRightBtn.setOnClickListener(this);
         mRightBtn.setBackgroundResource(R.drawable.btn_title);
         
+        mSphinx.getClearMapBtn().setVisibility(View.INVISIBLE);
         mSphinx.getLocationView().setVisibility(View.INVISIBLE);
         
         mSphinx.setTouchMode(TouchMode.MEASURE_DISTANCE);
-        
-        if (mLastOverlayItem != null) {
-            mSphinx.showInfoWindow(mLastOverlayItem);
-        } else  {
-            mMapView.getInfoWindow().setVisible(false);
-            mMapView.refreshMap();
-        }
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-    }
-    
-    protected void findViews() {
-    }
-    
-    protected void setListener() {
     }
 
     @Override
@@ -279,7 +254,7 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
         switch (id) {
         case R.id.right_btn:
             mActionLog.addAction(mActionTag + ActionLog.MeasureDistanceClear);
-            clearLine();
+            clean();
         	break;
 
         case R.id.right2_btn:
@@ -296,10 +271,10 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
     @Override
     public void dismiss() {
         super.dismiss();
-        clearLine();
+        clean();
         mSphinx.setTouchMode(mTouchMode);
         
+        mSphinx.getClearMapBtn().setVisibility(mVisibilityCleanMap);
         mSphinx.getLocationView().setVisibility(mVisibilityLocation);
-        mSphinx.showInfoWindow(mOtherOverlayItem);
     }
 }
