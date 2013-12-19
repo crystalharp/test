@@ -96,14 +96,12 @@ public class FetchFavoriteFragment extends BaseFragment {
 	
 	@Override
     public void onPause() {
-        // TODO Auto-generated method stub
         super.onPause();
     }
 
 
     @Override
     public void onResume() {
-        // TODO Auto-generated method stub
         super.onResume();
 
         mTitleBtn.setText(mContext.getString(R.string.favorite));
@@ -118,8 +116,8 @@ public class FetchFavoriteFragment extends BaseFragment {
                 int mPosition = arg2;
                 if (getPOI(mPosition) != null) {
                 	mActionLog.addAction(mActionTag + ActionLog.ListViewItem, mPosition);
-                	mSphinx.getTrafficQueryFragment().setData(getPOI(mPosition), TrafficQueryFragment.SELECTED);
                 	dismiss();
+                	mSphinx.getPOIQueryFragment().onConfirmed(getPOI(mPosition));
                 }
             }
         });
@@ -144,7 +142,6 @@ public class FetchFavoriteFragment extends BaseFragment {
             }
 
             public void onScrollStateChanged(AbsListView view, int scrollState) {
-                // TODO Auto-generated method stub
             }});
 	}
 	
@@ -245,7 +242,6 @@ public class FetchFavoriteFragment extends BaseFragment {
 
 	@Override
 	public void show() {
-		// TODO Auto-generated method stub
 		super.show();
 		mEmptyView.setVisibility(View.GONE);
 		mFavoriteList.clear();
@@ -280,7 +276,6 @@ public class FetchFavoriteFragment extends BaseFragment {
 
 		@Override
 		public int getCount() {
-			// TODO Auto-generated method stub
 			return mFavoriteList.size();
 		}
         

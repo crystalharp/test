@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -56,6 +57,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
 
     private ListView mSuggestLsv = null;
     private LinearLayout mTrafficBtnGroup;
+    private Button mFavBtn;
     
     private SuggestWordListManager mSuggestWordListManager;
     
@@ -194,6 +196,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
     protected void findViews() {
         mSuggestLsv = (ListView)mRootView.findViewById(R.id.suggest_lsv);
         mTrafficBtnGroup = (LinearLayout) mRootView.findViewById(R.id.traffic_btn_group);
+        mFavBtn = (Button) mRootView.findViewById(R.id.btn_fav_position);
     }
 
     protected void setListener() {
@@ -236,6 +239,15 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                 return false;
             }
         });
+        
+        mFavBtn.setOnClickListener(new View.OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                mSphinx.showView(mSphinx.getFetchFavoriteFragment().getId());
+            }
+        });
     }
 
     public void onClick(View view) {
@@ -252,7 +264,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         }
     }
     
-    private void onConfirmed(String key) {
+    public void onConfirmed(String key) {
         switch (mCurMode) {
         case MODE_BUELINE:
             submitBuslineQuery(key);
@@ -261,9 +273,10 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
             //TODO:提交公交站点查询，并且返回原页面
             POI poi = new POI();
             poi.setName(key);
-            callback.onConfirmed(poi);
-            mSphinx.getTrafficQueryFragment().autoStartQuery(true);
-            dismiss();
+            onConfirmed(poi);
+//            callback.onConfirmed(poi);
+//            mSphinx.getTrafficQueryFragment().autoStartQuery(true);
+//            dismiss();
             break;
         case MODE_POI:
             submitPOIQuery(key);
@@ -273,9 +286,11 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         }
     }
     
-    private void onConfirmed(POI poi) {
+    public void onConfirmed(POI poi) {
         if (mCurMode == MODE_TRANSFER) {
             callback.onConfirmed(poi);
+            mSphinx.getTrafficQueryFragment().autoStartQuery(true);
+            dismiss();
         }
     }
     
