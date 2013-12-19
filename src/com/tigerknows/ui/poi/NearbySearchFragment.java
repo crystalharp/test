@@ -53,18 +53,18 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     /**
      * 在此POI周边进行搜索
      */
-    private POI mPOI = new POI();
+    protected POI mPOI = new POI();
     
-    private TextView mLocationTxv;
+    protected TextView mLocationTxv;
     
     /**
      * 分类名称列表
      */
-    private String[] mCategoryNames;
+    protected String[] mCategoryNames;
     
-    private Button[][] mCategoryBtns;
+    protected Button[][] mCategoryBtns;
     
-    private static final int[] CATEGORY_ID = {R.id.food_category,
+    protected static final int[] CATEGORY_ID = {R.id.food_category,
     	R.id.hotel_category,
     	R.id.entertainment_category,
     	R.id.shopping_category,
@@ -76,12 +76,12 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     	R.id.hospital_category
     };
     
-    private static final int NUM_OF_SUB_CATEGORY = 5;
+    protected static final int NUM_OF_SUB_CATEGORY = 5;
     
-    private View[] mCategoryViews;
+    protected View[] mCategoryViews;
 
-    private FilterListView mFilterListView;
-    private List<Filter> mFilterList;
+    protected FilterListView mFilterListView;
+    protected List<Filter> mFilterList;
     
     
     @Override
@@ -113,7 +113,12 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     public void onResume() {
         super.onResume();
         
-        mTitleBtn.setVisibility(View.GONE);
+        mLeftBtn.setOnClickListener(this);
+        if(mFilterListView.getVisibility() == View.GONE){
+        	mTitleBtn.setText(R.string.nearby_search);
+        }else{
+        	mTitleBtn.setText(R.string.merchant_type);
+        }
         String name = mPOI.getName();
         String title = mSphinx.getString(R.string.at_where_search, name);
         SpannableStringBuilder style = new SpannableStringBuilder(title);
@@ -153,9 +158,9 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     	}
     }
     
-    private void setFilterListView() {
-        //mFilterListView = (FilterListView) findViewById(R.id.filter_list_view);
-        //mFilterListView.findViewById(R.id.body_view).setPadding(0, 0, 0, 0);    	
+    protected void setFilterListView() {
+        mFilterListView = (FilterListView) mRootView.findViewById(R.id.filter_list_view);
+        mFilterListView.findViewById(R.id.body_view).setPadding(0, 0, 0, 0);    	
         if (mFilterList != null) {
             FilterListView.selectedFilter(mFilterList.get(0), -1);
         } else {
@@ -176,6 +181,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
                     indexList.add(id);
                 }
                 Filter categoryFilter = DataQuery.makeFilterResponse(mContext, indexList, filterCategory.getVersion(), filterOptionList, FilterCategoryOrder.FIELD_LIST_CATEGORY, false);
+                categoryFilter.getChidrenFilterList().remove(0);
                 List<Filter> list = categoryFilter.getChidrenFilterList();
                 for(int i = 0 ; i < CATEGORY_ID.length; i++){
                 	int position = -1;
@@ -187,10 +193,12 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
                 	}
                 	if(position >= 0){
                 		mCategoryBtns[i][0].setText(list.get(position).getFilterOption().getName());
+                		mCategoryBtns[i][0].setTag(list.get(position).getFilterOption().getName());
                 		Filter filter = list.get(position);
                 		List<Filter> childrenList = filter.getChidrenFilterList();
                 		for(int j = 0, size = childrenList.size(); j < NUM_OF_SUB_CATEGORY && j < size; j++){
                 			mCategoryBtns[i][j+1].setText(childrenList.get(j).getFilterOption().getName());
+                			mCategoryBtns[i][j+1].setTag(childrenList.get(j).getFilterOption().getName());
                 		}
                 	}else{
                 		mCategoryViews[i].setVisibility(View.GONE);
@@ -200,21 +208,36 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
                 mFilterList = new ArrayList<Filter>();
                 mFilterList.add(categoryFilter);
             }
-            //mFilterListView.setData(mFilterList, FilterResponse.FIELD_FILTER_CATEGORY_INDEX, this, false, false, mActionTag);
+            mFilterListView.setData(mFilterList, FilterResponse.FIELD_FILTER_CATEGORY_INDEX, this, false, false, mActionTag);
         }
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
+        case R.id.left_btn:
+        	if(mFilterListView.getVisibility() == View.VISIBLE){
+        		backHome();
+        	}else{
+                synchronized (mSphinx.mUILock) {
+            	    mActionLog.addAction(mActionTag + ActionLog.TitleLeftButton);
+                	dismiss();
+                }
+        	}
+        	break;
+        case R.id.category_btn:
         case R.id.sub_1_btn:
         case R.id.sub_2_btn:
         case R.id.sub_3_btn:
         case R.id.sub_4_btn:
         case R.id.sub_5_btn:
-        	submitQuery(((Button)view).getText().toString());
+        	submitQuery(((Button)view).getTag().toString());
         	break;
         case R.id.sub_more_btn:
+        	//TODO: mActionLog
+        	mTitleBtn.setText(R.string.merchant_type);
+            mFilterListView.setData(mFilterList, FilterResponse.FIELD_FILTER_CATEGORY_INDEX, this, false, false, mActionTag);
+            mFilterListView.setVisibility(View.VISIBLE);
         	break;
         default:
             break;
@@ -226,7 +249,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
      * 查询
      * @param keyword
      */
-    private void submitQuery(String keyword) {
+    protected void submitQuery(String keyword) {
         if (!TextUtils.isEmpty(keyword)) {
             DataQuery poiQuery = new DataQuery(mContext);
             POI requestPOI = mPOI;
@@ -261,18 +284,38 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
      * 将UI及内容重置为第一次进入页面时的状态
      */
     public void reset() {
-    	// TODO:
+    	mFilterListView.setVisibility(View.GONE);
+    	mTitleBtn.setText(R.string.nearby_search);
     }
 
 	@Override
 	public void doFilter(String name) {
-		// TODO Auto-generated method stub
-		
+		backHome();
+        Filter categoryFitler = mFilterList.get(0);
+        List<Filter> list = categoryFitler.getChidrenFilterList();
+        for(int i = 0, size = list.size(); i < size; i++) {
+            Filter filter = list.get(i);
+            if (filter.isSelected()) {
+            }
+            List<Filter> chidrenList = filter.getChidrenFilterList();
+            for(int j = 0, count = chidrenList.size(); j < count; j++) {
+                Filter chidren = chidrenList.get(j);
+                if (chidren.isSelected()) {
+                	submitQuery(chidren.getFilterOption().getName());
+                    return;
+                }
+            }
+        }		
 	}
 
 	@Override
 	public void cancelFilter() {
-		// TODO Auto-generated method stub
+		backHome();
 		
 	}
+    
+	protected void backHome() {
+        mFilterListView.setVisibility(View.GONE);
+        mTitleBtn.setText(R.string.nearby_search);
+    }
 }
