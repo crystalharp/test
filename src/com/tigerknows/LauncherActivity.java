@@ -200,7 +200,7 @@ public class LauncherActivity extends TKActivity {
                 mAnimation.startNow();
                 mAnimation = null;
             }
-            findViewById(R.id.logo_imv).setVisibility(View.VISIBLE);
+            mRootView.findViewById(R.id.logo_imv).setVisibility(View.VISIBLE);
             
             int beginIndex = url.lastIndexOf("/");
             int endIndex = url.lastIndexOf(".");
