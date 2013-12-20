@@ -18,7 +18,7 @@
     </FrameLayout>
     
     <LinearLayout 
-  	    android:id="@+id/common_place_lst"
+  	    android:id="@+id/common_place_lsv"
   	    android:orientation="vertical"
         android:layout_width="fill_parent" 
         android:layout_height="wrap_content"
@@ -32,7 +32,7 @@
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
         android:background="@drawable/list_footer"
-        android:layout_below="@id/common_place_lst" >
+        android:layout_below="@id/common_place_lsv" >
     	<TextView 
 	        android:layout_width="fill_parent" 
 	        android:layout_height="wrap_content"
