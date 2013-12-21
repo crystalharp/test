@@ -46,6 +46,36 @@ public class Tigerknows {
 
     }
     
+    public interface CommonPlace extends BaseColumns {
+        
+        public static final int TYPE_EMPTY = 0;
+        
+        public static final int TYPE_NO_EMPTY = 1;
+
+        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/commonplace");
+        
+        public static final Uri CONTENT_URI_COUNT = Uri.parse("content://" + AUTHORITY + "/commonplace_count");
+        
+        public static final String ALIAS = "_alias";
+        
+        public static final String POI = "_poi";
+        
+        public static final String EMPTY = "_empty";
+    }
+    
+    public interface TrafficSearchHistory extends BaseColumns {
+
+        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/trafficsearch");
+        
+        public static final Uri CONTENT_URI_COUNT = Uri.parse("content://" + AUTHORITY + "/trafficsearch_count");
+        
+        public static final String START = "_start";
+        
+        public static final String END = "_end";
+        
+        public static final String DATETIME = "_datetime";
+    }
+    
     public interface Favorite extends BaseColumns {
         
         public static final int FAVORITE_POI = 1;

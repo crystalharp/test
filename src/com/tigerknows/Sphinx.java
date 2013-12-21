@@ -172,6 +172,7 @@ import com.tigerknows.ui.traffic.TrafficDetailFragment;
 import com.tigerknows.ui.traffic.TrafficQueryFragment;
 import com.tigerknows.ui.traffic.TrafficReportErrorActivity;
 import com.tigerknows.ui.traffic.TrafficResultFragment;
+import com.tigerknows.ui.traffic.TrafficSearchHistoryFragment;
 import com.tigerknows.ui.user.MyCommentListFragment;
 import com.tigerknows.ui.user.UserBaseActivity;
 import com.tigerknows.ui.user.UserHomeFragment;
@@ -2546,6 +2547,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     private TrafficDetailFragment mTrafficDetailFragment = null;
     private TrafficResultFragment mTrafficResultFragment = null;
     private TrafficCommonPlaceFragment mTrafficCommonAddressFragment = null;
+    private TrafficSearchHistoryFragment mTrafficSearchHistoryFragment = null;
     private BuslineResultLineFragment mBuslineResultLineFragment = null;
     private BuslineResultStationFragment mBuslineResultStationFragment = null;
     private BuslineDetailFragment mBuslineDetailFragment = null;
@@ -2653,6 +2655,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 
             case R.id.view_traffic_common_places:
                 baseFragment = getTrafficCommonAddressFragment();
+                break;
+                
+            case R.id.view_traffic_search_history:
+                baseFragment = getTrafficSearchHistoryFragment();
                 break;
                 
             case R.id.view_traffic_fetch_favorite_poi:
@@ -2854,6 +2860,18 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 mHistoryFragment = historyFragment;
             }
             return mHistoryFragment;
+        }
+    }
+
+    public TrafficSearchHistoryFragment getTrafficSearchHistoryFragment() {
+        synchronized (mUILock) {
+            if (mTrafficSearchHistoryFragment == null) {
+                TrafficSearchHistoryFragment f = new TrafficSearchHistoryFragment(Sphinx.this);
+                f.setId(R.id.view_traffic_search_history);
+                f.onCreate(null);
+                mTrafficSearchHistoryFragment = f;
+            }
+            return mTrafficSearchHistoryFragment;
         }
     }
     
