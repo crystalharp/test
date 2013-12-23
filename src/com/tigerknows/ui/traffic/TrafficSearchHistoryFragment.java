@@ -23,7 +23,6 @@ import com.tigerknows.model.POI;
 import com.tigerknows.model.xobject.XMap;
 import com.tigerknows.provider.Tigerknows;
 import com.tigerknows.ui.BaseFragment;
-import com.tigerknows.ui.traffic.TrafficCommonPlaceFragment.CommonPlace;
 import com.tigerknows.util.ByteUtil;
 import com.tigerknows.util.SqliteWrapper;
 
@@ -213,36 +212,36 @@ public class TrafficSearchHistoryFragment extends BaseFragment {
     }
 
 //  public static int readCommonPlace(Context context, List<CommonPlace> list, long maxId, long minId, boolean next){
-  public static int readTrafficSearchHistory(Context context, List<SearchHistory> list){
-      int total = 0;
-      int count;
-      Cursor c = SqliteWrapper.query(context, context.getContentResolver(), Tigerknows.CommonPlace.CONTENT_URI, null, "", null, "_datetime DESC");
-      if (c != null) {
-          count = c.getCount();
-          if (count > 0) {
-              SearchHistory data;
-              c.moveToFirst();
-//              maxId = 0;
-              for(int i = 0; i<count; i++) {
-                  data = SearchHistory.readFromCursor(context, c);
-                  if (data != null) {
-                      if (list.contains(data)) {
-                          list.remove(data);
-                      }
-                      list.add(data);
-//                      maxId = traffic.getDateTime();
-                  }
-                  c.moveToNext();
-              }
-              Cursor c1 = SqliteWrapper.query(context, context.getContentResolver(), Tigerknows.CommonPlace.CONTENT_URI_COUNT, null, null, null, null);
-              if (c1 != null) {
-                  total = c1.getCount();
-                  c1.close();
-              }
-          }
-          c.close();
-      }
-      
-      return total;
-  }
+//  public static int readTrafficSearchHistory(Context context, List<SearchHistory> list){
+//      int total = 0;
+//      int count;
+//      Cursor c = SqliteWrapper.query(context, context.getContentResolver(), Tigerknows.CommonPlace.CONTENT_URI, null, "", null, "_datetime DESC");
+//      if (c != null) {
+//          count = c.getCount();
+//          if (count > 0) {
+//              SearchHistory data;
+//              c.moveToFirst();
+////              maxId = 0;
+//              for(int i = 0; i<count; i++) {
+//                  data = SearchHistory.readFromCursor(context, c);
+//                  if (data != null) {
+//                      if (list.contains(data)) {
+//                          list.remove(data);
+//                      }
+//                      list.add(data);
+////                      maxId = traffic.getDateTime();
+//                  }
+//                  c.moveToNext();
+//              }
+//              Cursor c1 = SqliteWrapper.query(context, context.getContentResolver(), Tigerknows.CommonPlace.CONTENT_URI_COUNT, null, null, null, null);
+//              if (c1 != null) {
+//                  total = c1.getCount();
+//                  c1.close();
+//              }
+//          }
+//          c.close();
+//      }
+//      
+//      return total;
+//  }
 }

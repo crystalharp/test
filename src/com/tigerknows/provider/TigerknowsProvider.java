@@ -329,6 +329,14 @@ public class TigerknowsProvider extends ContentProvider {
                 }
                 c.close();
             }
+            upgradeDatabaseToVersion10(db);
+        }
+        
+        private void upgradeDatabaseToVersion10(SQLiteDatabase db) {
+            db.execSQL("CREATE TABLE trafficsearchhistory (_id INTEGER PRIMARY KEY,"
+                    + "    _start BLOB, _end BLOB, _datetime INTEGER);");
+            db.execSQL("CREATE TABLE commonplace (_id INTEGER PRIMARY KEY,"
+                    + "    _alias TEXT, _empty INTEGER, _poi BLOB);");
         }
         
         private void createTables(SQLiteDatabase db) {
@@ -344,6 +352,10 @@ public class TigerknowsProvider extends ContentProvider {
                     + "    store_type INTEGER, _type INTEGER, parent_id INTEGER, times INTEGER, total_length INTEGER, start INTEGER, end INTEGER, _data BLOB);");
             db.execSQL("CREATE TABLE busline (_id INTEGER PRIMARY KEY,"
                     + "    store_type INTEGER, parent_id INTEGER, busline_name TEXT, busline_num INTEGER, total_length INTEGER, _data BLOB);");
+            db.execSQL("CREATE TABLE trafficsearchhistory (_id INTEGER PRIMARY KEY,"
+                    + "    _start BLOB, _end BLOB, _datetime INTEGER);");
+            db.execSQL("CREATE TABLE commonplace (_id INTEGER PRIMARY KEY,"
+                    + "    _alias TEXT, _empty INTEGER, _poi BLOB);");
         }
     }
     
