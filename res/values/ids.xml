@@ -22,7 +22,6 @@
     <item type="id" name="view_home" />
     <item type="id" name="view_poi_input_search" />
     <item type="id" name="view_poi_result" />
-    <item type="id" name="view_poi_result2" />
     <item type="id" name="view_poi_detail" />
     <item type="id" name="view_poi_nearby_search" />
     <item type="id" name="activity_poi_report_error" />

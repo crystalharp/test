@@ -97,7 +97,7 @@ public class MyOrderFragment extends BaseFragment{
 	@Override
 	public void onResume() {
 		super.onResume();
-		mTitleBtn.setText(mSphinx.getString(R.string.wodedingdan));
+		mTitleBtn.setText(getString(R.string.wodedingdan));
 		
         if (isReLogin()) {
             return;
@@ -160,11 +160,11 @@ public class MyOrderFragment extends BaseFragment{
 		}
 		
 		if (mFromTuangou){
-			mTitleBtn.setText(mSphinx.getString(R.string.tuangoudingdan));
+			mTitleBtn.setText(getString(R.string.tuangoudingdan));
 			mTuangouTitleLly.setVisibility(View.GONE);
 			mHotelOrderBtn.setVisibility(View.GONE);
 		}else{
-			mTitleBtn.setText(mSphinx.getString(R.string.wodedingdan));
+			mTitleBtn.setText(getString(R.string.wodedingdan));
 			mTuangouTitleLly.setVisibility(View.VISIBLE);
 			mHotelOrderBtn.setVisibility(View.VISIBLE);
 		}
@@ -178,7 +178,7 @@ public class MyOrderFragment extends BaseFragment{
     		btn.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
     		btn.setTextSize(16);
     		btn.setTextColor(mSphinx.getResources().getColor(R.color.black_dark));
-    		btn.setText(mSphinx.getString(R.string.view) + shangjia.getMessage());
+    		btn.setText(getString(R.string.view) + shangjia.getMessage());
     		btn.setGravity(Gravity.LEFT|Gravity.CENTER_VERTICAL);
     		if (i == mResultList.size() - 1){
     			btn.setBackgroundDrawable(mSphinx.getResources().getDrawable(R.drawable.list_footer));
@@ -233,8 +233,8 @@ public class MyOrderFragment extends BaseFragment{
     	
         Intent intent = new Intent();
         intent.setClass(mSphinx, BrowserActivity.class);
-        intent.putExtra(BrowserActivity.TITLE, mSphinx.getString(R.string.wodedingdan));
-        intent.putExtra(BrowserActivity.LEFT, mSphinx.getString(R.string.tuangou_shop_list));
+        intent.putExtra(BrowserActivity.TITLE, getString(R.string.wodedingdan));
+        intent.putExtra(BrowserActivity.LEFT, getString(R.string.tuangou_shop_list));
         intent.putExtra(BrowserActivity.URL, shangjia.getUrl());
         intent.putExtra(BrowserActivity.TIP, shangjia.getName());
         mSphinx.startActivity(intent);
@@ -245,7 +245,7 @@ public class MyOrderFragment extends BaseFragment{
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_IDS, String.valueOf(shangjia.getSource()));
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_NEED_FIELD, Shangjia.NEED_FIELD);
         dataQuery.addParameter(BaseQuery.SERVER_PARAMETER_SESSION_ID, Globals.g_Session_Id);
-        dataQuery.setup(Globals.getCurrentCityInfo().getId(), getId(), getId(), mSphinx.getString(R.string.doing_and_wait));
+        dataQuery.setup(getId(), getId(), getString(R.string.doing_and_wait));
         mSphinx.queryStart(dataQuery);
     }
 

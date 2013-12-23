@@ -575,7 +575,6 @@ public class BaseQueryTest {
                 String phone = deleteMobileNumEdt.getText().toString().trim();
                 accountManage.addParameter(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, "du");
                 accountManage.addParameter(BaseQuery.SERVER_PARAMETER_TELEPHONE, phone);
-                accountManage.setup(Globals.getCurrentCityInfo().getId());
                 accountManage.setTipText(activity.getString(R.string.doing_and_wait));
                 if (activity instanceof BaseActivity) {
                     ((BaseActivity)(activity)).queryStart(accountManage, false);
@@ -768,25 +767,25 @@ public class BaseQueryTest {
                     CityInfo cityInfo1 = allCityInfoList.get(i);
                     List<CityInfo> childCityInfoList = cityInfo1.getCityList();
                     if (childCityInfoList.size() > 1) {
-//                        for(int ii = childCityInfoList.size()-1; ii >= 0; ii--) {
-//                            CityInfo cityInfo2 = childCityInfoList.get(ii);
-//                            StringBuilder s = new StringBuilder();
-//                            for(int l = 0; l < 51; l++) {
-//                                s.append(l);
-//                                TKWord tkWord = new TKWord(TKWord.ATTRIBUTE_HISTORY, s.toString(), cityInfo2.getPosition());
-//                                HistoryWordTable.addHistoryWord(activity, tkWord, cityInfo2.getId(), HistoryWordTable.TYPE_POI);
-//                                HistoryWordTable.addHistoryWord(activity, tkWord, cityInfo2.getId(), HistoryWordTable.TYPE_TRAFFIC);
-//                                HistoryWordTable.addHistoryWord(activity, tkWord, cityInfo2.getId(), HistoryWordTable.TYPE_BUSLINE);
-//                            }
-//                        }
+                        for(int ii = childCityInfoList.size()-1; ii >= 0; ii--) {
+                            CityInfo cityInfo2 = childCityInfoList.get(ii);
+                            StringBuilder s = new StringBuilder();
+                            for(int l = 0; l < 51; l++) {
+                                s.append(l);
+                                TKWord tkWord = new TKWord(TKWord.ATTRIBUTE_HISTORY, s.toString(), cityInfo2.getPosition());
+                                HistoryWordTable.addHistoryWord(activity, tkWord, HistoryWordTable.TYPE_POI);
+                                HistoryWordTable.addHistoryWord(activity, tkWord, HistoryWordTable.TYPE_TRAFFIC);
+                                HistoryWordTable.addHistoryWord(activity, tkWord, HistoryWordTable.TYPE_BUSLINE);
+                            }
+                        }
                     } else {
                         StringBuilder s = new StringBuilder();
                         for(int l = 0; l < 51; l++) {
                             s.append(l);
                             TKWord tkWord = new TKWord(TKWord.ATTRIBUTE_HISTORY, s.toString(), cityInfo1.getPosition());
-                            HistoryWordTable.addHistoryWord(activity, tkWord, cityInfo1.getId(), HistoryWordTable.TYPE_POI);
-                            HistoryWordTable.addHistoryWord(activity, tkWord, cityInfo1.getId(), HistoryWordTable.TYPE_TRAFFIC);
-                            HistoryWordTable.addHistoryWord(activity, tkWord, cityInfo1.getId(), HistoryWordTable.TYPE_BUSLINE);
+                            HistoryWordTable.addHistoryWord(activity, tkWord, HistoryWordTable.TYPE_POI);
+                            HistoryWordTable.addHistoryWord(activity, tkWord, HistoryWordTable.TYPE_TRAFFIC);
+                            HistoryWordTable.addHistoryWord(activity, tkWord, HistoryWordTable.TYPE_BUSLINE);
                         }
                     }
                 }

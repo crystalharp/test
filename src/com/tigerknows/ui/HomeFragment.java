@@ -7,12 +7,10 @@ package com.tigerknows.ui;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
-import com.tigerknows.android.location.Position;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.MapView;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataQuery;
-import com.tigerknows.model.POI;
 import com.tigerknows.ui.poi.InputSearchFragment;
 
 import android.os.Bundle;
@@ -71,22 +69,16 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         mapView.setStopRefreshMyLocation(false);
         
         mSphinx.getCenterTokenView().setVisibility(View.INVISIBLE);
-        mSphinx.getMoreBtn().setVisibility(View.VISIBLE);
+        mSphinx.getToolsBtn().setVisibility(View.VISIBLE);
         mSphinx.getClearMapBtn().setVisibility(View.INVISIBLE);
         mSphinx.getLocationView().setVisibility(View.VISIBLE);
     }
 
     public DataQuery getDataQuery(String keyWord) {
-        POI requestPOI = mSphinx.getPOI();
         DataQuery poiQuery = new DataQuery(mContext);
         poiQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_POI);
         poiQuery.addParameter(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_POI);
         poiQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
-        Position position = requestPOI.getPosition();
-        if (position != null) {
-            poiQuery.addParameter(DataQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
-            poiQuery.addParameter(DataQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
-        }
         
         if (keyWord != null) {
             poiQuery.addParameter(DataQuery.SERVER_PARAMETER_KEYWORD, keyWord);

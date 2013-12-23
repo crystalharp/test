@@ -104,7 +104,7 @@ public class FetchFavoriteFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
 
-        mTitleBtn.setText(mContext.getString(R.string.favorite));
+        mTitleBtn.setText(getString(R.string.favorite));
     }
 
 

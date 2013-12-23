@@ -178,7 +178,7 @@ public class TuangouDetailFragment extends BaseDetailFragment
 
         //Show it on map
         ItemizedOverlayHelper.drawPOIOverlay(mSphinx, list, 0);
-        mSphinx.getResultMapFragment().setData(mContext.getString(R.string.shanghu_ditu), ActionLog.ResultMapTuangouDetail);
+        mSphinx.getResultMapFragment().setData(getString(R.string.shanghu_ditu), ActionLog.ResultMapTuangouDetail);
         super.viewMap();
     }
     

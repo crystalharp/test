@@ -5,11 +5,11 @@
  */
 package com.tigerknows.provider;
 
+import com.decarta.Globals;
 import com.decarta.android.db.PrefTable;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
 import com.tigerknows.android.location.Position;
-import com.tigerknows.map.CityInfo;
 import com.tigerknows.map.MapEngine;
 import com.tigerknows.model.TKWord;
 
@@ -39,12 +39,8 @@ public class HistoryWordTable {
     public static final int TYPE_BUSLINE = 2;
     
     private static final LinkedList<TKWord> History_Word_POI = new LinkedList<TKWord>();
-    public static final LinkedList<TKWord> History_Word_Traffic = new LinkedList<TKWord>();
-    public static final LinkedList<TKWord> History_Word_Busline = new LinkedList<TKWord>();
-    
-    public static long POI_CityId = CityInfo.CITY_ID_INVALID;
-    public static long Traffic_CityId = CityInfo.CITY_ID_INVALID;
-    public static long Busline_CityId = CityInfo.CITY_ID_INVALID;
+    private static final LinkedList<TKWord> History_Word_Traffic = new LinkedList<TKWord>();
+    private static final LinkedList<TKWord> History_Word_Busline = new LinkedList<TKWord>();
     
     static final String TAG = "HistoryWordTable";
     
@@ -127,7 +123,7 @@ public class HistoryWordTable {
 	 * 
 	 * 
 	 */
-	public void write(TKWord tkWord, int cityId, int type) {
+	public void write(TKWord tkWord, int type) {
         if (tkWord == null || TextUtils.isEmpty(tkWord.word)) {
             return;
         }
@@ -137,22 +133,21 @@ public class HistoryWordTable {
 		ContentValues cv = new ContentValues();
         cv.put(HASHCODE, hashCode);
 		cv.put(WORD, tkWord.word);
-		cv.put(CITY_ID, cityId);
         cv.put(TYPE, type);
 		Position position = tkWord.position;
 		if (position != null) {
             cv.put(POSITION, position.getLat()+","+position.getLon());
 		}
 
-		mDb.delete(TABLE_NAME,  "(" + CITY_ID + "=" + cityId+ ") AND (" + TYPE + "=" + type+ ") AND (" + HASHCODE + "=" + hashCode+ ")", null);
+		mDb.delete(TABLE_NAME,  "(" + TYPE + "=" + type+ ") AND (" + HASHCODE + "=" + hashCode+ ")", null);
 		mDb.insert(TABLE_NAME, null, cv);
 	}
 
-    public void read(List<TKWord> list, int cityId, int type) {
+    public void read(List<TKWord> list, int type) {
         if(!mDb.isOpen())
             return;
         Cursor mCursor = mDb.query(true, TABLE_NAME,
-                new String[] { WORD, POSITION}, "(" + CITY_ID + "=" + cityId+ ") AND (" + TYPE + "=" + type+ ")",
+                new String[] { WORD, POSITION}, "(" + TYPE + "=" + type+ ")",
                 null, null, null, ID + " DESC", null);
         if (mCursor != null) {
             mCursor.moveToFirst();
@@ -187,10 +182,10 @@ public class HistoryWordTable {
 	 * truncates table
 	 * @throws SQLException
 	 */
-	public boolean clear(int cityId, int type) throws SQLException {
+	public boolean clear(int type) throws SQLException {
 		if(!mDb.isOpen())
 			return false;
-		mDb.delete(TABLE_NAME, "(" + CITY_ID + "=" + cityId + ") AND (" + TYPE + "=" + type+ ")", null);
+		mDb.delete(TABLE_NAME, "(" + TYPE + "=" + type+ ")", null);
 		return true;
 	}
 	
@@ -217,47 +212,35 @@ public class HistoryWordTable {
         }
     }
     
-    public static void readHistoryWord(Context context, int cityId, int type) {
+    public static void readHistoryWord(Context context, int type) {
         List<TKWord> list;
         String key;
         if (TYPE_POI == type) {
             key = TKConfig.PREFS_HISTORY_WORD_POI;
             list = History_Word_POI;
-            if (POI_CityId == cityId) {
-                return;
-            }
-            POI_CityId = cityId;
         } else if (TYPE_TRAFFIC == type) {
             key = TKConfig.PREFS_HISTORY_WORD_TRAFFIC;
             list = History_Word_Traffic;
-            if (Traffic_CityId == cityId) {
-                return;
-            }
-            Traffic_CityId = cityId;
         } else {
             key = TKConfig.PREFS_HISTORY_WORD_BUSLINE;
             list = History_Word_Busline;
-            if (Busline_CityId == cityId) {
-                return;
-            }
-            Busline_CityId = cityId;
         }
         list.clear();
         HistoryWordTable historyWordTable = new HistoryWordTable(context);
-        List<String> listAtPrefTable = readHistoryWordV4(context, cityId, type);
+        List<String> listAtPrefTable = readHistoryWordV4(context, type);
         if (listAtPrefTable.size() > 0) {
             for(int i = 0, size = listAtPrefTable.size(); i < size; i++) {
-                historyWordTable.write(new TKWord(TKWord.ATTRIBUTE_HISTORY, listAtPrefTable.get(i)), cityId, type);
+                historyWordTable.write(new TKWord(TKWord.ATTRIBUTE_HISTORY, listAtPrefTable.get(i)), type);
             }
             listAtPrefTable.clear();
             clearHistoryWord(context, key);
         }
         
-        historyWordTable.read(list, cityId, type);
+        historyWordTable.read(list, type);
         historyWordTable.close();
     }
     
-    public static void addHistoryWord(Context context, TKWord tkWord, int cityId, int type) {
+    public static void addHistoryWord(Context context, TKWord tkWord, int type) {
         if (tkWord == null || tkWord.word == null || TextUtils.isEmpty(tkWord.word.trim())) {
             return;
         }
@@ -272,12 +255,12 @@ public class HistoryWordTable {
         list.remove(tkWord);
         list.add(0, tkWord);
         HistoryWordTable historyWordTable = new HistoryWordTable(context);
-        historyWordTable.write(tkWord, cityId, type);
+        historyWordTable.write(tkWord, type);
         historyWordTable.optimize(type);
         historyWordTable.close();
     }
     
-    public static void clearHistoryWord(Context context, int cityId, int type) {
+    public static void clearHistoryWord(Context context, int type) {
         List<TKWord> list;
         if (TYPE_POI == type) {
             list = History_Word_POI;
@@ -288,7 +271,7 @@ public class HistoryWordTable {
         }
         list.clear();
         HistoryWordTable historyWordTable = new HistoryWordTable(context);
-        historyWordTable.clear(cityId, type);
+        historyWordTable.clear(type);
         historyWordTable.close();
     }
     
@@ -381,7 +364,8 @@ public class HistoryWordTable {
     }
     
     @Deprecated
-    private static List<String> readHistoryWordV4(Context context, int cityId, int type) {
+    private static List<String> readHistoryWordV4(Context context, int type) {
+        int cityId = Globals.getCurrentCityInfo(context).getId();
         List<String> list = new ArrayList<String>();
         if (context == null) {
             return list;
@@ -426,8 +410,5 @@ public class HistoryWordTable {
         History_Word_POI.clear();
         History_Word_Traffic.clear();
         History_Word_Busline.clear();
-        POI_CityId = CityInfo.CITY_ID_INVALID;
-        Traffic_CityId = CityInfo.CITY_ID_INVALID;
-        Busline_CityId = CityInfo.CITY_ID_INVALID;
     }
 }

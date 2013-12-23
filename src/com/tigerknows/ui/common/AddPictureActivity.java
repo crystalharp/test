@@ -22,7 +22,6 @@ import android.widget.ImageView.ScaleType;
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
 
-import com.decarta.Globals;
 import com.tigerknows.android.os.TKAsyncTask;
 import android.widget.Toast;
 import com.tigerknows.common.ActionLog;
@@ -162,7 +161,7 @@ public class AddPictureActivity extends BaseActivity implements View.OnClickList
             fileUpload.addParameter(FileUpload.SERVER_PARAMETER_CHECKSUM, mPhotoMD5);
             fileUpload.addParameter(FileUpload.SERVER_PARAMETER_FILENAME, mPhotoMD5+filePath.substring(filePath.lastIndexOf(".")));
             fileUpload.addParameter(FileUpload.SERVER_PARAMETER_UPFILE, filePath);
-            fileUpload.setup(Globals.getCurrentCityInfo().getId(), -1, -1, mThis.getString(R.string.doing_and_wait));
+            fileUpload.setup(-1, -1, mThis.getString(R.string.doing_and_wait));
             queryStart(fileUpload);
         }
     }

@@ -280,7 +280,7 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
             if (isNormal == false) {
                 dataQuery.addParameter(DataQuery.SERVER_PARAMETER_BIAS, DataQuery.BIAS_HOT);
             }
-            dataQuery.setup(Globals.getCurrentCityInfo().getId(), mId, mId, null, false, false, mPOI);
+            dataQuery.setup(mId, mId, null, false, false, mPOI);
             mCommentLsv.changeHeaderViewByState(false, SpringbackListView.REFRESHING);
             queryStart(dataQuery);
             return;
@@ -309,7 +309,6 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
 
         DataQuery dataQuery = new DataQuery(mCommentQuery);
         POI requestPOI = mCommentQuery.getPOI();
-        int cityId = mCommentQuery.getCityId();
         if (mCommentArrayList.size() > 0) {
             mCommentLsv.changeHeaderViewByState(false, SpringbackListView.REFRESHING);
             if (isHeader) {
@@ -324,12 +323,12 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
                     dataQuery.addParameter(DataQuery.SERVER_PARAMETER_TIME, comment.getTime());
                 }
                 dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DIRECTION, DataQuery.DIRECTION_AFTER);
-                dataQuery.setup(cityId, -1, -1, null, true, false, requestPOI);
+                dataQuery.setup(-1, -1, null, true, false, requestPOI);
                 queryStart(dataQuery);
             } else {
                 dataQuery.addParameter(DataQuery.SERVER_PARAMETER_TIME, mCommentArrayList.get(mCommentArrayList.size()-1).getTime());
                 dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DIRECTION, DataQuery.DIRECTION_BEFORE);
-                dataQuery.setup(cityId, -1, -1, null, true, false, requestPOI);
+                dataQuery.setup(-1, -1, null, true, false, requestPOI);
                 queryStart(dataQuery);
             }
         } else {
@@ -827,7 +826,7 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
             if (isNormal == false) {
                 dataQuery.addParameter(DataQuery.SERVER_PARAMETER_BIAS, DataQuery.BIAS_HOT);
             }
-            dataQuery.setup(Globals.getCurrentCityInfo().getId(), mId, mId, null, false, false, mPOI);
+            dataQuery.setup(mId, mId, null, false, false, mPOI);
             mCommentLsv.changeHeaderViewByState(false, SpringbackListView.REFRESHING);
             queryStart(dataQuery);
         } else {

@@ -379,7 +379,7 @@ public class MapStatsService extends Service {
      * 统计当前城市的地图信息及状态
      */
     private DownloadCity statsCurrentCity() {
-        CityInfo cityInfo = Globals.getCurrentCityInfo(false);
+        CityInfo cityInfo = Globals.getCurrentCityInfo(getBaseContext());
         if (cityInfo != null) {
             MapVersionQuery mapVersionQuery = new MapVersionQuery(getBaseContext());
             mapVersionQuery.setup(MapEngine.getRegionIdList(cityInfo.getCName()));

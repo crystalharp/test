@@ -402,4 +402,12 @@ public class BaseFragment extends LinearLayout {
 			e.printStackTrace();
 		}
     }
+    
+    public String getString(int resId) {
+        return mContext.getString(resId);
+    }
+    
+    public String getString(int resId, Object... formatArgs) {
+        return mContext.getString(resId, formatArgs);
+    }
 }

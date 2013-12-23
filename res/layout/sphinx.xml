@@ -79,7 +79,7 @@
         android:layout_marginBottom="8dp">
         
         <ImageButton
-            android:id="@+id/more_btn"
+            android:id="@+id/tools_btn"
             android:layout_width="52dp"
             android:layout_height="52dp"
             android:background="@drawable/btn_location_map"
@@ -91,17 +91,17 @@
             android:clickable="false"/>
         
         <ImageView
-            android:id="@+id/more_imv"
+            android:id="@+id/tools_imv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignRight="@id/more_btn"
-            android:layout_alignTop="@id/more_btn"
+            android:layout_alignRight="@id/tools_btn"
+            android:layout_alignTop="@id/tools_btn"
             android:background="@drawable/menu_upgrade"
             android:clickable="false"/>
         
         <ImageButton
             android:id="@+id/clear_map_btn"
-            android:layout_below="@id/more_btn"
+            android:layout_below="@id/tools_btn"
             android:layout_alignParentRight="true"
             android:layout_width="52dp"
             android:layout_height="52dp"

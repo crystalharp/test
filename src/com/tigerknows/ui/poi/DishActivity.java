@@ -1117,7 +1117,7 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
         if (mode == 0 && tab == 1) {
             dataQuery.addParameter(DataQuery.SERVER_PARAMETER_BIAS, DataQuery.BIAS_RECOMMEND_DISH);
         }
-        dataQuery.setup(Globals.getCurrentCityInfo().getId(), mId, mId, null, false, false, mPOI);
+        dataQuery.setup(mId, mId, null, false, false, mPOI);
         queryStart(dataQuery);
 
         View mRetryView;

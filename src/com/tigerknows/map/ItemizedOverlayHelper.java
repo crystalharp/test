@@ -49,7 +49,7 @@ public class ItemizedOverlayHelper {
             
             sphinx.getCenterTokenView().setVisibility(View.VISIBLE);
             sphinx.getClearMapBtn().setVisibility(View.INVISIBLE);
-            sphinx.getMoreBtn().setVisibility(View.INVISIBLE);
+            sphinx.getToolsBtn().setVisibility(View.INVISIBLE);
             sphinx.getLocationView().setVisibility(View.INVISIBLE);
             sphinx.setTouchMode(touchMode);
             
@@ -256,7 +256,7 @@ public class ItemizedOverlayHelper {
             }
             
             sphinx.getCenterTokenView().setVisibility(View.INVISIBLE);
-            sphinx.getMoreBtn().setVisibility(View.VISIBLE);
+            sphinx.getToolsBtn().setVisibility(View.VISIBLE);
             sphinx.getClearMapBtn().setVisibility(View.VISIBLE);
             sphinx.getLocationView().setVisibility(View.VISIBLE);
             

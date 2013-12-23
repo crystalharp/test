@@ -102,9 +102,9 @@ public class BuslineResultStationFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
         
-        mCommentTxv.setText(mContext.getString(R.string.busline_result_title, mBuslineQuery.getKeyword(), 
+        mCommentTxv.setText(getString(R.string.busline_result_title, mBuslineQuery.getKeyword(), 
         		mBuslineModel.getTotal()));
-        mTitleBtn.setText(mContext.getString(R.string.title_station_result));
+        mTitleBtn.setText(getString(R.string.title_station_result));
     	
         if (mResultLsv.isFooterSpringback()) {
             mSphinx.getHandler().postDelayed(mTurnPageRun, 1000);
@@ -203,7 +203,8 @@ public class BuslineResultStationFragment extends BaseFragment {
         }
         mResultLsv.changeHeaderViewByState(false, SpringbackListView.REFRESHING);
     	BuslineQuery buslineQuery = new BuslineQuery(mContext);
-    	buslineQuery.setup(mBuslineQuery.getCityId(), mBuslineQuery.getKeyword(), mStationList.size(), true, getId(), null);
+    	buslineQuery.setup(mBuslineQuery.getKeyword(), mStationList.size(), true, getId(), null);
+    	buslineQuery.setCityId(mBuslineQuery.getCityId());
     	mSphinx.queryStart(buslineQuery);
         mActionLog.addAction(mActionTag+ActionLog.ListViewItemMore);
         }
@@ -348,7 +349,8 @@ public class BuslineResultStationFragment extends BaseFragment {
     protected void submitBuslineQuery(String keyword) {
         
         BuslineQuery buslineQuery = new BuslineQuery(mContext);
-        buslineQuery.setup(mBuslineQuery.getCityId(), keyword, 0, false, getId(), mContext.getString(R.string.doing_and_wait));
+        buslineQuery.setup(keyword, 0, false, getId(), getString(R.string.doing_and_wait));
+        buslineQuery.setCityId(mBuslineQuery.getCityId());
         mSphinx.queryStart(buslineQuery); 
     }
 

@@ -103,7 +103,7 @@ public class CouponDetailView extends BaseDetailView implements View.OnClickList
         
         mNameTxv.setText(mData.getListName());
         mDescriptionTxv.setText(coupon.getDescription());
-        mHotTxv.setText(mSphinx.getString(R.string._used_sum_times, coupon.getHot()));
+        mHotTxv.setText(getString(R.string._used_sum_times, coupon.getHot()));
         mDetailTxv.setText(coupon.getDetail());
         if(coupon.getQrimgTKDrawable() != null){
             mQrimgLly.setVisibility(GONE);

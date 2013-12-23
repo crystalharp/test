@@ -63,7 +63,7 @@ public class AboutUsActivity extends BaseActivity implements View.OnClickListene
 //            mQuanguoSuggestVersionImv.setVisibility(View.GONE);
         }
 
-        int cityId = Globals.getCurrentCityInfo().getId();
+        int cityId = Globals.getCurrentCityInfo(mThis).getId();
         int swCurrentCityVersion = 0;
         //当前城市为全国时返回0，调用引擎会出错
         if (cityId != 0) {

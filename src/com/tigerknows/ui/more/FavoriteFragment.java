@@ -411,8 +411,8 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
                 case MENU_DELETE:
                     mActionLog.addAction(mActionTag +  ActionLog.FavoriteMenuDelete + getActionLogType());
                     Utility.showNormalDialog(mSphinx,
-                            mContext.getString(R.string.prompt),
-                            mContext.getString(mLayerType.equals(ItemizedOverlay.POI_OVERLAY) ? R.string.delete_a_favorite_poi : R.string.delete_a_favorite_traffic),
+                            getString(R.string.prompt),
+                            getString(mLayerType.equals(ItemizedOverlay.POI_OVERLAY) ? R.string.delete_a_favorite_poi : R.string.delete_a_favorite_traffic),
                             new DialogInterface.OnClickListener() {
                                 
                                 @Override
@@ -465,8 +465,8 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
                 }
                 if (count > 0) {
                     Utility.showNormalDialog(mSphinx,
-                            mContext.getString(R.string.prompt),
-                            mContext.getString(mLayerType.equals(ItemizedOverlay.POI_OVERLAY) ? R.string.delete_all_favorite_poi : R.string.delete_all_favorite_traffic),
+                            getString(R.string.prompt),
+                            getString(mLayerType.equals(ItemizedOverlay.POI_OVERLAY) ? R.string.delete_all_favorite_poi : R.string.delete_all_favorite_traffic),
                             new DialogInterface.OnClickListener() {
                                 
                                 @Override
@@ -877,11 +877,11 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
         }
         nameEdt.append(name);
         Dialog dialog = Utility.showNormalDialog(mSphinx,
-                mSphinx.getString(R.string.rename),
+                getString(R.string.rename),
                 null,
                 textEntryView,
-                mSphinx.getString(R.string.confirm),
-                mSphinx.getString(R.string.cancel),
+                getString(R.string.confirm),
+                getString(R.string.cancel),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         if (whichButton == DialogInterface.BUTTON_POSITIVE) {

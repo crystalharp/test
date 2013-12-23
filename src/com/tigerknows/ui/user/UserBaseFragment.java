@@ -10,15 +10,12 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.android.os.TKAsyncTask;
 import android.widget.Toast;
 
-import com.tigerknows.map.CityInfo;
-import com.tigerknows.map.MapEngine;
 import com.tigerknows.model.AccountManage;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.Response;
@@ -131,29 +128,8 @@ public abstract class UserBaseFragment extends BaseFragment {
 	 * 提供公共参数支持
 	 */
 	protected void sendRequest(AccountManage accountManage) {
-		accountManage.setup(getCityParameter(), getId(), getId(), mContext.getString(R.string.doing_and_wait));
+		accountManage.setup(getId(), getId(), getString(R.string.doing_and_wait));
 		mSphinx.queryStart(accountManage, false);
-	}
-
-	/**
-	 * 获取城市ID参数, 若定到位, 使用定位城市; 若无定位信息, 使用当前地图城市
-	 * @return
-	 */
-	private int getCityParameter() {
-		int cityId = CityInfo.CITY_ID_INVALID;
-		
-		CityInfo mylocaCityInfo = Globals.g_My_Location_City_Info;
-		if (mylocaCityInfo != null) {
-			cityId = mylocaCityInfo.getId();
-		}
-		
-		CityInfo myCurrentCityInfo = Globals.getCurrentCityInfo();
-		if (cityId == CityInfo.CITY_ID_INVALID && myCurrentCityInfo != null) {
-			cityId = myCurrentCityInfo.getId();
-		}
-		LogWrapper.d(TAG, "cityId: " + cityId);
-		
-		return cityId;
 	}
 	
 	@Override
@@ -200,7 +176,7 @@ public abstract class UserBaseFragment extends BaseFragment {
 		 * @param edittext
 		 */
 		public void showErrorThenSelectAllAndShowSoftkeyboard(int titleResId, int bodyResId, final ExtValidationEditText edittext) {
-			Utility.showNormalDialog(mSphinx, mContext.getString(titleResId), mContext.getString(bodyResId), mSphinx.getString(R.string.confirm),
+			Utility.showNormalDialog(mSphinx, getString(titleResId), getString(bodyResId), getString(R.string.confirm),
 	                null,
 	                new DialogInterface.OnClickListener() {
 
@@ -225,7 +201,7 @@ public abstract class UserBaseFragment extends BaseFragment {
 		 * @param edittext
 		 */
 		public void showErrorThenClearAndShowSoftkeyboard(int titleResId, int bodyResId, final ExtValidationEditText edittext) {
-			Utility.showNormalDialog(mSphinx, mContext.getString(titleResId), mContext.getString(bodyResId), mSphinx.getString(R.string.confirm),
+			Utility.showNormalDialog(mSphinx, getString(titleResId), getString(bodyResId), getString(R.string.confirm),
 	                null,
 	                new DialogInterface.OnClickListener() {
 
@@ -248,6 +224,6 @@ public abstract class UserBaseFragment extends BaseFragment {
 	protected abstract void responseCodeAction(AccountManage accountManage);
 	
 	protected void showToast(int resId) {
-		Toast.makeText(mContext, resId, 2000).show();
+		Toast.makeText(mSphinx, resId, 2000).show();
 	}
 }

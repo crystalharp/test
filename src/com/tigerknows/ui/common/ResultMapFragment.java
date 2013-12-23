@@ -82,9 +82,9 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
             mRightBtn.setBackgroundResource(R.drawable.btn_view_detail);
             mRightBtn.setOnClickListener(this);
         	if (mActionTag == ActionLog.TrafficDriveMap) {
-        	    mTitleBtn.setText(mSphinx.getString(R.string.title_type_drive));
+        	    mTitleBtn.setText(getString(R.string.title_type_drive));
         	} else {
-        	    mTitleBtn.setText(mSphinx.getString(R.string.title_type_walk));
+        	    mTitleBtn.setText(getString(R.string.title_type_walk));
         	}
         }
         mSphinx.showHint(TKConfig.PREFS_HINT_LOCATION, R.layout.hint_location_map);
@@ -147,7 +147,7 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
 	        				position = mSphinx.getMapView().getCenterPosition();
 	        				description = MapEngine.getPositionName(position);
 	        				if (TextUtils.isEmpty(description)) {
-	        					description = mContext.getString(R.string.select_point);
+	        					description = getString(R.string.select_point);
 	        				}
 	        				description = description.replace('(', ' ').replace(')', ' ');
 	        			}

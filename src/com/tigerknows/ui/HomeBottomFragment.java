@@ -24,6 +24,8 @@ public class HomeBottomFragment extends BaseFragment implements View.OnClickList
 
     private Button mMoreBtn;
     
+    private View mMoreImv;
+    
     public HomeBottomFragment(Sphinx sphinx) {
         super(sphinx);
     }
@@ -44,6 +46,7 @@ public class HomeBottomFragment extends BaseFragment implements View.OnClickList
         mPOIBtn = (Button) mRootView.findViewById(R.id.poi_btn);
         mTrafficBtn = (Button) mRootView.findViewById(R.id.traffic_btn);
         mMoreBtn = (Button) mRootView.findViewById(R.id.more_btn);
+        mMoreImv = mRootView.findViewById(R.id.more_imv);
     }
 
     protected void setListener() {
@@ -57,7 +60,7 @@ public class HomeBottomFragment extends BaseFragment implements View.OnClickList
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.poi_btn) {
-            mSphinx.getPOINearbyFragment().setData(mSphinx.getPOI(true));
+            mSphinx.getPOINearbyFragment().setData(mSphinx.getCenterPOI());
             mSphinx.showView(R.id.view_poi_nearby_search);
         } else if (id == R.id.traffic_btn) {
             mSphinx.showView(R.id.view_traffic_home);

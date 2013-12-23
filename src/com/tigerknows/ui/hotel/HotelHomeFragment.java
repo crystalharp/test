@@ -23,13 +23,10 @@ import com.tigerknows.model.DataQuery.FilterOption;
 import com.tigerknows.model.DataQuery.FilterResponse;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.Response;
-import com.tigerknows.provider.HistoryWordTable;
-import com.tigerknows.provider.HotelOrderTable;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
-import com.tigerknows.ui.HomeFragment;
 import com.tigerknows.ui.more.ChangeCityActivity;
-import com.tigerknows.ui.poi.POIResultFragment;
+import com.tigerknows.ui.poi.InputSearchFragment;
 import com.tigerknows.util.Utility;
 import com.tigerknows.widget.FilterListView;
 
@@ -41,7 +38,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.ScrollView;
@@ -138,7 +134,6 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         findViews();
         setListener();
         
-        DataQuery.initStaticField(BaseQuery.DATA_TYPE_POI, BaseQuery.SUB_DATA_TYPE_HOTEL, MapEngine.SW_ID_QUANGUO, mSphinx);
         return mRootView;
     }
 
@@ -196,7 +191,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_CHECKIN, SIMPLE_DATE_FORMAT.format(mCheckInDat.getTime()));
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_CHECKOUT, SIMPLE_DATE_FORMAT.format(mCheckOutDat.getTime()));
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
-        dataQuery.setup(Globals.getCurrentCityInfo().getId(), getId(), getId(), null, true);
+        dataQuery.setup(getId(), getId(), null, true);
         mSphinx.queryStart(dataQuery);
     }
     
@@ -268,7 +263,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                     queryFilter();
                     showProgressDialog();
                 } else {
-                    mSphinx.getPickLocationFragment().setTitle(mSphinx.getString(R.string.hotel_select_location));
+                    mSphinx.getPickLocationFragment().setTitle(getString(R.string.hotel_select_location));
                     mSphinx.showView(R.id.view_hotel_pick_location);
                 }
                 break;
@@ -308,15 +303,9 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                 
             case R.id.query_all_hotel_view:
                 mActionLog.addAction(mActionTag + ActionLog.HotelQueryAll);
-                DataQuery dataQuery = mSphinx.getHomeFragment().getDataQuery(mSphinx.getString(R.string.hotel));
-                dataQuery.setup(Globals.getCurrentCityInfo(true).getId(), getId(), mSphinx.getPOIResultFragmentID(), null, false, false, mSphinx.getPOI());
-                BaseFragment baseFragment = mSphinx.getFragment(dataQuery.getTargetViewId());
-                
-                if (baseFragment != null && baseFragment instanceof POIResultFragment) {
-                    mSphinx.queryStart(dataQuery);
-                    ((POIResultFragment)mSphinx.getFragment(dataQuery.getTargetViewId())).setup();
-                    mSphinx.showView(dataQuery.getTargetViewId());
-                 }                
+                DataQuery dataQuery = mSphinx.getHomeFragment().getDataQuery(getString(R.string.hotel));
+                dataQuery.setup(getId(), getId(), getString(R.string.doing_and_wait), false, false, mSphinx.getCenterPOI());
+                mSphinx.queryStart(dataQuery);
                 break;
                 
             default:
@@ -374,10 +363,9 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     }
     
     public void setCityInfo(CityInfo cityInfo) {
-        Globals.setHotelCityInfo(cityInfo);
         mCityTxv.setText(cityInfo.getCName());
 
-        DataQuery.initStaticField(BaseQuery.DATA_TYPE_POI, BaseQuery.SUB_DATA_TYPE_HOTEL, cityInfo.getId(), mSphinx);
+        DataQuery.initStaticField(BaseQuery.DATA_TYPE_POI, BaseQuery.SUB_DATA_TYPE_HOTEL, mSphinx, cityInfo.getId());
         
         refreshFilterCategory();
         
@@ -386,9 +374,6 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         mRefreshFilterArea = true;
         refreshFilterArea(true);
         mPOI = null;
-
-        int cityId = Globals.getCurrentCityInfo().getId();
-        mSphinx.reloadTrafficHistoryWord(cityId);
     }
     
     void refreshFilterCategory() {
@@ -418,7 +403,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
             int filterAreaState;
             CityInfo locationCityInfo = Globals.g_My_Location_City_Info;
             if (locationCityInfo != null &&
-            		locationCityInfo.getId() == Globals.getCurrentCityInfo().getId()) {
+            		locationCityInfo.getId() == Globals.getCurrentCityInfo(mSphinx).getId()) {
                 filterAreaState = 1;
                 mLocationCityInfo = locationCityInfo;
             } else {
@@ -525,7 +510,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         if (mProgressDialog == null) {
             View custom = mSphinx.getLayoutInflater().inflate(R.layout.loading, null);
             TextView loadingTxv = (TextView)custom.findViewById(R.id.loading_txv);
-            loadingTxv.setText(mSphinx.getString(R.string.doing_and_wait));
+            loadingTxv.setText(getString(R.string.doing_and_wait));
             mProgressDialog = Utility.showNormalDialog(mSphinx, custom);
             mProgressDialog.setCancelable(true);
             mProgressDialog.setCanceledOnTouchOutside(false);
@@ -553,7 +538,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), getId(), getId(), getId(), mCancelLoginListener)) {
             isReLogin = true;
             return;
-        } else {
+        } else if (DataQuery.APPENDACTION_NOSEARCH.contains(baseQuery.getParameter(DataQuery.SERVER_PARAMETER_APPENDACTION))) {
             Response response = baseQuery.getResponse();
             mResponse = response;
             if (response == null) {
@@ -616,11 +601,14 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                 }
                 
                 if (mProgressDialog != null && mProgressDialog.isShowing()) {
-                    mSphinx.getPickLocationFragment().setTitle(mSphinx.getString(R.string.hotel_select_location));
+                    mSphinx.getPickLocationFragment().setTitle(getString(R.string.hotel_select_location));
                     mSphinx.showView(R.id.view_hotel_pick_location);
                     dismissProgressDialog();
                 }
             }
+            
+        } else {
+            InputSearchFragment.dealWithPOIResponse((DataQuery) baseQuery, mSphinx, this);
         }
     }
     
@@ -635,7 +623,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                     if (mProgressDialog != null && mProgressDialog.isShowing()) {
                         dismissProgressDialog();
                     }
-                    Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.response_code_702));
+                    Utility.showNormalDialog(mSphinx, getString(R.string.response_code_702));
                 }
                 result = false;
             } else if (responseCode == 703) {
@@ -643,7 +631,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                     if (mProgressDialog != null && mProgressDialog.isShowing()) {
                         dismissProgressDialog();
                     }
-                    Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.response_code_703));
+                    Utility.showNormalDialog(mSphinx, getString(R.string.response_code_703));
                 }
                 result = false;
             }
@@ -807,7 +795,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
             CityInfo locationCityInfo = mLocationCityInfo;
             int id = FilterListView.getSelectedIdByFilter(getFilter(mFilterList, FilterArea.FIELD_LIST));
             if (locationCityInfo != null &&
-                    locationCityInfo.getId() == Globals.getCurrentCityInfo().getId() &&
+                    locationCityInfo.getId() == Globals.getCurrentCityInfo(mSphinx).getId() &&
                     id >= 6 &&
                     id <= 10) {
                 dataQuery.addParameter(DataQuery.SERVER_PARAMETER_LOCATION_CITY, String.valueOf(locationCityInfo.getId()));
@@ -818,14 +806,8 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_FILTER, DataQuery.makeFilterRequest(filterList, key));
                 
-        int targetViewId = mSphinx.getPOIResultFragmentID();
-        dataQuery.setup(Globals.getCurrentCityInfo().getId(), getId(), targetViewId, null, false, false, poi);
-        BaseFragment baseFragment = mSphinx.getFragment(targetViewId);
-        if (baseFragment != null && baseFragment instanceof POIResultFragment) {
-            mSphinx.queryStart(dataQuery);
-            ((POIResultFragment)mSphinx.getFragment(targetViewId)).setup();
-            mSphinx.showView(targetViewId);
-        }
+        dataQuery.setup(getId(), getId(), getString(R.string.doing_and_wait), false, false, poi);
+        mSphinx.queryStart(dataQuery);
     }
     
     public List<Filter> getFilterList() {

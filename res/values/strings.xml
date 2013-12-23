@@ -1341,4 +1341,5 @@
     
     <string name="hotel">酒店</string>
     <string name="qi">起</string>
+    <string name="subway_city_list_title">以下城市现已开通地铁</string>
 </resources>

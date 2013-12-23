@@ -12,7 +12,6 @@ import java.util.List;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputFilter;
@@ -24,7 +23,6 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
@@ -159,12 +157,12 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     @Override
     public void onResume(){
         super.onResume();
-        mTitleBtn.setText(mSphinx.getString(R.string.hotel_room_title));
+        mTitleBtn.setText(getString(R.string.hotel_room_title));
         final HotelVendor hotelVendor = HotelVendor.getHotelVendorById(mRoomType.getVendorID(), mSphinx, null);
         if(hotelVendor == null || TextUtils.isEmpty(hotelVendor.getReserveTel())){
         }else{
             mRightBtn.setBackgroundResource(R.drawable.btn_title);
-            mRightBtn.setText(mSphinx.getString(R.string.tel_reserve));
+            mRightBtn.setText(getString(R.string.tel_reserve));
             mRightBtn.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -305,10 +303,10 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
                     mBookUsername = tempStr;
                 }
                 if(TextUtils.isEmpty(tempStr)){
-                    Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.hotel_room_person_empty_tip), thisPersonEdt);
+                    Utility.showEdittextErrorDialog(mSphinx, getString(R.string.hotel_room_person_empty_tip), thisPersonEdt);
                     return;
                 }else if(!ValidateUtil.isValidElongName(tempStr)){
-                    Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.hotel_person_name_format), thisPersonEdt);
+                    Utility.showEdittextErrorDialog(mSphinx, getString(R.string.hotel_person_name_format), thisPersonEdt);
                     return;
                 }
                 str += tempStr;
@@ -316,10 +314,10 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
             mUsername = str;
             str = mRoomMobileNumberEdt.getText().toString();
             if(TextUtils.isEmpty(str)){
-                Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.hotel_room_mobile_empty_tip), mRoomMobileNumberEdt);
+                Utility.showEdittextErrorDialog(mSphinx, getString(R.string.hotel_room_mobile_empty_tip), mRoomMobileNumberEdt);
                  return;
             }else if(!ValidateUtil.isValidHotelMobile(str)){
-                Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.hotel_mobile_format), mRoomMobileNumberEdt);
+                Utility.showEdittextErrorDialog(mSphinx, getString(R.string.hotel_mobile_format), mRoomMobileNumberEdt);
                 return;
             }else{
                 mMobile = str;
@@ -335,7 +333,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     private void refreshData(){
         mTotalPrice = mRoomtypeDynamic.getPrice() * mRoomHowmany;
         mOneNightPrice = mRoomtypeDynamic.getFirstNightPrice() * mRoomHowmany;
-        mRoomHowmanyBtn.setText(mSphinx.getString(R.string.room_howmany_item, mRoomHowmany, Utility.formatHotelPrice(mTotalPrice)));
+        mRoomHowmanyBtn.setText(getString(R.string.room_howmany_item, mRoomHowmany, Utility.formatHotelPrice(mTotalPrice)));
         RefreshPersonView();
         clearFocus();
         final List<RetentionTime> rtList = findRTimeByRoomHowmany(mRoomHowmany);
@@ -344,8 +342,8 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         rtList.get(mRTimeWhich).getNeed();
         mNeedCreditAssure = rtList.get(mRTimeWhich).getNeed();
         mTypeCreditAssure = rtList.get(mRTimeWhich).getType();
-        mRoomReserveBtn.setText(mRTime + ((mNeedCreditAssure == 1) ? mSphinx.getString(R.string.hotel_room_need_credit_assure) : "") );
-        mSubmitOrderBtn.setText((mNeedCreditAssure == 1) ? mSphinx.getString(R.string.go_credit_assure) : mSphinx.getString(R.string.submit_order));
+        mRoomReserveBtn.setText(mRTime + ((mNeedCreditAssure == 1) ? getString(R.string.hotel_room_need_credit_assure) : "") );
+        mSubmitOrderBtn.setText((mNeedCreditAssure == 1) ? getString(R.string.go_credit_assure) : getString(R.string.submit_order));
         mDanbaoHintTxv.setVisibility((mNeedCreditAssure == 1) ? View.VISIBLE : View.GONE);
     }
     
@@ -377,7 +375,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         	mRoomtypeSubtitleTxv.setText(appendContent);
         }
         mRoomtypeDetailTxv.setText(mRoomType.generateDescription());
-        mRoomDateTxv.setText(mSphinx.getString(R.string.hotel_room_date,
+        mRoomDateTxv.setText(getString(R.string.hotel_room_date,
                 checkIn.get(Calendar.MONTH)+1,
                 checkIn.get(Calendar.DATE),
                 checkOut.get(Calendar.MONTH)+1,
@@ -386,8 +384,8 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         mCheckIn = checkIn;
         mCheckOut = checkOut;
         mNights = CalendarUtil.dateInterval(mCheckIn, mCheckOut);
-        mRoomNightsTxv.setText(mSphinx.getString(R.string.hotel_total_nights, mNights));
-        mRoomTypeComeFromTxv.setText(mSphinx.getString(R.string.this_come_from_colon, mRoomType.getVendorName()));
+        mRoomNightsTxv.setText(getString(R.string.hotel_total_nights, mNights));
+        mRoomTypeComeFromTxv.setText(getString(R.string.this_come_from_colon, mRoomType.getVendorName()));
         mRoomHowmany = mRoomtypeDynamic.getMinimum();
         mRTimeWhich = 0;
         mHotelOrderWriteScv.smoothScrollTo(0, 0);
@@ -410,7 +408,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         txv.setPadding(Utility.dip2px(mContext, 8), 0, 0, 0);
         txv.setTextColor(getResources().getColor(R.color.black_dark));
         txv.setTextSize(16);
-        txv.setText(mSphinx.getString(R.string.hotel_room_person_name));
+        txv.setText(getString(R.string.hotel_room_person_name));
         txv.setGravity(Gravity.LEFT|Gravity.CENTER_VERTICAL);
         
         final EditText edt = new EditText(mContext);
@@ -419,7 +417,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         edt.setFilters(new InputFilter[]{new InputFilter.LengthFilter(50)});
         edt.setTextSize(16);
         edt.setPadding(Utility.dip2px(mContext, 8), Utility.dip2px(mContext, 8), Utility.dip2px(mContext, 8), Utility.dip2px(mContext, 8));
-        edt.setHint(mSphinx.getString(R.string.hotel_room_person_name_hint));
+        edt.setHint(getString(R.string.hotel_room_person_name_hint));
         edt.setHintTextColor(getResources().getColor(R.color.black_light));
         edt.setFocusable(true);
         edt.setFocusableInTouchMode(true);
@@ -521,8 +519,8 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
             if(rt.getNeed() == 1){
                 roomReserveTxv.setText(Utility.renderColorToPartOfString(mContext,
                         R.color.orange,
-                        rt.getTime() + mSphinx.getString(R.string.hotel_room_credit_note),
-                        mSphinx.getString(R.string.hotel_room_credit_note)));
+                        rt.getTime() + getString(R.string.hotel_room_credit_note),
+                        getString(R.string.hotel_room_credit_note)));
             }else{
                 roomReserveTxv.setText(rt.getTime());
             }
@@ -552,7 +550,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         long listsize = (mRoomtypeDynamic.getNum() > MAX_ROOM_HOWMANY) ? MAX_ROOM_HOWMANY : mRoomtypeDynamic.getNum();
         String listitem;
         for(long i = mRoomtypeDynamic.getMinimum(); i <= listsize; i++){
-            listitem = mSphinx.getString(R.string.room_howmany_item, i, Utility.formatHotelPrice(mRoomtypeDynamic.getPrice()*i));
+            listitem = getString(R.string.room_howmany_item, i, Utility.formatHotelPrice(mRoomtypeDynamic.getPrice()*i));
             list.add(listitem);
         }
         final ArrayAdapter<String> adapter = new HotelRoomHowmanyAdapter(mSphinx, list);
@@ -642,7 +640,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
             hotelOrderOperation.addParameter(HotelOrderOperation.SERVER_PARAMETER_IDCARD_TYPE, mIdCardType);
             hotelOrderOperation.addParameter(HotelOrderOperation.SERVER_PARAMETER_IDCARD_NO, mIdCardNo);
         }
-        hotelOrderOperation.setup(Globals.getCurrentCityInfo().getId(), getId(), getId(), mSphinx.getString(R.string.doing_and_wait));
+        hotelOrderOperation.setup(getId(), getId(), getString(R.string.doing_and_wait));
         mSphinx.queryStart(hotelOrderOperation);
     }
     
@@ -672,7 +670,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         }
         switch(response.getResponseCode()){
         case Response.RESPONSE_CODE_OK:
-            Toast.makeText(mContext, mSphinx.getString(R.string.order_submit_success), Toast.LENGTH_LONG).show();
+            Toast.makeText(mSphinx, getString(R.string.order_submit_success), Toast.LENGTH_LONG).show();
             if (hotelOrderCreateResponse == null){
                 return;
             }
@@ -738,10 +736,10 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         	switch(analysisDescription(description)){
         	case 1:
         		Utility.showNormalDialog(mSphinx, 
-        				mSphinx.getString(R.string.prompt), 
+        				getString(R.string.prompt), 
         				description, 
-        				mSphinx.getString(R.string.view_order), 
-        				mSphinx.getString(R.string.know_la), 
+        				getString(R.string.view_order), 
+        				getString(R.string.know_la), 
         				new DialogInterface.OnClickListener() {
 
         			        @Override
@@ -765,7 +763,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         }
     }
     private int analysisDescription(String description){
-    	if(description.contains(mSphinx.getString(R.string.hotel_duplicate_order))){
+    	if(description.contains(getString(R.string.hotel_duplicate_order))){
     		return 1;
     	}else {
     		return 0;
@@ -796,7 +794,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         }
         if(list.isEmpty()){
             XMap data = new XMap();
-            data.put(RetentionTime.FIELD_TIME, mSphinx.getString(R.string.before_23_59));
+            data.put(RetentionTime.FIELD_TIME, getString(R.string.before_23_59));
             data.put(RetentionTime.FIELD_NEED, 0);
             data.put(RetentionTime.FIELD_TYPE, 0);
             data.put(RetentionTime.FIELD_TIME_DETAIL, SIMPLE_DATE_FORMAT.format(mCheckIn.getTime()) + " 23:59:00");

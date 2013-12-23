@@ -44,6 +44,7 @@ import com.decarta.android.map.MapLayer.MapLayerType;
 import com.decarta.android.map.TilesView.MapPreference;
 import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
+import com.decarta.android.util.XYDouble;
 import com.decarta.android.util.XYFloat;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
@@ -1146,5 +1147,9 @@ public class MapView extends RelativeLayout implements
     
     public void zoomInAtPosition(Position position) {
     	tilesView.zoomInAtPosition(position);
+    }
+    
+    public XYFloat mercXYToScreenXYConv(XYDouble mercXY, float zoomLevel) {
+        return tilesView.mercXYToScreenXYConv(mercXY, zoomLevel);
     }
 }

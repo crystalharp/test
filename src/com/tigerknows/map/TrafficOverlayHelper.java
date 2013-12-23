@@ -124,7 +124,7 @@ public class TrafficOverlayHelper {
                 mapView.showOverlay(ItemizedOverlay.MY_LOCATION_OVERLAY, false);
                 
                 sphinx.getCenterTokenView().setVisibility(View.INVISIBLE);
-                sphinx.getMoreBtn().setVisibility(View.VISIBLE);
+                sphinx.getToolsBtn().setVisibility(View.VISIBLE);
                 sphinx.getClearMapBtn().setVisibility(View.VISIBLE);
                 sphinx.getLocationView().setVisibility(View.VISIBLE);
 	        }

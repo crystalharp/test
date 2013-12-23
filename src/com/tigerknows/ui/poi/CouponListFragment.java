@@ -19,7 +19,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.decarta.Globals;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.android.os.TKAsyncTask;
@@ -164,7 +163,7 @@ public class CouponListFragment extends BaseFragment implements RetryView.CallBa
             dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_COUPON);
             dataQuery.addParameter(DataQuery.SERVER_PARAMETER_POI_ID, mPOI.getUUID());
             dataQuery.addParameter(DataQuery.SERVER_PARAMETER_NEED_FIELD, Coupon.NEED_FIELD);
-            dataQuery.setup(Globals.getCurrentCityInfo().getId(), getId(), getId(), null);
+            dataQuery.setup(getId(), getId(), null);
             mSphinx.queryStart(dataQuery);
         }
     }
@@ -192,7 +191,7 @@ public class CouponListFragment extends BaseFragment implements RetryView.CallBa
             final Coupon coupon = getItem(position);
             
             nameTxv.setText(coupon.getDescription());
-            hotTxv.setText(mSphinx.getString(R.string._used_sum_times, coupon.getHot()));
+            hotTxv.setText(getString(R.string._used_sum_times, coupon.getHot()));
             
             TKDrawable tkDrawable = coupon.getBriefPicTKDrawable();
             if (tkDrawable != null) {

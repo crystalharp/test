@@ -129,7 +129,7 @@ public class DynamicNormalPOI extends DynamicPOIViewTemplate {
                 dataOperation.addParameter(DataOperation.SERVER_PARAMETER_PICTURE,
                         Util.byteToHexString(Yanchu.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[0]" + ";" +
                         Util.byteToHexString(Yanchu.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[0]");
-                dataOperation.setup(Globals.getCurrentCityInfo().getId(), mPOIDetailFragment.getId(), mPOIDetailFragment.getId(), mSphinx.getString(R.string.doing_and_wait));
+                dataOperation.setup(mPOIDetailFragment.getId(), mPOIDetailFragment.getId(), getString(R.string.doing_and_wait));
                 queryStart(dataOperation);
             } else if (BaseQuery.DATA_TYPE_ZHANLAN.equals(dataType)) {
                 mPOIDetailFragment.mActionLog.addAction(mPOIDetailFragment.mActionTag +  ActionLog.POIDetailZhanlan);
@@ -138,14 +138,14 @@ public class DynamicNormalPOI extends DynamicPOIViewTemplate {
                 dataOperation.addParameter(DataOperation.SERVER_PARAMETER_PICTURE,
                         Util.byteToHexString(Zhanlan.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[0]" + ";" +
                         Util.byteToHexString(Zhanlan.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[0]");
-                dataOperation.setup(Globals.getCurrentCityInfo().getId(), mPOIDetailFragment.getId(), mPOIDetailFragment.getId(), mSphinx.getString(R.string.doing_and_wait));
+                dataOperation.setup(mPOIDetailFragment.getId(), mPOIDetailFragment.getId(), getString(R.string.doing_and_wait));
                 queryStart(dataOperation);
             } else if (BaseQuery.DATA_TYPE_COUPON.equals(dataType)) {
                 // 1 coupon, d operation
                 if (DPOIMasterUid != null && !TextUtils.isEmpty(DPOIMasterUid)) {
                 	mPOIDetailFragment.mActionLog.addAction(mPOIDetailFragment.mActionTag + ActionLog.POIDetailCouponSingle);
                     dataOperation.addParameter(DataOperation.SERVER_PARAMETER_NEED_FIELD, Coupon.NEED_FIELD);
-                    dataOperation.setup(Globals.getCurrentCityInfo().getId(), mPOIDetailFragment.getId(), mPOIDetailFragment.getId(), mSphinx.getString(R.string.doing_and_wait));
+                    dataOperation.setup(mPOIDetailFragment.getId(), mPOIDetailFragment.getId(), getString(R.string.doing_and_wait));
                     queryStart(dataOperation);
                 // some coupons, s operation
                 } else {

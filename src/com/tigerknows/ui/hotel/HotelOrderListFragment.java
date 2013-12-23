@@ -26,9 +26,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
-import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
@@ -124,7 +122,7 @@ public class HotelOrderListFragment extends BaseFragment{
         mResultLsv.setHeaderSpringback(false);
         mResultLsv.setAdapter(hotelOrderAdapter);
         mResultLsv.changeHeaderViewByState(true, SpringbackListView.PULL_TO_REFRESH);
-        mEmptyTxv.setText( mContext.getString(R.string.no_order) );
+        mEmptyTxv.setText( getString(R.string.no_order) );
         mEmptyImv.setBackgroundResource(R.drawable.bg_order_empty);
         
         return mRootView;
@@ -207,7 +205,7 @@ public class HotelOrderListFragment extends BaseFragment{
     @Override
     public void onResume() {
     	super.onResume();
-        mTitleBtn.setText(mContext.getString(R.string.hotel_ordered));
+        mTitleBtn.setText(getString(R.string.hotel_ordered));
 
         if (Test_Pull_Order_List) {
             fillOrderDb();
@@ -254,7 +252,7 @@ public class HotelOrderListFragment extends BaseFragment{
     	hotelOrderOperation.addParameter(HotelOrderOperation.SERVER_PARAMETER_ORDER_ID_FILTER, ids);
     	hotelOrderOperation.addParameter(BaseQuery.SERVER_PARAMETER_NEED_FIELD, HotelOrder.NEED_FIELDS);
         hotelOrderOperation.addLocalParameter(BaseQuery.RESPONSE_NULL_ERROR_MSG, ""+R.string.response_null_hotel_order_sync);
-    	hotelOrderOperation.setup(Globals.getCurrentCityInfo().getId(), getId(), getId(), mContext.getString(R.string.hotel_order_sync_tip));
+    	hotelOrderOperation.setup(getId(), getId(), getString(R.string.hotel_order_sync_tip));
     	mTkAsyncTasking = mSphinx.queryStart(hotelOrderOperation);
     	mBaseQuerying = mTkAsyncTasking.getBaseQueryList();
 	}
@@ -280,7 +278,7 @@ public class HotelOrderListFragment extends BaseFragment{
     		
     		if(list.size() < maxDbSize){
     			HotelOrder order = new HotelOrder("11111", System.currentTimeMillis(), 1, "0F2B4330-906A-11E2-A511-06973B18DA73", "HotelName", "hotelAddress", new Position(39.88, 116.3), "13581704277", 
-    					mContext.getString(R.string.app_name), 3, 390, 2001, 
+    					getString(R.string.app_name), 3, 390, 2001, 
     					System.currentTimeMillis(), System.currentTimeMillis(), System.currentTimeMillis(),2, 
     					"GuestName", "13581704277", System.currentTimeMillis()+120000);
     			for (int i = list.size(); i < maxDbSize; i++) {
@@ -342,10 +340,10 @@ public class HotelOrderListFragment extends BaseFragment{
             roomTypeTxv.setText(order.getRoomType());
             checkinDateTxv.setText(formatOrderListItemMonthDay(order.getCheckinTime() ) );
             checkoutDateTxv.setText(formatOrderListItemMonthDay(order.getCheckoutTime() ) );
-            dayCountView.setText(mContext.getString(R.string.hotel_total_nights, Integer.valueOf(order.getDayCount())));
+            dayCountView.setText(getString(R.string.hotel_total_nights, Integer.valueOf(order.getDayCount())));
             HotelVendor hotelVendor = HotelVendor.getHotelVendorById(order.getVendorID(), mSphinx, null);
             if(hotelVendor != null){
-            	comeFromTxv.setText(mSphinx.getString(R.string.this_come_from_colon, hotelVendor.getName()));
+            	comeFromTxv.setText(getString(R.string.this_come_from_colon, hotelVendor.getName()));
             	comeFromTxv.setVisibility(View.VISIBLE);
             }else{
             	comeFromTxv.setVisibility(View.GONE);
@@ -378,7 +376,7 @@ public class HotelOrderListFragment extends BaseFragment{
     
     private String formatOrderListItemMonthDay(long millis){
     	Date date = new Date(millis);
-    	SimpleDateFormat dateformat=new SimpleDateFormat(mContext.getString(R.string.simple_month_day_format));
+    	SimpleDateFormat dateformat=new SimpleDateFormat(getString(R.string.simple_month_day_format));
 		return dateformat.format(date);
     }
     
@@ -386,7 +384,7 @@ public class HotelOrderListFragment extends BaseFragment{
     public void onCancelled(TKAsyncTask tkAsyncTask) {
         super.onCancelled(tkAsyncTask);
         logI("onCancelled");
-        Toast.makeText(mContext, mSphinx.getString(R.string.response_null_hotel_order_sync), Toast.LENGTH_LONG).show();
+        Toast.makeText(mContext, getString(R.string.response_null_hotel_order_sync), Toast.LENGTH_LONG).show();
     }
     
     Handler mLoadOrderHandler = new Handler(){
@@ -506,7 +504,7 @@ public class HotelOrderListFragment extends BaseFragment{
     	HotelOrderOperation hotelOrderOperation = new HotelOrderOperation(mSphinx);
     	hotelOrderOperation.addParameter(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, HotelOrderOperation.OPERATION_CODE_QUERY);
     	hotelOrderOperation.addParameter(HotelOrderOperation.SERVER_PARAMETER_ORDER_IDS, ids);
-    	hotelOrderOperation.setup(Globals.getCurrentCityInfo().getId(), getId(), getId(), null);
+    	hotelOrderOperation.setup(getId(), getId(), null);
     	mTkAsyncTasking = mSphinx.queryStart(hotelOrderOperation);
     	mBaseQuerying = mTkAsyncTasking.getBaseQueryList();
     }
@@ -649,7 +647,7 @@ public class HotelOrderListFragment extends BaseFragment{
         				}
         			}
         		}
-        		Toast.makeText(mContext, mContext.getString(R.string.hotel_order_sync_success), Toast.LENGTH_SHORT).show();
+        		Toast.makeText(mContext, getString(R.string.hotel_order_sync_success), Toast.LENGTH_SHORT).show();
         		
         		if(!isExceptExists){
         			//clear the anomaly exists flag

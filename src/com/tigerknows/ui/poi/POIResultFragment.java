@@ -10,7 +10,6 @@ import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
-import com.tigerknows.map.MapEngine;
 import com.tigerknows.map.ItemizedOverlayHelper;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.BuslineModel;
@@ -158,37 +157,22 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         return mPOIList;
     }
     
-    public void setup() {
-        setup(null);
-    }
-    
-    public void setup(String inputText) {
-        mInputText = inputText;
-        
-        DataQuery lastDataQuerying = (DataQuery) this.mTkAsyncTasking.getBaseQuery();
-        if (lastDataQuerying == null) {
+    public void setup(DataQuery dataQuery) {
+        if (dataQuery == null) {
             return;
         }
         
-        if (lastDataQuerying.getSourceViewId() != getId()) {
+        mInputText = dataQuery.getParameter(DataQuery.SERVER_PARAMETER_KEYWORD);
+        
+        if (dataQuery.getSourceViewId() != getId()) {
             mDataQuery = null;
             mFilterControlView.setVisibility(View.GONE);
             mAPOI = null;
             mFilterList.clear();
         }
 
-        POI poi = lastDataQuerying.getPOI();
-        int sourceType = poi.getSourceType();
-        String str;
-        if (sourceType == POI.SOURCE_TYPE_MY_LOCATION) {
-            str = mContext.getString(R.string.searching);
-        } else if (sourceType == POI.SOURCE_TYPE_CITY_CENTER) {
-            str = mContext.getString(R.string.at_city_searching, MapEngine.getCityInfo(lastDataQuerying.getCityId()).getCName());
-        } else {
-            str = mContext.getString(R.string.at_location_searching);
-        }
-        mQueryingTxv.setText(str);
-        mTitleText = mSphinx.getString(R.string.searching_title);
+        mQueryingTxv.setText(R.string.searching);
+        mTitleText = getString(R.string.searching_title);
         
         this.mState = STATE_QUERYING;
         updateView();
@@ -305,20 +289,20 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     }
     
     private void refreshResultTitleText(DataQuery dataQuery) {
-        String str = mContext.getString(R.string.no_result);
+        String str = getString(R.string.no_result);
         if (dataQuery != null) {
             POIResponse poiModel = (POIResponse)dataQuery.getResponse();
             if (poiModel != null) {
                 POIList poiList = poiModel.getAPOIList();
                 if (poiList != null) {
                     mTitleText = Utility.substring(poiList.getShortMessage(), 5)
-                    + mSphinx.getString(R.string.double_bracket, poiList.getTotal());
+                    + getString(R.string.double_bracket, poiList.getTotal());
                 }
         
                 poiList = poiModel.getBPOIList();
                 if (poiList != null) {
                     mTitleText = Utility.substring(poiList.getShortMessage(), 5)
-                    + mSphinx.getString(R.string.double_bracket, poiList.getTotal());
+                    + getString(R.string.double_bracket, poiList.getTotal());
                 }
             }
         }
@@ -470,12 +454,11 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
 
         DataQuery poiQuery = new DataQuery(lastDataQuery);
         POI requestPOI = lastDataQuery.getPOI();
-        int cityId = lastDataQuery.getCityId();
         poiQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, String.valueOf(mPOIList.size()));
         if (poiQuery.hasParameter(DataQuery.SERVER_PARAMETER_FILTER) == false) {
             poiQuery.addParameter(DataQuery.SERVER_PARAMETER_FILTER, DataQuery.makeFilterRequest(mFilterList));
         }
-        poiQuery.setup(cityId, getId(), getId(), null, true, false, requestPOI);
+        poiQuery.setup(getId(), getId(), null, true, false, requestPOI);
         mSphinx.queryStart(poiQuery);
         }
     }
@@ -509,7 +492,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             firstIndex++;
         }
         ItemizedOverlayHelper.drawPOIOverlay(mSphinx, poiList, firstIndex);
-        mSphinx.getResultMapFragment().setData(mContext.getString(R.string.result_map), BaseQuery.SUB_DATA_TYPE_HOTEL.equals(mResultAdapter.getSubDataType()) ? ActionLog.POIHotelListMap : ActionLog.POIListMap);
+        mSphinx.getResultMapFragment().setData(getString(R.string.result_map), BaseQuery.SUB_DATA_TYPE_HOTEL.equals(mResultAdapter.getSubDataType()) ? ActionLog.POIHotelListMap : ActionLog.POIListMap);
         mSphinx.showView(R.id.view_result_map);   
     }
     
@@ -525,12 +508,11 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         DataQuery poiQuery = new DataQuery(lastDataQuery);
 
         POI requestPOI = lastDataQuery.getPOI();
-        int cityId = lastDataQuery.getCityId();
         poiQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
         poiQuery.addParameter(DataQuery.SERVER_PARAMETER_FILTER, DataQuery.makeFilterRequest(mFilterList));
-        poiQuery.setup(cityId, getId(), getId(), null, false, false, requestPOI);
+        poiQuery.setup(getId(), getId(), null, false, false, requestPOI);
         mSphinx.queryStart(poiQuery);
-        setup(mInputText);
+        setup(poiQuery);
         dismissPopupWindow();
     }
     
@@ -969,20 +951,6 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         }
 
         POIResponse poiResponse = (POIResponse)dataQuery.getResponse();
-        BuslineModel buslineModel = poiResponse.getBuslineModel();
-        if (buslineModel != null) {
-            BuslineQuery buslineQuery = new BuslineQuery(mSphinx);
-            buslineQuery.setup(dataQuery.getCityId(), dataQuery.getParameter(BaseQuery.SERVER_PARAMETER_KEYWORD), 0, false, R.id.view_traffic_busline_line_result, mContext.getString(R.string.doing_and_wait));
-            buslineQuery.setBuslineModel(buslineModel);
-            if (buslineModel.getType() == BuslineModel.TYPE_BUSLINE) {
-                poiResponse.setBuslineModel(null);
-                uiStackAdjust(dataQuery);
-                mSphinx.uiStackRemove(POIResultFragment.this.getId());
-                mSphinx.getBuslineResultLineFragment().setData(buslineQuery, dataQuery);
-                mSphinx.showView(R.id.view_traffic_busline_line_result);
-                return;
-            }
-        }
         
         if ((poiResponse.getAPOIList() != null && 
                 poiResponse.getAPOIList().getList() != null && 
@@ -1130,13 +1098,13 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
 
     @Override
     public void retry() {
-        if (mBaseQuerying != null) {
+        if (mBaseQuerying != null && mBaseQuerying.size() > 0) {
         	for(int i = 0, size = mBaseQuerying.size(); i < size; i++) {
                 mBaseQuerying.get(i).setResponse(null);
         	}
             mSphinx.queryStart(mBaseQuerying);
+            setup((DataQuery) mBaseQuerying.get(0));
         }
-        setup(mInputText);
     }
     
     public DataQuery getDataQuery() {

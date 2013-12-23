@@ -5,7 +5,6 @@
 package com.tigerknows.service;
 
 import com.decarta.Globals;
-import com.decarta.android.exception.APIException;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.TKConfig;
 import com.tigerknows.android.location.Position;
@@ -131,7 +130,7 @@ public class PullService extends Service {
                 }
                 
                 // 获取当前城市
-                CityInfo currentCityInfo = Globals.getLastCityInfo(getApplicationContext());
+                CityInfo currentCityInfo = Globals.getCurrentCityInfo(getApplicationContext());
                 
                 LogWrapper.d(TAG, "currentCityInfo="+currentCityInfo);
                 // 安装后从来没有使用过老虎宝典的情况
@@ -176,7 +175,7 @@ public class PullService extends Service {
                     if (!TextUtils.isEmpty(lastSucceedTime)) {
                         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_LAST_PULL_DATE, lastSucceedTime);
                     }
-                    dataQuery.setup(currentCityInfo.getId());
+                    dataQuery.setCityId(currentCityInfo.getId());
                     dataQuery.query();
                     Response response = dataQuery.getResponse();
                     if (response != null && response instanceof PullMessage) {

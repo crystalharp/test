@@ -7,7 +7,6 @@ package com.tigerknows.ui.poi;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.text.Spannable;
@@ -25,6 +24,8 @@ import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.android.location.Position;
+import com.tigerknows.android.os.TKAsyncTask;
+
 import android.widget.Toast;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.MapEngine;
@@ -101,8 +102,6 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         
         findViews();
         setListener();
-        
-        setFilterListView();
                 
         mLocationTxv.setVisibility(View.VISIBLE);
 
@@ -120,7 +119,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         	mTitleBtn.setText(R.string.merchant_type);
         }
         String name = mPOI.getName();
-        String title = mSphinx.getString(R.string.at_where_search, name);
+        String title = getString(R.string.at_where_search, name);
         SpannableStringBuilder style = new SpannableStringBuilder(title);
         int focusedColor = mSphinx.getResources().getColor(R.color.black_dark);
         style.setSpan(new ForegroundColorSpan(focusedColor), 0, 2, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
@@ -164,7 +163,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         if (mFilterList != null) {
             FilterListView.selectedFilter(mFilterList.get(0), -1);
         } else {
-            DataQuery.initStaticField(BaseQuery.DATA_TYPE_POI, BaseQuery.SUB_DATA_TYPE_POI, Globals.getCurrentCityInfo().getId(), mContext);
+            DataQuery.initStaticField(BaseQuery.DATA_TYPE_POI, BaseQuery.SUB_DATA_TYPE_POI, mContext, MapEngine.getCityId(mPOI.getPosition()));
             FilterCategoryOrder filterCategory = DataQuery.getPOIFilterCategoryOrder();
             if (filterCategory != null) {
                 List<FilterOption> filterOptionList = new ArrayList<DataQuery.FilterOption>();
@@ -266,10 +265,9 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
             }
             poiQuery.addParameter(DataQuery.SERVER_PARAMETER_INFO, DataQuery.INFO_TYPE_TAG);
             poiQuery.addParameter(DataQuery.SERVER_PARAMETER_EXT, DataQuery.EXT_BUSLINE);
-            poiQuery.setup(cityId, getId(), mSphinx.getPOIResultFragmentID(), null, false, false, requestPOI);
+            poiQuery.setup(getId(), getId(), getString(R.string.doing_and_wait), false, false, requestPOI);
+            poiQuery.setCityId(cityId);
             mSphinx.queryStart(poiQuery);
-            ((POIResultFragment)mSphinx.getFragment(poiQuery.getTargetViewId())).setup(null);
-            mSphinx.showView(poiQuery.getTargetViewId());
         } else {
             mSphinx.showTip(R.string.search_input_keyword, Toast.LENGTH_SHORT);
         }
@@ -278,6 +276,8 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     public void setData(POI poi) {
         reset();
         mPOI = poi;
+        
+        setFilterListView();
     }
     
     /**
@@ -317,5 +317,16 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
 	protected void backHome() {
         mFilterListView.setVisibility(View.GONE);
         mTitleBtn.setText(R.string.nearby_search);
+    }
+
+    @Override
+    public void onPostExecute(TKAsyncTask tkAsyncTask) {
+        super.onPostExecute(tkAsyncTask);
+        BaseQuery baseQuery = tkAsyncTask.getBaseQuery();
+        
+        String apiType = baseQuery.getAPIType();
+        if (BaseQuery.API_TYPE_DATA_QUERY.equals(apiType)) {
+            InputSearchFragment.dealWithPOIResponse((DataQuery) baseQuery, mSphinx, this);
+        }
     }
 }

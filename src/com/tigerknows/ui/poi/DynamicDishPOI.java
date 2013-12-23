@@ -165,7 +165,7 @@ public class DynamicDishPOI extends DynamicPOIViewTemplate implements View.OnCli
         if (id == R.id.title_view) {
             mPOIDetailFragment.mActionLog.addAction(mPOIDetailFragment.mActionTag+ActionLog.POIDetailShopkeeper);
             Intent intent = new Intent();
-            intent.putExtra(BrowserActivity.TITLE, mSphinx.getString(R.string.add_dish));
+            intent.putExtra(BrowserActivity.TITLE, getString(R.string.add_dish));
             intent.putExtra(BrowserActivity.URL, "http://dish.laohubaodian.net/dish/13");
             mSphinx.showView(R.id.activity_browser, intent);
         } else if (id == R.id.list_view) {

@@ -39,7 +39,6 @@ import com.tigerknows.android.location.Position;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.crypto.DataEncryptor;
 import com.tigerknows.map.CityInfo;
-import com.tigerknows.map.MapEngine;
 import com.tigerknows.model.response.Appendix;
 import com.tigerknows.model.response.DataPackage;
 import com.tigerknows.model.response.DownloadDomainCake;
@@ -163,18 +162,30 @@ public abstract class BaseQuery {
 
     // sessionid    string  false   登录用户sessionId 
     public static final String SERVER_PARAMETER_SESSION_ID = "sessionid";
-
-    // lc  int false   定位城市
-    public static final String SERVER_PARAMETER_LOCATION_CITY = "lc";
-
-    // lx  Double  false   定位经度x
+    
+    // x   Double  false   选定经度x
+    public static final String SERVER_PARAMETER_LONGITUDE = "x";
+    
+    // y   Double  false   选定纬度y
+    public static final String SERVER_PARAMETER_LATITUDE = "y";
+    
+    // lx   Double  false   定位经度x
     public static final String SERVER_PARAMETER_LOCATION_LONGITUDE = "lx";
-
-    // ly  Double  false   定位纬度y
+    
+    // ly   Double  false   定位纬度y
     public static final String SERVER_PARAMETER_LOCATION_LATITUDE = "ly";
 
     // lt  int false   local type 定位来源
     public static final String SERVER_PARAMETER_LOCATION_TYPE = "lt";
+    
+    // lc   int  false   定位城市Id
+    public static final String SERVER_PARAMETER_LOCATION_CITY = "lc";
+    
+    // cx   Double  false   地图中心经度cx
+    public static final String SERVER_PARAMETER_CENTER_LONGITUDE = "cx";
+    
+    // cy   Double  false   地图中心纬度cy
+    public static final String SERVER_PARAMETER_CENTER_LATITUDE = "cy";
 
     // tel string true 手机号
     public static final String SERVER_PARAMETER_TELEPHONE = "tel";
@@ -373,34 +384,34 @@ public abstract class BaseQuery {
         sCommonParameters.add("vp", TKConfig.getVersionOfPlatform());
     }
     
+    protected void addCommonParameters() {
+        addCommonParameters(this.cityId);
+    }
+    
     /**
      * 添加Query的公共参数，继承自此类的Query可以override这个函数
      */
-    protected void addCommonParameters() {
-        addCommonParameters(cityId, false);
-    }
-    
-    public void addCommonParameters(int cityId, boolean isLocateMe) {
+    protected void addCommonParameters(int cityId) {
+        CityInfo cityInfo = Globals.getCurrentCityInfo(context);
+        if (cityId == CityInfo.CITY_ID_INVALID) {
+            cityId = cityInfo.getId();
+        }
         requestParameters.add(sCommonParameters);
 
-        if (cityId < CityInfo.CITY_ID_BEIJING && isLocateMe == false) {
-            cityId = CityInfo.CITY_ID_BEIJING;
-        }
         requestParameters.add("c", String.valueOf(cityId));
-
         requestParameters.add("e", TKConfig.getIMEI());
         requestParameters.add("d", TKConfig.getIMSI());
-        boolean simAvailably = true;
         TKCellLocation tkCellLocation = TKConfig.getCellLocation();
         int mcc = TKConfig.getMCC();
         int mnc = TKConfig.getMNC();
         int lac = tkCellLocation.lac;
         int cid = tkCellLocation.cid;
-            requestParameters.add("mcc", String.valueOf(mcc));
-            requestParameters.add("mnc", String.valueOf(mnc));
-            requestParameters.add("lac", String.valueOf(lac));
-            requestParameters.add("ci", String.valueOf(cid));
-            requestParameters.add("ss", String.valueOf(TKConfig.getSignalStrength()));
+
+        requestParameters.add("mcc", String.valueOf(mcc));
+        requestParameters.add("mnc", String.valueOf(mnc));
+        requestParameters.add("lac", String.valueOf(lac));
+        requestParameters.add("ci", String.valueOf(cid));
+        requestParameters.add("ss", String.valueOf(TKConfig.getSignalStrength()));
         
         //服务器的约定，这些类别的请求不能含有at
         if (API_TYPE_PROXY.equals(apiType) == false 
@@ -412,9 +423,19 @@ public abstract class BaseQuery {
             requestParameters.add(SERVER_PARAMETER_VERSION, version);
         }
 
-        addMyLocationParameters();
         addUUIDParameter();
         requestParameters.add(SERVER_PARAMETER_CLIENT_STATUS, sClentStatus);
+        
+        String dataType = getParameter(SERVER_PARAMETER_DATA_TYPE);
+        if (DATA_TYPE_PULL_MESSAGE.equals(dataType) == false) {
+            addMyLocationParameters();
+            
+            Position position = cityInfo.getPosition();
+            if (position != null && cityInfo.order == 0) {
+                requestParameters.add(SERVER_PARAMETER_CENTER_LONGITUDE, String.valueOf(position.getLon()));
+                requestParameters.add(SERVER_PARAMETER_CENTER_LATITUDE, String.valueOf(position.getLat()));
+            }
+        }
     }
     
     /**
@@ -435,7 +456,7 @@ public abstract class BaseQuery {
     
     protected String actionTag;
     
-    protected int cityId = CityInfo.CITY_ID_BEIJING;
+    protected int cityId = CityInfo.CITY_ID_INVALID;
 
     protected int sourceViewId = -1;
     
@@ -487,6 +508,7 @@ public abstract class BaseQuery {
         this.tipText = query.tipText;
         this.needReconntection = query.needReconntection;
         this.requestParameters = query.requestParameters.clone();
+        this.cityId = query.cityId;
     }
     
     public int getTargetViewId() {
@@ -551,21 +573,16 @@ public abstract class BaseQuery {
     public interface ReportState {
         public void onReportStateCode(int stateCode);
     }
-
-    public void setup(int cityId) {
-        setup(cityId, -1, -1);
+    
+    public void setup(int sourceViewId, int targetViewId) {
+        setup(sourceViewId, targetViewId, null);
     }
     
-    public void setup(int cityId, int sourceViewId, int targetViewId) {
-        setup(cityId, sourceViewId, targetViewId, null);
+    public void setup(int sourceViewId, int targetViewId, String tipText) {
+        setup(sourceViewId, targetViewId, tipText, false);
     }
     
-    public void setup(int cityId, int sourceViewId, int targetViewId, String tipText) {
-        setup(cityId, sourceViewId, targetViewId, tipText, false);
-    }
-    
-    public void setup(int cityId, int sourceViewId, int targetViewId, String tipText, boolean needReconntection) {
-        this.cityId = cityId;
+    public void setup(int sourceViewId, int targetViewId, String tipText, boolean needReconntection) {
         this.sourceViewId = sourceViewId;
         this.targetViewId = targetViewId;
         this.tipText = tipText;
@@ -621,7 +638,8 @@ public abstract class BaseQuery {
      */
     String[] CommonOptionalKeys = new String[]{"lc", "lx", "ly", "lt", "mcc", "mnc", "lac", 
             "ci", "ss", "at", "v", "info", "dsrc", "ddst", "dv", "sc", "sg", "si", "sv", "vd", 
-            "ec", "vp", SERVER_PARAMETER_CLIENT_STATUS, SERVER_PARAMETER_SESSION_ID};
+            "ec", "vp", SERVER_PARAMETER_CLIENT_STATUS, SERVER_PARAMETER_SESSION_ID,
+            SERVER_PARAMETER_CENTER_LONGITUDE, SERVER_PARAMETER_CENTER_LATITUDE};
      
     /**
      * 这个函数用来检测参数,顺便可以兼容以前添加公共参数的行为.

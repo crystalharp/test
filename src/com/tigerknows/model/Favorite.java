@@ -92,7 +92,7 @@ public class Favorite extends BaseData{
             BuslineModel buslineModel = new BuslineModel();
             List<Line> lineList = Line.readFromDatabases(context, id, Tigerknows.STORE_TYPE_FAVORITE);
             buslineModel.setLineList(lineList);
-            buslineQuery.setup(-1, lineList.get(0).getName(), 0, true, -1, null);
+            buslineQuery.setup(lineList.get(0).getName(), 0, true, -1, null);
             buslineModel.setTotal(1);
             buslineModel.setType(BuslineModel.TYPE_BUSLINE);
 

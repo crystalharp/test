@@ -132,7 +132,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
         mTitleBtn.setText(R.string.add_merchant);
         mRightBtn.setBackgroundResource(R.drawable.btn_submit_comment);
         
-        CityInfo cityInfo = Globals.getCurrentCityInfo();
+        CityInfo cityInfo = Globals.getCurrentCityInfo(mThis);
         
         mCityBtn.setText(cityInfo.getCName());
         mLastAreaCode = MapEngine.getAreaCodeByCityId(cityInfo.getId())+"-";
@@ -174,7 +174,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
     
     boolean setFilterCategoryOrder(boolean updateNameEdt) {
         boolean result = false;
-        DataQuery.initStaticField(BaseQuery.DATA_TYPE_POI, BaseQuery.SUB_DATA_TYPE_POI, Globals.getCurrentCityInfo().getId(), mThis);
+        DataQuery.initStaticField(BaseQuery.DATA_TYPE_POI, BaseQuery.SUB_DATA_TYPE_POI, mThis);
         FilterCategoryOrder filterCategory = DataQuery.getPOIFilterCategoryOrder();
         Filter categoryFitler = null;
         if (mFilterList == null || mFilterList.size() <= 0) {
@@ -637,7 +637,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
         DataQuery dataQuery = new DataQuery(mThis);
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_FILTER);
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_CONFIGINFO, DataQuery.CONFIGINFO_POI_CATEGORY_ORDER);
-        dataQuery.setup(Globals.getCurrentCityInfo(false).getId(), mId, mId, null, true);
+        dataQuery.setup(mId, mId, null, true);
         mThis.queryStart(dataQuery);
     }
     
@@ -734,7 +734,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
         
         FeedbackUpload feedbackUpload = new FeedbackUpload(mThis);
         feedbackUpload.addParameter(FeedbackUpload.SERVER_PARAMETER_ADD_MERCHANT, s.toString());
-        feedbackUpload.setup(Globals.getCurrentCityInfo().getId(), -1, -1, mThis.getString(R.string.doing_and_wait));
+        feedbackUpload.setup(-1, -1, mThis.getString(R.string.doing_and_wait));
         
         queryStart(feedbackUpload);
     }

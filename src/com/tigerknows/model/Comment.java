@@ -573,7 +573,7 @@ public class Comment extends BaseData {
         commentQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_DIANPING);
         commentQuery.addParameter(DataQuery.SERVER_PARAMETER_POI_ID, poi.getUUID());
         commentQuery.addParameter(DataQuery.SERVER_PARAMETER_REFER, DataQuery.REFER_POI);
-        commentQuery.setup(Globals.getCurrentCityInfo().getId(), sourceViewId, targerViewId, null, false, false, poi);
+        commentQuery.setup(sourceViewId, targerViewId, null, false, false, poi);
         return commentQuery;
     }
     

@@ -23,6 +23,8 @@ import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
+import com.tigerknows.android.location.Position;
+import com.tigerknows.map.CityInfo;
 import com.tigerknows.map.MapEngine;
 import com.tigerknows.model.DataQuery.DiscoverResponse.DiscoverConfigList;
 import com.tigerknows.model.DataQuery.DiscoverResponse.DiscoverCategoryList.DiscoverCategory;
@@ -59,12 +61,6 @@ public final class DataQuery extends BaseQuery {
     
     // info  string  false   info目前的取值有： tagsearch POI搜索时是通过点击首页进行的搜索（非输入搜索） networkpush 因为网络可用触发的push请求 
     public static final String SERVER_PARAMETER_INFO = "info";
-    
-    // x   Double  false   选定经度x
-    public static final String SERVER_PARAMETER_LONGITUDE = "x";
-    
-    // y   Double  false   选定纬度y
-    public static final String SERVER_PARAMETER_LATITUDE = "y";
 
     // flt String  false   筛选选项，格式为key:id;key:id;key:id(key是对应筛选项在xmap中的key，目前有11,12,13)
     public static final String SERVER_PARAMETER_FILTER = "flt";
@@ -89,15 +85,6 @@ public final class DataQuery extends BaseQuery {
     
     // poiid   string  false   评论所属poi的id，通过POI详情查看点评时必需
     public static final String SERVER_PARAMETER_POI_ID = "poiid";
-    
-    // lx   Double  false   定位经度x
-    public static final String SERVER_PARAMETER_LOCATION_LONGITUDE = "lx";
-    
-    // ly   Double  false   定位纬度y
-    public static final String SERVER_PARAMETER_LOCATION_LATITUDE = "ly";
-    
-    // lc   int  false   定位城市Id
-    public static final String SERVER_PARAMETER_LOCATION_CITY = "lc";
 
     // time string false 参考时间点
     public static final String SERVER_PARAMETER_TIME = "time";
@@ -287,13 +274,12 @@ public final class DataQuery extends BaseQuery {
         super(lastDataQuery);
     }
 
-    public void setup(int cityId, int sourceViewId, int targetViewId, String tipText, boolean isTurnpage, boolean needReconntection, POI poi) {
-        super.setup(cityId, sourceViewId, targetViewId, tipText);
+    public void setup(int sourceViewId, int targetViewId, String tipText, boolean isTurnpage, boolean needReconntection, POI poi) {
+        super.setup(sourceViewId, targetViewId, tipText);
         this.poi = poi;
-        this.cityId = cityId;
         this.isTurnPage = isTurnpage;
         this.needReconntection = needReconntection;
-        initStaticField(getParameter(SERVER_PARAMETER_DATA_TYPE), getParameter(SERVER_PARAMETER_SUB_DATA_TYPE), this.cityId);
+        initStaticField(getParameter(SERVER_PARAMETER_DATA_TYPE), getParameter(SERVER_PARAMETER_SUB_DATA_TYPE), context, this.cityId);
     }
     
     public static boolean checkDiscoveryCity(int cityId) {
@@ -339,13 +325,16 @@ public final class DataQuery extends BaseQuery {
         }
     }
     
-    public static void initStaticField(String dataType, String subDataType, int cityId) {
-        initStaticField(dataType, subDataType, cityId, null);
+    public static void initStaticField(String dataType, String subDataType, Context context) {
+        initStaticField(dataType, subDataType, context, Globals.getCurrentCityInfo(context).getId());
     }
     
-    public static void initStaticField(String dataType, String subDataType, int cityId, Context context) {
+    public static void initStaticField(String dataType, String subDataType, Context context, int cityId) {
         try {
             synchronized (Filter_Lock) {
+                if (cityId == CityInfo.CITY_ID_INVALID) {
+                    cityId = Globals.getCurrentCityInfo(context).getId();
+                }
                 FilterArea filterDataArea = null;
                 FilterCategoryOrder filterDataCategoryOrder = null;
                 String filterFileKey = dataType;
@@ -508,12 +497,8 @@ public final class DataQuery extends BaseQuery {
      */
     @Override
     protected void addMyLocationParameters() {
-        String dataType = getParameter(SERVER_PARAMETER_DATA_TYPE);
-        /*FIXME:推送的请求已经有定位信息，不再走这个逻辑，下版本改掉这个做法*/
-        if (DATA_TYPE_PULL_MESSAGE.equals(dataType)) {
-            return;
-        }
         if (isTurnPage == false) {
+            String dataType = getParameter(SERVER_PARAMETER_DATA_TYPE);
             if (DATA_TYPE_FENDIAN.equals(dataType) || DATA_TYPE_YINGXUN.equals(dataType) ||
                     (SUB_DATA_TYPE_HOTEL.equals(getParameter(SERVER_PARAMETER_SUB_DATA_TYPE)) && hasParameter(SERVER_PARAMETER_LOCATION_CITY))) {
 //                if (criteria.containsKey(SERVER_PARAMETER_LOCATION_CITY)
@@ -1660,6 +1645,12 @@ public final class DataQuery extends BaseQuery {
 
         // 0x04     x_map   公交类线路查询返回格式
         public static final byte FIELD_EXT_BUSLINE = 0x04;
+
+        // 0x05     x_map   切换地图的中心和边界范围
+        public static final byte FIELD_MAP_CENTER_AND_BORDER_RANGE = 0x05;
+
+        // 0x06     x_array<x_map>  x_map<城市&结果数量> 
+        public static final byte FIELD_CITY_ID_AND_RESULT_TOTAL = 0x06;
         
         // 0x23 x_array<x_int>
         // 与请求idlist相关，反映id们属性的字段，用整数表示属性，第1个bit为1表示无效，第2bit为1表示不存在，第3bit为1表示金戳，第4bit为1表示银戳(从低位开始)
@@ -1668,6 +1659,10 @@ public final class DataQuery extends BaseQuery {
         private POIList aPOIList;
 
         private POIList bPOIList;
+        
+        private MapCenterAndBorderRange mapCenterAndBorderRange;
+        
+        private List<CityIdAndResultTotal> cityIdAndResultTotalList;
 
         private List<Long> idList;
         
@@ -1701,6 +1696,14 @@ public final class DataQuery extends BaseQuery {
             this.buslineModel = buslineModel;
         }
 
+        public MapCenterAndBorderRange getMapCenterAndBorderRange() {
+            return mapCenterAndBorderRange;
+        }
+
+        public List<CityIdAndResultTotal> getCityIdAndResultTotalList() {
+            return cityIdAndResultTotalList;
+        }
+
         @SuppressWarnings("unchecked")
         public POIResponse(XMap data) throws APIException {
             super(data);
@@ -1711,6 +1714,10 @@ public final class DataQuery extends BaseQuery {
             if (this.data.containsKey(FIELD_B_POI_LIST)) {
                 this.bPOIList = new POIList(this.data.getXMap(FIELD_B_POI_LIST), FIELD_B_POI_LIST);
             }
+            if (this.data.containsKey(FIELD_MAP_CENTER_AND_BORDER_RANGE)) {
+                mapCenterAndBorderRange = new MapCenterAndBorderRange(this.data.getXMap(FIELD_MAP_CENTER_AND_BORDER_RANGE));
+            }
+            this.cityIdAndResultTotalList = getListFromData(FIELD_CITY_ID_AND_RESULT_TOTAL, CityIdAndResultTotal.Initializer);
             if (this.data.containsKey(FIELD_ID_LIST)) {
                 this.idList = this.data.getXArray(FIELD_ID_LIST).toIntList();
             }
@@ -1758,6 +1765,86 @@ public final class DataQuery extends BaseQuery {
                 this.shortMessage = getStringFromData(FIELD_SHORT_MESSAGE);
             }
 
+        }
+        
+        public static class CityIdAndResultTotal extends XMapData {
+            // 0x01     x_int   城市的seq id 
+            public static final byte FIELD_CIYT_ID = 0x01;
+
+            // 0x02     x_int   该城市中的结果数量
+            public static final byte FIELD_RESULT_TOTAL = 0x02;
+
+            private long cityId;
+
+            private long resultTotal;
+            
+            public long getCityId() {
+                return cityId;
+            }
+
+            public long getResultTotal() {
+                return resultTotal;
+            }
+
+            public CityIdAndResultTotal(XMap data) throws APIException {
+                super(data);
+                
+                this.cityId = getLongFromData(FIELD_CIYT_ID);
+                this.resultTotal = getLongFromData(FIELD_RESULT_TOTAL);
+            }
+
+            public static XMapInitializer<CityIdAndResultTotal> Initializer = new XMapInitializer<CityIdAndResultTotal>() {
+
+                @Override
+                public CityIdAndResultTotal init(XMap data) throws APIException {
+                    return new CityIdAndResultTotal(data);
+                }
+            };
+        }
+        
+        public static class MapCenterAndBorderRange extends XMapData {
+            // 0x01     x_int   中心点经度——x，普通经度 * 10万  
+            public static final byte FIELD_MAP_CENTER_X = 0x01;
+
+            // 0x02     x_int   中心点纬度——y，普通纬度 * 10万
+            public static final byte FIELD_MAP_CENTER_Y = 0x02;
+            
+            // 0x03     x_array<x_int>  x_array<边界范围点序列的x坐标 * 10万> 
+            public static final byte FIELD_BORDER_RANGE_X = 0x03;
+
+            // 0x04     x_array<x_int>  x_array<边界范围点序列的y坐标 * 10万>
+            public static final byte FIELD_BORDER_RANGE_Y = 0x04;
+
+            private Position mapCenter;
+
+            private ArrayList<Position> borderRange;
+
+            public Position getMapCenter() {
+                return mapCenter;
+            }
+
+            public ArrayList<Position> getBorderRange() {
+                return borderRange;
+            }
+
+            public MapCenterAndBorderRange(XMap data) throws APIException {
+                super(data);
+                
+                this.mapCenter = getPositionFromData(FIELD_MAP_CENTER_X, FIELD_MAP_CENTER_Y);
+                if (data.containsKey(FIELD_BORDER_RANGE_X) && data.containsKey(FIELD_BORDER_RANGE_Y)) {
+                    XArray<XInt> x = data.getXArray(FIELD_BORDER_RANGE_X);
+                    XArray<XInt> y = data.getXArray(FIELD_BORDER_RANGE_Y);
+                    
+                    if (x.size() == y.size()) {
+                        borderRange = new ArrayList<Position>();
+                        for(int i = 0, size = x.size(); i < size; i++) {
+                            Position position = new Position(long2doubleForLatLon(y.get(i).getValue()),
+                                    long2doubleForLatLon(x.get(i).getValue()));
+                            borderRange.add(position);
+                        }
+                    }
+                }
+            }
         }
     }
 

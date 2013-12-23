@@ -90,7 +90,7 @@ public class AppRecommendActivity extends BaseActivity {
         }
         
         Bootstrap bootstrap = new Bootstrap(mThis);
-        bootstrap.setup(Globals.getCurrentCityInfo().getId(), -1, -1, mThis.getString(R.string.doing_and_wait));
+        bootstrap.setup(-1, -1, mThis.getString(R.string.doing_and_wait));
         queryStart(bootstrap);
     }
 

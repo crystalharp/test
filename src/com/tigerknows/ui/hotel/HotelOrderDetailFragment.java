@@ -20,13 +20,11 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
@@ -194,7 +192,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
 		public void onClick(View v) {
 			LogWrapper.i(TAG, "Cancel order. Id: " + mOrder.getId());
 			mActionLog.addAction(mActionTag + ActionLog.HotelOrderDetailCancel);
-			Utility.showNormalDialog(mSphinx, mContext.getString(R.string.hotel_order_cancel_confirm), new DialogInterface.OnClickListener() {
+			Utility.showNormalDialog(mSphinx, getString(R.string.hotel_order_cancel_confirm), new DialogInterface.OnClickListener() {
 
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
@@ -220,7 +218,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
     	hotelOrderOperation.addParameter(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, HotelOrderOperation.OPERATION_CODE_UPDATE);
     	hotelOrderOperation.addParameter(HotelOrderOperation.SERVER_PARAMETER_ORDER_ID, mOrder.getId());
     	hotelOrderOperation.addParameter(HotelOrderOperation.SERVER_PARAMETER_UPDATE_ACTION, HotelOrderOperation.ORDER_UPDATE_ACTION_CANCEL);
-    	hotelOrderOperation.setup(Globals.getCurrentCityInfo().getId(), getId(), getId(), mContext.getString(R.string.doing_and_wait));
+    	hotelOrderOperation.setup(getId(), getId(), getString(R.string.doing_and_wait));
     	mTkAsyncTasking = mSphinx.queryStart(hotelOrderOperation);
     	mBaseQuerying = mTkAsyncTasking.getBaseQueryList();
 
@@ -233,7 +231,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
         commentQuery.addParameter(DataQuery.SERVER_PARAMETER_POI_ID, mOrder.getHotelPoiUUID());
         commentQuery.addParameter(DataQuery.SERVER_PARAMETER_REFER, DataQuery.REFER_POI);
         commentQuery.addParameter(DataQuery.SERVER_PARAMETER_SIZE, "1");
-        commentQuery.setup(Globals.getCurrentCityInfo().getId(), getId(), getId(), mContext.getString(R.string.doing_and_wait), false);
+        commentQuery.setup(getId(), getId(), getString(R.string.doing_and_wait), false);
         
 		return commentQuery;
         
@@ -277,7 +275,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
 
 			mActionLog.addAction(mActionTag + ActionLog.HotelOrderDetailDelete);
 			
-			Utility.showNormalDialog(mSphinx, mContext.getString(R.string.hotel_order_delete_confirm), new DialogInterface.OnClickListener() {
+			Utility.showNormalDialog(mSphinx, getString(R.string.hotel_order_delete_confirm), new DialogInterface.OnClickListener() {
 
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
@@ -301,10 +299,10 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
 			table.close();
 			mSphinx.getHotelOrderListFragment().removeOrder(mOrder);
 			dismiss();
-			Toast.makeText(mContext, R.string.hotel_order_delete_success, Toast.LENGTH_LONG).show();
+			Toast.makeText(mSphinx, R.string.hotel_order_delete_success, Toast.LENGTH_LONG).show();
 		} catch (Exception e) {
 			e.printStackTrace();
-			Toast.makeText(mContext, R.string.hotel_order_delete_success, Toast.LENGTH_SHORT).show();
+			Toast.makeText(mSphinx, R.string.hotel_order_delete_success, Toast.LENGTH_SHORT).show();
 		}
 	}
     
@@ -335,7 +333,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
         super.onResume();
         
         // set title fragment content
-        mTitleBtn.setText(mContext.getString(R.string.hotel_order_detail));
+        mTitleBtn.setText(getString(R.string.hotel_order_detail));
         if(mHotelVendor == null || TextUtils.isEmpty(mHotelVendor.getServiceName())){
         }else{
             mRightBtn.setBackgroundResource(R.drawable.btn_title);
@@ -380,7 +378,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
     	HotelOrderOperation hotelOrderOperation = new HotelOrderOperation(mSphinx);
     	hotelOrderOperation.addParameter(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, HotelOrderOperation.OPERATION_CODE_QUERY);
     	hotelOrderOperation.addParameter(HotelOrderOperation.SERVER_PARAMETER_ORDER_IDS, ids);
-    	hotelOrderOperation.setup(Globals.getCurrentCityInfo().getId(), getId(), getId(), null);
+    	hotelOrderOperation.setup(getId(), getId(), null);
     	mTkAsyncTasking = mSphinx.queryStart(hotelOrderOperation);
     	mBaseQuerying = mTkAsyncTasking.getBaseQueryList();
     }
@@ -426,8 +424,8 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
     	mOrderIdTxv.setText(order.getId().split("\\$")[0]);
     	mOrderStateTxv.setText(getOrderStateDesc(order.getState()));
     	mOrderTimeTxv.setText(formatOrderTime(order.getCreateTime()));
-    	mTotalFeeTxv.setText(Utility.formatHotelPrice(order.getTotalFee()) + mContext.getString(R.string.rmb_text) );
-    	mPayTypeTxv.setText(mContext.getString(R.string.hotel_order_default_pay_type));
+    	mTotalFeeTxv.setText(Utility.formatHotelPrice(order.getTotalFee()) + getString(R.string.rmb_text) );
+    	mPayTypeTxv.setText(getString(R.string.hotel_order_default_pay_type));
     	mCheckinDateTxv.setText(formatOrderTime(order.getCheckinTime()));
     	mCheckoutDateTxv.setText(formatOrderTime(order.getCheckoutTime()));
     	mRetentionDateTxv.setText(CalendarUtil.ymd8c_Hm4.format(new Date(order.getRetentionTime())));
@@ -438,7 +436,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
         if(mHotelVendor == null || TextUtils.isEmpty(mHotelVendor.getName())){
         	mComeFromTxv.setVisibility(View.GONE);
         }else{
-        	mComeFromTxv.setText(mSphinx.getString(R.string.this_come_from_colon, mHotelVendor.getName()));
+        	mComeFromTxv.setText(getString(R.string.this_come_from_colon, mHotelVendor.getName()));
         	mComeFromTxv.setVisibility(View.VISIBLE);
         }
     }
@@ -456,7 +454,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
             state = 1;
         }
         
-        return mContext.getString(orderStateDescResId[state-1]);
+        return getString(orderStateDescResId[state-1]);
     }
     
     public static String formatOrderTime(long millis){
@@ -559,7 +557,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
 	            		}else{
 	            			// No data is get
 	            			// TODO show error to user
-	            			Toast.makeText(mContext, TAG+" Network error", Toast.LENGTH_SHORT).show();
+	            			Toast.makeText(mSphinx, TAG+" Network error", Toast.LENGTH_SHORT).show();
 	            		}
 	            		
 	            	}
@@ -668,7 +666,8 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
         poiQuery.addParameter(DataQuery.SERVER_PARAMETER_HOTEL_SOURCE, HotelVendor.ALL);
         
         int cityId= MapEngine.getCityId(mOrder.getPosition());
-        poiQuery.setup(cityId, getId(), getId(), mContext.getString(R.string.doing_and_wait));
+        poiQuery.setup(getId(), getId(), getString(R.string.doing_and_wait));
+        poiQuery.setCityId(cityId);
         return poiQuery;
     }
     

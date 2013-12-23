@@ -52,6 +52,7 @@ import com.tigerknows.android.os.TKAsyncTask;
 import android.widget.Toast;
 
 import com.tigerknows.common.ActionLog;
+import com.tigerknows.map.CityInfo;
 import com.tigerknows.map.MapEngine;
 import com.tigerknows.map.ItemizedOverlayHelper;
 import com.tigerknows.model.BaseQuery;
@@ -424,7 +425,14 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         
         //动态POI的数据加载。会在初始化后检测存在该动态POI的时候被调用，如果需要就做进一步查询，不需要则直接刷新显示
         public abstract void loadData(int fromType);
-
+        
+        public String getString(int resId) {
+            return mPOIDetailFragment.mContext.getString(resId);
+        }
+        
+        public String getString(int resId, Object... formatArgs) {
+            return mPOIDetailFragment.mContext.getString(resId, formatArgs);
+        }
     }
 
     /**
@@ -572,8 +580,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
 
         Resources resources = mSphinx.getResources();
         mIcAPOI = resources.getDrawable(R.drawable.ic_location_nearby);
-        mDistance = mSphinx.getString(R.string.distance);
-        mDistanceA = mSphinx.getString(R.string.distanceA);
+        mDistance = getString(R.string.distance);
+        mDistanceA = getString(R.string.distanceA);
         
         mDynamicNormalPOI = new DynamicNormalPOI(this, mLayoutInflater);
         
@@ -640,13 +648,14 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             poiQuery.addParameter(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
             poiQuery.addParameter(DataOperation.SERVER_PARAMETER_DATA_UID, poi.getUUID());
             poiQuery.addParameter(DataOperation.SERVER_PARAMETER_NEED_FIELD, POI.NEED_FIELD);
-            int cityId = Globals.getCurrentCityInfo().getId();
+            int cityId = CityInfo.CITY_ID_INVALID;
             if (poi.ciytId != 0) {
                 cityId = poi.ciytId;
             } else if (poi.getPosition() != null){
                 cityId = MapEngine.getCityId(poi.getPosition());
             }
-            poiQuery.setup(cityId, getId(), getId(), mSphinx.getString(R.string.doing_and_wait));
+            poiQuery.setup(getId(), getId(), getString(R.string.doing_and_wait));
+            poiQuery.setCityId(cityId);
             baseQueryList.add(poiQuery);
             mSphinx.queryStart(baseQueryList);
         }
@@ -701,7 +710,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         if (mDynamicHotelPOI.isExist() || poi.getSubType() == POI.SUB_TYPE_HOTEL) {
             mMoneyTxv.setVisibility(View.GONE);
         } else if (money > -1) {
-            mMoneyTxv.setText(mContext.getString(R.string.yuan, money));
+            mMoneyTxv.setText(getString(R.string.yuan, money));
             mMoneyTxv.setVisibility(View.VISIBLE);
         } else {
             mMoneyTxv.setVisibility(View.GONE);
@@ -759,7 +768,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             
             if (!TextUtils.isEmpty(telephone)) {
                 mTelephoneView.setVisibility(View.VISIBLE);
-                mTelephoneTxv.setText(telephone.replace("|", mSphinx.getString(R.string.dunhao)));
+                mTelephoneTxv.setText(telephone.replace("|", getString(R.string.dunhao)));
                 
                 if (TextUtils.isEmpty(address)) {
                     mTelephoneView.setBackgroundResource(R.drawable.list_single);
@@ -1013,7 +1022,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                     }
 
                     Utility.showNormalDialog(mSphinx, 
-                            mSphinx.getString(resId));
+                            getString(resId));
                 } else {
                     EditCommentActivity.setPOI(poi, getId(), poi.getMyComment() != null ? EditCommentActivity.STATUS_MODIFY : EditCommentActivity.STATUS_NEW);
                     mSphinx.showView(R.id.activity_poi_edit_comment);
@@ -1035,7 +1044,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         List<POI> pois = new ArrayList<POI>();
         pois.add(poi);
         ItemizedOverlayHelper.drawPOIOverlay(mSphinx, pois, 0);
-        mSphinx.getResultMapFragment().setData(mContext.getString(R.string.result_map), poi.getSourceType() == POI.SOURCE_TYPE_HOTEL ? ActionLog.POIHotelDetailMap : ActionLog.POIDetailMap);
+        mSphinx.getResultMapFragment().setData(getString(R.string.result_map), poi.getSourceType() == POI.SOURCE_TYPE_HOTEL ? ActionLog.POIHotelDetailMap : ActionLog.POIDetailMap);
         mSphinx.showView(R.id.view_result_map);
     }
     
@@ -1048,10 +1057,10 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         mActionLog.addAction(mActionTag +  ActionLog.CommonFavorite, String.valueOf(isFavorite));
         if (isFavorite) {
             Utility.showNormalDialog(mSphinx, 
-                    mContext.getString(R.string.prompt), 
-                    mContext.getString(R.string.cancel_favorite_tip),
-                    mContext.getString(R.string.yes),
-                    mContext.getString(R.string.no),
+                    getString(R.string.prompt), 
+                    getString(R.string.cancel_favorite_tip),
+                    getString(R.string.yes),
+                    getString(R.string.no),
                     new DialogInterface.OnClickListener() {
                         
                         @Override
@@ -1144,13 +1153,14 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             poiQuery.addParameter(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
             poiQuery.addParameter(DataOperation.SERVER_PARAMETER_DATA_UID, uuid);
             poiQuery.addParameter(DataOperation.SERVER_PARAMETER_NEED_FIELD, POI.NEED_FIELD);
-            int cityId = Globals.getCurrentCityInfo().getId();
+            int cityId = CityInfo.CITY_ID_INVALID;
             if (poi.ciytId != 0) {
                 cityId = poi.ciytId;
             } else if (poi.getPosition() != null){
                 cityId = MapEngine.getCityId(poi.getPosition());
             }
-            poiQuery.setup(cityId, getId(), getId(), null);
+            poiQuery.setup(getId(), getId(), null);
+            poiQuery.setCityId(cityId);
             baseQueryList.add(poiQuery);
         }
         
@@ -1159,7 +1169,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             commentQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_DIANPING);
             commentQuery.addParameter(DataQuery.SERVER_PARAMETER_POI_ID, poi.getUUID());
             commentQuery.addParameter(DataQuery.SERVER_PARAMETER_REFER, DataQuery.REFER_POI);
-            commentQuery.setup(Globals.getCurrentCityInfo().getId(), getId(), getId(), null, false, false, poi);
+            commentQuery.setup(getId(), getId(), null, false, false, poi);
             baseQueryList.add(commentQuery);
             mCommentTipView.setVisibility(View.GONE);
         } else {
@@ -1229,11 +1239,11 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         String hotelService = poi.getHotelService();
         String roomDescription = poi.getRoomDescription();
         if (hotelService != null) {
-            nameList.add(mSphinx.getString(R.string.hotel_service_title));
+            nameList.add(getString(R.string.hotel_service_title));
             valueList.add(hotelService);
         }
         if (roomDescription != null) {
-            nameList.add(mSphinx.getString(R.string.hotel_room_description_title));
+            nameList.add(getString(R.string.hotel_room_description_title));
             valueList.add(roomDescription);
         }
         
@@ -1379,7 +1389,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
 //                            mSphinx.startActivityForResult(intent, R.id.activity_poi_comment);
 //                        } else {
 //                            CommonUtils.showNormalDialog(mSphinx, 
-//                                    mSphinx.getString(R.string.comment_poi_invalid_hit));
+//                                    getString(R.string.comment_poi_invalid_hit));
 //                        }
 //                    }
 //                });
@@ -1406,7 +1416,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                 srcTxv.setVisibility(View.GONE);
             } else {
                 srcTxv.setVisibility(View.VISIBLE);
-                String source = mSphinx.getString(R.string.source_);
+                String source = getString(R.string.source_);
                 String src = String.format(source, url);
                 SpannableString srcSns = new SpannableString(src);
                 srcSns.setSpan(new ClickableSpan() {
@@ -1418,8 +1428,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                     @Override
                     public void onClick(final View widget) {
                         Utility.showNormalDialog(mSphinx,
-                                mSphinx.getString(R.string.prompt), 
-                                mSphinx.getString(R.string.are_you_view_url, url),
+                                getString(R.string.prompt), 
+                                getString(R.string.are_you_view_url, url),
                                 new DialogInterface.OnClickListener() {
                                     
                                     @Override
@@ -1497,7 +1507,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                                 int responseCode = response.getResponseCode();
                                 if (responseCode == 603) {
                                     poi.setStatus(POI.STATUS_INVALID);
-                                    BaseActivity.showErrorDialog(mSphinx, mSphinx.getString(R.string.response_code_603), this, true);
+                                    BaseActivity.showErrorDialog(mSphinx, getString(R.string.response_code_603), this, true);
                                 }
                             }
                             return;
@@ -1545,5 +1555,5 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
 
         CommentListActivity.setPOI(poi);
         mSphinx.showView(R.id.activity_poi_comment_list);
-    }    
+    }  
 }

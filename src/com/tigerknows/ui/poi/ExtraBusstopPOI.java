@@ -135,12 +135,12 @@ public class ExtraBusstopPOI extends DynamicPOIView {
             return;
         }
         
-        MapEngine mapEngine = MapEngine.getInstance();
-        int cityId = mapEngine.getCityId(mPOI.getPosition());
+        int cityId = MapEngine.getCityId(mPOI.getPosition());
         
         BuslineQuery buslineQuery = new BuslineQuery(mSphinx);
         buslineQuery.addParameter(BaseQuery.SERVER_PARAMETER_SIZE, "10000");
-        buslineQuery.setup(cityId, mPOI.getName(), 0, false, R.id.view_traffic_home, null);
+        buslineQuery.setup(mPOI.getName(), 0, false, R.id.view_traffic_home, null);
+        buslineQuery.setCityId(cityId);
         
         queryStart(buslineQuery);
         mPOIDetailFragment.addLoadingView();

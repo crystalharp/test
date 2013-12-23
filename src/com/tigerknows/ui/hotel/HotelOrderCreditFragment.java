@@ -88,7 +88,7 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
     
     public void onResume(){
         super.onResume();
-        mTitleBtn.setText(mSphinx.getString(R.string.credit_assure_title));
+        mTitleBtn.setText(getString(R.string.credit_assure_title));
         clearFocus();
     }
     
@@ -168,8 +168,8 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
             String str = mCreditBankBtn.getText().toString();
             List<String> list = new ArrayList<String>();
             // 判断选择银行
-            if(TextUtils.isEmpty(str) || TextUtils.equals(str, mSphinx.getString(R.string.credit_bank_hint))){
-                Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.credit_bank_empty_tip));
+            if(TextUtils.isEmpty(str) || TextUtils.equals(str, getString(R.string.credit_bank_hint))){
+                Utility.showNormalDialog(mSphinx, getString(R.string.credit_bank_empty_tip));
                 return;
             }
             list.add(str);
@@ -177,10 +177,10 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
             // 判断银行卡号
             str = mCreditCodeEdt.getText().toString();
             if(TextUtils.isEmpty(str)){
-                Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.credit_code_empty_tip), mCreditCodeEdt);
+                Utility.showEdittextErrorDialog(mSphinx, getString(R.string.credit_code_empty_tip), mCreditCodeEdt);
                 return;
             }else if(!ValidateUtil.isValidCreditCard(str)){
-                Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.credit_code_format), mCreditCodeEdt);
+                Utility.showEdittextErrorDialog(mSphinx, getString(R.string.credit_code_format), mCreditCodeEdt);
                 return;
             }
             list.add(str);
@@ -188,10 +188,10 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
             // 判断持卡人姓名
             str = mCreditOwnerEdt.getText().toString().trim();
             if(TextUtils.isEmpty(str)){
-                Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.credit_owner_empty_tip), mCreditOwnerEdt);
+                Utility.showEdittextErrorDialog(mSphinx, getString(R.string.credit_owner_empty_tip), mCreditOwnerEdt);
                 return;
             }else if(!ValidateUtil.isValidElongName(str)){
-                Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.hotel_person_name_format), mCreditOwnerEdt);
+                Utility.showEdittextErrorDialog(mSphinx, getString(R.string.hotel_person_name_format), mCreditOwnerEdt);
                 return;
             }
             list.add(str);
@@ -199,17 +199,17 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
             // 判断信用卡验证码
             str = mCreditVerifyEdt.getText().toString();
             if(TextUtils.isEmpty(str)){
-                Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.credit_verify_empty_tip), mCreditVerifyEdt);
+                Utility.showEdittextErrorDialog(mSphinx, getString(R.string.credit_verify_empty_tip), mCreditVerifyEdt);
                 return;
             }else if(!ValidateUtil.isValidCreditCardVerify(str)){
-                Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.credit_verify_format), mCreditVerifyEdt);
+                Utility.showEdittextErrorDialog(mSphinx, getString(R.string.credit_verify_format), mCreditVerifyEdt);
                 return;
             }
             list.add(str);
             
             // 判断信用卡有效期
             if(mDate == null){
-                Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.credit_validity_empty_tip));
+                Utility.showNormalDialog(mSphinx, getString(R.string.credit_validity_empty_tip));
                 return;
             }
             list.add(mDate.get(Calendar.YEAR) + "");
@@ -222,10 +222,10 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
             // 判断证件号码
             str = mCreditCertCodeEdt.getText().toString();
             if(TextUtils.isEmpty(str)){
-                Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.credit_cert_code_empty_tip), mCreditCertCodeEdt);
+                Utility.showEdittextErrorDialog(mSphinx, getString(R.string.credit_cert_code_empty_tip), mCreditCertCodeEdt);
                 return;
-            }else if(mCreditCertTypeBtn.getText().toString().contains(mSphinx.getString(R.string.mainland_id_card)) && !ValidateUtil.isValidIdCardCode(str)){
-                Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.hotel_idcard_code_format), mCreditCertCodeEdt);
+            }else if(mCreditCertTypeBtn.getText().toString().contains(getString(R.string.mainland_id_card)) && !ValidateUtil.isValidIdCardCode(str)){
+                Utility.showEdittextErrorDialog(mSphinx, getString(R.string.hotel_idcard_code_format), mCreditCertCodeEdt);
                 return;
             }
             list.add(str);
@@ -380,11 +380,11 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         }
         mGetBankPosition = -1;
         mCertTypeList = new ArrayList<String>(Arrays.asList(getResources().getStringArray(R.array.cert_type)));
-        if(TextUtils.equals(mCreditCertTypeBtn.getText().toString(), mSphinx.getString(R.string.credit_cert_code))){
+        if(TextUtils.equals(mCreditCertTypeBtn.getText().toString(), getString(R.string.credit_cert_code))){
         	mCreditCertTypeBtn.setText(mCertTypeList.get(0));
         	mGetCreditCertPosition = 0;
         }
-        mCreditAssurePriceTxv.setText(mSphinx.getString(R.string.credit_assure_price, (assureType == 2 ) ? mSumPrice : oneNightPrice));
+        mCreditAssurePriceTxv.setText(getString(R.string.credit_assure_price, (assureType == 2 ) ? mSumPrice : oneNightPrice));
         Calendar cancelDeadline = Calendar.getInstance();
         try {
             cancelDeadline.setTime(CalendarUtil.ymd8c_Hm4.parse(mOrderModifyDeadline));
@@ -397,12 +397,12 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         if(cancelDeadline.after(currentTime) == false){
             mCreditNoteTxv.setText(Utility.renderColorToPartOfString(mContext,
                     R.color.black_dark,
-                    mSphinx.getString(R.string.credit_note_detail_2, mSphinx.getString(R.string.credit_cannot_cancel)),
-                    mSphinx.getString(R.string.credit_cannot_cancel)));
+                    getString(R.string.credit_note_detail_2, getString(R.string.credit_cannot_cancel)),
+                    getString(R.string.credit_cannot_cancel)));
         }else{
             mCreditNoteTxv.setText(Utility.renderColorToPartOfString(mContext,
                     R.color.black_dark,
-                    mSphinx.getString(R.string.credit_note_detail, mOrderModifyDeadline).trim(),
+                    getString(R.string.credit_note_detail, mOrderModifyDeadline).trim(),
                     mOrderModifyDeadline));
         }
         mCreditAssureScv.smoothScrollTo(0, 0);

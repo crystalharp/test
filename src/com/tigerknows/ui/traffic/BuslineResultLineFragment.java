@@ -27,12 +27,14 @@ import com.tigerknows.Sphinx;
 import com.tigerknows.android.os.TKAsyncTask;
 import android.widget.Toast;
 import com.tigerknows.common.ActionLog;
+import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.BuslineModel;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.BuslineModel.Line;
+import com.tigerknows.model.DataQuery.POIResponse;
 import com.tigerknows.model.BuslineQuery;
 import com.tigerknows.ui.BaseFragment;
-import com.tigerknows.ui.poi.POIResultFragment;
+import com.tigerknows.ui.poi.InputSearchFragment;
 import com.tigerknows.widget.SpringbackListView;
 import com.tigerknows.widget.SpringbackListView.OnRefreshListener;
 
@@ -112,9 +114,9 @@ public class BuslineResultLineFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
 
-        mCommentTxv.setText(mContext.getString(R.string.busline_result_title, mBuslineQuery.getKeyword(), 
+        mCommentTxv.setText(getString(R.string.busline_result_title, mBuslineQuery.getKeyword(), 
         		mBuslineModel.getTotal()));
-        mTitleBtn.setText(mContext.getString(R.string.title_busline_result));
+        mTitleBtn.setText(getString(R.string.title_busline_result));
     	
         if (mResultLsv.isFooterSpringback()) {
             mSphinx.getHandler().postDelayed(mTurnPageRun, 1000);
@@ -151,14 +153,10 @@ public class BuslineResultLineFragment extends BaseFragment {
 					mSphinx.showView(R.id.view_traffic_busline_detail);
 				} else if (mResultLsv.isFooterSpringback() == false && mDataQuery != null) {
                     mActionLog.addAction(mActionTag + ActionLog.TrafficBuslineViewPOI);
-		            mSphinx.uiStackRemove(R.id.view_traffic_busline_line_result);
-                    mSphinx.uiStackRemove(R.id.view_traffic_busline_station_result);
                     DataQuery poiQuery = new DataQuery(mDataQuery);
                     poiQuery.removeParameter(DataQuery.SERVER_PARAMETER_EXT);
-                    poiQuery.setup(Globals.getCurrentCityInfo().getId(), getId(), mSphinx.getPOIResultFragmentID(), null, false, false, mDataQuery.getPOI());
+                    poiQuery.setup(getId(), getId(), getString(R.string.doing_and_wait), false, false, mDataQuery.getPOI());
                     mSphinx.queryStart(poiQuery);
-                    ((POIResultFragment)mSphinx.getFragment(poiQuery.getTargetViewId())).setup(mDataQuery.getParameter(DataQuery.SERVER_PARAMETER_KEYWORD));
-                    mSphinx.showView(poiQuery.getTargetViewId());
                 }
 			}
 
@@ -222,9 +220,18 @@ public class BuslineResultLineFragment extends BaseFragment {
             return;
         }
         mResultLsv.changeHeaderViewByState(false, SpringbackListView.REFRESHING);
-        BuslineQuery buslineQuery = new BuslineQuery(mContext);
-        buslineQuery.setup(mBuslineQuery.getCityId(), mBuslineQuery.getKeyword(), mLineList.size(), true, getId(), null);
-        mSphinx.queryStart(buslineQuery);
+        if (mDataQuery != null) {
+            DataQuery dataQuery = new DataQuery(mDataQuery);
+            dataQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, String.valueOf(mLineList.size()));
+            dataQuery.setup(getId(), getId(), null, true, false, mDataQuery.getPOI());
+            mSphinx.queryStart(dataQuery);
+        } else {
+            int cityId = mBuslineQuery.getCityId();
+            BuslineQuery buslineQuery = new BuslineQuery(mContext);
+            buslineQuery.setup(mBuslineQuery.getKeyword(), mLineList.size(), true, getId(), null);
+            buslineQuery.setCityId(cityId);
+            mSphinx.queryStart(buslineQuery);
+    	}
         mActionLog.addAction(mActionTag+ActionLog.ListViewItemMore);
         }
     }
@@ -238,11 +245,17 @@ public class BuslineResultLineFragment extends BaseFragment {
      * @param poiQuery 查询结果
      */
     public void setData(BuslineQuery buslineQuery, DataQuery dataQuery) {
+        mDataQuery = dataQuery;
+        if (mDataQuery != null) {
+            buslineQuery = new BuslineQuery(mSphinx);
+            buslineQuery.setup(dataQuery.getParameter(BaseQuery.SERVER_PARAMETER_KEYWORD), 0, false, R.id.view_traffic_busline_line_result, null);
+            buslineQuery.setBuslineModel(((POIResponse) mDataQuery.getResponse()).getBuslineModel());
+            buslineQuery.setTurnPage(mDataQuery.isTurnPage());
+        }
         mResultLsv.onRefreshComplete(false);
         mResultLsv.setFooterSpringback(false);
         mBuslineQuery = buslineQuery;
         mBuslineModel = mBuslineQuery.getBuslineModel();
-        mDataQuery = dataQuery;
         
         if (mBuslineQuery.isTurnPage()) {
             if (mBuslineQuery.getBuslineModel() == null) {
@@ -347,7 +360,7 @@ public class BuslineResultLineFragment extends BaseFragment {
             final Line line = (Line)getItem(position);
             
             lineHolder.text.setText(line.getName());
-            lineHolder.summary.setText(mContext.getString(R.string.busline_line_listitem_title, 
+            lineHolder.summary.setText(getString(R.string.busline_line_listitem_title, 
             		line.getTime(), line.getLengthStr(mSphinx)));
             lineHolder.index.setText(String.valueOf(position+1));
             lineHolder.position = position;
@@ -377,8 +390,14 @@ public class BuslineResultLineFragment extends BaseFragment {
     @Override
     public void onPostExecute(TKAsyncTask tkAsyncTask) {
         super.onPostExecute(tkAsyncTask);
-        BuslineQuery baseQuery = (BuslineQuery)tkAsyncTask.getBaseQuery();
-        queryBuslineEnd(baseQuery);
+
+        BaseQuery baseQuery = tkAsyncTask.getBaseQuery();
+        String apiType = baseQuery.getAPIType();
+        if (BaseQuery.API_TYPE_BUSLINE_QUERY.equals(apiType)) {
+            queryBuslineEnd((BuslineQuery) baseQuery);
+        } else if (BaseQuery.API_TYPE_DATA_QUERY.equals(apiType)) {
+            InputSearchFragment.dealWithPOIResponse((DataQuery) baseQuery, mSphinx, this);
+        }
     }
     
     class ChildView extends RelativeLayout {
@@ -419,8 +438,6 @@ public class BuslineResultLineFragment extends BaseFragment {
         if (buslineModel.getType() == BuslineModel.TYPE_BUSLINE){
         	if (buslineModel.getLineList() == null || buslineModel.getLineList().size() <= 0) {
         		mSphinx.showTip(R.string.busline_non_tip, Toast.LENGTH_SHORT);
-        	} else {
-    			mSphinx.getBuslineResultLineFragment().setData(buslineQuery, mDataQuery);
         	}
         }
     }

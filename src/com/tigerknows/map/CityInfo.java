@@ -31,7 +31,7 @@ public class CityInfo implements Parcelable {
     private int level;
     private String cProvinceName;
     private String eProvinceName;
-    public int order;
+    public int order = 0;
     
     public CityInfo() {
     }

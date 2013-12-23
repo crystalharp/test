@@ -201,7 +201,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             mFilterList.clear();
         }
         
-        String str = mContext.getString(R.string.searching);
+        String str = getString(R.string.searching);
         mQueryingTxv.setText(str);
         
         mDataType = lastDataQuery.getParameter(BaseQuery.SERVER_PARAMETER_DATA_TYPE);
@@ -289,9 +289,9 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         for(Filter filter : mFilterList) {
             if (filter.getKey() == FilterCategoryOrder.FIELD_LIST_CATEGORY) {
                 String str = getSelectFilterName(filter);
-                if (str.contains(mSphinx.getString(R.string.tomorrow_char))) {
+                if (str.contains(getString(R.string.tomorrow_char))) {
                     changciOption = Changci.OPTION_DAY_TOMORROW;
-                } else if (str.contains(mSphinx.getString(R.string.after_tomorrow_char))) {
+                } else if (str.contains(getString(R.string.after_tomorrow_char))) {
                     changciOption = Changci.OPTION_DAY_AFTER_TOMORROW;
                 }
             }
@@ -399,7 +399,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         }
 
         if (TextUtils.isEmpty(str)) {
-            str = mContext.getString(R.string.no_result);
+            str = getString(R.string.no_result);
         }
         mEmptyTxv.setText(str);
     }
@@ -540,7 +540,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         if (BaseQuery.DATA_TYPE_DIANYING.equals(mDataType) && dianyingSize > 0) {
             dataQuery.setParameter(DataQuery.SERVER_PARAMETER_DIANYING_UUID, mDianyingList.get(dianyingSize-1).getUid());
         }
-        dataQuery.setup(lastDataQuery.getCityId(), getId(), getId(), tip, true, false, lastDataQuery.getPOI());
+        dataQuery.setup(getId(), getId(), tip, true, false, lastDataQuery.getPOI());
         mSphinx.queryStart(dataQuery);
         }
     }
@@ -589,7 +589,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             actionTag = ActionLog.ResultMapZhanlanList;
         }
         ItemizedOverlayHelper.drawPOIOverlay(mSphinx, dataList, page[2]);
-        mSphinx.getResultMapFragment().setData(mContext.getString(name), actionTag);
+        mSphinx.getResultMapFragment().setData(getString(name), actionTag);
         mSphinx.showView(R.id.view_result_map);   
     }
     
@@ -605,10 +605,9 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         DataQuery dataQuery = new DataQuery(lastDataQuery);
 
         POI requestPOI = lastDataQuery.getPOI();
-        int cityId = lastDataQuery.getCityId();
         dataQuery.setParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
         dataQuery.setParameter(DataQuery.SERVER_PARAMETER_FILTER, DataQuery.makeFilterRequest(mFilterList));
-        dataQuery.setup(cityId, getId(), getId(), null, false, false, requestPOI);
+        dataQuery.setup(getId(), getId(), null, false, false, requestPOI);
         mSphinx.queryStart(dataQuery);
         setup();
         
@@ -724,7 +723,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 distanceTxv.setText(distance);
                 distanceTxv.setVisibility(View.VISIBLE);
             }
-            buyerNumTxv.setText(String.valueOf(tuangou.getBuyerNum())+mSphinx.getString(R.string.people));
+            buyerNumTxv.setText(String.valueOf(tuangou.getBuyerNum())+getString(R.string.people));
             
             if (tuangou.getAppointment() == 1) {
                 appointmentTxv.setVisibility(View.VISIBLE);
@@ -782,10 +781,10 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             if (TextUtils.isEmpty(distance)) {
                 distanceTxv.setVisibility(View.GONE);
             } else {
-                //distanceTxv.setText(mSphinx.getString(R.string.dianying_detail_nearest, String.valueOf(dianying.getYingxun().getDistance())));
-            	  String distanceStr = mSphinx.getString(R.string.dianying_detail_nearest, String.valueOf(dianying.getYingxun().getDistance()));
+                //distanceTxv.setText(getString(R.string.dianying_detail_nearest, String.valueOf(dianying.getYingxun().getDistance())));
+            	  String distanceStr = getString(R.string.dianying_detail_nearest, String.valueOf(dianying.getYingxun().getDistance()));
 
-                Utility.formatText(distanceTxv, distanceStr, mSphinx.getString(R.string.dianying_detail_nearest, ""), R.color.black_dark);
+                Utility.formatText(distanceTxv, distanceStr, getString(R.string.dianying_detail_nearest, ""), R.color.black_dark);
                 distanceTxv.setVisibility(View.VISIBLE);
             }
             
@@ -1221,7 +1220,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     @Override
     public void turnPageStart(boolean isHeader, IPagerListCallBack iPagerListCallBack) {
         mIPagerListCallBack = iPagerListCallBack;
-        turnPage(mSphinx.getString(R.string.doing_and_wait));
+        turnPage(getString(R.string.doing_and_wait));
     }
 
     @Override
