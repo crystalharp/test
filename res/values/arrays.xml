@@ -51,13 +51,26 @@
         <item>美食</item>
         <item>酒店</item>
         <item>娱乐</item>
+        <item>交通</item>
         <item>购物</item>
         <item>旅游</item>
-        <item>交通</item>
         <item>丽人</item>
         <item>银行</item>
         <item>运动</item>
         <item>医疗</item>
+    </string-array>
+    
+    <string-array name="home_sub_category">
+        <item>看菜单;小吃快餐;烧烤;火锅;甜品饮品;咖啡馆;自助餐;西餐;更多</item>
+        <item>订酒店;快捷酒店;旅馆;三星级酒店;五星级酒店</item>
+        <item>影片;影院;KTV;洗浴按摩;网吧;酒吧;演出;展览;更多</item>
+        <item>地铁图;公交站;地铁站;加油站;火车站;更多</item>
+        <item>超市;商场;服饰鞋包;数码家电;书店;更多</item>
+        <item>景点;公园;更多</item>
+        <item>美发;美容;更多</item>
+        <item>ATM;工商银行;农业银行;建设银行;中国银行;更多</item>
+        <item>健身中心;游泳馆;更多</item>
+        <item>医院;药店;更多</item>
     </string-array>
     
     <string-array name="discover_categroy_type">
