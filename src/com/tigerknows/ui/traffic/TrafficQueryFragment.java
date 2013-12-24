@@ -54,10 +54,11 @@ import com.tigerknows.model.TrafficModel.Station;
 import com.tigerknows.model.TrafficQuery;
 import com.tigerknows.provider.CommonPlaceTable.CommonPlace;
 import com.tigerknows.provider.HistoryWordTable;
+import com.tigerknows.provider.TrafficSearchHistoryTable;
+import com.tigerknows.provider.TrafficSearchHistoryTable.SearchHistory;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.ui.more.HistoryFragment;
 import com.tigerknows.ui.poi.InputSearchFragment;
-import com.tigerknows.ui.traffic.TrafficSearchHistoryFragment.SearchHistory;
 //import com.tigerknows.ui.traffic.TrafficViewSTT.Event;
 //import com.tigerknows.ui.traffic.TrafficViewSTT.State;
 import com.tigerknows.util.Utility;
@@ -91,13 +92,8 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	
 	public static final int LINE = 3;
 	
-	public static final String TYPE_MY_LOCATION = "t1";
-	public static final String TYPE_MAP_LOCATION = "t2";
-	public static final String TYPE_SUGGEST_WORD = "t3";
-	public static final String TYPE_HISTORY_WORD = "t4";
-	public static final String TYPE_POI = "t5";
 	
-	//TODO:不记得这个变量和选中的框什么意思了，先注掉
+		//TODO:不记得这个变量和选中的框什么意思了，先注掉
 	public static final int SELECTED = 4;
 	
 //	protected int mode = TRAFFIC_MODE;
@@ -164,6 +160,8 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
     List<CommonPlace> mCommonPlaces = new LinkedList<CommonPlace>();
 
     List<SearchHistory> mQueryHistorys = new LinkedList<SearchHistory>();
+    
+    TrafficSearchHistoryTable mHistoryTable = new TrafficSearchHistoryTable(mSphinx);
 //	int oldCheckButton;
 
 	String[] KEYWORDS;
@@ -360,7 +358,8 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	            SearchHistory h = (SearchHistory) v.getTag();
 	            mStart.setPOI(h.start);
 	            mEnd.setPOI(h.end);
-	            query();
+	            updateSearchHistory(h);
+	            submitTrafficQuery(h.start, h.end);
 	        }
 	    };
 	    mQueryHistoryAdapter = new LinearListAdapter(mSphinx, mQueryHistoryLst, R.layout.traffic_transfer_his_item) {
@@ -454,8 +453,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
         mTitleView.removeAllViews();
         mTitleView.addView(mTitleBar);
         mRightBtn.setBackgroundResource(R.drawable.btn_view_detail);
-//        HistoryFragment.readTraffic(mContext, mQueryHistorys, Long.MAX_VALUE, 0, false);
-        mQueryHistoryAdapter.refreshList(mQueryHistorys);
+        initHistory();
         updateCommonPlace();
         if (!mStart.textEmpty() 
                 && !mEnd.textEmpty()
@@ -505,6 +503,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 		mEnd.clear();
 	}
 	
+	//TODO:删掉这个函数
 	public void setPOI(POI poi, int index) {
 	    switch(index) {
 	    case START:
@@ -519,6 +518,14 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 
 	    }
 	}
+	
+	public final void setStart(POI p) {
+	    mStart.setPOI(p);
+	}
+	
+	public final void setEnd(POI p) {
+	    mEnd.setPOI(p);
+	}
 
 	public View getContentView() {
 //		if (mode == TRAFFIC_MODE) 
@@ -529,37 +536,35 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	
 	public final void query() {
 //		mSphinx.hideSoftInput();
-		
-//		if (mode == TRAFFIC_MODE) {
-			submitTrafficQuery();
-//		} else {
-//			submitBuslineQuery();
-//		}
+	    POI start = mStart.getPOI();
+        POI end = mEnd.getPOI();
+        
+        if (start == null || end == null)
+            return;
+        
+        if (checkIsInputEmpty())
+            return;
+
+        if (checkIsInputEqual()) {
+            return;
+        }
+        
+        addSearchHistory(new SearchHistory(start, end));
+        
+        submitTrafficQuery(start, end);
 
 	}
 
-	public void submitTrafficQuery() {
+	public void submitTrafficQuery(POI start, POI end) {
 		
-		POI start = mStart.getPOI();
-		POI end = mEnd.getPOI();
-		
-		if (start == null || end == null)
-			return;
-		
-		if (checkIsInputEmpty())
-        	return;
 
-		if (checkIsInputEqual()) {
-			return;
-		}
-		
-		if (!processMyLocation(start)) {
-		    return;
-		}
-		
-		if (!processMyLocation(end)) {
-		    return;
-		}
+        if (!processMyLocation(start)) {
+            return;
+        }
+        
+        if (!processMyLocation(end)) {
+            return;
+        }
         
         TrafficQuery trafficQuery = new TrafficQuery(mContext);
         
@@ -585,6 +590,25 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
             Position position = poi.getPosition();
             HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, name, position), cityId, type);
         }
+    }
+    
+    public void addSearchHistory(SearchHistory sh) {
+        mHistoryTable.add(sh);
+        mQueryHistorys.add(sh);
+        mQueryHistoryAdapter.refreshList(mQueryHistorys);
+    }
+    
+    public void updateSearchHistory(SearchHistory sh) {
+        mQueryHistorys.remove(sh);
+        mQueryHistorys.add(0, sh);
+        mHistoryTable.update(sh);
+        mQueryHistoryAdapter.refreshList(mQueryHistorys);
+    }
+    
+    public void initHistory() {
+        mQueryHistorys.clear();
+        mHistoryTable.readTrafficSearchHistory(mQueryHistorys);
+        mQueryHistoryAdapter.refreshList(mQueryHistorys);
     }
     
     public static void submitTrafficQuery(Sphinx sphinx, POI start, POI end, int queryType) {
@@ -914,7 +938,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
                     mActionLog.addAction(ActionLog.TrafficAlternative + (start ? ActionLog.TrafficAlterStart : ActionLog.TrafficAlterEnd), which, station.getName());
                 }
                 if (start == false || end == false) {
-                	submitTrafficQuery();
+                    submitTrafficQuery(mStart.getPOI(), mEnd.getPOI());
                 } else {
                 	showAlternativeDialog(null, endStationList);
                 }
