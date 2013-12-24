@@ -42,17 +42,17 @@
 		        android:layout_height="wrap_content"
 		        />
 		    <include layout="@layout/poi_nearby_search_category_item"
+		        android:id="@+id/traffic_category"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		        />		    
+		    <include layout="@layout/poi_nearby_search_category_item"
 		        android:id="@+id/shopping_category"
 		        android:layout_width="fill_parent"
 		        android:layout_height="wrap_content"
 		        />
 		    <include layout="@layout/poi_nearby_search_category_item"
 		        android:id="@+id/travel_category"
-		        android:layout_width="fill_parent"
-		        android:layout_height="wrap_content"
-		        />
-		    <include layout="@layout/poi_nearby_search_category_item"
-		        android:id="@+id/traffic_category"
 		        android:layout_width="fill_parent"
 		        android:layout_height="wrap_content"
 		        />

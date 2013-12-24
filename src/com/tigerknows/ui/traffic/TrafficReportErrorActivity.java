@@ -1,7 +1,6 @@
 package com.tigerknows.ui.traffic;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -160,7 +159,7 @@ public class TrafficReportErrorActivity extends BaseActivity {
 				mActionLog.addAction(mActionTag + ActionLog.TitleRightButton);
                 FeedbackUpload feedbackUpload = new FeedbackUpload(mThis);
                 feedbackUpload.addParameter(FeedbackUpload.SERVER_PARAMETER_ERROR_RECOVERY, result.toString());
-                feedbackUpload.setup(Globals.getCurrentCityInfo().getId(), -1, -1, mThis.getString(R.string.doing_and_wait));
+                feedbackUpload.setup(-1, -1, mThis.getString(R.string.doing_and_wait));
                 queryStart(feedbackUpload);
 			}
 		});

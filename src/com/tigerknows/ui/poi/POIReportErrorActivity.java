@@ -29,7 +29,6 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
-import com.decarta.Globals;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.util.Utility;
 import com.tigerknows.widget.FilterListView;
@@ -143,6 +142,16 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
+        synchronized (sTargetList) {
+            int size = sTargetList.size();
+            if (size > 0) {
+                Object target = sTargetList.get(size-1);
+                if (target instanceof POI) {
+                    mPOI = (POI) target;
+                }
+            }
+        }
+        
         mActionTag = ActionLog.POIReportError;
         vErreportMain = this.getLayoutInflater().inflate(R.layout.poi_report_error, null);
         vErreportDetail = this.getLayoutInflater().inflate(R.layout.poi_report_error_detail, null);
@@ -155,16 +164,6 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
         mPage = HOME_PAGE;
         
         getBaseContext();
-        
-        synchronized (sTargetList) {
-            int size = sTargetList.size();
-            if (size > 0) {
-                Object target = sTargetList.get(size-1);
-                if (target instanceof POI) {
-                    mPOI = (POI) target;
-                }
-            }
-        }
     }
     
     /**
@@ -219,7 +218,7 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
         if (mFilterList != null) {
             FilterListView.selectedFilter(mFilterList.get(0), -1);
         } else {
-            DataQuery.initStaticField(BaseQuery.DATA_TYPE_POI, BaseQuery.SUB_DATA_TYPE_POI, Globals.getCurrentCityInfo().getId(), mThis);
+            DataQuery.initStaticField(BaseQuery.DATA_TYPE_POI, BaseQuery.SUB_DATA_TYPE_POI, mThis, MapEngine.getCityId(mPOI.getPosition()));
             FilterCategoryOrder filterCategory = DataQuery.getPOIFilterCategoryOrder();
             if (filterCategory != null) {
                 List<FilterOption> filterOptionList = new ArrayList<DataQuery.FilterOption>();
@@ -701,7 +700,6 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
         FeedbackUpload feedbackUpload = new FeedbackUpload(mThis);
         feedbackUpload.addParameter(FeedbackUpload.SERVER_PARAMETER_ERROR_RECOVERY, s.toString());
         feedbackUpload.addLocalParameter(FeedbackUpload.LOCAL_PARAMETER_POIERROR_IGNORE, "true");
-        feedbackUpload.setup(Globals.getCurrentCityInfo().getId());
         queryStart(feedbackUpload);
     }
 
@@ -738,7 +736,7 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
         hideSoftInput();
         FeedbackUpload feedbackUpload = new FeedbackUpload(mThis);
         feedbackUpload.addParameter(FeedbackUpload.SERVER_PARAMETER_ERROR_RECOVERY, s.toString());
-        feedbackUpload.setup(Globals.getCurrentCityInfo().getId(), -1, -1, mThis.getString(R.string.doing_and_wait));
+        feedbackUpload.setup(-1, -1, mThis.getString(R.string.doing_and_wait));
         queryStart(feedbackUpload);
     }
     @Override

@@ -126,16 +126,16 @@ public class YanchuDetailView extends BaseDetailView implements View.OnClickList
         String telephone = null;
         if (mData != null) {
             telephone = mData.getContactTel();
-            telephoneTitle = mSphinx.getString(R.string.lianxidianhua);
+            telephoneTitle = getString(R.string.lianxidianhua);
             if (TextUtils.isEmpty(telephone)) {
                 telephone = mData.getOrderTel();
-                telephoneTitle = mSphinx.getString(R.string.dingpiaozixun);
+                telephoneTitle = getString(R.string.dingpiaozixun);
             }
         }
         String name = mData.getPlaceName();
-        DiscoverChildListFragment.showPOI(mSphinx, 0, TextUtils.isEmpty(name) ? mSphinx.getString(R.string.yanchu_didian) : name, mData.getDistance(), mData.getAddress(), telephone, 
+        DiscoverChildListFragment.showPOI(mSphinx, 0, TextUtils.isEmpty(name) ? getString(R.string.yanchu_didian) : name, mData.getDistance(), mData.getAddress(), telephone, 
                 mFendianNameTxv, mDistanceTxv, mAddressView, mTelephoneView, mAddressTxv, mTelephoneTxv, 
-                R.drawable.list_middle, R.drawable.list_footer, R.drawable.list_footer, mSphinx.getString(R.string.xiangxidizhi), telephoneTitle);
+                R.drawable.list_middle, R.drawable.list_footer, R.drawable.list_footer, getString(R.string.xiangxidizhi), telephoneTitle);
         
         refreshDescription(true);
         refreshDrawable();
@@ -180,7 +180,7 @@ public class YanchuDetailView extends BaseDetailView implements View.OnClickList
         		dataOperation.addParameter(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
         		dataOperation.addParameter(DataOperation.SERVER_PARAMETER_DATA_UID, mData.getUid());
         		dataOperation.addParameter(DataOperation.SERVER_PARAMETER_NEED_FIELD, Util.byteToHexString(Yanchu.FIELD_DESCRIPTION));
-        		dataOperation.setup(Globals.getCurrentCityInfo().getId(), mParentFragment.getId(), mParentFragment.getId(), null, true);
+        		dataOperation.setup(mParentFragment.getId(), mParentFragment.getId(), null, true);
         		mAsyncTaskExecuting = true;
         		mTKAsyncTasking = mSphinx.queryStart(dataOperation);
         		mBaseQuerying = mTKAsyncTasking.getBaseQueryList();
@@ -208,7 +208,7 @@ public class YanchuDetailView extends BaseDetailView implements View.OnClickList
                Util.byteToHexString(Yanchu.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[0]" + ";" +
                Util.byteToHexString(Yanchu.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[0]");
         dataOperation.addLocalParameter(BaseQuery.RESPONSE_CODE_ERROR_MSG_PREFIX + 410, ""+R.string.response_code_410_pulled);
-        dataOperation.setup(Globals.getCurrentCityInfo().getId(), mParentFragment.getId(), mParentFragment.getId(), mSphinx.getString(R.string.doing_and_wait));
+        dataOperation.setup(mParentFragment.getId(), mParentFragment.getId(), getString(R.string.doing_and_wait));
         mTKAsyncTasking = mSphinx.queryStart(dataOperation);
         mAsyncTaskExecuting = true;
         mBaseQuerying = mTKAsyncTasking.getBaseQueryList();

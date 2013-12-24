@@ -78,7 +78,7 @@ public class SuggestWordListManager {
     private void updateSuggestWord(Sphinx sphinx, List<TKWord> tkWordList, String searchWord) {
         tkWordList.clear();
         MapEngine mapEngine = MapEngine.getInstance();
-        mapEngine.suggestwordCheck(sphinx, Globals.getCurrentCityInfo().getId());
+        mapEngine.suggestwordCheck(sphinx, Globals.getCurrentCityInfo(sphinx).getId());
         tkWordList.addAll(HistoryWordTable.generateSuggestWordList(sphinx, searchWord, mSuggestType));
     }
 }

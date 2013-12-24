@@ -66,7 +66,6 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     DynamicPOIViewBlock mLowerBlock;
     List<DynamicPOIViewBlock> blockList = new LinkedList<DynamicPOIViewBlock>();
     
-    int mHotelCityId;
     Hotel mHotel;
     Calendar checkin;
     Calendar checkout;
@@ -127,12 +126,12 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             mDynamicRoomTypeMoreView.setVisibility(View.VISIBLE);
             mRetryView.setVisibility(View.GONE);
         } else if (s == STATE_LOAD_FAILED) {
-            retryTxv.setText(Html.fromHtml(mSphinx.getString(R.string.hotel_click_to_reload)));
+            retryTxv.setText(Html.fromHtml(getString(R.string.hotel_click_to_reload)));
             mDynamicRoomTypeMoreView.setVisibility(View.GONE);
             mRetryView.setVisibility(View.VISIBLE);
             mRetryView.setClickable(true);
         } else if (s == STATE_NO_DATA) {
-            retryTxv.setText(mSphinx.getString(R.string.hotel_no_roomtype));
+            retryTxv.setText(getString(R.string.hotel_no_roomtype));
             mDynamicRoomTypeMoreView.setVisibility(View.GONE);
             mRetryView.setVisibility(View.VISIBLE);
             mRetryView.setClickable(false);
@@ -242,7 +241,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             public void refresh() {
                 String value = mHotel.getLongDescription();
                 if (TextUtils.isEmpty(value)) {
-                    value = mSphinx.getString(R.string.hotel_no_summary);
+                    value = getString(R.string.hotel_no_summary);
                     hotelSummaryBlock.setClickable(false);
                 } else {
                     hotelSummaryBlock.setClickable(true);
@@ -286,7 +285,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
                 }
                 if (!TextUtils.isEmpty(roomType.getVendorName())) {
                     roomSourceTxv.setVisibility(View.VISIBLE);
-                    roomSourceTxv.setText(mSphinx.getString(R.string.this_come_from_colon, roomType.getVendorName()));
+                    roomSourceTxv.setText(getString(R.string.this_come_from_colon, roomType.getVendorName()));
                 } else {
                     roomSourceTxv.setVisibility(View.GONE);
                 }
@@ -328,7 +327,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
                 mPOIDetailFragment.mActionLog.addAction(ActionLog.POIDetail + ActionLog.POIDetailHotelFailRetry);
                 //不能直接重发上一个请求，否则无网络的时候进详情页，再改个日期，所发的请求nf字段就只有房态信息了。
                 BaseQuery baseQuery = buildHotelQuery(checkin, checkout, mPOI, Hotel.NEED_FIELD_DETAIL + Hotel.NEED_FIELD_LIST);
-                baseQuery.setTipText(mSphinx.getString(R.string.doing_and_wait));
+                baseQuery.setTipText(getString(R.string.doing_and_wait));
                 queryStart(baseQuery);
             }
         };
@@ -357,7 +356,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
                     mPOIDetailFragment.mActionLog.addAction(ActionLog.POIDetail + ActionLog.POIDetailHotelImage);
                     Intent intent = new Intent();
                     ArrayList<HotelTKDrawable> list = (ArrayList<HotelTKDrawable>)hotel.getHotelTKDrawableList();
-                    intent.putExtra(ViewImageActivity.EXTRA_TITLE, mSphinx.getString(R.string.hotel_picture_title, list.size()));
+                    intent.putExtra(ViewImageActivity.EXTRA_TITLE, getString(R.string.hotel_picture_title, list.size()));
                     intent.putParcelableArrayListExtra(ViewImageActivity.EXTRA_IMAGE_LIST, list);
                     intent.putParcelableArrayListExtra(ViewImageActivity.EXTRA_ORIGINAL_IMAGE_LIST, (ArrayList<HotelTKDrawable>)hotel.getOriginalHotelTKDrawableList());
                     mSphinx.showView(R.id.activity_common_view_image, intent);
@@ -409,7 +408,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         }
         refreshDate();
         BaseQuery baseQuery = buildHotelQuery(checkin, checkout, mPOI, Hotel.NEED_FIELD_ROOM_INFO);
-        baseQuery.setTipText(mSphinx.getString(R.string.doing_and_wait));
+        baseQuery.setTipText(getString(R.string.doing_and_wait));
         queryStart(baseQuery);
         mPOIDetailFragment.dismissPopupWindow();
     }
@@ -475,7 +474,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         }
         List<HotelTKDrawable> picList = mHotel.getHotelTKDrawableList();
         int picNum = (picList == null ? 0 : picList.size());
-        imageNumTxv.setText(mSphinx.getString(R.string.pictures, picNum));
+        imageNumTxv.setText(getString(R.string.pictures, picNum));
         boolean setDefault = true;
         if (picList != null && picList.size() > 0) {
             TKDrawable tkDrawable = picList.get(0).getTKDrawable();
@@ -501,13 +500,13 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     
     void refreshBookBtn(Button btn, long restRoom) {
         if (restRoom > 3) {
-            btn.setText(mSphinx.getString(R.string.hotel_btn_book));
+            btn.setText(getString(R.string.hotel_btn_book));
             btn.setEnabled(true);
         } else if (restRoom > 0) {
-            btn.setText(mSphinx.getString(R.string.hotel_btn_x_room_left, restRoom));
+            btn.setText(getString(R.string.hotel_btn_x_room_left, restRoom));
             btn.setEnabled(true);
         } else {
-            btn.setText(mSphinx.getString(R.string.hotel_btn_sold_out));
+            btn.setText(getString(R.string.hotel_btn_sold_out));
             btn.setEnabled(false);
         }
     }
@@ -537,7 +536,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     }
 
     private BaseQuery buildHotelQuery(Calendar checkin, Calendar checkout, POI poi, String needFiled){
-        mHotelCityId = MapEngine.getCityId(mPOI.getPosition());
+        int cityId = MapEngine.getCityId(mPOI.getPosition());
         String checkinTime = HotelHomeFragment.SIMPLE_DATE_FORMAT.format(checkin.getTime());
         String checkoutTime = HotelHomeFragment.SIMPLE_DATE_FORMAT.format(checkout.getTime());
         DataOperation dataOperation = new DataOperation(mSphinx);
@@ -549,12 +548,13 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         dataOperation.addParameter(DataOperation.SERVER_PARAMETER_CHECKIN, checkinTime);
         dataOperation.addParameter(DataOperation.SERVER_PARAMETER_CHECKOUT, checkoutTime);
         dataOperation.addParameter(DataOperation.SERVER_PARAMETER_HOTEL_SOURCE, HotelVendor.ALL);
-        dataOperation.setup(mHotelCityId, mPOIDetailFragment.getId(), mPOIDetailFragment.getId());
+        dataOperation.setup(mPOIDetailFragment.getId(), mPOIDetailFragment.getId());
+        dataOperation.setCityId(cityId);
         return dataOperation;
     }
     
     private BaseQuery buildRoomTypeDynamicQuery(long vendorID, String hotelId, String roomId, String pkgId, Calendar checkin, Calendar checkout){
-        mHotelCityId = MapEngine.getCityId(mPOI.getPosition());
+        int cityId = MapEngine.getCityId(mPOI.getPosition());
         ProxyQuery query = new ProxyQuery(mSphinx);
         query.addParameter(ProxyQuery.SERVER_PARAMETER_VENDORID, String.valueOf(vendorID));
         query.addParameter(ProxyQuery.SERVER_PARAMETER_CHECKIN_DATE, HotelHomeFragment.SIMPLE_DATE_FORMAT.format(checkin.getTime()));
@@ -563,7 +563,8 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         query.addParameter(ProxyQuery.SERVER_PARAMETER_ROOMID, roomId);
         query.addParameter(ProxyQuery.SERVER_PARAMETER_ROOM_TYPE_TAOCANID, pkgId);
         query.addParameter(ProxyQuery.SERVER_PARAMETER_TASK, "1");
-        query.setup(mHotelCityId, mPOIDetailFragment.getId(), mPOIDetailFragment.getId(), mSphinx.getString(R.string.doing_and_wait));
+        query.setup(mPOIDetailFragment.getId(), mPOIDetailFragment.getId(), getString(R.string.doing_and_wait));
+        query.setCityId(cityId);
         return query;
     }
         
@@ -634,7 +635,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
 
             if (baseQuery instanceof DataOperation) {
                 if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, false, this, false)) {
-                    Toast.makeText(mSphinx, mSphinx.getString(R.string.network_failed), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mSphinx, getString(R.string.network_failed), Toast.LENGTH_SHORT).show();
                     loadSucceed(false);
                     refresh();
                     return;
@@ -659,7 +660,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
                             mClickedRoomType.setCanReserve(0);
                             refreshBookBtn(mClickedBookBtn, 0);
                             mClickedChild.setClickable(false);
-                            Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.hotel_no_room_left));
+                            Utility.showNormalDialog(mSphinx, getString(R.string.hotel_no_room_left));
                         }
                     }
                     return;
@@ -674,7 +675,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
                     mClickedRoomType.setCanReserve(0);
                     refreshBookBtn(mClickedBookBtn, 0);
                     mClickedChild.setClickable(false);
-                    Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.hotel_no_room_left));
+                    Utility.showNormalDialog(mSphinx, getString(R.string.hotel_no_room_left));
                 }
             }
         }

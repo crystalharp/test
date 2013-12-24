@@ -90,7 +90,7 @@ public class ExtraSubwayPOI extends DynamicPOIView {
                         timeDetail += "-";
                         timeDetail += ptime.getEndTime();
                     } else {
-                        timeDetail += mSphinx.getString(R.string.subway_no_time_info);
+                        timeDetail += getString(R.string.subway_no_time_info);
                     }
                     timeDetail += "\n";
                 }

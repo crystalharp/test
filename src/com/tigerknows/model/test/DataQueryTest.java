@@ -14,6 +14,8 @@ import com.tigerknows.model.DataQuery.CouponResponse.CouponList;
 import com.tigerknows.model.DataQuery.FilterConfigResponse;
 import com.tigerknows.model.DataQuery.DishResponse;
 import com.tigerknows.model.DataQuery.HotelVendorResponse;
+import com.tigerknows.model.DataQuery.POIResponse.CityIdAndResultTotal;
+import com.tigerknows.model.DataQuery.POIResponse.MapCenterAndBorderRange;
 import com.tigerknows.model.DataQuery.PictureResponse;
 import com.tigerknows.model.DataQuery.PictureResponse.PictureList;
 import com.tigerknows.model.Dianying;
@@ -68,6 +70,7 @@ import com.tigerknows.model.Yingxun.Changci;
 import com.tigerknows.model.xobject.XArray;
 import com.tigerknows.model.xobject.XInt;
 import com.tigerknows.model.xobject.XMap;
+import com.tigerknows.model.xobject.XObject;
 import com.tigerknows.util.ByteUtil;
 import com.tigerknows.util.Utility;
 
@@ -616,6 +619,12 @@ public class DataQueryTest {
         data.put(POIResponse.FIELD_FILTER_ORDER_INDEX, launchFilterIndex(3, 168));
         data.put(POIResponse.FIELD_FILTER_AREA, launchFilterArea());
         data.put(POIResponse.FIELD_FILTER_CATEGORY_ORDER, launchFilterCategoryOrder());
+        data.put(POIResponse.FIELD_MAP_CENTER_AND_BORDER_RANGE, launchMapCenterAndBorderRange());
+        XArray<XMap> xArray = new XArray<XMap>();
+        for(int i = 1; i < 8; i++) {
+            xArray.add(launchCityIdAndResultTotal(i, i*8));
+        }
+        data.put(POIResponse.FIELD_CITY_ID_AND_RESULT_TOTAL, xArray);
         
         String path = TKConfig.getTestDataPath() + "buslinemodel";
         File file = new File(path);
@@ -1044,6 +1053,27 @@ public class DataQueryTest {
         data.put(HotelVendor.FIELD_NAME, "虚拟商家" + message);
         data.put(HotelVendor.FIELD_SERVICE_TEL, "400000" + message * 1111);
         data.put(HotelVendor.FIELD_RESERVE_TEL, message == 2 ? "12588888888" : "");
+        return data;
+    }
+
+    protected static XMap launchMapCenterAndBorderRange() {
+        XMap data = new XMap();
+        data.put(MapCenterAndBorderRange.FIELD_MAP_CENTER_X, ((int) (116.397*100000)));
+        data.put(MapCenterAndBorderRange.FIELD_MAP_CENTER_Y, ((int) (39.904*100000)));
+        
+        XArray<XInt> x = new XArray<XInt>();
+        XArray<XInt> y = new XArray<XInt>();
+        for(int i = 0; i < 8; i++) {
+            x.add((XInt) XObject.valueOf(((int) (116.397*100000 + i * 100000))));
+            y.add((XInt) XObject.valueOf(((int) (39.904*100000 + i * 100000))));
+        }
+        return data;
+    }
+
+    protected static XMap launchCityIdAndResultTotal(int cityId, int resultTotal) {
+        XMap data = new XMap();
+        data.put(CityIdAndResultTotal.FIELD_CIYT_ID, cityId);
+        data.put(CityIdAndResultTotal.FIELD_RESULT_TOTAL, resultTotal);
         return data;
     }
 }

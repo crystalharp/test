@@ -49,6 +49,7 @@ public class FeedbackActivity extends BaseActivity implements View.OnClickListen
         setListener();
 
         mTitleBtn.setText(R.string.feedback);
+        mRightBtn.setVisibility(View.GONE);
 //        SpannableString ss = new SpannableString(mThis.getString(R.string.feedback_text2));
 //        ss.setSpan(new ClickableSpan() {
 //            @Override
@@ -154,7 +155,7 @@ public class FeedbackActivity extends BaseActivity implements View.OnClickListen
 
             FeedbackUpload feedbackUpload = new FeedbackUpload(mThis);
             feedbackUpload.addParameter(FeedbackUpload.SERVER_PARAMETER_FEEDBACK, feedContent);
-            feedbackUpload.setup(-1, -1, -1, mThis.getString(R.string.doing_and_wait));
+            feedbackUpload.setup(-1, -1, mThis.getString(R.string.doing_and_wait));
             queryStart(feedbackUpload);
         } else {
             Toast.makeText(mThis, R.string.feedback_no_content_tip, Toast.LENGTH_SHORT).show();

@@ -4,9 +4,9 @@
 
 package com.tigerknows.service;
 
+import com.tigerknows.android.app.TKService;
 import com.tigerknows.util.Utility;
 
-import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -18,7 +18,7 @@ import android.net.ConnectivityManager;
  * @author pengwenyue
  *
  */
-public abstract class TKNetworkService extends Service {
+public abstract class TKNetworkService extends TKService {
 
     private ConnectivityBroadcastReceiver receiver;
     

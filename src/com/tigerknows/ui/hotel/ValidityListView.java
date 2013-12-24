@@ -88,13 +88,13 @@ public class ValidityListView extends LinearLayout {
         this.childFilterList.clear();
 
         for(int i = 0; i < 10; i++) {
-            parentFilterList.add((now.get(Calendar.YEAR)+i)+mSphinx.getString(R.string.year));
+            parentFilterList.add((now.get(Calendar.YEAR)+i)+getString(R.string.year));
         }
 
         this.selectedParentPosition = (this.calendar.get(Calendar.YEAR)-now.get(Calendar.YEAR));
         
         for(int i = (this.selectedParentPosition <= 0 ? now.get(Calendar.MONTH) : 0); i < 12; i++) {
-            childFilterList.add((i+1)+mSphinx.getString(R.string.month));
+            childFilterList.add((i+1)+getString(R.string.month));
         }
         
         this.selectedChildPosition = this.calendar.get(Calendar.MONTH) - (this.selectedParentPosition == 0 ? now.get(Calendar.MONTH) : 0);
@@ -198,7 +198,7 @@ public class ValidityListView extends LinearLayout {
                 
                 childFilterList.clear();
                 for(int i = (selectedParentPosition == 0 ? now.get(Calendar.MONTH) : 0); i < 12; i++) {
-                    childFilterList.add((i+1)+mSphinx.getString(R.string.month));
+                    childFilterList.add((i+1)+getString(R.string.month));
                 }
                 selectedChildPosition = 0;
                 childAdapter.notifyDataSetChanged();
@@ -341,5 +341,13 @@ public class ValidityListView extends LinearLayout {
             
             return view;
         }
+    }
+    
+    public String getString(int resId) {
+        return getContext().getString(resId);
+    }
+    
+    public String getString(int resId, Object... formatArgs) {
+        return getContext().getString(resId, formatArgs);
     }
 }

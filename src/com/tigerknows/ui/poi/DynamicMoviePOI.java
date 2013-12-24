@@ -144,7 +144,7 @@ public class DynamicMoviePOI extends DynamicPOIViewTemplate {
                 Dianying.NEED_FIELD_POI_DETAIL);
         dataQuery.addParameter(DataOperation.SERVER_PARAMETER_PICTURE,
                Util.byteToHexString(Dianying.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[0]");
-        dataQuery.setup(Globals.getCurrentCityInfo().getId(), mPOIDetailFragment.getId(), mPOIDetailFragment.getId(), null, false, false, poi);
+        dataQuery.setup(mPOIDetailFragment.getId(), mPOIDetailFragment.getId(), null, false, false, poi);
         
         return dataQuery;
     }
@@ -174,7 +174,7 @@ public class DynamicMoviePOI extends DynamicPOIViewTemplate {
                 dataOperation.addParameter(DataOperation.SERVER_PARAMETER_PICTURE,
                         Util.byteToHexString(Dianying.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[0]" + ";" +
                         Util.byteToHexString(Dianying.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[0]");
-                dataOperation.setup(Globals.getCurrentCityInfo().getId(), mPOIDetailFragment.getId(), mPOIDetailFragment.getId(), mSphinx.getString(R.string.doing_and_wait));
+                dataOperation.setup(mPOIDetailFragment.getId(), mPOIDetailFragment.getId(), getString(R.string.doing_and_wait));
                 list.add(dataOperation);
                 
                 dataOperation = new DataOperation(mSphinx);
@@ -183,7 +183,7 @@ public class DynamicMoviePOI extends DynamicPOIViewTemplate {
                 dataOperation.addParameter(DataOperation.SERVER_PARAMETER_DATA_UID, dynamic.getYingxun().getUid());
                 
                 dataOperation.addParameter(DataOperation.SERVER_PARAMETER_NEED_FIELD, Yingxun.NEED_FIELD);
-                dataOperation.setup(Globals.getCurrentCityInfo().getId(), mPOIDetailFragment.getId(), mPOIDetailFragment.getId(), mSphinx.getString(R.string.doing_and_wait));
+                dataOperation.setup(mPOIDetailFragment.getId(), mPOIDetailFragment.getId(), getString(R.string.doing_and_wait));
                 list.add(dataOperation);
                 
                 queryStart(list);

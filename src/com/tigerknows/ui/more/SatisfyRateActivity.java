@@ -181,7 +181,7 @@ public class SatisfyRateActivity extends BaseActivity implements View.OnClickLis
     	}
         FeedbackUpload feedbackUpload = new FeedbackUpload(mThis);
         feedbackUpload.addParameter(FeedbackUpload.SERVER_PARAMETER_SATISFY_RATE, s.toString());
-        feedbackUpload.setup(Globals.getCurrentCityInfo().getId(), -1, -1, mThis.getString(R.string.doing_and_wait));
+        feedbackUpload.setup(-1, -1, mThis.getString(R.string.doing_and_wait));
         queryStart(feedbackUpload);
     }
     @Override

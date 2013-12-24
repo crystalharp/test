@@ -94,7 +94,7 @@ public class BaseDetailFragment extends DiscoverBaseFragment implements View.OnC
     @Override
     public void onResume() {
         super.onResume();
-        mRightBtn.setBackgroundResource(R.drawable.btn_view_map);
+        mRightBtn.setText(R.string.map);
         mRightBtn.setOnClickListener(this);   
 
         if (isReLogin()) {

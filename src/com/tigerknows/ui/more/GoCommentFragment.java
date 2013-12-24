@@ -4,11 +4,9 @@
 
 package com.tigerknows.ui.more;
 
-import com.decarta.Globals;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
-import com.tigerknows.android.location.Position;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BaseQuery;
@@ -257,18 +255,12 @@ public class GoCommentFragment extends BaseFragment implements View.OnClickListe
             DataQuery dataQuery = mDataQuery;
             if (dataQuery == null) {
                 DataQuery poiQuery = new DataQuery(mContext);
-                POI requestPOI = mSphinx.getPOI();
-                int cityId = Globals.getCurrentCityInfo().getId();
+                POI requestPOI = mSphinx.getCenterPOI();
                 poiQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
                 poiQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_POI);
                 poiQuery.addParameter(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_POI);
                 poiQuery.addParameter(DataQuery.SERVER_PARAMETER_BIAS, DataQuery.BIAS_MY_COMMENT);
-                Position position = requestPOI.getPosition();
-                if (position != null) {
-                    poiQuery.addParameter(DataQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
-                    poiQuery.addParameter(DataQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
-                }
-                poiQuery.setup(cityId, getId(), getId(), null, false, false, requestPOI);
+                poiQuery.setup(getId(), getId(), null, false, false, requestPOI);
                 mSphinx.queryStart(poiQuery); 
             } else {
                 POIList poiList = ((POIResponse)dataQuery.getResponse()).getBPOIList(); 
@@ -277,10 +269,9 @@ public class GoCommentFragment extends BaseFragment implements View.OnClickListe
                 if (index + poiList.getList().size() < total) {
                     DataQuery poiQuery = new DataQuery(dataQuery);
                     POI requestPOI = dataQuery.getPOI();
-                    int cityId = dataQuery.getCityId();
                     poiQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, String.valueOf(poiList.getList().size()));
                     poiQuery.copyLocationParameter(dataQuery);
-                    poiQuery.setup(cityId, getId(), getId(), null, true, false, requestPOI);
+                    poiQuery.setup(getId(), getId(), null, true, false, requestPOI);
                     mSphinx.queryStart(poiQuery); 
                 }
             }       
@@ -294,14 +285,8 @@ public class GoCommentFragment extends BaseFragment implements View.OnClickListe
         poiQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_POI);
         poiQuery.addParameter(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_POI);
         poiQuery.addParameter(DataQuery.SERVER_PARAMETER_BIAS, DataQuery.BIAS_MY_COMMENT);
-        POI requestPOI = mSphinx.getPOI();
-        Position position = requestPOI.getPosition();
-        if (position != null) {
-            poiQuery.addParameter(DataQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
-            poiQuery.addParameter(DataQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
-        }
-        int cityId = Globals.getCurrentCityInfo().getId();
-        poiQuery.setup(cityId, getId(), getId(), null, false, false, requestPOI);
+        POI requestPOI = mSphinx.getCenterPOI();
+        poiQuery.setup(getId(), getId(), null, false, false, requestPOI);
         mSphinx.queryStart(poiQuery); 
     }
     
@@ -378,9 +363,8 @@ public class GoCommentFragment extends BaseFragment implements View.OnClickListe
             poiQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_POI);
             poiQuery.addParameter(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_POI);
             poiQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
-            int cityId = Globals.getCurrentCityInfo().getId();
             poiQuery.addParameter(DataQuery.SERVER_PARAMETER_ID_LIST, idList.toString());
-            poiQuery.setup(cityId, GoCommentFragment.this.getId(), GoCommentFragment.this.getId(), null, false, false, null);
+            poiQuery.setup(GoCommentFragment.this.getId(), GoCommentFragment.this.getId(), null, false, false, null);
             poiQuery.query();
             Response response = poiQuery.getResponse();
             if (response == null || response.getResponseCode() != Response.RESPONSE_CODE_OK) {

@@ -28,7 +28,7 @@ public class ExtraSameTypePOI extends DynamicPOIViewTemplate {
         if (mPOI == null || mPOI.isOnlyAPOI()) {
             return false;
         }
-        if (TextUtils.isEmpty(mPOI.getCategory()) == false && (mSphinx.uiStackContains(R.id.view_poi_result) || mSphinx.uiStackContains(R.id.view_poi_result2))) {
+        if (TextUtils.isEmpty(mPOI.getCategory()) == false && mSphinx.uiStackContains(R.id.view_poi_result)) {
             return true;
         }
         return false;
@@ -95,7 +95,7 @@ public class ExtraSameTypePOI extends DynamicPOIViewTemplate {
                 } else {
                     long money = target.getPerCapity();
                     if (money > -1) {
-                        moneyTxv.setText(mSphinx.getString(R.string.yuan, money));
+                        moneyTxv.setText(getString(R.string.yuan, money));
                     } else {
                         moneyTxv.setText("");
                     }
@@ -154,11 +154,7 @@ public class ExtraSameTypePOI extends DynamicPOIViewTemplate {
             return;
         }
         
-        int id = R.id.view_poi_result;
-        if (mSphinx.uiStackContains(id) == false) {
-            id = R.id.view_poi_result2;
-        }
-        POIResultFragment poiResultFragment = (POIResultFragment) mSphinx.getFragment(id);
+        POIResultFragment poiResultFragment = (POIResultFragment) mSphinx.getPOIResultFragment();
         
         DataQuery dataQuery = poiResultFragment.getDataQuery();
         if (dataQuery == null) {
@@ -167,7 +163,6 @@ public class ExtraSameTypePOI extends DynamicPOIViewTemplate {
         
         DataQuery poiQuery = new DataQuery(dataQuery);
 
-        int cityId = dataQuery.getCityId();
         poiQuery.removeParameter(DataQuery.SERVER_PARAMETER_INFO);
         poiQuery.removeParameter(DataQuery.SERVER_PARAMETER_FILTER);
         poiQuery.removeParameter(DataQuery.SERVER_PARAMETER_FILTER_STRING);
@@ -180,7 +175,7 @@ public class ExtraSameTypePOI extends DynamicPOIViewTemplate {
             poiQuery.addParameter(DataQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
             poiQuery.addParameter(DataQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
         }
-        poiQuery.setup(cityId, mPOIDetailFragment.getId(), mPOIDetailFragment.getId(), null, false, false, mPOI);
+        poiQuery.setup(mPOIDetailFragment.getId(), mPOIDetailFragment.getId(), null, false, false, mPOI);
         queryStart(poiQuery);
         
         mPOIDetailFragment.addLoadingView();

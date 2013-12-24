@@ -11,7 +11,6 @@ import android.content.DialogInterface.OnDismissListener;
 import android.location.Location;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,13 +25,11 @@ import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
-import com.tigerknows.Sphinx.TouchMode;
 import com.tigerknows.android.location.Position;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.android.widget.TKEditText;
@@ -40,10 +37,7 @@ import android.widget.Toast;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.CityInfo;
 import com.tigerknows.map.MapEngine;
-import com.tigerknows.map.MapView;
 import com.tigerknows.model.BaseQuery;
-import com.tigerknows.model.BuslineModel;
-import com.tigerknows.model.BuslineQuery;
 import com.tigerknows.model.History;
 import com.tigerknows.model.LocationQuery;
 import com.tigerknows.model.POI;
@@ -240,7 +234,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	        
 	        if (TextUtils.isEmpty(btn.getText())) {
 	            poi = new POI();
-	        } else if (mContext.getString(R.string.my_location).equals(btn.getText().toString())) {
+	        } else if (getString(R.string.my_location).equals(btn.getText().toString())) {
 	            POI location = mMapLocationHelper.getMyLocation();
 	            if (location != null) {
 	                poi = new POI();
@@ -294,8 +288,8 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
         findViews();
     	
     	KEYWORDS = new String[]{
-    		mContext.getString(R.string.my_location),
-    		mContext.getString(R.string.select_has_point),
+    		getString(R.string.my_location),
+    		getString(R.string.select_has_point),
     	};
     	
     	keywordList = Arrays.asList(KEYWORDS);
@@ -308,8 +302,8 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
         mLogHelper = new TrafficQueryLogHelper(this);
 //        mSuggestWordHelper = new TrafficQuerySuggestWordHelper(mContext, this, mSuggestLsv);
         
-        mStart.setHint(mContext.getString(R.string.start_));
-        mEnd.setHint(mContext.getString(R.string.end_));
+        mStart.setHint(getString(R.string.start_));
+        mEnd.setHint(getString(R.string.end_));
 		
         return mRootView;
     }
@@ -569,13 +563,12 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
         TrafficQuery trafficQuery = new TrafficQuery(mContext);
         
         //和产品确认所查询的换乘所属的城市是当前所设置的城市，而不是地图所在的城市
-        int cityId = mMapLocationHelper.getQueryCityInfo().getId();
         
         addHistoryWord(start, HistoryWordTable.TYPE_TRAFFIC);
         addHistoryWord(end, HistoryWordTable.TYPE_TRAFFIC);
     		
         mActionLog.addAction(mActionTag +  ActionLog.TrafficTrafficBtn, getQueryType(), mStart.getText(), mEnd.getText());
-        trafficQuery.setup(cityId, start, end, getQueryType(), getId(), mContext.getString(R.string.doing_and_wait));
+        trafficQuery.setup(start, end, getQueryType(), getId(), getString(R.string.doing_and_wait));
         
         mSphinx.queryStart(trafficQuery);
 	}
@@ -584,11 +577,10 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
         if (poi == null) {
             return;
         }
-        int cityId = mMapLocationHelper.getQueryCityInfo().getId();
         String name = poi.getName();
-        if (name != null && name.trim().equals(mSphinx.getString(R.string.my_location)) == false) {
+        if (name != null && name.trim().equals(getString(R.string.my_location)) == false) {
             Position position = poi.getPosition();
-            HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, name, position), cityId, type);
+            HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, name, position), type);
         }
     }
     
@@ -625,7 +617,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
         
         TrafficQuery trafficQuery = new TrafficQuery(sphinx);
             
-        trafficQuery.setup(Globals.getCurrentCityInfo().getId(), start, end, queryType, R.id.view_traffic_home, sphinx.getString(R.string.doing_and_wait));
+        trafficQuery.setup(start, end, queryType, R.id.view_traffic_home, sphinx.getString(R.string.doing_and_wait));
         
         sphinx.queryStart(trafficQuery);
     }
@@ -633,13 +625,6 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	public static String getMyLocationName(Sphinx mSphinx, Position position) {
 		String mLocationName = MapEngine.getPositionName(position);
 		return mLocationName;
-	}
-	
-	private boolean isKeyword(String input) {
-		if (keywordList.contains(input)) {
-			return true;
-		}
-		return false;
 	}
 	
 	private boolean checkIsInputEmpty() {
@@ -667,8 +652,8 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	    POI start, end;
 	    start = mStart.getPOI();
 	    end = mEnd.getPOI();
-		if (mContext.getString(R.string.select_has_point).equals(mStart.getText())
-				&& mContext.getString(R.string.select_has_point).equals(mEnd.getText())) {
+		if (getString(R.string.select_has_point).equals(mStart.getText())
+				&& getString(R.string.select_has_point).equals(mEnd.getText())) {
 			if (POI.isPositionEqual(start, end)) {
 				mSphinx.showTip(R.string.start_equal_to_end, Toast.LENGTH_SHORT);
 				return true;
@@ -749,10 +734,6 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
     public void setDataNoSuggest(POI poi, int index, int queryType) {
         if (index != START && index != END && index != SELECTED) 
             return;
-
-        if (poi.getPosition() != null) {
-            mMapLocationHelper.mTargetCityInfo = MapEngine.getCityInfo(MapEngine.getCityId(poi.getPosition()));
-        }
         
         mSettedRadioBtn = R.id.traffic_transfer_rbt;
         switch (queryType) {
@@ -806,12 +787,12 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
     public void modifyData(POI poi, int index) {
     	if (index != START && index != END ) 
     		return;
-    	if (index == START && mContext.getString(R.string.my_location).equals(mStart.getText())) {
+    	if (index == START && getString(R.string.my_location).equals(mStart.getText())) {
     		LogWrapper.d("eric", "getTrafficQueryFragment modifyData mylocation skip");
     		return;
     	}
     	
-    	if (index == END && mContext.getString(R.string.my_location).equals(mEnd.getText())) {
+    	if (index == END && getString(R.string.my_location).equals(mEnd.getText())) {
     		LogWrapper.d("eric", "getTrafficQueryFragment modifyData mylocation skip");
     		return;
     	}
@@ -1033,12 +1014,12 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 			
 			if (!TextUtils.isEmpty(mEdt.getText())
 					&& !mEdt.getText().toString().equals(mPOI.getName())
-					&& !mEdt.getText().toString().equals(mContext.getString(R.string.my_location))) {
+					&& !mEdt.getText().toString().equals(getString(R.string.my_location))) {
 				mPOI = new POI();
 				mPOI.setName(mEdt.getText().toString().trim());
 			}
 			
-			if (mEdt.getText().toString().equals(mContext.getString(R.string.my_location))) {
+			if (mEdt.getText().toString().equals(getString(R.string.my_location))) {
 				POI location = mMapLocationHelper.getMyLocation();
 				if (location != null) {
 					mPOI.setName(mEdt.getText().toString());
@@ -1104,7 +1085,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
      * @param currentCity
      */
     public void setCurrentCity(String currentCity) {
-//		mCityTxt.setText(mContext.getString(R.string.current_city, currentCity));
+//		mCityTxt.setText(getString(R.string.current_city, currentCity));
 	}
     	
 	public void postTask(Runnable r) {

@@ -12,14 +12,11 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.android.os.TKAsyncTask;
 import android.widget.Toast;
 
-import com.tigerknows.map.CityInfo;
-import com.tigerknows.map.MapEngine;
 import com.tigerknows.model.AccountManage;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.Response;
@@ -162,30 +159,8 @@ public abstract class UserBaseActivity extends BaseActivity {
 	 */
 	protected void sendRequest(AccountManage accountManage) {
 		hideSoftInput();
-		accountManage.setup(getCityParameter());
 		accountManage.setTipText(getString(R.string.doing_and_wait));
 		queryStart(accountManage, false);
-	}
-
-	/**
-	 * 获取城市ID参数, 若定到位, 使用定位城市; 若无定位信息, 使用当前地图城市
-	 * @return
-	 */
-	private int getCityParameter() {
-		int cityId = CityInfo.CITY_ID_INVALID;
-		
-		CityInfo mylocaCityInfo = Globals.g_My_Location_City_Info;
-		if (mylocaCityInfo != null) {
-			cityId = mylocaCityInfo.getId();
-		}
-		
-		CityInfo myCurrentCityInfo = Globals.getCurrentCityInfo();
-		if (cityId == CityInfo.CITY_ID_INVALID && myCurrentCityInfo != null) {
-			cityId = myCurrentCityInfo.getId();
-		}
-		LogWrapper.d(TAG, "cityId: " + cityId);
-		
-		return cityId;
 	}
 	
 	@Override

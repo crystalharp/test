@@ -1022,7 +1022,7 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
             shareQzone = shareQzone + mThis.getString(R.string.poi_comment_share_qzone_source); // 17个
             dataOperation.addLocalParameter(DataOperation.SERVER_PARAMETER_SHARE_QZONE, shareQzone);
         }
-        dataOperation.setup(Globals.getCurrentCityInfo().getId(), -1, mFromViewId, mThis.getString(R.string.comment_publishing_and_wait));
+        dataOperation.setup(-1, mFromViewId, mThis.getString(R.string.comment_publishing_and_wait));
         queryStart(dataOperation, false);
     }
     
@@ -1112,7 +1112,7 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
                             DataOperation dataOperation = new DataOperation(commentOperation);
                             dataOperation.addParameter(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_UPDATE);
                             dataOperation.addParameter(DataOperation.SERVER_PARAMETER_DATA_UID, mComment.getUid());
-                            dataOperation.setup(Globals.getCurrentCityInfo().getId(), -1, mFromViewId, mThis.getString(R.string.doing_and_wait));
+                            dataOperation.setup(-1, mFromViewId, mThis.getString(R.string.doing_and_wait));
                             queryStart(dataOperation);
                         }
                     });
@@ -1122,7 +1122,7 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
                     mTitleBtn.setText(R.string.publish_comment);
                     DataOperation dataOperation = new DataOperation(commentOperation);
                     dataOperation.addParameter(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_CREATE);
-                    dataOperation.setup(Globals.getCurrentCityInfo().getId(), -1, mFromViewId, mThis.getString(R.string.doing_and_wait));
+                    dataOperation.setup(-1, mFromViewId, mThis.getString(R.string.doing_and_wait));
                     queryStart(dataOperation);
                 } else if (response.getResponseCode() == 603) {
                     BaseActivity.showErrorDialog(mThis, mThis.getString(R.string.response_code_603), mThis, true);

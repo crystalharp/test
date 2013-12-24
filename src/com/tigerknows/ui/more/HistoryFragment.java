@@ -397,8 +397,8 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
                 case MENU_DELETE:
                     mActionLog.addAction(mActionTag+ActionLog.HistoryMenuDelete + getActionLogType());
                     Utility.showNormalDialog(mSphinx,
-                            mContext.getString(R.string.prompt),
-                            mContext.getString(mLayerType.equals(ItemizedOverlay.POI_OVERLAY) ? R.string.delete_a_history_poi : R.string.delete_a_history_traffic),
+                            getString(R.string.prompt),
+                            getString(mLayerType.equals(ItemizedOverlay.POI_OVERLAY) ? R.string.delete_a_history_poi : R.string.delete_a_history_traffic),
                             new DialogInterface.OnClickListener() {
                                 
                                 @Override
@@ -447,8 +447,8 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
                 }
                 if (count > 0) {
                     Utility.showNormalDialog(mSphinx,
-                            mContext.getString(R.string.prompt),
-                            mContext.getString(mLayerType.equals(ItemizedOverlay.POI_OVERLAY) ? R.string.delete_all_history_poi : R.string.delete_all_history_traffic),
+                            getString(R.string.prompt),
+                            getString(mLayerType.equals(ItemizedOverlay.POI_OVERLAY) ? R.string.delete_all_history_poi : R.string.delete_all_history_traffic),
                             new DialogInterface.OnClickListener() {
                                 
                                 @Override

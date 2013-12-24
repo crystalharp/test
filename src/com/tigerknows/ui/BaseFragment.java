@@ -73,8 +73,6 @@ public class BaseFragment extends LinearLayout {
     
     public Button mRightBtn;
     
-    public Button mRight2Btn;
-    
     /**
      * 最顶的View，其高度为0
      */
@@ -153,7 +151,6 @@ public class BaseFragment extends LinearLayout {
             mKeywordEdt = mTitleFragment.mKeywordEdt;
             mLeftBtn = mTitleFragment.mLeftBtn;
             mRightBtn = mTitleFragment.mRightBtn;
-            mRight2Btn = mTitleFragment.mRight2Btn;
             mSkylineView = mTitleFragment.mSkylineView;
         }
         
@@ -401,5 +398,13 @@ public class BaseFragment extends LinearLayout {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+    }
+    
+    public String getString(int resId) {
+        return mContext.getString(resId);
+    }
+    
+    public String getString(int resId, Object... formatArgs) {
+        return mContext.getString(resId, formatArgs);
     }
 }

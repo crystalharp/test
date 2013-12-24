@@ -947,6 +947,10 @@ public class MapEngine {
     
     private static HashMap<Integer, String> subwayMap = new HashMap<Integer, String>();
     
+    public static HashMap<Integer, String> getSubwayMap() {
+        return subwayMap;
+    }
+    
     /**
      * 检查指定城市是否支持查看地铁图功能
      * @param cityId

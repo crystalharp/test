@@ -6,7 +6,6 @@ package com.tigerknows.ui.user;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Hashtable;
 import java.util.List;
 
 import android.content.Context;
@@ -78,18 +77,19 @@ public class MyCommentListFragment extends BaseFragment {
                     poiQuery.addParameter(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
                     poiQuery.addParameter(DataOperation.SERVER_PARAMETER_DATA_UID, poi.getUUID());
                     poiQuery.addParameter(DataOperation.SERVER_PARAMETER_NEED_FIELD, POI.NEED_FIELD);
-                    int cityId = Globals.getCurrentCityInfo().getId();
+                    int cityId = Globals.getCurrentCityInfo(mSphinx).getId();
                     try {
                         cityId = Integer.parseInt(comment.getPoiCityId());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    poiQuery.setup(cityId, getId(), getId(), mSphinx.getString(R.string.doing_and_wait));
+                    poiQuery.setup(getId(), getId(), getString(R.string.doing_and_wait));
+                    poiQuery.setCityId(cityId);
                     mSphinx.queryStart(poiQuery);
                 }
             } else {
                 Utility.showNormalDialog(mSphinx, 
-                        mSphinx.getString(R.string.poi_invalid));
+                        getString(R.string.poi_invalid));
             }
         }
     };
@@ -156,7 +156,7 @@ public class MyCommentListFragment extends BaseFragment {
                     if (comment != null) {
                         if (comment.getPOI().getStatus() <= 0) {
                             Utility.showNormalDialog(mSphinx, 
-                                    mSphinx.getString(R.string.poi_comment_poi_invalid_not_update));
+                                    getString(R.string.poi_comment_poi_invalid_not_update));
                         } else {
                             EditCommentActivity.setPOI(comment.getPOI(), getId(), EditCommentActivity.STATUS_MODIFY);
                             mSphinx.showView(R.id.activity_poi_edit_comment);
@@ -175,13 +175,12 @@ public class MyCommentListFragment extends BaseFragment {
             DataQuery dataQuery = new DataQuery(mSphinx);
             dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_DIANPING);
             dataQuery.addParameter(DataQuery.SERVER_PARAMETER_REFER, DataQuery.REFER_USER);
-            dataQuery.setup(Globals.getCurrentCityInfo().getId(), getId(), getId(), null);
+            dataQuery.setup(getId(), getId(), null);
             mSphinx.queryStart(dataQuery);
             return;
         }
 
         DataQuery dataQuery;
-        int cityId = lastDataQuery.getCityId();
         if (mCommentArrayList.size() > 0) {
             dataQuery = new DataQuery(lastDataQuery);
             if (isHeader) {
@@ -196,7 +195,7 @@ public class MyCommentListFragment extends BaseFragment {
             dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_DIANPING);
             dataQuery.addParameter(DataQuery.SERVER_PARAMETER_REFER, DataQuery.REFER_USER);
         }
-        dataQuery.setup(cityId, getId(), getId(), null, true, false, null);
+        dataQuery.setup(getId(), getId(), null, true, false, null);
         mSphinx.queryStart(dataQuery);
         }
     }
@@ -206,6 +205,7 @@ public class MyCommentListFragment extends BaseFragment {
         super.onResume();
         
         mTitleBtn.setText(R.string.my_comment);
+        mRightBtn.setVisibility(View.GONE);
         
         mEmptyTxv.setVisibility(View.GONE);
         if (mCommentArrayList.isEmpty()) {    

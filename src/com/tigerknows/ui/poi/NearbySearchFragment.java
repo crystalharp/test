@@ -7,8 +7,6 @@ package com.tigerknows.ui.poi;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.content.Context;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -18,17 +16,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.android.location.Position;
+import com.tigerknows.android.os.TKAsyncTask;
+
 import android.widget.Toast;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.MapEngine;
 import com.tigerknows.model.BaseQuery;
+import com.tigerknows.model.CategoryProperty;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.DataQuery.Filter;
@@ -61,22 +62,51 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
      * 分类名称列表
      */
     protected String[] mCategoryNames;
-    
+    protected String[] mSubCategoryNames;
+    protected LinearLayout[][] mCategoryLlys;
     protected Button[][] mCategoryBtns;
     
-    protected static final int[] CATEGORY_ID = {R.id.food_category,
-    	R.id.hotel_category,
-    	R.id.entertainment_category,
-    	R.id.shopping_category,
-    	R.id.travel_category,
-    	R.id.traffic_category,
-    	R.id.beauty_category,
-    	R.id.bank_category,
-    	R.id.sports_category,
-    	R.id.hospital_category
-    };
+    protected CategoryProperty[] mCategoryList;
     
-    protected static final int NUM_OF_SUB_CATEGORY = 5;
+    protected static final int NUM_OF_CATGEGORY = 10;
+    
+    protected static final int FOOD = 0;
+    protected static final int HOTEL = 1;
+    protected static final int ENTERTAINMENT = 2;
+    protected static final int TRAFFIC = 3;
+
+    public void launchCategoryPropertyList(){
+        final int[][] SPECIAL_OP = {
+        	{FOOD, 0, CategoryProperty.OP_DISH},
+        	{HOTEL, 3, CategoryProperty.OP_HOTEL},
+        	{HOTEL, 8, CategoryProperty.OP_INVISIBLE},
+        	{ENTERTAINMENT, 0, CategoryProperty.OP_DIANYING},
+        	{ENTERTAINMENT, 6, CategoryProperty.OP_YANCHU},
+        	{ENTERTAINMENT, 7, CategoryProperty.OP_ZHANLAN},
+        	{TRAFFIC, 3, CategoryProperty.OP_SUBWAY}
+        };
+    	mCategoryList = new CategoryProperty[]{
+        	new CategoryProperty(R.id.food_category, 7),
+        	new CategoryProperty(R.id.hotel_category, 3),
+        	new CategoryProperty(R.id.entertainment_category, 7),
+        	new CategoryProperty(R.id.traffic_category, 3),
+        	new CategoryProperty(R.id.shopping_category, 3),
+        	new CategoryProperty(R.id.travel_category, 1),
+        	new CategoryProperty(R.id.beauty_category, 1), 
+        	new CategoryProperty(R.id.bank_category, 3),
+        	new CategoryProperty(R.id.sports_category, 1),
+        	new CategoryProperty(R.id.hospital_category, 1)
+    	};
+    	for(int i=0; i<SPECIAL_OP.length; i++){
+    		mCategoryList[SPECIAL_OP[i][0]].setOperationType(SPECIAL_OP[i][1], SPECIAL_OP[i][2]);
+    	}
+    	mCategoryNames = mContext.getResources().getStringArray(R.array.home_category);
+    	mSubCategoryNames = mContext.getResources().getStringArray(R.array.home_sub_category);
+    	for(int i=0; i<NUM_OF_CATGEGORY; i++){
+    		mCategoryList[i].setName(mCategoryNames[i]);
+    		mCategoryList[i].setButtonText(mSubCategoryNames[i].split(";"));
+    	}
+    }    
     
     protected View[] mCategoryViews;
 
@@ -96,12 +126,11 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         LogWrapper.d(BaseFragment.TAG, "onCreateView()"+mActionTag);
         
         mRootView = mLayoutInflater.inflate(R.layout.poi_nearby_search, container, false);
-        Resources resources = mContext.getResources();
-        mCategoryNames = resources.getStringArray(R.array.home_category);
+        launchCategoryPropertyList();
         
         findViews();
         setListener();
-        
+        setButtonView();
         setFilterListView();
                 
         mLocationTxv.setVisibility(View.VISIBLE);
@@ -120,7 +149,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         	mTitleBtn.setText(R.string.merchant_type);
         }
         String name = mPOI.getName();
-        String title = mSphinx.getString(R.string.at_where_search, name);
+        String title = getString(R.string.at_where_search, name);
         SpannableStringBuilder style = new SpannableStringBuilder(title);
         int focusedColor = mSphinx.getResources().getColor(R.color.black_dark);
         style.setSpan(new ForegroundColorSpan(focusedColor), 0, 2, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
@@ -135,25 +164,58 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
 
     protected void findViews() {
         mLocationTxv = (TextView) mRootView.findViewById(R.id.location_txv);
-        mCategoryBtns = new Button[CATEGORY_ID.length][];
-        mCategoryViews = new View[CATEGORY_ID.length];
-        for(int i = 0; i < CATEGORY_ID.length; i++){
-        	mCategoryViews[i] = (View)mRootView.findViewById(CATEGORY_ID[i]);
-        	mCategoryBtns[i] = new Button[NUM_OF_SUB_CATEGORY + 2];
-        	mCategoryBtns[i][0] = (Button) mCategoryViews[i].findViewById(R.id.category_btn);
+        mCategoryBtns = new Button[NUM_OF_CATGEGORY][];
+        mCategoryLlys = new LinearLayout[NUM_OF_CATGEGORY][];
+        mCategoryViews = new View[NUM_OF_CATGEGORY];
+        for(int i = 0; i < NUM_OF_CATGEGORY; i++){
+        	mCategoryViews[i] = (View)mRootView.findViewById(mCategoryList[i].getID());
+        	mCategoryLlys[i] = new LinearLayout[CategoryProperty.LINEAR_ARRAY.length];
+        	mCategoryLlys[i][0] = (LinearLayout) mCategoryViews[i].findViewById(R.id.sub_alpha_lly);
+        	mCategoryLlys[i][1] = (LinearLayout) mCategoryViews[i].findViewById(R.id.sub_beta_lly);
+        	mCategoryLlys[i][2] = (LinearLayout) mCategoryViews[i].findViewById(R.id.sub_more_lly);
+        	mCategoryBtns[i] = new Button[CategoryProperty.NUM_OF_SUBBUTTONS + 1];
+        	mCategoryBtns[i][0] = (Button) mCategoryViews[i].findViewById(R.id.sub_0_btn);
         	mCategoryBtns[i][1] = (Button) mCategoryViews[i].findViewById(R.id.sub_1_btn);
         	mCategoryBtns[i][2] = (Button) mCategoryViews[i].findViewById(R.id.sub_2_btn);
         	mCategoryBtns[i][3] = (Button) mCategoryViews[i].findViewById(R.id.sub_3_btn);
         	mCategoryBtns[i][4] = (Button) mCategoryViews[i].findViewById(R.id.sub_4_btn);
         	mCategoryBtns[i][5] = (Button) mCategoryViews[i].findViewById(R.id.sub_5_btn);
-        	mCategoryBtns[i][6] = (Button) mCategoryViews[i].findViewById(R.id.sub_more_btn);
+        	mCategoryBtns[i][6] = (Button) mCategoryViews[i].findViewById(R.id.sub_6_btn);
+        	mCategoryBtns[i][7] = (Button) mCategoryViews[i].findViewById(R.id.sub_7_btn);
+        	mCategoryBtns[i][8] = (Button) mCategoryViews[i].findViewById(R.id.sub_more_btn);
+        	mCategoryBtns[i][9] = (Button) mCategoryViews[i].findViewById(R.id.category_btn);
         }
     }
 
     protected void setListener() {
-    	for(int i = 0; i < CATEGORY_ID.length; i++){
-    		for(int j = 0; j < NUM_OF_SUB_CATEGORY + 2; j++){
+    	for(int i = 0; i < NUM_OF_CATGEGORY; i++){
+    		for(int j = 0; j < CategoryProperty.NUM_OF_SUBBUTTONS + 1; j++){
     			mCategoryBtns[i][j].setOnClickListener(this);
+    		}
+    	}
+    }
+    
+    protected void setButtonView(){
+    	for(int i = 0; i < NUM_OF_CATGEGORY; i++){
+    		CategoryProperty cp = mCategoryList[i];
+    		mCategoryBtns[i][9].setText(cp.getName());
+    		for(int j = 0; j < CategoryProperty.LINEAR_ARRAY.length; j++){
+    			if((CategoryProperty.LINEAR_ARRAY[j] & mCategoryList[i].getLlyVisibility()) == 0){
+    				mCategoryLlys[i][j].setVisibility(View.GONE);
+    			}else{
+    				mCategoryLlys[i][j].setVisibility(View.VISIBLE);
+    			}
+    		}
+    		for(int j = 0; j < CategoryProperty.NUM_OF_SUBBUTTONS; j++){
+    			mCategoryBtns[i][j].setText(cp.getButtonText(j));
+    			int OP = mCategoryList[i].getOperationType(j);
+    			if(OP == CategoryProperty.OP_MORE){
+    				mCategoryBtns[i][j].setTag(mCategoryList[i].getName());
+    			}else if(OP == CategoryProperty.OP_INVISIBLE){
+    				mCategoryBtns[i][j].setVisibility(View.INVISIBLE);
+    			}else{
+    				mCategoryBtns[i][j].setTag(OP);
+    			}
     		}
     	}
     }
@@ -164,7 +226,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         if (mFilterList != null) {
             FilterListView.selectedFilter(mFilterList.get(0), -1);
         } else {
-            DataQuery.initStaticField(BaseQuery.DATA_TYPE_POI, BaseQuery.SUB_DATA_TYPE_POI, Globals.getCurrentCityInfo().getId(), mContext);
+            DataQuery.initStaticField(BaseQuery.DATA_TYPE_POI, BaseQuery.SUB_DATA_TYPE_POI, mContext, MapEngine.getCityId(mPOI.getPosition()));
             FilterCategoryOrder filterCategory = DataQuery.getPOIFilterCategoryOrder();
             if (filterCategory != null) {
                 List<FilterOption> filterOptionList = new ArrayList<DataQuery.FilterOption>();
@@ -182,28 +244,6 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
                 }
                 Filter categoryFilter = DataQuery.makeFilterResponse(mContext, indexList, filterCategory.getVersion(), filterOptionList, FilterCategoryOrder.FIELD_LIST_CATEGORY, false);
                 categoryFilter.getChidrenFilterList().remove(0);
-                List<Filter> list = categoryFilter.getChidrenFilterList();
-                for(int i = 0 ; i < CATEGORY_ID.length; i++){
-                	int position = -1;
-                	for(int k = 0; k < list.size(); k++){
-                		if(TextUtils.equals(mCategoryNames[i], list.get(k).getFilterOption().getName())){
-                			position = k;
-                			break;
-                		}
-                	}
-                	if(position >= 0){
-                		mCategoryBtns[i][0].setText(list.get(position).getFilterOption().getName());
-                		mCategoryBtns[i][0].setTag(list.get(position).getFilterOption().getName());
-                		Filter filter = list.get(position);
-                		List<Filter> childrenList = filter.getChidrenFilterList();
-                		for(int j = 0, size = childrenList.size(); j < NUM_OF_SUB_CATEGORY && j < size; j++){
-                			mCategoryBtns[i][j+1].setText(childrenList.get(j).getFilterOption().getName());
-                			mCategoryBtns[i][j+1].setTag(childrenList.get(j).getFilterOption().getName());
-                		}
-                	}else{
-                		mCategoryViews[i].setVisibility(View.GONE);
-                	}
-                }
                 
                 mFilterList = new ArrayList<Filter>();
                 mFilterList.add(categoryFilter);
@@ -226,12 +266,26 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         	}
         	break;
         case R.id.category_btn:
+        	submitQuery(((Button)view).getText().toString());
+        	break;
+        case R.id.sub_0_btn:
         case R.id.sub_1_btn:
         case R.id.sub_2_btn:
         case R.id.sub_3_btn:
         case R.id.sub_4_btn:
         case R.id.sub_5_btn:
-        	submitQuery(((Button)view).getTag().toString());
+        case R.id.sub_6_btn:
+        case R.id.sub_7_btn:
+        	Button btn = (Button)view;
+        	int op = (Integer) btn.getTag();
+        	LogWrapper.d("Trap", "op=" + op);
+        	switch(op){
+        	case CategoryProperty.OP_SEARCH:
+        		submitQuery(btn.getText().toString());
+        		break;
+        	default:
+        		break;
+        	}
         	break;
         case R.id.sub_more_btn:
         	//TODO: mActionLog
@@ -266,10 +320,9 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
             }
             poiQuery.addParameter(DataQuery.SERVER_PARAMETER_INFO, DataQuery.INFO_TYPE_TAG);
             poiQuery.addParameter(DataQuery.SERVER_PARAMETER_EXT, DataQuery.EXT_BUSLINE);
-            poiQuery.setup(cityId, getId(), mSphinx.getPOIResultFragmentID(), null, false, false, requestPOI);
+            poiQuery.setup(getId(), getId(), getString(R.string.doing_and_wait), false, false, requestPOI);
+            poiQuery.setCityId(cityId);
             mSphinx.queryStart(poiQuery);
-            ((POIResultFragment)mSphinx.getFragment(poiQuery.getTargetViewId())).setup(null);
-            mSphinx.showView(poiQuery.getTargetViewId());
         } else {
             mSphinx.showTip(R.string.search_input_keyword, Toast.LENGTH_SHORT);
         }
@@ -278,13 +331,17 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     public void setData(POI poi) {
         reset();
         mPOI = poi;
+        
+        setFilterListView();
     }
     
     /**
      * 将UI及内容重置为第一次进入页面时的状态
      */
     public void reset() {
-    	mFilterListView.setVisibility(View.GONE);
+        if (mFilterListView != null) {
+    	    mFilterListView.setVisibility(View.GONE);
+        }
     	mTitleBtn.setText(R.string.nearby_search);
     }
 
@@ -317,5 +374,16 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
 	protected void backHome() {
         mFilterListView.setVisibility(View.GONE);
         mTitleBtn.setText(R.string.nearby_search);
+    }
+
+    @Override
+    public void onPostExecute(TKAsyncTask tkAsyncTask) {
+        super.onPostExecute(tkAsyncTask);
+        BaseQuery baseQuery = tkAsyncTask.getBaseQuery();
+        
+        String apiType = baseQuery.getAPIType();
+        if (BaseQuery.API_TYPE_DATA_QUERY.equals(apiType)) {
+            InputSearchFragment.dealWithPOIResponse((DataQuery) baseQuery, mSphinx, this);
+        }
     }
 }

@@ -297,7 +297,6 @@ public class SettingActivity extends BaseActivity {
 	                    	intent = new Intent(mThis, BrowserActivity.class);
 	                        intent.putExtra(BrowserActivity.TITLE, getString(R.string.help));
 	                        HelpQuery baseQuery = new HelpQuery(mThis);
-	                        baseQuery.addCommonParameters(Globals.getCurrentCityInfo().getId(), false);
 	                        intent.putExtra(BrowserActivity.URL, String.format(TKConfig.getHelpUrl(), TKConfig.getHelpHost()) + "?" + baseQuery.getParameters().getEncodedPostParam(TKConfig.getEncoding()));
 	                        startActivityForResult(intent, 0);
 	                    	break;

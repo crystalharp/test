@@ -9,6 +9,7 @@ import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.android.widget.TKEditText;
 
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -20,6 +21,11 @@ import android.widget.Button;
  * @author Peng Wenyue
  */
 public class TitleFragment extends BaseFragment {
+    
+    public int mRightBtnPaddingLeft;
+    public int mRightBtnPaddingTop;
+    public int mRightBtnConfirmColor;
+    public int mRightBtnCancelColor;
     
     public TitleFragment(Sphinx sphinx) {
         super(sphinx);
@@ -35,6 +41,14 @@ public class TitleFragment extends BaseFragment {
         
         findViews();
         setListener();
+        
+        mRightBtnPaddingLeft = mRightBtn.getPaddingLeft();
+        mRightBtnPaddingTop = mRightBtn.getPaddingTop();
+        
+        Resources resources = mSphinx.getResources();
+        mRightBtnConfirmColor = resources.getColor(R.color.white);
+        mRightBtnCancelColor = resources.getColor(R.color.black_dark);
+        
         return mRootView;
     }
     
@@ -44,7 +58,6 @@ public class TitleFragment extends BaseFragment {
         mKeywordEdt = (TKEditText) mRootView.findViewById(R.id.keyword_edt);
         mLeftBtn = (Button) mRootView.findViewById(R.id.left_btn);
         mRightBtn = (Button) mRootView.findViewById(R.id.right_btn);
-        mRight2Btn = (Button) mRootView.findViewById(R.id.right2_btn);
         mSkylineView = mRootView.findViewById(R.id.skyline_view);
     }
     
@@ -61,6 +74,8 @@ public class TitleFragment extends BaseFragment {
         mTitleBtn.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
         mTitleBtn.setText(null);
         mTitleBtn.setBackgroundDrawable(null);
+        mTitleBtn.setCompoundDrawables(null, null, null, null);
+        mTitleBtn.getLayoutParams().height = LayoutParams.WRAP_CONTENT;
         mTitleBtn.setOnClickListener(null);
         mTitleBtn.setVisibility(View.VISIBLE);
         
@@ -71,16 +86,26 @@ public class TitleFragment extends BaseFragment {
         mLeftBtn.setOnClickListener(null);
         mLeftBtn.setVisibility(View.VISIBLE);
         
-        mRightBtn.setBackgroundDrawable(null);
+        mRightBtn.setBackgroundResource(R.drawable.btn_confirm);
+        mRightBtn.setPadding(mRightBtnPaddingLeft, mRightBtnPaddingTop, mRightBtnPaddingLeft, mRightBtnPaddingTop);
+        mRightBtn.setTextColor(mRightBtnConfirmColor);
         mRightBtn.setText(null);
         mRightBtn.setEnabled(true);
         mRightBtn.setOnClickListener(null);
         mRightBtn.setVisibility(View.VISIBLE);
-        
-        mRight2Btn.setBackgroundDrawable(null);
-        mRight2Btn.setText(null);
-        mRight2Btn.setOnClickListener(null);
-        mRight2Btn.setVisibility(View.VISIBLE);
     }
-    
+
+    public void refreshRightBtn(String keyword) {
+        if (keyword.trim().length() > 0) {
+            mRightBtn.setText(R.string.confirm);
+            mRightBtn.setTextColor(mRightBtnConfirmColor);
+            mRightBtn.setBackgroundResource(R.drawable.btn_confirm);
+            mRightBtn.setPadding(mRightBtnPaddingLeft, mRightBtnPaddingTop, mRightBtnPaddingLeft, mRightBtnPaddingTop);
+        } else {
+            mRightBtn.setText(R.string.cancel);
+            mRightBtn.setTextColor(mRightBtnCancelColor);
+            mRightBtn.setBackgroundResource(R.drawable.btn_cancel);
+            mRightBtn.setPadding(mRightBtnPaddingLeft, mRightBtnPaddingTop, mRightBtnPaddingLeft, mRightBtnPaddingTop);
+        }
+    }
 }

@@ -5,9 +5,9 @@
 package com.tigerknows.service;
 
 import com.decarta.Globals;
-import com.decarta.android.exception.APIException;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.TKConfig;
+import com.tigerknows.android.app.TKService;
 import com.tigerknows.android.location.Position;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.CityInfo;
@@ -21,7 +21,6 @@ import com.tigerknows.model.PullMessage.Message;
 import com.tigerknows.radar.Alarms;
 import com.tigerknows.radar.RadarReceiver;
 import com.tigerknows.radar.TKNotificationManager;
-import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
@@ -29,7 +28,6 @@ import android.os.IBinder;
 import android.text.TextUtils;
 
 import java.util.Calendar;
-import java.util.Hashtable;
 import java.util.List;
 
 /**
@@ -69,7 +67,7 @@ import java.util.List;
  *   一个5分钟后的定时器
  *
  */
-public class PullService extends Service {
+public class PullService extends TKService {
     
     static final String TAG = "PullService";
     final static int MaxFail = 3;
@@ -131,7 +129,7 @@ public class PullService extends Service {
                 }
                 
                 // 获取当前城市
-                CityInfo currentCityInfo = Globals.getLastCityInfo(getApplicationContext());
+                CityInfo currentCityInfo = Globals.getCurrentCityInfo(getApplicationContext());
                 
                 LogWrapper.d(TAG, "currentCityInfo="+currentCityInfo);
                 // 安装后从来没有使用过老虎宝典的情况
@@ -176,7 +174,7 @@ public class PullService extends Service {
                     if (!TextUtils.isEmpty(lastSucceedTime)) {
                         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_LAST_PULL_DATE, lastSucceedTime);
                     }
-                    dataQuery.setup(currentCityInfo.getId());
+                    dataQuery.setCityId(currentCityInfo.getId());
                     dataQuery.query();
                     Response response = dataQuery.getResponse();
                     if (response != null && response instanceof PullMessage) {

@@ -16,14 +16,15 @@ import java.util.regex.Pattern;
 
 import com.decarta.android.exception.APIException;
 import com.decarta.android.util.LogWrapper;
-import com.decarta.android.util.Util;
 import com.tigerknows.R;
+import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
 import com.tigerknows.android.location.Position;
 import com.tigerknows.common.AsyncImageLoader;
 import com.tigerknows.common.ImageCache;
 import com.tigerknows.map.CityInfo;
 import com.tigerknows.map.MapEngine;
+import com.tigerknows.map.MapView;
 import com.tigerknows.model.BootstrapModel;
 import com.tigerknows.model.Session;
 import com.tigerknows.model.User;
@@ -49,7 +50,7 @@ public class Globals {
     public static final int LOCATION_STATE_AT_YET_FAILED = 2;
     
     /**
-     * 定位失败
+     * 打开软件之后一直定位成功过，然后又定位失败
      */
     public static final int LOCATION_STATE_FAILED = 3;
     
@@ -58,56 +59,6 @@ public class Globals {
      */
 	public static DisplayMetrics g_metrics=new DisplayMetrics();
 	
-	/**
-	 * 当前所选城市信息
-	 */
-	private static CityInfo g_Current_City_Info = null;
-    
-    public static void setCurrentCityInfo(CityInfo cityInfo) {
-        g_Current_City_Info = cityInfo;
-    }
-    
-    public static CityInfo getCurrentCityInfo() {
-        return getCurrentCityInfo(true);
-    }
-    
-    public static CityInfo getCurrentCityInfo(boolean query) {
-        CityInfo currentCityInfo = g_Current_City_Info;
-        CityInfo hotelCityInfo = g_Hotel_City_Info;
-        CityInfo cityInfo = null;
-        if (query && hotelCityInfo != null && hotelCityInfo.isAvailably()) {
-            cityInfo = hotelCityInfo;
-        } else if (currentCityInfo != null && currentCityInfo.isAvailably()){
-            cityInfo = currentCityInfo;
-        } else {
-            // "北京,beijing,39.90415599,116.397772995,11, 北京,beijing"
-            cityInfo = new CityInfo();
-            cityInfo.setCName("北京");
-            cityInfo.setCProvinceName("北京");
-            cityInfo.setEName("beijing");
-            cityInfo.setEProvinceName("beijing");
-            cityInfo.setId(1);
-            cityInfo.setPosition(new Position(39.90415599,116.397772995));
-            cityInfo.setLevel(11);
-        }
-        return cityInfo;
-    }
-    
-    /**
-     * 酒店查询的目标城市
-     * 打开酒店页面时，默认设为当前所选城市
-     * 用户在此页面切换酒店查询的目标城市时并不影响当前所选城市
-     */
-    private static CityInfo g_Hotel_City_Info = null;
-    
-    public static void setHotelCityInfo(CityInfo cityInfo) {
-        g_Hotel_City_Info = cityInfo;
-    }
-    
-    public static CityInfo getHotelCityInfo() {
-        return g_Hotel_City_Info;
-    }
-    
     /**
      * 定位信息
      */
@@ -133,7 +84,9 @@ public class Globals {
     
     public static String StartupDisplayLogFile;
     
-    public static boolean init = false;
+    private static boolean init = false;
+    
+    private static Sphinx sSphinx = null;
     
     /**
      * Gets the number of cores available in this device, across all processors.
@@ -244,43 +197,49 @@ public class Globals {
      * 重置当前所选城市、定位信息、图片尺寸
      * @param activity
      */
-    public static void init(Activity activity) {
+    public static void init(Context context) {
         
-        initDataPath(activity);
+        if (context instanceof Sphinx) {
+            sSphinx = (Sphinx) context;
+        }
         
-        AsyncImageLoader.getInstance().onCreate(activity);
+        initDataPath(context);
+        
+        AsyncImageLoader.getInstance().onCreate(context);
         
         if (init) {
             return;
         }
         init = true;
         
-        Globals.g_Current_City_Info = null;
         Globals.g_My_Location_City_Info = null;
         Globals.g_My_Location = null;
         Globals.g_My_Location_State = LOCATION_STATE_NONE;
         
-        Globals.readSessionAndUser(activity);
-        Globals.setConnectionFast(Utility.isConnectionFast(activity));
+        Globals.readSessionAndUser(context);
+        Globals.setConnectionFast(Utility.isConnectionFast(context));
 
         // 读取屏幕参数，如高宽、密度
-        WindowManager winMan=(WindowManager)activity.getSystemService(Context.WINDOW_SERVICE);
+        WindowManager winMan=(WindowManager)context.getSystemService(Context.WINDOW_SERVICE);
         Display display=winMan.getDefaultDisplay();
         display.getMetrics(Globals.g_metrics);
         
         initOptimalAdaptiveScreenSize();
     }
     
-    public static void initDataPath(Activity activity) {
+    public static void initDataPath(Context context) {
         try {
-            MapEngine.getInstance().initMapDataPath(activity);
-            ImageCache.getInstance().init(activity);
+            MapEngine.getInstance().initMapDataPath(context);
+            ImageCache.getInstance().init(context);
             StartupDisplayFile = TKConfig.getDataPath(true)+"StartupDisplay";
             StartupDisplayLogFile = TKConfig.getDataPath(true)+"StartupDisplayLog";
         } catch (APIException e) {
             e.printStackTrace();
-            Utility.showDialogAcitvity(activity, activity.getString(R.string.not_enough_space_and_please_clear));
-            activity.finish();
+            if (context instanceof Activity) {
+                Activity activity = (Activity) context;
+                Utility.showDialogAcitvity(activity, activity.getString(R.string.not_enough_space_and_please_clear));
+                activity.finish();
+            }
         }
     }
 
@@ -378,36 +337,58 @@ public class Globals {
             Globals.g_User = null;
         }
     }
-        
-    /**
-     * 获取最近所选的城市信息
-     * @param context
-     * @return 当第一次安装使用时，因为还没有选择某个城市所以返回无效的城市信息
-     */
-    public static CityInfo getLastCityInfo(Context context) {
-        CityInfo cityInfo = g_Current_City_Info;
-        if (cityInfo == null || cityInfo.isAvailably() == false) {
-            double lastLon = Double.parseDouble(TKConfig.getPref(context, TKConfig.PREFS_LAST_LON, "361"));
-            double lastLat = Double.parseDouble(TKConfig.getPref(context, TKConfig.PREFS_LAST_LAT, "361"));
-            int lastZoomLevel = MapEngine.DEFAULT_CITY_LEVEL;//Integer.parseInt(TKConfig.getPref(context, TKConfig.PREFS_LAST_ZOOM_LEVEL, String.valueOf(TKConfig.ZOOM_LEVEL_DEFAULT)));
+    
+    public static void onDestory() {
+        sSphinx = null;
+    }
 
-            Position lastPosition = new Position(lastLat, lastLon);
-            if(Util.inChina(lastPosition)) {
+    public static CityInfo getCurrentCityInfo(Context context) {
+        CityInfo cityInfo = new CityInfo();
+        try {
+            if (context != null) {
                 MapEngine mapEngine = MapEngine.getInstance();
-                try {
-                    mapEngine.initMapDataPath(context);
+                mapEngine.initMapDataPath(context);
+                
+                Sphinx sphinx = sSphinx;
+                if (sphinx != null) {
+                    MapView mapView = sphinx.getMapView();
+                    if (mapView != null) {
+                        Position position = mapView.getCenterPosition();
+                        int cityId = MapEngine.getCityId(position);
+                        CityInfo cityInfoTmp = MapEngine.getCityInfo(cityId);
+                        if (cityInfoTmp != null && cityInfoTmp.isAvailably()) {
+                            cityInfo = cityInfoTmp;
+                            cityInfo.setPosition(position);
+                            
+                            float zoomLevle = mapView.getZoomLevel();
+                            if (sphinx.positionInScreen(position)
+                                    && zoomLevle >= 12) { // 12级别是1千米
+                                cityInfo.order = 1;
+                            }
+                        }
+                    }
+                }
+                
+                if (cityInfo.isAvailably() == false) {
+                    double lastLon = Double.parseDouble(TKConfig.getPref(context, TKConfig.PREFS_LAST_LON, "116.397772995"));
+                    double lastLat = Double.parseDouble(TKConfig.getPref(context, TKConfig.PREFS_LAST_LAT, "39.90415599"));
+                    int lastZoomLevel = Integer.parseInt(TKConfig.getPref(context, TKConfig.PREFS_LAST_ZOOM_LEVEL, String.valueOf(TKConfig.ZOOM_LEVEL_DEFAULT)));
+
+                    Position lastPosition = new Position(lastLat, lastLon);
                     int cityId = MapEngine.getCityId(lastPosition);
                     CityInfo cityInfoTmp = MapEngine.getCityInfo(cityId);
-                    if (cityInfoTmp != null) {
+                    if (cityInfoTmp != null && cityInfoTmp.isAvailably()) {
                         cityInfo = cityInfoTmp;
                         cityInfo.setPosition(lastPosition);
                         cityInfo.setLevel(lastZoomLevel);
                     }
-                } catch (APIException e) {
-                    e.printStackTrace();
                 }
+            
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+
         return cityInfo;
     }
 }

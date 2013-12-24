@@ -5,7 +5,6 @@
 package com.tigerknows.model;
 
 import java.io.IOException;
-import java.util.List;
 
 import android.content.Context;
 

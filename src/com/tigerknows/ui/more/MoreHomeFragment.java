@@ -163,7 +163,6 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 		@Override
 		public void run() {
             Bootstrap bootstrap = new Bootstrap(mSphinx);
-            bootstrap.setup(Globals.getCurrentCityInfo().getId());
             mSphinx.queryStart(bootstrap);
         }
     };
@@ -265,7 +264,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 	                    mActionLog.addAction(mActionTag + ActionLog.MoreAppDownload, position, recommendApp.getName());
 	                    final String url = recommendApp.getUrl();
 	                    if (!TextUtils.isEmpty(url)) {
-	                        Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.are_you_sure_download_this_software), new DialogInterface.OnClickListener() {
+	                        Utility.showNormalDialog(mSphinx, getString(R.string.are_you_sure_download_this_software), new DialogInterface.OnClickListener() {
 	                            
 	                            @Override
 	                            public void onClick(DialogInterface dialog, int which) {
@@ -294,17 +293,17 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         }
         mFavoriteBtn.setText(Utility.renderColorToPartOfString(mContext, 
         		R.color.black_light, 
-        		mSphinx.getString(R.string.more_favorite) + mSphinx.getString(R.string.favorite_hint), 
-        		mSphinx.getString(R.string.favorite_hint)));
+        		getString(R.string.more_favorite) + getString(R.string.favorite_hint), 
+        		getString(R.string.favorite_hint)));
         mMyOrderBtn.setText(Utility.renderColorToPartOfString(mContext, 
         		R.color.black_light, 
-        		mSphinx.getString(R.string.order) + mSphinx.getString(R.string.order_hint), 
-        		mSphinx.getString(R.string.order_hint)));
+        		getString(R.string.order) + getString(R.string.order_hint), 
+        		getString(R.string.order_hint)));
 
         refreshUserEntrance();
         refreshBootStrapData(true);
         refreshMoreData();
-        refreshCity(Globals.getCurrentCityInfo().getCName());
+        refreshCity(Globals.getCurrentCityInfo(mSphinx).getCName());
         refreshGoCommentData();
         refreshAllNoticeDrawable();
     	refreshMapDownloadData();
@@ -424,10 +423,12 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     	}
     }
     
-    public void refreshMenuFragment() {
+    public void refreshHomeBottomFragment() {
         if(mUpgradeMap || TextUtils.equals(TKConfig.getPref(mContext, TKConfig.PREFS_MORE_OPENED, ""), "no")){
+            mSphinx.getHomeBottomFragment().getMoreImv().setVisibility(View.VISIBLE);
         	return;
         }else{
+            mSphinx.getHomeBottomFragment().getMoreImv().setVisibility(View.GONE);
         }
     }
     
@@ -452,7 +453,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     // 该函数在系统启动时，和每次进入更多页面时均调用
     public void refreshMoreData() {
     	refreshMoreNotice(null);
-    	refreshMenuFragment();
+    	refreshHomeBottomFragment();
     }
 
     public void refreshMoreNotice(NoticeResultResponse noticeResultResponse) {
@@ -463,7 +464,6 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         		setNoticeList();
         	}else if(mPagecount < 0){
              	NoticeQuery noticeQuery = new NoticeQuery(mSphinx);
-                noticeQuery.setup(Globals.getCurrentCityInfo().getId());
                 mSphinx.queryStart(noticeQuery);
             }
     	}
@@ -480,7 +480,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 			XMap data = new XMap();
 			data.put(Notice.FIELD_NOTICE_ID, mSoftwareUpdate.getId());
 			data.put(Notice.FIELD_OPERATION_TYPE, 0);
-			data.put(Notice.FIELD_NOTICE_TITLE, mSphinx.getString(R.string.message_tip_software_update));
+			data.put(Notice.FIELD_NOTICE_TITLE, getString(R.string.message_tip_software_update));
 			data.put(Notice.FIELD_NOTICE_DESCRIPTION, "");
 			data.put(Notice.FIELD_URL, mSoftwareUpdate.getURL());
 			try {
@@ -503,7 +503,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 		}
 		mPagecount = (int)mNoticeList.size();
 		TKConfig.setPref(mContext, TKConfig.PREFS_MORE_OPENED, (mPagecount==0) ? "hide" : "no");
-		refreshMenuFragment();
+		refreshHomeBottomFragment();
         if(mPagecount > 1){
         	Utility.pageIndicatorInit(mSphinx, mPageIndicatorView, mPagecount, 0, R.drawable.ic_notice_dot_normal, R.drawable.ic_notice_dot_selected);
         	mNoticeRly.setVisibility(View.VISIBLE);
@@ -577,7 +577,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 
     private void refreshUserEntrance() {
     	if (TextUtils.isEmpty(Globals.g_Session_Id) == false) {
-        	mUserBtn.setText(mContext.getString(R.string.user_home));
+        	mUserBtn.setText(getString(R.string.user_home));
         	mUserNameTxv.setMaxWidth(mContext.getResources().getDisplayMetrics().widthPixels -
         			mUserBtn.getPaddingLeft() -
         			mUserBtn.getPaddingRight() -
@@ -589,7 +589,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
             	mUserNameTxv.setVisibility(View.VISIBLE);
         	}
         } else {
-        	mUserBtn.setText(mContext.getString(R.string.login_or_regist));
+        	mUserBtn.setText(getString(R.string.login_or_regist));
         	mUserNameTxv.setVisibility(View.GONE);
         }
     }
@@ -699,7 +699,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 					mActionLog.addAction(mActionTag + ActionLog.MoreNotice);
 					Notice notice = mNoticeList.get(fPosition % mPagecount);
 					TKConfig.setPref(mContext, TKConfig.PREFS_MORE_OPENED, "yes");
-					refreshMenuFragment();
+					refreshHomeBottomFragment();
 					switch((int)notice.getLocalType()){
 					case 0:
 						break;
@@ -754,7 +754,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
             return;
         }
         Utility.showNormalDialog(mSphinx,
-                mContext.getString(R.string.download_software_title), 
+                getString(R.string.download_software_title), 
                 mSoftwareUpdate.getText(),
                 new DialogInterface.OnClickListener() {
                     
@@ -764,7 +764,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
                             case DialogInterface.BUTTON_POSITIVE:
                                 String url = mSoftwareUpdate.getURL();
                                 if (url != null) {
-                                    DownloadService.download(mSphinx, url, mSphinx.getString(R.string.app_name), ApkDownloadedProcessor.getInstance());
+                                    DownloadService.download(mSphinx, url, getString(R.string.app_name), ApkDownloadedProcessor.getInstance());
                                 }
                                 break;
                             default:

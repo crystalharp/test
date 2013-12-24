@@ -122,9 +122,9 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         
         switch(mShowType) {
             case SHOW_TYPE_TRANSFER:
-                mRightBtn.setBackgroundResource(R.drawable.btn_view_map);
+                mRightBtn.setText(R.string.map);
                 mRightBtn.setOnClickListener(this);
-                mTitleBtn.setText(mContext.getString(R.string.title_transfer_plan));
+                mTitleBtn.setText(getString(R.string.title_transfer_plan));
                 mErrorRecoveryBtn.setVisibility(View.VISIBLE);
                 mBottomButtonsView.setWeightSum(3);
             	mSubTitleTxv.setText(this.plan.getTitle(mSphinx));
@@ -132,15 +132,15 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
             	mLengthTxv.setText(plan.getLengthStr(mSphinx));
                 break;
             case SHOW_TYPE_DRVIE:
-                mTitleBtn.setText(mContext.getString(R.string.title_drive_plan));
-                mSubTitleTxv.setText(mSphinx.getString(R.string.length_str_title, plan.getLengthStr(mSphinx)));
+                mTitleBtn.setText(getString(R.string.title_drive_plan));
+                mSubTitleTxv.setText(getString(R.string.length_str_title, plan.getLengthStr(mSphinx)));
                 mErrorRecoveryBtn.setVisibility(View.GONE);
                 mBottomButtonsView.setWeightSum(2);
             	mLengthTxv.setVisibility(View.GONE);
                 break;
             case SHOW_TYPE_WALK:
-                mTitleBtn.setText(mContext.getString(R.string.title_walk_plan));
-                mSubTitleTxv.setText(mSphinx.getString(R.string.length_str_title, plan.getLengthStr(mSphinx)));
+                mTitleBtn.setText(getString(R.string.title_walk_plan));
+                mSubTitleTxv.setText(getString(R.string.length_str_title, plan.getLengthStr(mSphinx)));
                 mErrorRecoveryBtn.setVisibility(View.GONE);
                 mBottomButtonsView.setWeightSum(2);
             	mLengthTxv.setVisibility(View.GONE);
@@ -150,7 +150,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         
         if (mPlanList.size() > 0) {
             //有内容，需要弹出顶部切换菜单
-            mTitleBtn.setText(mContext.getString(R.string.title_transfer_plan_popup, TrafficQuery.numToStr(mSphinx, curLineNum + 1)));
+            mTitleBtn.setText(getString(R.string.title_transfer_plan_popup, TrafficQuery.numToStr(mSphinx, curLineNum + 1)));
         }
         
         Utility.setFavoriteBtn(mSphinx, mFavorateBtn, plan.checkFavorite(mContext));
@@ -398,10 +398,10 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
             mActionLog.addAction(mActionTag +  ActionLog.CommonFavorite, String.valueOf(isFavorite));
 	        if (isFavorite) {
 	        	Utility.showNormalDialog(mSphinx, 
-                        mContext.getString(R.string.prompt),
-                        mContext.getString(R.string.cancel_favorite_tip),
-                        mContext.getString(R.string.yes),
-                        mContext.getString(R.string.no),
+                        getString(R.string.prompt),
+                        getString(R.string.cancel_favorite_tip),
+                        getString(R.string.yes),
+                        getString(R.string.no),
                         new DialogInterface.OnClickListener() {
                             
                             @Override
@@ -451,7 +451,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
 
         	TrafficOverlayHelper.drawOverlay(mSphinx, mSphinx.getMapView(), plan, mShowType);
         	
-            mSphinx.getResultMapFragment().setData(mContext.getString(R.string.title_traffic_result_map), actionTag);
+            mSphinx.getResultMapFragment().setData(getString(R.string.title_traffic_result_map), actionTag);
             String resultMapActionTag = mSphinx.getResultMapFragment().mActionTag;
             if (mSphinx.uiStackContains(R.id.view_result_map)
                     && (actionTag.equals(resultMapActionTag)

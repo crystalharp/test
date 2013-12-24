@@ -26,7 +26,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.AdapterView.OnItemClickListener;
 
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
@@ -106,23 +105,23 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
     public void onResume() {
         super.onResume();
 
-        mRightBtn.setBackgroundResource(R.drawable.btn_view_map);
+        mRightBtn.setText(R.string.map);
         mRightBtn.setOnClickListener(this);
 
-        mLengthTxv.setText(mSphinx.getString(R.string.length_str_title, line.getLengthStr(mSphinx)));
+        mLengthTxv.setText(getString(R.string.length_str_title, line.getLengthStr(mSphinx)));
         mNameTxv.setText(line.getName());
         if (!TextUtils.isEmpty(line.getTime())) {
-        	mTimeTxv.setText(mContext.getString(R.string.time_str_title, line.getTime()));
+        	mTimeTxv.setText(getString(R.string.time_str_title, line.getTime()));
         	mTimeTxv.setVisibility(View.VISIBLE);
         } else {
         	mTimeTxv.setVisibility(View.GONE);
         }
         
         if (mLineList != null && curLineNum != -1) {
-            mTitleBtn.setText(mSphinx.getString(R.string.title_busline_line_popup, TrafficQuery.numToStr(mSphinx, curLineNum + 1)));
+            mTitleBtn.setText(getString(R.string.title_busline_line_popup, TrafficQuery.numToStr(mSphinx, curLineNum + 1)));
         } else {
         	//不用顶部弹出切换
-            mTitleBtn.setText(mContext.getString(R.string.title_busline_line));
+            mTitleBtn.setText(getString(R.string.title_busline_line));
         }
         Utility.setFavoriteBtn(mSphinx, mFavorateBtn, line.checkFavorite(mContext));
 
@@ -260,7 +259,7 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
 
             StationViewHolder stationHolder = (StationViewHolder)convertView.getTag();
             
-            String txt = mContext.getString(R.string.bus_index_station, position+1, (String)getItem(position));
+            String txt = getString(R.string.bus_index_station, position+1, (String)getItem(position));
             int index = txt.indexOf((String)getItem(position))-1; 
 
             SpannableStringBuilder style=new SpannableStringBuilder(txt);               
@@ -309,10 +308,10 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
             mActionLog.addAction(mActionTag +  ActionLog.CommonFavorite, String.valueOf(isFavorite));
             if (isFavorite) {
             	Utility.showNormalDialog(mSphinx, 
-                        mContext.getString(R.string.prompt),
-                        mContext.getString(R.string.cancel_favorite_tip),
-                        mContext.getString(R.string.yes),
-                        mContext.getString(R.string.no),
+                        getString(R.string.prompt),
+                        getString(R.string.cancel_favorite_tip),
+                        getString(R.string.yes),
+                        getString(R.string.no),
                         new DialogInterface.OnClickListener() {
                             
                             @Override
@@ -356,7 +355,7 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
 
         BuslineOverlayHelper.drawOverlay(mSphinx, mSphinx.getMapView(), line);
         
-        mSphinx.getResultMapFragment().setData(mContext.getString(R.string.title_busline_result_map), ActionLog.TrafficBuslineMap);
+        mSphinx.getResultMapFragment().setData(getString(R.string.title_busline_result_map), ActionLog.TrafficBuslineMap);
         mSphinx.showView(R.id.view_result_map);
     }
 

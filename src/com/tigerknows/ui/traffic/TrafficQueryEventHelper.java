@@ -172,7 +172,7 @@
 //        		/*
 //        		 * 显示选择对话框
 //        		 */
-//        		String title = (R.id.start_edt == mQueryEdt.getEdt().getId()) ? mQueryFragment.mContext.getString(R.string.select_start_station) : mQueryFragment.mContext.getString(R.string.select_end_station);
+//        		String title = (R.id.start_edt == mQueryEdt.getEdt().getId()) ? mQueryFragment.getString(R.string.select_start_station) : mQueryFragment.getString(R.string.select_end_station);
 //        		boolean hasMyLocation = (Globals.g_My_Location_City_Info != null);
 //        		
 //        		showSelectOptionDialog(mQueryFragment.mSphinx, mQueryEdt, title, hasMyLocation);
@@ -202,7 +202,7 @@
 //		@Override
 //		public void afterTextChanged(Editable s) {
 //			mQueryFragment.checkQueryState();
-//			if (mQueryEdt.getEdt().getText().toString().equals(mQueryFragment.mContext.getString(R.string.my_location))
+//			if (mQueryEdt.getEdt().getText().toString().equals(mQueryFragment.getString(R.string.my_location))
 //			        && mQueryEdt != mQueryFragment.mBusline) {
 //                mQueryEdt.getEdt().setTextColor(0xFF009CFF);
 //            } else {
@@ -562,7 +562,7 @@
 //				LogWrapper.d("eric", "performSelectMyLocation()");
 //
 //	        		POI poi = new POI();
-//	        		poi.setName(mQueryFragment.mContext.getString(R.string.my_location));
+//	        		poi.setName(mQueryFragment.getString(R.string.my_location));
 //	        		mQueryFragment.setData(poi, TrafficQueryFragment.SELECTED);
 //
 //			}
@@ -575,7 +575,7 @@
 //				Position center = mQueryFragment.mSphinx.getMapView().getCenterPosition();
 //				String positionName = mQueryFragment.mSphinx.getMapEngine().getPositionName(center, (int)mQueryFragment.mSphinx.getMapView().getZoomLevel());
 //				if (TextUtils.isEmpty(positionName)) {
-//					positionName = mQueryFragment.mContext.getString(R.string.select_has_point);
+//					positionName = mQueryFragment.getString(R.string.select_has_point);
 //				}
 //				
 //				mQueryFragment.mSphinx.clearMap();
@@ -583,7 +583,7 @@
 //				
 ////				mQueryFragment.mStateTransitionTable.event(TrafficViewSTT.Event.ClicktoSelectPoint);
 //	            
-//	            String tip = mQueryFragment.mContext.getString(R.id.start_edt == queryEditText.getEdt().getId() ? R.string.click_map_as_start : R.string.click_map_as_end);
+//	            String tip = mQueryFragment.getString(R.id.start_edt == queryEditText.getEdt().getId() ? R.string.click_map_as_start : R.string.click_map_as_end);
 //	            mQueryFragment.mSphinx.showTip(tip, Toast.LENGTH_SHORT);
 //			}
 //			

@@ -1,6 +1,11 @@
 package com.tigerknows.ui.traffic;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map.Entry;
 
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -13,7 +18,10 @@ import android.webkit.WebSettings;
 import android.webkit.WebSettings.ZoomDensity;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,6 +43,7 @@ import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.widget.QueryingView;
 import com.tigerknows.widget.RetryView;
+import com.tigerknows.widget.StringArrayAdapter;
 
 public class SubwayMapFragment extends BaseFragment implements RetryView.CallBack {
 
@@ -52,6 +61,10 @@ public class SubwayMapFragment extends BaseFragment implements RetryView.CallBac
     View mEmptyView;
     ImageView mEmptyImg;
     TextView mEmptyTxv;
+    private View mCityListView;
+    private ListView mCityLsv;
+    private List<CityInfo> mCityList = new ArrayList<CityInfo>();
+    private StringArrayAdapter mCityAdapter;
     
     static final String TAG = "SubwayMapFragment";
     
@@ -89,9 +102,44 @@ public class SubwayMapFragment extends BaseFragment implements RetryView.CallBac
         super.onResume();
         
         mTitleBtn.setText(mTitle);
+        mRightBtn.setVisibility(View.GONE);
+        
         if (!mDismissed) {
             return;
         }
+        
+        // 若指定的城市为非地铁城市，则显示所有地铁城市列表
+        if (MapEngine.checkSupportSubway(mCityInfo.getId()) == false
+                || mCityInfo.getCName() == null) {
+            
+            if (mCityAdapter == null) {
+                mCityList.clear();
+                List<String> cityNameList = new ArrayList<String>();
+                HashMap<Integer, String> hashMap = MapEngine.getSubwayMap();
+                if (hashMap != null) {
+                    Iterator<Entry<Integer, String>> k = hashMap.entrySet().iterator();
+                    for (; k.hasNext(); ) {
+                        Entry<Integer, String> e = k.next();
+                        CityInfo cityInfo = MapEngine.getCityInfo(e.getKey());
+                        mCityList.add(cityInfo);
+                        cityNameList.add(cityInfo.getCName());
+                    }
+                }
+                mCityAdapter = new StringArrayAdapter(mSphinx, cityNameList);
+                mCityLsv.setAdapter(mCityAdapter);
+            }
+            
+            mCityLsv.setSelectionFromTop(0, 0);
+            mCityListView.setVisibility(View.VISIBLE);
+            return;
+        }
+        
+        showSubwayMap();
+    }
+    
+    private void showSubwayMap() {
+        mCityListView.setVisibility(View.GONE);
+        
         subwayPath = MapEngine.getSubwayDataPath(mSphinx, mCityInfo.getId());
         LogWrapper.d(TAG, "subway path:" + subwayPath);
         if (subwayPath == null) {
@@ -106,11 +154,12 @@ public class SubwayMapFragment extends BaseFragment implements RetryView.CallBac
             
             setStatus(STAT_MAP);
             mURL = Uri.fromFile(new File(subwayPath)).toString();
-            showSubwayMap(mURL);
+            loadSubwayMap(mURL);
         }
         FileDownload fileDownload = new FileDownload(mSphinx);
         fileDownload.addParameter(FileDownload.SERVER_PARAMETER_FILE_TYPE, FileDownload.FILE_TYPE_SUBWAY);
-        fileDownload.setup(mCityInfo.getId(), this.getId(), this.getId());
+        fileDownload.setup(this.getId(), this.getId());
+        fileDownload.setCityId(mCityInfo.getId());
         mSphinx.queryStart(fileDownload);
     }
 
@@ -125,14 +174,17 @@ public class SubwayMapFragment extends BaseFragment implements RetryView.CallBac
         mEmptyView = mRootView.findViewById(R.id.empty_view);
         mEmptyTxv = (TextView) mEmptyView.findViewById(R.id.empty_txv);
         mEmptyImg = (ImageView) mEmptyView.findViewById(R.id.icon_imv);
-        mEmptyTxv.setText(mSphinx.getString(R.string.no_subway_map));
+        mEmptyTxv.setText(getString(R.string.no_subway_map));
         
         mQueryingView.setText(R.string.loading_subway_map);
         mRetryView.setCallBack(this, mActionTag);
         mEmptyImg.setBackgroundResource(R.drawable.bg_no_subway);
+        
+        mCityListView = mRootView.findViewById(R.id.city_list_view);
+        mCityLsv = (ListView) mRootView.findViewById(R.id.city_list_lsv);
     }
     
-    private void showSubwayMap(String url) {
+    private void loadSubwayMap(String url) {
         if (mPos != null) {
             String s_params = "?";
             double lx = mPos.getLon();
@@ -203,22 +255,36 @@ public class SubwayMapFragment extends BaseFragment implements RetryView.CallBac
             }
             
         });
+        
+        mCityLsv.setOnItemClickListener(new OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
+                CityInfo cityInfo = mCityList.get(position);
+                mSphinx.changeCity(cityInfo);
+                setData(cityInfo);
+                
+                showSubwayMap();
+            }
+        });
     }
     
     public void setData(CityInfo cityinfo) {
         needRefresh = true;
         mWebWbv.stopLoading();
         mWebWbv.clearView();
-        mTitle = mSphinx.getString(R.string.subway_map);
+        mTitle = getString(R.string.subway_map);
         mCityInfo = cityinfo;
+        if (mCityInfo == null) {
+            mCityInfo = new CityInfo();
+        }
         CityInfo locateCityInfo = Globals.g_My_Location_City_Info;
-        if (locateCityInfo != null && locateCityInfo.getId() == mCityInfo.getId()) {
+        if (locateCityInfo != null
+                && locateCityInfo.getId() == mCityInfo.getId()) {
             mPos = locateCityInfo.getPosition();
         } else {
             mPos = null;
         }
-        LogWrapper.d(TAG, "city:" + cityinfo.getEName());
-
     }
     
     public class StationHandler {
@@ -230,7 +296,7 @@ public class SubwayMapFragment extends BaseFragment implements RetryView.CallBac
                 public void run() {
                     POI poi = new POI();
                     poi.setUUID(poiid);
-                    poi.ciytId =  Globals.getCurrentCityInfo().getId();
+                    poi.ciytId =  mCityInfo.getId();
                     mSphinx.getPOIDetailFragment().setData(poi);
                     mSphinx.showView(R.id.view_poi_detail);
                 }
@@ -254,7 +320,7 @@ public class SubwayMapFragment extends BaseFragment implements RetryView.CallBac
                     POI poi = new POI();
                     Position pos = new Position(Double.parseDouble(y), Double.parseDouble(x));
                     poi.setUUID(poiid);
-                    poi.setName(name + mSphinx.getString(R.string.subway_poi_name_suffix));
+                    poi.setName(name + getString(R.string.subway_poi_name_suffix));
                     poi.setPosition(pos);
                     poi.setSourceType(POI.SOURCE_TYPE_SUBWAY);
                     poi.setFrom(POI.FROM_LOCAL);
@@ -281,7 +347,7 @@ public class SubwayMapFragment extends BaseFragment implements RetryView.CallBac
                     if (subwayPath != null) {
                         stat = STAT_MAP;
                         mURL = Uri.fromFile(new File(subwayPath)).toString();
-                        showSubwayMap(mURL);
+                        loadSubwayMap(mURL);
                     }
                 } else {
                     stat = STAT_NODATA;
@@ -304,5 +370,4 @@ public class SubwayMapFragment extends BaseFragment implements RetryView.CallBac
         setStatus(STAT_QUERY);
 
     }
-
 }

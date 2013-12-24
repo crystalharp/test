@@ -31,11 +31,9 @@ import android.widget.TextView.OnEditorActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.decarta.Globals;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.android.os.TKAsyncTask;
-import com.tigerknows.android.widget.TKEditText;
 import android.widget.Toast;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BaseQuery;
@@ -111,11 +109,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
         }
 
         public void afterTextChanged(Editable s) {
-            if (s.toString().trim().length() > 0) {
-                mRightBtn.setText(R.string.confirm);
-            } else {
-                mRightBtn.setText(R.string.cancel);
-            }
+            mTitleFragment.refreshRightBtn(s.toString());
         }
     };
     
@@ -185,21 +179,15 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
     public void onResume() {
         super.onResume();
         
-        mTitleBtn.setVisibility(View.GONE);
+        mTitleBtn.setText(mTitle);
         mKeywordEdt.setVisibility(View.VISIBLE);
         
         mKeywordEdt.addTextChangedListener(mKeywordEdtWatcher);
         mKeywordEdt.setOnTouchListener(mOnTouchListener);
         mKeywordEdt.setOnEditorActionListener(mOnEditorActionListener);
         
-        mRightBtn.setBackgroundResource(R.drawable.btn_title);
         mRightBtn.setOnClickListener(this);
-        
-        if (mKeywordEdt.getText().toString().trim().length() > 0) {
-            mRightBtn.setText(R.string.confirm);
-        } else {
-            mRightBtn.setText(R.string.cancel);
-        }
+        mTitleFragment.refreshRightBtn(mKeywordEdt.getText().toString());
     }
 
     @Override
@@ -255,7 +243,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
                 TKWord tkWord = (TKWord) arg0.getAdapter().getItem(position);
                 if (tkWord.attribute == TKWord.ATTRIBUTE_CLEANUP) {
                     mActionLog.addAction(mActionTag + ActionLog.ListViewItemHistoryClear);
-                    HistoryWordTable.clearHistoryWord(mSphinx, Globals.getCurrentCityInfo().getId(), HistoryWordTable.TYPE_TRAFFIC);
+                    HistoryWordTable.clearHistoryWord(mSphinx, HistoryWordTable.TYPE_TRAFFIC);
                     mSuggestWordListManager.refresh();
                 } else {
                     if (tkWord.attribute == TKWord.ATTRIBUTE_HISTORY) {
@@ -295,7 +283,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
                     POI poi = mAlternativeList.get(position);
                     mInvoker.setPOI(poi);
                     mActionLog.addAction(mActionTag+ActionLog.HotelPickLocationAlternativeSelect, position, poi.getName());
-                    HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, poi.getName(), poi.getPosition()), Globals.getCurrentCityInfo().getId(), HistoryWordTable.TYPE_TRAFFIC);
+                    HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, poi.getName(), poi.getPosition()), HistoryWordTable.TYPE_TRAFFIC);
                     dismiss();
                 }
             }
@@ -331,13 +319,13 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
             return;
         } else {
             mSphinx.hideSoftInput(mKeywordEdt.getInput());
-            HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, word, null), Globals.getCurrentCityInfo().getId(), HistoryWordTable.TYPE_TRAFFIC);
+            HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, word, null), HistoryWordTable.TYPE_TRAFFIC);
             DataQuery poiQuery = new DataQuery(mContext);
-            int cityId = Globals.getCurrentCityInfo().getId();
             poiQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_ALTERNATIVE);
             poiQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
             poiQuery.addParameter(DataQuery.SERVER_PARAMETER_KEYWORD, word);
-            poiQuery.setup(cityId, getId(), getId(), mSphinx.getString(R.string.doing_and_wait), false, false, null);
+            poiQuery.setup(getId(), getId(), getString(R.string.doing_and_wait), false, false, null);
+            
             mSphinx.queryStart(poiQuery);
         }
     }
@@ -478,7 +466,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
                 
                 if (selected != null) {
                     result = true;
-                    HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, selected.getFilterOption().getName(), null), Globals.getCurrentCityInfo().getId(), HistoryWordTable.TYPE_TRAFFIC);
+                    HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, selected.getFilterOption().getName(), null), HistoryWordTable.TYPE_TRAFFIC);
                     mInvoker.setSelectedLocation(true);
                     dismiss();
                 }

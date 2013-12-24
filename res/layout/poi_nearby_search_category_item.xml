@@ -10,11 +10,18 @@
         android:drawableRight="@drawable/icon_arrow_right"
         android:background="@drawable/list_header_title"
         />
-    <LinearLayout
+    <LinearLayout android:id="@+id/sub_alpha_lly"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         >
+        <Button android:id="@+id/sub_0_btn"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/app_name"
+            android:background="@drawable/btn_location_map"
+            />
         <Button android:id="@+id/sub_1_btn"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -28,20 +35,20 @@
             android:layout_weight="1"
             android:text="@string/app_name"
             android:background="@drawable/btn_location_map"
-            />
+            />                
+    </LinearLayout>
+    <LinearLayout android:id="@+id/sub_beta_lly"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
         <Button android:id="@+id/sub_3_btn"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/app_name"
             android:background="@drawable/btn_location_map"
-            />                
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        >
+            />
         <Button android:id="@+id/sub_4_btn"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -50,6 +57,26 @@
             android:background="@drawable/btn_location_map"
             />
         <Button android:id="@+id/sub_5_btn"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/app_name"
+            android:background="@drawable/btn_location_map"
+            />                
+    </LinearLayout>    
+    <LinearLayout android:id="@+id/sub_more_lly"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+        <Button android:id="@+id/sub_6_btn"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/app_name"
+            android:background="@drawable/btn_location_map"
+            />
+        <Button android:id="@+id/sub_7_btn"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"

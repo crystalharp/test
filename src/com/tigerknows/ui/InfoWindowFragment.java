@@ -409,7 +409,7 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
         starsRtb.setRating(poi.getGrade()/2.0f);
         long money = poi.getPerCapity();
         if (money > -1) {
-            priceTxv.setText(mContext.getString(R.string.yuan, money));
+            priceTxv.setText(getString(R.string.yuan, money));
         } else {
             priceTxv.setText("");
         }
@@ -419,7 +419,7 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
         
         TextView titleTxv = (TextView) v.findViewById(R.id.title_txv);
         titleTxv.setVisibility(View.VISIBLE);
-        titleTxv.setText(mSphinx.getString(R.string.my_location_with_accuracy, Utility.formatMeterString((int)poi.getPosition().getAccuracy())));
+        titleTxv.setText(getString(R.string.my_location_with_accuracy, Utility.formatMeterString((int)poi.getPosition().getAccuracy())));
         
         setMessageToView(v, poi, true);
     }

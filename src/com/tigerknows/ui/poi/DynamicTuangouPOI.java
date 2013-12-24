@@ -61,7 +61,7 @@ public class DynamicTuangouPOI extends DynamicPOIViewTemplate{
     public DynamicTuangouPOI(POIDetailFragment poiFragment, LayoutInflater inflater){
         super(poiFragment, inflater);
 
-        mRMB = mSphinx.getString(R.string.rmb_text);
+        mRMB = getString(R.string.rmb_text);
         mTitleTxv.setText(R.string.dynamic_tuangou_title);
         mTitleRightTxv.setVisibility(View.GONE);
         mViewBlock = new DynamicPOIViewBlock(mPOIDetailFragment.mBelowAddressLayout, mRootView) {
@@ -93,7 +93,7 @@ public class DynamicTuangouPOI extends DynamicPOIViewTemplate{
                 }
                 mAllList.addAll(list);
                 
-                mMoreTxv.setText(mSphinx.getString(R.string.dynamic_tuangou_more, mAllList.size()));
+                mMoreTxv.setText(getString(R.string.dynamic_tuangou_more, mAllList.size()));
                 
                 if (size > SHOW_DYNAMIC_COUNT) {
                     for(int i = 0; i < SHOW_DYNAMIC_COUNT; i++) {
@@ -130,7 +130,7 @@ public class DynamicTuangouPOI extends DynamicPOIViewTemplate{
 
                     Shangjia shangjia = Shangjia.getShangjiaById(tuangou.getSource(), mSphinx, mLoadedDrawableRun);
                     if (shangjia != null) {
-                        sourceTxv.setText(mSphinx.getString(R.string.this_come_from_colon, shangjia.getName()));
+                        sourceTxv.setText(getString(R.string.this_come_from_colon, shangjia.getName()));
                     } else {
                         sourceTxv.setText(null);
                     }
@@ -186,14 +186,14 @@ public class DynamicTuangouPOI extends DynamicPOIViewTemplate{
                     Util.byteToHexString(Tuangou.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_TUANGOU_LIST)+"_[0]" + ";" +
                     Util.byteToHexString(Tuangou.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_TUANGOU_DETAIL)+"_[0]" + ";" +
                     Util.byteToHexString(Tuangou.FIELD_CONTENT_PIC)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_TUANGOU_TAOCAN)+"_[0]");
-            dataOperation.setup(Globals.getCurrentCityInfo().getId(), mPOIDetailFragment.getId(), mPOIDetailFragment.getId(), mSphinx.getString(R.string.doing_and_wait));
+            dataOperation.setup(mPOIDetailFragment.getId(), mPOIDetailFragment.getId(), getString(R.string.doing_and_wait));
             list.add(dataOperation);
             dataOperation = new DataOperation(mSphinx);
             dataOperation.addParameter(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
             dataOperation.addParameter(DataOperation.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_FENDIAN);
             dataOperation.addParameter(DataOperation.SERVER_PARAMETER_DATA_UID, dynamicPOI.getSlaveUid());
             dataOperation.addParameter(DataOperation.SERVER_PARAMETER_NEED_FIELD, Fendian.NEED_FIELD);
-            dataOperation.setup(Globals.getCurrentCityInfo().getId(), mPOIDetailFragment.getId(), mPOIDetailFragment.getId(), mSphinx.getString(R.string.doing_and_wait));
+            dataOperation.setup(mPOIDetailFragment.getId(), mPOIDetailFragment.getId(), getString(R.string.doing_and_wait));
             list.add(dataOperation);
             queryStart(list);
         }

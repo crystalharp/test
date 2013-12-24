@@ -106,7 +106,6 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
         mActionTag = actionTag;
         
         DataQuery dataQuery = new DataQuery(mContext);
-        int cityId = Globals.getCurrentCityInfo().getId();
         
         if (object instanceof Tuangou) {
             mTuangou = (Tuangou) object;
@@ -154,7 +153,7 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, String.valueOf(0));
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, mDataType);
         dataQuery.copyLocationParameter(mSphinx.getDiscoverListFragment().getLastQuery());
-        dataQuery.setup(cityId, getId(), getId(), null, false, true, null);
+        dataQuery.setup(getId(), getId(), null, false, true, null);
         
         mSphinx.queryStart(dataQuery);
         mResultLsv.changeHeaderViewByState(false, SpringbackListView.REFRESHING);
@@ -222,7 +221,7 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
         }
 
         if (TextUtils.isEmpty(str)) {
-            str = mContext.getString(R.string.no_result);
+            str = getString(R.string.no_result);
         }
         
         mResultTxv.setText(str);
@@ -237,7 +236,7 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
         } else if (BaseQuery.DATA_TYPE_YINGXUN.equals(mDataType)) {
             mTitleBtn.setText(R.string.dianyingyuan_list);
         }
-        mRightBtn.setBackgroundResource(R.drawable.btn_view_map);
+        mRightBtn.setText(R.string.map);
         mRightBtn.setOnClickListener(this);
         
         if (isReLogin()) {
@@ -273,10 +272,9 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
         mActionLog.addAction(mActionTag+ActionLog.ListViewItemMore);
 
         DataQuery dataQuery = new DataQuery(lastDataQuery);
-        int cityId = lastDataQuery.getCityId();
         //FIXME:获取参数，修改，然后重新请求。加个函数
         dataQuery.setParameter(DataQuery.SERVER_PARAMETER_INDEX, String.valueOf(getList().size()));
-        dataQuery.setup(cityId, getId(), getId(), null, true, false, dataQuery.getPOI());
+        dataQuery.setup(getId(), getId(), null, true, false, dataQuery.getPOI());
         mSphinx.queryStart(dataQuery);
         }
     }
@@ -308,7 +306,7 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
     private void viewMap(List<POI> poiList, int index) {
         ItemizedOverlayHelper.drawPOIOverlay(mSphinx, poiList, index);
         boolean yingxun = BaseQuery.DATA_TYPE_YINGXUN.equals(mDataType);
-        mSphinx.getResultMapFragment().setData(mContext.getString(yingxun ? R.string.dianying_ditu : R.string.shanghu_ditu), yingxun ? ActionLog.ResultMapDianyingBranchList : ActionLog.ResultMapTuangouBranchList);
+        mSphinx.getResultMapFragment().setData(getString(yingxun ? R.string.dianying_ditu : R.string.shanghu_ditu), yingxun ? ActionLog.ResultMapDianyingBranchList : ActionLog.ResultMapTuangouBranchList);
         mSphinx.showView(R.id.view_result_map);   
     }
 

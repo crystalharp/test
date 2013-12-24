@@ -230,12 +230,6 @@ public class LogUpload {
                     return;
                 }
                 
-                CityInfo cityInfo = Globals.getCurrentCityInfo();
-                int cityId = CityInfo.CITY_ID_BEIJING;
-                if (cityInfo != null) {
-                    cityId = cityInfo.getId();
-                }
-                feedbackUpload.setup(cityId);
                 feedbackUpload.query();
                 com.tigerknows.model.Response response = feedbackUpload.getResponse();
                 if ((response != null && response.getResponseCode() == com.tigerknows.model.Response.RESPONSE_CODE_OK)) {
@@ -278,13 +272,6 @@ public class LogUpload {
                             
                             FeedbackUpload feedbackUpload = new FeedbackUpload(mContext);
                             feedbackUpload.addParameter(mServerParameterKey, log);
-                            
-                            CityInfo cityInfo = Globals.getCurrentCityInfo();
-                            int cityId = CityInfo.CITY_ID_BEIJING;
-                            if (cityInfo != null) {
-                                cityId = cityInfo.getId();
-                            }
-                            feedbackUpload.setup(cityId);
                             
                             feedbackUpload.query();
                             

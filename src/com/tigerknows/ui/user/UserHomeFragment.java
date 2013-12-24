@@ -117,8 +117,8 @@ public class UserHomeFragment extends UserBaseFragment {
 			public void onClick(View v) {
 				// TODO 注销登录, 跳转"更多"页面
 				mActionLog.addAction(mActionTag +  ActionLog.UserHomeLogout);
-				Utility.showNormalDialog(mSphinx, mContext.getString(R.string.title_error_tip), 
-						mContext.getString(R.string.logout_account_tip), mSphinx.getString(R.string.confirm),
+				Utility.showNormalDialog(mSphinx, getString(R.string.title_error_tip), 
+						getString(R.string.logout_account_tip), getString(R.string.confirm),
 		                null,
 		                new DialogInterface.OnClickListener() {
 
@@ -163,10 +163,11 @@ public class UserHomeFragment extends UserBaseFragment {
 		super.onResume();
 		LogWrapper.d(TAG, "onResume()");
 		
-        mTitleBtn.setText(mContext.getString(R.string.title_user_home));
+        mTitleBtn.setText(getString(R.string.title_user_home));
+        mRightBtn.setVisibility(View.GONE);
         
 		if (Globals.g_User != null) {
-			nickNameBtn.setText(mContext.getString(R.string.nickname_colon) + Globals.g_User.getNickName());
+			nickNameBtn.setText(getString(R.string.nickname_colon) + Globals.g_User.getNickName());
 			LogWrapper.d(TAG, "onResume() set username: " + Globals.g_User.getNickName());
 		} else {
 		    dismiss();

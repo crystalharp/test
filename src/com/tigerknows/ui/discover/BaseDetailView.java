@@ -149,4 +149,12 @@ public class BaseDetailView extends LinearLayout {
         }
 		return true;
 	}
+    
+    public String getString(int resId) {
+        return mParentFragment.mContext.getString(resId);
+    }
+    
+    public String getString(int resId, Object... formatArgs) {
+        return mParentFragment.mContext.getString(resId, formatArgs);
+    }
 }

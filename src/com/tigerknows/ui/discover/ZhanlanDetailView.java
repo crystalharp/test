@@ -123,9 +123,9 @@ public class ZhanlanDetailView extends BaseDetailView implements View.OnClickLis
         }
        
         String name = mData.getPlaceName();
-        DiscoverChildListFragment.showPOI(mSphinx, 0, TextUtils.isEmpty(name) ? mSphinx.getString(R.string.zhanlan_didian) : name, mData.getDistance(), mData.getAddress(), mData.getContactTel(), 
+        DiscoverChildListFragment.showPOI(mSphinx, 0, TextUtils.isEmpty(name) ? getString(R.string.zhanlan_didian) : name, mData.getDistance(), mData.getAddress(), mData.getContactTel(), 
                 mFendianNameTxv, mDistanceTxv, mAddressView, mTelephoneView, mAddressTxv, mTelephoneTxv, 
-                R.drawable.list_middle, R.drawable.list_footer, R.drawable.list_footer, mSphinx.getString(R.string.xiangxidizhi), mSphinx.getString(R.string.lianxidianhua));
+                R.drawable.list_middle, R.drawable.list_footer, R.drawable.list_footer, getString(R.string.xiangxidizhi), getString(R.string.lianxidianhua));
         
         refreshDescription(true);
         refreshDrawable();
@@ -170,7 +170,7 @@ public class ZhanlanDetailView extends BaseDetailView implements View.OnClickLis
         		dataOperation.addParameter(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
         		dataOperation.addParameter(DataOperation.SERVER_PARAMETER_DATA_UID, mData.getUid());
         		dataOperation.addParameter(DataOperation.SERVER_PARAMETER_NEED_FIELD, Util.byteToHexString(Zhanlan.FIELD_DESCRIPTION));
-        		dataOperation.setup(Globals.getCurrentCityInfo().getId(), mParentFragment.getId(), mParentFragment.getId(), null, true);
+        		dataOperation.setup(mParentFragment.getId(), mParentFragment.getId(), null, true);
         		mTKAsyncTasking = mSphinx.queryStart(dataOperation);
         		mAsyncTaskExecuting = true;
         		mBaseQuerying = mTKAsyncTasking.getBaseQueryList();
@@ -294,7 +294,7 @@ public class ZhanlanDetailView extends BaseDetailView implements View.OnClickLis
                 Util.byteToHexString(Zhanlan.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[0]" + ";" +
                 Util.byteToHexString(Zhanlan.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[0]");
         dataOperation.addLocalParameter(BaseQuery.RESPONSE_CODE_ERROR_MSG_PREFIX + 410, ""+R.string.response_code_410_pulled);
-        dataOperation.setup(Globals.getCurrentCityInfo().getId(), mParentFragment.getId(), mParentFragment.getId(), mSphinx.getString(R.string.doing_and_wait));
+        dataOperation.setup(mParentFragment.getId(), mParentFragment.getId(), getString(R.string.doing_and_wait));
         mTKAsyncTasking = mSphinx.queryStart(dataOperation);
         mAsyncTaskExecuting = true;
         mBaseQuerying = mTKAsyncTasking.getBaseQueryList();

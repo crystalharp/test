@@ -69,9 +69,6 @@ public class AccountManage extends BaseQuery {
 
     @Override
     protected void checkRequestParameters() throws APIException {
-        if (cityId < CityInfo.CITY_ID_BEIJING) {
-            throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_CITY);
-        }
         String operationCode = getParameter(SERVER_PARAMETER_OPERATION_CODE);
         String [] ekeys = new String[] {SERVER_PARAMETER_OPERATION_CODE};
         if (OPERATION_CODE_BIND_TELEPHONE.equals(operationCode)) {

@@ -81,14 +81,13 @@ public final class TrafficQuery extends BaseQuery {
         super(context, API_TYPE_TRAFFIC_QUERY, VERSION);
     }
     
-    public void setup(int cityId, POI startPOI, POI endPOI, int queryType, int targetViewId, String tipText) {
+    public void setup(POI startPOI, POI endPOI, int queryType, int targetViewId, String tipText) {
         if (!startPOI.equals(this.startPOI) || !endPOI.equals(this.endPOI) || queryType != this.queryType) {
             trafficModel = null;
         }        
         this.queryType = queryType;
         this.startPOI = startPOI;
         this.endPOI = endPOI;
-        this.cityId = cityId;
         
         this.isPOIModified = false;
         this.targetViewId = targetViewId;

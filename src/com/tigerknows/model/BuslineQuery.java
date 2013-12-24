@@ -48,7 +48,6 @@ public final class BuslineQuery extends BaseQuery {
 		this.isTurnPage = isTurnPage;
 	}
 
-
 	public BuslineModel getBuslineModel() {
         return buslineModel;
     }
@@ -61,10 +60,9 @@ public final class BuslineQuery extends BaseQuery {
         super(context, API_TYPE_BUSLINE_QUERY);
     }
     
-    public void setup(int cityId, String keyword, int startPos, boolean isReturnTotal, int targetViewId, String tipText) {
+    public void setup(String keyword, int startPos, boolean isReturnTotal, int targetViewId, String tipText) {
 
     	this.keyword = keyword;
-    	this.cityId = cityId;
         this.startPos = startPos;
         this.isTurnPage = (this.startPos > 0);
         this.needReconntection = false;
