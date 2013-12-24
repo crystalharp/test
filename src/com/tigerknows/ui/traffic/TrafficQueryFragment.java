@@ -823,77 +823,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
         } 
         mCommonPlaceAdapter.refreshList(mCommonPlaces);
     }
-		
-	/*TODO:扔到输入页去*/
-//	public class QueryEditText {
-//
-//		protected TKEditText mEdt;
-//
-//		protected POI mPOI = new POI();
-//		
-//		public TKEditText getEdt() {
-//			return mEdt;
-//		}
-//
-//		public boolean isEmpty() {
-//			return TextUtils.isEmpty(mEdt.getText().toString());
-//		}
-//		
-//		public POI getPOI() {
-//			
-//			if (TextUtils.isEmpty(mEdt.getText())) {
-//				mPOI = new POI();
-//			}
-//			
-//			if (!TextUtils.isEmpty(mEdt.getText())
-//					&& !mEdt.getText().toString().equals(mPOI.getName())
-//					&& !mEdt.getText().toString().equals(getString(R.string.my_location))) {
-//				mPOI = new POI();
-//				mPOI.setName(mEdt.getText().toString().trim());
-//			}
-//			
-//			if (mEdt.getText().toString().equals(getString(R.string.my_location))) {
-//				POI location = mMapLocationHelper.getMyLocation();
-//				if (location != null) {
-//					mPOI.setName(mEdt.getText().toString());
-//					mPOI.setPosition(location.getPosition());
-//				} else {
-//					mSphinx.showTip(R.string.mylocation_failed, Toast.LENGTH_SHORT);
-//					return null;
-//				}
-//			} 
-//			
-//			return mPOI;
-//		}
-//
-//		public void setPOI(POI mPOI) {
-//			this.mPOI = mPOI;
-//			if (this.mPOI == null) {
-//			    setText("");
-//			} else {
-//			    setText(mPOI.getName());
-//			}
-//		}
-//
-//		protected void setText(String text) {
-//			mEdt.setText(text);
-//			mEdt.clearFocus();
-//		}
-//
-//		public void clear() {
-//			setText("");
-//			mPOI = new POI();
-//		}
-//		
-//		public QueryEditText(TKEditText tkEditText) {
-//			mEdt = tkEditText;
-//		}
-//		
-//		public void setHint(String hint) {
-//			mEdt.setHint(hint);
-//		}
-//	}
-	    	
+			    	
 	public void postTask(Runnable r) {
 		mSphinx.getHandler().post(r);
 	}
@@ -903,9 +833,13 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
         switch (v.getId()) {
         case R.id.right_btn:
             // TODO:弹出三个按钮或者变成确定按钮
-            mSphinx.getInputSearchFragment().reset();
-            mSphinx.getInputSearchFragment().setMode(InputSearchFragment.MODE_BUELINE);
-            mSphinx.showView(R.id.view_poi_input_search);
+            if (!mStart.textEmpty() && !mEnd.textEmpty()) {
+                query();
+            } else {
+                mSphinx.getInputSearchFragment().reset();
+                mSphinx.getInputSearchFragment().setMode(InputSearchFragment.MODE_BUELINE);
+                mSphinx.showView(R.id.view_poi_input_search);
+            }
             break;
             
         case R.id.end_btn:

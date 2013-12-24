@@ -55,7 +55,7 @@ public class TrafficSearchHistoryFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
         mTitleBtn.setText("Search History");
-        updateData();
+        initData();
         mRightBtn.setBackgroundResource(R.drawable.btn_close);
         mRightBtn.setOnClickListener(new View.OnClickListener() {
             
@@ -89,9 +89,10 @@ public class TrafficSearchHistoryFragment extends BaseFragment {
         });
     }
     
-    private void updateData() {
+    private void initData() {
         mList.clear();
         table.readTrafficSearchHistory(mList);
+        mAdapter.notifyDataSetChanged();
     }
     
     private void clearHistory() {
@@ -103,6 +104,7 @@ public class TrafficSearchHistoryFragment extends BaseFragment {
     private void updateHistory(SearchHistory sh) {
         mList.remove(sh);
         mList.add(0, sh);
+        mAdapter.notifyDataSetChanged();
         table.update(sh);
     }
     
