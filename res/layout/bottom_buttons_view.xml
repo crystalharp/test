@@ -3,56 +3,81 @@
     android:id="@+id/root_view"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:layout_alignParentBottom="true"
     android:orientation="horizontal"
     android:weightSum="4">
     
-    <Button android:id="@+id/nearby_search_btn" 
+    <LinearLayout 
+        android:id="@+id/nearby_search_btn" 
         android:layout_weight="1"
         android:layout_width="fill_parent" 
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:background="@drawable/btn_bottom"
-        android:paddingTop="6dp"
-        android:paddingBottom="6dp"
-        android:drawableTop="@drawable/ic_nearby_search"
-        android:text="@string/nearby_search"
-        android:textSize="12sp"
-        android:gravity="center"/>
-                
-    <Button android:id="@+id/favorite_btn" 
-        android:layout_weight="1"
-        android:layout_width="fill_parent" 
-        android:layout_height="wrap_content"
-        android:background="@drawable/btn_bottom"
-        android:paddingTop="6dp"
-        android:paddingBottom="6dp"
-        android:drawableTop="@drawable/ic_favorite"
-        android:text="@string/add_favorite"
-        android:textSize="12sp"
-        android:gravity="center"/>
-    
-    <Button android:id="@+id/share_btn" 
-        android:layout_weight="1"
-        android:layout_width="fill_parent" 
-        android:layout_height="wrap_content"
-        android:background="@drawable/btn_bottom"
-        android:paddingTop="6dp"
-        android:paddingBottom="6dp"
-        android:drawableTop="@drawable/ic_share"
-        android:text="@string/send_friend"
-        android:textSize="12sp"
-        android:gravity="center"/>
+        android:gravity="center">
+        <TextView
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/ic_nearby_search"
+            android:text="@string/perimeter"
+            android:textSize="12sp"
+            android:textColor="#dbdbdc"
+            />
         
-    <Button android:id="@+id/error_recovery_btn" 
+    </LinearLayout>
+                
+    
+    <LinearLayout 
+        android:id="@+id/favorite_btn" 
         android:layout_weight="1"
         android:layout_width="fill_parent" 
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:background="@drawable/btn_bottom"
-        android:paddingTop="6dp"
-        android:paddingBottom="6dp"
-        android:drawableTop="@drawable/ic_recovery_error"
-        android:text="@string/erreport_title"
-        android:textSize="12sp"
-        android:gravity="center"/>
+        android:gravity="center">
+        <TextView
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/ic_add_favorite"
+            android:text="@string/more_favorite"
+            android:textSize="12sp"
+            android:textColor="#dbdbdc"
+            />
+        
+    </LinearLayout>
+    
+    
+    <LinearLayout 
+        android:id="@+id/share_btn" 
+        android:layout_weight="1"
+        android:layout_width="fill_parent" 
+        android:layout_height="40dp"
+        android:background="@drawable/btn_bottom"
+        android:gravity="center">
+        <TextView
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/ic_share"
+            android:text="@string/share"
+            android:textSize="12sp"
+            android:textColor="#dbdbdc"
+            />
+        
+    </LinearLayout>        
+    
+    <LinearLayout 
+        android:id="@+id/error_recovery_btn" 
+        android:layout_weight="1"
+        android:layout_width="fill_parent" 
+        android:layout_height="40dp"
+        android:background="@drawable/btn_bottom"
+        android:gravity="center">
+        <TextView
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/ic_recovery_error"
+            android:text="@string/error_recovery"
+            android:textSize="12sp"
+            android:textColor="#dbdbdc"
+            />
+        
+    </LinearLayout>
 </LinearLayout>
 
