@@ -92,6 +92,7 @@ public class TKEditText extends LinearLayout implements OnClickListener {
                 mInputEdt.setBackgroundDrawable(drawable);
                 mInputEdt.setPadding(paddingLeft != 0 ? paddingLeft : padding, padding, paddingRight, padding);
             }
+            mInputEdt.setSingleLine();
             int imeOptions = a.getInt(R.styleable.tkEditText_imeOptions, IMEOPTION_ACTIONUNSPECIFIED);
             int androidImeOption = EditorInfo.IME_NULL;
             switch (imeOptions) {

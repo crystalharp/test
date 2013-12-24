@@ -105,7 +105,7 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
     public void onResume() {
         super.onResume();
 
-        mRightBtn.setBackgroundResource(R.drawable.btn_view_map);
+        mRightBtn.setText(R.string.map);
         mRightBtn.setOnClickListener(this);
 
         mLengthTxv.setText(getString(R.string.length_str_title, line.getLengthStr(mSphinx)));

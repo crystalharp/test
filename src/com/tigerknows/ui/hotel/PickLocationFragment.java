@@ -109,11 +109,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
         }
 
         public void afterTextChanged(Editable s) {
-            if (s.toString().trim().length() > 0) {
-                mRightBtn.setText(R.string.confirm);
-            } else {
-                mRightBtn.setText(R.string.cancel);
-            }
+            mTitleFragment.refreshRightBtn(s.toString());
         }
     };
     
@@ -190,14 +186,8 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
         mKeywordEdt.setOnTouchListener(mOnTouchListener);
         mKeywordEdt.setOnEditorActionListener(mOnEditorActionListener);
         
-        mRightBtn.setBackgroundResource(R.drawable.btn_title);
         mRightBtn.setOnClickListener(this);
-        
-        if (mKeywordEdt.getText().toString().trim().length() > 0) {
-            mRightBtn.setText(R.string.confirm);
-        } else {
-            mRightBtn.setText(R.string.cancel);
-        }
+        mTitleFragment.refreshRightBtn(mKeywordEdt.getText().toString());
     }
 
     @Override

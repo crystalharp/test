@@ -14,9 +14,13 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.TypedValue;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
+import android.widget.LinearLayout.LayoutParams;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -31,6 +35,8 @@ public class TakeScreenshotActivity extends BaseActivity implements View.OnClick
     
     private ImageView mImageImv;
     private Uri mUri;
+    private Button mShareBtn;
+    private LayoutParams mShareLayoutParams;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -42,6 +48,22 @@ public class TakeScreenshotActivity extends BaseActivity implements View.OnClick
         findViews();
         setListener();
         
+        mShareBtn = new Button(mThis);
+        mShareBtn.setText(R.string.share);
+        mShareBtn.setBackgroundResource(R.drawable.btn_confirm);
+        mShareBtn.setOnClickListener(this);
+        mShareBtn.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+        mShareLayoutParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+        mShareLayoutParams.leftMargin = Utility.dip2px(mThis, 12);
+        
+        mShareBtn.setTextColor(mRightBtn.getTextColors());
+        mShareBtn.setPadding(mRightBtn.getPaddingLeft(),
+                mRightBtn.getPaddingTop(),
+                mRightBtn.getPaddingRight(),
+                mRightBtn.getPaddingBottom());
+        ViewGroup mRightView = (ViewGroup) mRightBtn.getParent();
+        mRightView.addView(mShareBtn, mShareLayoutParams);
+        
         mUri = getIntent().getData();
         if (mUri == null) {
             finish();
@@ -51,13 +73,8 @@ public class TakeScreenshotActivity extends BaseActivity implements View.OnClick
 
         mTitleBtn.setText(R.string.take_screenshot);
         
-        mRight2Btn.setText(R.string.share);
-        mRight2Btn.setVisibility(View.VISIBLE);
-        mRight2Btn.setOnClickListener(this);
-        mRight2Btn.setBackgroundResource(R.drawable.btn_title);
         mRightBtn.setText(R.string.save);
         mRightBtn.setOnClickListener(this);
-        mRightBtn.setBackgroundResource(R.drawable.btn_title);
         
         Bitmap bm = Utility.imageUri2Bitmap(mThis, mUri);
         mImageImv.setImageBitmap(bm);
@@ -98,12 +115,9 @@ public class TakeScreenshotActivity extends BaseActivity implements View.OnClick
             Toast.makeText(mThis, R.string.save_falied_tip, Toast.LENGTH_LONG).show();
         	break;
 
-        case R.id.right2_btn:
+    	default:
             mActionLog.addAction(mActionTag + ActionLog.TakeScreenshotShare);
             Utility.share(mThis, getString(R.string.share), null, mUri);
-            break;
-            
-    	default:
     		break;
         }
 

@@ -122,7 +122,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         
         switch(mShowType) {
             case SHOW_TYPE_TRANSFER:
-                mRightBtn.setBackgroundResource(R.drawable.btn_view_map);
+                mRightBtn.setText(R.string.map);
                 mRightBtn.setOnClickListener(this);
                 mTitleBtn.setText(getString(R.string.title_transfer_plan));
                 mErrorRecoveryBtn.setVisibility(View.VISIBLE);

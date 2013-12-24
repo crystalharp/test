@@ -12,7 +12,6 @@ import com.tigerknows.android.location.Position;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.CityInfo;
-import com.tigerknows.map.MapEngine;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.HotelVendor;
@@ -171,11 +170,9 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
             mRightBtn.setText(R.string.tel_reserve);
             mRightBtn.setTag(hotelVendor.getReserveTel());
             mRightBtn.setOnClickListener(this);
-            mRightBtn.setBackgroundResource(R.drawable.btn_title);
         } else {
             mRightBtn.setText(null);
             mRightBtn.setOnClickListener(null);
-            mRight2Btn.setBackgroundDrawable(null);
         }
     }
     

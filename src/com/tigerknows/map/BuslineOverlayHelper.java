@@ -99,8 +99,8 @@ public class BuslineOverlayHelper {
                 mapView.showOverlay(ItemizedOverlay.MY_LOCATION_OVERLAY, false);
                 
                 sphinx.getCenterTokenView().setVisibility(View.INVISIBLE);
-                sphinx.getToolsBtn().setVisibility(View.VISIBLE);
-                sphinx.getClearMapBtn().setVisibility(View.VISIBLE);
+                sphinx.getMapToolsBtn().setVisibility(View.VISIBLE);
+                sphinx.getMapCleanBtn().setVisibility(View.VISIBLE);
                 sphinx.getLocationView().setVisibility(View.VISIBLE);
 			}
 		} catch(Exception e) {

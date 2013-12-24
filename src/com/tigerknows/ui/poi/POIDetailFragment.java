@@ -610,7 +610,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     public void onResume() {
         super.onResume();
         mTitleBtn.setText(R.string.detail_info);
-        mRightBtn.setBackgroundResource(R.drawable.btn_view_map);
+        mRightBtn.setText(R.string.map);
         mRightBtn.setOnClickListener(this); 
         
         TKWeixin tkWeixin = TKWeixin.getInstance(mSphinx);

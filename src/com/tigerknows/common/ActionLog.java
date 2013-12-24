@@ -72,6 +72,7 @@ public class ActionLog extends LogUpload {
     // 顶部导航栏
     public static final String TitleLeftButton = "ZA";
     public static final String TitleRightButton = "ZB";
+    public static final String TitleCenterButton = "YI";
     
     // PopupWindow
     public static final String PopupWindowFilter = "ZC";

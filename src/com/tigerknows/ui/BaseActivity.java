@@ -38,8 +38,6 @@ public class BaseActivity extends TKActivity implements TKAsyncTask.EventListene
     
     protected Button mRightBtn;
     
-    protected Button mRight2Btn;
-    
     protected int mId;
     
     protected boolean isReLogin = false;
@@ -78,7 +76,6 @@ public class BaseActivity extends TKActivity implements TKAsyncTask.EventListene
         mTitleBtn = (Button) findViewById(R.id.title_btn);
         mLeftBtn = (Button) findViewById(R.id.left_btn);
         mRightBtn = (Button) findViewById(R.id.right_btn);
-        mRight2Btn = (Button) findViewById(R.id.right2_btn);
     }
     
     protected void setListener() {
@@ -97,6 +94,11 @@ public class BaseActivity extends TKActivity implements TKAsyncTask.EventListene
     @Override
     protected void onResume() {
         super.onResume();
+        
+        View keywordEdt = findViewById(R.id.keyword_edt);
+        if (keywordEdt != null) {
+            keywordEdt.setVisibility(View.GONE);
+        }
         LogWrapper.d(TAG, "onResume()");
     }
 

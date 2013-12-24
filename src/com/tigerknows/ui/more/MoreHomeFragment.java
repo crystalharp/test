@@ -423,10 +423,12 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     	}
     }
     
-    public void refreshMenuFragment() {
+    public void refreshHomeBottomFragment() {
         if(mUpgradeMap || TextUtils.equals(TKConfig.getPref(mContext, TKConfig.PREFS_MORE_OPENED, ""), "no")){
+            mSphinx.getHomeBottomFragment().getMoreImv().setVisibility(View.VISIBLE);
         	return;
         }else{
+            mSphinx.getHomeBottomFragment().getMoreImv().setVisibility(View.GONE);
         }
     }
     
@@ -451,7 +453,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     // 该函数在系统启动时，和每次进入更多页面时均调用
     public void refreshMoreData() {
     	refreshMoreNotice(null);
-    	refreshMenuFragment();
+    	refreshHomeBottomFragment();
     }
 
     public void refreshMoreNotice(NoticeResultResponse noticeResultResponse) {
@@ -501,7 +503,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 		}
 		mPagecount = (int)mNoticeList.size();
 		TKConfig.setPref(mContext, TKConfig.PREFS_MORE_OPENED, (mPagecount==0) ? "hide" : "no");
-		refreshMenuFragment();
+		refreshHomeBottomFragment();
         if(mPagecount > 1){
         	Utility.pageIndicatorInit(mSphinx, mPageIndicatorView, mPagecount, 0, R.drawable.ic_notice_dot_normal, R.drawable.ic_notice_dot_selected);
         	mNoticeRly.setVisibility(View.VISIBLE);
@@ -697,7 +699,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 					mActionLog.addAction(mActionTag + ActionLog.MoreNotice);
 					Notice notice = mNoticeList.get(fPosition % mPagecount);
 					TKConfig.setPref(mContext, TKConfig.PREFS_MORE_OPENED, "yes");
-					refreshMenuFragment();
+					refreshHomeBottomFragment();
 					switch((int)notice.getLocalType()){
 					case 0:
 						break;

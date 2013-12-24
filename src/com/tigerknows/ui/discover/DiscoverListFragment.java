@@ -425,21 +425,20 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         mIPagerListCallBack = null;
         if (BaseQuery.DATA_TYPE_TUANGOU.equals(mDataType)) {
             mTitleBtn.setText(R.string.tuangou_list);
-            mRightBtn.setBackgroundResource(R.drawable.btn_view_map);
+            mRightBtn.setText(R.string.map);
             mRightBtn.setOnClickListener(this);
         } else if (BaseQuery.DATA_TYPE_DIANYING.equals(mDataType)) {
             mTitleBtn.setText(R.string.dianying_list);
         } else if (BaseQuery.DATA_TYPE_YANCHU.equals(mDataType)) {
             mTitleBtn.setText(R.string.yanchu_list);
-            mRightBtn.setBackgroundResource(R.drawable.btn_view_map);
+            mRightBtn.setText(R.string.map);
             mRightBtn.setOnClickListener(this);
         } else if (BaseQuery.DATA_TYPE_ZHANLAN.equals(mDataType)) {
             mTitleBtn.setText(R.string.zhanlan_list);
-            mRightBtn.setBackgroundResource(R.drawable.btn_view_map);
+            mRightBtn.setText(R.string.map);
             mRightBtn.setOnClickListener(this);
         }
         
-        mTitleBtn.setBackgroundResource(R.drawable.btn_title_popup);
         mTitleBtn.setOnClickListener(this);
 
         if (isReLogin()) {
@@ -471,10 +470,8 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     	}
         if (mState == STATE_QUERYING) {
             mTitleBtn.setClickable(false);
-            mTitleBtn.setBackgroundResource(R.color.transparent);
         } else {
             mTitleBtn.setClickable(true);
-            mTitleBtn.setBackgroundResource(R.drawable.btn_title_popup);
         }
     }
     

@@ -123,11 +123,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         }
 
         public void afterTextChanged(Editable s) {
-            if (s.toString().trim().length() > 0) {
-                mRightBtn.setText(R.string.confirm);
-            } else {
-                mRightBtn.setText(R.string.cancel);
-            }
+            mTitleFragment.refreshRightBtn(s.toString());
         }
     };
 
@@ -155,6 +151,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
             }
         };
         mSuggestWordListManager = new SuggestWordListManager(mSphinx, mSuggestLsv, mKeywordEdt, btnHandler, HistoryWordTable.TYPE_POI);
+        
         return mRootView;
     }
 
@@ -169,18 +166,13 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         mKeywordEdt.setOnEditorActionListener(mOnEditorActionListener);
         mKeywordEdt.addTextChangedListener(mFindEdtWatcher);
         mKeywordEdt.setOnTouchListener(mOnTouchListener);
-        
-        mRightBtn.setBackgroundResource(R.drawable.btn_title);
+
         mRightBtn.setOnClickListener(this);
         
         mSphinx.showSoftInput(mKeywordEdt.getInput());
         mKeywordEdt.getInput().requestFocus();
+        mTitleFragment.refreshRightBtn(mKeywordEdt.getText().toString());
         
-        if (mKeywordEdt.getText().toString().trim().length() > 0) {
-            mRightBtn.setText(R.string.confirm);
-        } else {
-            mRightBtn.setText(R.string.cancel);
-        }
         switch (mCurMode) {
         //TODO:add actiontag
         case MODE_BUELINE:
@@ -322,11 +314,9 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
     }
     
     public void submitPOIQuery(String keyword) {
-//        String keyword = mKeywordEdt.getText().toString().trim();
         if (!TextUtils.isEmpty(keyword)) {
             mSphinx.hideSoftInput(mKeywordEdt.getInput());
             HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, keyword), HistoryWordTable.TYPE_POI);
-            mKeywordEdt.setText(null);
             mActionLog.addAction(mActionTag +  ActionLog.POIHomeInputQueryBtn, keyword);
 
             POI requestPOI = mSphinx.getCenterPOI();

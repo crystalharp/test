@@ -11,18 +11,17 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 /**
  * @author Peng Wenyue
  */
 public class HomeBottomFragment extends BaseFragment implements View.OnClickListener {
 
-    private Button mPOIBtn;
+    private View mPOIView;
 
-    private Button mTrafficBtn;
+    private View mTrafficView;
 
-    private Button mMoreBtn;
+    private View mMoreView;
     
     private View mMoreImv;
     
@@ -43,31 +42,36 @@ public class HomeBottomFragment extends BaseFragment implements View.OnClickList
     }
     
     protected void findViews() {
-        mPOIBtn = (Button) mRootView.findViewById(R.id.poi_btn);
-        mTrafficBtn = (Button) mRootView.findViewById(R.id.traffic_btn);
-        mMoreBtn = (Button) mRootView.findViewById(R.id.more_btn);
+        mPOIView = mRootView.findViewById(R.id.poi_view);
+        mTrafficView = mRootView.findViewById(R.id.traffic_view);
+        mMoreView = mRootView.findViewById(R.id.more_view);
         mMoreImv = mRootView.findViewById(R.id.more_imv);
     }
 
     protected void setListener() {
         super.setListener();
-        mPOIBtn.setOnClickListener(this);
-        mTrafficBtn.setOnClickListener(this);
-        mMoreBtn.setOnClickListener(this);
+        mPOIView.setOnClickListener(this);
+        mTrafficView.setOnClickListener(this);
+        mMoreView.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
         int id = v.getId();
-        if (id == R.id.poi_btn) {
+        if (id == R.id.poi_view) {
             mSphinx.getPOINearbyFragment().setData(mSphinx.getCenterPOI());
             mSphinx.showView(R.id.view_poi_nearby_search);
-        } else if (id == R.id.traffic_btn) {
+        } else if (id == R.id.traffic_view) {
             mSphinx.showView(R.id.view_traffic_home);
-        } else if (id == R.id.more_btn) {
+        } else if (id == R.id.more_view) {
+            mMoreImv.setVisibility(View.GONE);
             mSphinx.showView(R.id.view_more_home);
         }
         
+    }
+    
+    public View getMoreImv() {
+        return mMoreImv;
     }
     
 }
