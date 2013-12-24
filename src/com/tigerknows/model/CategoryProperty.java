@@ -10,7 +10,6 @@ public class CategoryProperty {
 	public static final int NUM_OF_SUBBUTTONS = 9;
 	public static final int[] LINEAR_ARRAY = {4,2,1};
 	
-	public static final int OP_INVISIBLE = -2;
 	public static final int OP_HIDE = 0;
 	public static final int OP_SEARCH = 1;
 	public static final int OP_MORE = 23;
