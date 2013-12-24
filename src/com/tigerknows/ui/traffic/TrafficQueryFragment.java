@@ -903,15 +903,15 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
         switch (v.getId()) {
         case R.id.right_btn:
             // TODO:弹出三个按钮或者变成确定按钮
-            mSphinx.getPOIQueryFragment().reset();
-            mSphinx.getPOIQueryFragment().setMode(InputSearchFragment.MODE_BUELINE);
+            mSphinx.getInputSearchFragment().reset();
+            mSphinx.getInputSearchFragment().setMode(InputSearchFragment.MODE_BUELINE);
             mSphinx.showView(R.id.view_poi_input_search);
             break;
             
         case R.id.end_btn:
-            mSphinx.getPOIQueryFragment().reset();
-            mSphinx.getPOIQueryFragment().setMode(InputSearchFragment.MODE_TRANSFER);
-            mSphinx.getPOIQueryFragment().setConfirmedCallback(new InputSearchFragment.Callback() {
+            mSphinx.getInputSearchFragment().reset();
+            mSphinx.getInputSearchFragment().setMode(InputSearchFragment.MODE_TRANSFER);
+            mSphinx.getInputSearchFragment().setConfirmedCallback(new InputSearchFragment.Callback() {
                 
                 @Override
                 public void onConfirmed(POI p) {
@@ -922,9 +922,9 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
             break;
             
         case R.id.start_btn:
-            mSphinx.getPOIQueryFragment().reset();
-            mSphinx.getPOIQueryFragment().setMode(InputSearchFragment.MODE_TRANSFER);
-            mSphinx.getPOIQueryFragment().setConfirmedCallback(new InputSearchFragment.Callback() {
+            mSphinx.getInputSearchFragment().reset();
+            mSphinx.getInputSearchFragment().setMode(InputSearchFragment.MODE_TRANSFER);
+            mSphinx.getInputSearchFragment().setConfirmedCallback(new InputSearchFragment.Callback() {
                 
                 @Override
                 public void onConfirmed(POI p) {

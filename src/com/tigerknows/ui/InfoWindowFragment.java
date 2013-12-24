@@ -503,7 +503,7 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             
             POI poi = (POI) overlayItem.getAssociatedObject();
             mSphinx.getFragment(mOwerFragmentId).dismiss();
-            mSphinx.getPOIQueryFragment().onConfirmed(poi);
+            mSphinx.getInputSearchFragment().onConfirmed(poi);
             
         } else if(touchMode.equals(TouchMode.LONG_CLICK)){
             POI poi = (POI) overlayItem.getAssociatedObject();

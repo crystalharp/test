@@ -1257,9 +1257,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     } else if ("q".equals(parm[0])) {
                         String keyword = parm[1];
                         if (!TextUtils.isEmpty(keyword)) {
-                            getPOIQueryFragment().setData(keyword);
+                            getInputSearchFragment().setData(keyword);
                             showView(R.id.view_poi_input_search);
-                            getPOIQueryFragment().submitPOIQuery(keyword);
+                            getInputSearchFragment().submitPOIQuery(keyword);
                             query = true;
                         }
                     }
@@ -1310,9 +1310,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     } else if ("q".equals(parm[0])) {
                         String keyword = parm[1];
                         if (!TextUtils.isEmpty(keyword)) {
-                            getPOIQueryFragment().setData(keyword);
+                            getInputSearchFragment().setData(keyword);
                             showView(R.id.view_poi_input_search);
-                            getPOIQueryFragment().submitPOIQuery(keyword);
+                            getInputSearchFragment().submitPOIQuery(keyword);
                         }
                         query = true;
                     }
@@ -1364,7 +1364,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 return true;
             }
             uiStackClose(new int[]{R.id.view_home});
-            getPOIQueryFragment().reset();
+            getInputSearchFragment().reset();
             showView(R.id.view_poi_input_search);
         } else if (intent.getBooleanExtra(EXTRA_WEIXIN, false)) { //   来自微信的调用，为其提供POI数据作为返回
         	mFromThirdParty = THIRD_PARTY_WENXIN_REQUET;
@@ -2544,7 +2544,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 break;
                 
             case R.id.view_poi_input_search:
-                baseFragment = getPOIQueryFragment();
+                baseFragment = getInputSearchFragment();
                 break;
                 
             case R.id.view_poi_nearby_search:
@@ -2821,7 +2821,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         }
     }
     
-    public InputSearchFragment getPOIQueryFragment() {
+    public InputSearchFragment getInputSearchFragment() {
         synchronized (mUILock) {
             if (mPOIQueryFragment == null) {
                 InputSearchFragment poiQueryFragment = new InputSearchFragment(Sphinx.this);
