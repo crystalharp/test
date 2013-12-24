@@ -19,6 +19,7 @@ package com.tigerknows.android.widget;
 import com.decarta.Globals;
 import com.tigerknows.R;
 import com.tigerknows.common.ActionLog;
+import com.tigerknows.model.POI;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -54,6 +55,7 @@ public class TKEditText extends LinearLayout implements OnClickListener {
     private static final int IMEOPTION_FLAGNOENTERACTION=0x40000000;
     
     private EditText mInputEdt;
+    private POI poi;
     private Button mDeleteBtn;
     public String mActionTag;
         
@@ -227,6 +229,23 @@ public class TKEditText extends LinearLayout implements OnClickListener {
     
     public Editable getText() {
         return mInputEdt.getText();
+    }
+    
+    public void setPOI(POI p) {
+        poi = p;
+        if (poi == null) {
+            mInputEdt.setText("");
+        } else {
+            mInputEdt.setText(poi.getName());
+        }
+    }
+    
+    public POI getPOI() {
+        if (poi == null) {
+            poi = new POI();
+            poi.setName(mInputEdt.getText().toString().trim());
+        }
+        return poi;
     }
     
     public void setOnTouchListener(OnTouchListener onTouchListener) {

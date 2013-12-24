@@ -146,7 +146,8 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
             
             @Override
             public void onBtnClicked(TKWord tkWord, int position) {
-                mKeywordEdt.setText(tkWord.word);
+//                mKeywordEdt.setText(tkWord.word);
+                mKeywordEdt.setPOI(tkWord.toPOI());
                 mActionLog.addAction(mActionTag + ActionLog.HistoryWordInput, position, tkWord.word, tkWord.attribute);
             }
         };
@@ -172,6 +173,8 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         mSphinx.showSoftInput(mKeywordEdt.getInput());
         mKeywordEdt.getInput().requestFocus();
         mTitleFragment.refreshRightBtn(mKeywordEdt.getText().toString());
+        
+        mSuggestWordListManager.refresh(mKeywordEdt, mCurHisWordType);
         
         switch (mCurMode) {
         //TODO:add actiontag
@@ -230,10 +233,10 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                     }
                     mKeywordEdt.setText(tkWord.word); //处理光标问题
                     if (mCurMode == MODE_TRANSFER) {
-                        POI poi = new POI();
-                        poi.setName(tkWord.word);
-                        poi.setPosition(tkWord.position);
-                        onConfirmed(poi);
+//                        POI poi = new POI();
+//                        poi.setName(tkWord.word);
+//                        poi.setPosition(tkWord.position);
+                        onConfirmed(tkWord.toPOI());
                     } else {
                         onConfirmed(tkWord.word);
                     }
@@ -258,7 +261,6 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
             
             @Override
             public void onClick(View v) {
-                // TODO Auto-generated method stub
                 mSphinx.showView(mSphinx.getFetchFavoriteFragment().getId());
             }
         });
@@ -274,7 +276,11 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                 
             case R.id.right_btn:
                 if (mKeywordEdt.getText().toString().trim().length() > 0) {
-                    onConfirmed(mKeywordEdt.getText().toString().trim());
+                    if (mCurMode == MODE_TRANSFER) {
+                        onConfirmed(mKeywordEdt.getPOI());
+                    } else {
+                        onConfirmed(mKeywordEdt.getText().toString().trim());
+                    }
                 } else {
                     dismiss();
                 }
