@@ -59,7 +59,7 @@ public class HomeBottomFragment extends BaseFragment implements View.OnClickList
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.poi_view) {
-            mSphinx.getPOINearbyFragment().setData(mSphinx.getCenterPOI());
+            mSphinx.getPOINearbyFragment().setData(mSphinx.getCenterPOI(),false);
             mSphinx.showView(R.id.view_poi_nearby_search);
         } else if (id == R.id.traffic_view) {
             mSphinx.showView(R.id.view_traffic_home);
