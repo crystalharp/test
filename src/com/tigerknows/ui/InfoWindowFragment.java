@@ -502,8 +502,8 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
         if(mType == TYPE_CLICKED_SELECT_POINT) {
             
             POI poi = (POI) overlayItem.getAssociatedObject();
-            mSphinx.getTrafficQueryFragment().setDataForSelectPoint(poi, TrafficQueryFragment.SELECTED);
-            mSphinx.uiStackClearTop(R.id.view_traffic_home);
+            mSphinx.getFragment(mOwerFragmentId).dismiss();
+            mSphinx.getPOIQueryFragment().onConfirmed(poi);
             
         } else if(touchMode.equals(TouchMode.LONG_CLICK)){
             POI poi = (POI) overlayItem.getAssociatedObject();

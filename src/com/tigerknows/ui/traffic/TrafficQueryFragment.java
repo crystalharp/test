@@ -1,7 +1,6 @@
 package com.tigerknows.ui.traffic;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -32,13 +31,11 @@ import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
 import com.tigerknows.android.location.Position;
 import com.tigerknows.android.os.TKAsyncTask;
-import com.tigerknows.android.widget.TKEditText;
 import android.widget.Toast;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.CityInfo;
 import com.tigerknows.map.MapEngine;
 import com.tigerknows.model.BaseQuery;
-import com.tigerknows.model.History;
 import com.tigerknows.model.LocationQuery;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.TKWord;
@@ -51,10 +48,7 @@ import com.tigerknows.provider.HistoryWordTable;
 import com.tigerknows.provider.TrafficSearchHistoryTable;
 import com.tigerknows.provider.TrafficSearchHistoryTable.SearchHistory;
 import com.tigerknows.ui.BaseFragment;
-import com.tigerknows.ui.more.HistoryFragment;
 import com.tigerknows.ui.poi.InputSearchFragment;
-//import com.tigerknows.ui.traffic.TrafficViewSTT.Event;
-//import com.tigerknows.ui.traffic.TrafficViewSTT.State;
 import com.tigerknows.util.Utility;
 import com.tigerknows.widget.LinearListAdapter;
 import com.tigerknows.widget.StringArrayAdapter;
@@ -76,21 +70,13 @@ import com.tigerknows.widget.StringArrayAdapter;
  */
 public class TrafficQueryFragment extends BaseFragment implements View.OnClickListener{
 
-//	public static final int TRAFFIC_MODE = 1;
-//	
-//	public static final int BUSLINE_MODE = 2;
-	
 	public static final int START = 1;
 	
 	public static final int END = 2;
 	
 	public static final int LINE = 3;
 	
-	
-		//TODO:不记得这个变量和选中的框什么意思了，先注掉
-	public static final int SELECTED = 4;
-	
-//	protected int mode = TRAFFIC_MODE;
+	public String MY_LOCATION;
 	
 	private int mSettedRadioBtn = 0;
 	
@@ -113,8 +99,6 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	Button mSelectStartBtn = null;
 	
 	Button mSelectEndBtn = null;
-    
-//	QueryEditText mBusline;
 
 	/**
 	 * 注：因为起终点对应的poi直接setTag给了按钮，所以不要直接给这两个按钮直接赋值，
@@ -123,20 +107,10 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	private InputBtn mStart;
     
 	private InputBtn mEnd;
-	
-//	POI mStart;
-	
-//	POI mEnd;
-    
-	QueryEditText mSelectedEdt;
-	    
-//    LinearLayout mSuggestLnl;
-    
-//	ListView mSuggestLsv;
-	
-	RelativeLayout mTrafficLayout;
-
-	RelativeLayout mBuslineLayout;
+		
+//	RelativeLayout mTrafficLayout;
+//
+//	RelativeLayout mBuslineLayout;
 	
 	LinearLayout mAddCommonPlace;
 	
@@ -158,50 +132,12 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
     TrafficSearchHistoryTable mHistoryTable = new TrafficSearchHistoryTable(mSphinx);
 //	int oldCheckButton;
 
-	String[] KEYWORDS;
-	
-	List<String> keywordList = null;
-	
-	/*
-	 * 控制此页面所有控件的事件
-	 */
-//	TrafficQueryEventHelper mEventHelper;
-	/*
-	 * 状态转化表 
-	 */
-//	TrafficViewSTT mStateTransitionTable;
-	
-	/*
-	 * 动画辅助类
-	 */
-//	TrafficQueryAnimationHelper mAnimationHelper;
-	
-	/*
-	 * 地图中心点辅助类
-	 */
-	TrafficQueryMapAndLocationHelper mMapLocationHelper;
-	
-	/*
-	 * 状态切换控制类
-	 */
-//	TrafficQueryStateHelper mStateHelper;
-	
 	/*
 	 * 行为日志辅助类
 	 */
 	TrafficQueryLogHelper mLogHelper;
 	
-	/*
-	 * 历史词及联想词辅助类
-	 */
-//	TrafficQuerySuggestWordHelper mSuggestWordHelper;
-	
 	public static final String TAG = "TrafficQueryFragment";
-	
-	//疑似无用
-//	public CityInfo getQueryCityInfo() {
-//		return mMapLocationHelper.getQueryCityInfo();
-//	}
 	
 	final class InputBtn {
 	    Button btn;
@@ -234,16 +170,6 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	        
 	        if (TextUtils.isEmpty(btn.getText())) {
 	            poi = new POI();
-	        } else if (getString(R.string.my_location).equals(btn.getText().toString())) {
-	            POI location = mMapLocationHelper.getMyLocation();
-	            if (location != null) {
-	                poi = new POI();
-	                poi.setName(btn.getText().toString());
-	                poi.setPosition(location.getPosition());
-	            } else {
-	                mSphinx.showTip(R.string.mylocation_failed, Toast.LENGTH_SHORT);
-	                return null;
-	            }
 	        }
 
 	        return poi;
@@ -286,17 +212,16 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
         mRootView = mLayoutInflater.inflate(R.layout.traffic_query, container, false);
 
         findViews();
-    	
-    	KEYWORDS = new String[]{
-    		getString(R.string.my_location),
-    		getString(R.string.select_has_point),
-    	};
-    	
-    	keywordList = Arrays.asList(KEYWORDS);
+        MY_LOCATION = getString(R.string.my_location);
+//    	KEYWORDS = new String[]{
+//    		getString(R.string.my_location),
+//    		getString(R.string.select_has_point),
+//    	};
+//    	
+//    	keywordList = Arrays.asList(KEYWORDS);
     	
 //        mEventHelper = new TrafficQueryEventHelper(this);
 //        mAnimationHelper = new TrafficQueryAnimationHelper(this);
-        mMapLocationHelper = new TrafficQueryMapAndLocationHelper(this);
 //        mStateHelper = new TrafficQueryStateHelper(this);
 //        mStateTransitionTable = new TrafficViewSTT(mStateHelper);
         mLogHelper = new TrafficQueryLogHelper(this);
@@ -313,9 +238,6 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 //    	mTitle = (FrameLayout)mRootView.findViewById(R.id.title_lnl);
         mBlock = (LinearLayout)mRootView.findViewById(R.id.content_lnl);
 		
-		mTrafficLayout = (RelativeLayout)mRootView.findViewById(R.id.traffic_rll);
-		mBuslineLayout = (RelativeLayout)mRootView.findViewById(R.id.busline_rll);
-        
     	mBackBtn = (Button)mRootView.findViewById(R.id.back_btn);
     	mTrafficSwitchBtn = (Button)mRootView.findViewById(R.id.traffic_switch_btn);
     	mBuslineQueryBtn = (Button)mRootView.findViewById(R.id.busline_query_btn);
@@ -413,8 +335,6 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
     @Override
     public void dismiss() {
     	super.dismiss();
-//    	mMapLocationHelper.mTargetCityInfo = null;
-//    	mSphinx.setTouchMode(TouchMode.NORMAL);
     	clearAllText();
     	showStartMyLocation = true; 
     	
@@ -473,8 +393,10 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	    if (showStartMyLocation) {
 	        //如果要求显示起点，定位为设定城市，在起点框填写上当前位置。
 	        if (mStart.textEmpty()) {
-	            POI poi = mMapLocationHelper.getMyLocation();
-	            mStart.setPOI(poi);
+	            POI poi = getMylocationPOI();
+	            if (poi != null) {
+	                mStart.setPOI(poi);
+	            }
 	        }
 	        //否则什么都不做，不影响当前起点框内容
 	    } else {
@@ -483,6 +405,13 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	    }
 		
     }
+	
+	POI getMylocationPOI() {
+	    //TODO:有定位信息则返回
+	    POI p = new POI();
+	    p.setName(MY_LOCATION);
+	    return p;
+	}
 	
 	void switchStartEnd() {
 	    POI start, end;
@@ -496,23 +425,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 		mStart.clear();
 		mEnd.clear();
 	}
-	
-	//TODO:删掉这个函数
-	public void setPOI(POI poi, int index) {
-	    switch(index) {
-	    case START:
-	        mStart.setPOI(poi);
-	        break;
-	    case END:
-	        mEnd.setPOI(poi);
-	        break;
-	    case SELECTED:
-	        //            mSelectedEdt.setPOI(poi);
-	    default:
-
-	    }
-	}
-	
+		
 	public final void setStart(POI p) {
 	    mStart.setPOI(p);
 	}
@@ -520,18 +433,10 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	public final void setEnd(POI p) {
 	    mEnd.setPOI(p);
 	}
-
-	public View getContentView() {
-//		if (mode == TRAFFIC_MODE) 
-			return mTrafficLayout;
-//		else 
-//			return mBuslineLayout;
-	}
 	
 	public final void query() {
-//		mSphinx.hideSoftInput();
-	    POI start = mStart.getPOI();
-        POI end = mEnd.getPOI();
+	    POI start = mStart.getPOI().clone();
+        POI end = mEnd.getPOI().clone();
         
         if (start == null || end == null)
             return;
@@ -550,19 +455,15 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	}
 
 	public void submitTrafficQuery(POI start, POI end) {
-		
 
         if (!processMyLocation(start)) {
             return;
         }
-        
         if (!processMyLocation(end)) {
             return;
         }
         
         TrafficQuery trafficQuery = new TrafficQuery(mContext);
-        
-        //和产品确认所查询的换乘所属的城市是当前所设置的城市，而不是地图所在的城市
         
         addHistoryWord(start, HistoryWordTable.TYPE_TRAFFIC);
         addHistoryWord(end, HistoryWordTable.TYPE_TRAFFIC);
@@ -578,7 +479,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
             return;
         }
         String name = poi.getName();
-        if (name != null && name.trim().equals(getString(R.string.my_location)) == false) {
+        if (name != null && name.trim().equals(MY_LOCATION) == false) {
             Position position = poi.getPosition();
             HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, name, position), type);
         }
@@ -679,9 +580,8 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	}
 	
 	private boolean processMyLocation(POI p) {
-	    if (p.getName().equals(mContext.getString(R.string.my_location))) {
+	    if (p.getName().equals(MY_LOCATION)) {
             if (p.getPosition() != null) {
-                //TODO:如何处理待定
                 p.setName(getMyLocationName(mSphinx, p.getPosition()));
                 return true;
             } else {
@@ -692,9 +592,11 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
                 if (location != null) {
                     position = MapEngine.getInstance().latlonTransform(new Position(location.getLatitude(), location.getLongitude()));
                     p.setPosition(position);
+                    p.setName(getMyLocationName(mSphinx, p.getPosition()));
                     return true;
                 } else {
                     //定位失败
+	                mSphinx.showTip(R.string.mylocation_failed, Toast.LENGTH_SHORT);
                     return false;
                 }
             }
@@ -722,22 +624,9 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
         
         return queryType;
     }
-	
-	/*
-     * 点击书签选择"当前位置"或"收藏夹" SELECTED
-     */
-    public void setData(POI poi, int index) {
-    	if (index != START && index != END && index != SELECTED) 
-    		return;
-    	
-    	setPOI(poi.clone(), index);
-//    	mStateTransitionTable.event(TrafficViewSTT.Event.ClickSelectStartEndBtn);
-    }
-    
+	    
     //TODO:把这个函数也重写，mSettedRadioBtn不要这么用
-    public void setDataNoSuggest(POI poi, int index, int queryType) {
-        if (index != START && index != END && index != SELECTED) 
-            return;
+    public void setQueryType(int queryType) {
         
         mSettedRadioBtn = R.id.traffic_transfer_rbt;
         switch (queryType) {
@@ -752,57 +641,8 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
             break;
         }
         mRadioGroup.check(mSettedRadioBtn);
-//        setState(TrafficViewSTT.State.Input);
-        setPOI(poi.clone(), index);
         
-//        changeToMode(TRAFFIC_MODE);
-        //自定起起点功能要求不显示起点，用这个变量进行标识，onpause的时候恢复
-        setShowStartMyLocation(false);
     }    
-    
-    /*
-     * 长按地图
-     */
-    public void setDataForLongClick(POI poi, int index) {
-//    	if (index != START && index != END && index != SELECTED) 
-//    		return;
-//    	
-//    	setPOI(poi.clone(), index);
-//    	mStateTransitionTable.event(TrafficViewSTT.Event.LongClick);
-//    	/*
-//    	 * 长按选点设置CheckButton
-//    	 */
-//    	mLogHelper.checkedRadioButton(oldCheckButton);
-//    	/*
-//    	 * 到这里去 NOT 线路查询
-//    	 */
-//    	preferTrafficThanBusline();
-    }
-    
-    /*
-     * 单击选点
-     */
-    //TODO:把这个函数换个名字，setdata怎么都不像要发event的
-    public void setDataForSelectPoint(POI poi, int index) {
-//    	mStateTransitionTable.event(TrafficViewSTT.Event.PointSelected);
-    	setData(poi.clone(), index);
-    }
-	
-    public void modifyData(POI poi, int index) {
-    	if (index != START && index != END ) 
-    		return;
-    	if (index == START && getString(R.string.my_location).equals(mStart.getText())) {
-    		LogWrapper.d("eric", "getTrafficQueryFragment modifyData mylocation skip");
-    		return;
-    	}
-    	
-    	if (index == END && getString(R.string.my_location).equals(mEnd.getText())) {
-    		LogWrapper.d("eric", "getTrafficQueryFragment modifyData mylocation skip");
-    		return;
-    	}
-    	
-    	setPOI(poi.clone(), index);
-    }
 	
 	public void onBack() {
 //		if (mStateTransitionTable.event(Event.Back)) {
@@ -812,18 +652,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 //		}
 			clearAllText();
 	}
-	
-//	@Override
-//	public boolean onKeyDown(int keyCode, KeyEvent event) {
-//		if (keyCode == KeyEvent.KEYCODE_BACK) {
-//			if (mStateTransitionTable.event(Event.Back)) {
-//			    mActionLog.addAction(ActionLog.KeyCodeBack);
-//				return true;
-//			} 
-//		}
-//		return super.onKeyDown(keyCode, event);
-//	}
-	
+		
 	@Override
 	public void onPostExecute(TKAsyncTask tkAsyncTask) {
 		super.onPostExecute(tkAsyncTask);
@@ -851,10 +680,10 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
             } else if (trafficModel.getType() == TrafficModel.TYPE_PROJECT) {
                 mActionLog.addAction(mActionTag + ActionLog.TrafficResultTraffic, trafficModel.getPlanList().size());
             	// 若之前发出的请求中的起终点被服务器修改, 此处要修改客户端显示
-            	if (trafficQuery.isPOIModified()) {
-            		modifyData(trafficQuery.getStart(), TrafficQueryFragment.START);
-            		modifyData(trafficQuery.getEnd(), TrafficQueryFragment.END);
-            	} 
+//            	if (trafficQuery.isPOIModified()) {
+//            		modifyData(trafficQuery.getStart(), TrafficQueryFragment.START);
+//            		modifyData(trafficQuery.getEnd(), TrafficQueryFragment.END);
+//            	} 
             	
             	// 下一行代码为避免以下操作会出现问题
             	// 搜索-结果列表-详情-地图-点击气泡中的交通按钮-选择到这里去/自驾-点击左上按钮无反应(期望进入 详情界面)
@@ -913,10 +742,10 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
             	Station station = null;
             	if (start) {
             	    station = startStationList.get(which);
-            	    setPOI(station.toPOI(), START);
+            	    setStart(station.toPOI());
             	} else if (end) {
             		station = endStationList.get(which);
-            	    setPOI(station.toPOI(), END);
+            	    setEnd(station.toPOI());
             	}
                 dialog.dismiss();
                 if (station != null) {
@@ -996,102 +825,75 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
     }
 		
 	/*TODO:扔到输入页去*/
-	public class QueryEditText {
-
-		protected TKEditText mEdt;
-
-		protected POI mPOI = new POI();
-		
-		public TKEditText getEdt() {
-			return mEdt;
-		}
-
-		public boolean isEmpty() {
-			return TextUtils.isEmpty(mEdt.getText().toString());
-		}
-		
-		public POI getPOI() {
-			
-			if (TextUtils.isEmpty(mEdt.getText())) {
-				mPOI = new POI();
-			}
-			
-			if (!TextUtils.isEmpty(mEdt.getText())
-					&& !mEdt.getText().toString().equals(mPOI.getName())
-					&& !mEdt.getText().toString().equals(getString(R.string.my_location))) {
-				mPOI = new POI();
-				mPOI.setName(mEdt.getText().toString().trim());
-			}
-			
-			if (mEdt.getText().toString().equals(getString(R.string.my_location))) {
-				POI location = mMapLocationHelper.getMyLocation();
-				if (location != null) {
-					mPOI.setName(mEdt.getText().toString());
-					mPOI.setPosition(location.getPosition());
-				} else {
-					mSphinx.showTip(R.string.mylocation_failed, Toast.LENGTH_SHORT);
-					return null;
-				}
-			} 
-			
-			return mPOI;
-		}
-
-		public void setPOI(POI mPOI) {
-			this.mPOI = mPOI;
-			if (this.mPOI == null) {
-			    setText("");
-			} else {
-			    setText(mPOI.getName());
-			}
-		}
-
-		protected void setText(String text) {
-			mEdt.setText(text);
-			mEdt.clearFocus();
-		}
-
-		public void clear() {
-			setText("");
-			mPOI = new POI();
-		}
-		
-		public QueryEditText(TKEditText tkEditText) {
-			mEdt = tkEditText;
-		}
-		
-		public void setHint(String hint) {
-			mEdt.setHint(hint);
-		}
-	}
-	
-    /**
-     * 在交通首页时, 点击地图-定位按钮-缩放按钮, 进入交通全屏地图
-     * @param isShowTip
-     */
-    public void onMapTouch(boolean isShowTip) {
-//    	if (isShowTip && mStateTransitionTable.getCurrentState() == TrafficViewSTT.State.Normal) {
-//    		mSphinx.showTip(R.string.tip_longpress_select_traffic, Toast.LENGTH_SHORT);
-//    	}
-//    	mStateTransitionTable.event(TrafficViewSTT.Event.TouchMap);
-    }
-	
-    /**
-     * 地图移动时根据当前地图中心点设置当前城市名, 并设置交通查询中心点
-     * @param newCenter
-     */
-    public void onMapCenterChanged(CityInfo cityInfo) {
-//    	mMapLocationHelper.onMapCenterChanged(cityInfo);
-    }
-	
-    /**
-     * 更新"当前城市"文本
-     * @param currentCity
-     */
-    public void setCurrentCity(String currentCity) {
-//		mCityTxt.setText(getString(R.string.current_city, currentCity));
-	}
-    	
+//	public class QueryEditText {
+//
+//		protected TKEditText mEdt;
+//
+//		protected POI mPOI = new POI();
+//		
+//		public TKEditText getEdt() {
+//			return mEdt;
+//		}
+//
+//		public boolean isEmpty() {
+//			return TextUtils.isEmpty(mEdt.getText().toString());
+//		}
+//		
+//		public POI getPOI() {
+//			
+//			if (TextUtils.isEmpty(mEdt.getText())) {
+//				mPOI = new POI();
+//			}
+//			
+//			if (!TextUtils.isEmpty(mEdt.getText())
+//					&& !mEdt.getText().toString().equals(mPOI.getName())
+//					&& !mEdt.getText().toString().equals(getString(R.string.my_location))) {
+//				mPOI = new POI();
+//				mPOI.setName(mEdt.getText().toString().trim());
+//			}
+//			
+//			if (mEdt.getText().toString().equals(getString(R.string.my_location))) {
+//				POI location = mMapLocationHelper.getMyLocation();
+//				if (location != null) {
+//					mPOI.setName(mEdt.getText().toString());
+//					mPOI.setPosition(location.getPosition());
+//				} else {
+//					mSphinx.showTip(R.string.mylocation_failed, Toast.LENGTH_SHORT);
+//					return null;
+//				}
+//			} 
+//			
+//			return mPOI;
+//		}
+//
+//		public void setPOI(POI mPOI) {
+//			this.mPOI = mPOI;
+//			if (this.mPOI == null) {
+//			    setText("");
+//			} else {
+//			    setText(mPOI.getName());
+//			}
+//		}
+//
+//		protected void setText(String text) {
+//			mEdt.setText(text);
+//			mEdt.clearFocus();
+//		}
+//
+//		public void clear() {
+//			setText("");
+//			mPOI = new POI();
+//		}
+//		
+//		public QueryEditText(TKEditText tkEditText) {
+//			mEdt = tkEditText;
+//		}
+//		
+//		public void setHint(String hint) {
+//			mEdt.setHint(hint);
+//		}
+//	}
+	    	
 	public void postTask(Runnable r) {
 		mSphinx.getHandler().post(r);
 	}
