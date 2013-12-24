@@ -197,15 +197,15 @@ public class Globals {
      * 重置当前所选城市、定位信息、图片尺寸
      * @param activity
      */
-    public static void init(Activity activity) {
+    public static void init(Context context) {
         
-        if (activity instanceof Sphinx) {
-            sSphinx = (Sphinx) activity;
+        if (context instanceof Sphinx) {
+            sSphinx = (Sphinx) context;
         }
         
-        initDataPath(activity);
+        initDataPath(context);
         
-        AsyncImageLoader.getInstance().onCreate(activity);
+        AsyncImageLoader.getInstance().onCreate(context);
         
         if (init) {
             return;
@@ -216,27 +216,30 @@ public class Globals {
         Globals.g_My_Location = null;
         Globals.g_My_Location_State = LOCATION_STATE_NONE;
         
-        Globals.readSessionAndUser(activity);
-        Globals.setConnectionFast(Utility.isConnectionFast(activity));
+        Globals.readSessionAndUser(context);
+        Globals.setConnectionFast(Utility.isConnectionFast(context));
 
         // 读取屏幕参数，如高宽、密度
-        WindowManager winMan=(WindowManager)activity.getSystemService(Context.WINDOW_SERVICE);
+        WindowManager winMan=(WindowManager)context.getSystemService(Context.WINDOW_SERVICE);
         Display display=winMan.getDefaultDisplay();
         display.getMetrics(Globals.g_metrics);
         
         initOptimalAdaptiveScreenSize();
     }
     
-    public static void initDataPath(Activity activity) {
+    public static void initDataPath(Context context) {
         try {
-            MapEngine.getInstance().initMapDataPath(activity);
-            ImageCache.getInstance().init(activity);
+            MapEngine.getInstance().initMapDataPath(context);
+            ImageCache.getInstance().init(context);
             StartupDisplayFile = TKConfig.getDataPath(true)+"StartupDisplay";
             StartupDisplayLogFile = TKConfig.getDataPath(true)+"StartupDisplayLog";
         } catch (APIException e) {
             e.printStackTrace();
-            Utility.showDialogAcitvity(activity, activity.getString(R.string.not_enough_space_and_please_clear));
-            activity.finish();
+            if (context instanceof Activity) {
+                Activity activity = (Activity) context;
+                Utility.showDialogAcitvity(activity, activity.getString(R.string.not_enough_space_and_please_clear));
+                activity.finish();
+            }
         }
     }
 

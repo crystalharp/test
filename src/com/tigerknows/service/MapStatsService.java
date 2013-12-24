@@ -7,6 +7,7 @@ package com.tigerknows.service;
 import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.TKConfig;
+import com.tigerknows.android.app.TKService;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.CityInfo;
 import com.tigerknows.map.LocalRegionDataInfo;
@@ -19,7 +20,6 @@ import com.tigerknows.ui.more.MapDownloadActivity;
 import com.tigerknows.ui.more.MoreHomeFragment;
 import com.tigerknows.ui.more.MapDownloadActivity.DownloadCity;
 
-import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
@@ -44,7 +44,7 @@ import java.util.List;
  * ACTION_STATS_DOWNLOAD_CITY_LIST_FOR_EXIST_MAP   统计未出现在下载列表中但是tigermap/map文件夹下已经存在地图数据文件的城市的地图信息及状态
  *
  */
-public class MapStatsService extends Service {
+public class MapStatsService extends TKService {
     
     static final String TAG = "MapStatsService";
     
