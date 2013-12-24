@@ -38,9 +38,9 @@
     <color name="gray">#333333</color>
     <color name="bright_green">#ff199bde</color>
     <color name="bright_foreground_light">#99000000</color>
-    <color name="black_dark">#323232</color>
+    <color name="black_dark">#333333</color>
     <color name="black_middle">#4d4d4d</color>
-    <color name="black_light">#969696</color>
+    <color name="black_light">#999999</color>
     <color name="black_transparent_half">#88000000</color>
     <color name="orange">#ff6c00</color>
     <color name="transparent">#00000000</color>

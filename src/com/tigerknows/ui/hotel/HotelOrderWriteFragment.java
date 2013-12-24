@@ -161,7 +161,6 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         final HotelVendor hotelVendor = HotelVendor.getHotelVendorById(mRoomType.getVendorID(), mSphinx, null);
         if(hotelVendor == null || TextUtils.isEmpty(hotelVendor.getReserveTel())){
         }else{
-            mRightBtn.setBackgroundResource(R.drawable.btn_title);
             mRightBtn.setText(getString(R.string.tel_reserve));
             mRightBtn.setOnClickListener(new OnClickListener() {
 				@Override

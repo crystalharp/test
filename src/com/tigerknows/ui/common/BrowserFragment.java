@@ -84,10 +84,11 @@ public class BrowserFragment extends BaseFragment implements View.OnClickListene
     public void onResume() {
         super.onResume();
         if (TextUtils.isEmpty(mTitle)) {
-            mTitleBtn.setText(mSphinx.getString(R.string.buy));
+            mTitleBtn.setText(getString(R.string.buy));
         } else {
             mTitleBtn.setText(mTitle);
         }
+        mRightBtn.setVisibility(View.GONE);
 
         mWebWbv.requestFocusFromTouch();
         
@@ -108,7 +109,7 @@ public class BrowserFragment extends BaseFragment implements View.OnClickListene
         }
 
         if (TextUtils.isEmpty(tip) == false) {
-            Toast.makeText(mSphinx, mSphinx.getString(R.string.going_to_, tip), Toast.LENGTH_LONG).show();
+            Toast.makeText(mSphinx, getString(R.string.going_to_, tip), Toast.LENGTH_LONG).show();
         }
         
         mWebWbv.stopLoading();

@@ -24,6 +24,7 @@ import android.content.res.Resources;
 import android.graphics.Rect;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.AnimationDrawable;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -42,14 +43,17 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.tigerknows.R;
@@ -173,6 +177,7 @@ import com.tigerknows.ui.traffic.TrafficDetailFragment;
 import com.tigerknows.ui.traffic.TrafficQueryFragment;
 import com.tigerknows.ui.traffic.TrafficReportErrorActivity;
 import com.tigerknows.ui.traffic.TrafficResultFragment;
+import com.tigerknows.ui.traffic.TrafficSearchHistoryFragment;
 import com.tigerknows.ui.user.MyCommentListFragment;
 import com.tigerknows.ui.user.UserBaseActivity;
 import com.tigerknows.ui.user.UserHomeFragment;
@@ -229,9 +234,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     private View mLocationView=null;
     private ImageButton mLocationBtn=null;
     private TextView mLocationTxv=null;
-    private ImageButton mClearMapBtn=null;
-    private ImageButton mToolsBtn;
-    private ImageView mToolsImv;
+    private ImageButton mMapCleanBtn=null;
+    private ImageButton mMapToolsBtn;
+    private ImageView mMapToolsImv;
+    private PopupWindow mPopupWindowTools;
     
 	private TouchMode touchMode=TouchMode.NORMAL;
 	public enum TouchMode{
@@ -442,7 +448,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             // add zoom controller to zoom view
             mZoomView.addView(zoomControls);
             
-            mClearMapBtn.setOnClickListener(new OnClickListener() {
+            mMapCleanBtn.setOnClickListener(new OnClickListener() {
                 
                 @Override
                 public void onClick(View arg0) {
@@ -729,9 +735,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     private void initView() {
         
         if (TKConfig.getPref(mThis, TKConfig.PREFS_MAP_TOOLS) == null) {
-            mToolsImv.setVisibility(View.VISIBLE);
+            mMapToolsImv.setVisibility(View.VISIBLE);
         } else {
-            mToolsImv.setVisibility(View.GONE);
+            mMapToolsImv.setVisibility(View.GONE);
         }
         
         mUIStack.clear();
@@ -1085,87 +1091,107 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         mMapView = (MapView) findViewById(R.id.mapview);
         mMapOverView = findViewById(R.id.map_over_view);
         mCenterTokenView = findViewById(R.id.center_token_view);
-        mClearMapBtn=(ImageButton)(findViewById(R.id.clear_map_btn));
+        mMapCleanBtn=(ImageButton)(findViewById(R.id.map_clean_btn));
         mLocationView=(findViewById(R.id.location_view));
         mLocationBtn=(ImageButton)(findViewById(R.id.location_btn));
         mLocationTxv=(TextView)(findViewById(R.id.location_txv));
         mDownloadView = (TextView)findViewById(R.id.download_txv);
         mCompassView = findViewById(R.id.compass_imv);
         
-        mToolsBtn = (ImageButton)findViewById(R.id.tools_btn);
-        mToolsImv = (ImageView)findViewById(R.id.tools_imv);
+        mMapToolsBtn = (ImageButton)findViewById(R.id.map_tools_btn);
+        mMapToolsImv = (ImageView)findViewById(R.id.map_tools_imv);
     }
 
     private void setListener() {
     	
-    	mToolsBtn.setOnClickListener(new OnClickListener() {
+    	mMapToolsBtn.setOnClickListener(new OnClickListener() {
             
             @Override
             public void onClick(View v) {
                 mActionLog.addAction(ActionLog.MapMore);
                 TKConfig.setPref(mThis, TKConfig.PREFS_MAP_TOOLS, "1");
-                mToolsImv.setVisibility(View.GONE);
-
-                View view = mLayoutInflater.inflate(R.layout.alert_map_tools, null, false);
-                final Dialog dialog = Utility.getChoiceDialog(mThis, view, R.style.AlterChoiceDialog);
-
-                View button0 = view.findViewById(R.id.button0_view);
-                View button1 = view.findViewById(R.id.button1_view);
-                View button2 = view.findViewById(R.id.button2_view);
-                View button3 = view.findViewById(R.id.button3_view);
+                mMapToolsImv.setVisibility(View.GONE);
                 
-                View.OnClickListener onClickListener = new OnClickListener() {
+                if (mPopupWindowTools == null) {
+                    View view = mLayoutInflater.inflate(R.layout.alert_map_tools, null, false);
+                    mPopupWindowTools = new PopupWindow(view);
+                    mPopupWindowTools.setWindowLayoutMode(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
+                    mPopupWindowTools.setFocusable(true);
+                    // 设置允许在外点击消失
+                    mPopupWindowTools.setOutsideTouchable(true);
+    
+                    // 这个是为了点击“返回Back”也能使其消失，并且并不会影响你的背景
+                    mPopupWindowTools.setBackgroundDrawable(new BitmapDrawable());
+                    mPopupWindowTools.setAnimationStyle(-1);
+                    mPopupWindowTools.update();
                     
-                    @Override
-                    public void onClick(View v) {
-                        int id = v.getId();
-                        if (uiStackPeek() == R.id.view_traffic_home) {
-                            getTrafficQueryFragment().priorityMyLocation = false;
-                        }
-                        if (id == R.id.button0_view) {
-                            
-                            mActionLog.addAction(ActionLog.MapTakeScreenshot);
-                            getSubwayMapFragment().setData(MapEngine.getCityInfo(MapEngine.getCityId(mMapView.getCenterPosition())));
-                            showView(R.id.view_subway_map);
-                            
-                        } else if (id == R.id.button1_view) {
-                            mActionLog.addAction(ActionLog.MapTakeScreenshot);
-                            
-                            snapMapView(new SnapMap() {
+                    View button0 = view.findViewById(R.id.button0_view);
+                    View button1 = view.findViewById(R.id.button1_view);
+                    View button2 = view.findViewById(R.id.button2_view);
+                    View button3 = view.findViewById(R.id.button3_view);
+                    
+                    View.OnClickListener onClickListener = new OnClickListener() {
+                        
+                        @Override
+                        public void onClick(View v) {
+                            int id = v.getId();
+                            if (uiStackPeek() == R.id.view_traffic_home) {
+                                getTrafficQueryFragment().priorityMyLocation = false;
+                            }
+                            if (id == R.id.button0_view) {
                                 
-                                @Override
-                                public void finish(Uri uri) {
-                                    if (uri == null) {
-                                        return;
+                                mActionLog.addAction(ActionLog.MapTakeScreenshot);
+                                getSubwayMapFragment().setData(MapEngine.getCityInfo(MapEngine.getCityId(mMapView.getCenterPosition())));
+                                showView(R.id.view_subway_map);
+                                
+                            } else if (id == R.id.button1_view) {
+                                mActionLog.addAction(ActionLog.MapTakeScreenshot);
+                                
+                                snapMapView(new SnapMap() {
+                                    
+                                    @Override
+                                    public void finish(Uri uri) {
+                                        if (uri == null) {
+                                            return;
+                                        }
+                                        Intent intent = new Intent();
+                                        intent.setData(uri);
+                                        showView(R.id.activity_take_screenshot, intent);
                                     }
-                                    Intent intent = new Intent();
-                                    intent.setData(uri);
-                                    showView(R.id.activity_take_screenshot, intent);
-                                }
-                            }, mMapView.getCenterPosition(), mMapView.getCurrentMapScene());
-                            
-                        } else if (id == R.id.button2_view) {
-                            mActionLog.addAction(ActionLog.MapDistance);
-
-                            getMeasureDistanceFragment().setData();
-                            showView(R.id.view_measure_distance);
-                            
-                            Toast.makeText(mThis, R.string.measure_distance_tip, Toast.LENGTH_LONG).show();
-                        } else if (id == R.id.button3_view) {
-                            mActionLog.addAction(ActionLog.MapCompass);
-                            
-                            showView(R.id.activity_traffic_compass);
+                                }, mMapView.getCenterPosition(), mMapView.getCurrentMapScene());
+                                
+                            } else if (id == R.id.button2_view) {
+                                mActionLog.addAction(ActionLog.MapDistance);
+                                
+                                getMeasureDistanceFragment().setData();
+                                showView(R.id.view_measure_distance);
+                                
+                                Toast.makeText(mThis, R.string.measure_distance_tip, Toast.LENGTH_LONG).show();
+                            } else if (id == R.id.button3_view) {
+                                mActionLog.addAction(ActionLog.MapCompass);
+                                
+                                showView(R.id.activity_traffic_compass);
+                            }
+                            mPopupWindowTools.dismiss();
                         }
-                        dialog.dismiss();
-                    }
-                };
-                button0.setOnClickListener(onClickListener);
-                button1.setOnClickListener(onClickListener);
-                button2.setOnClickListener(onClickListener);
-                button3.setOnClickListener(onClickListener);
+                    };
+                    button0.setOnClickListener(onClickListener);
+                    button1.setOnClickListener(onClickListener);
+                    button2.setOnClickListener(onClickListener);
+                    button3.setOnClickListener(onClickListener);
+                    
+                    view.findViewById(R.id.bottomPanel).setOnTouchListener(new OnTouchListener() {
+                        
+                        @Override
+                        public boolean onTouch(View v, MotionEvent event) {
+                            mPopupWindowTools.dismiss();
+                            return false;
+                        }
+                    });
+                }
+                    
+                mPopupWindowTools.showAsDropDown(mMapToolsBtn, 0, 0);
                 
-                dialog.show();
-                setShowingDialog(dialog);
             }
         });
     }
@@ -1547,6 +1573,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         LogWrapper.i(TAG, "onPause");
         mActionLog.onPause();
         mOnPause = true;
+        
+        if (mPopupWindowTools != null) {
+            mPopupWindowTools.dismiss();
+        }
         
         LogUpload.uploadLog(mThis, mActionLog, mTKLocationManager.getGPSLocationUpload(), mTKLocationManager.getNetworkLocationUpload());
         
@@ -2443,6 +2473,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     private TrafficDetailFragment mTrafficDetailFragment = null;
     private TrafficResultFragment mTrafficResultFragment = null;
     private TrafficCommonPlaceFragment mTrafficCommonAddressFragment = null;
+    private TrafficSearchHistoryFragment mTrafficSearchHistoryFragment = null;
     private BuslineResultLineFragment mBuslineResultLineFragment = null;
     private BuslineResultStationFragment mBuslineResultStationFragment = null;
     private BuslineDetailFragment mBuslineDetailFragment = null;
@@ -2546,6 +2577,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 
             case R.id.view_traffic_common_places:
                 baseFragment = getTrafficCommonAddressFragment();
+                break;
+                
+            case R.id.view_traffic_search_history:
+                baseFragment = getTrafficSearchHistoryFragment();
                 break;
                 
             case R.id.view_traffic_fetch_favorite_poi:
@@ -2747,6 +2782,18 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 mHistoryFragment = historyFragment;
             }
             return mHistoryFragment;
+        }
+    }
+
+    public TrafficSearchHistoryFragment getTrafficSearchHistoryFragment() {
+        synchronized (mUILock) {
+            if (mTrafficSearchHistoryFragment == null) {
+                TrafficSearchHistoryFragment f = new TrafficSearchHistoryFragment(Sphinx.this);
+                f.setId(R.id.view_traffic_search_history);
+                f.onCreate(null);
+                mTrafficSearchHistoryFragment = f;
+            }
+            return mTrafficSearchHistoryFragment;
         }
     }
     
@@ -3443,12 +3490,12 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         return mLocationView;
     }
 
-    public View getToolsBtn() {
-        return mToolsBtn;
+    public View getMapToolsBtn() {
+        return mMapToolsBtn;
     }
     
-    public View getClearMapBtn() {
-        return mClearMapBtn;
+    public View getMapCleanBtn() {
+        return mMapCleanBtn;
     }
     
     public void setMapViewPaddingBottom(int bottom) {

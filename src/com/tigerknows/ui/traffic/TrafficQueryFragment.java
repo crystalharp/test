@@ -8,6 +8,7 @@ import java.util.List;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
+import android.location.Location;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -38,17 +39,20 @@ import com.tigerknows.map.CityInfo;
 import com.tigerknows.map.MapEngine;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.History;
+import com.tigerknows.model.LocationQuery;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.TKWord;
 import com.tigerknows.model.TrafficModel;
 import com.tigerknows.model.TrafficModel.Plan;
 import com.tigerknows.model.TrafficModel.Station;
 import com.tigerknows.model.TrafficQuery;
+import com.tigerknows.provider.CommonPlaceTable.CommonPlace;
 import com.tigerknows.provider.HistoryWordTable;
+import com.tigerknows.provider.TrafficSearchHistoryTable;
+import com.tigerknows.provider.TrafficSearchHistoryTable.SearchHistory;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.ui.more.HistoryFragment;
 import com.tigerknows.ui.poi.InputSearchFragment;
-import com.tigerknows.ui.traffic.TrafficCommonPlaceFragment.CommonPlace;
 //import com.tigerknows.ui.traffic.TrafficViewSTT.Event;
 //import com.tigerknows.ui.traffic.TrafficViewSTT.State;
 import com.tigerknows.util.Utility;
@@ -70,7 +74,7 @@ import com.tigerknows.widget.StringArrayAdapter;
  * @author linqingzu
  *
  */
-public class TrafficQueryFragment extends BaseFragment {
+public class TrafficQueryFragment extends BaseFragment implements View.OnClickListener{
 
 //	public static final int TRAFFIC_MODE = 1;
 //	
@@ -82,7 +86,8 @@ public class TrafficQueryFragment extends BaseFragment {
 	
 	public static final int LINE = 3;
 	
-	//TODO:不记得这个变量和选中的框什么意思了，先注掉
+	
+		//TODO:不记得这个变量和选中的框什么意思了，先注掉
 	public static final int SELECTED = 4;
 	
 //	protected int mode = TRAFFIC_MODE;
@@ -97,7 +102,7 @@ public class TrafficQueryFragment extends BaseFragment {
 	
 	Button mBackBtn;
 	
-	Button mTrafficQueryBtn;
+	Button mTrafficSwitchBtn;
 	
 	Button mBuslineQueryBtn;
 	
@@ -148,7 +153,9 @@ public class TrafficQueryFragment extends BaseFragment {
             
     List<CommonPlace> mCommonPlaces = new LinkedList<CommonPlace>();
 
-    List<History> mQueryHistorys = new LinkedList<History>();
+    List<SearchHistory> mQueryHistorys = new LinkedList<SearchHistory>();
+    
+    TrafficSearchHistoryTable mHistoryTable = new TrafficSearchHistoryTable(mSphinx);
 //	int oldCheckButton;
 
 	String[] KEYWORDS;
@@ -199,6 +206,7 @@ public class TrafficQueryFragment extends BaseFragment {
 	final class InputBtn {
 	    Button btn;
 	    POI poi;
+	    String type;
 	    
 	    public InputBtn(Button b) {
 	        btn = b;
@@ -309,7 +317,7 @@ public class TrafficQueryFragment extends BaseFragment {
 		mBuslineLayout = (RelativeLayout)mRootView.findViewById(R.id.busline_rll);
         
     	mBackBtn = (Button)mRootView.findViewById(R.id.back_btn);
-    	mTrafficQueryBtn = (Button)mRootView.findViewById(R.id.traffic_query_btn);
+    	mTrafficSwitchBtn = (Button)mRootView.findViewById(R.id.traffic_switch_btn);
     	mBuslineQueryBtn = (Button)mRootView.findViewById(R.id.busline_query_btn);
         mTitleBar = mLayoutInflater.inflate(R.layout.traffic_query_bar, null);
     	mRadioGroup = (RadioGroup)mTitleBar.findViewById(R.id.traffic_rgp);
@@ -331,86 +339,31 @@ public class TrafficQueryFragment extends BaseFragment {
     }
 	
 	void setListeners() {
-	    mAddCommonPlace.setOnClickListener(new View.OnClickListener() {
-            
-            @Override
-            public void onClick(View v) {
-                mSphinx.showView(R.id.view_traffic_common_places);
-                makeToast("showView add common place");
-            }
-        });
-	    
-	    mQueryHistory.setOnClickListener(new View.OnClickListener() {
-            
-            @Override
-            public void onClick(View v) {
-                // TODO Auto-generated method stub
-                //跳转到查询线路历史
-                mSphinx.showView(mSphinx.getHistoryFragment().getId());
-            }
-        });
-	    
-	    mTrafficQueryBtn.setOnClickListener(new View.OnClickListener() {
-            
-            @Override
-            public void onClick(View v) {
-                switchStartEnd();
-            }
-        });
-	    
-	    mStart.setOnClickListener(new View.OnClickListener() {
-            
-            @Override
-            public void onClick(View v) {
-                mSphinx.getPOIQueryFragment().reset();
-                mSphinx.getPOIQueryFragment().setMode(InputSearchFragment.MODE_TRANSFER);
-                mSphinx.getPOIQueryFragment().setConfirmedCallback(new InputSearchFragment.Callback() {
-                    
-                    @Override
-                    public void onConfirmed(POI p) {
-                        mStart.setPOI(p);
-                    }
-                });
-                mSphinx.showView(R.id.view_poi_input_search);
-            }
-        });
-	    
-	    mEnd.setOnClickListener(new View.OnClickListener() {
-            
-            @Override
-            public void onClick(View v) {
-                mSphinx.getPOIQueryFragment().reset();
-                mSphinx.getPOIQueryFragment().setMode(InputSearchFragment.MODE_TRANSFER);
-                mSphinx.getPOIQueryFragment().setConfirmedCallback(new InputSearchFragment.Callback() {
-                    
-                    @Override
-                    public void onConfirmed(POI p) {
-                        mEnd.setPOI(p);
-                    }
-                });
-                mSphinx.showView(R.id.view_poi_input_search);
-            }
-        });
-	   
+	    mStart.setOnClickListener(this);
+	    mEnd.setOnClickListener(this);
+	    mAddCommonPlace.setOnClickListener(this);
+        mQueryHistory.setOnClickListener(this);
+        mTrafficSwitchBtn.setOnClickListener(this);
 	//---------------------history start-----------------------//
 	    final OnClickListener historyItemListener = new View.OnClickListener() {
 
 	        @Override
 	        public void onClick(View v) {
-	            // TODO Auto-generated method stub
-	            History h = (History) v.getTag();
-	            HistoryFragment.showTrafficDetail(mSphinx, h);
+	            SearchHistory h = (SearchHistory) v.getTag();
+	            mStart.setPOI(h.start);
+	            mEnd.setPOI(h.end);
+	            updateSearchHistory(h);
+	            submitTrafficQuery(h.start, h.end);
 	        }
 	    };
 	    mQueryHistoryAdapter = new LinearListAdapter(mSphinx, mQueryHistoryLst, R.layout.traffic_transfer_his_item) {
 
 	        @Override
 	        public View getView(Object data, View child, int pos) {
-	            // TODO Auto-generated method stub
-	            History h = (History)data;
-	            TextView t = (TextView) child.findViewById(R.id.his_text);
+	            SearchHistory h = (SearchHistory)data;
+	            TextView t = (TextView) child.findViewById(R.id.his_txv);
 	            child.setTag(data);
-	            t.setText(HistoryFragment.getTrafficName(h));
+	            t.setText(h.genDescription());
 	            child.setOnClickListener(historyItemListener);
 	            return null;
 	        }
@@ -426,8 +379,10 @@ public class TrafficQueryFragment extends BaseFragment {
                 if (c.empty) {
                     mSphinx.showView(R.id.view_traffic_common_places);
                 } else {
-                // TODO Auto-generated method stub
-                    //发起查询
+                    mEnd.setPOI(c.poi);
+                    if (!mStart.textEmpty()) {
+                        query();
+                    }
                 }
             }
         };
@@ -478,20 +433,8 @@ public class TrafficQueryFragment extends BaseFragment {
 	    }
 	    super.onResume();
          
-	    // TODO:这个listener需要重用，经常刷新
-	    mRightBtn.setOnClickListener(new View.OnClickListener() {
-            
-            @Override
-            public void onClick(View v) {
-                // TODO Auto-generated method stub
-                // 弹出三个按钮或者编程确定
-                makeToast("right btn clicked");
-                mSphinx.getPOIQueryFragment().reset();
-                mSphinx.getPOIQueryFragment().setMode(InputSearchFragment.MODE_BUELINE);
-                mSphinx.showView(R.id.view_poi_input_search);
-            }
-        });
-        /*
+	    mRightBtn.setOnClickListener(this);
+	    /*
          * 由于在一个“session”中会多次调用onresume，导致在地图选点和收藏夹选点之后返回本页面都会调用initstart
          * 这里引入mDissmissed变量，在整个页面被dismiss的时候设为true，onresume的时候把变量设为false，并把所有
          * 应该初始化的内容初始化。这个概念以后应该被扩展到其他的页面。
@@ -504,8 +447,7 @@ public class TrafficQueryFragment extends BaseFragment {
         mTitleView.removeAllViews();
         mTitleView.addView(mTitleBar);
         mRightBtn.setBackgroundResource(R.drawable.btn_view_detail);
-        HistoryFragment.readTraffic(mContext, mQueryHistorys, Long.MAX_VALUE, 0, false);
-        mQueryHistoryAdapter.refreshList(mQueryHistorys);
+        initHistory();
         updateCommonPlace();
         if (!mStart.textEmpty() 
                 && !mEnd.textEmpty()
@@ -543,8 +485,6 @@ public class TrafficQueryFragment extends BaseFragment {
     }
 	
 	void switchStartEnd() {
-	    //TODO:switch start end content
-	    makeToast("switch start end");
 	    POI start, end;
 	    start = mStart.getPOI();
 	    end = mEnd.getPOI();
@@ -557,6 +497,7 @@ public class TrafficQueryFragment extends BaseFragment {
 		mEnd.clear();
 	}
 	
+	//TODO:删掉这个函数
 	public void setPOI(POI poi, int index) {
 	    switch(index) {
 	    case START:
@@ -571,6 +512,14 @@ public class TrafficQueryFragment extends BaseFragment {
 
 	    }
 	}
+	
+	public final void setStart(POI p) {
+	    mStart.setPOI(p);
+	}
+	
+	public final void setEnd(POI p) {
+	    mEnd.setPOI(p);
+	}
 
 	public View getContentView() {
 //		if (mode == TRAFFIC_MODE) 
@@ -579,39 +528,38 @@ public class TrafficQueryFragment extends BaseFragment {
 //			return mBuslineLayout;
 	}
 	
-	public void query() {
+	public final void query() {
 //		mSphinx.hideSoftInput();
-		
-//		if (mode == TRAFFIC_MODE) {
-			submitTrafficQuery();
-//		} else {
-//			submitBuslineQuery();
-//		}
+	    POI start = mStart.getPOI();
+        POI end = mEnd.getPOI();
+        
+        if (start == null || end == null)
+            return;
+        
+        if (checkIsInputEmpty())
+            return;
+
+        if (checkIsInputEqual()) {
+            return;
+        }
+        
+        addSearchHistory(new SearchHistory(start, end));
+        
+        submitTrafficQuery(start, end);
 
 	}
 
-	public void submitTrafficQuery() {
+	public void submitTrafficQuery(POI start, POI end) {
 		
-		POI start = mStart.getPOI();
-		POI end = mEnd.getPOI();
-		
-		if (start == null || end == null)
-			return;
-		
-		if (checkIsInputEmpty())
-        	return;
 
-		if (checkIsInputEqual()) {
-			return;
-		}
-		
-        if (start.getName().equals(getString(R.string.my_location))) {
-        	start.setName(getMyLocationName(mSphinx, start.getPosition()));
-        } 
-        if (end.getName().equals(getString(R.string.my_location))) {
-        	end.setName(getMyLocationName(mSphinx, end.getPosition()));
+        if (!processMyLocation(start)) {
+            return;
         }
-
+        
+        if (!processMyLocation(end)) {
+            return;
+        }
+        
         TrafficQuery trafficQuery = new TrafficQuery(mContext);
         
         //和产品确认所查询的换乘所属的城市是当前所设置的城市，而不是地图所在的城市
@@ -634,6 +582,29 @@ public class TrafficQueryFragment extends BaseFragment {
             Position position = poi.getPosition();
             HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, name, position), type);
         }
+    }
+    
+    public void addSearchHistory(SearchHistory sh) {
+        if (!mQueryHistorys.contains(sh)) {
+            mHistoryTable.add(sh);
+            mQueryHistorys.add(sh);
+            mQueryHistoryAdapter.refreshList(mQueryHistorys);
+        } else {
+            updateSearchHistory(sh);
+        }
+    }
+    
+    public void updateSearchHistory(SearchHistory sh) {
+        mQueryHistorys.remove(sh);
+        mQueryHistorys.add(0, sh);
+        mHistoryTable.update(sh);
+        mQueryHistoryAdapter.refreshList(mQueryHistorys);
+    }
+    
+    public void initHistory() {
+        mQueryHistorys.clear();
+        mHistoryTable.readTrafficSearchHistory(mQueryHistorys);
+        mQueryHistoryAdapter.refreshList(mQueryHistorys);
     }
     
     public static void submitTrafficQuery(Sphinx sphinx, POI start, POI end, int queryType) {
@@ -705,6 +676,31 @@ public class TrafficQueryFragment extends BaseFragment {
 		} 
 		
 		return false;
+	}
+	
+	private boolean processMyLocation(POI p) {
+	    if (p.getName().equals(mContext.getString(R.string.my_location))) {
+            if (p.getPosition() != null) {
+                //TODO:如何处理待定
+                p.setName(getMyLocationName(mSphinx, p.getPosition()));
+                return true;
+            } else {
+                //是“我的位置”且没有定位点则定位
+                LocationQuery locationQuery = LocationQuery.getInstance(getContext());
+                Location location = locationQuery.getLocation();
+                Position position = null;
+                if (location != null) {
+                    position = MapEngine.getInstance().latlonTransform(new Position(location.getLatitude(), location.getLongitude()));
+                    p.setPosition(position);
+                    return true;
+                } else {
+                    //定位失败
+                    return false;
+                }
+            }
+        } else {
+            return true;
+        }
 	}
 	
 	protected int getQueryType(){
@@ -927,7 +923,7 @@ public class TrafficQueryFragment extends BaseFragment {
                     mActionLog.addAction(ActionLog.TrafficAlternative + (start ? ActionLog.TrafficAlterStart : ActionLog.TrafficAlterEnd), which, station.getName());
                 }
                 if (start == false || end == false) {
-                	submitTrafficQuery();
+                    submitTrafficQuery(mStart.getPOI(), mEnd.getPOI());
                 } else {
                 	showAlternativeDialog(null, endStationList);
                 }
@@ -1099,5 +1095,56 @@ public class TrafficQueryFragment extends BaseFragment {
 	public void postTask(Runnable r) {
 		mSphinx.getHandler().post(r);
 	}
-	
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+        case R.id.right_btn:
+            // TODO:弹出三个按钮或者变成确定按钮
+            mSphinx.getPOIQueryFragment().reset();
+            mSphinx.getPOIQueryFragment().setMode(InputSearchFragment.MODE_BUELINE);
+            mSphinx.showView(R.id.view_poi_input_search);
+            break;
+            
+        case R.id.end_btn:
+            mSphinx.getPOIQueryFragment().reset();
+            mSphinx.getPOIQueryFragment().setMode(InputSearchFragment.MODE_TRANSFER);
+            mSphinx.getPOIQueryFragment().setConfirmedCallback(new InputSearchFragment.Callback() {
+                
+                @Override
+                public void onConfirmed(POI p) {
+                    mEnd.setPOI(p);
+                }
+            });
+            mSphinx.showView(R.id.view_poi_input_search);
+            break;
+            
+        case R.id.start_btn:
+            mSphinx.getPOIQueryFragment().reset();
+            mSphinx.getPOIQueryFragment().setMode(InputSearchFragment.MODE_TRANSFER);
+            mSphinx.getPOIQueryFragment().setConfirmedCallback(new InputSearchFragment.Callback() {
+                
+                @Override
+                public void onConfirmed(POI p) {
+                    mStart.setPOI(p);
+                }
+            });
+            mSphinx.showView(R.id.view_poi_input_search);
+            break;
+            
+        case R.id.add_common_place:
+            mSphinx.showView(R.id.view_traffic_common_places);
+            break;
+        
+        case R.id.query_history_title:
+            mSphinx.showView(R.id.view_traffic_search_history);
+            break;
+            
+        case R.id.traffic_switch_btn:
+            switchStartEnd();
+            break;
+            
+        }
+    }
+    
 }

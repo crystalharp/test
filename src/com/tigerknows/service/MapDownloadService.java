@@ -5,6 +5,7 @@
 package com.tigerknows.service;
 
 import com.decarta.android.util.LogWrapper;
+import com.tigerknows.android.app.TKService;
 import com.tigerknows.map.CityInfo;
 import com.tigerknows.map.LocalRegionDataInfo;
 import com.tigerknows.map.MapEngine;
@@ -16,7 +17,6 @@ import com.tigerknows.model.MapTileDataDownload;
 import com.tigerknows.model.MapVersionQuery.ServerRegionDataInfo;
 import com.tigerknows.ui.more.MapDownloadActivity;
 
-import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
@@ -32,7 +32,7 @@ import java.util.List;
  * 下载城市地图
  * 在onCreate()时创建一个线程用于下载城市地图，下载过程中广播通知监听者进度及完成情况
  */
-public class MapDownloadService extends Service implements MapTileDataDownload.ITileDownload {
+public class MapDownloadService extends TKService implements MapTileDataDownload.ITileDownload {
     
     static final String TAG = "MapDownloadService";
     

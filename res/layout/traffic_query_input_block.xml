@@ -13,7 +13,7 @@
 	        android:padding="12dp"
 	        android:background="@color/traffic_input_background_gray">
 	        
-	        <Button android:id="@+id/traffic_query_btn"
+	        <Button android:id="@+id/traffic_switch_btn"
 	            android:layout_alignParentLeft="true"
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
@@ -25,7 +25,7 @@
 	            android:layout_width="fill_parent" 
 	            android:layout_height="wrap_content"
 	            android:orientation="vertical"
-	            android:layout_toRightOf="@+id/traffic_query_btn"
+	            android:layout_toRightOf="@+id/traffic_switch_btn"
 	            android:layout_alignParentTop="true">
 	            <LinearLayout 
 			        android:layout_width="fill_parent" 

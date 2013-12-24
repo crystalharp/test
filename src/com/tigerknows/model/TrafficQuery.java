@@ -277,9 +277,6 @@ public final class TrafficQuery extends BaseQuery {
 
     @Override
     protected void checkRequestParameters() throws APIException {
-        if (cityId < CityInfo.CITY_ID_BEIJING) {
-            throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_CITY);
-        }
     }
 
     @Override

@@ -12,8 +12,6 @@ import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.ItemizedOverlayHelper;
 import com.tigerknows.model.BaseQuery;
-import com.tigerknows.model.BuslineModel;
-import com.tigerknows.model.BuslineQuery;
 import com.tigerknows.model.Comment;
 import com.tigerknows.model.Hotel;
 import com.tigerknows.model.POI;
@@ -26,6 +24,7 @@ import com.tigerknows.model.DataQuery.POIResponse.POIList;
 import com.tigerknows.model.POI.DynamicPOI;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
+import com.tigerknows.ui.HomeFragment;
 import com.tigerknows.ui.hotel.NavigationWidget;
 import com.tigerknows.ui.more.AddMerchantActivity;
 import com.tigerknows.util.Utility;
@@ -44,6 +43,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -308,7 +308,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         }
         
         if (getId() == mSphinx.uiStackPeek()) {
-            mTitleBtn.setText(mTitleText);
+            mTitleBtn.setHint(mTitleText);
         }
 
         if (BaseQuery.SUB_DATA_TYPE_HOTEL.equals(mResultAdapter.getSubDataType())) {
@@ -335,7 +335,16 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     @Override
     public void onResume() {
         super.onResume();
-        mRightBtn.setBackgroundResource(R.drawable.btn_view_map);
+        
+        mTitleBtn.setBackgroundResource(R.drawable.edt_home);
+        mTitleBtn.setOnClickListener(this);
+        mTitleBtn.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
+
+        HomeFragment homeFragment = mSphinx.getHomeFragment();
+        mTitleBtn.setPadding(homeFragment.mTitleBtnPaddingLeft, homeFragment.mTitleBtnPaddingRight, homeFragment.mTitleBtnPaddingLeft, homeFragment.mTitleBtnPaddingRight);
+        mTitleBtn.getLayoutParams().height = Utility.dip2px(mSphinx, 40);
+        
+        mRightBtn.setText(R.string.map);
         mRightBtn.setOnClickListener(this);
         
         if (isReLogin()) {
@@ -526,6 +535,14 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     @Override
     public void onClick(final View view) {
         switch (view.getId()) {
+            case R.id.title_btn:
+                if (mPOIList.isEmpty() || mState != STATE_LIST) {
+                    return;
+                }
+                mActionLog.addAction(mActionTag + ActionLog.TitleCenterButton);
+                dismiss();
+                break;
+                
             case R.id.right_btn:
                 if (mPOIList.isEmpty() || mState != STATE_LIST) {
                     return;

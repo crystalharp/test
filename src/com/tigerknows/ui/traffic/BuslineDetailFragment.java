@@ -72,9 +72,9 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
     
     private LinearLayout mBottomButtonsView;
     
-    private Button mFavorateBtn = null;
+    private ViewGroup mFavorateBtn = null;
     
-    private Button mShareBtn = null;
+    private ViewGroup mShareBtn = null;
     
     private Line line = null;
 
@@ -105,7 +105,7 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
     public void onResume() {
         super.onResume();
 
-        mRightBtn.setBackgroundResource(R.drawable.btn_view_map);
+        mRightBtn.setText(R.string.map);
         mRightBtn.setOnClickListener(this);
 
         mLengthTxv.setText(getString(R.string.length_str_title, line.getLengthStr(mSphinx)));
@@ -157,8 +157,8 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
         mLengthTxv = (TextView)mRootView.findViewById(R.id.length_txv);
         mTimeTxv = (TextView)mRootView.findViewById(R.id.time_txv);
         mResultLsv = (ListView)mRootView.findViewById(R.id.result_lsv);
-        mFavorateBtn = (Button)mRootView.findViewById(R.id.favorite_btn);
-        mShareBtn = (Button)mRootView.findViewById(R.id.share_btn);
+        mFavorateBtn = (ViewGroup)mRootView.findViewById(R.id.favorite_btn);
+        mShareBtn = (ViewGroup)mRootView.findViewById(R.id.share_btn);
         mBottomButtonsView = ((LinearLayout) (mRootView.findViewById(R.id.bottom_buttons_view)));
         mBottomButtonsView.findViewById(R.id.nearby_search_btn).setVisibility(View.GONE);
         mBottomButtonsView.findViewById(R.id.error_recovery_btn).setVisibility(View.GONE);

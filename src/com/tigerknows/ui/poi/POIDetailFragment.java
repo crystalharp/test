@@ -44,7 +44,6 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 
-import com.decarta.Globals;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
@@ -137,8 +136,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     private ImageView mStampImv = null;
     
     private ImageView mStampBigImv = null;
-
-    private Button mShareBtn = null;
     
     private TextView mCategoryTxv;
 
@@ -167,18 +164,19 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     
     public LinearLayout mBelowFeatureView;
 
-    // Error Fix Button
-    private Button mErrorFixBtn = null;
-    
     private TextView mDescriptionTxv = null;
 
     private ViewGroup mCommentListView = null;
     
     private ViewGroup mCommentSumTotalView;
     
-    private Button mFavoriteBtn;
+    private ViewGroup mPOIBtn;
     
-    private Button mPOIBtn;
+    private ViewGroup mFavoriteBtn;
+
+    private ViewGroup mShareBtn = null;
+    
+    private ViewGroup mErrorFixBtn = null;
     
     protected POI mPOI;
     
@@ -610,7 +608,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     public void onResume() {
         super.onResume();
         mTitleBtn.setText(R.string.detail_info);
-        mRightBtn.setBackgroundResource(R.drawable.btn_view_map);
+        mRightBtn.setText(R.string.map);
         mRightBtn.setOnClickListener(this); 
         
         TKWeixin tkWeixin = TKWeixin.getInstance(mSphinx);
@@ -906,11 +904,10 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         mDistanceTxv = (TextView)mRootView.findViewById(R.id.distance_txv);
         mDistanceFromTxv = (TextView) mRootView.findViewById(R.id.distance_from_txv);
         
-        mPOIBtn = (Button) mRootView.findViewById(R.id.nearby_search_btn);
-        mShareBtn = (Button)mRootView.findViewById(R.id.share_btn);
-        mFavoriteBtn = (Button)mRootView.findViewById(R.id.favorite_btn);
-        // Error Fix
-        mErrorFixBtn = (Button)mRootView.findViewById(R.id.error_recovery_btn);
+        mPOIBtn = (ViewGroup) mRootView.findViewById(R.id.nearby_search_btn);
+        mShareBtn = (ViewGroup)mRootView.findViewById(R.id.share_btn);
+        mFavoriteBtn = (ViewGroup)mRootView.findViewById(R.id.favorite_btn);
+        mErrorFixBtn = (ViewGroup)mRootView.findViewById(R.id.error_recovery_btn);
         
         mBelowCommentLayout = (LinearLayout)mRootView.findViewById(R.id.below_comment);
         mBelowAddressLayout = (LinearLayout)mRootView.findViewById(R.id.below_address);

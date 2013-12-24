@@ -344,7 +344,9 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
      * 将UI及内容重置为第一次进入页面时的状态
      */
     public void reset() {
-    	mFilterListView.setVisibility(View.GONE);
+        if (mFilterListView != null) {
+    	    mFilterListView.setVisibility(View.GONE);
+        }
     	mTitleBtn.setText(R.string.nearby_search);
     }
 

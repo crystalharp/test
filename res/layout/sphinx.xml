@@ -79,11 +79,10 @@
         android:layout_marginBottom="8dp">
         
         <ImageButton
-            android:id="@+id/tools_btn"
-            android:layout_width="52dp"
-            android:layout_height="52dp"
-            android:background="@drawable/btn_location_map"
-            android:src="@drawable/ic_map_tools"
+            android:id="@+id/map_tools_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_map_tools"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
             android:layout_marginBottom="4dp"
@@ -91,27 +90,27 @@
             android:clickable="false"/>
         
         <ImageView
-            android:id="@+id/tools_imv"
+            android:id="@+id/map_tools_imv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignRight="@id/tools_btn"
-            android:layout_alignTop="@id/tools_btn"
-            android:background="@drawable/menu_upgrade"
+            android:layout_alignRight="@id/map_tools_btn"
+            android:layout_alignTop="@id/map_tools_btn"
+            android:background="@drawable/ic_new"
             android:clickable="false"/>
         
         <ImageButton
-            android:id="@+id/clear_map_btn"
-            android:layout_below="@id/tools_btn"
+            android:id="@+id/map_clean_btn"
+            android:layout_below="@id/map_tools_btn"
             android:layout_alignParentRight="true"
-            android:layout_width="52dp"
-            android:layout_height="52dp"
-            android:background="@drawable/btn_location_map"
-            android:src="@drawable/ic_map_tools"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_map_clean"
+            />
 
         <LinearLayout 
             android:id="@+id/location_view"
-            android:layout_width="52dp"
-            android:layout_height="52dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:background="@drawable/btn_location_map"
             android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
@@ -119,8 +118,8 @@
             android:gravity="center">
             <ImageButton
                 android:id="@+id/location_btn"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:src="@drawable/ic_location_normal"
                 android:background="@color/transparent"
                 android:scaleType="center"

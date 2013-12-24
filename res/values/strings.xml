@@ -405,6 +405,7 @@
     <string name="search">搜索</string>
     <string name="discover">发现</string>
     <string name="nearby">附近</string>
+    <string name="perimeter">周边</string>
     <string name="result">结果</string>
     <string name="center_map">地图中心</string>
     <string name="discover_location">位置:%1$s</string>

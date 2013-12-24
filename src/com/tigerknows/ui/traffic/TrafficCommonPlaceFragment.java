@@ -1,6 +1,5 @@
 package com.tigerknows.ui.traffic;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -18,15 +17,17 @@ import android.widget.TextView;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.model.POI;
+import com.tigerknows.provider.CommonPlaceTable;
+import com.tigerknows.provider.CommonPlaceTable.CommonPlace;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.ui.poi.InputSearchFragment;
-import com.tigerknows.ui.poi.InputSearchFragment.Callback;;
+import com.tigerknows.ui.poi.InputSearchFragment.Callback;
 
 public class TrafficCommonPlaceFragment extends BaseFragment{
 
     ListView mCommonPlaceLsv;
     
-    List<CommonPlace> mList = new LinkedList<CommonPlace>();
+    CommonPlaceList mList = new CommonPlaceList();
     
     CommonPlaceAdapter mAdapter = new CommonPlaceAdapter();
     
@@ -36,11 +37,11 @@ public class TrafficCommonPlaceFragment extends BaseFragment{
 
         @Override
         public void onConfirmed(POI p) {
-            if (clickedPos != 0) {
+            if (clickedPos == mList.size() && clickedPos != 0) {
+                //点到了新增
                 mList.add(new CommonPlace("common", p, false));
             } else {
-                mList.remove(0);
-                mList.add(0, new CommonPlace("home", p, false));
+                mList.setPOI(clickedPos, p);
             }
             mAdapter.notifyDataSetChanged();
             
@@ -62,16 +63,24 @@ public class TrafficCommonPlaceFragment extends BaseFragment{
 
     @Override
     public void onPause() {
-        // TODO Auto-generated method stub
         super.onPause();
     }
 
     @Override
     public void onResume() {
-        // TODO Auto-generated method stub
         super.onResume();
-        updateData();
         mTitleBtn.setText("Common Place");
+        mRightBtn.setVisibility(View.VISIBLE);
+        mRightBtn.setBackgroundResource(R.drawable.btn_delete);
+        mRightBtn.setOnClickListener(new View.OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                mAdapter.delMode = !mAdapter.delMode;
+                mAdapter.notifyDataSetChanged();
+            }
+        });
     }
 
     public TrafficCommonPlaceFragment(Sphinx sphinx) {
@@ -87,7 +96,6 @@ public class TrafficCommonPlaceFragment extends BaseFragment{
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
                     long arg3) {
-                // TODO Auto-generated method stub
                 clickedPos = arg2;
                 if (arg2 == mAdapter.getCount() - 1 || 
                         (arg2 == 0 && mList.get(0).empty)) {
@@ -99,41 +107,71 @@ public class TrafficCommonPlaceFragment extends BaseFragment{
         });
     }
     
-    static class CommonPlace {
-        String alias;
-        boolean empty;
-        POI poi;
+    //和数据库有关的操作全部封在这个类中
+    class CommonPlaceList {
+        List<CommonPlace> mList = new LinkedList<CommonPlace>();
+        CommonPlaceTable table = new CommonPlaceTable(mSphinx);
         
-        public CommonPlace(String a, POI p) {
-            alias = a;
-            poi = p;
-            empty = false;
+//        int init() {
+//            table.readCommonPlace(mList);
+//            if (mList.size() == 0) {
+//                add(new CommonPlace("home", null, true));
+//            }
+//            return mList.size();
+//        }
+        
+        public CommonPlaceList() {
+            table.readCommonPlace(mList);
+            if (mList.size() == 0) {
+                add(new CommonPlace("home", null, true));
+            }
         }
         
-        public CommonPlace(String a, POI p, boolean b) {
-            alias = a;
-            poi = p;
-            empty = b;
+        void add(CommonPlace c) {
+            mList.add(c);
+            table.addCommonPlace(c);
         }
+        
+        void setPOI(int pos, POI p) {
+            if (pos < mList.size()) {
+                mList.get(pos).poi = p;
+                if (pos == 0 && p != null) {
+                    mList.get(pos).empty = false;
+                }
+                table.updateDatabase(mList.get(pos));
+            }
+        }
+        
+        void remove(int pos) {
+            if (pos < mList.size()) {
+                if (pos == 0) {
+                    mList.get(0).empty = true;
+                    setPOI(0, null);
+                } else {
+                    table.deleteCommonPlace(mList.get(pos));
+                    mList.remove(pos);
+                }
+            }
+        }
+                
+        boolean contains(CommonPlace c) {
+            return mList.contains(c);
+        }
+        
+        int size() {
+            return mList.size();
+        }
+        
+        CommonPlace get(int pos) {
+            if (pos < mList.size()) {
+                return mList.get(pos);
+            } else {
+                return null;
+            }
+        }
+        
     }
-
-    private void updateData() {
-        if (mList.size() == 0) {
-            mList.add(new CommonPlace("home", null, true));
-        }
-    }
-    
-    OnClickListener l = new View.OnClickListener() {
         
-        @Override
-        public void onClick(View v) {
-            // TODO Auto-generated method stub
-            mSphinx.getPOIQueryFragment().setMode(InputSearchFragment.MODE_TRANSFER);
-            mSphinx.getPOIQueryFragment().setConfirmedCallback(a);
-            mSphinx.showView(mSphinx.getPOIQueryFragment().getId());
-        }
-    };
-    
     class CommonPlaceAdapter extends BaseAdapter {
 
         boolean delMode = false;
@@ -161,6 +199,7 @@ public class TrafficCommonPlaceFragment extends BaseFragment{
             TextView descTxv = (TextView) convertView.findViewById(R.id.description_txv);
             TextView aliasTxv = (TextView) convertView.findViewById(R.id.alias_txv);
             Button delBtn = (Button) convertView.findViewById(R.id.del_btn);
+            delBtn.setOnClickListener(l);
             // the last one is "add place"
             if (position == mList.size()) {
                 aliasTxv.setText("add place");
@@ -172,9 +211,35 @@ public class TrafficCommonPlaceFragment extends BaseFragment{
                 delBtn.setVisibility(delMode ? View.VISIBLE : View.GONE);
                 descTxv.setText(c.empty ? "click to set" : c.poi.getName());
                 aliasTxv.setText(c.alias);
+                delBtn.setTag(position);
             }
             return convertView;
         }
         
     }
+    
+    OnClickListener l = new View.OnClickListener() {
+        
+        @Override
+        public void onClick(View v) {
+            // TODO Auto-generated method stub
+            int pos = (Integer) v.getTag();
+            mList.remove(pos);
+            mAdapter.notifyDataSetChanged();
+        }
+    };
+    
+//    public final void initData() {
+//        //TODO：如果没有表，则建表，并且创建一个第一个是“家”的列表，否则直接读就行了
+//        mList.init();
+//    }
+
+//    final private void delCommonPlace(int pos) {
+//        if (pos == 0) {
+//            mList.get(0).empty = true;
+//            mList.setPOI(0, null);
+//        } else {
+//            mList.remove(pos);
+//        }
+//    }
 }

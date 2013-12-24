@@ -24,9 +24,11 @@ import com.tigerknows.util.Utility;
 
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -43,6 +45,8 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
     private TouchMode mTouchMode;
     private ViewGroup mInfoWindowView;
     private TextView mInfoWindowTxv;
+    private Button mRevocationBtn;
+    private LayoutParams mRevocationBtnLayoutParams;
     
     private ViewGroup getInfoWindowView() {
         if (mInfoWindowView == null) {
@@ -196,7 +200,6 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
     
     public MeasureDistanceFragment(Sphinx sphinx) {
         super(sphinx);
-        mMapView = sphinx.getMapView();
     }
 
     @Override
@@ -211,6 +214,16 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
         
         mRootView = mLayoutInflater.inflate(R.layout.home, container, false);
         
+        mMapView = mSphinx.getMapView();
+        
+        mRevocationBtn = new Button(mSphinx);
+        mRevocationBtn.setText(R.string.revocation);
+        mRevocationBtn.setBackgroundResource(R.drawable.btn_confirm);
+        mRevocationBtn.setOnClickListener(this);
+        mRevocationBtn.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+        mRevocationBtnLayoutParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+        mRevocationBtnLayoutParams.leftMargin = Utility.dip2px(mSphinx, 12);
+        
         findViews();
         setListener();
         
@@ -220,7 +233,7 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
     public void setData() {
         Sphinx.TouchMode touchMode = mSphinx.getTouchMode();
         if (touchMode != Sphinx.TouchMode.MEASURE_DISTANCE) {
-            mVisibilityCleanMap = mSphinx.getClearMapBtn().getVisibility();
+            mVisibilityCleanMap = mSphinx.getMapCleanBtn().getVisibility();
             mVisibilityLocation = mSphinx.getLocationView().getVisibility();
             InfoWindowHelper.hideInfoWindow(mMapView);
             mTouchMode = touchMode;
@@ -234,18 +247,29 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
         mTitleBtn.setText(R.string.measure);
         setOnTouchListener(null);
         
-        mRight2Btn.setText(R.string.revocation);
-        mRight2Btn.setVisibility(View.VISIBLE);
-        mRight2Btn.setOnClickListener(this);
-        mRight2Btn.setBackgroundResource(R.drawable.btn_title);
+        mRevocationBtn.setTextColor(mTitleFragment.mRightBtnConfirmColor);
+        mRevocationBtn.setPadding(mTitleFragment.mRightBtnPaddingLeft,
+                mTitleFragment.mRightBtnPaddingTop,
+                mTitleFragment.mRightBtnPaddingLeft,
+                mTitleFragment.mRightBtnPaddingTop);
+        ViewGroup mRightView = (ViewGroup) mRightBtn.getParent();
+        mRightView.addView(mRevocationBtn, mRevocationBtnLayoutParams);
+        
         mRightBtn.setText(R.string.clear);
         mRightBtn.setOnClickListener(this);
-        mRightBtn.setBackgroundResource(R.drawable.btn_title);
         
-        mSphinx.getClearMapBtn().setVisibility(View.INVISIBLE);
+        mSphinx.getMapCleanBtn().setVisibility(View.INVISIBLE);
         mSphinx.getLocationView().setVisibility(View.INVISIBLE);
         
         mSphinx.setTouchMode(TouchMode.MEASURE_DISTANCE);
+    }
+
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        ViewGroup mRightView = (ViewGroup) mRightBtn.getParent();
+        mRightView.removeView(mRevocationBtn);
     }
 
     @Override
@@ -257,13 +281,11 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
             clean();
         	break;
 
-        case R.id.right2_btn:
+        default:
             mActionLog.addAction(mActionTag + ActionLog.MeasureDistanceRevocation);
             removeLastPoint();
             break;
             
-    	default:
-    		break;
         }
 
     }
@@ -274,7 +296,7 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
         clean();
         mSphinx.setTouchMode(mTouchMode);
         
-        mSphinx.getClearMapBtn().setVisibility(mVisibilityCleanMap);
+        mSphinx.getMapCleanBtn().setVisibility(mVisibilityCleanMap);
         mSphinx.getLocationView().setVisibility(mVisibilityLocation);
     }
 }
