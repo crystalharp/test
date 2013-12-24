@@ -73,11 +73,11 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
     
     private ListView mResultLsv = null;
     
-    private Button mFavorateBtn = null;
+    private ViewGroup mFavorateBtn = null;
     
-    private Button mShareBtn = null;
+    private ViewGroup mShareBtn = null;
     
-    private Button mErrorRecoveryBtn = null;
+    private ViewGroup mErrorRecoveryBtn = null;
     
     private int mShowType = -1;
 
@@ -183,9 +183,9 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         mRootView.findViewById(R.id.traffic_detail_sub_title).setVisibility(View.VISIBLE);
         mRootView.findViewById(R.id.traffic_result_sub_title).setVisibility(View.GONE);
         mBottomButtonsView = (LinearLayout) mRootView.findViewById(R.id.bottom_buttons_view);
-        mErrorRecoveryBtn = (Button)mRootView.findViewById(R.id.error_recovery_btn);
-        mFavorateBtn = (Button)mRootView.findViewById(R.id.favorite_btn);
-        mShareBtn = (Button)mRootView.findViewById(R.id.share_btn);
+        mErrorRecoveryBtn = (ViewGroup) mRootView.findViewById(R.id.error_recovery_btn);
+        mFavorateBtn = (ViewGroup) mRootView.findViewById(R.id.favorite_btn);
+        mShareBtn = (ViewGroup) mRootView.findViewById(R.id.share_btn);
         mBottomButtonsView.findViewById(R.id.nearby_search_btn).setVisibility(View.GONE);
     }
 

@@ -66,6 +66,8 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     protected LinearLayout[][] mCategoryLlys;
     protected Button[][] mCategoryBtns;
     
+    private boolean mFromPOI;
+    
     protected CategoryProperty[] mCategoryList;
     
     protected static final int NUM_OF_CATGEGORY = 10;
@@ -78,8 +80,6 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     public void launchCategoryPropertyList(){
         final int[][] SPECIAL_OP = {
         	{FOOD, 0, CategoryProperty.OP_DISH},
-        	{HOTEL, 3, CategoryProperty.OP_HOTEL},
-        	{HOTEL, 8, CategoryProperty.OP_INVISIBLE},
         	{ENTERTAINMENT, 0, CategoryProperty.OP_DIANYING},
         	{ENTERTAINMENT, 6, CategoryProperty.OP_YANCHU},
         	{ENTERTAINMENT, 7, CategoryProperty.OP_ZHANLAN},
@@ -87,7 +87,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         };
     	mCategoryList = new CategoryProperty[]{
         	new CategoryProperty(R.id.food_category, 7),
-        	new CategoryProperty(R.id.hotel_category, 3),
+        	new CategoryProperty(R.id.hotel_category, 6),
         	new CategoryProperty(R.id.entertainment_category, 7),
         	new CategoryProperty(R.id.traffic_category, 3),
         	new CategoryProperty(R.id.shopping_category, 3),
@@ -211,8 +211,6 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     			int OP = mCategoryList[i].getOperationType(j);
     			if(OP == CategoryProperty.OP_MORE){
     				mCategoryBtns[i][j].setTag(mCategoryList[i].getName());
-    			}else if(OP == CategoryProperty.OP_INVISIBLE){
-    				mCategoryBtns[i][j].setVisibility(View.INVISIBLE);
     			}else{
     				mCategoryBtns[i][j].setTag(OP);
     			}
@@ -327,11 +325,18 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
             mSphinx.showTip(R.string.search_input_keyword, Toast.LENGTH_SHORT);
         }
     }
+    
+    public void setData(POI poi){
+    	setData(poi, true);
+    }
 
-    public void setData(POI poi) {
+    public void setData(POI poi, boolean fromPOI) {
         reset();
         mPOI = poi;
-        
+        mFromPOI = fromPOI;
+        if(fromPOI && mSphinx.uiStackContains(R.id.view_poi_nearby_search)){
+        	mSphinx.uiStackRemove(R.id.view_poi_nearby_search);
+        }
         setFilterListView();
     }
     
@@ -383,7 +388,30 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         
         String apiType = baseQuery.getAPIType();
         if (BaseQuery.API_TYPE_DATA_QUERY.equals(apiType)) {
-            InputSearchFragment.dealWithPOIResponse((DataQuery) baseQuery, mSphinx, this);
+            int result = InputSearchFragment.dealWithPOIResponse((DataQuery) baseQuery, mSphinx, this);
+            if(mFromPOI && result > 0){
+            		uiStackAdjust();
+            }
+        }
+    }
+    
+    
+    public void uiStackAdjust() {
+        if (mSphinx.uiStackContains(R.id.view_more_favorite)) {
+            mSphinx.uiStackClearBetween(R.id.view_more_favorite, getId());
+        } else if (mSphinx.uiStackContains(R.id.view_more_history)) {
+            mSphinx.uiStackClearBetween(R.id.view_more_history, getId());
+        } else if (mSphinx.uiStackContains(R.id.view_more_go_comment)) {
+            mSphinx.uiStackClearBetween(R.id.view_more_go_comment, getId());
+        } else if (mSphinx.uiStackContains(R.id.view_user_my_comment_list)) {
+            mSphinx.uiStackClearBetween(R.id.view_user_my_comment_list, getId());
+        } else if (mSphinx.uiStackContains(R.id.view_more_my_order)) {
+            mSphinx.uiStackClearBetween(R.id.view_more_my_order, getId());
+        } else {
+            if (mSphinx.uiStackContains(R.id.view_home) == false) {
+                mSphinx.uiStackInsert(R.id.view_home, 0);
+            }
+            mSphinx.uiStackClearBetween(R.id.view_home, getId());
         }
     }
 }

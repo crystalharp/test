@@ -1032,8 +1032,6 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 mPOIList.addAll(bPOIList);
             }
             
-            uiStackAdjust(dataQuery);
-            
             mResultLsv.setFooterSpringback(canTurnPage());
             List<Filter> filterList = mDataQuery.getFilterList();
             if (filterList != null && filterList.size() > 0) {
@@ -1055,21 +1053,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         }
         
     }
-    
-    void uiStackAdjust(DataQuery dataQuery) {
-        if (dataQuery.getSourceViewId() == R.id.view_poi_nearby_search) {
-            if (this.mSphinx.uiStackContains(R.id.view_more_favorite)) {
-                mSphinx.uiStackClose(new int[]{R.id.view_more_home, R.id.view_more_favorite, getId()});
-            } else if (this.mSphinx.uiStackContains(R.id.view_more_history)) {
-                mSphinx.uiStackClose(new int[]{R.id.view_more_home, R.id.view_more_history, getId()});
-            } else {
-                mSphinx.uiStackClose(new int[]{R.id.view_home, R.id.view_poi_input_search, getId()});
-                if (mSphinx.uiStackContains(R.id.view_home) == false) {
-                    mSphinx.uiStackInsert(R.id.view_home, 0);
-                }
-            }
-        }
-    }
+
     
     private boolean canTurnPage() {
         if (mATotal > 1) {

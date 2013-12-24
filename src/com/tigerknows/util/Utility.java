@@ -910,19 +910,17 @@ public class Utility {
      * @param button
      * @param hasFavorite
      */
-    public static void setFavoriteBtn(Context context, Button button, boolean hasFavorite) {
+    public static void setFavoriteBtn(Context context, ViewGroup view, boolean hasFavorite) {
 
+        TextView textView = (TextView) view.getChildAt(0);
+        Drawable drawable;
         if (hasFavorite) {
-            Drawable icCancelFavorite = context.getResources().getDrawable(R.drawable.ic_cancel_favorite);
-            icCancelFavorite.setBounds(0, 0, icCancelFavorite.getIntrinsicWidth(), icCancelFavorite.getIntrinsicHeight());
-            button.setCompoundDrawables(null, icCancelFavorite, null, null);
-            button.setText(R.string.cancel_favorite);
+            drawable = context.getResources().getDrawable(R.drawable.ic_cancel_favorite);
         } else {
-            Drawable icAddFavorite = context.getResources().getDrawable(R.drawable.ic_add_favorite);
-            icAddFavorite.setBounds(0, 0, icAddFavorite.getIntrinsicWidth(), icAddFavorite.getIntrinsicHeight());
-            button.setCompoundDrawables(null, icAddFavorite, null, null);
-            button.setText(R.string.add_favorite);
+            drawable = context.getResources().getDrawable(R.drawable.ic_add_favorite);
         }
+        drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+        textView.setCompoundDrawables(drawable, null, null, null);
     }
 
     public static ListView makeListView(Context context) {
