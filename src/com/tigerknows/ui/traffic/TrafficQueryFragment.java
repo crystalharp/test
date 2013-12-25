@@ -48,6 +48,7 @@ import com.tigerknows.provider.TrafficSearchHistoryTable;
 import com.tigerknows.provider.TrafficSearchHistoryTable.SearchHistory;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.ui.poi.InputSearchFragment;
+import com.tigerknows.ui.traffic.TrafficCommonPlaceFragment.CommonPlaceList;
 import com.tigerknows.util.Utility;
 import com.tigerknows.widget.LinearListAdapter;
 import com.tigerknows.widget.StringArrayAdapter;
@@ -111,7 +112,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 //
 //	RelativeLayout mBuslineLayout;
 	
-	LinearLayout mAddCommonPlace;
+//	LinearLayout mAddCommonPlace;
 	
 	LinearLayout mCommonPlaceLst;
 	
@@ -124,13 +125,12 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	LinearListAdapter mQueryHistoryAdapter;
 	LinearListAdapter mCommonPlaceAdapter;
             
-    List<CommonPlace> mCommonPlaces = new LinkedList<CommonPlace>();
+    CommonPlaceList mCommonPlaces = new CommonPlaceList(mSphinx);
 
     List<SearchHistory> mQueryHistorys = new LinkedList<SearchHistory>();
     
     TrafficSearchHistoryTable mHistoryTable = new TrafficSearchHistoryTable(mSphinx);
     
-    CommonPlaceTable mCommonPlaceTable = new CommonPlaceTable(mSphinx);
 //	int oldCheckButton;
 
 	/*
@@ -253,7 +253,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
     	
     	mQueryHistory = (LinearLayout) mRootView.findViewById(R.id.query_history_title);
     	mQueryHistoryLst = (LinearLayout)mRootView.findViewById(R.id.query_history_lst);
-    	mAddCommonPlace = (LinearLayout)mRootView.findViewById(R.id.add_common_place);
+//    	mAddCommonPlace = (LinearLayout)mRootView.findViewById(R.id.add_common_place);
     	mCommonPlaceLst = (LinearLayout)mRootView.findViewById(R.id.common_place_lsv);
 		
 //		mSuggestLnl = (LinearLayout)mRootView.findViewById(R.id.suggest_lnl);
@@ -264,7 +264,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	void setListeners() {
 	    mStart.setOnClickListener(this);
 	    mEnd.setOnClickListener(this);
-	    mAddCommonPlace.setOnClickListener(this);
+//	    mAddCommonPlace.setOnClickListener(this);
         mQueryHistory.setOnClickListener(this);
         mTrafficSwitchBtn.setOnClickListener(this);
 	//---------------------history start-----------------------//
@@ -300,7 +300,16 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
             public void onClick(View v) {
                 CommonPlace c = (CommonPlace) v.getTag();
                 if (c.isEmptyFixedPlace()) {
-                    mSphinx.showView(R.id.view_traffic_common_places);
+                    mSphinx.getInputSearchFragment().setMode(InputSearchFragment.MODE_TRAFFIC);
+                    mSphinx.getInputSearchFragment().setConfirmedCallback(new InputSearchFragment.Callback(){
+
+                        @Override
+                        public void onConfirmed(POI p) {
+                            mCommonPlaces.setPOI(0, p);
+                            mCommonPlaceAdapter.refreshList(mCommonPlaces.getList());
+                            
+                        }}, InputSearchFragment.REQUEST_COMMON_PLACE);
+                    mSphinx.showView(mSphinx.getInputSearchFragment().getId());
                 } else {
                     mEnd.setPOI(c.poi);
                     if (!mStart.textEmpty()) {
@@ -449,7 +458,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
             return;
         }
         
-        addSearchHistory(new SearchHistory(start, end));
+        addSearchHistory(new SearchHistory(start.clone(), end.clone()));
         
         submitTrafficQuery(start, end);
 
@@ -489,7 +498,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
     public void addSearchHistory(SearchHistory sh) {
         if (!mQueryHistorys.contains(sh)) {
             mHistoryTable.add(sh);
-            mQueryHistorys.add(sh);
+            mQueryHistorys.add(0, sh);
             mQueryHistoryAdapter.refreshList(mQueryHistorys);
         } else {
             updateSearchHistory(sh);
@@ -815,10 +824,12 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
     
     private void updateCommonPlace() {
         //暂时不能新增常用地址，只有一项
-        mAddCommonPlace.setVisibility(View.GONE);
-        mCommonPlaces.clear();
-        mCommonPlaceTable.readCommonPlace(mCommonPlaces);
-        mCommonPlaceAdapter.refreshList(mCommonPlaces);
+        mCommonPlaces.updateData();
+        mCommonPlaceAdapter.refreshList(mCommonPlaces.getList());
+    }
+    
+    private void setCommonPlace() {
+        
     }
 			    	
 	public void postTask(Runnable r) {
@@ -841,7 +852,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
             
         case R.id.end_btn:
             mSphinx.getInputSearchFragment().reset();
-            mSphinx.getInputSearchFragment().setMode(InputSearchFragment.MODE_TRANSFER);
+            mSphinx.getInputSearchFragment().setMode(InputSearchFragment.MODE_TRAFFIC);
             mSphinx.getInputSearchFragment().setConfirmedCallback(new InputSearchFragment.Callback() {
                 
                 @Override
@@ -854,7 +865,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
             
         case R.id.start_btn:
             mSphinx.getInputSearchFragment().reset();
-            mSphinx.getInputSearchFragment().setMode(InputSearchFragment.MODE_TRANSFER);
+            mSphinx.getInputSearchFragment().setMode(InputSearchFragment.MODE_TRAFFIC);
             mSphinx.getInputSearchFragment().setConfirmedCallback(new InputSearchFragment.Callback() {
                 
                 @Override
