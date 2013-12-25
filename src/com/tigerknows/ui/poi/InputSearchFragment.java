@@ -68,7 +68,7 @@ import com.tigerknows.widget.SuggestWordListManager;
 public class InputSearchFragment extends BaseFragment implements View.OnClickListener {
     
     final public static int MODE_POI = HistoryWordTable.TYPE_POI;
-    final public static int MODE_TRANSFER = HistoryWordTable.TYPE_TRAFFIC;
+    final public static int MODE_TRAFFIC = HistoryWordTable.TYPE_TRAFFIC;
     final public static int MODE_BUELINE = HistoryWordTable.TYPE_BUSLINE;
     
     //用来标记请求的是哪个按钮
@@ -191,7 +191,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         case MODE_BUELINE:
             mTrafficBtnGroup.setVisibility(View.GONE);
             break;
-        case MODE_TRANSFER:
+        case MODE_TRAFFIC:
             mTrafficBtnGroup.setVisibility(View.VISIBLE);
             break;
         case MODE_POI:
@@ -247,7 +247,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                         mActionLog.addAction(mActionTag + ActionLog.ListViewItemSuggest, position, tkWord.word);
                     }
                     mKeywordEdt.setText(tkWord.word); //处理光标问题
-                    if (mCurMode == MODE_TRANSFER) {
+                    if (mCurMode == MODE_TRAFFIC) {
 //                        POI poi = new POI();
 //                        poi.setName(tkWord.word);
 //                        poi.setPosition(tkWord.position);
@@ -300,7 +300,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
             case R.id.right_btn:
                 String keyword = mKeywordEdt.getText().toString().trim();
                 if (keyword.length() > 0) {
-                    if (mCurMode == MODE_TRANSFER) {
+                    if (mCurMode == MODE_TRAFFIC) {
                         if (mTKWord != null && keyword.equals(mTKWord.word)) {
                             onConfirmed(mTKWord.toPOI());
                         } else {
@@ -322,7 +322,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         case MODE_BUELINE:
             submitBuslineQuery(key);
             break;
-        case MODE_TRANSFER:
+        case MODE_TRAFFIC:
             //TODO:提交公交站点查询，并且返回原页面
             POI poi = new POI();
             poi.setName(key);
@@ -340,7 +340,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
     }
     
     public void onConfirmed(POI poi) {
-        if (mCurMode == MODE_TRANSFER) {
+        if (mCurMode == MODE_TRAFFIC) {
             callback.onConfirmed(poi);
             mSphinx.getTrafficQueryFragment().autoStartQuery(true);
             dismiss();
