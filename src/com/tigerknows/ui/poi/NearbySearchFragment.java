@@ -288,7 +288,14 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         		mSphinx.showView(R.id.view_hotel_home);
         		uiStackAdjust();
         		break;
+        	case CategoryProperty.OP_SUBWAY:
+        		mSphinx.getSubwayMapFragment().setData(Globals.getCurrentCityInfo(mContext));
+        		mSphinx.showView(R.id.view_subway_map);
+        		uiStackAdjust();
+        		break;
         	case CategoryProperty.OP_TUANGOU:
+        		mSphinx.getDiscoverListFragment();
+        		mSphinx.showView(R.id.view_discover_list);
         		break;
         	default:
         		break;
