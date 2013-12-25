@@ -38,6 +38,7 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -278,7 +279,7 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
         mPostion = position;
         if (mType == TYPE_POI) {
             
-            mHeight = mTotalHeight - mHotelHeight - mTuangouHeight - mTitleHeight;
+            mHeight = mTotalHeight - mHotelHeight - mTuangouHeight;
             mSphinx.setMapViewPaddingBottom(mHeight);
             
             View view = (View) mCyclePagerAdapter.viewList.get((position) % mCyclePagerAdapter.viewList.size());
@@ -310,40 +311,40 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             }
         } else if (mType == TYPE_MESSAGE) {
 
-            mHeight = mTotalHeight - mPOIHeight - mHotelHeight - mTuangouHeight - mTitleHeight - mBottomHeight;
+            mHeight = mTotalHeight - mPOIHeight - mHotelHeight - mTuangouHeight - mBottomHeight;
             mSphinx.setMapViewPaddingBottom(mHeight);
             
             View view = (View) mCyclePagerAdapter.viewList.get((position) % mCyclePagerAdapter.viewList.size());
-            setMessageToView(view, mItemizedOverlay.get(position).getMessage(), false, false);
+            setMessageToView(view, mItemizedOverlay.get(position).getMessage(), null, false);
             
             if (position - 1 >= 0) {
                 view = mCyclePagerAdapter.viewList.get((position-1) % mCyclePagerAdapter.viewList.size());
-                setMessageToView(view, mItemizedOverlay.get(position).getMessage(), false, false);
+                setMessageToView(view, mItemizedOverlay.get(position).getMessage(), null, false);
             }
             if (position + 1 < mCyclePagerAdapter.count) {
                 view = mCyclePagerAdapter.viewList.get((position+1) % mCyclePagerAdapter.viewList.size());
-                setMessageToView(view, mItemizedOverlay.get(position).getMessage(), false, false);
+                setMessageToView(view, mItemizedOverlay.get(position).getMessage(), null, false);
             }
         } else if (mType == TYPE_LONG_CLICKED_SELECT_POINT
                 || mType == TYPE_MAP_POI) {
 
-            mHeight = mTotalHeight - mPOIHeight - mHotelHeight - mTuangouHeight - mTitleHeight;
+            mHeight = mTotalHeight - mPOIHeight - mHotelHeight - mTuangouHeight;
             mSphinx.setMapViewPaddingBottom(mHeight);
             
             View view = (View) mCyclePagerAdapter.viewList.get((position) % mCyclePagerAdapter.viewList.size());
-            setMessageToView(view, ((POI) mItemizedOverlay.get(position).getAssociatedObject()).getName(), true, true);
+            setMessageToView(view, ((POI) mItemizedOverlay.get(position).getAssociatedObject()).getName(), getString(R.string.detail), true);
             
             if (position - 1 >= 0) {
                 view = mCyclePagerAdapter.viewList.get((position-1) % mCyclePagerAdapter.viewList.size());
-                setMessageToView(view, ((POI) mItemizedOverlay.get(position).getAssociatedObject()).getName(), true, true);
+                setMessageToView(view, ((POI) mItemizedOverlay.get(position).getAssociatedObject()).getName(), getString(R.string.detail), true);
             }
             if (position + 1 < mCyclePagerAdapter.count) {
                 view = mCyclePagerAdapter.viewList.get((position+1) % mCyclePagerAdapter.viewList.size());
-                setMessageToView(view, ((POI) mItemizedOverlay.get(position).getAssociatedObject()).getName(), true, true);
+                setMessageToView(view, ((POI) mItemizedOverlay.get(position).getAssociatedObject()).getName(), getString(R.string.detail), true);
             }
         } else if (mType == TYPE_HOTEL) {
 
-            mHeight = mTotalHeight - mPOIHeight - mTuangouHeight - mTitleHeight;
+            mHeight = mTotalHeight - mPOIHeight - mTuangouHeight;
             mSphinx.setMapViewPaddingBottom(mHeight);
             
             View view = (View) mCyclePagerAdapter.viewList.get((position) % mCyclePagerAdapter.viewList.size());
@@ -375,7 +376,7 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             }
         } else if (mType == TYPE_DYNAMIC_POI) {
 
-            mHeight = mTotalHeight - mHotelHeight - mTuangouHeight - mTitleHeight;
+            mHeight = mTotalHeight - mHotelHeight - mTuangouHeight;
             mSphinx.setMapViewPaddingBottom(mHeight);
             
             View view = (View) mCyclePagerAdapter.viewList.get((position) % mCyclePagerAdapter.viewList.size());
@@ -391,23 +392,23 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             }
         } else if (mType == TYPE_CLICKED_SELECT_POINT) {
 
-            mHeight = mTotalHeight - mPOIHeight - mHotelHeight - mTuangouHeight - mBottomHeight - mTitleHeight;
+            mHeight = mTotalHeight - mPOIHeight - mHotelHeight - mTuangouHeight - mBottomHeight;
             mSphinx.setMapViewPaddingBottom(mHeight);
             
             View view = (View) mCyclePagerAdapter.viewList.get((position) % mCyclePagerAdapter.viewList.size());
-            setMessageToView(view, ((POI) mItemizedOverlay.get(position).getAssociatedObject()).getName(), true, false);
+            setClickSelectPointToView(view, mItemizedOverlay.get(position));
             
             if (position - 1 >= 0) {
                 view = mCyclePagerAdapter.viewList.get((position-1) % mCyclePagerAdapter.viewList.size());
-                setMessageToView(view, ((POI) mItemizedOverlay.get(position).getAssociatedObject()).getName(), true, false);
+                setClickSelectPointToView(view, mItemizedOverlay.get(position));
             }
             if (position + 1 < mCyclePagerAdapter.count) {
                 view = mCyclePagerAdapter.viewList.get((position+1) % mCyclePagerAdapter.viewList.size());
-                setMessageToView(view, ((POI) mItemizedOverlay.get(position).getAssociatedObject()).getName(), true, false);
+                setClickSelectPointToView(view, mItemizedOverlay.get(position));
             }
         } else if (mType == TYPE_PLAN_LIST) {
 
-            mHeight = mTotalHeight - mPOIHeight - mHotelHeight - mTuangouHeight - mBottomHeight - mTitleHeight;
+            mHeight = mTotalHeight - mPOIHeight - mHotelHeight - mTuangouHeight - mBottomHeight;
             mSphinx.setMapViewPaddingBottom(mHeight);
             
             View view = (View) mCyclePagerAdapter.viewList.get((position) % mCyclePagerAdapter.viewList.size());
@@ -484,24 +485,35 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
         v.findViewById(R.id.bottom_view).setVisibility(View.GONE);
     }
     
+    private void setClickSelectPointToView(View v, OverlayItem overlayItem) {
+        
+        TextView titleTxv = (TextView) v.findViewById(R.id.title_txv);
+        titleTxv.setVisibility(View.VISIBLE);
+        titleTxv.setText(overlayItem.getMessage());
+        
+        setMessageToView(v, ((POI) overlayItem.getAssociatedObject()).getName(), getString(R.string.confirm), false);
+    }
+    
     private void setMyLocationToView(View v, POI poi) {
         
         TextView titleTxv = (TextView) v.findViewById(R.id.title_txv);
         titleTxv.setVisibility(View.VISIBLE);
         titleTxv.setText(getString(R.string.my_location_with_accuracy, Utility.formatMeterString((int)poi.getPosition().getAccuracy())));
         
-        setMessageToView(v, poi.getName(), true, true);
+        setMessageToView(v, poi.getName(), getString(R.string.detail), true);
     }
     
-    private void setMessageToView(View v, String name, boolean showDetailBtn, boolean showBottomView) {
+    private void setMessageToView(View v, String name, String detailBtnText, boolean showBottomView) {
         
         TextView nameTxv=(TextView)v.findViewById(R.id.name_txv);
         nameTxv.setText(name);
         
-        if (showDetailBtn) {
-            v.findViewById(R.id.detail_btn).setVisibility(View.VISIBLE);
+        Button detailBtn = (Button) v.findViewById(R.id.detail_btn);
+        if (detailBtnText != null) {
+            detailBtn.setText(detailBtnText);
+            detailBtn.setVisibility(View.VISIBLE);
         } else {
-            v.findViewById(R.id.detail_btn).setVisibility(View.GONE);
+            detailBtn.setVisibility(View.GONE);
         }
         
         if (showBottomView) {

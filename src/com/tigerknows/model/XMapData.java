@@ -172,6 +172,10 @@ public class XMapData {
      * @return
      */
     Position getPositionFromData(byte lonKey, byte latKey, Position defaultValue) {
+        return getPositionFromData(data, lonKey, latKey, defaultValue);
+    }
+    
+    public static Position getPositionFromData(XMap data, byte lonKey, byte latKey, Position defaultValue) {
         Position result = null;
         if (data.containsKey(lonKey) && data.containsKey(latKey)) {
             result = new Position(long2doubleForLatLon(data.getInt(latKey)), long2doubleForLatLon(data.getInt(lonKey)));

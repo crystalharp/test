@@ -16,6 +16,7 @@ import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
 import com.tigerknows.Sphinx.TouchMode;
 import com.tigerknows.android.location.Position;
+import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.Dianying;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.TrafficModel.Plan;
@@ -25,6 +26,7 @@ import com.tigerknows.model.Zhanlan;
 import com.tigerknows.model.DataQuery.POIResponse;
 
 import android.content.res.Resources;
+import android.graphics.Rect;
 import android.view.View;
 
 import java.util.ArrayList;
@@ -32,7 +34,7 @@ import java.util.List;
 
 public class ItemizedOverlayHelper {
 
-    public static void drawClickSelectPointOverlay(Sphinx sphinx, TouchMode touchMode) {
+    public static void drawClickSelectPointOverlay(Sphinx sphinx, String title) {
         
         try {
             sphinx.clearMap();
@@ -40,22 +42,23 @@ public class ItemizedOverlayHelper {
             POI poi = sphinx.getCenterPOI();
             poi.setSourceType(POI.SOURCE_TYPE_CLICKED_SELECT_POINT);
             
-            OverlayItem overlayItem = new OverlayItem(poi.getPosition(), null, null, null, null);
+            OverlayItem overlayItem = new OverlayItem(poi.getPosition(), null, null, title, null);
             overlayItem.setAssociatedObject(poi);
             
             ItemizedOverlay itemizedOverlay = new ItemizedOverlay(ItemizedOverlay.CLICKED_OVERLAY);
             itemizedOverlay.addOverlayItem(overlayItem);
             
+            sphinx.getResultMapFragment().setData(sphinx.getString(R.string.map_select_point), ActionLog.ResultMapSelectPoint);
+            sphinx.showView(R.id.view_result_map);
+            
             sphinx.showInfoWindow(overlayItem);
             
             sphinx.getCenterTokenView().setVisibility(View.VISIBLE);
             sphinx.getMapCleanBtn().setVisibility(View.INVISIBLE);
-            sphinx.getMapToolsBtn().setVisibility(View.INVISIBLE);
+            sphinx.getMapToolsView().setVisibility(View.INVISIBLE);
             sphinx.getLocationView().setVisibility(View.INVISIBLE);
-            sphinx.setTouchMode(touchMode);
             
-            sphinx.getResultMapFragment().setData("select poing", "actionTag");
-            sphinx.showView(R.id.view_result_map);
+            sphinx.setTouchMode(TouchMode.CLICK_SELECT_POINT);
             
         } catch(APIException e) {
             e.printStackTrace();
@@ -83,8 +86,7 @@ public class ItemizedOverlayHelper {
                 overlayItem.addEventListener(EventType.TOUCH, new OverlayItem.TouchEventListener() {
                     @Override
                     public void onTouchEvent(EventSource eventSource) {
-                        if (sphinx.getTouchMode().equals(TouchMode.CHOOSE_ROUTING_START_POINT)
-                                || sphinx.getTouchMode().equals(TouchMode.CHOOSE_ROUTING_END_POINT)) {
+                        if (sphinx.getTouchMode().equals(TouchMode.CLICK_SELECT_POINT)) {
                             return;
                         }
                         if (sphinx.getTouchMode().equals(TouchMode.MEASURE_DISTANCE)) {
@@ -295,7 +297,8 @@ public class ItemizedOverlayHelper {
                 overlay.isShowInPreferZoom = true;
                 int screenX = Globals.g_metrics.widthPixels;
                 int screenY = Globals.g_metrics.heightPixels;
-                int fitZoomLevle = Util.getZoomLevelToFitPositions(screenX, screenY, iconA.getSize().y, positions, srcreenPosition);
+                Rect rect = mapView.getPadding();
+                int fitZoomLevle = Util.getZoomLevelToFitPositions(screenX, screenY, rect, positions, srcreenPosition);
                 mapView.setZoomLevel(fitZoomLevle);
                 mapView.panToPosition(srcreenPosition);
             } else {
@@ -304,7 +307,7 @@ public class ItemizedOverlayHelper {
             }
             
             sphinx.getCenterTokenView().setVisibility(View.INVISIBLE);
-            sphinx.getMapToolsBtn().setVisibility(View.VISIBLE);
+            sphinx.getMapToolsView().setVisibility(View.VISIBLE);
             sphinx.getMapCleanBtn().setVisibility(View.VISIBLE);
             sphinx.getLocationView().setVisibility(View.VISIBLE);
             

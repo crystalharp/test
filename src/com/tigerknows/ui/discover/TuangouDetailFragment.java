@@ -166,6 +166,8 @@ public class TuangouDetailFragment extends BaseDetailFragment
      * View fendian poi on map
      */
     public void viewMap() {
+        mSphinx.getResultMapFragment().setData(getString(R.string.shanghu_ditu), ActionLog.ResultMapTuangouDetail);
+        super.viewMap();
     	//Get Fendian poi
         Tuangou data = this.mDataList.get(mViewPager.getCurrentItem());
         Fendian fendian = data.getFendian();
@@ -178,8 +180,6 @@ public class TuangouDetailFragment extends BaseDetailFragment
 
         //Show it on map
         ItemizedOverlayHelper.drawPOIOverlay(mSphinx, list, 0);
-        mSphinx.getResultMapFragment().setData(getString(R.string.shanghu_ditu), ActionLog.ResultMapTuangouDetail);
-        super.viewMap();
     }
     
     /**

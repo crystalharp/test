@@ -110,8 +110,6 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     
     private String mInputText;
     
-    private long mATotal;
-    
     private long mBTotal;
     
     private POI mAPOI = null;
@@ -485,24 +483,19 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         int size = mPOIList.size();
         List<POI> poiList = new ArrayList<POI>();
         int[] page = Utility.makePagedIndex(mResultLsv, size, firstVisiblePosition);
-        POI poi;
-        if (mAPOI != null) {
-            poiList.add(mAPOI);
-        }
+        poiList.add(mAPOI);
         
         int minIndex = page[0];
         int maxIndex = page[1];
         for(;minIndex <= maxIndex && minIndex < size; minIndex++) {
-            poi = mPOIList.get(minIndex);
+            POI poi = mPOIList.get(minIndex);
             poiList.add(poi);
         }
         int firstIndex = page[2];
-        if (mAPOI != null) {
-            firstIndex++;
-        }
-        ItemizedOverlayHelper.drawPOIOverlay(mSphinx, poiList, firstIndex);
+        firstIndex++;
         mSphinx.getResultMapFragment().setData(getString(R.string.result_map), BaseQuery.SUB_DATA_TYPE_HOTEL.equals(mResultAdapter.getSubDataType()) ? ActionLog.POIHotelListMap : ActionLog.POIListMap);
         mSphinx.showView(R.id.view_result_map);   
+        ItemizedOverlayHelper.drawPOIOverlay(mSphinx, poiList, firstIndex);
     }
     
     public void doFilter(String name) {
@@ -969,12 +962,11 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
 
         POIResponse poiResponse = (POIResponse)dataQuery.getResponse();
         
-        if ((poiResponse.getAPOIList() != null && 
-                poiResponse.getAPOIList().getList() != null && 
-                poiResponse.getAPOIList().getList().size() > 0) || 
-           (poiResponse.getBPOIList() != null && 
+        InputSearchFragment.mapCenterAndBorderRange(mSphinx, poiResponse);
+        
+        if (poiResponse.getBPOIList() != null && 
                 poiResponse.getBPOIList().getList() != null && 
-                poiResponse.getBPOIList().getList().size() > 0)) {
+                poiResponse.getBPOIList().getList().size() > 0) {
       
             mDataQuery = dataQuery;
             mState = STATE_LIST;
@@ -989,10 +981,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             }
             
             poiList = poiResponse.getAPOIList();
-            List<POI> aPOIList = null;
             if (!dataQuery.isTurnPage()) {
-                this.mATotal = 0;
-                this.mAPOI = null;
                 mPOIList.clear();
                 mSphinx.getHandler().post(new Runnable() {
 
@@ -1001,26 +990,8 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                         mResultLsv.setSelectionFromTop(0, 0);
                     }
                 });
-                if (poiList != null) {
-                    mATotal = poiList.getTotal();
-                    aPOIList = poiList.getList();
-                }
-                
-                POI poi = dataQuery.getPOI();
-                if (mATotal == 0 && TextUtils.isEmpty(poi.getUUID()) == false) { // 若POI存在地址且搜索结果的子类型为普通POI则将其列为A类POI
-                    mATotal = 1;
-                    poi.setResultType(POIResponse.FIELD_A_POI_LIST);
-                    poi.setToCenterDistance(null);
-                    aPOIList = new ArrayList<POI>();
-                    aPOIList.add(poi);
-                }
-                
-                if (mATotal == 1 && mBTotal > 0) {
-                    this.mAPOI = aPOIList.get(0);
-                    aPOIList.get(0).setOnlyAPOI(true);
-                } else if (aPOIList != null){
-                    mPOIList.addAll(aPOIList);
-                }
+                mAPOI = dataQuery.getPOI();
+                mAPOI.setOnlyAPOI(true);
             }
 
             if (bPOIList != null) {
@@ -1056,11 +1027,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
 
     
     private boolean canTurnPage() {
-        if (mATotal > 1) {
-            return mPOIList.size() < mATotal;
-        } else {
-            return mPOIList.size() < mBTotal;
-        }
+        return mPOIList.size() < mBTotal;
     }
 
     public void refreshStamp() {

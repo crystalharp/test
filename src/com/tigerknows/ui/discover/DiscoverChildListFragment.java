@@ -304,10 +304,10 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
     }
     
     private void viewMap(List<POI> poiList, int index) {
-        ItemizedOverlayHelper.drawPOIOverlay(mSphinx, poiList, index);
         boolean yingxun = BaseQuery.DATA_TYPE_YINGXUN.equals(mDataType);
         mSphinx.getResultMapFragment().setData(getString(yingxun ? R.string.dianying_ditu : R.string.shanghu_ditu), yingxun ? ActionLog.ResultMapDianyingBranchList : ActionLog.ResultMapTuangouBranchList);
         mSphinx.showView(R.id.view_result_map);   
+        ItemizedOverlayHelper.drawPOIOverlay(mSphinx, poiList, index);
     }
 
     @Override

@@ -1740,12 +1740,21 @@ public final class DataQuery extends BaseQuery {
 
             // 0x04 | x_string | 短信息提示
             public static final byte FIELD_SHORT_MESSAGE = 0x04;
+            
+            // 0x11    x_map   搜索结果所环绕的中心点，没有该key返回，则需要客户端自己取中心点
+            public static final byte FIELD_CENTER_POSITION = 0x11;
 
             private List<POI> list;
 
             private int resultType;
             
             private String shortMessage;
+            
+            private Position position;
+
+            public Position getPosition() {
+                return position;
+            }
 
             public String getShortMessage() {
                 return shortMessage;
@@ -1770,6 +1779,10 @@ public final class DataQuery extends BaseQuery {
                     }
                 }
                 this.shortMessage = getStringFromData(FIELD_SHORT_MESSAGE);
+                if (this.data.containsKey(FIELD_CENTER_POSITION)) {
+                    XMap xMap = this.data.getXMap(FIELD_CENTER_POSITION);
+                    this.position = getPositionFromData(xMap, (byte)0x01, (byte)0x02, null);
+                }
             }
 
         }

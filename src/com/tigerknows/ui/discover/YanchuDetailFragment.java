@@ -98,6 +98,8 @@ public class YanchuDetailFragment extends BaseDetailFragment
     }
     
     public void viewMap() {
+        mSphinx.getResultMapFragment().setData(getString(R.string.yanchu_didian_ditu), ActionLog.ResultMapYanchuDetail);
+        super.viewMap();
         Yanchu data = mDataList.get(mViewPager.getCurrentItem());
         List<POI> list = new ArrayList<POI>();
         POI poi = data.getPOI();
@@ -105,8 +107,6 @@ public class YanchuDetailFragment extends BaseDetailFragment
         poi.setAddress(data.getAddress());
         list.add(poi);
         ItemizedOverlayHelper.drawPOIOverlay(mSphinx, list, 0);
-        mSphinx.getResultMapFragment().setData(getString(R.string.yanchu_didian_ditu), ActionLog.ResultMapYanchuDetail);
-        super.viewMap();
     }
     
     public void refreshViews(int position) {

@@ -100,13 +100,13 @@ public class DianyingDetailFragment extends BaseDetailFragment
     }
     
     public void viewMap() {
+        mSphinx.getResultMapFragment().setData(getString(R.string.dianying_ditu), ActionLog.ResultMapDianyingDetail);
+        super.viewMap();
         Dianying data = mDataList.get(mViewPager.getCurrentItem());
         List<POI> list = new ArrayList<POI>();
         POI poi = data.getPOI();
         list.add(poi);
         ItemizedOverlayHelper.drawPOIOverlay(mSphinx, list, 0);
-        mSphinx.getResultMapFragment().setData(getString(R.string.dianying_ditu), ActionLog.ResultMapDianyingDetail);
-        super.viewMap();
     }
     
     public void refreshViews(int position) {

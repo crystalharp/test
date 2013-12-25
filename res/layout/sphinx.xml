@@ -78,29 +78,37 @@
         android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp">
         
-        <ImageButton
-            android:id="@+id/map_tools_btn"
+        <RelativeLayout 
+            android:id="@+id/map_tools_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/btn_map_tools"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
-            android:layout_marginBottom="4dp"
-            android:scaleType="center"
-            android:clickable="false"/>
-        
-        <ImageView
-            android:id="@+id/map_tools_imv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignRight="@id/map_tools_btn"
-            android:layout_alignTop="@id/map_tools_btn"
-            android:background="@drawable/ic_new"
-            android:clickable="false"/>
+            android:layout_marginBottom="4dp">
+            
+            <ImageButton
+                android:id="@+id/map_tools_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:background="@drawable/btn_map_tools"
+                android:scaleType="center"
+                android:clickable="false"/>
+            
+            <ImageView
+                android:id="@+id/map_tools_imv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:background="@drawable/ic_new"
+                android:clickable="false"/>
+        </RelativeLayout>
         
         <ImageButton
             android:id="@+id/map_clean_btn"
-            android:layout_below="@id/map_tools_btn"
+            android:layout_below="@id/map_tools_view"
             android:layout_alignParentRight="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

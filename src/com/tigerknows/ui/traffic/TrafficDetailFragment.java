@@ -458,8 +458,8 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
                 dismiss();
                 TrafficOverlayHelper.drawOverlay(mSphinx, mSphinx.getMapView(), plan);
             } else {
-                mSphinx.showView(R.id.view_result_map);
                 ItemizedOverlayHelper.drawPlanListOverlay(mSphinx, mPlanList, curLineNum);
+                mSphinx.showView(R.id.view_result_map);
             }
             
         }
