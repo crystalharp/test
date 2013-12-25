@@ -246,6 +246,7 @@
     <string name="user_home">个人中心</string>
     <string name="give_favourable_comment">给个好评吧！</string>
     <string name="more_favorite">收藏</string>
+    <string name="manage_common_place">管理常用地点</string>
     
     <string name="settings_open_gps">开启GPS（卫星定位）</string>
     <string name="settings_close_gps">关闭GPS（卫星定位）</string>
