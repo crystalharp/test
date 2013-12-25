@@ -677,6 +677,7 @@ public class ActionLog extends LogUpload {
     
     // 影院列表地图页
     public static final String ResultMapDianyingBranchList = "DV";
+    public static final String ResultMapSelectPoint = "DW";
     
     public static final String HotelQuery = "GA";
     public static final String HotelQueryCity = "BA";

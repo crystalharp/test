@@ -30,6 +30,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Bitmap.CompressFormat;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
 import android.util.TypedValue;
@@ -123,9 +124,9 @@ public class Util {
 	 * 
 	 */
 	public static int getZoomLevelToFitPositions(int screenX, int screenY,
-			ArrayList<Position> positions) throws APIException{
+			Rect rect, ArrayList<Position> positions) throws APIException{
 		
-		return getZoomLevelToFitBoundingBox(screenX, screenY, getBoundingBoxToFitPositions(positions));
+		return getZoomLevelToFitBoundingBox(screenX, screenY, rect, getBoundingBoxToFitPositions(positions));
 	}
 
 	/**
@@ -138,7 +139,7 @@ public class Util {
 	 *            to fit
 	 * 
 	 */
-	public static int getZoomLevelToFitBoundingBox(int screenX, int screenY,BoundingBox boundingBox) throws APIException {
+	public static int getZoomLevelToFitBoundingBox(int screenX, int screenY, Rect rect, BoundingBox boundingBox) throws APIException {
 		screenX = Math.abs(screenX / 2);
 		screenY = Math.abs(screenY / 2);
 		int fitZoom = CONFIG.ZOOM_LOWER_BOUND;
@@ -149,11 +150,11 @@ public class Util {
 			double pixelsY = Util.lat2pix(boundingBox.getCenterPosition().getLat(), scale);
 			double pixelsX = Util.lon2pix(boundingBox.getCenterPosition().getLon(), scale);
 
-			double maxlat = Util.pix2lat((int) pixelsY + screenY, scale);
-			double maxlon = Util.pix2lon((int) pixelsX + screenX, scale);
+			double maxlat = Util.pix2lat((int) pixelsY + screenY - rect.top, scale);
+			double maxlon = Util.pix2lon((int) pixelsX + screenX - rect.left, scale);
 
-			double minlat = Util.pix2lat((int) pixelsY - screenY, scale);
-			double minlon = Util.pix2lon((int) pixelsX - screenX, scale);
+			double minlat = Util.pix2lat((int) pixelsY - screenY + rect.bottom , scale);
+			double minlon = Util.pix2lon((int) pixelsX - screenX + rect.right, scale);
 
 			BoundingBox gxbbox = new BoundingBox(new Position(minlat, minlon),new Position(maxlat, maxlon));
 
@@ -162,6 +163,11 @@ public class Util {
 				break;
 			}
 		}
+		
+        if (fitZoom == CONFIG.ZOOM_JUMP) {
+            fitZoom = CONFIG.ZOOM_JUMP - 1;
+        }
+
 		return fitZoom;
 	}
 
@@ -421,7 +427,7 @@ public class Util {
 			
 	}
 
-    public static int getZoomLevelToFitPositions(int screenX, int screenY, int padding, ArrayList<Position> positions, Position screenCenter) throws APIException {
+    public static int getZoomLevelToFitPositions(int screenX, int screenY, Rect padding, ArrayList<Position> positions, Position screenCenter) throws APIException {
         if (positions == null || positions.isEmpty()) {
             throw new APIException("positions is null");
         }
@@ -450,57 +456,6 @@ public class Util {
         } else {
             throw new APIException("boundingBox is null");
         }
-    }
-    /**
-     * 
-     * 画交通图层时, 需要考虑
-     * 1. 让图标也全部显示在屏幕内
-     * 2. 交通图层不会被title盖住
-     * 
-     * @param screenX
-     *            (screen width)
-     * @param screenY
-     *            (screen height)
-     * @param halfIconSize
-     *            (half of icon size)
-     * @param boundingBox
-     *            to fit
-     * 
-     */
-    public static int getZoomLevelToFitBoundingBox(int screenX, int screenY, int padding, BoundingBox boundingBox) throws APIException {
-//    	LogWrapper.d("centerdebug", "fit box sx: " + screenX + ", sy: " + screenY);
-        int fitZoom = CONFIG.ZOOM_LOWER_BOUND;
-        for (int gxZoom = CONFIG.ZOOM_UPPER_BOUND; gxZoom >= CONFIG.ZOOM_LOWER_BOUND; --gxZoom) {
-
-            double scale = Util.radsPerPixelAtZoom(CONFIG.TILE_SIZE, gxZoom);
-            double maxPixelY = Util.lat2pix(boundingBox.getMaxPosition().getLat(), scale);
-            double maxPixelX = Util.lon2pix(boundingBox.getMaxPosition().getLon(), scale);
-            double minPixelX = Util.lon2pix(boundingBox.getMinPosition().getLon(), scale);
-            boundingBox.setMaxPosition(
-            		new Position(Util.pix2lat(maxPixelY + padding, scale), Util.pix2lon(maxPixelX + (padding>>1), scale)));
-            boundingBox.setMinPosition(
-            		new Position(boundingBox.getMinPosition().getLat(), Util.pix2lon(minPixelX - (padding>>1), scale)));
-
-            Position centerPosition = boundingBox.getCenterPosition();
-            double pixelsY = Util.lat2pix(centerPosition.getLat(), scale);
-            double pixelsX = Util.lon2pix(centerPosition.getLon(), scale);
-            double maxlat = Util.pix2lat(pixelsY + (screenY>>1), scale);
-            double maxlon = Util.pix2lon(pixelsX + (screenX>>1), scale);
-            double minlat = Util.pix2lat(pixelsY - (screenY>>1), scale);
-            double minlon = Util.pix2lon(pixelsX - (screenX>>1), scale);
-            BoundingBox gxbbox = new BoundingBox(new Position(minlat, minlon),new Position(maxlat, maxlon));
-
-            if (gxbbox.contains(boundingBox.getMinPosition()) && gxbbox.contains(boundingBox.getMaxPosition())) {
-                fitZoom = gxZoom;
-                break;
-            } 
-        }
-        
-        if (fitZoom == CONFIG.ZOOM_JUMP) {
-            fitZoom = CONFIG.ZOOM_JUMP - 1;
-        }
-        
-        return fitZoom;
     }
     
     public static XYDouble xyzToMercPix(XYZ xyz) {

@@ -585,9 +585,9 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             name = R.string.zhanlan_ditu;
             actionTag = ActionLog.ResultMapZhanlanList;
         }
-        ItemizedOverlayHelper.drawPOIOverlay(mSphinx, dataList, page[2]);
         mSphinx.getResultMapFragment().setData(getString(name), actionTag);
         mSphinx.showView(R.id.view_result_map);   
+        ItemizedOverlayHelper.drawPOIOverlay(mSphinx, dataList, page[2]);
     }
     
     public void doFilter(String name) {

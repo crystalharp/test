@@ -5,6 +5,7 @@
 package com.tigerknows.ui.poi;
 
 import android.app.Dialog;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -67,7 +68,7 @@ import com.tigerknows.widget.SuggestWordListManager;
 public class InputSearchFragment extends BaseFragment implements View.OnClickListener {
     
     final public static int MODE_POI = HistoryWordTable.TYPE_POI;
-    final public static int MODE_TRANSFER = HistoryWordTable.TYPE_TRAFFIC;
+    final public static int MODE_TRAFFIC = HistoryWordTable.TYPE_TRAFFIC;
     final public static int MODE_BUELINE = HistoryWordTable.TYPE_BUSLINE;
     
     //用来标记请求的是哪个按钮
@@ -88,6 +89,8 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
     private SuggestWordListManager mSuggestWordListManager;
     
     private Callback callback;
+    
+    private TKWord mTKWord;
     
     //页面的数据输出回调接口，这个页面主要用来获取一个POI，所以用POI来做参数
     public interface Callback {
@@ -153,8 +156,8 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
             
             @Override
             public void onBtnClicked(TKWord tkWord, int position) {
-//                mKeywordEdt.setText(tkWord.word);
-                mKeywordEdt.setPOI(tkWord.toPOI());
+                mKeywordEdt.setText(tkWord.word);
+                mTKWord = tkWord;
                 mActionLog.addAction(mActionTag + ActionLog.HistoryWordInput, position, tkWord.word, tkWord.attribute);
             }
         };
@@ -188,7 +191,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         case MODE_BUELINE:
             mTrafficBtnGroup.setVisibility(View.GONE);
             break;
-        case MODE_TRANSFER:
+        case MODE_TRAFFIC:
             mTrafficBtnGroup.setVisibility(View.VISIBLE);
             break;
         case MODE_POI:
@@ -244,7 +247,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                         mActionLog.addAction(mActionTag + ActionLog.ListViewItemSuggest, position, tkWord.word);
                     }
                     mKeywordEdt.setText(tkWord.word); //处理光标问题
-                    if (mCurMode == MODE_TRANSFER) {
+                    if (mCurMode == MODE_TRAFFIC) {
 //                        POI poi = new POI();
 //                        poi.setName(tkWord.word);
 //                        poi.setPosition(tkWord.position);
@@ -283,13 +286,26 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         switch (view.getId()) {
             
             case R.id.btn_map_position:
-                ItemizedOverlayHelper.drawClickSelectPointOverlay(mSphinx, mSphinx.getTouchMode());
+                String title;
+                if (mRequestInput == REQUEST_TRAFFIC_START) {
+                    title = getString(R.string.select_start_station);
+                } else if (mRequestInput == REQUEST_TRAFFIC_END) {
+                    title = getString(R.string.select_end_station);
+                } else {
+                    title = getString(R.string.select_point);
+                }
+                ItemizedOverlayHelper.drawClickSelectPointOverlay(mSphinx, title);
                 break;
                 
             case R.id.right_btn:
-                if (mKeywordEdt.getText().toString().trim().length() > 0) {
-                    if (mCurMode == MODE_TRANSFER) {
-                        onConfirmed(mKeywordEdt.getPOI());
+                String keyword = mKeywordEdt.getText().toString().trim();
+                if (keyword.length() > 0) {
+                    if (mCurMode == MODE_TRAFFIC) {
+                        if (mTKWord != null && keyword.equals(mTKWord.word)) {
+                            onConfirmed(mTKWord.toPOI());
+                        } else {
+                            onConfirmed(keyword);
+                        }
                     } else {
                         onConfirmed(mKeywordEdt.getText().toString().trim());
                     }
@@ -306,7 +322,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         case MODE_BUELINE:
             submitBuslineQuery(key);
             break;
-        case MODE_TRANSFER:
+        case MODE_TRAFFIC:
             //TODO:提交公交站点查询，并且返回原页面
             POI poi = new POI();
             poi.setName(key);
@@ -324,7 +340,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
     }
     
     public void onConfirmed(POI poi) {
-        if (mCurMode == MODE_TRANSFER) {
+        if (mCurMode == MODE_TRAFFIC) {
             callback.onConfirmed(poi);
             mSphinx.getTrafficQueryFragment().autoStartQuery(true);
             dismiss();
@@ -391,6 +407,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
     //还原为第一次进入的状态
     public void reset() {
         mKeywordEdt.setText(null);
+        mTKWord = null;
     }
     
     public void setData(String text) {
@@ -428,32 +445,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         }
 
         POIResponse poiResponse = (POIResponse)dataQuery.getResponse();
-        MapCenterAndBorderRange mapCenterAndBorderRange = poiResponse.getMapCenterAndBorderRange();
-        if (mapCenterAndBorderRange != null) {
-            MapView mapView = sphinx.getMapView();
-            
-            Position mapCenter = mapCenterAndBorderRange.getMapCenter();
-            float zoomLevel = mapView.getZoomLevel();
-            
-            ArrayList<Position> borderRange = mapCenterAndBorderRange.getBorderRange();
-            if (borderRange != null
-                    && borderRange.size() > 0) {
-                
-                DisplayMetrics displayMetrics = Globals.g_metrics;
-                try {
-                    zoomLevel = Util.getZoomLevelToFitPositions(displayMetrics.widthPixels,
-                            displayMetrics.heightPixels,
-                            borderRange);
-                } catch (APIException e) {
-                    e.printStackTrace();
-                }
-                
-            }
-            
-            if (mapCenter != null) {
-                mapView.centerOnPosition(mapCenter, zoomLevel);
-            }
-        }
+        mapCenterAndBorderRange(sphinx, poiResponse);
         
         BuslineModel buslineModel = poiResponse.getBuslineModel();
         if (buslineModel != null) {
@@ -478,9 +470,10 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
             
             if (cityIdAndResultTotalList.size() == 1) {
                 if (poiList != null && poiList.size() > 0) {
-                    ItemizedOverlayHelper.drawPOIOverlay(sphinx, poiList, 0);
-                    sphinx.getResultMapFragment().setData("非当前城市的一个结果", "actionTAG");
+                    sphinx.getResultMapFragment().setData(sphinx.getString(R.string.result_map), ActionLog.POIListMap);
                     sphinx.showView(R.id.view_result_map);
+                    
+                    ItemizedOverlayHelper.drawPOIOverlay(sphinx, poiList, 0);
                     
                     result = 2;
                     return result;
@@ -540,7 +533,6 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                 && poiList.size() > 0) {
             
             POIResultFragment poiResultFragment = sphinx.getPOIResultFragment();
-            poiResultFragment.setup(dataQuery);
             poiResultFragment.setData(dataQuery);
             sphinx.showView(R.id.view_poi_result);
             sphinx.uiStackRemove(R.id.view_traffic_busline_line_result);
@@ -553,6 +545,41 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         }
         
         return result;
+    }
+    
+    public static void mapCenterAndBorderRange(Sphinx sphinx, POIResponse poiResponse) {
+        if (sphinx == null || poiResponse == null) {
+            return;
+        }
+        
+        MapCenterAndBorderRange mapCenterAndBorderRange = poiResponse.getMapCenterAndBorderRange();
+        if (mapCenterAndBorderRange != null) {
+            MapView mapView = sphinx.getMapView();
+            
+            Position mapCenter = mapCenterAndBorderRange.getMapCenter();
+            float zoomLevel = mapView.getZoomLevel();
+            
+            ArrayList<Position> borderRange = mapCenterAndBorderRange.getBorderRange();
+            if (borderRange != null
+                    && borderRange.size() > 0) {
+                
+                DisplayMetrics displayMetrics = Globals.g_metrics;
+                try {
+                    Rect rect = mapView.getPadding();
+                    zoomLevel = Util.getZoomLevelToFitPositions(displayMetrics.widthPixels,
+                            displayMetrics.heightPixels,
+                            rect,
+                            borderRange);
+                } catch (APIException e) {
+                    e.printStackTrace();
+                }
+                
+            }
+            
+            if (mapCenter != null) {
+                mapView.centerOnPosition(mapCenter, zoomLevel);
+            }
+        }
     }
     
     public void queryBuslineEnd(BuslineQuery buslineQuery) {

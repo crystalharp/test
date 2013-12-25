@@ -352,11 +352,10 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
         if (line == null) {
             return;
         }
-
-        BuslineOverlayHelper.drawOverlay(mSphinx, mSphinx.getMapView(), line);
-        
         mSphinx.getResultMapFragment().setData(getString(R.string.title_busline_result_map), ActionLog.TrafficBuslineMap);
         mSphinx.showView(R.id.view_result_map);
+
+        BuslineOverlayHelper.drawOverlay(mSphinx, mSphinx.getMapView(), line);
     }
 
     private void history() {

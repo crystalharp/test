@@ -4,6 +4,7 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.res.Resources;
+import android.graphics.Rect;
 import android.view.View;
 
 import com.decarta.Globals;
@@ -124,7 +125,7 @@ public class TrafficOverlayHelper {
                 mapView.showOverlay(ItemizedOverlay.MY_LOCATION_OVERLAY, false);
                 
                 sphinx.getCenterTokenView().setVisibility(View.INVISIBLE);
-                sphinx.getMapToolsBtn().setVisibility(View.VISIBLE);
+                sphinx.getMapToolsView().setVisibility(View.VISIBLE);
                 sphinx.getMapCleanBtn().setVisibility(View.VISIBLE);
                 sphinx.getLocationView().setVisibility(View.VISIBLE);
 	        }
@@ -213,8 +214,9 @@ public class TrafficOverlayHelper {
 		 * 缩放到该zoomlevel, 并平移至中心点
 		 */
 		try {
+            Rect rect = mapview.getPadding();
 		    Icon start = Icon.getIcon(activity.getResources(), R.drawable.icon_start_pin, Icon.OFFSET_LOCATION_CENTER_BOTTOM);
-		    int fitZoom = Util.getZoomLevelToFitBoundingBox(screenX, screenY, start.getSize().y, boundingBox);
+		    int fitZoom = Util.getZoomLevelToFitBoundingBox(screenX, screenY, rect, boundingBox);
 			LogWrapper.d(TAG, "get fitZoom: " + fitZoom);
 			Position centerPosition = boundingBox.getCenterPosition();
 			LogWrapper.d(TAG, "get centerPosition: " + centerPosition.getLon() + " " + centerPosition.getLat());

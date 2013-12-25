@@ -1048,11 +1048,11 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         if (poi == null) {
             return;
         }
+        mSphinx.getResultMapFragment().setData(getString(R.string.result_map), poi.getSourceType() == POI.SOURCE_TYPE_HOTEL ? ActionLog.POIHotelDetailMap : ActionLog.POIDetailMap);
+        mSphinx.showView(R.id.view_result_map);
         List<POI> pois = new ArrayList<POI>();
         pois.add(poi);
         ItemizedOverlayHelper.drawPOIOverlay(mSphinx, pois, 0);
-        mSphinx.getResultMapFragment().setData(getString(R.string.result_map), poi.getSourceType() == POI.SOURCE_TYPE_HOTEL ? ActionLog.POIHotelDetailMap : ActionLog.POIDetailMap);
-        mSphinx.showView(R.id.view_result_map);
     }
     
     public void favorite() {

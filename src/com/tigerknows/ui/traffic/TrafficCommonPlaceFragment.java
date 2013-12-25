@@ -3,6 +3,7 @@ package com.tigerknows.ui.traffic;
 import java.util.LinkedList;
 import java.util.List;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,7 +28,7 @@ public class TrafficCommonPlaceFragment extends BaseFragment{
 
     ListView mCommonPlaceLsv;
     
-    CommonPlaceList mList = new CommonPlaceList();
+    CommonPlaceList mList = new CommonPlaceList(mSphinx);
     
     CommonPlaceAdapter mAdapter = new CommonPlaceAdapter();
     
@@ -81,6 +82,7 @@ public class TrafficCommonPlaceFragment extends BaseFragment{
                 mAdapter.notifyDataSetChanged();
             }
         });
+        mList.updateData();
     }
 
     public TrafficCommonPlaceFragment(Sphinx sphinx) {
@@ -98,7 +100,7 @@ public class TrafficCommonPlaceFragment extends BaseFragment{
                     long arg3) {
                 clickedPos = arg2;
                 CommonPlace c = mList.get(arg2);
-                mSphinx.getInputSearchFragment().setMode(InputSearchFragment.MODE_TRANSFER);
+                mSphinx.getInputSearchFragment().setMode(InputSearchFragment.MODE_TRAFFIC);
                 mSphinx.getInputSearchFragment().setConfirmedCallback(a, InputSearchFragment.REQUEST_COMMON_PLACE);
                 if (c.poi != null) {
                     mSphinx.getInputSearchFragment().setData(c.poi.getName());
@@ -109,11 +111,19 @@ public class TrafficCommonPlaceFragment extends BaseFragment{
     }
     
     //和数据库有关的操作全部封在这个类中
-    class CommonPlaceList {
-        List<CommonPlace> mList = new LinkedList<CommonPlace>();
-        CommonPlaceTable table = new CommonPlaceTable(mSphinx);
+    public static class CommonPlaceList {
+        
+        Context mCtx;
+        private List<CommonPlace> mList = new LinkedList<CommonPlace>();
+        private CommonPlaceTable table;
                 
-        public CommonPlaceList() {
+        public CommonPlaceList(Context ctx) {
+            mCtx = ctx;
+            table = new CommonPlaceTable(ctx);
+        }
+        
+        public void updateData() {
+            mList.clear();
             table.readCommonPlace(mList);
         }
         
@@ -155,6 +165,10 @@ public class TrafficCommonPlaceFragment extends BaseFragment{
             } else {
                 return null;
             }
+        }
+        
+        List<CommonPlace> getList() {
+            return mList;
         }
         
     }

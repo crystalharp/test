@@ -99,6 +99,8 @@ public class ZhanlanDetailFragment extends BaseDetailFragment
     }
     
     public void viewMap() {
+        mSphinx.getResultMapFragment().setData(getString(R.string.zhanlan_didian_ditu), ActionLog.ResultMapZhanlanDetail);
+        super.viewMap();
         Zhanlan data = mDataList.get(mViewPager.getCurrentItem());
         List<POI> list = new ArrayList<POI>();
         POI poi = data.getPOI();
@@ -106,8 +108,6 @@ public class ZhanlanDetailFragment extends BaseDetailFragment
         poi.setAddress(data.getAddress());
         list.add(poi);
         ItemizedOverlayHelper.drawPOIOverlay(mSphinx, list, 0);
-        mSphinx.getResultMapFragment().setData(getString(R.string.zhanlan_didian_ditu), ActionLog.ResultMapZhanlanDetail);
-        super.viewMap();
     }
     
     public void refreshViews(int position) {

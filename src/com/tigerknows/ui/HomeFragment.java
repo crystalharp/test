@@ -93,7 +93,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         mapView.setStopRefreshMyLocation(false);
         
         mSphinx.getCenterTokenView().setVisibility(View.INVISIBLE);
-        mSphinx.getMapToolsBtn().setVisibility(View.VISIBLE);
+        mSphinx.getMapToolsView().setVisibility(View.VISIBLE);
         mSphinx.getMapCleanBtn().setVisibility(View.INVISIBLE);
         mSphinx.getLocationView().setVisibility(View.VISIBLE);
     }
