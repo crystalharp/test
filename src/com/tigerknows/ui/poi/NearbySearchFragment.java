@@ -19,6 +19,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
@@ -277,10 +278,17 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         case R.id.sub_7_btn:
         	Button btn = (Button)view;
         	int op = (Integer) btn.getTag();
-        	LogWrapper.d("Trap", "op=" + op);
         	switch(op){
         	case CategoryProperty.OP_SEARCH:
         		submitQuery(btn.getText().toString());
+        		break;
+        	case CategoryProperty.OP_HOTEL:
+        		mSphinx.getHotelHomeFragment().resetDate();
+        		mSphinx.getHotelHomeFragment().setCityInfo(Globals.getCurrentCityInfo(mContext));
+        		mSphinx.showView(R.id.view_hotel_home);
+        		uiStackAdjust();
+        		break;
+        	case CategoryProperty.OP_TUANGOU:
         		break;
         	default:
         		break;
@@ -391,7 +399,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         if (BaseQuery.API_TYPE_DATA_QUERY.equals(apiType)) {
             int result = InputSearchFragment.dealWithPOIResponse((DataQuery) baseQuery, mSphinx, this);
             if(mFromPOI && result > 0){
-            		uiStackAdjust();
+            	uiStackAdjust();
             }
         }
     }
