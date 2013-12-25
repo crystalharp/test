@@ -274,7 +274,7 @@ public class BaseFragment extends LinearLayout {
     public void onPause() {
         LogWrapper.d(TAG, "onPause()"+mActionTag);
         int id = getId();
-        if (id != R.id.view_invalid) {
+        if (id != R.id.view_invalid && id != R.id.view_infowindow) {
             dismissPopupWindow();
             mSphinx.hideSoftInput();
             mSphinx.resetLoactionButtonState();
@@ -291,7 +291,7 @@ public class BaseFragment extends LinearLayout {
     public void onResume() {
         LogWrapper.d(TAG, "onResume()"+mActionTag);
         int id = getId();
-        if (id != R.id.view_invalid) { 
+        if (id != R.id.view_invalid && id != R.id.view_infowindow) { 
             if (!TextUtils.isEmpty(mActionTag)) {
                 mActionLog.addAction(mActionTag);
             }

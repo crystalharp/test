@@ -272,8 +272,8 @@ public abstract class BaseQuery {
     // 备选 5
     public static final String DATA_TYPE_ALTERNATIVE = "5";
 
-    // 打折商场 6
-    public static final String DATA_TYPE_DAZHESHANGCHANG = "6";
+    // 反向定位poi
+    public static final String DATA_TYPE_GEOCODER = "6";
 
     // 优惠 7
     public static final String DATA_TYPE_YOUHUI = "7";

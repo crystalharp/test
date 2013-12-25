@@ -148,6 +148,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         }else{
         	mTitleBtn.setText(R.string.merchant_type);
         }
+        mRightBtn.setVisibility(View.GONE);
         String name = mPOI.getName();
         String title = getString(R.string.at_where_search, name);
         SpannableStringBuilder style = new SpannableStringBuilder(title);

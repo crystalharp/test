@@ -13,6 +13,8 @@ import com.tigerknows.model.DataQuery.CouponResponse;
 import com.tigerknows.model.DataQuery.CouponResponse.CouponList;
 import com.tigerknows.model.DataQuery.FilterConfigResponse;
 import com.tigerknows.model.DataQuery.DishResponse;
+import com.tigerknows.model.DataQuery.GeoCoderResponse;
+import com.tigerknows.model.DataQuery.GeoCoderResponse.GeoCoderList;
 import com.tigerknows.model.DataQuery.HotelVendorResponse;
 import com.tigerknows.model.DataQuery.POIResponse.CityIdAndResultTotal;
 import com.tigerknows.model.DataQuery.POIResponse.MapCenterAndBorderRange;
@@ -75,6 +77,7 @@ import com.tigerknows.util.ByteUtil;
 import com.tigerknows.util.Utility;
 
 import android.content.Context;
+import android.location.Geocoder;
 import android.text.TextUtils;
 
 import java.io.File;
@@ -1074,6 +1077,24 @@ public class DataQueryTest {
         XMap data = new XMap();
         data.put(CityIdAndResultTotal.FIELD_CIYT_ID, cityId);
         data.put(CityIdAndResultTotal.FIELD_RESULT_TOTAL, resultTotal);
+        return data;
+    }
+
+    public static XMap launchGeoCoderResponse() {
+        XMap data = new XMap();
+        BaseQueryTest.launchResponse(data);
+        data.put(GeoCoderResponse.FIELD_RESULT, launchGeoCoder());
+        return data;
+    }
+
+    protected static XMap launchGeoCoder() {
+        XMap data = new XMap();
+        data.put(GeoCoderList.FIELD_TOTAL, 2);
+        XArray<XMap> list = new XArray<XMap>();
+        for(int i = 0 ; i < 8; i ++) {
+            list.add(launchPOI("POI"+i+"POIPOIPOIPOIPOIPOIPOIPOIPOIPOIPOIPOIPOIPOIPOIPOIPOI"));
+        }
+        data.put(GeoCoderList.FIELD_POI_LIST, list);
         return data;
     }
 }

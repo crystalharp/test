@@ -439,6 +439,8 @@ public class POI extends BaseData {
     
     public static final int SOURCE_TYPE_SUBWAY = 15;
 
+    public static final int SOURCE_TYPE_MAP_POI = 16;
+
     public static final int FROM_ONLINE = 0;
 
     public static final int FROM_LOCAL = 1;

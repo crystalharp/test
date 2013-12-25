@@ -872,7 +872,7 @@ public class TrafficModel extends XMapData {
             body.append(end.getName());
             body.append("\n");
 
-            List<CharSequence> strList = NavigationSplitJointRule.splitJoint(context, type, this);
+            List<CharSequence> strList = NavigationSplitJointRule.splitJoint(context, this);
             int i = 1;
             for(CharSequence str : strList) {
                 body.append(i++);

@@ -108,6 +108,7 @@ public class GoCommentFragment extends BaseFragment implements View.OnClickListe
     public void onResume() {
         super.onResume();
         mTitleBtn.setText(R.string.go_comment);
+        mRightBtn.setVisibility(View.GONE);
         if (isReLogin()) {
             return;
         }

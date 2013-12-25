@@ -9,7 +9,6 @@ import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import com.tigerknows.R;
-import com.tigerknows.model.TrafficModel;
 import com.tigerknows.model.TrafficQuery;
 import com.tigerknows.model.TrafficModel.Plan;
 import com.tigerknows.model.TrafficModel.Plan.Step;
@@ -36,12 +35,12 @@ public class NavigationSplitJointRule {
         NavigationSplitJointRule.ishightLight = ishightLight;
     }
 
-    public static List<CharSequence> splitJoint(Context context, int type, Plan plan) {
+    public static List<CharSequence> splitJoint(Context context, Plan plan) {
         
         List<CharSequence> strList = new ArrayList<CharSequence>();
         
         mode = plan.getStepList().size();
-
+        int type = plan.getType();
         switch(type){
         case TrafficQuery.QUERY_TYPE_TRANSFER:
             for(int i = 0; i < mode; i++){

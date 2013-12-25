@@ -83,7 +83,6 @@ import com.decarta.android.util.XYDouble;
 import com.decarta.android.util.XYFloat;
 import com.decarta.android.util.XYZ;
 import com.tigerknows.R;
-import com.tigerknows.Sphinx.TouchMode;
 import com.tigerknows.android.location.Position;
 import com.tigerknows.map.Grid;
 import com.tigerknows.map.MapEngine;
@@ -137,6 +136,8 @@ public class TilesView extends GLSurfaceView {
 	private static float Cos60 = (float) Math.cos(60 * Math.PI / 180);
 
 	// Tigerknows begin
+    ArrayList<SingleRectLabel> shownLabels = new ArrayList<SingleRectLabel>();
+    
 	public static class Texture {
 		public int textureRef = 0;
 		public XYInteger size = new XYInteger(0, 0);
@@ -1208,7 +1209,59 @@ public class TilesView extends GLSurfaceView {
 
 					} else {
                         infoWindow.setVisible(false);
-                        mParentMapView.executeTouchListeners(position);
+
+                        // 判断是否点击在地图上的POI上
+                        shownLabels.clear();
+                        synchronized (drawingLock) {
+                            
+                            ArrayList<Label>[] onlineShownLabels = mapRender.getShownLabels();
+                            
+                            if (onlineShownLabels != null) {
+                                int length = onlineShownLabels.length;
+                                for(int i = 0; i < length; i++) {
+                                    if (onlineShownLabels[i] != null) {
+                                        for(int j = 0, s = onlineShownLabels[i].size(); j < s; j++) {
+                                            Label label = onlineShownLabels[i].get(j);
+                                            if (label != null
+                                                    && label.opacity >= 0.5
+                                                    && label.pointNum == 1
+                                                    && label.type != 0
+                                                    && label.type != 1) {
+                                                shownLabels.add((SingleRectLabel) label);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        SingleRectLabel touchLabel = null;
+                        for(int i = 0, s = shownLabels.size(); i < s; i++) {
+                            SingleRectLabel label = shownLabels.get(i);
+                            if (xy0Conv.x >= label.rect.left
+                                    && xy0Conv.x <= label.rect.right
+                                    && xy0Conv.y >= label.rect.top
+                                    && xy0Conv.y <= label.rect.bottom) {
+                                
+                                XYInteger center = new XYInteger(displaySize.x / 2,
+                                        displaySize.y / 2);
+                                int tileSize = CONFIG.TILE_SIZE;
+                                int cx = center.x;
+                                int cy = center.y;
+                                float refx = cx + centerDelta.x + (label.x - centerXYZ.x) * tileSize - (tileSize >> 1);//label所在tile的左上角坐标
+                                float refy = cy + centerDelta.y + (centerXYZ.y - label.y) * tileSize - (tileSize >> 1);
+                                float sx = label.point.x + refx;//point.x + refx为实际原始坐标
+                                float sy = label.point.y + refy;
+                                
+                                Position pos = screenXYConvToPos(sx, sy);
+                                mParentMapView.executeClickPOIEventListener(pos, label.name);
+                                touchLabel = label;
+                                break;
+                            }
+                        }
+                        
+                        if (touchLabel == null) {
+                            mParentMapView.executeTouchListeners(position);
+                        }
                         
 						if (lastTouchUpTime != 0
 								&& (touchUpTime - lastTouchUpTime) < DOUBLE_CLICK_INTERVAL_TIME_MAX
@@ -1218,8 +1271,7 @@ public class TilesView extends GLSurfaceView {
 							lastTouchUp.x = 0;
 							lastTouchUp.y = 0;
 							lastTouchUpTime = 0;
-							mParentMapView
-									.executeDoubleClickListeners(position);
+							mParentMapView.executeDoubleClickListeners(position);
 						} else {
 							lastTouchUp.x = event.getX(0);
 							lastTouchUp.y = event.getY(0);
@@ -2552,6 +2604,11 @@ public class TilesView extends GLSurfaceView {
 		private int maxLabelPriority = 0;
 		ArrayList<Label>[] priorityLabels;
 		ArrayList<Label>[] shownLabels;
+		
+		protected ArrayList<Label>[] getShownLabels() {
+		    return shownLabels;
+		}
+		
 		ArrayList<Label>[] lastShownLabels;
 
 		private boolean isLabelShown(Label label) {

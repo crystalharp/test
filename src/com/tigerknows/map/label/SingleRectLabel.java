@@ -493,7 +493,9 @@ public class SingleRectLabel extends Label {
             state = LABEL_STATE_CANT_BE_SHOWN;
             return state;
         }
-        RectInteger rect = new RectInteger();
+        if(rect == null) {
+            rect = new RectInteger();
+        }
         float sx = point.x + refx;//point.x + refx为实际原始坐标
         float sy = point.y + refy;
         float dx = scale == 1 ? (sx - cx) : scale * (sx - cx);

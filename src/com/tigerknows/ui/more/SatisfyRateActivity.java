@@ -14,13 +14,11 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
-import android.widget.Button;
 import android.widget.RatingBar;
 import android.widget.Toast;
 import android.widget.RatingBar.OnRatingBarChangeListener;
 import android.widget.TextView;
 
-import com.decarta.Globals;
 import com.tigerknows.R;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
@@ -54,7 +52,6 @@ public class SatisfyRateActivity extends BaseActivity implements View.OnClickLis
 	private RatingBar[] mSatisfyRbt;
 	private TextView[] mRateTxv;
 	private List<String> mRateList;
-	private Button mSubmitBtn;
 	private boolean mChanged;
 	
 	protected void onCreate(Bundle savedInstanceState) {
@@ -67,12 +64,13 @@ public class SatisfyRateActivity extends BaseActivity implements View.OnClickLis
         findViews();
         setListener();    
         mTitleBtn.setText(getString(R.string.satisfy_rate));
+        mRightBtn.setText(R.string.submit);
+        refreshSubmitBtn();
         mChanged = false;
     }
     
     protected void findViews() {
     	super.findViews();
-    	mSubmitBtn = (Button)findViewById(R.id.submit_btn);
     	for (int i=0; i<NUM_OF_RATINGBAR; i++){
     		mSatisfyRbt[i] = (RatingBar)findViewById(mRatingBarID[i]);
     		mRateTxv[i] = (TextView)findViewById(mRateTxvID[i]);
@@ -87,7 +85,7 @@ public class SatisfyRateActivity extends BaseActivity implements View.OnClickLis
     
     protected void setListener() {
     	super.setListener();
-    	mSubmitBtn.setOnClickListener(this);
+    	mRightBtn.setOnClickListener(this);
     	mLeftBtn.setOnClickListener(this);
     	for (int i=0; i<NUM_OF_RATINGBAR; i++){
     		final int j=i;
@@ -101,9 +99,6 @@ public class SatisfyRateActivity extends BaseActivity implements View.OnClickLis
 						int iRating = Math.round(rating);
 						mRateTxv[j].setText(mRateList.get(iRating));
 						refreshSubmitBtn();
-						mSubmitBtn.setTextColor(mSubmitBtn.isEnabled()
-								? getResources().getColor(R.color.orange)
-								: getResources().getColor(R.color.black_light));
 					}
 				}
     		});
@@ -131,7 +126,8 @@ public class SatisfyRateActivity extends BaseActivity implements View.OnClickLis
     			status = false;
     		}else mChanged = true;
     	}
-    	mSubmitBtn.setEnabled(status);
+    	mRightBtn.setEnabled(status);
+        Utility.refreshButton(mThis, mRightBtn);
     }
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -162,8 +158,8 @@ public class SatisfyRateActivity extends BaseActivity implements View.OnClickLis
     
     @Override
     public void onClick(View view) {
-    	if(view.getId() == R.id.submit_btn){
-    		mActionLog.addAction(mActionTag + ActionLog.SatisfyRateSubmit);
+    	if(view.getId() == R.id.right_btn){
+    		mActionLog.addAction(mActionTag + ActionLog.TitleRightButton);
     		submit();
     	}else if(view.getId() == R.id.left_btn){
     		mActionLog.addAction(mActionTag + ActionLog.TitleLeftButton);

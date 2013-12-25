@@ -650,6 +650,12 @@ public final class DataQuery extends BaseQuery {
             ekeys = Utility.mergeArray(ekeys, new String[] {SERVER_PARAMETER_NEED_FIELD});
             okeys = Utility.mergeArray(okeys, positionKeys, new String[]{SERVER_PARAMETER_IDS});
             debugCheckParameters(ekeys, okeys);
+        } else if (DATA_TYPE_GEOCODER.equals(dataType)) { 
+            ekeys = Utility.mergeArray(ekeys, new String[] {SERVER_PARAMETER_NEED_FIELD,
+                    SERVER_PARAMETER_LONGITUDE,
+                    SERVER_PARAMETER_LATITUDE,
+                    SERVER_PARAMETER_KEYWORD});
+            debugCheckParameters(ekeys, okeys);
         } else {
             throw APIException.wrapToMissingRequestParameterException("invalid data type.");
         }
@@ -839,6 +845,7 @@ public final class DataQuery extends BaseQuery {
             addParameter(SERVER_PARAMETER_NEED_FIELD, Dish.NEED_FIELD);
         } else if (DATA_TYPE_HOTELVENDOR.equals(dataType)) { 
             addParameter(SERVER_PARAMETER_NEED_FIELD, getParameter(SERVER_PARAMETER_NEED_FIELD));
+        } else if (DATA_TYPE_GEOCODER.equals(dataType)) {
         }
         
         addParameter(SERVER_PARAMETER_TIME_STAMP, TIME_STAMP_FORMAT.format(Calendar.getInstance().getTime()));
@@ -941,8 +948,8 @@ public final class DataQuery extends BaseQuery {
         } else if (DATA_TYPE_PICTURE.equals(dataType)) {
             PictureResponse response = new PictureResponse(responseXMap);
             this.response = response;
-        } else if (DATA_TYPE_HOTELVENDOR.equals(dataType)) {
-        	HotelVendorResponse response = new HotelVendorResponse(responseXMap);
+        } else if (DATA_TYPE_GEOCODER.equals(dataType)) {
+            GeoCoderResponse response = new GeoCoderResponse(responseXMap);
             this.response = response;
         }
     }
@@ -2940,6 +2947,78 @@ public final class DataQuery extends BaseQuery {
             }
         }
     }    
+
+    public static class GeoCoderResponse extends Response {
+        // 0x02     x_map   关键字匹配得到的候选点结果
+        public static final byte FIELD_RESULT = 0x02;
+
+        private GeoCoderList list;
+
+        public GeoCoderResponse(XMap data) throws APIException {
+            super(data);
+
+            if (this.data.containsKey(FIELD_RESULT)) {
+                this.list = new GeoCoderList(this.data.getXMap(FIELD_RESULT));
+            }
+        }
+
+        public GeoCoderList getList() {
+            return list;
+        }
+
+        public static class GeoCoderList extends XMapData {
+            
+            // 0x01     x_int   总数  
+            public static final byte FIELD_TOTAL = 0x01;
+
+            // 0x02     x_array<x_map>  x_array<普通poi> 
+            public static final byte FIELD_POI_LIST = 0x02;
+
+            private long total;
+
+            private List<POI> poiList;
+
+            public GeoCoderList(XMap data) throws APIException {
+                super(data);
+                
+                total = getLongFromData(FIELD_TOTAL);
+                poiList = getListFromData(FIELD_POI_LIST, POI.Initializer);
+            }
+
+            public long getTotal() {
+                return total;
+            }
+
+            public List<POI> getPOIList() {
+                return poiList;
+            }
+            
+        }
+        
+        public static class Category {
+            private int id;
+            private String name;
+            private List<Long> dishList;
+            private List<Category> childList;
+            public int firstDishIndex = 0;
+            
+            public int getId() {
+                return id;
+            }
+            
+            public String getName() {
+                return name;
+            }
+            
+            public List<Category> getChildList() {
+                return childList;
+            }
+            
+            public List<Long> getDishList() {
+                return dishList;
+            }
+        }
+    }
     
     protected void launchTest() {
         super.launchTest();
@@ -2989,6 +3068,8 @@ public final class DataQuery extends BaseQuery {
             responseXMap = DataQueryTest.launchPictureResponse(168);
         } else if (DATA_TYPE_HOTELVENDOR.equals(dataType)) {
             responseXMap = DataQueryTest.launchHotelVendorResponse(context, 10);
+        } else if (DATA_TYPE_GEOCODER.equals(dataType)) {
+            responseXMap = DataQueryTest.launchGeoCoderResponse();
         }
     }
 }

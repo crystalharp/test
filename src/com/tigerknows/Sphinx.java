@@ -307,23 +307,41 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     
                     if(touchMode.equals(TouchMode.CHOOSE_ROUTING_END_POINT)
                             || touchMode.equals(TouchMode.CHOOSE_ROUTING_START_POINT)) {
-                        ItemizedOverlayHelper.drawClickOverlay(Sphinx.this, touchMode);
+                        ItemizedOverlayHelper.drawClickSelectPointOverlay(Sphinx.this, touchMode);
                     }
                     
                 } else if (msg.what == MAP_LONG_CLICKED) {
                     
                     Position position = (Position) msg.obj;
                     
-                    if (touchMode.equals(TouchMode.MEASURE_DISTANCE)){
-                        getMeasureDistanceFragment().addPoint(position);
+                    if(touchMode.equals(TouchMode.CHOOSE_ROUTING_END_POINT)
+                            || touchMode.equals(TouchMode.CHOOSE_ROUTING_START_POINT)) {
+                        return;
+                    }
+                    
+                    if(touchMode.equals(TouchMode.MEASURE_DISTANCE)) {
                         return;
                     }
                     
                     resetLoactionButtonState();
+                    InfoWindowFragment infoWindowFragment = getInfoWindowFragment();
+                    if (infoWindowFragment == mBottomFragment) {
+                        ItemizedOverlay itemizedOverlay = infoWindowFragment.getItemizedOverlay();
+                        String overlayName = itemizedOverlay.getName();
+                        if (ItemizedOverlay.BUSLINE_OVERLAY.equals(overlayName) ||
+                                ItemizedOverlay.TRAFFIC_OVERLAY.equals(overlayName)) {
+                            return;
+                        }
+                    }
+                    
+                    mMapView.deleteOverlaysByName(ItemizedOverlay.MAP_POI_OVERLAY);
+                    
                     setTouchMode(TouchMode.LONG_CLICK);
                     
-                    POI poi = getPOI(position);
-                    ItemizedOverlayHelper.drawLongClickOverlay(Sphinx.this, poi);
+                    POI poi = getPOI(position, getString(R.string.select_point));
+                    poi.setSourceType(POI.SOURCE_TYPE_LONG_CLICKED_SELECT_POINT);
+                    
+                    ItemizedOverlayHelper.drawPOIOverlay(ItemizedOverlay.LONG_CLICKED_OVERLAY, Sphinx.this, poi);
 
                 } else if (msg.what == MAP_ZOOMEND) {
                     mMapView.setZoomControlsState(msg.arg1);
@@ -383,7 +401,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             mMyLocation = new MyLocation(null, icon, iconFocused, icFaceToNormal, icFaceToFocused, null, rt);
             POI poi = new POI();
             poi.setSourceType(POI.SOURCE_TYPE_MY_LOCATION);
-            poi.setName(getString(R.string.location_doing));
             mMyLocation.setAssociatedObject(poi);
             mMyLocation.isFoucsed = true;
             
@@ -489,6 +506,42 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     mHandler.sendEmptyMessage(SHOW_MAPVIEW);
                 }
             });
+            EventRegistry.addEventListener(mMapView, MapView.EventType.CLICKPOI, new MapView.ClickPOIEventListener() {
+                
+                @Override
+                public void onClickPOIEvent(EventSource eventSource, Position position, String name) {
+                    
+                    if(touchMode.equals(TouchMode.CHOOSE_ROUTING_END_POINT)
+                            || touchMode.equals(TouchMode.CHOOSE_ROUTING_START_POINT)) {
+                        return;
+                    }
+                    
+                    if(touchMode.equals(TouchMode.MEASURE_DISTANCE)) {
+                        return;
+                    }
+                    
+                    mMapView.deleteOverlaysByName(ItemizedOverlay.LONG_CLICKED_OVERLAY);
+                    
+                    resetLoactionButtonState();
+                    InfoWindowFragment infoWindowFragment = getInfoWindowFragment();
+                    if (infoWindowFragment == mBottomFragment) {
+                        ItemizedOverlay itemizedOverlay = infoWindowFragment.getItemizedOverlay();
+                        String overlayName = itemizedOverlay.getName();
+                        if (ItemizedOverlay.BUSLINE_OVERLAY.equals(overlayName) ||
+                                ItemizedOverlay.TRAFFIC_OVERLAY.equals(overlayName)) {
+                            return;
+                        }
+                    }
+                    setTouchMode(TouchMode.NORMAL);
+                    
+                    POI poi = new POI();
+                    poi.setPosition(position);
+                    poi.setName(name);
+                    poi.setSourceType(POI.SOURCE_TYPE_MAP_POI);
+                    
+                    ItemizedOverlayHelper.drawPOIOverlay(ItemizedOverlay.MAP_POI_OVERLAY, Sphinx.this, poi);
+                }
+            });
             
             EventRegistry.addEventListener(mMapView, MapView.EventType.MOVEEND, new MapView.MoveEndEventListener(){
                 @Override
@@ -555,23 +608,36 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             EventRegistry.addEventListener(mMapView, MapView.EventType.TOUCH, new MapView.TouchEventListener(){
                 @Override
                 public void onTouchEvent(EventSource eventSource, Position position) {
-                    
-                    if (infoWindowChangeToHomeBottom(InfoWindowFragment.TYPE_LONG_CLIKED_SELECT_POINT)) {
+
+                    if(touchMode.equals(TouchMode.CHOOSE_ROUTING_END_POINT)
+                            || touchMode.equals(TouchMode.CHOOSE_ROUTING_START_POINT)) {
                         return;
                     }
                     
-                    ItemizedOverlay itemizedOverlay = mMapView.deleteOverlaysByName(ItemizedOverlay.LONG_CLICKED_OVERLAY);
-                    if (itemizedOverlay != null) {
-                        mMapView.refreshMap();
-                        
-                        int id = uiStackPeek();
-                        if (id == R.id.view_result_map) {
-                            ResultMapFragment resultMapFragment = getResultMapFragment();
-                            itemizedOverlay = resultMapFragment.getItemizedOverlay();
-                            if (itemizedOverlay != null) {
-                                showInfoWindow(R.id.view_result_map, itemizedOverlay.getItemByFocused());
-                            }
+                    if(touchMode.equals(TouchMode.MEASURE_DISTANCE)) {
+                        return;
+                    }
+                    
+                    resetLoactionButtonState();
+                    InfoWindowFragment infoWindowFragment = getInfoWindowFragment();
+                    if (infoWindowFragment == mBottomFragment) {
+                        ItemizedOverlay itemizedOverlay = infoWindowFragment.getItemizedOverlay();
+                        String overlayName = itemizedOverlay.getName();
+                        if (ItemizedOverlay.BUSLINE_OVERLAY.equals(overlayName) ||
+                                ItemizedOverlay.TRAFFIC_OVERLAY.equals(overlayName)) {
+                            return;
                         }
+                    }
+                    
+                    if (infoWindowBackInHome(ItemizedOverlay.LONG_CLICKED_OVERLAY)
+                            || infoWindowBackInHome(ItemizedOverlay.MAP_POI_OVERLAY)) {
+                        return;
+                    }
+
+                    
+                    if (infoWindowBackInResultMap(ItemizedOverlay.LONG_CLICKED_OVERLAY)
+                            || infoWindowBackInResultMap(ItemizedOverlay.MAP_POI_OVERLAY)) {
+                        return;
                     }
                 }
             });
@@ -580,14 +646,28 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 @Override
                 public void onTouchEvent(EventSource eventSource, Position position) {
                     
+                    if(touchMode.equals(TouchMode.CHOOSE_ROUTING_END_POINT)
+                            || touchMode.equals(TouchMode.CHOOSE_ROUTING_START_POINT)) {
+                        return;
+                    }
+                    
                     if(touchMode.equals(TouchMode.MEASURE_DISTANCE)) {
                         getMeasureDistanceFragment().addPoint(position);
                         return;
                     }
                     
                     resetLoactionButtonState();
+                    InfoWindowFragment infoWindowFragment = getInfoWindowFragment();
+                    if (infoWindowFragment == mBottomFragment) {
+                        ItemizedOverlay itemizedOverlay = infoWindowFragment.getItemizedOverlay();
+                        String overlayName = itemizedOverlay.getName();
+                        if (ItemizedOverlay.BUSLINE_OVERLAY.equals(overlayName) ||
+                                ItemizedOverlay.TRAFFIC_OVERLAY.equals(overlayName)) {
+                            return;
+                        }
+                    }
                     
-                    if (infoWindowChangeToHomeBottom(InfoWindowFragment.TYPE_MY_LOCATION)) {
+                    if (infoWindowBackInHome(ItemizedOverlay.MY_LOCATION_OVERLAY)) {
                         return;
                     }
                     
@@ -1039,9 +1119,17 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     return true;
                 }
                 
-                if (infoWindowChangeToHomeBottom(InfoWindowFragment.TYPE_MY_LOCATION)
-                        || infoWindowChangeToHomeBottom(InfoWindowFragment.TYPE_LONG_CLIKED_SELECT_POINT)) {
-                    return true;
+                if(!touchMode.equals(TouchMode.CHOOSE_ROUTING_END_POINT)
+                        && touchMode.equals(TouchMode.CHOOSE_ROUTING_START_POINT)
+                        && touchMode.equals(TouchMode.MEASURE_DISTANCE)) {
+                    
+                    if (infoWindowBackInHome(ItemizedOverlay.MY_LOCATION_OVERLAY)
+                            || infoWindowBackInHome(ItemizedOverlay.LONG_CLICKED_OVERLAY)
+                            || infoWindowBackInHome(ItemizedOverlay.MAP_POI_OVERLAY)) {
+                        
+                        resetLoactionButtonState();
+                        return true;
+                    }
                 }
                 
                 if (!uiStackBack()) {
@@ -1140,9 +1228,12 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                             }
                             if (id == R.id.button0_view) {
                                 
-                                mActionLog.addAction(ActionLog.MapTakeScreenshot);
-                                getSubwayMapFragment().setData(MapEngine.getCityInfo(MapEngine.getCityId(mMapView.getCenterPosition())));
-                                showView(R.id.view_subway_map);
+                                mActionLog.addAction(ActionLog.MapSubway);
+                                CityInfo cityInfo = Globals.getCurrentCityInfo(mThis);
+                                if (cityInfo != null && cityInfo.isAvailably()) {
+                                    getSubwayMapFragment().setData(cityInfo);
+                                    showView(R.id.view_subway_map);
+                                }
                                 
                             } else if (id == R.id.button1_view) {
                                 mActionLog.addAction(ActionLog.MapTakeScreenshot);
@@ -1221,18 +1312,12 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 String uriStr = uri.toString();
                 String[] parms = uriStr.substring(uriStr.indexOf("?")+1).split("&");
                 String[] parm = parms[0].split("=");
-                POI poi = new POI();
+                POI poi = null;
                 if ("latlon".equals(parm[0])) {
                     Position position = new Position(parm[1]);
                     mMapView.setZoomLevel(TKConfig.ZOOM_LEVEL_LOCATION);
                     mMapView.panToPosition(position);
-                    poi.setPosition(position);
-                    String name = MapEngine.getPositionName(poi.getPosition(), (int)mMapView.getZoomLevel());
-                    if (!TextUtils.isEmpty(name)) {
-                        poi.setName(name);
-                    } else {
-                        poi.setName(getString(R.string.select_point));
-                    }
+                    poi = getPOI(position, getString(R.string.select_point));
                 }
                 boolean query = false;
                 try {
@@ -1300,9 +1385,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 boolean query = false;
                 if (uriStr.indexOf("?") > -1) {
                     lon = Double.parseDouble(uriStr.substring(0, uriStr.indexOf("?")));
-                    LogWrapper.d("Sphinx", "initIntent() lon="+lon);
-                    mMapView.centerOnPosition(new Position(lat, lon), TKConfig.ZOOM_LEVEL_LOCATION);
-                    poi.setPosition(new Position(lat, lon));
+                    Position position = new Position(lat, lon);
+                    poi = getPOI(position, getString(R.string.select_point));
+                    mMapView.centerOnPosition(position, TKConfig.ZOOM_LEVEL_LOCATION);
                     uriStr = uriStr.substring(uriStr.indexOf("?")+1);
                     String[] parm = uriStr.split("=");
                     if ("z".equals(parm[0])) {
@@ -1318,11 +1403,12 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     }
                 } else {
                     lon = Double.parseDouble(uriStr);
-                    poi.setPosition(new Position(lat, lon));
-                    mMapView.centerOnPosition(new Position(lat, lon), TKConfig.ZOOM_LEVEL_LOCATION);
+                    Position position = new Position(lat, lon);
+                    poi = getPOI(position, getString(R.string.select_point));
+                    mMapView.centerOnPosition(position, TKConfig.ZOOM_LEVEL_LOCATION);
                 }
                 if (query == false && Util.inChina(poi.getPosition())) {
-                    String name = MapEngine.getPositionName(poi.getPosition(), (int)mMapView.getZoomLevel());
+                    String name = mMapEngine.getPositionName(poi.getPosition());
                     if (!TextUtils.isEmpty(name)) {
                         poi.setName(name);
                     } else {
@@ -1346,9 +1432,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             }
             uiStackClose(new int[]{R.id.view_home});
             showView(R.id.view_home);
-            POI poi = getCenterPOI();
-            if (poi.getSourceType() == POI.SOURCE_TYPE_MY_LOCATION) {
-                poi.setName(MapEngine.getPositionName(poi.getPosition(), (int)mMapView.getZoomLevel()));
+            POI poi = getMyLocationPOI();
+            if (poi.getPosition() != null) {
                 List<POI> list = new ArrayList<POI>();
                 list.add(poi);
                 ItemizedOverlayHelper.drawPOIOverlay(this, list, 0);
@@ -1590,11 +1675,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             baseFragment.onPause();
         }
 
-        if (null != mMapView && null != mMapEngine) {
-            Position position = mMapView.getCenterPosition();
-            CityInfo cityInfo = MapEngine.getCityInfo(MapEngine.getCityId(position));
-            
-            if (cityInfo != null && cityInfo.isAvailably()){
+        CityInfo cityInfo = Globals.getCurrentCityInfo(mThis);
+        if (cityInfo != null && cityInfo.isAvailably()){
+            Position position = cityInfo.getPosition();
+            if (position != null) {
                 TKConfig.setPref(mContext, TKConfig.PREFS_LAST_LON, String.valueOf(position.getLon()));
                 TKConfig.setPref(mContext, TKConfig.PREFS_LAST_LAT, String.valueOf(position.getLat()));
                 int zoom = (int)mMapView.getZoomLevel();
@@ -2468,7 +2552,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     private HistoryFragment mHistoryFragment;
     private POIDetailFragment mPOIDetailFragment;
     private POIResultFragment mPOIResultFragment;
-    private InputSearchFragment mPOIQueryFragment;
+    private InputSearchFragment mInputSearchFragment;
     private NearbySearchFragment mPOINearbyFragment;
     private TrafficDetailFragment mTrafficDetailFragment = null;
     private TrafficResultFragment mTrafficResultFragment = null;
@@ -2506,7 +2590,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     public BaseFragment getFragment(int id) {
         BaseFragment baseFragment = null;
 
-        switch (id) {                
+        switch (id) {              
+            case R.id.view_infowindow:
+                baseFragment = getInfoWindowFragment();
+                break;     
             case R.id.view_more_home:
                 baseFragment = getMoreFragment();
                 break;
@@ -2683,6 +2770,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         synchronized (mUILock) {
             if (mInfoWindowFragment == null) {
                 InfoWindowFragment fragment = new InfoWindowFragment(Sphinx.this);
+                fragment.setId(R.id.view_infowindow);
                 fragment.onCreate(null);
                 mInfoWindowFragment = fragment;
             }
@@ -2823,13 +2911,13 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     
     public InputSearchFragment getInputSearchFragment() {
         synchronized (mUILock) {
-            if (mPOIQueryFragment == null) {
+            if (mInputSearchFragment == null) {
                 InputSearchFragment poiQueryFragment = new InputSearchFragment(Sphinx.this);
                 poiQueryFragment.setId(R.id.view_poi_input_search);
                 poiQueryFragment.onCreate(null);
-                mPOIQueryFragment = poiQueryFragment;
+                mInputSearchFragment = poiQueryFragment;
             }
-            return mPOIQueryFragment;
+            return mInputSearchFragment;
         }
     }
     
@@ -3182,8 +3270,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     private MyLocation mMyLocation;
     private ItemizedOverlay mMyLocationOverlay;
     private Circle mMyLocationCircle;
-    private Position lastMyPosition;
-    private String lastMyPositionName;
     private Runnable mLocationChangedRun = new Runnable() {
         
         @Override
@@ -3194,17 +3280,34 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             if (myLocationCityInfo != null) {
                 myPosition = myLocationCityInfo.getPosition();
             }
-
-            String name = MapEngine.getPositionName(myPosition);
-            
-            if (lastMyPosition == myPosition || (lastMyPosition != null && lastMyPosition.equals(myPosition) && lastMyPositionName != null && lastMyPositionName.equals(name))) {
-                return;
+            String name = mMapEngine.getPositionName(myPosition);
+            if (name == null) {
+                name = myLocationCityInfo.getCName();
             }
-            lastMyPosition = myPosition;
-            lastMyPositionName = name;
+            
+            if (myPosition != null && name != null) {
+                if (myPosition.equals(mMyLocation.getPosition()) && name.equals(mMyLocation.getMessage())) {
+                    return;
+                }
+            } else if (myPosition != null && name == null) {
+                if (myPosition.equals(mMyLocation.getPosition()) && mMyLocation.getMessage() == null) {
+                    return;
+                }
+            } else if (myPosition == null) {
+                if (mMyLocation.getPosition() == null) {
+                    return;
+                }
+            }
             
             if (mMapView.isStopRefreshMyLocation()) {
                 return;
+            }
+            
+            try {
+                mMyLocation.setPosition(myPosition);
+                mMyLocation.setMessage(name);
+            } catch (APIException e) {
+                e.printStackTrace();
             }
             
             updateMyLocation();
@@ -3212,8 +3315,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     };
     
     public void updateMyLocation() {
-        final Position myPosition = lastMyPosition;
-        updateMyLocationOverlay(myPosition); 
+        final Position myPosition = mMyLocation.getPosition();
+        updateMyLocationOverlay(); 
         
         if (myPosition != null) {
             if (MyLocation.MODE_NONE == mMyLocation.mode) {
@@ -3265,11 +3368,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         }
     };
     
-    private boolean updateMyLocationOverlay(Position myLocation){
+    private boolean updateMyLocationOverlay(){
         try {
-            mMyLocation.setPosition(myLocation);
+            Position myLocation = mMyLocation.getPosition();
             if(myLocation==null) {
-                    
                 mMapView.deleteOverlaysByName(ItemizedOverlay.MY_LOCATION_OVERLAY);
                 mMapView.deleteShapeByName(Shape.MY_LOCATION);
                 mMapView.refreshMap();
@@ -3295,30 +3397,23 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 
                 POI poi = (POI) mMyLocation.getAssociatedObject();
                 poi.setPosition(myLocation);
-                
-                String lastName = poi.getName();
-                String name = MapEngine.getPositionName(myLocation);
-                poi.setName(name);
-                
-                if(!myLocation.equals(mMyLocation.getPosition())
-                        || (lastName != null && lastName.equals(name) == false)){
+                poi.setName(mMyLocation.getMessage());
                     
-                    if (mRequestLocation) {
-                        mRequestLocation = false;
-                        showTip(getString(R.string.location_success, Utility.formatMeterString((int)myLocation.getAccuracy())), 3000);
-                        if (uiStackPeek() == R.id.view_home) {
-                            showInfoWindow(R.id.view_home, mMyLocation);
-                        }
-                    } else {
-                        
-                        InfoWindowFragment fragment = getInfoWindowFragment();
-                        if (fragment == mBottomFragment && fragment.getItemizedOverlay() == mMyLocationOverlay) {
-                            fragment.setData(fragment.getOwerFragmentId(), mMyLocationOverlay, fragment.mActionTag);
-                        }
+                if (mRequestLocation) {
+                    mRequestLocation = false;
+                    showTip(getString(R.string.location_success, Utility.formatMeterString((int)myLocation.getAccuracy())), 3000);
+                    if (uiStackPeek() == R.id.view_home) {
+                        showInfoWindow(R.id.view_home, mMyLocation);
                     }
+                } else {
                     
-                    mMapView.refreshMap();
+                    InfoWindowFragment fragment = getInfoWindowFragment();
+                    if (fragment == mBottomFragment && fragment.getItemizedOverlay() == mMyLocationOverlay) {
+                        fragment.setData(fragment.getOwerFragmentId(), mMyLocationOverlay, fragment.mActionTag);
+                    }
                 }
+                
+                mMapView.refreshMap();
             }
             
             return true;
@@ -3506,31 +3601,50 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         }
     }
     
-    private boolean infoWindowChangeToHomeBottom(int type) {
+    private boolean infoWindowBackInHome(String overlayName) {
         
         boolean result = false;
         
         BaseFragment bottomfragment = mBottomFragment;
         InfoWindowFragment infoWindowFragment = getInfoWindowFragment();
-        int currentType = infoWindowFragment.getType();
         HomeFragment homeFragment = getHomeFragment();
-        
-        if (bottomfragment != null
+
+        int id = uiStackPeek();
+        if (id == R.id.view_home
+                && bottomfragment != null
                 && bottomfragment == infoWindowFragment
-                && uiStackPeek() == R.id.view_home
-                && currentType == type) {
+                && overlayName.equals(infoWindowFragment.getItemizedOverlay().getName())) {
             
+            result = true;
             homeFragment.mBottomFrament = getHomeBottomFragment();
             replaceBottomUI(homeFragment);
-            result = true;
-            resetLoactionButtonState();
             
-            if (type == InfoWindowFragment.TYPE_LONG_CLIKED_SELECT_POINT) {
-                mMapView.deleteOverlaysByName(ItemizedOverlay.LONG_CLICKED_OVERLAY);
-                mMapView.refreshMap();
-            }
+            mMapView.deleteOverlaysByName(overlayName);
         }
         
+        return result;
+    }
+    
+    private boolean infoWindowBackInResultMap(String overlayName) {
+
+        boolean result = false;
+        InfoWindowFragment infoWindowFragment = getInfoWindowFragment();
+
+        int id = uiStackPeek();
+        if (id == R.id.view_result_map
+                && overlayName.equals(infoWindowFragment.getItemizedOverlay().getName())) {
+            ItemizedOverlay itemizedOverlay = mMapView.deleteOverlaysByName(overlayName);
+            if (itemizedOverlay != null) {
+                result = true;
+                mMapView.refreshMap();
+                ResultMapFragment resultMapFragment = getResultMapFragment();
+                itemizedOverlay = resultMapFragment.getItemizedOverlay();
+                if (itemizedOverlay != null) {
+                    showInfoWindow(R.id.view_result_map, itemizedOverlay.getItemByFocused());
+                }
+            }
+        }
+
         return result;
     }
     
@@ -3541,24 +3655,23 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     public POI getMyLocationPOI() {
         POI poi = null;
         if (mMyLocation.getPosition() != null) {
-            poi = ((POI) mMyLocation.getAssociatedObject()).clone();
-            poi.setSourceType(POI.SOURCE_TYPE_MY_LOCATION);
+            poi = ((POI) mMyLocation.getAssociatedObject());
         }
         return poi;
     }
     
     public POI getCenterPOI() {
-        POI poi = getPOI(mMapView.getCenterPosition());
+        POI poi = getPOI(mMapView.getCenterPosition(), getString(R.string.map_center));
         poi.setSourceType(POI.SOURCE_TYPE_MAP_CENTER);
         return poi;
     }
     
-    public POI getPOI(Position position) {
+    public POI getPOI(Position position, String defaultName) {
         
         POI poi = new POI();
-        String name = MapEngine.getPositionName(position, (int)mMapView.getZoomLevel());
-        if (TextUtils.isEmpty(name)) {
-            name = getString(R.string.select_point);
+        String name = mMapEngine.getPositionName(position);
+        if (name == null) {
+            name = defaultName;
         }
         poi.setName(name);
         poi.setPosition(position);

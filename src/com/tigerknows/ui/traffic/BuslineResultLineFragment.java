@@ -117,6 +117,7 @@ public class BuslineResultLineFragment extends BaseFragment {
         mCommentTxv.setText(getString(R.string.busline_result_title, mBuslineQuery.getKeyword(), 
         		mBuslineModel.getTotal()));
         mTitleBtn.setText(getString(R.string.title_busline_result));
+        mRightBtn.setVisibility(View.GONE);
     	
         if (mResultLsv.isFooterSpringback()) {
             mSphinx.getHandler().postDelayed(mTurnPageRun, 1000);

@@ -21,7 +21,6 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioGroup;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.decarta.android.util.LogWrapper;
@@ -33,7 +32,6 @@ import com.tigerknows.android.location.Position;
 import com.tigerknows.android.os.TKAsyncTask;
 import android.widget.Toast;
 import com.tigerknows.common.ActionLog;
-import com.tigerknows.map.CityInfo;
 import com.tigerknows.map.MapEngine;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.LocationQuery;
@@ -528,7 +526,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
     }
     
 	public static String getMyLocationName(Sphinx mSphinx, Position position) {
-		String mLocationName = MapEngine.getPositionName(position);
+		String mLocationName = mSphinx.getMapEngine().getPositionName(position);
 		return mLocationName;
 	}
 	

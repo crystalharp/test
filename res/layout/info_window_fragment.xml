@@ -4,11 +4,13 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:gravity="left|top"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:background="@drawable/btn_home_bottom" >
 
     <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:padding="8dp" >
 
         <TextView
             android:id="@+id/title_txv"
@@ -20,7 +22,7 @@
             android:singleLine="true"
             android:text="@string/app_name"
             android:textColor="@color/black_dark"
-            android:textSize="14sp" >
+            android:textSize="16sp" >
         </TextView>
 
         <TextView
@@ -31,7 +33,7 @@
             android:ellipsize="end"
             android:singleLine="true"
             android:text="@string/app_name"
-            android:textColor="@color/black_dark"
+            android:textColor="@color/black_light"
             android:textSize="14sp" >
         </TextView>
 
@@ -41,6 +43,12 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_gravity="center_vertical"
+            android:textColor="@color/white"
+            android:background="@drawable/btn_confirm"
+            android:paddingLeft="12dp"
+            android:paddingTop="8dp"
+            android:paddingRight="12dp"
+            android:paddingBottom="8dp"
             android:text="@string/detail" />
     </RelativeLayout>
 
@@ -64,31 +72,18 @@
         </TextView>
 
         <TextView
-            android:id="@+id/hotel_rmb_text_txv"
+            android:id="@+id/hotel_category_txv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBaseline="@id/hotel_price_txv"
             android:layout_alignParentTop="true"
+            android:layout_marginLeft="8dp"
             android:layout_toRightOf="@id/hotel_price_txv"
-            android:focusable="false"
-            android:singleLine="true"
-            android:text="@string/qi"
-            android:textColor="@color/black_light"
-            android:textSize="14sp" />
-
-        <TextView
-            android:id="@+id/hotel_can_reserve_txv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:background="#99000000"
             android:focusable="false"
             android:gravity="left"
             android:singleLine="true"
-            android:text="@string/can_not_reserve"
-            android:textColor="@color/white"
-            android:textSize="16sp" />
+            android:text="@string/app_name"
+            android:textColor="@color/black_light"
+            android:textSize="12sp" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -139,42 +134,58 @@
             android:textSize="16sp"
             android:textStyle="bold" >
         </TextView>
-
-        <TextView
-            android:id="@+id/tuangou_rmb_text_txv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_toRightOf="@id/tuangou_price_txv"
-            android:focusable="false"
-            android:singleLine="true"
-            android:text="@string/rmb_text"
-            android:textColor="@color/black_light"
-            android:textSize="14sp" />
     </RelativeLayout>
 
     <LinearLayout
         android:id="@+id/bottom_view"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="8dp"
         android:orientation="horizontal"
         android:weightSum="2" >
 
-        <Button
+            
+        <LinearLayout 
             android:id="@+id/poi_btn"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
             android:layout_weight="1"
-            android:text="@string/nearby_search" />
-
-        <Button
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:background="@drawable/btn_dialog_map_tools_left"  >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:singleLine="true"
+                android:textSize="14sp"
+                android:textColor="@color/black_dark"
+                android:drawableLeft="@drawable/ic_infowindow_search_poi"
+                android:gravity="center"
+                android:text="@string/search_perimeter"/>
+        </LinearLayout>
+            
+        <LinearLayout 
             android:id="@+id/traffic_btn"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
             android:layout_weight="1"
-            android:text="@string/traffic" />
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:background="@drawable/btn_dialog_map_tools_right"  >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:singleLine="true"
+                android:textSize="14sp"
+                android:textColor="@color/black_dark"
+                android:drawableLeft="@drawable/ic_infowindow_search_trafic"
+                android:gravity="center"
+                android:text="@string/query_line"/>
+        </LinearLayout>
     </LinearLayout>
 
 </LinearLayout>
