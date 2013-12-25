@@ -770,21 +770,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             overlay.isShowInPreferZoom = false;
         }
 	}
-	
-	private void checkCitySupportDiscover(int cityId) {
-	    boolean support = DataQuery.checkDiscoveryCity(cityId);
-        if (support == false) {
-            return;
-        }
-	    String discover = TKConfig.getPref(this, TKConfig.PREFS_HINT_DISCOVER_HOME);
-	    boolean show = TextUtils.isEmpty(discover);
-	    if (show == false) {
-	        return;
-	    }
-        if (support) {
-        } else {
-        }
-	}
 
     @Override
     //为了防止万一程序被销毁的风险，这个方法可以保证重要数据的正确性
@@ -1726,10 +1711,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     public void changeCity(CityInfo cityInfo) {
         if (cityInfo.isAvailably()) {
             
-            int cityId = cityInfo.getId();
             mMapView.centerOnPosition(cityInfo.getPosition(), cityInfo.getLevel(), true);
             updateCityInfo(cityInfo);
-            checkCitySupportDiscover(cityId);
             if (!mViewedCityInfoList.contains(cityInfo)) {
                 mViewedCityInfoList.add(cityInfo);
             }
@@ -3622,7 +3605,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             homeFragment.mBottomFrament = getHomeBottomFragment();
             replaceBottomUI(homeFragment);
             
-            mMapView.deleteOverlaysByName(overlayName);
+            if (ItemizedOverlay.MY_LOCATION_OVERLAY.equals(overlayName) == false) {
+                mMapView.deleteOverlaysByName(overlayName);
+            }
         }
         
         return result;
