@@ -109,8 +109,8 @@
 
         <LinearLayout 
             android:id="@+id/location_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:background="@drawable/btn_location_map"
             android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
@@ -139,6 +139,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_above="@id/location_view"
+            android:layout_marginBottom="8dp"
             />
 
     </RelativeLayout>

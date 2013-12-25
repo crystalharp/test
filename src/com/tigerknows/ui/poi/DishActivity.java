@@ -918,6 +918,10 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
             
             mSelectedAdapter.notifyDataSetChanged();
         }
+        int left = Utility.dip2px(mThis, 12);
+        int top = Utility.dip2px(mThis, 8);
+        mTitleBtn.setPadding(left, top, left, top);
+        mAllBtn.setPadding(left, top, left, top);
 
         refreshData(mode, tab);
     }
