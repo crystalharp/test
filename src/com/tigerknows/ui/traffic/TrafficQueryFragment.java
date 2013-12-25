@@ -43,6 +43,7 @@ import com.tigerknows.model.TrafficModel;
 import com.tigerknows.model.TrafficModel.Plan;
 import com.tigerknows.model.TrafficModel.Station;
 import com.tigerknows.model.TrafficQuery;
+import com.tigerknows.provider.CommonPlaceTable;
 import com.tigerknows.provider.CommonPlaceTable.CommonPlace;
 import com.tigerknows.provider.HistoryWordTable;
 import com.tigerknows.provider.TrafficSearchHistoryTable;
@@ -130,6 +131,8 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
     List<SearchHistory> mQueryHistorys = new LinkedList<SearchHistory>();
     
     TrafficSearchHistoryTable mHistoryTable = new TrafficSearchHistoryTable(mSphinx);
+    
+    CommonPlaceTable mCommonPlaceTable = new CommonPlaceTable(mSphinx);
 //	int oldCheckButton;
 
 	/*
@@ -298,7 +301,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
             @Override
             public void onClick(View v) {
                 CommonPlace c = (CommonPlace) v.getTag();
-                if (c.empty) {
+                if (c.isEmptyFixedPlace()) {
                     mSphinx.showView(R.id.view_traffic_common_places);
                 } else {
                     mEnd.setPOI(c.poi);
@@ -320,7 +323,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	            child.setOnClickListener(placeItemListener);
 	            CommonPlace c = (CommonPlace) data;
 	            aliasTxv.setText(c.alias);
-	            if (c.empty) {
+	            if (c.isEmptyFixedPlace()) {
 	                descTxv.setText("click to set");
 	            } else {
 	                descTxv.setText(c.poi.getName());
@@ -813,14 +816,10 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
     }
     
     private void updateCommonPlace() {
-        mAddCommonPlace.setVisibility(View.VISIBLE);
-        if (mCommonPlaces.size() == 0) {
-            //没有设置
-            mCommonPlaces.add(new CommonPlace("home", null, true));
-        } else if (mCommonPlaces.size() >= 2) {
-            //有两条以上，不再显示入口
-            mAddCommonPlace.setVisibility(View.GONE);
-        } 
+        //暂时不能新增常用地址，只有一项
+        mAddCommonPlace.setVisibility(View.GONE);
+        mCommonPlaces.clear();
+        mCommonPlaceTable.readCommonPlace(mCommonPlaces);
         mCommonPlaceAdapter.refreshList(mCommonPlaces);
     }
 			    	

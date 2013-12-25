@@ -12,15 +12,13 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.text.TextUtils;
 
 
 public class CommonPlaceTable {
     public static final int MAX_COUNT = 50;
     public static final int HISTORY_WORD_LIST_SIZE = 3;
     public static final int HISTORY_WORD_FIRST_SIZE = 10;
-    
-    public static final int TYPE_EMPTY = 0;
-    public static final int TYPE_NO_EMPTY = 1;
     
 //    private static final LinkedList<TKWord> History_Word_POI = new LinkedList<TKWord>();
 //    public static final LinkedList<TKWord> History_Word_Traffic = new LinkedList<TKWord>();
@@ -39,7 +37,7 @@ public class CommonPlaceTable {
     // COLUMNS
     public static final String ID = "_id";
     public static final String ALIAS = "_alias";
-    public static final String EMPTY = "_empty";
+    public static final String TYPE = "_type";
     public static final String POI = "_poi";
 
     // DB NAME
@@ -54,7 +52,7 @@ public class CommonPlaceTable {
             + "( " 
             + ID + " INTEGER PRIMARY KEY, "
             + ALIAS + " TEXT not null, "
-            + EMPTY + " INTEGER, "
+            + TYPE + " INTEGER, "
             + POI + " BLOB )";
 
     public Context mCtx;
@@ -124,6 +122,12 @@ public class CommonPlaceTable {
             c.close();
         }
         
+        if (total == 0) {
+            CommonPlace cp = new CommonPlace("home", null, CommonPlace.TYPE_FIXED);
+            addCommonPlace(cp);
+            list.add(cp);
+        }
+        
         return total;
     }
     
@@ -134,8 +138,7 @@ public class CommonPlaceTable {
             if (c.getCount() > 0) {
                 String a = c.getString(c.getColumnIndex(ALIAS));
                 byte[] t = c.getBlob(c.getColumnIndex(POI));
-                int b = c.getInt(c.getColumnIndex(EMPTY));
-                boolean empty = (b == TYPE_EMPTY ? true : false);
+                int type = c.getInt(c.getColumnIndex(TYPE));
                 POI p = new POI();
                 try {
                     XMap xmap = (XMap) ByteUtil.byteToXObject(t);
@@ -143,7 +146,7 @@ public class CommonPlaceTable {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                data = new CommonPlace(a, p, empty);
+                data = new CommonPlace(a, p, type);
                 data.id = c.getLong(c.getColumnIndex(ID));
             }
         }
@@ -154,8 +157,8 @@ public class CommonPlaceTable {
         boolean isFailed = false;
         ContentValues values = new ContentValues();
         values.put(ALIAS, c.alias);
-        values.put(EMPTY, c.empty ? TYPE_EMPTY : TYPE_NO_EMPTY);
-        if (c.empty) {
+        values.put(TYPE, c.type);
+        if (c.isEmptyFixedPlace()) {
             //空的就把POI信息删掉，目前用于第一条“家”的内容
             values.put(POI, "");
         } else {
@@ -182,7 +185,6 @@ public class CommonPlaceTable {
     
 
     public int deleteCommonPlace(CommonPlace c) {
-//        int count = SqliteWrapper.delete(context, context.getContentResolver(), CONTENT_URI, "_id="+c.id, null);
 		int count = mDb.delete(TABLE_NAME,  "(" + ID + "=" + c.id + ")", null);
         c.id = -1;
         return count;
@@ -192,7 +194,7 @@ public class CommonPlaceTable {
         int count = 0;
         boolean isFailed = false;
         ContentValues values = new ContentValues();
-        if (c.empty) {
+        if (c.isEmptyFixedPlace()) {
             //空的就把POI信息删掉，目前用于第一条“家”的内容
             values.put(POI, "");
         } else {
@@ -214,30 +216,30 @@ public class CommonPlaceTable {
     
 
     public static class CommonPlace {
+        public static int TYPE_NORMAL = 0;
+        public static int TYPE_FIXED = 1;
         public String alias;
-        public boolean empty;
         public POI poi;
+        public int type;
         long id;
         
-        public CommonPlace(String a, POI p) {
-            this(a, p, false);
-        }
-        
-        public CommonPlace(String a, POI p, boolean b) {
+        public CommonPlace(String a, POI p, int t) {
             alias = a;
             poi = p;
-            empty = b;
+            type = t;
+        }
+        
+        public void delete() {
+            if (type == TYPE_FIXED) {
+                poi = null;
+            }
+        }
+        
+        public boolean isEmptyFixedPlace() {
+            return (type == TYPE_FIXED && 
+                    (poi == null || TextUtils.isEmpty(poi.getName())));
         }
         
     }
     
-
-    public static class FixedCommonPlace extends CommonPlace {
-        public boolean empty;
-
-        public FixedCommonPlace(String a, POI p, boolean b) {
-            super(a, p);
-            empty = b;
-        }
-    }
 }

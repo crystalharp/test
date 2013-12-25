@@ -37,12 +37,12 @@ public class TrafficCommonPlaceFragment extends BaseFragment{
 
         @Override
         public void onConfirmed(POI p) {
-            if (clickedPos == mList.size() && clickedPos != 0) {
-                //点到了新增
-                mList.add(new CommonPlace("common", p, false));
-            } else {
+//            if (clickedPos == mList.size() && clickedPos != 0) {
+//                //点到了新增
+//                mList.add(new CommonPlace("common", p, CommonPlace.TYPE_NORMAL));
+//            } else {
                 mList.setPOI(clickedPos, p);
-            }
+//            }
             mAdapter.notifyDataSetChanged();
             
         }};
@@ -97,12 +97,13 @@ public class TrafficCommonPlaceFragment extends BaseFragment{
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
                     long arg3) {
                 clickedPos = arg2;
-                if (arg2 == mAdapter.getCount() - 1 || 
-                        (arg2 == 0 && mList.get(0).empty)) {
-                    mSphinx.getInputSearchFragment().setMode(InputSearchFragment.MODE_TRANSFER);
-                    mSphinx.getInputSearchFragment().setConfirmedCallback(a);
-                    mSphinx.showView(mSphinx.getInputSearchFragment().getId());
+                CommonPlace c = mList.get(arg2);
+                mSphinx.getInputSearchFragment().setMode(InputSearchFragment.MODE_TRANSFER);
+                mSphinx.getInputSearchFragment().setConfirmedCallback(a);
+                if (c.poi != null) {
+                    mSphinx.getInputSearchFragment().setData(c.poi.getName());
                 }
+                mSphinx.showView(mSphinx.getInputSearchFragment().getId());
             }
         });
     }
@@ -111,20 +112,9 @@ public class TrafficCommonPlaceFragment extends BaseFragment{
     class CommonPlaceList {
         List<CommonPlace> mList = new LinkedList<CommonPlace>();
         CommonPlaceTable table = new CommonPlaceTable(mSphinx);
-        
-//        int init() {
-//            table.readCommonPlace(mList);
-//            if (mList.size() == 0) {
-//                add(new CommonPlace("home", null, true));
-//            }
-//            return mList.size();
-//        }
-        
+                
         public CommonPlaceList() {
             table.readCommonPlace(mList);
-            if (mList.size() == 0) {
-                add(new CommonPlace("home", null, true));
-            }
         }
         
         void add(CommonPlace c) {
@@ -135,21 +125,18 @@ public class TrafficCommonPlaceFragment extends BaseFragment{
         void setPOI(int pos, POI p) {
             if (pos < mList.size()) {
                 mList.get(pos).poi = p;
-                if (pos == 0 && p != null) {
-                    mList.get(pos).empty = false;
-                }
                 table.updateDatabase(mList.get(pos));
             }
         }
         
         void remove(int pos) {
             if (pos < mList.size()) {
-                if (pos == 0) {
-                    mList.get(0).empty = true;
-                    setPOI(0, null);
-                } else {
+                mList.get(pos).delete();
+                if (mList.get(pos).type == CommonPlace.TYPE_NORMAL) {
                     table.deleteCommonPlace(mList.get(pos));
                     mList.remove(pos);
+                } else {
+                    table.updateDatabase(mList.get(pos));
                 }
             }
         }
@@ -178,7 +165,7 @@ public class TrafficCommonPlaceFragment extends BaseFragment{
         
         @Override
         public int getCount() {
-            return mList.size() + 1;
+            return mList.size();
         }
 
         @Override
@@ -201,18 +188,18 @@ public class TrafficCommonPlaceFragment extends BaseFragment{
             Button delBtn = (Button) convertView.findViewById(R.id.del_btn);
             delBtn.setOnClickListener(l);
             // the last one is "add place"
-            if (position == mList.size()) {
-                aliasTxv.setText("add place");
-                descTxv.setVisibility(View.GONE);
-                delBtn.setVisibility(View.GONE);
-            } else {
-                descTxv.setVisibility(View.VISIBLE);
-                CommonPlace c = (CommonPlace) getItem(position);
-                delBtn.setVisibility(delMode ? View.VISIBLE : View.GONE);
-                descTxv.setText(c.empty ? "click to set" : c.poi.getName());
-                aliasTxv.setText(c.alias);
-                delBtn.setTag(position);
-            }
+//            if (position == mList.size()) {
+//                aliasTxv.setText("add place");
+//                descTxv.setVisibility(View.GONE);
+//                delBtn.setVisibility(View.GONE);
+//            } else {
+            descTxv.setVisibility(View.VISIBLE);
+            CommonPlace c = (CommonPlace) getItem(position);
+            delBtn.setVisibility(delMode ? View.VISIBLE : View.GONE);
+            descTxv.setText(c.isEmptyFixedPlace() ? "click to set" : c.poi.getName());
+            aliasTxv.setText(c.alias);
+            delBtn.setTag(position);
+//            }
             return convertView;
         }
         
