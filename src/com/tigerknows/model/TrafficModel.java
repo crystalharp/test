@@ -87,6 +87,23 @@ public class TrafficModel extends XMapData {
         // 0x10 x_string 出发方向
         private static final byte FIELD_START_OUT_ORIENTATION = 0x10;
         
+        // 0x11    x_string    预计时间(驾车类)
+        private static final byte FIELD_EXPECTED_DRIVE_TIME = 0x11;
+        // 0x12    x_string    全程距离(驾车类)
+        private static final byte FIELD_DRIVE_DISTANCE = 0x12;
+        // 0x13    x_string    红绿灯数(驾车类)
+        private static final byte FIELD_TRAFFIC_LIGHT_NUM = 0x13;
+        // 0x14    x_string    打车费用(驾车类)
+        private static final byte FIELD_TAXI_COST = 0x14;
+        // 0x21    x_string    预计时间(公交类)
+        private static final byte FIELD_EXPECTED_BUS_TIME = 0x15;
+        // 0x22    x_string    全程长度(公交类)
+        private static final byte FIELD_BUS_DISTANCE = 0x16;
+        // 0x23    x_string    总步行距离(公交类)
+        private static final byte FIELD_WALK_DISTANCE = 0x17;
+        // 0x24    x_string    公交站数(公交类) 
+        private static final byte FIELD_BUSSTOP_NUM = 0x18;
+        
         public static final int TRANSFER_WALK_MIN_DISTANCE = 50;
 
         public static class Step extends XMapData {
@@ -731,6 +748,22 @@ public class TrafficModel extends XMapData {
         
         private POI end;
         
+        private String expectedDriveTime;
+        
+        private String driveDistance;
+        
+        private String trafficLightNum;
+        
+        private String taxiCost;
+        
+        private String expectedBusTime;
+        
+        private String busDistance;
+        
+        private String walkDistance;
+        
+        private String busstopNum;
+        
         private List<Position> routeGeometry = new ArrayList<Position>();
         
         /*
@@ -793,6 +826,22 @@ public class TrafficModel extends XMapData {
         public void setStartOutOrientation(String startOutOrientation) {
             this.startOutOrientation = startOutOrientation;
         }
+
+        public String getExpectedDriveTime() {  return expectedDriveTime;}
+        
+        public String getDriveDistance() {  return driveDistance;}
+        
+        public String getTrafficLightNum() {  return trafficLightNum;}
+        
+        public String getTaxiCost() {  return taxiCost;}
+        
+        public String getExpectedBusTime() {  return expectedBusTime;}
+        
+        public String getBusDistance() {  return busDistance;}
+        
+        public String getWalkDistance() {  return walkDistance;}
+        
+        public String getBusstopNum() {  return busstopNum;}
         
         /**
          * 获取交通方案路线所经过的所有经纬坐标点
@@ -820,6 +869,14 @@ public class TrafficModel extends XMapData {
             length = (int)getLongFromData(FIELD_LENGTH, reset ? 0 : length);
             stepList = getListFromData(FIELD_STEP_LIST, Step.Initializer, reset ? null : stepList);
             startOutOrientation = getStringFromData(FIELD_START_OUT_ORIENTATION, reset ? null : startOutOrientation);
+            expectedDriveTime = getStringFromData(FIELD_EXPECTED_DRIVE_TIME, reset ? null : expectedDriveTime);
+            driveDistance = getStringFromData(FIELD_DRIVE_DISTANCE, reset ? null : driveDistance);
+            trafficLightNum = getStringFromData(FIELD_TRAFFIC_LIGHT_NUM, reset ? null : trafficLightNum);
+            taxiCost = getStringFromData(FIELD_TAXI_COST, reset ? null : taxiCost);
+            expectedBusTime = getStringFromData(FIELD_EXPECTED_BUS_TIME, reset ? null : expectedBusTime);
+            busDistance = getStringFromData(FIELD_BUS_DISTANCE, reset ? null : busDistance);
+            walkDistance = getStringFromData(FIELD_WALK_DISTANCE, reset ? null : walkDistance);
+            busstopNum = getStringFromData(FIELD_BUSSTOP_NUM, reset ? null : busstopNum);
 
             if (stepList != null) {
                 for (int i = 0, size = stepList.size(); i < size; i++) {
@@ -1199,6 +1256,49 @@ public class TrafficModel extends XMapData {
             }
         };
     }
+    // 0x11    x_map   附加信息
+    private static final byte FIELD_ADDTIONAL_INFO = 0x11;
+    
+    public static class AddtionalInfo extends XMapData {
+        //0x01    x_string    打车路线耗时
+        private static final byte FIELD_TAXI_TIME = 0x01;
+        
+        //0x02    x_string    打车路线里程
+        private static final byte FIELD_TAXI_DISTANCE = 0x02;
+        
+        //0x03    x_string    打车预计花费 
+        private static final byte FIELD_TAXI_COST = 0x03;
+        
+        private String taxiTime;
+        
+        private String taxiDistance;
+        
+        private String taxiCost;
+        
+        public String getTaxiTime() { return taxiTime ;}
+        
+        public String getTaxiDistance() { return taxiDistance ;}
+        
+        public String getTaxiCost() { return taxiCost ;}
+        
+        public AddtionalInfo(XMap data) throws APIException {
+            super(data);
+
+            taxiTime = data.getString(FIELD_TAXI_TIME);
+            
+            taxiDistance = data.getString(FIELD_TAXI_DISTANCE);
+            
+            taxiCost = data.getString(FIELD_TAXI_COST);
+        }
+        
+        public static XMapInitializer<AddtionalInfo> Initializer = new XMapInitializer<AddtionalInfo>() {
+
+            @Override
+            public AddtionalInfo init(XMap data) throws APIException {
+                return new AddtionalInfo(data);
+            }
+        };
+    }
     
     // 0x20 x_array<x_map> array<起点备选站点>
     private static final byte FIELD_START_ALTERNATIVES_LIST = 0x20;
@@ -1294,6 +1394,7 @@ public class TrafficModel extends XMapData {
     private String startName;
     private String endName;
     private List<Plan> planList;
+    private AddtionalInfo addtionalInfo;
     private List<Station> startAlternativesList;
     private List<Station> endAlternativesList;
     
@@ -1341,6 +1442,10 @@ public class TrafficModel extends XMapData {
     public List<Plan> getPlanList() {
         return planList;
     }
+    
+    public AddtionalInfo getAddtionalInfo() {
+        return addtionalInfo;
+    }
 
     public List<Station> getStartAlternativesList() {
         return startAlternativesList;
@@ -1375,6 +1480,7 @@ public class TrafficModel extends XMapData {
         this.type = (int)getLongFromData(FIELD_TYPE);
         this.startName = getStringFromData(FIELD_START_NAME);
         this.endName = getStringFromData(FIELD_END_NAME);
+        this.addtionalInfo = getObjectFromData(FIELD_ADDTIONAL_INFO, AddtionalInfo.Initializer);
         if (TYPE_PROJECT == this.type) {
             this.planList = getListFromData(FIELD_PROJECT_LIST, Plan.Initializer);
             if (this.planList != null) {
