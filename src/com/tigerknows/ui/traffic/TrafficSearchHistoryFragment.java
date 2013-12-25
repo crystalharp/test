@@ -43,7 +43,6 @@ public class TrafficSearchHistoryFragment extends BaseFragment {
         mRootView = mLayoutInflater.inflate(R.layout.traffic_transfer_history, container, false);
         
         findView();
-        updateData();
         return mRootView;
     }
 
@@ -56,6 +55,7 @@ public class TrafficSearchHistoryFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
         mTitleBtn.setText("Search History");
+        updateData();
         mRightBtn.setBackgroundResource(R.drawable.btn_close);
         mRightBtn.setOnClickListener(new View.OnClickListener() {
             

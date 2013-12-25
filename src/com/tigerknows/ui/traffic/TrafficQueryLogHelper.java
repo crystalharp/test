@@ -4,7 +4,6 @@ import android.text.TextUtils;
 
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.TKWord;
-import com.tigerknows.ui.traffic.TrafficQueryFragment.QueryEditText;
 import com.tigerknows.widget.SuggestArrayAdapter;
 
 /**
@@ -50,10 +49,10 @@ public class TrafficQueryLogHelper {
 //		}
 //	}
 	
-	public int logForSuggestDispatch(QueryEditText edt, int index) {
-		if (TextUtils.isEmpty(edt.getEdt().getText().toString())) {
-			return index;
-		} else {
+//	public int logForSuggestDispatch(QueryEditText edt, int index) {
+//		if (TextUtils.isEmpty(edt.getEdt().getText().toString())) {
+//			return index;
+//		} else {
 //			SuggestArrayAdapter adapter = (SuggestArrayAdapter)mQueryFragment.mSuggestLsv.getAdapter();
 //			TKWord tkWord =  adapter.getItem(index);
 //			if (tkWord.attribute == TKWord.ATTRIBUTE_HISTORY) {
@@ -70,7 +69,7 @@ public class TrafficQueryLogHelper {
 //			    }
 //			    return index - hisWordCount;
 //			}
-		}
-        return index;
-	}
+//		}
+//        return index;
+//	}
 }

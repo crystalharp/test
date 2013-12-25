@@ -99,9 +99,9 @@ public class TrafficCommonPlaceFragment extends BaseFragment{
                 clickedPos = arg2;
                 if (arg2 == mAdapter.getCount() - 1 || 
                         (arg2 == 0 && mList.get(0).empty)) {
-                    mSphinx.getPOIQueryFragment().setMode(InputSearchFragment.MODE_TRANSFER);
-                    mSphinx.getPOIQueryFragment().setConfirmedCallback(a);
-                    mSphinx.showView(mSphinx.getPOIQueryFragment().getId());
+                    mSphinx.getInputSearchFragment().setMode(InputSearchFragment.MODE_TRANSFER);
+                    mSphinx.getInputSearchFragment().setConfirmedCallback(a);
+                    mSphinx.showView(mSphinx.getInputSearchFragment().getId());
                 }
             }
         });

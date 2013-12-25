@@ -1203,30 +1203,31 @@ public class Utility {
                 
                 CityInfo locationCityInfo = Globals.g_My_Location_City_Info;
                 TrafficQueryFragment trafficQueryFragment = sphinx.getTrafficQueryFragment();
+                if (location == TrafficQueryFragment.START) {
+                    trafficQueryFragment.setStart(poiForTraffic);
+                } else {
+                    trafficQueryFragment.setEnd(poiForTraffic);
+                }
+                trafficQueryFragment.setQueryType(queryType);
                 if (queryType != -1
                         && locationCityInfo != null
                         && MapEngine.getCityId(poi.getPosition()) == MapEngine.getCityId(locationCityInfo.getPosition())) {
-                    POI locationPOI = new POI();
-                    locationPOI.setSourceType(POI.SOURCE_TYPE_MY_LOCATION);
-                    locationPOI.setPosition(locationCityInfo.getPosition());
-                    locationPOI.setName(sphinx.getString(R.string.my_location));
-                    POI start;
-                    POI end;
-                    if (location == TrafficQueryFragment.START) {
-                        start = poiForTraffic;
-                        end = locationPOI;
-                    } else {
-                        start = locationPOI;
-                        end = poiForTraffic;
-                    }
+//                    POI locationPOI = new POI();
+//                    locationPOI.setSourceType(POI.SOURCE_TYPE_MY_LOCATION);
+//                    locationPOI.setPosition(locationCityInfo.getPosition());
+//                    locationPOI.setName(sphinx.getString(R.string.my_location));
+//                    POI start;
+//                    POI end;
                     
-                    sphinx.getTrafficQueryFragment().addHistoryWord(poiForTraffic, HistoryWordTable.TYPE_TRAFFIC);
-                    TrafficQueryFragment.submitTrafficQuery(sphinx, start, end, queryType);
+//                    sphinx.getTrafficQueryFragment().addHistoryWord(poiForTraffic, HistoryWordTable.TYPE_TRAFFIC);
+//                    TrafficQueryFragment.submitTrafficQuery(sphinx, start, end, queryType);
+                    trafficQueryFragment.autoStartQuery(true);
                 } else {
-                    trafficQueryFragment.setDataNoSuggest(poiForTraffic, location, queryType);
+//                    trafficQueryFragment.setDataNoSuggest(poiForTraffic, location, queryType);
                     sphinx.uiStackRemove(R.id.view_result_map);   // 再回退时不出现地图界面
-                    sphinx.showView(R.id.view_traffic_home);
+                    trafficQueryFragment.setShowStartMyLocation(false);
                 }
+                sphinx.showView(R.id.view_traffic_home);
             }
         };
         button1.setOnClickListener(onClickListener);
