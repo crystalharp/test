@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -276,7 +277,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	            mStart.setPOI(h.start);
 	            mEnd.setPOI(h.end);
 	            updateSearchHistory(h);
-	            submitTrafficQuery(h.start, h.end);
+	            submitTrafficQuery(h.start.clone(), h.end.clone());
 	        }
 	    };
 	    mQueryHistoryAdapter = new LinearListAdapter(mSphinx, mQueryHistoryLst, R.layout.traffic_transfer_his_item) {
@@ -517,25 +518,25 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
         mHistoryTable.readTrafficSearchHistory(mQueryHistorys);
         mQueryHistoryAdapter.refreshList(mQueryHistorys);
     }
-    
-    public static void submitTrafficQuery(Sphinx sphinx, POI start, POI end, int queryType) {
-        
-        if (start == null || end == null)
-            return;
-        //以下内容出现在两个submit中，以后重构的时候注意写在一块
-        if (start.getName().equals(sphinx.getString(R.string.my_location))) {
-            start.setName(getMyLocationName(sphinx, start.getPosition()));
-        } 
-        if (end.getName().equals(sphinx.getString(R.string.my_location))) {
-            end.setName(getMyLocationName(sphinx, end.getPosition()));
-        }
-        
-        TrafficQuery trafficQuery = new TrafficQuery(sphinx);
-            
-        trafficQuery.setup(start, end, queryType, R.id.view_traffic_home, sphinx.getString(R.string.doing_and_wait));
-        
-        sphinx.queryStart(trafficQuery);
-    }
+//    
+//    public static void submitTrafficQuery(Sphinx sphinx, POI start, POI end, int queryType) {
+//        
+//        if (start == null || end == null)
+//            return;
+//        //以下内容出现在两个submit中，以后重构的时候注意写在一块
+//        if (start.getName().equals(sphinx.getString(R.string.my_location))) {
+//            start.setName(getMyLocationName(sphinx, start.getPosition()));
+//        } 
+//        if (end.getName().equals(sphinx.getString(R.string.my_location))) {
+//            end.setName(getMyLocationName(sphinx, end.getPosition()));
+//        }
+//        
+//        TrafficQuery trafficQuery = new TrafficQuery(sphinx);
+//            
+//        trafficQuery.setup(start, end, queryType, R.id.view_traffic_home, sphinx.getString(R.string.doing_and_wait));
+//        
+//        sphinx.queryStart(trafficQuery);
+//    }
     
 	public static String getMyLocationName(Sphinx mSphinx, Position position) {
 		String mLocationName = mSphinx.getMapEngine().getPositionName(position);
@@ -714,21 +715,52 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
         } 
     }
 
+	class StationAdapter extends BaseAdapter {
+	    List<Station> mList;
+
+	    public StationAdapter(List<Station> list) {
+	        mList = list;
+	    }
+        @Override
+        public int getCount() {
+            return mList.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return mList.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            if (convertView == null) {
+                convertView = mLayoutInflater.inflate(R.layout.traffic_alternative_station_item, null);
+            }
+            TextView name = (TextView) convertView.findViewById(R.id.name_txv);
+            TextView address = (TextView) convertView.findViewById(R.id.address_txv);
+            name.setText(mList.get(position).getName());
+            address.setText(mList.get(position).getAddress());
+            return convertView;
+        }
+	    
+	}
     private void showAlternativeDialog(final List<Station> startStationList, final List<Station> endStationList) {
-    	List<String> list = new ArrayList<String>();
     	final boolean start = (startStationList != null);
     	final boolean end = (endStationList != null);
+    	final StationAdapter adapter;
     	//如果有start，就先处理start的对话框，处理完后如果还有end则递归，参数传（null，end）
     	if (start) {
-			for(int i = 0, size = startStationList.size(); i < size; i++) {
-				list.add(startStationList.get(i).getName());
-			}
+    	    adapter = new StationAdapter(startStationList);
     	} else 	if (end) {
-    		for(int i = 0, size = endStationList.size(); i < size; i++) {
-				list.add(endStationList.get(i).getName());
-			}
+    	    adapter = new StationAdapter(endStationList);
+    	} else {
+    	    return;
     	}
-		final ArrayAdapter<String> adapter = new StringArrayAdapter(mSphinx, list);
         
         mActionLog.addAction(ActionLog.TrafficAlternative);
         
@@ -826,10 +858,6 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
         //暂时不能新增常用地址，只有一项
         mCommonPlaces.updateData();
         mCommonPlaceAdapter.refreshList(mCommonPlaces.getList());
-    }
-    
-    private void setCommonPlace() {
-        
     }
 			    	
 	public void postTask(Runnable r) {

@@ -1213,10 +1213,15 @@ public class TrafficModel extends XMapData {
         // 0x03 x_int 纬度＊100000
         public static final byte FIELD_LATITUDE = 0x03;
         
+        // 0x04 x_string 备选站点地址
+        public static final byte FIELD_ADDRESS = 0x04;
+        
         //名称
         private String name;
         
         private Position position;
+        
+        private String address;
         
         public String getName() {
             return name;
@@ -1225,10 +1230,18 @@ public class TrafficModel extends XMapData {
         public Position getPosition() {
 			return position;
 		}
+        
+        public String getAddress() {
+            return address;
+        }
 
 		public void setName(String name) {
             this.name = name;
         }
+		
+		public void setAddress(String address) {
+		    this.address = address;
+		}
 
 		public void setPosition(Position position) {
             if (!Util.inChina(position)) {
@@ -1243,11 +1256,18 @@ public class TrafficModel extends XMapData {
             
             name = data.getString(FIELD_NAME);
             this.position = getPositionFromData(FIELD_LONGITUDE, FIELD_LATITUDE);
+            address = data.getString(FIELD_ADDRESS);
         }
         
         public Station(String name, Position position) {
         	this.name = name;
         	this.position = position;
+        }
+        
+        public Station(String name, Position position, String address) {
+        	this.name = name;
+        	this.position = position;
+        	this.address = address;
         }
         
         public POI toPOI() {
