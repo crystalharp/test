@@ -848,7 +848,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
                 public void onConfirmed(POI p) {
                     mEnd.setPOI(p);
                 }
-            });
+            }, InputSearchFragment.REQUEST_TRAFFIC_END);
             mSphinx.showView(R.id.view_poi_input_search);
             break;
             
@@ -861,7 +861,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
                 public void onConfirmed(POI p) {
                     mStart.setPOI(p);
                 }
-            });
+            }, InputSearchFragment.REQUEST_TRAFFIC_START);
             mSphinx.showView(R.id.view_poi_input_search);
             break;
             

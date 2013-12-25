@@ -99,7 +99,7 @@ public class TrafficCommonPlaceFragment extends BaseFragment{
                 clickedPos = arg2;
                 CommonPlace c = mList.get(arg2);
                 mSphinx.getInputSearchFragment().setMode(InputSearchFragment.MODE_TRANSFER);
-                mSphinx.getInputSearchFragment().setConfirmedCallback(a);
+                mSphinx.getInputSearchFragment().setConfirmedCallback(a, InputSearchFragment.REQUEST_COMMON_PLACE);
                 if (c.poi != null) {
                     mSphinx.getInputSearchFragment().setData(c.poi.getName());
                 }

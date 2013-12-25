@@ -70,8 +70,15 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
     final public static int MODE_TRANSFER = HistoryWordTable.TYPE_TRAFFIC;
     final public static int MODE_BUELINE = HistoryWordTable.TYPE_BUSLINE;
     
+    //用来标记请求的是哪个按钮
+    final public static int REQUEST_NONE = 0;
+    final public static int REQUEST_TRAFFIC_START = 1;
+    final public static int REQUEST_TRAFFIC_END = 2;
+    final public static int REQUEST_COMMON_PLACE = 3;
+    
     private int mCurMode;
     private int mCurHisWordType;
+    private int mRequestInput;
 
     private ListView mSuggestLsv = null;
     private LinearLayout mTrafficBtnGroup;
@@ -204,7 +211,12 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
     }
     
     public void setConfirmedCallback(Callback c) {
+        setConfirmedCallback(c, REQUEST_NONE);
+    }
+    
+    public void setConfirmedCallback(Callback c, int request) {
         callback = c;
+        mRequestInput = request;
     }
 
     protected void findViews() {
