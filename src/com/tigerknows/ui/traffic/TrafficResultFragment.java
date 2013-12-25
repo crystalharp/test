@@ -108,6 +108,7 @@ public class TrafficResultFragment extends BaseFragment {
         mEndTxv.setText(getString(R.string.end_text, mTrafficModel.getEnd().getName()));
 
         mTitleBtn.setText(getString(R.string.title_type_transfer));
+        mRightBtn.setVisibility(View.GONE);
         mLengthTxv.setVisibility(View.GONE);
         
         mFootLayout.setVisibility(View.GONE);

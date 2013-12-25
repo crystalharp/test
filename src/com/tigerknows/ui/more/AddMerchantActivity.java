@@ -130,7 +130,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
         setListener();
 
         mTitleBtn.setText(R.string.add_merchant);
-        mRightBtn.setBackgroundResource(R.drawable.btn_submit_comment);
+        mRightBtn.setText(R.string.submit);
         
         CityInfo cityInfo = Globals.getCurrentCityInfo(mThis);
         

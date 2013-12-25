@@ -60,8 +60,7 @@
                 >
                 <EditText
                     android:id="@+id/telephone_edt"
-                    android:layout_width="0dp"
-                    android:layout_weight="2"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:gravity="left|center_vertical"
                     android:padding="8dp"
@@ -76,27 +75,6 @@
                     android:digits="0123456789"
                     >
                 </EditText>
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/user_center_divider_v"
-                    />
-                <LinearLayout 
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:background="@color/transparent"
-                    android:gravity="center"
-                    android:orientation="horizontal"
-                    >
-                    <Button
-                        android:id="@+id/feedback_send"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/btn_send_feedback"
-                        android:gravity="center|center_vertical"
-                        />
-                </LinearLayout>
             </LinearLayout>
             <ImageView
                 android:layout_width="fill_parent"

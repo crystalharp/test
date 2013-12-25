@@ -698,6 +698,12 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         float star = poi.getGrade();
         mStartsRtb.setRating(star/2.0f);
         
+        if (poi.getUUID() == null) {
+            mStartsRtb.setVisibility(View.GONE);
+        } else {
+            mStartsRtb.setVisibility(View.VISIBLE);
+        }
+        
         if (!TextUtils.isEmpty(category)) {
             mCategoryTxv.setText(category);
         } else {
@@ -817,6 +823,10 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         mCommentListView.setVisibility(View.GONE);
         
         POI poi = mPOI;
+        if (poi.getUUID() == null) {
+            mStampImv.setVisibility(View.GONE);
+            return result;
+        }
 
         if (poi != null) {
             if (poi.isGoldStamp()) {

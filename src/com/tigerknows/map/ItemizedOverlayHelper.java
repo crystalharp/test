@@ -18,6 +18,7 @@ import com.tigerknows.Sphinx.TouchMode;
 import com.tigerknows.android.location.Position;
 import com.tigerknows.model.Dianying;
 import com.tigerknows.model.POI;
+import com.tigerknows.model.TrafficModel.Plan;
 import com.tigerknows.model.Tuangou;
 import com.tigerknows.model.Yanchu;
 import com.tigerknows.model.Zhanlan;
@@ -31,7 +32,7 @@ import java.util.List;
 
 public class ItemizedOverlayHelper {
 
-    public static void drawClickOverlay(final Sphinx sphinx, TouchMode touchMode) {
+    public static void drawClickSelectPointOverlay(Sphinx sphinx, TouchMode touchMode) {
         
         try {
             sphinx.clearMap();
@@ -45,7 +46,7 @@ public class ItemizedOverlayHelper {
             ItemizedOverlay itemizedOverlay = new ItemizedOverlay(ItemizedOverlay.CLICKED_OVERLAY);
             itemizedOverlay.addOverlayItem(overlayItem);
             
-            sphinx.showInfoWindow(sphinx.uiStackPeek(), overlayItem);
+            sphinx.showInfoWindow(overlayItem);
             
             sphinx.getCenterTokenView().setVisibility(View.VISIBLE);
             sphinx.getMapCleanBtn().setVisibility(View.INVISIBLE);
@@ -62,19 +63,18 @@ public class ItemizedOverlayHelper {
         
     }
     
-    public static ItemizedOverlay drawLongClickOverlay(final Sphinx sphinx, POI poi) {
+    public static ItemizedOverlay drawPOIOverlay(String overlayName, final Sphinx sphinx, POI poi) {
         
         ItemizedOverlay itemizedOverlay = null;
         final MapView mapView = sphinx.getMapView();
         
         try {
-            poi.setSourceType(POI.SOURCE_TYPE_LONG_CLICKED_SELECT_POINT);
             
-            ItemizedOverlay overlay = mapView.getOverlaysByName(ItemizedOverlay.LONG_CLICKED_OVERLAY);
+            ItemizedOverlay overlay = mapView.getOverlaysByName(overlayName);
             OverlayItem overlayItem;
             
             if (overlay == null) {
-                overlay = new ItemizedOverlay(ItemizedOverlay.LONG_CLICKED_OVERLAY);
+                overlay = new ItemizedOverlay(overlayName);
                 RotationTilt rt = new RotationTilt(RotateReference.SCREEN,TiltReference.SCREEN);
                 overlayItem = new OverlayItem(poi.getPosition(), Icon.getIcon(sphinx.getResources(), R.drawable.btn_bubble_b_normal, Icon.OFFSET_LOCATION_CENTER_BOTTOM), 
                         Icon.getIcon(sphinx.getResources(), R.drawable.btn_bubble_b_normal, Icon.OFFSET_LOCATION_CENTER_BOTTOM),
@@ -83,6 +83,10 @@ public class ItemizedOverlayHelper {
                 overlayItem.addEventListener(EventType.TOUCH, new OverlayItem.TouchEventListener() {
                     @Override
                     public void onTouchEvent(EventSource eventSource) {
+                        if (sphinx.getTouchMode().equals(TouchMode.CHOOSE_ROUTING_START_POINT)
+                                || sphinx.getTouchMode().equals(TouchMode.CHOOSE_ROUTING_END_POINT)) {
+                            return;
+                        }
                         if (sphinx.getTouchMode().equals(TouchMode.MEASURE_DISTANCE)) {
                             return;
                         }
@@ -90,18 +94,62 @@ public class ItemizedOverlayHelper {
                         sphinx.showInfoWindow(sphinx.uiStackPeek(), overlayItem);
                     }
                 });
-                overlayItem.isFoucsed = true;
                 overlay.addOverlayItem(overlayItem);
                 mapView.addOverlay(overlay);
             } else {
-                overlayItem = overlay.getItemByFocused();
+                overlayItem = overlay.get(0);
                 overlayItem.setPosition(poi.getPosition());
             }
             
+            overlayItem.isFoucsed = true;
+            overlayItem.setMessage(poi.getName());
             overlayItem.setAssociatedObject(poi);
             mapView.showOverlay(ItemizedOverlay.MY_LOCATION_OVERLAY, false);
             
             sphinx.showInfoWindow(sphinx.uiStackPeek(), overlayItem);
+            
+            itemizedOverlay = overlay;
+        } catch(APIException e) {
+            e.printStackTrace();
+        }
+        
+        return itemizedOverlay;
+    }
+    
+    public static ItemizedOverlay drawPlanListOverlay(Sphinx sphinx, List<Plan> list, int focusedIndex) {
+        
+        ItemizedOverlay itemizedOverlay = null;
+        final MapView mapView = sphinx.getMapView();
+        
+        try {
+            
+            Plan focusedPlan = null;
+            OverlayItem focusedOverlayItem = null;
+            
+            mapView.deleteOverlaysByName(ItemizedOverlay.PLAN_LIST_OVERLAY);
+            
+            ItemizedOverlay overlay = new ItemizedOverlay(ItemizedOverlay.PLAN_LIST_OVERLAY);
+            
+            for(int i = 0, size = list.size(); i < size; i++) {
+                Plan plan = list.get(i);
+                RotationTilt rt = new RotationTilt(RotateReference.SCREEN,TiltReference.SCREEN);
+                OverlayItem overlayItem = new OverlayItem(new Position(39, 116), Icon.getIcon(sphinx.getResources(), R.drawable.btn_bubble_b_normal, Icon.OFFSET_LOCATION_CENTER_BOTTOM), 
+                        Icon.getIcon(sphinx.getResources(), R.drawable.btn_bubble_b_normal, Icon.OFFSET_LOCATION_CENTER_BOTTOM),
+                        plan.getDescription(), rt);
+                overlayItem.setAssociatedObject(plan);
+                overlay.addOverlayItem(overlayItem);
+                
+                if (focusedIndex == i) {
+                    focusedPlan = plan;
+                    overlayItem.isFoucsed = true;
+                    focusedOverlayItem = overlayItem;
+                }
+            }
+            
+            sphinx.showInfoWindow(focusedOverlayItem);
+            
+            TrafficOverlayHelper.drawOverlay(sphinx, mapView, focusedPlan);
+            TrafficOverlayHelper.panToViewWholeOverlay(focusedPlan, mapView, sphinx);
             
             itemizedOverlay = overlay;
         } catch(APIException e) {

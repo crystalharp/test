@@ -45,7 +45,7 @@ public class TrafficOverlayHelper {
 	 * @param type
 	 */
 	public static void drawOverlay(final Sphinx sphinx, 
-			final MapView mapView, Plan plan, final int type) {
+			final MapView mapView, Plan plan) {
 	    
 	    sphinx.clearMap();
 	    
@@ -63,7 +63,7 @@ public class TrafficOverlayHelper {
 	            RotationTilt rt = new RotationTilt(RotateReference.SCREEN,TiltReference.SCREEN);
 	            
 	            List<Step> steps = plan.getStepList();
-	            List<CharSequence> strings = NavigationSplitJointRule.splitJoint(sphinx, type, plan);
+	            List<CharSequence> strings = NavigationSplitJointRule.splitJoint(sphinx, plan);
 	            
 	            Resources resources = sphinx.getResources();
                 Icon start = Icon.getIcon(resources, R.drawable.icon_start_pin, Icon.OFFSET_LOCATION_CENTER_BOTTOM);

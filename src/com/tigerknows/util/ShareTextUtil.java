@@ -257,7 +257,7 @@ public class ShareTextUtil {
         }
         
         StringBuilder body = new StringBuilder();
-        List<CharSequence> strList = NavigationSplitJointRule.splitJoint(context, Step.TYPE_TRANSFER, plan);
+        List<CharSequence> strList = NavigationSplitJointRule.splitJoint(context, plan);
         int i = 1;
         for(CharSequence str : strList) {
             body.append(i++);
@@ -331,7 +331,7 @@ public class ShareTextUtil {
 		
 		
 		StringBuilder body = new StringBuilder();
-        List<CharSequence> strList = NavigationSplitJointRule.splitJoint(context, Step.TYPE_DRIVE, plan);
+        List<CharSequence> strList = NavigationSplitJointRule.splitJoint(context, plan);
         int i = 1;
         for(CharSequence str : strList) {
             body.append(i++);
@@ -393,7 +393,7 @@ public class ShareTextUtil {
 		String end = plan.getEnd().getName();
 		
 		StringBuilder body = new StringBuilder();
-        List<CharSequence> strList = NavigationSplitJointRule.splitJoint(context, Step.TYPE_WALK, plan);
+        List<CharSequence> strList = NavigationSplitJointRule.splitJoint(context, plan);
         int i = 1;
         for(CharSequence str : strList) {
             body.append(i++);

@@ -21,7 +21,6 @@ import android.view.View;
 import android.view.View.OnFocusChangeListener;
 import android.view.View.OnTouchListener;
 import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -38,7 +37,6 @@ public class FeedbackActivity extends BaseActivity implements View.OnClickListen
     private EditText mFeedbackEdt = null;
     private EditText mTelephoneEdt = null;    
 //    private TextView mWeibtoTxv;
-    private Button feedback_send;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
@@ -49,7 +47,7 @@ public class FeedbackActivity extends BaseActivity implements View.OnClickListen
         setListener();
 
         mTitleBtn.setText(R.string.feedback);
-        mRightBtn.setVisibility(View.GONE);
+        mRightBtn.setText(R.string.submit);
 //        SpannableString ss = new SpannableString(mThis.getString(R.string.feedback_text2));
 //        ss.setSpan(new ClickableSpan() {
 //            @Override
@@ -78,12 +76,11 @@ public class FeedbackActivity extends BaseActivity implements View.OnClickListen
         mFeedbackEdt = (EditText)findViewById(R.id.feedback_edt);
         mTelephoneEdt = (EditText)findViewById(R.id.telephone_edt);
 //        mWeibtoTxv = (TextView)findViewById(R.id.weibo_txv);
-        feedback_send = (Button)findViewById(R.id.feedback_send);
     }
 
     protected void setListener() {
         super.setListener();
-        feedback_send.setOnClickListener(this);
+        mRightBtn.setOnClickListener(this);
         mBodyScv.setOnTouchListener(new OnTouchListener() {
             
             @Override
@@ -132,7 +129,7 @@ public class FeedbackActivity extends BaseActivity implements View.OnClickListen
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.feedback_send:
+            case R.id.right_btn:
                 mActionLog.addAction(mActionTag + ActionLog.TitleRightButton);
                 send();
                 break;

@@ -10,7 +10,7 @@
     
     <item type="id" name="view_invalid" />
     
-    <item type="id" name="view_menu" />
+    <item type="id" name="view_infowindow" />
     <item type="id" name="view_title" />
     
     <item type="id" name="view_result_map" />

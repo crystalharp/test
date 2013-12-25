@@ -380,58 +380,16 @@ public class MapEngine {
     }
     
     /**
-     * 地图页获取点击位置
-     * @param position
-     * @param zoomLevel
+     * @param position 经纬度
      * @return
      */
-    public static String getPositionName(Position position, int zoomLevel) {
-        String poiName = "";
-        if (position == null) {
-        	return poiName;
-        }
-        poiName = getPOIName(position, zoomLevel, 1);
-        return poiName;
-    }
-    
-    /**
-     * 搜索首页获取当前位置
-     * @param position
-     * @return
-     */
-    public static String getPositionName(Position position) {
-    	String poiName = "";
-        if (position == null) {
-        	return poiName;
-        }
-        
-        float accurary = position.getAccuracy();
-        int flag = (accurary > 500 && accurary != 0) ? 0 : 1;
-        
-        poiName = getPOIName(position, 16, flag);
-        if (poiName == null) {
-            int cityId = getCityId(position);
-            CityInfo cityInfo = getCityInfo(cityId);
-            if (cityInfo != null) {
-            	poiName = cityInfo.getCName();
-            }
-        }
-        return poiName;
-    }
-    
-    /**
-     * @param position POI经纬度
-     * @param zoomLevel 期望获取该经纬度名字的缩放级别
-     * @param flag 1表示获取点的名字, 0表示获取线的名字
-     * @return
-     */
-    private static String getPOIName(Position position, int zoomLevel, int flag) {
+    public String getPositionName(Position position) {
             String poiName = null;
             if (position == null) {
                 return poiName;
             }
-            poiName = Ca.tk_get_poi_name(position.getLat(), position.getLon(), zoomLevel);
-            LogWrapper.i("MapEngine", "getPOIName: " + poiName + "of lat:" + position.getLat() + " lon: " + position.getLon());
+            poiName = Ca.tk_get_poi_name(position.getLat(), position.getLon(), 16);
+            LogWrapper.i("MapEngine", "getPositionName: " + poiName + "of lat:" + position.getLat() + " lon: " + position.getLon());
             if (poiName == null || poiName.equals("null")) {
             	return null;
             }

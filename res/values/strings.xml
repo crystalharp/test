@@ -1343,4 +1343,6 @@
     <string name="hotel">酒店</string>
     <string name="qi">起</string>
     <string name="subway_city_list_title">以下城市现已开通地铁</string>
+    <string name="search_perimeter">搜周边</string>
+    <string name="query_line">查路线</string>
 </resources>

@@ -17,7 +17,6 @@ import android.view.ViewGroup;
 import android.widget.AbsoluteLayout;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
-import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 
 import com.decarta.Globals;
@@ -37,15 +36,9 @@ public class GuideScreenActivity extends TKActivity {
     
     private int mPagecount = 4;
 
-    private boolean mAppFirstStart = false;
-    
-    private boolean mAppUpgrade = false;
-
     private ViewPager mViewPager;
     
     private HashMap<Integer, View> viewMap = new HashMap<Integer, View>();
-    
-    private LinearLayout rootView;
     
     private AbsoluteLayout animContainer;
     
@@ -55,11 +48,6 @@ public class GuideScreenActivity extends TKActivity {
         super.onCreate(savedInstanceState);
         
         mActionTag = ActionLog.Help;
-        Intent intent = getIntent();
-        if (intent != null) {
-            mAppFirstStart = intent.getBooleanExtra(APP_FIRST_START, false); 
-            mAppUpgrade = intent.getBooleanExtra(APP_UPGRADE, false); 
-        }
 
         setContentView(R.layout.guide_screen);
         
@@ -154,7 +142,6 @@ public class GuideScreenActivity extends TKActivity {
     private ImageView startExperience;
     
     protected void findViews() {
-        rootView = (LinearLayout) findViewById(R.id.root_view);
         mViewPager = (ViewPager) findViewById(R.id.view_pager);
         
         animContainer = (AbsoluteLayout) findViewById(R.id.anim_container);

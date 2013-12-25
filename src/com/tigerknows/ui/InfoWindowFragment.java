@@ -4,24 +4,33 @@
 
 package com.tigerknows.ui;
 
+import com.decarta.android.exception.APIException;
 import com.decarta.android.map.ItemizedOverlay;
 import com.decarta.android.map.OverlayItem;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.Sphinx.TouchMode;
+import com.tigerknows.android.location.Position;
+import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.ItemizedOverlayHelper;
+import com.tigerknows.map.MapEngine;
 import com.tigerknows.map.MapView;
+import com.tigerknows.map.TrafficOverlayHelper;
+import com.tigerknows.model.BaseQuery;
+import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.Dianying;
-import com.tigerknows.model.Hotel;
 import com.tigerknows.model.POI;
+import com.tigerknows.model.Response;
+import com.tigerknows.model.TrafficModel.Plan;
 import com.tigerknows.model.Tuangou;
 import com.tigerknows.model.Yanchu;
 import com.tigerknows.model.Zhanlan;
+import com.tigerknows.model.DataQuery.GeoCoderResponse;
+import com.tigerknows.model.DataQuery.GeoCoderResponse.GeoCoderList;
 import com.tigerknows.ui.discover.CycleViewPager;
 import com.tigerknows.ui.discover.CycleViewPager.CycleOnPageChangeListener;
 import com.tigerknows.ui.discover.CycleViewPager.CyclePagerAdapter;
-import com.tigerknows.ui.traffic.TrafficQueryFragment;
 import com.tigerknows.util.Utility;
 
 import android.os.Bundle;
@@ -54,7 +63,11 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
 
     public static final int TYPE_MY_LOCATION = 6;
 
-    public static final int TYPE_LONG_CLIKED_SELECT_POINT = 7;
+    public static final int TYPE_LONG_CLICKED_SELECT_POINT = 7;
+
+    public static final int TYPE_MAP_POI = 8;
+
+    public static final int TYPE_PLAN_LIST = 9;
 
     /**
      * 下面这些ViewGroup用于InfoWindow
@@ -63,6 +76,7 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
     private List<View> mInfoWindow = null;
     
     private ItemizedOverlay mItemizedOverlay;
+    private OverlayItem mOverlayItem;
     private int mOwerFragmentId;
     private int mType;
     private int mPostion;
@@ -81,8 +95,6 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-        
-        setBackgroundColor(mSphinx.getResources().getColor(R.color.normal_background));
         
         mViewPager = new ViewPager(mSphinx);
         mCyclePagerAdapter = new CyclePagerAdapter();
@@ -122,7 +134,11 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             mSphinx.getPOINearbyFragment().setData((POI) overlayItem.getAssociatedObject());
             mSphinx.showView(R.id.view_poi_nearby_search);
         } else if (id == R.id.traffic_btn) {
-            Utility.queryTraffic(mSphinx, (POI) overlayItem.getAssociatedObject(), mActionTag);
+            if (mType == TYPE_MY_LOCATION) {
+                mSphinx.showView(R.id.view_traffic_home);
+            } else {
+                Utility.queryTraffic(mSphinx, (POI) overlayItem.getAssociatedObject(), mActionTag);
+            }
         } else if (id == R.id.detail_btn) {
             infoWindowClicked();
         }
@@ -134,20 +150,16 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
         mItemizedOverlay = itemizedOverlay;
         mActionTag = actionTag;
         
-        OverlayItem currentOverlayItem = mItemizedOverlay.getItemByFocused();
+        mOverlayItem = mItemizedOverlay.getItemByFocused();
         
-        if (currentOverlayItem == null) {
-            currentOverlayItem = itemizedOverlay.get(0);
-            currentOverlayItem.isFoucsed = true;
+        if (mOverlayItem == null) {
+            mOverlayItem = itemizedOverlay.get(0);
+            mOverlayItem.isFoucsed = true;
         }
 
         mPostion = itemizedOverlay.getPositionByFocused();
-        mCyclePagerAdapter.count = itemizedOverlay.size();
-        mCyclePagerAdapter.notifyDataSetChanged();
-        mCycleOnPageChangeListener.count = mCyclePagerAdapter.count;
         
-        List<View> list = getInfoWindow();
-        Object object = currentOverlayItem.getAssociatedObject();
+        Object object = mOverlayItem.getAssociatedObject();
         
         if (object instanceof POI) {
             final POI poi = (POI) object;
@@ -160,7 +172,9 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             } else if (sourceType == POI.SOURCE_TYPE_MY_LOCATION) {
                 mType = TYPE_MY_LOCATION;
             } else if (sourceType == POI.SOURCE_TYPE_LONG_CLICKED_SELECT_POINT) {
-                mType = TYPE_LONG_CLIKED_SELECT_POINT;
+                mType = TYPE_LONG_CLICKED_SELECT_POINT;
+            } else if (sourceType == POI.SOURCE_TYPE_MAP_POI) {
+                mType = TYPE_MAP_POI;
             } else {
                 mType = TYPE_POI;
             }
@@ -169,11 +183,17 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             mType = TYPE_DYNAMIC_POI;
         } else if (object instanceof Tuangou) {
             mType = TYPE_TUANGUO;
+        } else if (object instanceof Plan) {
+            mType = TYPE_PLAN_LIST;
         } else {
             mType = TYPE_MESSAGE;
         }
 
+        List<View> list = getInfoWindowViewList();
         mCyclePagerAdapter.viewList = list;
+        mCyclePagerAdapter.count = itemizedOverlay.size();
+        mCyclePagerAdapter.notifyDataSetChanged();
+        mCycleOnPageChangeListener.count = mCyclePagerAdapter.count;
         layoutInfoWindowView();
         refreshViews(mPostion);
 
@@ -183,7 +203,7 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
         return mOwerFragmentId;
     }
     
-    private List<View> getInfoWindow() {
+    private List<View> getInfoWindowViewList() {
         if (mInfoWindow == null) {
             List<View> viewList = new ArrayList<View>();
             View view;
@@ -288,23 +308,38 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
                 view = mCyclePagerAdapter.viewList.get((position+1) % mCyclePagerAdapter.viewList.size());
                 setMyLocationToView(view, (POI) mItemizedOverlay.get(position).getAssociatedObject());
             }
-        } else if (mType == TYPE_MESSAGE
-                || mType == TYPE_MY_LOCATION
-                || mType == TYPE_LONG_CLIKED_SELECT_POINT) {
+        } else if (mType == TYPE_MESSAGE) {
+
+            mHeight = mTotalHeight - mPOIHeight - mHotelHeight - mTuangouHeight - mTitleHeight - mBottomHeight;
+            mSphinx.setMapViewPaddingBottom(mHeight);
+            
+            View view = (View) mCyclePagerAdapter.viewList.get((position) % mCyclePagerAdapter.viewList.size());
+            setMessageToView(view, mItemizedOverlay.get(position).getMessage(), false, false);
+            
+            if (position - 1 >= 0) {
+                view = mCyclePagerAdapter.viewList.get((position-1) % mCyclePagerAdapter.viewList.size());
+                setMessageToView(view, mItemizedOverlay.get(position).getMessage(), false, false);
+            }
+            if (position + 1 < mCyclePagerAdapter.count) {
+                view = mCyclePagerAdapter.viewList.get((position+1) % mCyclePagerAdapter.viewList.size());
+                setMessageToView(view, mItemizedOverlay.get(position).getMessage(), false, false);
+            }
+        } else if (mType == TYPE_LONG_CLICKED_SELECT_POINT
+                || mType == TYPE_MAP_POI) {
 
             mHeight = mTotalHeight - mPOIHeight - mHotelHeight - mTuangouHeight - mTitleHeight;
             mSphinx.setMapViewPaddingBottom(mHeight);
             
             View view = (View) mCyclePagerAdapter.viewList.get((position) % mCyclePagerAdapter.viewList.size());
-            setMessageToView(view, (POI) mItemizedOverlay.get(position).getAssociatedObject(), true);
+            setMessageToView(view, ((POI) mItemizedOverlay.get(position).getAssociatedObject()).getName(), true, true);
             
             if (position - 1 >= 0) {
                 view = mCyclePagerAdapter.viewList.get((position-1) % mCyclePagerAdapter.viewList.size());
-                setMessageToView(view, (POI) mItemizedOverlay.get(position).getAssociatedObject(), true);
+                setMessageToView(view, ((POI) mItemizedOverlay.get(position).getAssociatedObject()).getName(), true, true);
             }
             if (position + 1 < mCyclePagerAdapter.count) {
                 view = mCyclePagerAdapter.viewList.get((position+1) % mCyclePagerAdapter.viewList.size());
-                setMessageToView(view, (POI) mItemizedOverlay.get(position).getAssociatedObject(), true);
+                setMessageToView(view, ((POI) mItemizedOverlay.get(position).getAssociatedObject()).getName(), true, true);
             }
         } else if (mType == TYPE_HOTEL) {
 
@@ -360,15 +395,35 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             mSphinx.setMapViewPaddingBottom(mHeight);
             
             View view = (View) mCyclePagerAdapter.viewList.get((position) % mCyclePagerAdapter.viewList.size());
-            setMessageToView(view, (POI) mItemizedOverlay.get(position).getAssociatedObject(), false);
+            setMessageToView(view, ((POI) mItemizedOverlay.get(position).getAssociatedObject()).getName(), true, false);
             
             if (position - 1 >= 0) {
                 view = mCyclePagerAdapter.viewList.get((position-1) % mCyclePagerAdapter.viewList.size());
-                setMessageToView(view, (POI) mItemizedOverlay.get(position).getAssociatedObject(), false);
+                setMessageToView(view, ((POI) mItemizedOverlay.get(position).getAssociatedObject()).getName(), true, false);
             }
             if (position + 1 < mCyclePagerAdapter.count) {
                 view = mCyclePagerAdapter.viewList.get((position+1) % mCyclePagerAdapter.viewList.size());
-                setMessageToView(view, (POI) mItemizedOverlay.get(position).getAssociatedObject(), false);
+                setMessageToView(view, ((POI) mItemizedOverlay.get(position).getAssociatedObject()).getName(), true, false);
+            }
+        } else if (mType == TYPE_PLAN_LIST) {
+
+            mHeight = mTotalHeight - mPOIHeight - mHotelHeight - mTuangouHeight - mBottomHeight - mTitleHeight;
+            mSphinx.setMapViewPaddingBottom(mHeight);
+            
+            View view = (View) mCyclePagerAdapter.viewList.get((position) % mCyclePagerAdapter.viewList.size());
+            Plan plan = (Plan) mItemizedOverlay.get(position).getAssociatedObject();
+            setPlanListToView(view, plan);
+            
+            TrafficOverlayHelper.drawOverlay(mSphinx, mapView, plan);
+            TrafficOverlayHelper.panToViewWholeOverlay(plan, mapView, mSphinx);
+            
+            if (position - 1 >= 0) {
+                view = mCyclePagerAdapter.viewList.get((position-1) % mCyclePagerAdapter.viewList.size());
+                setPlanListToView(view, (Plan) mItemizedOverlay.get(position).getAssociatedObject());
+            }
+            if (position + 1 < mCyclePagerAdapter.count) {
+                view = mCyclePagerAdapter.viewList.get((position+1) % mCyclePagerAdapter.viewList.size());
+                setPlanListToView(view, (Plan) mItemizedOverlay.get(position).getAssociatedObject());
             }
         }
         mViewPager.getLayoutParams().height = mHeight;
@@ -395,6 +450,7 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
                 v.findViewById(R.id.tuangou_view).setVisibility(View.GONE);
             }
             v.findViewById(R.id.title_txv).setVisibility(View.GONE);
+            v.findViewById(R.id.detail_btn).setVisibility(View.VISIBLE);
             v.findViewById(R.id.bottom_view).setVisibility(View.VISIBLE);
         }
     }
@@ -415,19 +471,38 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
         }
     }
     
+    private void setPlanListToView(View v, Plan plan) {
+        
+        TextView titleTxv = (TextView) v.findViewById(R.id.title_txv);
+        titleTxv.setVisibility(View.VISIBLE);
+        titleTxv.setText(plan.getTitle(mSphinx));
+        
+        TextView nameTxv=(TextView)v.findViewById(R.id.name_txv);
+        nameTxv.setText(plan.getDescription());
+
+        v.findViewById(R.id.detail_btn).setVisibility(View.GONE);
+        v.findViewById(R.id.bottom_view).setVisibility(View.GONE);
+    }
+    
     private void setMyLocationToView(View v, POI poi) {
         
         TextView titleTxv = (TextView) v.findViewById(R.id.title_txv);
         titleTxv.setVisibility(View.VISIBLE);
         titleTxv.setText(getString(R.string.my_location_with_accuracy, Utility.formatMeterString((int)poi.getPosition().getAccuracy())));
         
-        setMessageToView(v, poi, true);
+        setMessageToView(v, poi.getName(), true, true);
     }
     
-    private void setMessageToView(View v, POI poi, boolean showBottomView) {
+    private void setMessageToView(View v, String name, boolean showDetailBtn, boolean showBottomView) {
         
         TextView nameTxv=(TextView)v.findViewById(R.id.name_txv);
-        nameTxv.setText(poi.getName());
+        nameTxv.setText(name);
+        
+        if (showDetailBtn) {
+            v.findViewById(R.id.detail_btn).setVisibility(View.VISIBLE);
+        } else {
+            v.findViewById(R.id.detail_btn).setVisibility(View.GONE);
+        }
         
         if (showBottomView) {
             v.findViewById(R.id.bottom_view).setVisibility(View.VISIBLE);
@@ -439,18 +514,10 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
     private void setHotelToView(View v, POI poi) {
 
         TextView nameTxv = (TextView) v.findViewById(R.id.name_txv);
-        TextView canReserveTxv = (TextView) v.findViewById(R.id.hotel_can_reserve_txv);
         TextView priceTxv = (TextView) v.findViewById(R.id.hotel_price_txv);
 
-        Hotel hotel = poi.getHotel();
         nameTxv.setText(poi.getName());
         priceTxv.setText(poi.getPrice());
-
-        if (hotel.getCanReserve() > 0) {
-            canReserveTxv.setVisibility(View.GONE);
-        } else {
-            canReserveTxv.setVisibility(View.VISIBLE);
-        }
     }
     
     private void setTuangouToView(View v, Tuangou tuangou) {
@@ -487,7 +554,6 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
     
     private void infoWindowClicked() {
         mActionLog.addAction(ActionLog.MapInfoWindowBody);
-        TouchMode touchMode = mSphinx.getTouchMode();
         
         if (mItemizedOverlay == null) {
             return;
@@ -505,7 +571,9 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             mSphinx.getFragment(mOwerFragmentId).dismiss();
             mSphinx.getInputSearchFragment().onConfirmed(poi);
             
-        } else if(touchMode.equals(TouchMode.LONG_CLICK)){
+        } else if(mType == TYPE_LONG_CLICKED_SELECT_POINT
+                || mType == TYPE_MY_LOCATION) {
+            
             POI poi = (POI) overlayItem.getAssociatedObject();
             if (mSphinx.uiStackContains(R.id.view_poi_detail)) {
                 mSphinx.dismissView(R.id.view_result_map);
@@ -513,6 +581,29 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
                 mSphinx.showView(R.id.view_poi_detail);
             }
             mSphinx.getPOIDetailFragment().setData(poi);
+        } else if(mType == TYPE_MAP_POI) {
+            POI poi = (POI) overlayItem.getAssociatedObject();
+            
+            String name = poi.getName();
+            if (poi.getFrom() == POI.FROM_LOCAL && name != null) {
+                DataQuery dataQuery = new DataQuery(mSphinx);
+                dataQuery.setup(getId(), getId(), getString(R.string.doing_and_wait), false, false, poi);
+                dataQuery.addParameter(BaseQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_GEOCODER);
+                dataQuery.addParameter(BaseQuery.SERVER_PARAMETER_NEED_FIELD, POI.NEED_FIELD);
+                dataQuery.addParameter(DataQuery.SERVER_PARAMETER_KEYWORD, name);
+                Position position = poi.getPosition();
+                dataQuery.addParameter(BaseQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
+                dataQuery.addParameter(BaseQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
+                dataQuery.setCityId(MapEngine.getCityId(poi.getPosition()));
+                mSphinx.queryStart(dataQuery);
+            } else {
+                if (mSphinx.uiStackContains(R.id.view_poi_detail)) {
+                    mSphinx.dismissView(R.id.view_result_map);
+                } else {
+                    mSphinx.showView(R.id.view_poi_detail);
+                }
+                mSphinx.getPOIDetailFragment().setData(poi);
+            }
         } else if (overlayItem != null) {
             if (overlayName.equals(ItemizedOverlay.POI_OVERLAY)) {
                 Object object = overlayItem.getAssociatedObject();
@@ -587,8 +678,49 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
     public ItemizedOverlay getItemizedOverlay() {
         return mItemizedOverlay;
     }
+
+    public OverlayItem getOverlayItem() {
+        return mOverlayItem;
+    }
     
     public int getType() {
         return mType;
+    }
+
+    @Override
+    public void onPostExecute(TKAsyncTask tkAsyncTask) {
+        super.onPostExecute(tkAsyncTask);
+        BaseQuery baseQuery = tkAsyncTask.getBaseQuery();
+        if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), getId(), getId(), getId(), mCancelLoginListener)) {
+            isReLogin = true;
+            return;
+        }
+            
+        if (baseQuery instanceof DataQuery) {
+            DataQuery dataQuery = (DataQuery) baseQuery;
+            Response response = dataQuery.getResponse();
+            if (response != null
+                    && response instanceof GeoCoderResponse
+                    && response.getResponseCode() == Response.RESPONSE_CODE_OK) {
+                GeoCoderResponse geoCoderResponse = (GeoCoderResponse) response;
+                GeoCoderList geoCoderList = geoCoderResponse.getList();
+                if (geoCoderList != null) {
+                    List<POI> list = geoCoderList.getPOIList();
+                    if (list != null && list.size() > 0) {
+                        POI poi = dataQuery.getPOI();
+                        try {
+                            Position position = poi.getPosition();
+                            poi.init(list.get(0).getData(), true);
+                            poi.setPosition(position);
+                            poi.setFrom(POI.FROM_ONLINE);
+                        } catch (APIException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }
+        
+        infoWindowClicked();
     }
 }

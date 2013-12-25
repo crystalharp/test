@@ -271,7 +271,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         switch (view.getId()) {
             
             case R.id.btn_map_position:
-                ItemizedOverlayHelper.drawClickOverlay(mSphinx, mSphinx.getTouchMode());
+                ItemizedOverlayHelper.drawClickSelectPointOverlay(mSphinx, mSphinx.getTouchMode());
                 break;
                 
             case R.id.right_btn:

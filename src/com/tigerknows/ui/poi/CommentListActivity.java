@@ -808,6 +808,10 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
             mTitleBtn.setBackgroundResource(R.drawable.btn_all_comment);
             mHotBtn.setBackgroundResource(R.drawable.btn_hot_comment_focused);
         }
+        int left = Utility.dip2px(mThis, 12);
+        int top = Utility.dip2px(mThis, 8);
+        mTitleBtn.setPadding(left, top, left, top);
+        mHotBtn.setPadding(left, top, left, top);
         mRetryView.setVisibility(View.GONE);
         mEmptyView.setVisibility(View.GONE);
         mCommentAdapter.notifyDataSetChanged();

@@ -234,6 +234,7 @@ public class MapView extends RelativeLayout implements
 
         public static int TOUCHUP = 11;
         public static int MULTITOUCHZOOM = 12;
+        public static int CLICKPOI = 13;
 	}
 	
     public interface DrawFrameEventListener extends EventListener{
@@ -253,6 +254,10 @@ public class MapView extends RelativeLayout implements
 	public interface TouchEventListener extends EventListener{
 		public void onTouchEvent(EventSource eventSource, Position pos);
 	}
+	
+    public interface ClickPOIEventListener extends EventListener{
+        public void onClickPOIEvent(EventSource eventSource, Position pos, String name);
+    }
 
 	/**
 	 * define the moveend listener of map
@@ -363,6 +368,8 @@ public class MapView extends RelativeLayout implements
                 && (listener instanceof SurfaceCreatedEventListener)
                 || eventType == EventType.DRAWFRAME
                 && (listener instanceof DrawFrameEventListener)
+                || eventType == EventType.CLICKPOI
+                && (listener instanceof ClickPOIEventListener)
 				)
 			return true;
 		else
@@ -387,6 +394,16 @@ public class MapView extends RelativeLayout implements
 			eventListeners.get(eventType).remove(listener);
 		}
 	}
+    
+    public void executeClickPOIEventListener(Position position, String name) {
+        if (eventListeners.containsKey(MapView.EventType.CLICKPOI)) {
+            ArrayList<EventListener> listeners = eventListeners
+                    .get(MapView.EventType.CLICKPOI);
+            for (int i = 0; i < listeners.size(); i++) {
+                ((ClickPOIEventListener) (listeners.get(i))).onClickPOIEvent(this, position, name);
+            }
+        }
+    }
     
     public void executeDrawFrameListeners() {
         if (eventListeners.containsKey(MapView.EventType.DRAWFRAME)) {

@@ -11,22 +11,10 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         />
-    <Button android:id="@+id/submit_btn"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/submit"
-        android:textColor="@color/black_light"
-        android:gravity="center"
-        android:layout_alignParentBottom="true"
-        android:background="@drawable/btn_bottom"
-        android:padding="12dp"
-        android:enabled="false"
-        />
     <ScrollView android:id="@+id/body_scv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/title_view"
-        android:layout_above="@id/submit_btn"
         >
         <LinearLayout
             android:layout_width="fill_parent"

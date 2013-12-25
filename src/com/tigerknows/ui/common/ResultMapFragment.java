@@ -11,11 +11,9 @@ import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
 import com.tigerknows.android.location.Position;
 import com.tigerknows.common.ActionLog;
-import com.tigerknows.map.MapEngine;
 import com.tigerknows.map.MapView.SnapMap;
 import com.tigerknows.model.POI;
 import com.tigerknows.ui.BaseFragment;
-import com.tigerknows.ui.InfoWindowFragment;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -68,6 +66,7 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
         mSphinx.getMapView().setStopRefreshMyLocation(false);
         mTitleBtn.setText(mTitle);
         setOnTouchListener(null);
+        mRightBtn.setVisibility(View.GONE);
         
         int fromThirdPartye = mSphinx.getFromThirdParty();
         if (fromThirdPartye == Sphinx.THIRD_PARTY_SONY_MY_LOCATION ||
@@ -80,6 +79,7 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
         //如果是驾车和步行，需要在这里可以切换到详情页
         if (mActionTag == ActionLog.TrafficDriveMap || mActionTag == ActionLog.TrafficWalkMap) {
             mRightBtn.setBackgroundResource(R.drawable.btn_view_detail);
+            mRightBtn.setVisibility(View.VISIBLE);
             mRightBtn.setOnClickListener(this);
         	if (mActionTag == ActionLog.TrafficDriveMap) {
         	    mTitleBtn.setText(getString(R.string.title_type_drive));
@@ -145,7 +145,7 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
 	        				}
 	        			} else {
 	        				position = mSphinx.getMapView().getCenterPosition();
-	        				description = MapEngine.getPositionName(position);
+	        				description = mSphinx.getMapEngine().getPositionName(position);
 	        				if (TextUtils.isEmpty(description)) {
 	        					description = getString(R.string.select_point);
 	        				}

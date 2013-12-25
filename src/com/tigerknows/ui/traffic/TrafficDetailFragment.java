@@ -18,12 +18,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.AdapterView.OnItemClickListener;
 
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
@@ -33,6 +31,7 @@ import android.widget.Toast;
 
 import com.tigerknows.android.location.Position;
 import com.tigerknows.common.ActionLog;
+import com.tigerknows.map.ItemizedOverlayHelper;
 import com.tigerknows.map.TrafficOverlayHelper;
 import com.tigerknows.map.MapView.MapScene;
 import com.tigerknows.model.BaseData;
@@ -240,7 +239,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         mStrList.clear();
         mTypes.clear();
         
-        mStrList.addAll(NavigationSplitJointRule.splitJoint(mSphinx, mShowType, plan));
+        mStrList.addAll(NavigationSplitJointRule.splitJoint(mSphinx, plan));
         mTypes.addAll((ArrayList<Integer>)plan.getStepTypeList(mContext));
 
         //列表前面显示起点，后面显示终点
@@ -425,7 +424,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
             return;
     	
     	MapScene mapScene = mSphinx.getMapView().getCurrentMapScene();
-    	TrafficOverlayHelper.drawOverlay(mSphinx, mSphinx.getMapView(), plan, mShowType);
+    	TrafficOverlayHelper.drawOverlay(mSphinx, mSphinx.getMapView(), plan);
     	Position position = TrafficOverlayHelper.panToViewWholeOverlay(plan, mSphinx.getMapView(), (Activity)mSphinx);
     	
     	ShareAPI.share(mSphinx, plan, position, mapScene, mActionTag);
@@ -449,7 +448,6 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         			
         	}
 
-        	TrafficOverlayHelper.drawOverlay(mSphinx, mSphinx.getMapView(), plan, mShowType);
         	
             mSphinx.getResultMapFragment().setData(getString(R.string.title_traffic_result_map), actionTag);
             String resultMapActionTag = mSphinx.getResultMapFragment().mActionTag;
@@ -458,9 +456,12 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
                             || actionTag.equals(resultMapActionTag)
                             || actionTag.equals(resultMapActionTag))) {
                 dismiss();
+                TrafficOverlayHelper.drawOverlay(mSphinx, mSphinx.getMapView(), plan);
             } else {
                 mSphinx.showView(R.id.view_result_map);
+                ItemizedOverlayHelper.drawPlanListOverlay(mSphinx, mPlanList, curLineNum);
             }
+            
         }
     }
     

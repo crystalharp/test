@@ -222,7 +222,7 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
         mRevocationBtn.setOnClickListener(this);
         mRevocationBtn.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
         mRevocationBtnLayoutParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-        mRevocationBtnLayoutParams.leftMargin = Utility.dip2px(mSphinx, 12);
+        mRevocationBtnLayoutParams.rightMargin = Utility.dip2px(mSphinx, 12);
         
         findViews();
         setListener();
