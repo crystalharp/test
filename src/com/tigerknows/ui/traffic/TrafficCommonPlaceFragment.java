@@ -124,7 +124,12 @@ public class TrafficCommonPlaceFragment extends BaseFragment{
         
         public void updateData() {
             mList.clear();
-            table.readCommonPlace(mList);
+            int total = table.readCommonPlace(mList);
+
+            if (total == 0) {
+                CommonPlace cp = new CommonPlace(mCtx.getString(R.string.common_place_home), null, CommonPlace.TYPE_FIXED);
+                add(cp);
+            }
         }
         
         void add(CommonPlace c) {

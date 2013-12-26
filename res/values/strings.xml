@@ -192,6 +192,7 @@
     <string name="title_traffic_result_map">交通地图</string>
     <string name="title_busline_result_map">线路地图</string>
     <string name="title_click_map">地图选点</string>
+    <string name="common_place_home">家</string>
     <string name="title_popup_content">%1$d. %2$s</string>
     
     <string name="poi_detail_not_next_tip">已经是最后一个了</string>
@@ -246,6 +247,7 @@
     <string name="user_home">个人中心</string>
     <string name="give_favourable_comment">给个好评吧！</string>
     <string name="more_favorite">收藏</string>
+    <string name="manage_common_place">管理常用地点</string>
     
     <string name="settings_open_gps">开启GPS（卫星定位）</string>
     <string name="settings_close_gps">关闭GPS（卫星定位）</string>

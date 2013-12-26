@@ -122,11 +122,6 @@ public class CommonPlaceTable {
             c.close();
         }
         
-        if (total == 0) {
-            CommonPlace cp = new CommonPlace("home", null, CommonPlace.TYPE_FIXED);
-            addCommonPlace(cp);
-            list.add(cp);
-        }
         
         return total;
     }

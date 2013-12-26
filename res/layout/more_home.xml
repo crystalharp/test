@@ -98,7 +98,7 @@
                 android:id="@+id/favorite_btn"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/list_footer"
+                android:background="@drawable/list_middle"
 	            android:paddingTop="8dp"
 	            android:paddingRight="8dp"
 	            android:paddingLeft="16dp"
@@ -106,6 +106,20 @@
                 android:textColor="@color/black_dark"
                 android:textSize="16sp"
                 android:text="@string/more_favorite"
+                android:gravity="left|center_vertical"
+                />
+            <Button
+                android:id="@+id/common_place_btn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/list_footer"
+	            android:paddingTop="8dp"
+	            android:paddingRight="8dp"
+	            android:paddingLeft="16dp"
+	            android:paddingBottom="8dp"
+                android:textColor="@color/black_dark"
+                android:textSize="16sp"
+                android:text="@string/manage_common_place"
                 android:gravity="left|center_vertical"
                 />
         </LinearLayout>
