@@ -73,6 +73,8 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	
 	public static final int LINE = 3;
 	
+	public static final int MAX_QUERY_HISTORY = 10;
+	
 	public String MY_LOCATION;
 	
 	private int mSettedRadioBtn = 0;
@@ -104,10 +106,6 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	private InputBtn mStart;
     
 	private InputBtn mEnd;
-		
-//	RelativeLayout mTrafficLayout;
-//
-//	RelativeLayout mBuslineLayout;
 	
 //	LinearLayout mAddCommonPlace;
 	
@@ -211,19 +209,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 
         findViews();
         MY_LOCATION = getString(R.string.my_location);
-//    	KEYWORDS = new String[]{
-//    		getString(R.string.my_location),
-//    		getString(R.string.select_has_point),
-//    	};
-//    	
-//    	keywordList = Arrays.asList(KEYWORDS);
-    	
-//        mEventHelper = new TrafficQueryEventHelper(this);
-//        mAnimationHelper = new TrafficQueryAnimationHelper(this);
-//        mStateHelper = new TrafficQueryStateHelper(this);
-//        mStateTransitionTable = new TrafficViewSTT(mStateHelper);
         mLogHelper = new TrafficQueryLogHelper(this);
-//        mSuggestWordHelper = new TrafficQuerySuggestWordHelper(mContext, this, mSuggestLsv);
         
         mStart.setHint(getString(R.string.start_));
         mEnd.setHint(getString(R.string.end_));
@@ -233,7 +219,6 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	
     protected void findViews() {
     	
-//    	mTitle = (FrameLayout)mRootView.findViewById(R.id.title_lnl);
         mBlock = (LinearLayout)mRootView.findViewById(R.id.content_lnl);
 		
     	mBackBtn = (Button)mRootView.findViewById(R.id.back_btn);
@@ -253,8 +238,6 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 //    	mAddCommonPlace = (LinearLayout)mRootView.findViewById(R.id.add_common_place);
     	mCommonPlaceLst = (LinearLayout)mRootView.findViewById(R.id.common_place_lsv);
 		
-//		mSuggestLnl = (LinearLayout)mRootView.findViewById(R.id.suggest_lnl);
-//		mSuggestLsv = (ListView)mRootView.findViewById(R.id.suggest_lsv);
     	setListeners();
     }
 	
@@ -512,30 +495,28 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
         mQueryHistoryAdapter.refreshList(mQueryHistorys);
     }
     
+    public void delSearchHistory(SearchHistory sh) {
+        mQueryHistorys.remove(sh);
+        mHistoryTable.delete(sh);
+        mQueryHistoryAdapter.refreshList(mQueryHistorys);
+    }
+    
     public void initHistory() {
         mQueryHistorys.clear();
         mHistoryTable.readTrafficSearchHistory(mQueryHistorys);
+        mQueryHistory.setVisibility(View.VISIBLE);
+        mQueryHistoryLst.setVisibility(View.VISIBLE);
+        if (mQueryHistorys.size() == 0) {
+            mQueryHistory.setVisibility(View.GONE);
+            mQueryHistoryLst.setVisibility(View.GONE);
+        } else if (mQueryHistorys.size() > MAX_QUERY_HISTORY) {
+            int size = mQueryHistorys.size();
+            for (int i = size - 1; i >= MAX_QUERY_HISTORY; i--) {
+                mQueryHistorys.remove(i);
+            }
+        }
         mQueryHistoryAdapter.refreshList(mQueryHistorys);
     }
-//    
-//    public static void submitTrafficQuery(Sphinx sphinx, POI start, POI end, int queryType) {
-//        
-//        if (start == null || end == null)
-//            return;
-//        //以下内容出现在两个submit中，以后重构的时候注意写在一块
-//        if (start.getName().equals(sphinx.getString(R.string.my_location))) {
-//            start.setName(getMyLocationName(sphinx, start.getPosition()));
-//        } 
-//        if (end.getName().equals(sphinx.getString(R.string.my_location))) {
-//            end.setName(getMyLocationName(sphinx, end.getPosition()));
-//        }
-//        
-//        TrafficQuery trafficQuery = new TrafficQuery(sphinx);
-//            
-//        trafficQuery.setup(start, end, queryType, R.id.view_traffic_home, sphinx.getString(R.string.doing_and_wait));
-//        
-//        sphinx.queryStart(trafficQuery);
-//    }
     
 	public static String getMyLocationName(Sphinx mSphinx, Position position) {
 		String mLocationName = mSphinx.getMapEngine().getPositionName(position);
@@ -655,12 +636,8 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
     }    
 	
 	public void onBack() {
-//		if (mStateTransitionTable.event(Event.Back)) {
-//			
-//		} else {
-			dismiss();
-//		}
-			clearAllText();
+	    dismiss();
+	    clearAllText();
 	}
 		
 	@Override
@@ -781,12 +758,17 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int which, long arg3) {
             	Station station = null;
+            	//如果点到这里来，第一条肯定是刚才搜索的。
+            	SearchHistory sh_old = mQueryHistorys.get(0);
+            	delSearchHistory(sh_old);
             	if (start) {
             	    station = startStationList.get(which);
             	    setStart(station.toPOI());
+            	    addSearchHistory(new SearchHistory(station.toPOI(), sh_old.end));
             	} else if (end) {
             		station = endStationList.get(which);
             	    setEnd(station.toPOI());
+            	    addSearchHistory(new SearchHistory(sh_old.start, station.toPOI()));
             	}
                 dialog.dismiss();
                 if (station != null) {

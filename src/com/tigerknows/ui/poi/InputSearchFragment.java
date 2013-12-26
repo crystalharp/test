@@ -202,9 +202,11 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         //TODO:add actiontag
         case MODE_BUELINE:
             mTrafficBtnGroup.setVisibility(View.GONE);
+            mKeywordEdt.setHint(getString(R.string.busline_search_hint));
             break;
         case MODE_TRAFFIC:
             mTrafficBtnGroup.setVisibility(View.VISIBLE);
+            mKeywordEdt.setHint(getString(R.string.traffic_search_hint));
             break;
         case MODE_POI:
             mTrafficBtnGroup.setVisibility(View.GONE);
