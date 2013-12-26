@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -22,6 +23,7 @@ import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.tigerknows.R;
@@ -31,6 +33,7 @@ import com.tigerknows.android.location.Position;
 import com.tigerknows.android.os.TKAsyncTask;
 import android.widget.Toast;
 import com.tigerknows.common.ActionLog;
+import com.tigerknows.map.CityInfo;
 import com.tigerknows.map.MapEngine;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.LocationQuery;
@@ -49,6 +52,7 @@ import com.tigerknows.ui.poi.InputSearchFragment;
 import com.tigerknows.ui.traffic.TrafficCommonPlaceFragment.CommonPlaceList;
 import com.tigerknows.util.Utility;
 import com.tigerknows.widget.LinearListAdapter;
+import com.tigerknows.widget.StringArrayAdapter;
 
 /**
  * 此类包含 交通首页、交通输入页、交通全屏页、交通选点页，合称“交通频道首页”
@@ -853,9 +857,53 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
             if (!mStart.textEmpty() && !mEnd.textEmpty()) {
                 query();
             } else {
-                mSphinx.getInputSearchFragment().setData(null,
-                        InputSearchFragment.MODE_BUELINE);
-                mSphinx.showView(R.id.view_poi_input_search);
+                String[] list = mSphinx.getResources().getStringArray(R.array.traffic_search_option);
+                int[] leftCompoundIconList = new int[3];
+                leftCompoundIconList[0] = R.drawable.ic_share_sina;
+                leftCompoundIconList[1] = R.drawable.ic_share_sina;
+                leftCompoundIconList[2] = R.drawable.ic_share_sina;
+                final ArrayAdapter<String> adapter = new StringArrayAdapter(mSphinx, list, leftCompoundIconList);
+                
+                View alterListView = mSphinx.getLayoutInflater().inflate(R.layout.alert_listview, null, false);
+                
+                ListView listView = (ListView) alterListView.findViewById(R.id.listview);
+                listView.setAdapter(adapter);
+                
+                final Dialog dialog = Utility.getChoiceDialog(mSphinx, alterListView, R.style.AlterChoiceDialog);
+                
+                TextView titleTxv = (TextView)alterListView.findViewById(R.id.title_txv);
+                titleTxv.setText(R.string.share);
+                
+                Button button = (Button)alterListView.findViewById(R.id.confirm_btn);
+                button.setVisibility(View.GONE);
+                
+                dialog.show();
+                
+                listView.setOnItemClickListener(new OnItemClickListener() {
+
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View arg1, int index, long arg3) {
+
+                        if (index == 0 || index == 1) {
+                            mSphinx.getInputSearchFragment().setData(null,
+                                    InputSearchFragment.MODE_BUELINE);
+                            mSphinx.showView(R.id.view_poi_input_search);
+                        } else if (index == 2) {
+                            CityInfo cityInfo = Globals.getCurrentCityInfo(mSphinx);
+                            if (cityInfo != null && cityInfo.isAvailably()) {
+                                mSphinx.getSubwayMapFragment().setData(cityInfo);
+                                mSphinx.showView(R.id.view_subway_map);
+                            }
+                        }
+                        dialog.setOnDismissListener(new OnDismissListener() {
+                            
+                            @Override
+                            public void onDismiss(DialogInterface dialog) {
+                            }
+                        });
+                        dialog.dismiss();
+                    }
+                });
             }
             break;
             
