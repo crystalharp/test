@@ -1325,6 +1325,10 @@ public class TrafficModel extends XMapData {
         
         public String getTaxiCost() { return taxiCost ;}
         
+        public String getDescription() {
+            return taxiTime + "," + taxiDistance + "," + taxiCost;
+        }
+        
         public AddtionalInfo(XMap data) throws APIException {
             super(data);
 

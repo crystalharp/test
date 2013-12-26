@@ -30,6 +30,7 @@ import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.TrafficModel;
+import com.tigerknows.model.TrafficModel.AddtionalInfo;
 import com.tigerknows.model.TrafficModel.Plan;
 import com.tigerknows.model.TrafficModel.Plan.PlanTag;
 import com.tigerknows.model.TrafficQuery;
@@ -78,6 +79,12 @@ public class TrafficResultFragment extends BaseFragment {
      */
     private ChildView downView;
     
+    private View mFooterView;
+    
+    private View mSearchReturnView;
+    
+    private TextView mDescriptionTxv;
+    
     int focusedIndex = Integer.MAX_VALUE;
     
     private static final String TAG = "TrafficResultFragment";
@@ -98,11 +105,13 @@ public class TrafficResultFragment extends BaseFragment {
         LogWrapper.d(BaseFragment.TAG, "onCreateView()"+mActionTag);
         
         mRootView = mLayoutInflater.inflate(R.layout.traffic_result, container, false);
+        mFooterView = mLayoutInflater.inflate(R.layout.traffic_transfer_result_footer, null);
 
         findViews();
         setListener();
         
         mResultAdapter = new TransferProjectListAdapter();
+        mResultLsv.addFooterView(mFooterView);
         mResultLsv.setAdapter(mResultAdapter);
         
         return mRootView;
@@ -116,6 +125,13 @@ public class TrafficResultFragment extends BaseFragment {
         mRightBtn.setVisibility(View.GONE);
         
         mFootLayout.setVisibility(View.GONE);
+        AddtionalInfo info = mTrafficModel.getAddtionalInfo();
+        if (info != null) {
+            mDescriptionTxv.setText(info.getDescription());
+            mDescriptionTxv.setVisibility(View.VISIBLE);
+        } else {
+            mDescriptionTxv.setVisibility(View.GONE);
+        }
         
         if (mDismissed) {
             mResultLsv.setSelectionFromTop(0, 0);
@@ -136,6 +152,8 @@ public class TrafficResultFragment extends BaseFragment {
     protected void findViews() {
         mResultLsv = (ListView)mRootView.findViewById(R.id.result_lsv);
         mFootLayout = (LinearLayout)mRootView.findViewById(R.id.bottom_buttons_view);
+        mSearchReturnView = mFooterView.findViewById(R.id.search_return_view);
+        mDescriptionTxv = (TextView) mFooterView.findViewById(R.id.description_txv);
     }
 
     protected void setListener() {
@@ -151,6 +169,16 @@ public class TrafficResultFragment extends BaseFragment {
 				mSphinx.showView(R.id.view_traffic_result_detail);
 			}
 
+        });
+        
+        mSearchReturnView.setOnClickListener(new View.OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                mSphinx.getTrafficQueryFragment().switchStartEnd();
+                dismiss();
+            }
         });
         
 //        mResultLsv.setOnScrollListener(new OnScrollListener() {
@@ -258,33 +286,28 @@ public class TrafficResultFragment extends BaseFragment {
         	planHolder.walkDistance.setText(plan.getWalkDistance());
         	planHolder.tags.removeAllViews();
         	List<PlanTag> list = plan.getPlanTagList();
-        	int tagNum = Math.min(MAX_TAG_NUM, plan.getPlanTagList().size());
-        	for (int i = 0; i < tagNum; i++) {
-        	    PlanTag tag = list.get(i);
-        	    if (tag.getBackgroundtype() < 1 || tag.getBackgroundtype() > 5) {
-        	        continue;
+        	if (list != null) {
+        	    int tagNum = Math.min(MAX_TAG_NUM, plan.getPlanTagList().size());
+        	    for (int i = 0; i < tagNum; i++) {
+        	        PlanTag tag = list.get(i);
+        	        if (tag.getBackgroundtype() < 1 || tag.getBackgroundtype() > 5) {
+        	            continue;
+        	        }
+        	        TextView txv = new TextView(mSphinx);
+        	        txv.setText(tag.getDescription());
+        	        int dpPadding2 = Utility.dip2px(mSphinx, 2);
+        	        txv.setPadding(dpPadding2, 0, dpPadding2, 0);
+        	        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+        	                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1);  
+        	        int dpMargin = Utility.dip2px(mSphinx, 4);
+        	        lp.setMargins(dpMargin, 0, dpMargin, 0); 
+        	        txv.setLayoutParams(lp); 
+        	        txv.setBackgroundResource(tagResList[tag.getBackgroundtype()]);
+        	        txv.setTextSize(11f);
+        	        txv.setTextColor(Color.WHITE);
+        	        planHolder.tags.addView(txv);
         	    }
-        	    TextView txv = new TextView(mSphinx);
-        	    txv.setText(tag.getDescription());
-        	    int dpPadding2 = Utility.dip2px(mSphinx, 2);
-        	    int dpPadding1 = Utility.dip2px(mSphinx, 1);
-        	    txv.setPadding(dpPadding2, dpPadding1, dpPadding2, dpPadding1);
-        	    LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-        	            LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1);  
-        	    int dpMargin = Utility.dip2px(mSphinx, 4);
-        	    lp.setMargins(dpMargin, 0, dpMargin, 0); 
-        	    txv.setLayoutParams(lp); 
-        	    txv.setBackgroundResource(tagResList[tag.getBackgroundtype()]);
-        	    txv.setTextSize(11f);
-        	    txv.setTextColor(Color.WHITE);
-        	    planHolder.tags.addView(txv);
         	}
-        	
-        	if (focusedIndex == position) {
-				LogWrapper.d(TAG, "position: " + position + "bg_index_focused");
-			} else {
-				LogWrapper.d(TAG, "position: " + position + "bg_index");
-			}
         	
         	planHolder.position = position;
         	

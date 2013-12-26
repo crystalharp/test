@@ -7,8 +7,8 @@
     <TextView
         android:id="@+id/his_txv"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/list_middle"
+        android:layout_height="40dp"
+        android:gravity="center_vertical"
         android:text="TextView" />
 
 </LinearLayout>

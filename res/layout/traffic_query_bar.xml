@@ -2,11 +2,11 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/bg_title" >
+     >
     <RelativeLayout 
         android:layout_width="fill_parent"
 		android:layout_height="fill_parent"
-		android:layout_gravity="center_vertical"> 
+		android:layout_gravity="center_vertical|center_horizontal"> 
 	
 	    <RadioGroup android:id="@+id/traffic_rgp"
 		    android:layout_centerInParent="true"
@@ -18,19 +18,19 @@
 	
 	        <RadioButton
 	            android:id="@+id/traffic_transfer_rbt"
-	            android:layout_width="58.5dp"
+	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
 	            android:button="@drawable/rdb_bus"
 	            android:checked="true" />
 	
 		    <RadioButton
 		        android:button="@drawable/rdb_drive"
-		        android:layout_width="58.5dp" 
+		        android:layout_width="wrap_content" 
 		        android:layout_height="wrap_content"
 		        android:id="@+id/traffic_drive_rbt" />
 		    <RadioButton
 		        android:button="@drawable/rdb_walk"
-		        android:layout_width="58.5dp" 
+		        android:layout_width="wrap_content" 
 		        android:layout_height="wrap_content"
 		        android:id="@+id/traffic_walk_rbt"/>
 			

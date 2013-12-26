@@ -270,6 +270,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	            SearchHistory h = (SearchHistory)data;
 	            TextView t = (TextView) child.findViewById(R.id.his_txv);
 	            child.setTag(data);
+	            child.setBackgroundResource(R.drawable.list_middle);
 	            t.setText(h.genDescription());
 	            child.setOnClickListener(historyItemListener);
 	            return null;
@@ -317,6 +318,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	            child.setOnClickListener(placeItemListener);
 	            CommonPlace c = (CommonPlace) data;
 	            aliasTxv.setText(c.alias);
+	            child.setBackgroundResource(R.drawable.list_single);
 	            if (c.isEmptyFixedPlace()) {
 	                nameTxv.setText(R.string.click_set_place);
 	            } else {
@@ -363,13 +365,16 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
         
         mTitleView.removeAllViews();
         mTitleView.addView(mTitleBar);
-        mRightBtn.setBackgroundResource(R.drawable.btn_view_detail);
         initHistory();
         updateCommonPlace();
         if (!mStart.textEmpty() 
-                && !mEnd.textEmpty()
-                && autoStartQuery) {
-            query();
+                && !mEnd.textEmpty()) {
+            mRightBtn.setBackgroundResource(R.drawable.btn_search);
+            if (autoStartQuery) {
+                query();
+            }
+        } else {
+            mRightBtn.setBackgroundResource(R.drawable.btn_traffic_more_type);
         }
 	}
     

@@ -18,39 +18,84 @@
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
 	            android:layout_marginLeft="8dp"
-	            android:background="@drawable/btn_traffic_query"
+	            android:background="@drawable/btn_traffic_switch_start_end"
 	            android:layout_centerVertical="true" />
-
+	        
+	        <LinearLayout
+	            android:id="@+id/traffic_start_end_ic"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_alignParentLeft="true"
+	            android:layout_centerVertical="true"
+	            android:gravity="center_horizontal"
+	            android:orientation="vertical" >
+	            
+	                <ImageView
+	                    android:layout_width="wrap_content"
+	                    android:layout_height="wrap_content"
+	                    android:padding="4dp"
+	                    android:src="@drawable/ic_start" />
+	                
+	                <ImageView
+	                    android:layout_width="wrap_content"
+	                    android:layout_height="wrap_content"
+	                    android:padding="4dp"
+	                    android:src="@drawable/ic_start_to_end" />
+	            
+	                <ImageView
+	                    android:layout_width="wrap_content"
+	                    android:layout_height="wrap_content"
+	                    android:padding="4dp"
+	                    android:src="@drawable/ic_end" />
+	        </LinearLayout>
+	        
 	        <LinearLayout android:id="@+id/traffic_lsv"
-	            android:layout_width="fill_parent" 
+	            android:layout_width="match_parent" 
 	            android:layout_height="wrap_content"
 	            android:orientation="vertical"
 	            android:layout_toLeftOf="@+id/traffic_switch_btn"
+	            android:layout_toRightOf="@id/traffic_start_end_ic"
 	            android:layout_alignParentTop="true">
 	            <LinearLayout 
 			        android:layout_width="fill_parent" 
 			        android:layout_height="wrap_content"
+			        android:gravity="center_vertical"
 			        android:orientation="horizontal" >
+
+
 			        <Button
 			            android:id="@+id/start_btn"
 			            android:layout_gravity="center_vertical"
-			            android:background="@drawable/btn_input_home"
+			            android:background="@color/transparent"
 			            android:layout_width="fill_parent"
-			            android:layout_height="wrap_content"
+			            android:layout_height="40dp"
+			            android:textSize="16sp"
 			            android:focusable="true" />
         		</LinearLayout>
+
+	            <ImageView
+	                android:id="@+id/imageView1"
+	                android:layout_width="fill_parent"
+	                android:layout_height="wrap_content"
+	                android:scaleType="fitXY"
+	                android:src="@drawable/ic_line_tile" />
+
 	            <LinearLayout 
-	                android:layout_marginTop="6dp"
+			        android:gravity="center_vertical"
 			        android:layout_width="fill_parent"
 			        android:layout_height="wrap_content">
+			        
 			        <Button
 			            android:id="@+id/end_btn"
 			            android:layout_gravity="center_vertical"
-			            android:background="@drawable/btn_input_home"
+			            android:background="@color/transparent"
 			            android:layout_width="fill_parent"
-			            android:layout_height="wrap_content" />
+			            android:textSize="16sp"
+			            android:layout_height="40dp" />
         		</LinearLayout>
 	        </LinearLayout>
+
+
 	    </RelativeLayout>
 
 	    <RelativeLayout android:id="@+id/busline_rll"
