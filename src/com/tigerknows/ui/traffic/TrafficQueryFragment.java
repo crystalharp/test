@@ -77,7 +77,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	
 	public static final int LINE = 3;
 	
-	public static final int MAX_QUERY_HISTORY = 2;
+	public static final int MAX_QUERY_HISTORY = 10;
 	
 	public String MY_LOCATION;
 	
@@ -213,19 +213,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 
         findViews();
         MY_LOCATION = getString(R.string.my_location);
-//    	KEYWORDS = new String[]{
-//    		getString(R.string.my_location),
-//    		getString(R.string.select_has_point),
-//    	};
-//    	
-//    	keywordList = Arrays.asList(KEYWORDS);
-    	
-//        mEventHelper = new TrafficQueryEventHelper(this);
-//        mAnimationHelper = new TrafficQueryAnimationHelper(this);
-//        mStateHelper = new TrafficQueryStateHelper(this);
-//        mStateTransitionTable = new TrafficViewSTT(mStateHelper);
         mLogHelper = new TrafficQueryLogHelper(this);
-//        mSuggestWordHelper = new TrafficQuerySuggestWordHelper(mContext, this, mSuggestLsv);
         
         mStart.setHint(getString(R.string.start_));
         mEnd.setHint(getString(R.string.end_));
@@ -235,7 +223,6 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	
     protected void findViews() {
     	
-//    	mTitle = (FrameLayout)mRootView.findViewById(R.id.title_lnl);
         mBlock = (LinearLayout)mRootView.findViewById(R.id.content_lnl);
 		
     	mBackBtn = (Button)mRootView.findViewById(R.id.back_btn);
@@ -255,8 +242,6 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 //    	mAddCommonPlace = (LinearLayout)mRootView.findViewById(R.id.add_common_place);
     	mCommonPlaceLst = (LinearLayout)mRootView.findViewById(R.id.common_place_lsv);
 		
-//		mSuggestLnl = (LinearLayout)mRootView.findViewById(R.id.suggest_lnl);
-//		mSuggestLsv = (ListView)mRootView.findViewById(R.id.suggest_lsv);
     	setListeners();
     }
 	
@@ -508,6 +493,12 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
         mQueryHistorys.remove(sh);
         mQueryHistorys.add(0, sh);
         mHistoryTable.update(sh);
+        mQueryHistoryAdapter.refreshList(mQueryHistorys);
+    }
+    
+    public void delSearchHistory(SearchHistory sh) {
+        mQueryHistorys.remove(sh);
+        mHistoryTable.delete(sh);
         mQueryHistoryAdapter.refreshList(mQueryHistorys);
     }
     
@@ -768,12 +759,17 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int which, long arg3) {
             	Station station = null;
+            	//如果点到这里来，第一条肯定是刚才搜索的。
+            	SearchHistory sh_old = mQueryHistorys.get(0);
+            	delSearchHistory(sh_old);
             	if (start) {
             	    station = startStationList.get(which);
             	    setStart(station.toPOI());
+            	    addSearchHistory(new SearchHistory(station.toPOI(), sh_old.end));
             	} else if (end) {
             		station = endStationList.get(which);
             	    setEnd(station.toPOI());
+            	    addSearchHistory(new SearchHistory(sh_old.start, station.toPOI()));
             	}
                 dialog.dismiss();
                 if (station != null) {
