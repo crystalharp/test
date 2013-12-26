@@ -173,6 +173,8 @@
     <string name="start_equal_to_end">起点与终点相同, 请重新输入!</string>
     <string name="start_equal_to_end_select">起点与终点相同, 请重新选择!</string>
     <string name="busline_name_">请输入线路名或站点名</string>
+    <string name="busline_search_hint">输入线路、站点名</string>
+    <string name="traffic_search_hint">输入地点</string>
     <string name="transfer_operation_time">运营时间:\u0020\u0020%1$s</string>
     <string name="bus_index_station">%1$d. %2$s</string>
     <string name="favorite_poi_empty">你还没有任何收藏</string>
@@ -192,6 +194,7 @@
     <string name="title_traffic_result_map">交通地图</string>
     <string name="title_busline_result_map">线路地图</string>
     <string name="title_click_map">地图选点</string>
+    <string name="common_place_home">家</string>
     <string name="title_popup_content">%1$d. %2$s</string>
     
     <string name="poi_detail_not_next_tip">已经是最后一个了</string>
@@ -1346,4 +1349,7 @@
     <string name="subway_city_list_title">以下城市现已开通地铁</string>
     <string name="search_perimeter">搜周边</string>
     <string name="query_line">查路线</string>
+    <string name="confirm_place">确定地点</string>
+    <string name="set_common_place">设置常用地点</string>
+    <string name="click_set_place">点击设置地点</string>
 </resources>

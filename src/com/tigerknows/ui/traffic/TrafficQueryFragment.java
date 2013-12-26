@@ -1,6 +1,5 @@
 package com.tigerknows.ui.traffic;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -24,6 +23,7 @@ import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.tigerknows.R;
@@ -33,6 +33,7 @@ import com.tigerknows.android.location.Position;
 import com.tigerknows.android.os.TKAsyncTask;
 import android.widget.Toast;
 import com.tigerknows.common.ActionLog;
+import com.tigerknows.map.CityInfo;
 import com.tigerknows.map.MapEngine;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.LocationQuery;
@@ -42,7 +43,6 @@ import com.tigerknows.model.TrafficModel;
 import com.tigerknows.model.TrafficModel.Plan;
 import com.tigerknows.model.TrafficModel.Station;
 import com.tigerknows.model.TrafficQuery;
-import com.tigerknows.provider.CommonPlaceTable;
 import com.tigerknows.provider.CommonPlaceTable.CommonPlace;
 import com.tigerknows.provider.HistoryWordTable;
 import com.tigerknows.provider.TrafficSearchHistoryTable;
@@ -77,6 +77,8 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	
 	public static final int LINE = 3;
 	
+	public static final int MAX_QUERY_HISTORY = 10;
+	
 	public String MY_LOCATION;
 	
 	private int mSettedRadioBtn = 0;
@@ -108,10 +110,6 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	private InputBtn mStart;
     
 	private InputBtn mEnd;
-		
-//	RelativeLayout mTrafficLayout;
-//
-//	RelativeLayout mBuslineLayout;
 	
 //	LinearLayout mAddCommonPlace;
 	
@@ -215,19 +213,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 
         findViews();
         MY_LOCATION = getString(R.string.my_location);
-//    	KEYWORDS = new String[]{
-//    		getString(R.string.my_location),
-//    		getString(R.string.select_has_point),
-//    	};
-//    	
-//    	keywordList = Arrays.asList(KEYWORDS);
-    	
-//        mEventHelper = new TrafficQueryEventHelper(this);
-//        mAnimationHelper = new TrafficQueryAnimationHelper(this);
-//        mStateHelper = new TrafficQueryStateHelper(this);
-//        mStateTransitionTable = new TrafficViewSTT(mStateHelper);
         mLogHelper = new TrafficQueryLogHelper(this);
-//        mSuggestWordHelper = new TrafficQuerySuggestWordHelper(mContext, this, mSuggestLsv);
         
         mStart.setHint(getString(R.string.start_));
         mEnd.setHint(getString(R.string.end_));
@@ -237,7 +223,6 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	
     protected void findViews() {
     	
-//    	mTitle = (FrameLayout)mRootView.findViewById(R.id.title_lnl);
         mBlock = (LinearLayout)mRootView.findViewById(R.id.content_lnl);
 		
     	mBackBtn = (Button)mRootView.findViewById(R.id.back_btn);
@@ -257,8 +242,6 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 //    	mAddCommonPlace = (LinearLayout)mRootView.findViewById(R.id.add_common_place);
     	mCommonPlaceLst = (LinearLayout)mRootView.findViewById(R.id.common_place_lsv);
 		
-//		mSuggestLnl = (LinearLayout)mRootView.findViewById(R.id.suggest_lnl);
-//		mSuggestLsv = (ListView)mRootView.findViewById(R.id.suggest_lsv);
     	setListeners();
     }
 	
@@ -301,16 +284,19 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
             public void onClick(View v) {
                 CommonPlace c = (CommonPlace) v.getTag();
                 if (c.isEmptyFixedPlace()) {
-                    mSphinx.getInputSearchFragment().setMode(InputSearchFragment.MODE_TRAFFIC);
-                    mSphinx.getInputSearchFragment().setConfirmedCallback(new InputSearchFragment.Callback(){
 
-                        @Override
-                        public void onConfirmed(POI p) {
-                            mCommonPlaces.setPOI(0, p);
-                            mCommonPlaceAdapter.refreshList(mCommonPlaces.getList());
-                            
-                        }}, InputSearchFragment.REQUEST_COMMON_PLACE);
-                    mSphinx.showView(mSphinx.getInputSearchFragment().getId());
+                    mSphinx.getInputSearchFragment().setData(null,
+                            InputSearchFragment.MODE_TRAFFIC,
+                            new InputSearchFragment.Callback(){
+
+                                @Override
+                                public void onConfirmed(POI p) {
+                                    mCommonPlaces.setPOI(0, p);
+                                    mCommonPlaceAdapter.refreshList(mCommonPlaces.getList());
+                                }
+                            },
+                            InputSearchFragment.REQUEST_COMMON_PLACE);
+                    mSphinx.showView(R.id.view_poi_input_search);
                 } else {
                     mEnd.setPOI(c.poi);
                     if (!mStart.textEmpty()) {
@@ -326,15 +312,15 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	        public View getView(Object data, View child, int pos) {
 	            //FIXME:进行严格检查
 	            TextView aliasTxv = (TextView) child.findViewById(R.id.alias_txv);
-	            TextView descTxv = (TextView) child.findViewById(R.id.description_txv);
+	            TextView nameTxv = (TextView) child.findViewById(R.id.name_txv);
 	            child.setTag(data);
 	            child.setOnClickListener(placeItemListener);
 	            CommonPlace c = (CommonPlace) data;
 	            aliasTxv.setText(c.alias);
 	            if (c.isEmptyFixedPlace()) {
-	                descTxv.setText("click to set");
+	                nameTxv.setText(R.string.click_set_place);
 	            } else {
-	                descTxv.setText(c.poi.getName());
+	                nameTxv.setText(c.poi.getName());
 	            }
 	            return null;
 	        }
@@ -513,30 +499,28 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
         mQueryHistoryAdapter.refreshList(mQueryHistorys);
     }
     
+    public void delSearchHistory(SearchHistory sh) {
+        mQueryHistorys.remove(sh);
+        mHistoryTable.delete(sh);
+        mQueryHistoryAdapter.refreshList(mQueryHistorys);
+    }
+    
     public void initHistory() {
         mQueryHistorys.clear();
         mHistoryTable.readTrafficSearchHistory(mQueryHistorys);
+        mQueryHistory.setVisibility(View.VISIBLE);
+        mQueryHistoryLst.setVisibility(View.VISIBLE);
+        if (mQueryHistorys.size() == 0) {
+            mQueryHistory.setVisibility(View.GONE);
+            mQueryHistoryLst.setVisibility(View.GONE);
+        } else if (mQueryHistorys.size() > MAX_QUERY_HISTORY) {
+            int size = mQueryHistorys.size();
+            for (int i = size - 1; i >= MAX_QUERY_HISTORY; i--) {
+                mQueryHistorys.remove(i);
+            }
+        }
         mQueryHistoryAdapter.refreshList(mQueryHistorys);
     }
-//    
-//    public static void submitTrafficQuery(Sphinx sphinx, POI start, POI end, int queryType) {
-//        
-//        if (start == null || end == null)
-//            return;
-//        //以下内容出现在两个submit中，以后重构的时候注意写在一块
-//        if (start.getName().equals(sphinx.getString(R.string.my_location))) {
-//            start.setName(getMyLocationName(sphinx, start.getPosition()));
-//        } 
-//        if (end.getName().equals(sphinx.getString(R.string.my_location))) {
-//            end.setName(getMyLocationName(sphinx, end.getPosition()));
-//        }
-//        
-//        TrafficQuery trafficQuery = new TrafficQuery(sphinx);
-//            
-//        trafficQuery.setup(start, end, queryType, R.id.view_traffic_home, sphinx.getString(R.string.doing_and_wait));
-//        
-//        sphinx.queryStart(trafficQuery);
-//    }
     
 	public static String getMyLocationName(Sphinx mSphinx, Position position) {
 		String mLocationName = mSphinx.getMapEngine().getPositionName(position);
@@ -656,12 +640,8 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
     }    
 	
 	public void onBack() {
-//		if (mStateTransitionTable.event(Event.Back)) {
-//			
-//		} else {
-			dismiss();
-//		}
-			clearAllText();
+	    dismiss();
+	    clearAllText();
 	}
 		
 	@Override
@@ -782,12 +762,17 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int which, long arg3) {
             	Station station = null;
+            	//如果点到这里来，第一条肯定是刚才搜索的。
+            	SearchHistory sh_old = mQueryHistorys.get(0);
+            	delSearchHistory(sh_old);
             	if (start) {
             	    station = startStationList.get(which);
             	    setStart(station.toPOI());
+            	    addSearchHistory(new SearchHistory(station.toPOI(), sh_old.end));
             	} else if (end) {
             		station = endStationList.get(which);
             	    setEnd(station.toPOI());
+            	    addSearchHistory(new SearchHistory(sh_old.start, station.toPOI()));
             	}
                 dialog.dismiss();
                 if (station != null) {
@@ -872,35 +857,83 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
             if (!mStart.textEmpty() && !mEnd.textEmpty()) {
                 query();
             } else {
-                mSphinx.getInputSearchFragment().reset();
-                mSphinx.getInputSearchFragment().setMode(InputSearchFragment.MODE_BUELINE);
-                mSphinx.showView(R.id.view_poi_input_search);
+                String[] list = mSphinx.getResources().getStringArray(R.array.traffic_search_option);
+                int[] leftCompoundIconList = new int[3];
+                leftCompoundIconList[0] = R.drawable.ic_share_sina;
+                leftCompoundIconList[1] = R.drawable.ic_share_sina;
+                leftCompoundIconList[2] = R.drawable.ic_share_sina;
+                final ArrayAdapter<String> adapter = new StringArrayAdapter(mSphinx, list, leftCompoundIconList);
+                
+                View alterListView = mSphinx.getLayoutInflater().inflate(R.layout.alert_listview, null, false);
+                
+                ListView listView = (ListView) alterListView.findViewById(R.id.listview);
+                listView.setAdapter(adapter);
+                
+                final Dialog dialog = Utility.getChoiceDialog(mSphinx, alterListView, R.style.AlterChoiceDialog);
+                
+                TextView titleTxv = (TextView)alterListView.findViewById(R.id.title_txv);
+                titleTxv.setText(R.string.share);
+                
+                Button button = (Button)alterListView.findViewById(R.id.confirm_btn);
+                button.setVisibility(View.GONE);
+                
+                dialog.show();
+                
+                listView.setOnItemClickListener(new OnItemClickListener() {
+
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View arg1, int index, long arg3) {
+
+                        if (index == 0 || index == 1) {
+                            mSphinx.getInputSearchFragment().setData(null,
+                                    InputSearchFragment.MODE_BUELINE);
+                            mSphinx.showView(R.id.view_poi_input_search);
+                        } else if (index == 2) {
+                            CityInfo cityInfo = Globals.getCurrentCityInfo(mSphinx);
+                            if (cityInfo != null && cityInfo.isAvailably()) {
+                                mSphinx.getSubwayMapFragment().setData(cityInfo);
+                                mSphinx.showView(R.id.view_subway_map);
+                            }
+                        }
+                        dialog.setOnDismissListener(new OnDismissListener() {
+                            
+                            @Override
+                            public void onDismiss(DialogInterface dialog) {
+                            }
+                        });
+                        dialog.dismiss();
+                    }
+                });
             }
             break;
             
         case R.id.end_btn:
-            mSphinx.getInputSearchFragment().reset();
-            mSphinx.getInputSearchFragment().setMode(InputSearchFragment.MODE_TRAFFIC);
-            mSphinx.getInputSearchFragment().setConfirmedCallback(new InputSearchFragment.Callback() {
-                
-                @Override
-                public void onConfirmed(POI p) {
-                    mEnd.setPOI(p);
-                }
-            }, InputSearchFragment.REQUEST_TRAFFIC_END);
+            mSphinx.getInputSearchFragment().setData(null,
+                    InputSearchFragment.MODE_TRAFFIC,
+                    new InputSearchFragment.Callback(){
+
+                        @Override
+                        public void onConfirmed(POI p) {
+                            mEnd.setPOI(p);
+                            autoStartQuery(true);
+                        }
+                    },
+                    InputSearchFragment.REQUEST_TRAFFIC_END);
             mSphinx.showView(R.id.view_poi_input_search);
             break;
             
         case R.id.start_btn:
-            mSphinx.getInputSearchFragment().reset();
-            mSphinx.getInputSearchFragment().setMode(InputSearchFragment.MODE_TRAFFIC);
-            mSphinx.getInputSearchFragment().setConfirmedCallback(new InputSearchFragment.Callback() {
-                
-                @Override
-                public void onConfirmed(POI p) {
-                    mStart.setPOI(p);
-                }
-            }, InputSearchFragment.REQUEST_TRAFFIC_START);
+            mSphinx.getInputSearchFragment().setData(null,
+                    InputSearchFragment.MODE_TRAFFIC,
+                    new InputSearchFragment.Callback(){
+
+                        @Override
+                        public void onConfirmed(POI p) {
+                            mStart.setPOI(p);
+                            autoStartQuery(true);
+                        }
+                    },
+                    InputSearchFragment.REQUEST_TRAFFIC_START);
             mSphinx.showView(R.id.view_poi_input_search);
             break;
             

@@ -164,7 +164,6 @@ public class TrafficOverlayHelper {
 	 * 将地图缩放至可以显示完整的交通路径, 并平移到交通路径中心点
 	 */
 	public static Position panToViewWholeOverlay(Plan plan, MapView mapview, Activity activity) {
-		LogWrapper.d(TAG, "panToViewWholeOverlay");
 		Position position = null;
 		if (plan == null) {
 			return position;

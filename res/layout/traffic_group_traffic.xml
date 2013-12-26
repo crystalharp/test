@@ -8,45 +8,90 @@
   	android:padding="4dp"
 	android:gravity="center_vertical|left" >
 
-    <TextView android:id="@+id/index"
-    	android:layout_width="wrap_content"
-      	android:layout_height="wrap_content"
-      	android:layout_centerVertical="true"
-      	android:layout_alignParentLeft="true"
-      	android:gravity="center"
-  		android:textColor="@color/white"
-  		android:textSize="14sp"
-  		android:focusable="false"
-      	android:focusableInTouchMode="false"
-        android:background="@drawable/bg_index" />
-      	
   	<TextView
-  	    android:id="@+id/text2"
+  	    android:id="@+id/title_txv"
   	    android:layout_width="wrap_content"
   	    android:layout_height="wrap_content"
-  	    android:layout_toRightOf="@id/index"
-  	    android:layout_toLeftOf="@id/text1"
+  	    android:layout_alignParentLeft="true"
   	    android:lineSpacingExtra="4dp"
-  	    android:gravity="center_vertical|left"
-  	    android:layout_centerVertical="true"
-  	    android:paddingLeft="4dp"
+  	    android:paddingLeft="8dp"
   	    android:paddingTop="12dp"
-  	    android:paddingBottom="12dp"
+  	    android:paddingBottom="2dp"
   	    android:textColor="@color/black"
+  	    android:text="title"
   	    android:textSize="16sp" />
 
-  	<TextView
+  	
+  	<LinearLayout
+  	    android:layout_width="fill_parent"
+  	    android:layout_height="wrap_content"
+      	android:layout_below="@id/title_txv"
+  	     >
+	  	<TextView
+	  	    android:id="@+id/bustime_txv"
+	  	    android:layout_width="fill_parent"
+	  	    android:layout_height="wrap_content"
+	  	    android:layout_weight="1"
+	      	android:padding="8dp"
+	  	    android:ellipsize="end"
+	  	    android:singleLine="true"
+	  	    android:textColor="@color/text_hint_gray"
+	  	    android:text="bustime"
+	  	    android:textSize="14sp" />
+	  	
+	  	<TextView
+	  	    android:id="@+id/distance_txv"
+	  	    android:layout_width="fill_parent"
+	  	    android:layout_height="wrap_content"
+	  	    android:layout_weight="1"
+	      	android:padding="8dp"
+	  	    android:ellipsize="end"
+	  	    android:singleLine="true"
+	  	    android:textColor="@color/text_hint_gray"
+	  	    android:text="distance"
+	  	    android:textSize="14sp" />
+	  	
+	  	<TextView
+	  	    android:id="@+id/walk_distance_txv"
+	  	    android:layout_width="fill_parent"
+	  	    android:layout_height="wrap_content"
+	  	    android:layout_weight="1"
+	      	android:padding="8dp"
+	  	    android:singleLine="true"
+	  	    android:textColor="@color/text_hint_gray"
+	  	    android:text="walk_distance"
+	  	    android:textSize="14sp" />
+	  	
+	  	<TextView
+	  	    android:id="@+id/busstop_txv"
+	  	    android:layout_width="fill_parent"
+	  	    android:layout_height="wrap_content"
+	  	    android:layout_weight="1"
+	      	android:padding="8dp"
+	  	    android:ellipsize="end"
+	  	    android:singleLine="true"
+	  	    android:textColor="@color/text_hint_gray"
+	  	    android:text="busstop_num"
+	  	    android:textSize="14sp" />
+  	</LinearLayout>
+  	
+  	<LinearLayout
+  	    android:layout_alignParentTop="true"
+      	android:layout_alignParentRight="true"
+  	    android:layout_width="wrap_content"
+  	    android:layout_height="wrap_content" >
+  	    <TextView
   	    android:id="@+id/text1"
   	    android:layout_width="wrap_content"
   	    android:layout_height="wrap_content"
-  	    android:layout_centerVertical="true" 
-      	android:layout_alignParentRight="true"
-      	android:padding="8dp"
-  	    android:ellipsize="end"
+      	android:padding="2dp"
   	    android:gravity="center_vertical|left"
   	    android:singleLine="true"
   	    android:textColor="@color/text_hint_gray"
+  	    android:text="test"
   	    android:textSize="14sp" />
+  	</LinearLayout>
+
 
 </RelativeLayout>
 

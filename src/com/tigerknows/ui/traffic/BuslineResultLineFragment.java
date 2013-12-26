@@ -25,7 +25,6 @@ import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.android.os.TKAsyncTask;
-import android.widget.Toast;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.BuslineModel;
@@ -395,7 +394,7 @@ public class BuslineResultLineFragment extends BaseFragment {
         BaseQuery baseQuery = tkAsyncTask.getBaseQuery();
         String apiType = baseQuery.getAPIType();
         if (BaseQuery.API_TYPE_BUSLINE_QUERY.equals(apiType)) {
-            queryBuslineEnd((BuslineQuery) baseQuery);
+            InputSearchFragment.dealWithBuslineResponse(mSphinx, (BuslineQuery) baseQuery, mActionTag, mResultLsv);
         } else if (BaseQuery.API_TYPE_DATA_QUERY.equals(apiType)) {
             InputSearchFragment.dealWithPOIResponse((DataQuery) baseQuery, mSphinx, this);
         }
@@ -425,22 +424,6 @@ public class BuslineResultLineFragment extends BaseFragment {
 			return super.onTouchEvent(event);
 		}
 		
-    }
-    
-    void queryBuslineEnd(BuslineQuery buslineQuery) {
-    	
-        BuslineModel buslineModel = buslineQuery.getBuslineModel();
-        
-        if (buslineQuery.isTurnPage() && buslineModel == null) {
-            mResultLsv.setFooterLoadFailed(true);
-            return;
-        }
-        
-        if (buslineModel.getType() == BuslineModel.TYPE_BUSLINE){
-        	if (buslineModel.getLineList() == null || buslineModel.getLineList().size() <= 0) {
-        		mSphinx.showTip(R.string.busline_non_tip, Toast.LENGTH_SHORT);
-        	}
-        }
     }
     
     public List<Line> getData() {

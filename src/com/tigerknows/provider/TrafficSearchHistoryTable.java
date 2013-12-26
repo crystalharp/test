@@ -158,6 +158,8 @@ public class TrafficSearchHistoryTable {
             }
         }
         
+        optimize();
+        
         return isFailed;
     }
     

@@ -1242,6 +1242,10 @@ public class TilesView extends GLSurfaceView {
                                     && xy0Conv.y >= label.rect.top
                                     && xy0Conv.y <= label.rect.bottom) {
                                 
+                                float scale = (float) Math.pow(2, zoomLevel - centerXYZ.z);
+                                float rotation = mapMode.getzRotation();
+                                float sinRot = mapMode.getSinZ();
+                                float cosRot = mapMode.getCosZ();
                                 XYInteger center = new XYInteger(displaySize.x / 2,
                                         displaySize.y / 2);
                                 int tileSize = CONFIG.TILE_SIZE;
@@ -1251,8 +1255,12 @@ public class TilesView extends GLSurfaceView {
                                 float refy = cy + centerDelta.y + (centerXYZ.y - label.y) * tileSize - (tileSize >> 1);
                                 float sx = label.point.x + refx;//point.x + refx为实际原始坐标
                                 float sy = label.point.y + refy;
+                                float dx = scale == 1 ? (sx - cx) : scale * (sx - cx);
+                                float dy = scale == 1 ? (sy - cy) : scale * (sy - cy);
+                                float x = rotation == 0 ? (dx + cx) : (cosRot * (dx) - (dy) * sinRot + cx);//旋转变换
+                                float y = rotation == 0 ? (dy + cy) : ((dx) * sinRot + (dy) * cosRot + cy);
                                 
-                                Position pos = screenXYConvToPos(sx, sy);
+                                Position pos = screenXYConvToPos(x, y);
                                 mParentMapView.executeClickPOIEventListener(pos, label.name);
                                 touchLabel = label;
                                 break;

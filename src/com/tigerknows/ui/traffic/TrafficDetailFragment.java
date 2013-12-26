@@ -66,10 +66,6 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
     
     private List<CharSequence> mStrList = new ArrayList<CharSequence>();
     
-    private TextView mSubTitleTxv = null;
-    
-    private TextView mLengthTxv = null;
-    
     private ListView mResultLsv = null;
     
     private ViewGroup mFavorateBtn = null;
@@ -126,23 +122,16 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
                 mTitleBtn.setText(getString(R.string.title_transfer_plan));
                 mErrorRecoveryBtn.setVisibility(View.VISIBLE);
                 mBottomButtonsView.setWeightSum(3);
-            	mSubTitleTxv.setText(this.plan.getTitle(mSphinx));
-            	mLengthTxv.setVisibility(View.VISIBLE);
-            	mLengthTxv.setText(plan.getLengthStr(mSphinx));
                 break;
             case SHOW_TYPE_DRVIE:
                 mTitleBtn.setText(getString(R.string.title_drive_plan));
-                mSubTitleTxv.setText(getString(R.string.length_str_title, plan.getLengthStr(mSphinx)));
                 mErrorRecoveryBtn.setVisibility(View.GONE);
                 mBottomButtonsView.setWeightSum(2);
-            	mLengthTxv.setVisibility(View.GONE);
                 break;
             case SHOW_TYPE_WALK:
                 mTitleBtn.setText(getString(R.string.title_walk_plan));
-                mSubTitleTxv.setText(getString(R.string.length_str_title, plan.getLengthStr(mSphinx)));
                 mErrorRecoveryBtn.setVisibility(View.GONE);
                 mBottomButtonsView.setWeightSum(2);
-            	mLengthTxv.setVisibility(View.GONE);
                 break;
             default:
         }
@@ -176,11 +165,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
     }
    
     protected void findViews() {
-    	mSubTitleTxv = (TextView)mRootView.findViewById(R.id.subtitle_txv);
-        mLengthTxv = (TextView)mRootView.findViewById(R.id.length_txv);
         mResultLsv = (ListView)mRootView.findViewById(R.id.result_lsv);
-        mRootView.findViewById(R.id.traffic_detail_sub_title).setVisibility(View.VISIBLE);
-        mRootView.findViewById(R.id.traffic_result_sub_title).setVisibility(View.GONE);
         mBottomButtonsView = (LinearLayout) mRootView.findViewById(R.id.bottom_buttons_view);
         mErrorRecoveryBtn = (ViewGroup) mRootView.findViewById(R.id.error_recovery_btn);
         mFavorateBtn = (ViewGroup) mRootView.findViewById(R.id.favorite_btn);
@@ -215,26 +200,24 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
 			TrafficOverlayHelper.panToViewWholeOverlay(plan, mSphinx.getMapView(), (Activity)mSphinx);
 		}
 	}
+	
     public void setData(Plan plan) {
-        setData(plan, -1);
+        List<Plan> list = new ArrayList<TrafficModel.Plan>();
+        list.add(plan);
+        setData(list, 0);
     }
     
-    public void setData(Plan plan, int curLine) {
+    public void setData(List<Plan> list, int curLine) {
     	
-    	if (plan == null)
+    	if (list == null || list.isEmpty() || curLine >= list.size())
     		return;
 
-        this.plan = plan;
+        plan = list.get(0);
         mShowType = plan.getType();
-        this.curLineNum = curLine;
+        curLineNum = curLine;
 
         mPlanList.clear();
-        if (mShowType == SHOW_TYPE_TRANSFER) {
-            List<Plan> list = mSphinx.getTrafficResultFragment().getData();
-            if (list != null) {
-            	this.mPlanList.addAll(list);
-            }
-        }
+        this.mPlanList.addAll(list);
 
         mStrList.clear();
         mTypes.clear();

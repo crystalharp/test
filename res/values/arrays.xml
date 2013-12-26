@@ -277,4 +277,10 @@
         <item>满意</item>
         <item>很满意</item>
     </string-array>    
+    
+    <string-array name="traffic_search_option">
+        <item>线路搜索</item>
+        <item>站点搜索</item>
+        <item>地铁图</item>
+    </string-array>
 </resources>

@@ -34,6 +34,7 @@ import com.tigerknows.util.Utility;
 import com.tigerknows.widget.FilterListView;
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
+import com.tigerknows.android.location.Position;
 import com.tigerknows.android.os.TKAsyncTask;
 import android.widget.Toast;
 import com.tigerknows.common.ActionLog;
@@ -160,6 +161,8 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
         findViewsMain();
         setListenerMain();
 
+        mRightBtn.setVisibility(View.GONE);
+        
         mChecked = HOME_PAGE;
         mPage = HOME_PAGE;
         
@@ -697,6 +700,7 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
     	s.append('_');
     	int errcode = 510 + (mChecked >> 6)*10;
     	s.append(errcode + "");
+        appendPOIDetail(mPOI, s);
         FeedbackUpload feedbackUpload = new FeedbackUpload(mThis);
         feedbackUpload.addParameter(FeedbackUpload.SERVER_PARAMETER_ERROR_RECOVERY, s.toString());
         feedbackUpload.addLocalParameter(FeedbackUpload.LOCAL_PARAMETER_POIERROR_IGNORE, "true");
@@ -730,6 +734,8 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
                 s.append(getString(R.string.erreport_contact));
                 s.append(URLEncoder.encode(mContactEdt.getText().toString(), TKConfig.getEncoding()));
             }
+            
+            appendPOIDetail(mPOI, s);
         }catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
@@ -739,6 +745,21 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
         feedbackUpload.setup(-1, -1, mThis.getString(R.string.doing_and_wait));
         queryStart(feedbackUpload);
     }
+    
+    private void appendPOIDetail(POI poi, StringBuilder s) {
+        if (poi == null || s ==  null) {
+            return;
+        }
+
+        s.append('_');
+        s.append(URLEncoder.encode(poi.getName()));
+        Position position = poi.getPosition();
+        s.append('_');
+        s.append(position.getLon());
+        s.append('_');
+        s.append(position.getLat());
+    }
+    
     @Override
     public void onPostExecute(TKAsyncTask tkAsyncTask) {
         super.onPostExecute(tkAsyncTask);

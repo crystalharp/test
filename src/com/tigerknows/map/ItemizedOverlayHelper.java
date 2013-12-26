@@ -16,7 +16,6 @@ import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
 import com.tigerknows.Sphinx.TouchMode;
 import com.tigerknows.android.location.Position;
-import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.Dianying;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.TrafficModel.Plan;
@@ -47,9 +46,6 @@ public class ItemizedOverlayHelper {
             
             ItemizedOverlay itemizedOverlay = new ItemizedOverlay(ItemizedOverlay.CLICKED_OVERLAY);
             itemizedOverlay.addOverlayItem(overlayItem);
-            
-            sphinx.getResultMapFragment().setData(sphinx.getString(R.string.map_select_point), ActionLog.ResultMapSelectPoint);
-            sphinx.showView(R.id.view_result_map);
             
             sphinx.showInfoWindow(overlayItem);
             
@@ -195,6 +191,10 @@ public class ItemizedOverlayHelper {
     }
     
     public static ItemizedOverlay drawPOIOverlay(final Sphinx sphinx, List dataList, int index) {
+        return drawPOIOverlay(sphinx, dataList, index, true);
+    }
+    
+    public static ItemizedOverlay drawPOIOverlay(final Sphinx sphinx, List dataList, int index, boolean showInfoWindow) {
         
         ItemizedOverlay itemizedOverlay = null;
         MapView mapView = sphinx.getMapView();
@@ -290,7 +290,7 @@ public class ItemizedOverlayHelper {
                         });
             }
             mapView.addOverlay(overlay);
-            if (focus != null) {
+            if (focus != null && showInfoWindow) {
                 sphinx.showInfoWindow(focus);
             }
             if (dataList.size() > 1) {
