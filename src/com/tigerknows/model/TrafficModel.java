@@ -96,13 +96,15 @@ public class TrafficModel extends XMapData {
         // 0x14    x_string    打车费用(驾车类)
         private static final byte FIELD_TAXI_COST = 0x14;
         // 0x21    x_string    预计时间(公交类)
-        private static final byte FIELD_EXPECTED_BUS_TIME = 0x15;
+        private static final byte FIELD_EXPECTED_BUS_TIME = 0x21;
         // 0x22    x_string    全程长度(公交类)
-        private static final byte FIELD_BUS_DISTANCE = 0x16;
+        private static final byte FIELD_BUS_DISTANCE = 0x22;
         // 0x23    x_string    总步行距离(公交类)
-        private static final byte FIELD_WALK_DISTANCE = 0x17;
+        private static final byte FIELD_WALK_DISTANCE = 0x23;
         // 0x24    x_string    公交站数(公交类) 
-        private static final byte FIELD_BUSSTOP_NUM = 0x18;
+        private static final byte FIELD_BUSSTOP_NUM = 0x24;
+        // 0x30    x_array<x_map>  array<方案标签>(公交类)
+        private static final byte FIELD_PLAN_TAG = 0x30;
         
         public static final int TRANSFER_WALK_MIN_DISTANCE = 50;
 
@@ -736,11 +738,48 @@ public class TrafficModel extends XMapData {
             };
         }
         
+        public static class PlanTag extends XMapData {
+            //0x01    x_int   标签对应的底图序号；
+            //客户端支持的底图序号从1开始，0是超出支持范围之后的底图序号
+            final static private byte FIELD_BACKGROUND_TYPE = 0x01;
+            //0x02    x_string    标签对应的字符串描述，在客户端将被加到底图上显示 
+            final static private byte FIELD_DESCRIPTION = 0x02;
+            
+            private long backgroundType;
+            private String description;
+            
+            public long getBackgroundtype() {
+                return backgroundType;
+            }
+            
+            public String getDescription() {
+                return description;
+            }
+            
+            public PlanTag(XMap data) throws APIException {
+                super(data);
+
+                backgroundType = data.getInt(FIELD_BACKGROUND_TYPE);
+                
+                description = data.getString(FIELD_DESCRIPTION);
+            }
+            
+            public static XMapInitializer<PlanTag> Initializer = new XMapInitializer<PlanTag>() {
+
+                @Override
+                public PlanTag init(XMap data) throws APIException {
+                    return new PlanTag(data);
+                }
+            };
+        }
+        
         private String description;
         
         private int length;
         
         private List<Step> stepList;
+        
+        private List<PlanTag> planTagList;
         
         private String startOutOrientation;
         
@@ -818,6 +857,10 @@ public class TrafficModel extends XMapData {
         public void setStepList(List<Step> stepList) {
             this.stepList = stepList;
         }
+        
+        public List<PlanTag> getPlanTagList() {
+            return planTagList;
+        }
 
         public String getStartOutOrientation() {
             return startOutOrientation;
@@ -868,6 +911,7 @@ public class TrafficModel extends XMapData {
             description = getStringFromData(FIELD_DESCRIPTION, reset ? null : description);
             length = (int)getLongFromData(FIELD_LENGTH, reset ? 0 : length);
             stepList = getListFromData(FIELD_STEP_LIST, Step.Initializer, reset ? null : stepList);
+            planTagList = getListFromData(FIELD_PLAN_TAG, PlanTag.Initializer, reset ? null : planTagList);
             startOutOrientation = getStringFromData(FIELD_START_OUT_ORIENTATION, reset ? null : startOutOrientation);
             expectedDriveTime = getStringFromData(FIELD_EXPECTED_DRIVE_TIME, reset ? null : expectedDriveTime);
             driveDistance = getStringFromData(FIELD_DRIVE_DISTANCE, reset ? null : driveDistance);

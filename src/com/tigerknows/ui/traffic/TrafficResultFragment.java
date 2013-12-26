@@ -50,12 +50,6 @@ public class TrafficResultFragment extends BaseFragment {
     
     private List<Plan> mPlanList = new ArrayList<TrafficModel.Plan>();
 
-    private TextView mStartTxv = null;
-
-    private TextView mEndTxv = null;
-    
-    private TextView mLengthTxv = null;
-    
     private ListView mResultLsv = null;
     
     private LinearLayout mFootLayout = null;
@@ -102,14 +96,9 @@ public class TrafficResultFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        mEndTxv.setVisibility(View.VISIBLE);
-        
-        mStartTxv.setText(getString(R.string.start_text, mTrafficModel.getStart().getName()));
-        mEndTxv.setText(getString(R.string.end_text, mTrafficModel.getEnd().getName()));
 
         mTitleBtn.setText(getString(R.string.title_type_transfer));
         mRightBtn.setVisibility(View.GONE);
-        mLengthTxv.setVisibility(View.GONE);
         
         mFootLayout.setVisibility(View.GONE);
         
@@ -130,9 +119,6 @@ public class TrafficResultFragment extends BaseFragment {
     }
    
     protected void findViews() {
-        mStartTxv = (TextView)mRootView.findViewById(R.id.start_txv);
-        mEndTxv = (TextView)mRootView.findViewById(R.id.end_txv);
-        mLengthTxv = (TextView)mRootView.findViewById(R.id.length_txv);
         mResultLsv = (ListView)mRootView.findViewById(R.id.result_lsv);
         mFootLayout = (LinearLayout)mRootView.findViewById(R.id.bottom_buttons_view);
     }
@@ -152,38 +138,38 @@ public class TrafficResultFragment extends BaseFragment {
 
         });
         
-        mResultLsv.setOnScrollListener(new OnScrollListener() {
-            
-            @Override
-            public void onScrollStateChanged(AbsListView arg0, int arg1) {
-            	if (downView != null) {
-            		PlanViewHolder viewHandler = (PlanViewHolder)downView.getTag();
-                	if (viewHandler.position != focusedIndex) {
-//                		viewHandler.index.setBackgroundResource(R.drawable.btn_index);
-                	}
-            	}
-            }
-
-			@Override
-			public void onScroll(AbsListView view, int firstVisibleItem,
-					int visibleItemCount, int totalItemCount) {
-			}
-        });
-        
-        mResultLsv.setOnTouchListener(new OnTouchListener() {
-			
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				if ((event.getAction() == MotionEvent.ACTION_UP) && (downView != null)) {
-					if (downView.isSelected() || downView.isFocused() || downView.isPressed()) {
-						LogWrapper.d(TAG, "set index bg: " + "bg_index_focused");
-						PlanViewHolder planHolder = (PlanViewHolder)downView.getTag();
-//		        		planHolder.index.setBackgroundResource(R.drawable.bg_index_focused);
-					}
-				}
-				return false;
-			}
-		});
+//        mResultLsv.setOnScrollListener(new OnScrollListener() {
+//            
+//            @Override
+//            public void onScrollStateChanged(AbsListView arg0, int arg1) {
+//            	if (downView != null) {
+//            		PlanViewHolder viewHandler = (PlanViewHolder)downView.getTag();
+//                	if (viewHandler.position != focusedIndex) {
+////                		viewHandler.index.setBackgroundResource(R.drawable.btn_index);
+//                	}
+//            	}
+//            }
+//
+//			@Override
+//			public void onScroll(AbsListView view, int firstVisibleItem,
+//					int visibleItemCount, int totalItemCount) {
+//			}
+//        });
+//        
+//        mResultLsv.setOnTouchListener(new OnTouchListener() {
+//			
+//			@Override
+//			public boolean onTouch(View v, MotionEvent event) {
+//				if ((event.getAction() == MotionEvent.ACTION_UP) && (downView != null)) {
+//					if (downView.isSelected() || downView.isFocused() || downView.isPressed()) {
+//						LogWrapper.d(TAG, "set index bg: " + "bg_index_focused");
+//						PlanViewHolder planHolder = (PlanViewHolder)downView.getTag();
+////		        		planHolder.index.setBackgroundResource(R.drawable.bg_index_focused);
+//					}
+//				}
+//				return false;
+//			}
+//		});
     }
     
     public void setData(TrafficQuery trafficQuery) {
@@ -199,9 +185,11 @@ public class TrafficResultFragment extends BaseFragment {
     }
 
     public static class PlanViewHolder {
-    	public TextView text;
-    	public TextView summary;
-    	public TextView index;
+    	public TextView title;
+    	public TextView distance;
+    	public TextView walkDistance;
+    	public TextView bustime;
+    	public TextView busstop;
         public int position;
     }
     
@@ -233,9 +221,11 @@ public class TrafficResultFragment extends BaseFragment {
         		convertView = new ChildView(mContext);
         		
         		planHolder = new PlanViewHolder();
-        		planHolder.summary = (TextView)convertView.findViewById(R.id.text1);
-        		planHolder.text = (TextView)convertView.findViewById(R.id.text2);
-        		planHolder.index = (TextView)convertView.findViewById(R.id.index);
+        		planHolder.distance = (TextView)convertView.findViewById(R.id.distance_txv);
+        		planHolder.title = (TextView)convertView.findViewById(R.id.title_txv);
+        		planHolder.busstop = (TextView) convertView.findViewById(R.id.busstop_txv);
+        		planHolder.bustime = (TextView) convertView.findViewById(R.id.bustime_txv);
+        		planHolder.walkDistance = (TextView) convertView.findViewById(R.id.walk_distance_txv);
         		planHolder.position = position;
         		
         		convertView.setTag(planHolder);
@@ -244,17 +234,16 @@ public class TrafficResultFragment extends BaseFragment {
         	}
         	
         	Plan plan = (Plan) getItem(position);
-        	planHolder.text.setText(plan.getTitle(mSphinx));
-
-        	planHolder.summary.setText(plan.getLengthStr(mSphinx));
-        	planHolder.index.setText(String.valueOf(position+1));
+        	planHolder.title.setText(plan.getTitle(mSphinx));
+        	planHolder.distance.setText(plan.getLengthStr(mSphinx));
+        	planHolder.busstop.setText(plan.getBusstopNum());
+        	planHolder.bustime.setText(plan.getExpectedBusTime());
+        	planHolder.walkDistance.setText(plan.getWalkDistance());
         	
         	if (focusedIndex == position) {
 				LogWrapper.d(TAG, "position: " + position + "bg_index_focused");
-//        		planHolder.index.setBackgroundResource(R.drawable.bg_index_focused);
 			} else {
 				LogWrapper.d(TAG, "position: " + position + "bg_index");
-//				planHolder.index.setBackgroundResource(R.drawable.btn_index);
 			}
         	
         	planHolder.position = position;

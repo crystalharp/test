@@ -7,7 +7,7 @@
     android:gravity="center" 
     android:background="@color/gray_light">
     
-    <LinearLayout android:id="@+id/top_view"
+    <!-- <LinearLayout android:id="@+id/top_view"
         android:layout_width="fill_parent" 
         android:layout_height="wrap_content"
         android:padding="4dp"
@@ -84,7 +84,7 @@
 	        </TextView>
 	        
         </RelativeLayout>
-    </LinearLayout>
+    </LinearLayout> -->
 
     <include android:id="@+id/bottom_buttons_view"
         android:layout_alignParentBottom="true"
@@ -93,19 +93,18 @@
     <ListView android:id="@+id/result_lsv"
         android:layout_width="fill_parent" 
         android:layout_height="fill_parent"
-        android:layout_below="@id/top_view"
         android:layout_above="@id/bottom_buttons_view"
         android:fadingEdge="none"
         android:drawSelectorOnTop="false"
         android:scrollingCache="false"
 		android:divider="@drawable/bg_line_split"
         android:background="@color/normal_background" />
-    <ImageView 
+    <!-- <ImageView 
         android:id="@+id/subtitle_down"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/top_view"
         android:scaleType="fitXY"
-        android:src="@drawable/bg_subtitle_down" />
+        android:src="@drawable/bg_subtitle_down" /> -->
     
 </RelativeLayout>
