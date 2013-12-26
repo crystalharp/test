@@ -1232,9 +1232,9 @@ public class POI extends BaseData {
         } else {
             return false;
         }
-        if (TextUtils.isEmpty(poi.uuid) && (storeType == Tigerknows.STORE_TYPE_FAVORITE || storeType == Tigerknows.STORE_TYPE_HISTORY)) {
-            return false;
-        }
+//        if (TextUtils.isEmpty(poi.uuid) && (storeType == Tigerknows.STORE_TYPE_FAVORITE || storeType == Tigerknows.STORE_TYPE_HISTORY)) {
+//            return false;
+//        }
         if (!TextUtils.isEmpty(poi.alise)) {
             values.put(Tigerknows.POI.ALIAS, poi.alise);
         }
@@ -1513,14 +1513,18 @@ public class POI extends BaseData {
             count = c.getCount();
             if (count > 0) {
                 c.moveToFirst();
-                for(int i = 0; i < count; i++) {
-                    POI other = readFromCursor(context, c);
-                    if((null != other && !other.equals(this)) || (null == other && other != this)) {
-                    } else {
-                        baseData = other;
-                        break;
+                if (id > -1) {
+                    baseData = readFromCursor(context, c);
+                } else {
+                    for(int i = 0; i < count; i++) {
+                        POI other = readFromCursor(context, c);
+                        if((null != other && !other.equals(this)) || (null == other && other != this)) {
+                        } else {
+                            baseData = other;
+                            break;
+                        }
+                        c.moveToNext();
                     }
-                    c.moveToNext();
                 }
             }
             c.close();
@@ -1533,20 +1537,34 @@ public class POI extends BaseData {
         if (this == object) {
             return true;
         }
-        if (object instanceof POI) {
-            POI other = (POI) object;
-//            XMap otherData = other.data;
-//            if((null != otherData && !otherData.equals(data)) || (null == otherData && otherData != data)) {
-//                return false;
-            if(null != uuid && null != other.uuid && uuid.equals(other.uuid)) {
-                return true;
-            } else if((null != other.name && !other.name.equals(this.name)) || (null == other.name && other.name != this.name)) {
-                return false;
-            } else if((null != other.position && !other.position.equals(this.position)) || (null == other.position && other.position != this.position)) {
-                return false;
-            } else {
+        if (null == object) {
+            return false;
+        }
+        
+        if (getClass() != object.getClass()) {
+            return false;
+        }
+        
+        POI other = (POI) object;
+//    XMap otherData = other.data;
+//    if((null != otherData && !otherData.equals(data)) || (null == otherData && otherData != data)) {
+//        return false;
+//    }
+        
+        if(null != uuid && uuid.equals(other.uuid)) {
+            return true;
+        } else if(null != name && name.equals(other.name)) {
+            if ((null != position && null != other.position && position.equals(other.position))
+                    || (null == position && position == other.position)) {
                 return true;
             }
+        } else if(null != position && null != other.position && position.equals(other.position)) {
+            if ((null != name && name.equals(other.name))
+                    || (null == name && name == other.name)) {
+                return true;
+            }
+        } else {
+            return false;
         }
         
         return false;
@@ -1584,7 +1602,7 @@ public class POI extends BaseData {
 		if (aPOI == null || bPOI == null)
 			return false;
 		
-		if ((aPOI.getName().equals(bPOI.getName()))) {
+		if ((aPOI.getName() != null && aPOI.getName().equals(bPOI.getName()))) {
 			return true;
 		} 
 		

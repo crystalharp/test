@@ -97,7 +97,7 @@ public class Position implements Serializable, Parcelable{
 		}
 		Position other = (Position) obj;
 		// 浮点数的判断不能用==
-		if(Math.abs(other.lat-this.lat) < 0.0000001 && Math.abs(other.lon-this.lon) < 0.0000001 && Math.abs(other.accuracy-this.accuracy) < 0.0000001)
+		if(Math.abs(other.lat-this.lat) < 0.0001d && Math.abs(other.lon-this.lon) < 0.0001d && Math.abs(other.accuracy-this.accuracy) < 1f)
 			return true;
 		else
 			return false;
@@ -106,8 +106,12 @@ public class Position implements Serializable, Parcelable{
 	@Override
 	public int hashCode() {
 		int hash = 7;
-		hash = 97 * hash + (int) (Double.doubleToLongBits(this.lat) ^ (Double.doubleToLongBits(this.lat) >>> 32));
-		hash = 97 * hash + (int) (Double.doubleToLongBits(this.lon) ^ (Double.doubleToLongBits(this.lon) >>> 32));
+		int temp = (int)(this.lat * 10000);
+		hash = 97 * hash + temp;
+		temp = (int)(this.lon * 10000);
+		hash = 97 * hash + temp;
+        temp = (int)(this.accuracy);
+        hash = 97 * hash + temp;
 		return hash;
 	}
 

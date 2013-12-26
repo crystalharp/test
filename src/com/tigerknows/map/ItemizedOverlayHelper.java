@@ -195,6 +195,10 @@ public class ItemizedOverlayHelper {
     }
     
     public static ItemizedOverlay drawPOIOverlay(final Sphinx sphinx, List dataList, int index) {
+        return drawPOIOverlay(sphinx, dataList, index, true);
+    }
+    
+    public static ItemizedOverlay drawPOIOverlay(final Sphinx sphinx, List dataList, int index, boolean showInfoWindow) {
         
         ItemizedOverlay itemizedOverlay = null;
         MapView mapView = sphinx.getMapView();
@@ -290,7 +294,7 @@ public class ItemizedOverlayHelper {
                         });
             }
             mapView.addOverlay(overlay);
-            if (focus != null) {
+            if (focus != null && showInfoWindow) {
                 sphinx.showInfoWindow(focus);
             }
             if (dataList.size() > 1) {
