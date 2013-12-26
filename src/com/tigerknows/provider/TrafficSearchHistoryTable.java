@@ -16,7 +16,7 @@ import com.tigerknows.util.ByteUtil;
 
 public class TrafficSearchHistoryTable {
 
-    public static final int MAX_COUNT = 50;
+    public static final int MAX_COUNT = 5;
     public static final int HISTORY_WORD_LIST_SIZE = 3;
     public static final int HISTORY_WORD_FIRST_SIZE = 10;
     
@@ -157,6 +157,8 @@ public class TrafficSearchHistoryTable {
                 isFailed = true;
             }
         }
+        
+        optimize();
         
         return isFailed;
     }

@@ -77,6 +77,8 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	
 	public static final int LINE = 3;
 	
+	public static final int MAX_QUERY_HISTORY = 2;
+	
 	public String MY_LOCATION;
 	
 	private int mSettedRadioBtn = 0;
@@ -108,10 +110,6 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	private InputBtn mStart;
     
 	private InputBtn mEnd;
-		
-//	RelativeLayout mTrafficLayout;
-//
-//	RelativeLayout mBuslineLayout;
 	
 //	LinearLayout mAddCommonPlace;
 	
@@ -516,27 +514,19 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
     public void initHistory() {
         mQueryHistorys.clear();
         mHistoryTable.readTrafficSearchHistory(mQueryHistorys);
+        mQueryHistory.setVisibility(View.VISIBLE);
+        mQueryHistoryLst.setVisibility(View.VISIBLE);
+        if (mQueryHistorys.size() == 0) {
+            mQueryHistory.setVisibility(View.GONE);
+            mQueryHistoryLst.setVisibility(View.GONE);
+        } else if (mQueryHistorys.size() > MAX_QUERY_HISTORY) {
+            int size = mQueryHistorys.size();
+            for (int i = size - 1; i >= MAX_QUERY_HISTORY; i--) {
+                mQueryHistorys.remove(i);
+            }
+        }
         mQueryHistoryAdapter.refreshList(mQueryHistorys);
     }
-//    
-//    public static void submitTrafficQuery(Sphinx sphinx, POI start, POI end, int queryType) {
-//        
-//        if (start == null || end == null)
-//            return;
-//        //以下内容出现在两个submit中，以后重构的时候注意写在一块
-//        if (start.getName().equals(sphinx.getString(R.string.my_location))) {
-//            start.setName(getMyLocationName(sphinx, start.getPosition()));
-//        } 
-//        if (end.getName().equals(sphinx.getString(R.string.my_location))) {
-//            end.setName(getMyLocationName(sphinx, end.getPosition()));
-//        }
-//        
-//        TrafficQuery trafficQuery = new TrafficQuery(sphinx);
-//            
-//        trafficQuery.setup(start, end, queryType, R.id.view_traffic_home, sphinx.getString(R.string.doing_and_wait));
-//        
-//        sphinx.queryStart(trafficQuery);
-//    }
     
 	public static String getMyLocationName(Sphinx mSphinx, Position position) {
 		String mLocationName = mSphinx.getMapEngine().getPositionName(position);
@@ -656,12 +646,8 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
     }    
 	
 	public void onBack() {
-//		if (mStateTransitionTable.event(Event.Back)) {
-//			
-//		} else {
-			dismiss();
-//		}
-			clearAllText();
+	    dismiss();
+	    clearAllText();
 	}
 		
 	@Override
