@@ -745,10 +745,10 @@ public class TrafficModel extends XMapData {
             //0x02    x_string    标签对应的字符串描述，在客户端将被加到底图上显示 
             final static private byte FIELD_DESCRIPTION = 0x02;
             
-            private long backgroundType;
+            private int backgroundType;
             private String description;
             
-            public long getBackgroundtype() {
+            public int getBackgroundtype() {
                 return backgroundType;
             }
             
@@ -759,7 +759,7 @@ public class TrafficModel extends XMapData {
             public PlanTag(XMap data) throws APIException {
                 super(data);
 
-                backgroundType = data.getInt(FIELD_BACKGROUND_TYPE);
+                backgroundType = (int) data.getInt(FIELD_BACKGROUND_TYPE);
                 
                 description = data.getString(FIELD_DESCRIPTION);
             }

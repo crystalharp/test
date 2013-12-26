@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -30,8 +31,10 @@ import com.tigerknows.Sphinx;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.TrafficModel;
 import com.tigerknows.model.TrafficModel.Plan;
+import com.tigerknows.model.TrafficModel.Plan.PlanTag;
 import com.tigerknows.model.TrafficQuery;
 import com.tigerknows.ui.BaseFragment;
+import com.tigerknows.util.Utility;
 
 /**
  * 
@@ -57,6 +60,18 @@ public class TrafficResultFragment extends BaseFragment {
     private TrafficQuery mTrafficQuery;
     
     private TrafficModel mTrafficModel = null;
+    
+    private static final int MAX_TAG_NUM = 3;
+    
+    private static final int tagResList[] = {0, 
+        R.drawable.bg_transfer_tag1,
+        R.drawable.bg_transfer_tag2,
+        R.drawable.bg_transfer_tag3,
+        R.drawable.bg_transfer_tag4,
+        R.drawable.bg_transfer_tag5,
+        R.drawable.bg_transfer_tag6,
+        R.drawable.bg_transfer_tag7
+        }; 
 
     /*
      * 用于控制序号图片显示
@@ -190,6 +205,7 @@ public class TrafficResultFragment extends BaseFragment {
     	public TextView walkDistance;
     	public TextView bustime;
     	public TextView busstop;
+    	public LinearLayout tags;
         public int position;
     }
     
@@ -226,6 +242,7 @@ public class TrafficResultFragment extends BaseFragment {
         		planHolder.busstop = (TextView) convertView.findViewById(R.id.busstop_txv);
         		planHolder.bustime = (TextView) convertView.findViewById(R.id.bustime_txv);
         		planHolder.walkDistance = (TextView) convertView.findViewById(R.id.walk_distance_txv);
+        		planHolder.tags = (LinearLayout) convertView.findViewById(R.id.tags_view);
         		planHolder.position = position;
         		
         		convertView.setTag(planHolder);
@@ -239,6 +256,29 @@ public class TrafficResultFragment extends BaseFragment {
         	planHolder.busstop.setText(plan.getBusstopNum());
         	planHolder.bustime.setText(plan.getExpectedBusTime());
         	planHolder.walkDistance.setText(plan.getWalkDistance());
+        	planHolder.tags.removeAllViews();
+        	List<PlanTag> list = plan.getPlanTagList();
+        	int tagNum = Math.min(MAX_TAG_NUM, plan.getPlanTagList().size());
+        	for (int i = 0; i < tagNum; i++) {
+        	    PlanTag tag = list.get(i);
+        	    if (tag.getBackgroundtype() < 1 || tag.getBackgroundtype() > 5) {
+        	        continue;
+        	    }
+        	    TextView txv = new TextView(mSphinx);
+        	    txv.setText(tag.getDescription());
+        	    int dpPadding2 = Utility.dip2px(mSphinx, 2);
+        	    int dpPadding1 = Utility.dip2px(mSphinx, 1);
+        	    txv.setPadding(dpPadding2, dpPadding1, dpPadding2, dpPadding1);
+        	    LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+        	            LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1);  
+        	    int dpMargin = Utility.dip2px(mSphinx, 4);
+        	    lp.setMargins(dpMargin, 0, dpMargin, 0); 
+        	    txv.setLayoutParams(lp); 
+        	    txv.setBackgroundResource(tagResList[tag.getBackgroundtype()]);
+        	    txv.setTextSize(11f);
+        	    txv.setTextColor(Color.WHITE);
+        	    planHolder.tags.addView(txv);
+        	}
         	
         	if (focusedIndex == position) {
 				LogWrapper.d(TAG, "position: " + position + "bg_index_focused");
