@@ -16,15 +16,133 @@
 		    <include layout="@layout/poi_nearby_search_bar"
 		        android:layout_width="fill_parent"
 		        android:layout_height="wrap_content"/>
-		    <LinearLayout 
+		    <LinearLayout android:id="@+id/hot_lly"
 		        android:layout_width="fill_parent"
 		        android:layout_height="wrap_content"
-		        android:orientation="vertical">
-		        <Button 
+		        android:orientation="vertical"
+		        android:background="@color/normal_background"
+		        >
+		        <LinearLayout android:id="@+id/hot_0_lly"
 		            android:layout_width="fill_parent"
 		            android:layout_height="wrap_content"
-		            android:text="热门分类区还没做呢"/>
-		        
+		            android:orientation="horizontal"
+		            >
+		            <include layout="@layout/poi_nearby_hot_item"
+		                android:id="@+id/hot_0_0_btn"
+		                android:layout_width="fill_parent"
+		                android:layout_height="wrap_content"
+		                android:layout_weight="1"
+		                />
+		            <include layout="@layout/poi_nearby_hot_item"
+		                android:id="@+id/hot_0_1_btn"
+		                android:layout_width="fill_parent"
+		                android:layout_height="wrap_content"
+		                android:layout_weight="1"
+		                />	
+		            <include layout="@layout/poi_nearby_hot_item"
+		                android:id="@+id/hot_0_2_btn"
+		                android:layout_width="fill_parent"
+		                android:layout_height="wrap_content"
+		                android:layout_weight="1"
+		                />
+		            <include layout="@layout/poi_nearby_hot_item"
+		                android:id="@+id/hot_0_3_btn"
+		                android:layout_width="fill_parent"
+		                android:layout_height="wrap_content"
+		                android:layout_weight="1"
+		                />		            		                
+		        </LinearLayout>
+		        <LinearLayout android:id="@+id/hot_1_lly"
+		            android:layout_width="fill_parent"
+		            android:layout_height="wrap_content"
+		            android:orientation="horizontal"
+		            >
+		            <include layout="@layout/poi_nearby_hot_item"
+		                android:id="@+id/hot_1_0_btn"
+		                android:layout_width="fill_parent"
+		                android:layout_height="wrap_content"
+		                android:layout_weight="1"
+		                />
+		            <include layout="@layout/poi_nearby_hot_item"
+		                android:id="@+id/hot_1_1_btn"
+		                android:layout_width="fill_parent"
+		                android:layout_height="wrap_content"
+		                android:layout_weight="1"
+		                />	
+		            <include layout="@layout/poi_nearby_hot_item"
+		                android:id="@+id/hot_1_2_btn"
+		                android:layout_width="fill_parent"
+		                android:layout_height="wrap_content"
+		                android:layout_weight="1"
+		                />
+		            <include layout="@layout/poi_nearby_hot_item"
+		                android:id="@+id/hot_1_3_btn"
+		                android:layout_width="fill_parent"
+		                android:layout_height="wrap_content"
+		                android:layout_weight="1"
+		                />		            		                
+		        </LinearLayout>
+
+		        <LinearLayout android:id="@+id/hot_2_lly"
+		            android:layout_width="fill_parent"
+		            android:layout_height="wrap_content"
+		            android:orientation="horizontal"
+		            >
+		            <include layout="@layout/poi_nearby_hot_item"
+		                android:id="@+id/hot_2_0_btn"
+		                android:layout_width="fill_parent"
+		                android:layout_height="wrap_content"
+		                android:layout_weight="1"
+		                />
+		            <include layout="@layout/poi_nearby_hot_item"
+		                android:id="@+id/hot_2_1_btn"
+		                android:layout_width="fill_parent"
+		                android:layout_height="wrap_content"
+		                android:layout_weight="1"
+		                />	
+		            <include layout="@layout/poi_nearby_hot_item"
+		                android:id="@+id/hot_2_2_btn"
+		                android:layout_width="fill_parent"
+		                android:layout_height="wrap_content"
+		                android:layout_weight="1"
+		                />
+		            <include layout="@layout/poi_nearby_hot_item"
+		                android:id="@+id/hot_2_3_btn"
+		                android:layout_width="fill_parent"
+		                android:layout_height="wrap_content"
+		                android:layout_weight="1"
+		                />		            		                
+		        </LinearLayout>	
+		        <LinearLayout android:id="@+id/hot_3_lly"
+		            android:layout_width="fill_parent"
+		            android:layout_height="wrap_content"
+		            android:orientation="horizontal"
+		            >
+		            <include layout="@layout/poi_nearby_hot_item"
+		                android:id="@+id/hot_3_0_btn"
+		                android:layout_width="fill_parent"
+		                android:layout_height="wrap_content"
+		                android:layout_weight="1"
+		                />
+		            <include layout="@layout/poi_nearby_hot_item"
+		                android:id="@+id/hot_3_1_btn"
+		                android:layout_width="fill_parent"
+		                android:layout_height="wrap_content"
+		                android:layout_weight="1"
+		                />	
+		            <include layout="@layout/poi_nearby_hot_item"
+		                android:id="@+id/hot_3_2_btn"
+		                android:layout_width="fill_parent"
+		                android:layout_height="wrap_content"
+		                android:layout_weight="1"
+		                />
+		            <include layout="@layout/poi_nearby_hot_item"
+		                android:id="@+id/hot_3_3_btn"
+		                android:layout_width="fill_parent"
+		                android:layout_height="wrap_content"
+		                android:layout_weight="1"
+		                />		            		                
+		        </LinearLayout>		        	        		        		        
 		    </LinearLayout>    
 		    <include layout="@layout/poi_nearby_search_category_item"
 		        android:id="@+id/food_category"
@@ -84,7 +202,8 @@
         android:layout_width="fill_parent" 
         android:layout_height="fill_parent" 
         android:visibility="gone"
-        ></com.tigerknows.widget.FilterListView>
+        >
+    </com.tigerknows.widget.FilterListView>
 
     	        
 </RelativeLayout>

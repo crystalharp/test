@@ -23,6 +23,7 @@ import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.TKConfig;
 import com.tigerknows.android.location.Position;
 import com.tigerknows.android.os.TKAsyncTask;
 
@@ -62,21 +63,24 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     /**
      * 分类名称列表
      */
-    protected String[] mCategoryNames;
-    protected String[] mSubCategoryNames;
-    protected LinearLayout[][] mCategoryLlys;
-    protected Button[][] mCategoryBtns;
+    private String[] mCategoryNames;
+    private String[] mSubCategoryNames;
+    private LinearLayout[][] mCategoryLlys;
+    private Button[][] mCategoryBtns;
+
+    private LinearLayout mHotLly;
+    private Button[] mHotBtns;
     
     private boolean mFromPOI;
     
-    protected CategoryProperty[] mCategoryList;
+    private CategoryProperty[] mCategoryList;
     
-    protected static final int NUM_OF_CATGEGORY = 10;
+    private static final int NUM_OF_CATGEGORY = 10;
     
-    protected static final int FOOD = 0;
-    protected static final int HOTEL = 1;
-    protected static final int ENTERTAINMENT = 2;
-    protected static final int TRAFFIC = 3;
+    private static final int FOOD = 0;
+    private static final int HOTEL = 1;
+    private static final int ENTERTAINMENT = 2;
+    private static final int TRAFFIC = 3;
 
     public void launchCategoryPropertyList(){
         final int[][] SPECIAL_OP = {
@@ -107,12 +111,19 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     		mCategoryList[i].setName(mCategoryNames[i]);
     		mCategoryList[i].setButtonText(mSubCategoryNames[i].split(";"));
     	}
-    }    
+    }
     
-    protected View[] mCategoryViews;
+    private static final int[] HOT_LLY_ID = {R.id.hot_0_lly, R.id.hot_1_lly, R.id.hot_2_lly, R.id.hot_3_lly};
+    private static final int[] HOT_BTN_ID = {R.id.hot_0_0_btn, R.id.hot_0_1_btn, R.id.hot_0_2_btn, R.id.hot_0_3_btn,
+    	R.id.hot_1_0_btn, R.id.hot_1_1_btn, R.id.hot_1_2_btn, R.id.hot_1_3_btn,
+    	R.id.hot_2_0_btn, R.id.hot_2_1_btn, R.id.hot_2_2_btn, R.id.hot_2_3_btn,
+    	R.id.hot_3_0_btn, R.id.hot_3_1_btn, R.id.hot_3_2_btn, R.id.hot_3_3_btn
+    };
+    
+    private View[] mCategoryViews;
 
-    protected FilterListView mFilterListView;
-    protected List<Filter> mFilterList;
+    private FilterListView mFilterListView;
+    private List<Filter> mFilterList;
     
     
     @Override
@@ -142,7 +153,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     @Override
     public void onResume() {
         super.onResume();
-        
+        refreshHotView(TKConfig.getPref(mContext, TKConfig.PREFS_CUSTOM_CATEGORY, "111111100000000"));
         mLeftBtn.setOnClickListener(this);
         if(mFilterListView.getVisibility() == View.GONE){
         	mTitleBtn.setText(R.string.nearby_search);
@@ -166,6 +177,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
 
     protected void findViews() {
         mLocationTxv = (TextView) mRootView.findViewById(R.id.location_txv);
+        mHotLly = (LinearLayout) mRootView.findViewById(R.id.hot_lly);
         mCategoryBtns = new Button[NUM_OF_CATGEGORY][];
         mCategoryLlys = new LinearLayout[NUM_OF_CATGEGORY][];
         mCategoryViews = new View[NUM_OF_CATGEGORY];
@@ -197,7 +209,11 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     	}
     }
     
-    protected void setButtonView(){
+    private void refreshHotView(String customPrefs){
+
+    }
+    
+    private void setButtonView(){
     	for(int i = 0; i < NUM_OF_CATGEGORY; i++){
     		CategoryProperty cp = mCategoryList[i];
     		mCategoryBtns[i][9].setText(cp.getName());
@@ -220,7 +236,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     	}
     }
     
-    protected void setFilterListView() {
+    private void setFilterListView() {
         mFilterListView = (FilterListView) mRootView.findViewById(R.id.filter_list_view);
         mFilterListView.findViewById(R.id.body_view).setPadding(0, 0, 0, 0);    	
         if (mFilterList != null) {
@@ -317,7 +333,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
      * 查询
      * @param keyword
      */
-    protected void submitQuery(String keyword) {
+    private void submitQuery(String keyword) {
         if (!TextUtils.isEmpty(keyword)) {
             DataQuery poiQuery = new DataQuery(mContext);
             POI requestPOI = mPOI;

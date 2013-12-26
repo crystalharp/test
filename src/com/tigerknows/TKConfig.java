@@ -737,6 +737,11 @@ public class TKConfig {
     public static final String PREFS_DISH = "prefs_dish";
     
     /**
+     * 自定义热门类别
+     */
+    public static final String PREFS_CUSTOM_CATEGORY = "prefs_custom_category";
+    
+    /**
      * 发现分类图片尺寸的Key
      */
     public static final int PICTURE_DISCOVER_HOME = 1;
