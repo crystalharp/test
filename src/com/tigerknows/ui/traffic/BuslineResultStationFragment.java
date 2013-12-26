@@ -28,12 +28,12 @@ import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.android.os.TKAsyncTask;
-import android.widget.Toast;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BuslineModel;
 import com.tigerknows.model.BuslineModel.Station;
 import com.tigerknows.model.BuslineQuery;
 import com.tigerknows.ui.BaseFragment;
+import com.tigerknows.ui.poi.InputSearchFragment;
 import com.tigerknows.widget.SpringbackListView;
 import com.tigerknows.widget.SpringbackListView.OnRefreshListener;
 
@@ -363,7 +363,7 @@ public class BuslineResultStationFragment extends BaseFragment {
     public void onPostExecute(TKAsyncTask tkAsyncTask) {
         super.onPostExecute(tkAsyncTask);
         BuslineQuery baseQuery = (BuslineQuery)tkAsyncTask.getBaseQuery();
-        queryBuslineEnd(baseQuery);
+        InputSearchFragment.dealWithBuslineResponse(mSphinx, baseQuery, mActionTag, mResultLsv);
     }
     
     class ChildView extends RelativeLayout {
@@ -390,33 +390,5 @@ public class BuslineResultStationFragment extends BaseFragment {
 			return super.onTouchEvent(event);
 		}
 		
-    }
-    
-    void queryBuslineEnd(BuslineQuery buslineQuery) {
-    	
-        BuslineModel buslineModel = buslineQuery.getBuslineModel();
-
-        
-        if (buslineQuery.isTurnPage() && buslineModel == null) {
-            mResultLsv.setFooterLoadFailed(true);
-            return;
-        }
-        
-        if (buslineModel == null) {
-        	mSphinx.showTip(R.string.network_failed, Toast.LENGTH_SHORT);
-        } else if (buslineModel.getType() == BuslineModel.TYPE_BUSLINE 
-        		|| buslineModel.getType() == BuslineModel.TYPE_STATION){
-        	if (((buslineModel.getLineList() == null || buslineModel.getLineList().size() <= 0) && 
-            (buslineModel.getStationList() == null || buslineModel.getStationList().size() <= 0))) {
-        		mSphinx.showTip(R.string.busline_non_tip, Toast.LENGTH_SHORT);
-        	} else {
-        		if (buslineModel.getType() == BuslineModel.TYPE_BUSLINE) {
-        			mSphinx.getBuslineResultLineFragment().setData(buslineQuery);
-        			mSphinx.showView(R.id.view_traffic_busline_line_result);
-        		} else if (buslineModel.getType() == BuslineModel.TYPE_STATION) {
-        			mSphinx.getBuslineResultStationFragment().setData(buslineQuery);
-        		}        		
-        	}
-        }
     }
 }

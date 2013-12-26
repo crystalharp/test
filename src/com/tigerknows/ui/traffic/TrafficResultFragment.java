@@ -146,7 +146,7 @@ public class TrafficResultFragment extends BaseFragment {
 
 				mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position);
 				focusedIndex = position;
-				mSphinx.getTrafficDetailFragment().setData(mTrafficModel.getPlanList().get(position), position);
+				mSphinx.getTrafficDetailFragment().setData(mTrafficModel.getPlanList(), position);
 				mSphinx.showView(R.id.view_traffic_result_detail);
 			}
 

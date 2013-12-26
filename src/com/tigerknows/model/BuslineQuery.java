@@ -15,7 +15,6 @@ import java.io.IOException;
 import com.decarta.android.exception.APIException;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.TKConfig;
-import com.tigerknows.map.CityInfo;
 import com.tigerknows.util.ByteUtil;
 import com.tigerknows.util.Utility;
 

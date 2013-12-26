@@ -5,6 +5,8 @@
 package com.tigerknows.ui.poi;
 
 import android.app.Dialog;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnDismissListener;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.text.Editable;
@@ -18,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -47,17 +50,21 @@ import com.tigerknows.map.MapView;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.BuslineModel;
 import com.tigerknows.model.BuslineQuery;
+import com.tigerknows.model.Response;
+import com.tigerknows.model.DataQuery.GeoCoderResponse.GeoCoderList;
 import com.tigerknows.model.DataQuery.POIResponse.CityIdAndResultTotal;
 import com.tigerknows.model.DataQuery.POIResponse.MapCenterAndBorderRange;
 import com.tigerknows.model.DataQuery.POIResponse.POIList;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.TKWord;
+import com.tigerknows.model.DataQuery.GeoCoderResponse;
 import com.tigerknows.model.DataQuery.POIResponse;
 import com.tigerknows.provider.HistoryWordTable;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.util.Utility;
+import com.tigerknows.widget.SpringbackListView;
 import com.tigerknows.widget.StringArrayAdapter;
 import com.tigerknows.widget.SuggestArrayAdapter.BtnEventHandler;
 import com.tigerknows.widget.SuggestWordListManager;
@@ -79,7 +86,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
     
     private int mCurMode;
     private int mCurHisWordType;
-    private int mRequestInput;
+    private int mRequest;
 
     private ListView mSuggestLsv = null;
     private LinearLayout mTrafficBtnGroup;
@@ -88,13 +95,13 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
     
     private SuggestWordListManager mSuggestWordListManager;
     
-    private Callback callback;
+    private Callback mCallback;
     
     private TKWord mTKWord;
     
     //页面的数据输出回调接口，这个页面主要用来获取一个POI，所以用POI来做参数
     public interface Callback {
-        public void onConfirmed(POI p);
+        public void onConfirmed(POI poi);
     }
     
     public InputSearchFragment(Sphinx sphinx) {
@@ -106,7 +113,12 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         @Override
         public boolean onEditorAction(TextView arg0, int actionId, KeyEvent event) {
             if (actionId == EditorInfo.IME_ACTION_SEARCH || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
-                onConfirmed(mKeywordEdt.getText().toString().trim());
+                String keyword = mKeywordEdt.getText().toString().trim();
+                if (mTKWord != null && keyword.equals(mTKWord.word)) {
+                    submit(mTKWord);
+                } else {
+                    submit(keyword);
+                }
                 return true;
             }
             return false;
@@ -207,20 +219,6 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         mKeywordEdt.clearFocus();
         mKeywordEdt.removeTextChangedListener(mFindEdtWatcher);
     }
-    
-    public void setMode(int m) {
-        mCurMode = m;
-        mCurHisWordType = m;
-    }
-    
-    public void setConfirmedCallback(Callback c) {
-        setConfirmedCallback(c, REQUEST_NONE);
-    }
-    
-    public void setConfirmedCallback(Callback c, int request) {
-        callback = c;
-        mRequestInput = request;
-    }
 
     protected void findViews() {
         mSuggestLsv = (ListView)mRootView.findViewById(R.id.suggest_lsv);
@@ -246,15 +244,9 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                     } else {
                         mActionLog.addAction(mActionTag + ActionLog.ListViewItemSuggest, position, tkWord.word);
                     }
+                    
                     mKeywordEdt.setText(tkWord.word); //处理光标问题
-                    if (mCurMode == MODE_TRAFFIC) {
-//                        POI poi = new POI();
-//                        poi.setName(tkWord.word);
-//                        poi.setPosition(tkWord.position);
-                        onConfirmed(tkWord.toPOI());
-                    } else {
-                        onConfirmed(tkWord.word);
-                    }
+                    submit(tkWord);
                 }
             }
         });
@@ -286,28 +278,30 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         switch (view.getId()) {
             
             case R.id.btn_map_position:
+                
                 String title;
-                if (mRequestInput == REQUEST_TRAFFIC_START) {
+                if (mRequest == REQUEST_TRAFFIC_START) {
                     title = getString(R.string.select_start_station);
-                } else if (mRequestInput == REQUEST_TRAFFIC_END) {
+                } else if (mRequest == REQUEST_TRAFFIC_END) {
                     title = getString(R.string.select_end_station);
                 } else {
-                    title = getString(R.string.select_point);
+                    title = getString(R.string.confirm_place);
                 }
+                
+                mSphinx.getResultMapFragment().setData(getString(R.string.map_select_point), ActionLog.ResultMapSelectPoint);
+                mSphinx.showView(R.id.view_result_map);
+                
                 ItemizedOverlayHelper.drawClickSelectPointOverlay(mSphinx, title);
+                
                 break;
                 
             case R.id.right_btn:
                 String keyword = mKeywordEdt.getText().toString().trim();
                 if (keyword.length() > 0) {
-                    if (mCurMode == MODE_TRAFFIC) {
-                        if (mTKWord != null && keyword.equals(mTKWord.word)) {
-                            onConfirmed(mTKWord.toPOI());
-                        } else {
-                            onConfirmed(keyword);
-                        }
+                    if (mTKWord != null && keyword.equals(mTKWord.word)) {
+                        submit(mTKWord);
                     } else {
-                        onConfirmed(mKeywordEdt.getText().toString().trim());
+                        submit(keyword);
                     }
                 } else {
                     dismiss();
@@ -317,101 +311,150 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         }
     }
     
-    public void onConfirmed(String key) {
+    private void submit(String keyword) {
         switch (mCurMode) {
-        case MODE_BUELINE:
-            submitBuslineQuery(key);
-            break;
-        case MODE_TRAFFIC:
-            //TODO:提交公交站点查询，并且返回原页面
-            POI poi = new POI();
-            poi.setName(key);
-            onConfirmed(poi);
-//            callback.onConfirmed(poi);
-//            mSphinx.getTrafficQueryFragment().autoStartQuery(true);
-//            dismiss();
-            break;
-        case MODE_POI:
-            submitPOIQuery(key);
-            break;
-        default:
-            break;
+            case MODE_BUELINE:
+                submitBuslineQuery(keyword);
+                break;
+            case MODE_TRAFFIC:
+
+                if (mRequest == REQUEST_TRAFFIC_START || mRequest == REQUEST_TRAFFIC_END) {
+                    POI poi = new POI();
+                    poi.setName(keyword);
+                    onConfirmed(poi);
+                } else if (mRequest == REQUEST_COMMON_PLACE) {
+                    submitGeoCoderQuery(keyword);
+                }
+                break;
+            case MODE_POI:
+                submitPOIQuery(keyword);
+                break;
+            default:
+                break;
         }
     }
     
+    private void submit(TKWord tkWord) {
+        if (tkWord == null || TextUtils.isEmpty(tkWord.word)) {
+            return;
+        }
+        
+        switch (mCurMode) {
+            case MODE_BUELINE:
+                submitBuslineQuery(tkWord.word);
+                break;
+            case MODE_TRAFFIC:
+
+                if (mRequest == REQUEST_TRAFFIC_START || mRequest == REQUEST_TRAFFIC_END) {
+                    POI poi = tkWord.toPOI();
+                    onConfirmed(poi);
+                } else if (mRequest == REQUEST_COMMON_PLACE) {
+                    if (tkWord.position != null) {
+                        POI poi = tkWord.toPOI();
+                        onConfirmed(poi);
+                    } else {
+                        submitGeoCoderQuery(tkWord.word);
+                    }
+                }
+                break;
+            case MODE_POI:
+                submitPOIQuery(tkWord.word);
+                break;
+            default:
+                break;
+        }
+    }
+    
+    /**
+     * 目前仅用于交通模式
+     * @param poi
+     */
     public void onConfirmed(POI poi) {
+        if (poi == null || TextUtils.isEmpty(poi.getName())) {
+            return;
+        }
+        
         if (mCurMode == MODE_TRAFFIC) {
-            callback.onConfirmed(poi);
-            mSphinx.getTrafficQueryFragment().autoStartQuery(true);
-            dismiss();
+            if (mRequest == REQUEST_TRAFFIC_START || mRequest == REQUEST_TRAFFIC_END) {
+                mCallback.onConfirmed(poi);
+                dismiss();
+            } else if (mRequest == REQUEST_COMMON_PLACE) {
+                if (poi.getPosition() != null) {
+                    mCallback.onConfirmed(poi);
+                    dismiss();
+                } else {
+                    submitGeoCoderQuery(poi.getName());
+                }
+            }
         }
     }
     
     public void submitPOIQuery(String keyword) {
-        if (!TextUtils.isEmpty(keyword)) {
-            mSphinx.hideSoftInput(mKeywordEdt.getInput());
-            HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, keyword), HistoryWordTable.TYPE_POI);
-            mActionLog.addAction(mActionTag +  ActionLog.POIHomeInputQueryBtn, keyword);
-
-            POI requestPOI = mSphinx.getCenterPOI();
-            DataQuery poiQuery = mSphinx.getHomeFragment().getDataQuery(keyword);
-            poiQuery.addParameter(DataQuery.SERVER_PARAMETER_EXT, DataQuery.EXT_BUSLINE);
-            poiQuery.setup(getId(), getId(), getString(R.string.doing_and_wait), false, false, requestPOI);
-            mSphinx.queryStart(poiQuery);
-        } else {
+        if (TextUtils.isEmpty(keyword)) {
             mSphinx.showTip(R.string.search_input_keyword, Toast.LENGTH_SHORT);
         }
-    }
-
-    /*TODO:放个合适的地方*/
-    public static void submitBuslineQuery(Sphinx sphinx, String key, int cityId) {
         
-        if (key == null) {
-            return;
-        }
-        
-        POI poi = new POI();
-        poi.setName(key);
-        sphinx.getTrafficQueryFragment().addHistoryWord(poi, HistoryWordTable.TYPE_BUSLINE);
-        BuslineQuery buslineQuery = new BuslineQuery(sphinx);
-        buslineQuery.setup(key, 0, false, R.id.view_traffic_home, sphinx.getString(R.string.doing_and_wait));
-        buslineQuery.setCityId(cityId);
-//        mActionLog.addAction(mActionTag +  ActionLog.TrafficBuslineBtn, key);
-        sphinx.queryStart(buslineQuery);
+        HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, keyword), HistoryWordTable.TYPE_POI);
 
+        POI requestPOI = mSphinx.getCenterPOI();
+        
+        DataQuery poiQuery = mSphinx.getHomeFragment().getDataQuery(keyword);
+        poiQuery.addParameter(DataQuery.SERVER_PARAMETER_EXT, DataQuery.EXT_BUSLINE);
+        poiQuery.setup(getId(), getId(), getString(R.string.doing_and_wait), false, false, requestPOI);
+        
+        mSphinx.queryStart(poiQuery);
     }
         
-    public void submitBuslineQuery(String searchword) {
-
-//        String searchword = mKeywordEdt.getText().toString().trim();
-        if (TextUtils.isEmpty(searchword)){
+    private void submitBuslineQuery(String keyword) {
+        if (TextUtils.isEmpty(keyword)){
             mSphinx.showTip(R.string.busline_name_, Toast.LENGTH_SHORT);
             return;
         }
 
-        addHistoryWord(searchword, HistoryWordTable.TYPE_BUSLINE);
+        HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, keyword), HistoryWordTable.TYPE_BUSLINE);
+        
         BuslineQuery buslineQuery = new BuslineQuery(mContext);
-        buslineQuery.setup(searchword, 0, false, getId(), getString(R.string.doing_and_wait));
+        buslineQuery.setup(keyword, 0, false, getId(), getString(R.string.doing_and_wait));
 
-        mActionLog.addAction(mActionTag +  ActionLog.TrafficBuslineBtn, searchword);
         mSphinx.queryStart(buslineQuery);
     }
-        
-    private void addHistoryWord(String name, int type) {
-        if (TextUtils.isEmpty(name)) {
+    
+    /**
+     * 搜索地点
+     * @param keyword
+     */
+    private void submitGeoCoderQuery(String keyword) {
+        if (TextUtils.isEmpty(keyword)){
+            mSphinx.showTip(R.string.search_input_keyword, Toast.LENGTH_SHORT);
             return;
         }
-        HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, name), type);
-    }
 
-    //还原为第一次进入的状态
-    public void reset() {
-        mKeywordEdt.setText(null);
-        mTKWord = null;
+        HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, keyword), HistoryWordTable.TYPE_TRAFFIC);
+        
+        DataQuery dataQuery = new DataQuery(mSphinx);
+        dataQuery.setup(getId(), getId(), getString(R.string.doing_and_wait), false, false, null);
+        dataQuery.addParameter(BaseQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_GEOCODER);
+        dataQuery.addParameter(BaseQuery.SERVER_PARAMETER_NEED_FIELD, POI.NEED_FIELD_SIMPLE);
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_KEYWORD, keyword);
+        
+        mSphinx.queryStart(dataQuery);
     }
     
-    public void setData(String text) {
+    public void setData() {
+        setData(null, MODE_POI);
+    }
+    
+    public void setData(String text, int mode) {
+        setData(text, mode, null, REQUEST_NONE);
+    }
+    
+    public void setData(String text, int mode, Callback callback, int request) {
         mKeywordEdt.setText(text);
+
+        mCurMode = mode;
+        mCurHisWordType = mode;
+        mCallback = callback;
+        mRequest = request;
     }
     
     @Override
@@ -420,12 +463,47 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         BaseQuery baseQuery = tkAsyncTask.getBaseQuery();
         String apiType = baseQuery.getAPIType();
         if (BaseQuery.API_TYPE_BUSLINE_QUERY.equals(apiType)) {
-            this.queryBuslineEnd((BuslineQuery)baseQuery);
-        } else if (BaseQuery.API_TYPE_DATA_QUERY.equals(apiType)) {            
-            dealWithPOIResponse((DataQuery) baseQuery, mSphinx, this);
+            dealWithBuslineResponse(mSphinx, (BuslineQuery)baseQuery, mActionTag, null);
+        } else if (BaseQuery.API_TYPE_DATA_QUERY.equals(apiType)) {
+            
+            String dataType = baseQuery.getParameter(BaseQuery.SERVER_PARAMETER_DATA_TYPE);
+            if (BaseQuery.DATA_TYPE_GEOCODER.equals(dataType)) {
+                
+                if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), getId(), getId(), getId(), mCancelLoginListener)) {
+                    isReLogin = true;
+                } else if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, true, this, false)) {
+                    return;
+                }
+                
+                DataQuery dataQuery = (DataQuery) baseQuery;
+                Response response = dataQuery.getResponse();
+                if (response != null
+                        && response instanceof GeoCoderResponse
+                        && response.getResponseCode() == Response.RESPONSE_CODE_OK) {
+                    GeoCoderResponse geoCoderResponse = (GeoCoderResponse) response;
+                    GeoCoderList geoCoderList = geoCoderResponse.getList();
+                    if (geoCoderList != null) {
+                        List<POI> list = geoCoderList.getPOIList();
+                        if (list != null && list.size() > 0) {
+                            showPlaceListDialog(list);
+                            return;
+                        }
+                    }
+                }
+                
+                Toast.makeText(mSphinx, getString(R.string.no_result), Toast.LENGTH_LONG).show();
+                
+            } else if (BaseQuery.DATA_TYPE_POI.equals(dataType)) {
+                dealWithPOIResponse((DataQuery) baseQuery, mSphinx, this);
+            }
         }
     }
-    
+
+    /**
+     * 根据POI搜索结果给出提示及实现界面跳转
+     * @param sphinx
+     * @param poiResponse
+     */
     public static int dealWithPOIResponse(final DataQuery dataQuery, final Sphinx sphinx, BaseFragment baseFragment) {
         int result = 0;
         if (dataQuery.isStop()) {
@@ -547,6 +625,11 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         return result;
     }
     
+    /**
+     * 根据POI搜索结果中地图的中心和边界范围数据来设置地图中心及比例尺
+     * @param sphinx
+     * @param poiResponse
+     */
     public static void mapCenterAndBorderRange(Sphinx sphinx, POIResponse poiResponse) {
         if (sphinx == null || poiResponse == null) {
             return;
@@ -582,40 +665,129 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         }
     }
     
-    public void queryBuslineEnd(BuslineQuery buslineQuery) {
+    public static void dealWithBuslineResponse(Sphinx sphinx, BuslineQuery buslineQuery, String actionTag, SpringbackListView listView) {
         
+        ActionLog actionLog = ActionLog.getInstance(sphinx);
         BuslineModel buslineModel = buslineQuery.getBuslineModel();
         
         if (buslineModel == null) {
-            mActionLog.addAction(mActionTag + ActionLog.TrafficResultBusline, -1);
-            if (buslineQuery.getStatusCode() == BaseQuery.STATUS_CODE_NONE) {
-                mSphinx.showTip(R.string.network_failed, Toast.LENGTH_SHORT);
+            
+            actionLog.addAction(actionTag + ActionLog.TrafficResultBusline, -1);
+            if (buslineQuery.isTurnPage() && listView != null) {
+                listView.setFooterLoadFailed(true);
+            } else if (buslineQuery.getStatusCode() == BaseQuery.STATUS_CODE_NONE) {
+                sphinx.showTip(R.string.network_failed, Toast.LENGTH_SHORT);
             } else {
-                mSphinx.showTip(R.string.busline_non_tip, Toast.LENGTH_SHORT);
+                sphinx.showTip(R.string.busline_non_tip, Toast.LENGTH_SHORT);
             }
+            
         } else if (buslineModel.getType() == BuslineModel.TYPE_EMPTY) {
-            mActionLog.addAction(mActionTag + ActionLog.TrafficResultBusline, -2);
-            mSphinx.showTip(R.string.busline_non_tip, Toast.LENGTH_SHORT);
+            
+            actionLog.addAction(actionTag + ActionLog.TrafficResultBusline, -2);
+            sphinx.showTip(R.string.busline_non_tip, Toast.LENGTH_SHORT);
+            
         } else if (buslineModel.getType() == BuslineModel.TYPE_UNSUPPORT) {
-            mActionLog.addAction(mActionTag + ActionLog.TrafficResultBusline, -3);
-            mSphinx.showTip(R.string.busline_not_support, Toast.LENGTH_SHORT);
+            
+            actionLog.addAction(actionTag + ActionLog.TrafficResultBusline, -3);
+            sphinx.showTip(R.string.busline_not_support, Toast.LENGTH_SHORT);
+            
         } else if (buslineModel.getType() == BuslineModel.TYPE_BUSLINE 
-                || buslineModel.getType() == BuslineModel.TYPE_STATION){
-            if (((buslineModel.getLineList() == null || buslineModel.getLineList().size() <= 0) && 
-            (buslineModel.getStationList() == null || buslineModel.getStationList().size() <= 0))) {
-                mSphinx.showTip(R.string.busline_non_tip, Toast.LENGTH_SHORT);
-                mActionLog.addAction(mActionTag + ActionLog.TrafficResultBusline, 0);
+                || buslineModel.getType() == BuslineModel.TYPE_STATION) {
+            
+            if ((buslineModel.getLineList() == null || buslineModel.getLineList().size() <= 0)
+                    &&  (buslineModel.getStationList() == null || buslineModel.getStationList().size() <= 0)) {
+                
+                sphinx.showTip(R.string.busline_non_tip, Toast.LENGTH_SHORT);
+                actionLog.addAction(actionTag + ActionLog.TrafficResultBusline, 0);
+                
             } else {
+                
                 if (buslineModel.getType() == BuslineModel.TYPE_BUSLINE) {
-                    mActionLog.addAction(mActionTag + ActionLog.TrafficResultBusline, buslineQuery.getBuslineModel().getLineList().size());
-                    mSphinx.getBuslineResultLineFragment().setData(buslineQuery);
-                    mSphinx.showView(R.id.view_traffic_busline_line_result);
+                    actionLog.addAction(actionTag + ActionLog.TrafficResultBusline, buslineQuery.getBuslineModel().getLineList().size());
+                    sphinx.getBuslineResultLineFragment().setData(buslineQuery);
+                    sphinx.showView(R.id.view_traffic_busline_line_result);
                 } else if (buslineModel.getType() == BuslineModel.TYPE_STATION) {
-                    mActionLog.addAction(mActionTag + ActionLog.TrafficResultBusline, buslineQuery.getBuslineModel().getStationList().size());
-                    mSphinx.getBuslineResultStationFragment().setData(buslineQuery);
-                    mSphinx.showView(R.id.view_traffic_busline_station_result);
+                    actionLog.addAction(actionTag + ActionLog.TrafficResultBusline, buslineQuery.getBuslineModel().getStationList().size());
+                    sphinx.getBuslineResultStationFragment().setData(buslineQuery);
+                    sphinx.showView(R.id.view_traffic_busline_station_result);
                 }               
             }
         }
+    }
+
+    private class PlaceAdapter extends BaseAdapter {
+        List<POI> mList;
+
+        public PlaceAdapter(List<POI> list) {
+            mList = list;
+        }
+        @Override
+        public int getCount() {
+            return mList.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return mList.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            if (convertView == null) {
+                convertView = mLayoutInflater.inflate(R.layout.traffic_alternative_station_item, null);
+            }
+            
+            POI poi = mList.get(position);
+            
+            TextView name = (TextView) convertView.findViewById(R.id.name_txv);
+            TextView address = (TextView) convertView.findViewById(R.id.address_txv);
+            
+            name.setText(poi.getName());
+            address.setText(poi.getAddress());
+            
+            return convertView;
+        }
+        
+    }
+    
+    private void showPlaceListDialog(final List<POI> list) {
+        
+        PlaceAdapter adapter = new PlaceAdapter(list);
+        View alterListView = mSphinx.getLayoutInflater().inflate(R.layout.alert_listview, null, false);
+        ListView listView = (ListView) alterListView.findViewById(R.id.listview);
+        listView.setAdapter(adapter);
+        
+        final Dialog dialog = Utility.getChoiceDialog(mSphinx, alterListView, R.style.AlterChoiceDialog);
+        
+        TextView titleTxv = (TextView)alterListView.findViewById(R.id.title_txv);
+        titleTxv.setText(R.string.confirm_place);
+        
+        Button button = (Button)alterListView.findViewById(R.id.confirm_btn);
+        button.setVisibility(View.GONE);
+        
+        listView.setOnItemClickListener(new OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
+                
+                dialog.dismiss();
+                onConfirmed(list.get(position));
+            }
+            
+        });
+        dialog.setOnDismissListener(new OnDismissListener() {
+            
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                mActionLog.addAction(ActionLog.TrafficAlternative + ActionLog.Dismiss);
+            }
+        });
+        
+        dialog.show();
     }
 }

@@ -450,6 +450,8 @@ public class POI extends BaseData {
     
     public static final String NEED_FIELD = "0001030405060708090a0b1213141516175658";
     
+    public static final String NEED_FIELD_SIMPLE = "0103040509";
+    
     private long subType;
     
     private String uuid;

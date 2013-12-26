@@ -114,8 +114,8 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         mBottomFrament = mSphinx.getHomeBottomFragment();
-        mSphinx.getInputSearchFragment().reset();
-        mSphinx.getInputSearchFragment().setMode(InputSearchFragment.MODE_POI);
+        mSphinx.getInputSearchFragment().setData(null,
+                InputSearchFragment.MODE_POI);
         mSphinx.showView(R.id.view_poi_input_search);
     }
 }

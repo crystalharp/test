@@ -215,26 +215,24 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
 			TrafficOverlayHelper.panToViewWholeOverlay(plan, mSphinx.getMapView(), (Activity)mSphinx);
 		}
 	}
+	
     public void setData(Plan plan) {
-        setData(plan, -1);
+        List<Plan> list = new ArrayList<TrafficModel.Plan>();
+        list.add(plan);
+        setData(list, 0);
     }
     
-    public void setData(Plan plan, int curLine) {
+    public void setData(List<Plan> list, int curLine) {
     	
-    	if (plan == null)
+    	if (list == null || list.isEmpty() || curLine >= list.size())
     		return;
 
-        this.plan = plan;
+        plan = list.get(0);
         mShowType = plan.getType();
-        this.curLineNum = curLine;
+        curLineNum = curLine;
 
         mPlanList.clear();
-        if (mShowType == SHOW_TYPE_TRANSFER) {
-            List<Plan> list = mSphinx.getTrafficResultFragment().getData();
-            if (list != null) {
-            	this.mPlanList.addAll(list);
-            }
-        }
+        this.mPlanList.addAll(list);
 
         mStrList.clear();
         mTypes.clear();

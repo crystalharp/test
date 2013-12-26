@@ -1347,4 +1347,7 @@
     <string name="subway_city_list_title">以下城市现已开通地铁</string>
     <string name="search_perimeter">搜周边</string>
     <string name="query_line">查路线</string>
+    <string name="confirm_place">确定地点</string>
+    <string name="set_common_place">设置常用地点</string>
+    <string name="click_set_place">点击设置地点</string>
 </resources>

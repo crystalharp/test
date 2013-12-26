@@ -94,7 +94,6 @@ import com.tigerknows.map.MapView.MapScene;
 import com.tigerknows.map.MapView.SnapMap;
 import com.tigerknows.map.label.Label;
 import com.tigerknows.model.BaseQuery;
-import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.HotelVendor;
 import com.tigerknows.model.NoticeQuery.NoticeResultResponse;
 import com.tigerknows.model.POI;
@@ -1329,7 +1328,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     } else if ("q".equals(parm[0])) {
                         String keyword = parm[1];
                         if (!TextUtils.isEmpty(keyword)) {
-                            getInputSearchFragment().setData(keyword);
+                            getInputSearchFragment().setData(keyword,
+                                    InputSearchFragment.MODE_POI);
                             showView(R.id.view_poi_input_search);
                             getInputSearchFragment().submitPOIQuery(keyword);
                             query = true;
@@ -1382,7 +1382,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     } else if ("q".equals(parm[0])) {
                         String keyword = parm[1];
                         if (!TextUtils.isEmpty(keyword)) {
-                            getInputSearchFragment().setData(keyword);
+                            getInputSearchFragment().setData(keyword,
+                                    InputSearchFragment.MODE_POI);
                             showView(R.id.view_poi_input_search);
                             getInputSearchFragment().submitPOIQuery(keyword);
                         }
@@ -1436,7 +1437,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 return true;
             }
             uiStackClose(new int[]{R.id.view_home});
-            getInputSearchFragment().reset();
+            getInputSearchFragment().setData();
             showView(R.id.view_poi_input_search);
         } else if (intent.getBooleanExtra(EXTRA_WEIXIN, false)) { //   来自微信的调用，为其提供POI数据作为返回
         	mFromThirdParty = THIRD_PARTY_WENXIN_REQUET;
