@@ -1741,6 +1741,9 @@ public final class DataQuery extends BaseQuery {
             // 0x04 | x_string | 短信息提示
             public static final byte FIELD_SHORT_MESSAGE = 0x04;
             
+            // 0x05     x_int   控制显示形态：0 列表优先显示， 1 地图优先显示 
+            public static final byte FIELD_SHOW_TYPE = 0x05;
+            
             // 0x11    x_map   搜索结果所环绕的中心点，没有该key返回，则需要客户端自己取中心点
             public static final byte FIELD_CENTER_POSITION = 0x11;
 
@@ -1751,6 +1754,8 @@ public final class DataQuery extends BaseQuery {
             private String shortMessage;
             
             private Position position;
+            
+            private long showType;
 
             public Position getPosition() {
                 return position;
@@ -1768,6 +1773,10 @@ public final class DataQuery extends BaseQuery {
                 this.list = list;
             }
 
+            public long getShowType() {
+                return showType;
+            }
+
             public POIList(XMap data, int resultType) throws APIException {
                 super(data);
                 this.resultType = resultType;
@@ -1779,6 +1788,7 @@ public final class DataQuery extends BaseQuery {
                     }
                 }
                 this.shortMessage = getStringFromData(FIELD_SHORT_MESSAGE);
+                this.showType = getLongFromData(FIELD_SHOW_TYPE);
                 if (this.data.containsKey(FIELD_CENTER_POSITION)) {
                     XMap xMap = this.data.getXMap(FIELD_CENTER_POSITION);
                     this.position = getPositionFromData(xMap, (byte)0x01, (byte)0x02, null);

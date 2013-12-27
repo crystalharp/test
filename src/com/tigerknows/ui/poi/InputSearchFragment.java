@@ -540,7 +540,9 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         }
 
         POIResponse poiResponse = (POIResponse)dataQuery.getResponse();
-        mapCenterAndBorderRange(sphinx, poiResponse);
+        if (mapCenterAndBorderRange(sphinx, poiResponse)) {
+            return 0;
+        }
         
         BuslineModel buslineModel = poiResponse.getBuslineModel();
         if (buslineModel != null) {
@@ -559,20 +561,24 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         if (bPOIList != null) {
             poiList = bPOIList.getList();
         }
-        
+
+        final MapView mapView = sphinx.getMapView();
         final List<CityIdAndResultTotal> cityIdAndResultTotalList = poiResponse.getCityIdAndResultTotalList();
         if (cityIdAndResultTotalList != null && cityIdAndResultTotalList.size() > 0) {
             
             if (cityIdAndResultTotalList.size() == 1) {
-                if (poiList != null && poiList.size() > 0) {
-                    sphinx.getResultMapFragment().setData(sphinx.getString(R.string.result_map), ActionLog.POIListMap);
-                    sphinx.showView(R.id.view_result_map);
-                    
-                    ItemizedOverlayHelper.drawPOIOverlay(sphinx, poiList, 0);
-                    
-                    result = 2;
-                    return result;
+                try {
+                    int cityId = (int) cityIdAndResultTotalList.get(0).getCityId();
+                    CityInfo cityInfo = MapEngine.getCityInfo(cityId);
+                    mapView.centerOnPosition(cityInfo.getPosition());
+                    DataQuery newDataQuery = new DataQuery(dataQuery);
+                    newDataQuery.setCityId(cityId);
+                    sphinx.queryStart(newDataQuery);
+                } catch (APIException e) {
+                    e.printStackTrace();
                 }
+                result = 2;
+                return result;
                 
             } else {
                 final List<CityInfo> cityList = new ArrayList<CityInfo>();
@@ -595,7 +601,6 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View arg1, int position, long arg3) {
-                        MapView mapView = sphinx.getMapView();
                         try {
                             mapView.centerOnPosition(cityList.get(position).getPosition());
                             CityIdAndResultTotal cityIdAndResultTotal = cityIdAndResultTotalList.get(position);
@@ -627,10 +632,28 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         if (poiList != null
                 && poiList.size() > 0) {
             
+            POI poi = poiList.get(0);
+            Position position = poi.getPosition();
+            int cityId = MapEngine.getCityId(position);
+            if (cityId != Globals.getCurrentCityInfo(sphinx).getId()) {
+                try {
+                    mapView.centerOnPosition(position);
+                } catch (APIException e) {
+                    e.printStackTrace();
+                }
+            }
+            
             POIResultFragment poiResultFragment = sphinx.getPOIResultFragment();
             poiResultFragment.setData(dataQuery);
-            sphinx.showView(R.id.view_poi_result);
-            sphinx.uiStackRemove(R.id.view_traffic_busline_line_result);
+            
+            if (bPOIList.getShowType() == 0) {
+                sphinx.showView(R.id.view_poi_result);
+                sphinx.uiStackRemove(R.id.view_traffic_busline_line_result);
+            } else if (bPOIList.getShowType() == 1) {
+                ItemizedOverlayHelper.drawPOIOverlay(sphinx, poiList, 0);
+                sphinx.getResultMapFragment().setData(sphinx.getString(R.string.result_map), ActionLog.POIListMap);
+                sphinx.showView(R.id.view_result_map);
+            }
             
             result = 4;
             return result;
@@ -647,9 +670,10 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
      * @param sphinx
      * @param poiResponse
      */
-    public static void mapCenterAndBorderRange(Sphinx sphinx, POIResponse poiResponse) {
+    private static boolean mapCenterAndBorderRange(Sphinx sphinx, POIResponse poiResponse) {
+        boolean result = false;
         if (sphinx == null || poiResponse == null) {
-            return;
+            return result;
         }
         
         MapCenterAndBorderRange mapCenterAndBorderRange = poiResponse.getMapCenterAndBorderRange();
@@ -678,8 +702,12 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
             
             if (mapCenter != null) {
                 mapView.centerOnPosition(mapCenter, zoomLevel);
+                sphinx.uiStackClearTop(R.id.view_home);
+                result = true;
             }
         }
+        
+        return result;
     }
     
     public static void dealWithBuslineResponse(Sphinx sphinx, BuslineQuery buslineQuery, String actionTag, SpringbackListView listView) {
