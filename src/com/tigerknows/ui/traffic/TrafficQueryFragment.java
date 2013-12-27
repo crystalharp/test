@@ -131,11 +131,6 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
     
 //	int oldCheckButton;
 
-	/*
-	 * 行为日志辅助类
-	 */
-	TrafficQueryLogHelper mLogHelper;
-	
 	public static final String TAG = "TrafficQueryFragment";
 	
 	final class InputBtn {
@@ -212,7 +207,6 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 
         findViews();
         MY_LOCATION = getString(R.string.my_location);
-        mLogHelper = new TrafficQueryLogHelper(this);
         
         mStart.setHint(getString(R.string.start_));
         mEnd.setHint(getString(R.string.end_));
@@ -928,11 +922,8 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
                                     InputSearchFragment.MODE_BUELINE);
                             mSphinx.showView(R.id.view_poi_input_search);
                         } else if (index == 2) {
-                            CityInfo cityInfo = Globals.getCurrentCityInfo(mSphinx);
-                            if (cityInfo != null && cityInfo.isAvailably()) {
-                                mSphinx.getSubwayMapFragment().setData(cityInfo);
-                                mSphinx.showView(R.id.view_subway_map);
-                            }
+                            mSphinx.getSubwayMapFragment().setData(Globals.getCurrentCityInfo(mSphinx, false));
+                            mSphinx.showView(R.id.view_subway_map);
                         }
                         dialog.setOnDismissListener(new OnDismissListener() {
                             

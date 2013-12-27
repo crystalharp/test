@@ -343,6 +343,10 @@ public class Globals {
     }
 
     public static CityInfo getCurrentCityInfo(Context context) {
+        return getCurrentCityInfo(context, true);
+    }
+
+    public static CityInfo getCurrentCityInfo(Context context, boolean readLast) {
         CityInfo cityInfo = new CityInfo();
         try {
             if (context != null) {
@@ -369,7 +373,7 @@ public class Globals {
                     }
                 }
                 
-                if (cityInfo.isAvailably() == false) {
+                if (cityInfo.isAvailably() == false && readLast) {
                     double lastLon = Double.parseDouble(TKConfig.getPref(context, TKConfig.PREFS_LAST_LON, "116.397772995"));
                     double lastLat = Double.parseDouble(TKConfig.getPref(context, TKConfig.PREFS_LAST_LAT, "39.90415599"));
                     int lastZoomLevel = Integer.parseInt(TKConfig.getPref(context, TKConfig.PREFS_LAST_ZOOM_LEVEL, String.valueOf(TKConfig.ZOOM_LEVEL_DEFAULT)));

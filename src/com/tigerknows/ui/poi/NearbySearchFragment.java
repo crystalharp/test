@@ -383,7 +383,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     		uiStackAdjust();
     		break;
     	case CategoryProperty.OP_SUBWAY:
-    		mSphinx.getSubwayMapFragment().setData(Globals.getCurrentCityInfo(mContext));
+    		mSphinx.getSubwayMapFragment().setData(Globals.getCurrentCityInfo(mContext, false));
     		mSphinx.showView(R.id.view_subway_map);
     		uiStackAdjust();
     		break;
