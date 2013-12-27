@@ -1092,6 +1092,7 @@ public class Utility {
     
     public static void pageIndicatorInit(Context context, ViewGroup viewPoints, int size, int selectedIndex, int normalResId, int selectedResId) {
         int margin = (int)(Globals.g_metrics.density * 2);
+        viewPoints.removeAllViews();
         for(int i=0;i<size;i++){
             ImageView imageView = new ImageView(context);            
             //默认选中的是第一张图片，此时第一个小圆点是选中状态，其他不是

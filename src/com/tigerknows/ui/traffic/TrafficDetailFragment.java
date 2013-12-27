@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,6 +60,8 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
     private static final int TYPE_RESULT_LIST_END = 7;
     
     private StringListAdapter mResultAdapter;
+    
+    private PlanListAdapter mPlanListAdapter;
 
     private List<Integer> mTypes = new ArrayList<Integer>();
     
@@ -71,6 +74,8 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
     private ViewGroup mShareBtn = null;
     
     private ViewGroup mErrorRecoveryBtn = null;
+    
+    private ViewGroup mPageIndicatorView = null;
     
     private int mType = -1;
 
@@ -91,6 +96,8 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
     private List<Plan> mDrivePlanList = new ArrayList<TrafficModel.Plan>();
     
     private List<Plan> mWalkPlanList = new ArrayList<TrafficModel.Plan>();
+    
+    private List<TrafficDetailItem> mDetailItemViewList = new ArrayList<TrafficDetailItem>();
     
     private int mIndex = -1;
     
@@ -117,6 +124,9 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         
         mResultAdapter = new StringListAdapter(mContext);
         mResultLsv.setAdapter(mResultAdapter);
+        
+        mPlanListAdapter = new PlanListAdapter();
+        mViewPager.setAdapter(mPlanListAdapter);
         
         return mRootView;
     }
@@ -150,13 +160,15 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         }
         
         if (mPlanList.size() > 0) {
-            //有内容，需要弹出顶部切换菜单
-//            mTitleBtn.setText(getString(R.string.title_transfer_plan_popup, TrafficQuery.numToStr(mSphinx, curLineNum + 1)));
             mViewPagerLayout.setVisibility(View.VISIBLE);
-//            Utility.pageIndicatorInit(mSphinx, mPageIndicatorView, mPagecount, 0, R.drawable.ic_notice_dot_normal, R.drawable.ic_notice_dot_selected);
-//            mNoticeRly.setVisibility(View.VISIBLE);
-//            mViewPager.setCurrentItem(mPagecount * VIEW_PAGE_LEFT);
-//            mPosition = 0;
+            mDetailItemViewList.clear();
+            for (Plan plan : mPlanList) {
+                TrafficDetailItem item = new TrafficDetailItem(mSphinx);
+                item.refresh(plan);
+                mDetailItemViewList.add(item);
+            }
+            Utility.pageIndicatorInit(mSphinx, mPageIndicatorView, mPlanList.size(), mIndex, R.drawable.ic_notice_dot_normal, R.drawable.ic_notice_dot_selected);
+            mViewPager.setCurrentItem(mIndex);
         } else {
             mViewPagerLayout.setVisibility(View.GONE);
         }
@@ -193,6 +205,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         mBottomButtonsView.findViewById(R.id.nearby_search_btn).setVisibility(View.GONE);
         mViewPagerLayout = mRootView.findViewById(R.id.traffic_rly);
         mViewPager = (ViewPager) mRootView.findViewById(R.id.view_pager);
+        mPageIndicatorView = (ViewGroup) mRootView.findViewById(R.id.page_indicator_view);
     }
 
     protected void setListener() {
@@ -226,6 +239,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
 
             @Override
             public void onPageSelected(int arg0) {
+                Utility.pageIndicatorChanged(mSphinx, mPageIndicatorView, arg0, R.drawable.ic_notice_dot_normal, R.drawable.ic_notice_dot_selected);
                 updateResult(mPlanList.get(arg0));
             } });
     }
@@ -304,13 +318,23 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
     class PlanListAdapter extends PagerAdapter {
 
         @Override
+        public void destroyItem(ViewGroup container, int position, Object object) {
+            ((ViewPager) container).removeView(mDetailItemViewList.get(position).getView());
+        }
+
+        @Override
+        public Object instantiateItem(ViewGroup container, int position) {
+            container.addView(mDetailItemViewList.get(position).getView(), 0);//添加页卡  
+            return mDetailItemViewList.get(position).getView(); 
+        }
+
+        @Override
         public int getCount() {
             return mPlanList.size();
         }
 
         @Override
         public boolean isViewFromObject(View arg0, Object arg1) {
-            // TODO Auto-generated method stub
             return arg0 == arg1;
         }
         
@@ -560,7 +584,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
     public static class TrafficDetailItem {
         View v;
         Plan plan;
-        int resid = R.layout.traffic_group_traffic;
+        static int resid = R.layout.traffic_group_traffic;
         PlanViewHolder planHolder;
         Sphinx mSphinx;
         private static final int MAX_TAG_NUM = 3;
@@ -576,7 +600,11 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
             }; 
         
         public TrafficDetailItem(Sphinx sphinx) {
-            v = sphinx.getLayoutInflater().inflate(resid, null);
+            this(sphinx, sphinx.getLayoutInflater().inflate(resid, null));
+        }
+        
+        public TrafficDetailItem(Sphinx sphinx, View view) {
+            v = view;
             mSphinx = sphinx;
             planHolder = new PlanViewHolder();
             planHolder.title = (TextView)v.findViewById(R.id.title_txv);
@@ -585,6 +613,8 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
             planHolder.txv3 = (TextView) v.findViewById(R.id.txv3);
             planHolder.txv4 = (TextView) v.findViewById(R.id.txv4);
             planHolder.tags = (LinearLayout) v.findViewById(R.id.tags_view);
+            planHolder.title.setSingleLine();
+            planHolder.title.setEllipsize(TextUtils.TruncateAt.END);
         }
         
         public void refresh(Plan p) {
