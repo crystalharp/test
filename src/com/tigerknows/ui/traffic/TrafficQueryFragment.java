@@ -6,7 +6,6 @@ import java.util.List;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
-import android.location.Location;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -35,8 +34,8 @@ import android.widget.Toast;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.CityInfo;
 import com.tigerknows.map.MapEngine;
+import com.tigerknows.map.TrafficOverlayHelper;
 import com.tigerknows.model.BaseQuery;
-import com.tigerknows.model.LocationQuery;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.TKWord;
 import com.tigerknows.model.TrafficModel;
@@ -586,11 +585,10 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
                 return true;
             } else {
                 //是“我的位置”且没有定位点则定位
-                LocationQuery locationQuery = LocationQuery.getInstance(getContext());
-                Location location = locationQuery.getLocation();
-                Position position = null;
-                if (location != null) {
-                    position = MapEngine.getInstance().latlonTransform(new Position(location.getLatitude(), location.getLongitude()));
+                CityInfo cityInfo = Globals.g_My_Location_City_Info;
+                
+                if (cityInfo != null) {
+                    Position position = cityInfo.getPosition();
                     p.setPosition(position);
                     p.setName(getMyLocationName(mSphinx, p.getPosition()));
                     return true;
@@ -654,50 +652,126 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 		super.onPostExecute(tkAsyncTask);
 		BaseQuery baseQuery = tkAsyncTask.getBaseQuery();
 		if (BaseQuery.API_TYPE_TRAFFIC_QUERY.equals(baseQuery.getAPIType())) {
-            this.queryTrafficEnd((TrafficQuery)baseQuery);
+            dealWithTrafficResponse(mSphinx,
+                    mActionTag,
+                    (TrafficQuery)baseQuery,
+                    true);
         } 
 	}
 
-	public void queryTrafficEnd(TrafficQuery trafficQuery) {
+	public static void dealWithTrafficResponse(Sphinx sphinx, String actionTag, TrafficQuery trafficQuery, boolean reset) {
+	    
         TrafficModel trafficModel = trafficQuery.getTrafficModel();
+        ActionLog actionLog = ActionLog.getInstance(sphinx);
+        
         if (trafficModel == null) {
-            mActionLog.addAction(mActionTag + ActionLog.TrafficResultTraffic, -1);
-            showTrafficErrorTip(trafficQuery);
+            actionLog.addAction(actionTag + ActionLog.TrafficResultTraffic, -1);
+            showTrafficErrorTip(sphinx, trafficQuery);
         } else if (trafficModel.getType() == TrafficModel.TYPE_EMPTY) {
-            mActionLog.addAction(mActionTag + ActionLog.TrafficResultTraffic, -2);
-            showTrafficErrorTip(trafficQuery);
+            actionLog.addAction(actionTag + ActionLog.TrafficResultTraffic, -2);
+            showTrafficErrorTip(sphinx, trafficQuery);
         } else if (trafficModel.getType() == TrafficModel.TYPE_ALTERNATIVES 
-        		|| trafficModel.getType() == TrafficModel.TYPE_PROJECT){
+        		|| trafficModel.getType() == TrafficModel.TYPE_PROJECT) {
+            
             if (trafficModel.getType() == TrafficModel.TYPE_ALTERNATIVES) {
-        		showAlternativeDialog(trafficQuery.getTrafficModel().getStartAlternativesList(), trafficQuery.getTrafficModel().getEndAlternativesList());
-            } else if (trafficModel.getPlanList() == null || trafficModel.getPlanList().size() <= 0){
-                mActionLog.addAction(mActionTag + ActionLog.TrafficResultTraffic, 0);
-            	showTrafficErrorTip(trafficQuery);
+        		sphinx.getTrafficQueryFragment().showAlternativeDialog(trafficQuery.getTrafficModel().getStartAlternativesList(), trafficQuery.getTrafficModel().getEndAlternativesList());
+        		
+            } else if (trafficModel.getPlanList() == null
+                    || trafficModel.getPlanList().size() <= 0) {
+                
+                actionLog.addAction(actionTag + ActionLog.TrafficResultTraffic, 0);
+            	showTrafficErrorTip(sphinx, trafficQuery);
+            	
             } else if (trafficModel.getType() == TrafficModel.TYPE_PROJECT) {
-                mActionLog.addAction(mActionTag + ActionLog.TrafficResultTraffic, trafficModel.getPlanList().size());
-            	// 若之前发出的请求中的起终点被服务器修改, 此处要修改客户端显示
-//            	if (trafficQuery.isPOIModified()) {
-//            		modifyData(trafficQuery.getStart(), TrafficQueryFragment.START);
-//            		modifyData(trafficQuery.getEnd(), TrafficQueryFragment.END);
-//            	} 
+                List<Plan> planList = trafficModel.getPlanList();
+                if (reset) {
+                    sphinx.getTrafficDetailFragment().getTransferPlanList().clear();
+                    sphinx.getTrafficDetailFragment().getDrivePlanList().clear();
+                    sphinx.getTrafficDetailFragment().getWalkPlanList().clear();
+                }
+                List<Plan> transferPlanList = sphinx.getTrafficDetailFragment().getTransferPlanList();
+                List<Plan> drivePlanList = sphinx.getTrafficDetailFragment().getDrivePlanList();
+                List<Plan> walkPlanList = sphinx.getTrafficDetailFragment().getWalkPlanList();
+                
+                actionLog.addAction(actionTag + ActionLog.TrafficResultTraffic, planList.size());
             	
             	// 下一行代码为避免以下操作会出现问题
             	// 搜索-结果列表-详情-地图-点击气泡中的交通按钮-选择到这里去/自驾-点击左上按钮无反应(期望进入 详情界面)
             	// 确保整个UI堆栈里不能出现重复的结果地图界面
                 // Fixed: [And4.30-287] [确实有]【交通】公交详情界面点击“地图”返回到公交方案界面，地图不加载。
-            	mSphinx.uiStackRemove(R.id.view_result_map);
-            	if (trafficModel.getPlanList().get(0).getType() == Plan.Step.TYPE_TRANSFER) {
+            	sphinx.uiStackRemove(R.id.view_result_map);
+            	int type = planList.get(0).getType();
+            	if (type == Plan.Step.TYPE_TRANSFER) {
             	    // 换乘方式
-            		mSphinx.getTrafficResultFragment().setData(trafficQuery);
-            		mSphinx.showView(R.id.view_traffic_result_transfer);
-            	} else {
-            	    //驾车或步行方式
-            	    Plan plan = trafficModel.getPlanList().get(0);
-            		mSphinx.getTrafficDetailFragment().setData(plan);
-            		mSphinx.getTrafficDetailFragment().viewPlanMap();
-            	}
+            	    sphinx.getTrafficDetailFragment().setData(trafficQuery, planList, drivePlanList, walkPlanList, type, 0);
+            	    sphinx.getTrafficResultFragment().setData(trafficQuery);
+            	    sphinx.showView(R.id.view_traffic_result_transfer);
+            	} else if (type == Plan.Step.TYPE_DRIVE) {
+            	    // 驾车
+            		sphinx.getTrafficDetailFragment().setData(trafficQuery, transferPlanList, planList, walkPlanList, type, 0);
+            		if (sphinx.uiStackPeek() == R.id.view_result_map) {
+                        sphinx.getResultMapFragment().changeTrafficType(type);
+                    } else {
+                        sphinx.getResultMapFragment().setData(null, ActionLog.TrafficDriveMap);
+                        sphinx.showView(R.id.view_result_map);
+                        TrafficOverlayHelper.drawTrafficPlanListOverlay(sphinx, planList, 0);
+                        TrafficOverlayHelper.panToViewWholeOverlay(planList.get(0), sphinx.getMapView(), sphinx);
+                    }
+            	} else if (type == Plan.Step.TYPE_WALK) {
+                    // 步行方式
+                    sphinx.getTrafficDetailFragment().setData(trafficQuery, transferPlanList, drivePlanList, planList, type, 0);
+                    if (sphinx.uiStackPeek() == R.id.view_result_map) {
+                        sphinx.getResultMapFragment().changeTrafficType(type);
+                    } else {
+                        sphinx.getResultMapFragment().setData(null, ActionLog.TrafficWalkMap);
+                        sphinx.showView(R.id.view_result_map);
+                        TrafficOverlayHelper.drawTrafficPlanListOverlay(sphinx, planList, 0);
+                        TrafficOverlayHelper.panToViewWholeOverlay(planList.get(0), sphinx.getMapView(), sphinx);
+                    }
+                }
             }
         } 
+    }
+    
+    private static void showTrafficErrorTip(Sphinx sphinx, TrafficQuery trafficQuery) {
+        if (!trafficQuery.isStop()) {
+            
+            TrafficModel trafficModel = trafficQuery.getTrafficModel();
+            if (trafficModel == null && trafficQuery.getStatusCode() == BaseQuery.STATUS_CODE_NONE) {
+                sphinx.showTip(R.string.network_failed, Toast.LENGTH_SHORT);
+                return;
+            }
+            
+            POI startPOI = trafficQuery.getStart();
+            POI endPOI = trafficQuery.getEnd();
+            Position start = startPOI.getPosition();
+            Position end = endPOI.getPosition();
+            
+            boolean isSameCity = true;
+            if (Util.inChina(start) && Util.inChina(end)) {
+                int cityId = MapEngine.getCityId(start);
+                isSameCity &= (cityId == MapEngine.getCityId(end));
+            }
+            if (!isSameCity) {
+                if (trafficQuery.getQueryType() == TrafficQuery.QUERY_TYPE_TRANSFER) {
+                    sphinx.showTip(R.string.transfer_non_support_city_tip, Toast.LENGTH_SHORT);
+                } else if (trafficQuery.getQueryType() == TrafficQuery.QUERY_TYPE_DRIVE) {
+                    sphinx.showTip(R.string.drive_non_support_city_tip, Toast.LENGTH_SHORT);
+                } else if (trafficQuery.getQueryType() == TrafficQuery.QUERY_TYPE_WALK) {
+                    sphinx.showTip(R.string.walk_non_support_city_tip, Toast.LENGTH_SHORT);
+                }
+            } else if (trafficQuery.getResponseXMap() == null) {
+                sphinx.showTip(R.string.no_result, Toast.LENGTH_SHORT);
+            } else {
+                if (trafficQuery.getQueryType() == TrafficQuery.QUERY_TYPE_TRANSFER) {
+                    sphinx.showTip(R.string.transfer_non_tip, Toast.LENGTH_SHORT);
+                } else if (trafficQuery.getQueryType() == TrafficQuery.QUERY_TYPE_DRIVE) {
+                    sphinx.showTip(R.string.drive_non_tip, Toast.LENGTH_SHORT);
+                } else if (trafficQuery.getQueryType() == TrafficQuery.QUERY_TYPE_WALK) {
+                    sphinx.showTip(R.string.walk_non_tip, Toast.LENGTH_SHORT);
+                }
+            }
+        }
     }
 
 	class StationAdapter extends BaseAdapter {
@@ -734,6 +808,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
         }
 	    
 	}
+	
     private void showAlternativeDialog(final List<Station> startStationList, final List<Station> endStationList) {
     	final boolean start = (startStationList != null);
     	final boolean end = (endStationList != null);
@@ -801,47 +876,6 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
         
         dialog.show();
         mSphinx.setShowingDialog(dialog);
-    }
-    
-    public void showTrafficErrorTip(TrafficQuery trafficQuery) {
-        if (!trafficQuery.isStop()) {
-        	
-        	TrafficModel trafficModel = trafficQuery.getTrafficModel();
-        	if (trafficModel == null && trafficQuery.getStatusCode() == BaseQuery.STATUS_CODE_NONE) {
-        		mSphinx.showTip(R.string.network_failed, Toast.LENGTH_SHORT);
-        		return;
-        	}
-        	
-            POI startPOI = trafficQuery.getStart();
-            POI endPOI = trafficQuery.getEnd();
-            Position start = startPOI.getPosition();
-            Position end = endPOI.getPosition();
-            
-            boolean isSameCity = true;
-            if (Util.inChina(start) && Util.inChina(end)) {
-                int cityId = MapEngine.getCityId(start);
-                isSameCity &= (cityId == MapEngine.getCityId(end));
-            }
-            if (!isSameCity) {
-                if (trafficQuery.getQueryType() == TrafficQuery.QUERY_TYPE_TRANSFER) {
-                	mSphinx.showTip(R.string.transfer_non_support_city_tip, Toast.LENGTH_SHORT);
-                } else if (trafficQuery.getQueryType() == TrafficQuery.QUERY_TYPE_DRIVE) {
-                	mSphinx.showTip(R.string.drive_non_support_city_tip, Toast.LENGTH_SHORT);
-                } else if (trafficQuery.getQueryType() == TrafficQuery.QUERY_TYPE_WALK) {
-                	mSphinx.showTip(R.string.walk_non_support_city_tip, Toast.LENGTH_SHORT);
-                }
-            } else if (trafficQuery.getResponseXMap() == null) {
-            	mSphinx.showTip(R.string.no_result, Toast.LENGTH_SHORT);
-            } else {
-                if (trafficQuery.getQueryType() == TrafficQuery.QUERY_TYPE_TRANSFER) {
-                	mSphinx.showTip(R.string.transfer_non_tip, Toast.LENGTH_SHORT);
-                } else if (trafficQuery.getQueryType() == TrafficQuery.QUERY_TYPE_DRIVE) {
-                	mSphinx.showTip(R.string.drive_non_tip, Toast.LENGTH_SHORT);
-                } else if (trafficQuery.getQueryType() == TrafficQuery.QUERY_TYPE_WALK) {
-                	mSphinx.showTip(R.string.walk_non_tip, Toast.LENGTH_SHORT);
-                }
-            }
-        }
     }
     
     private void updateCommonPlace() {

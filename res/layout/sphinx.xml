@@ -162,13 +162,4 @@
         >
     </FrameLayout>
     
-    <RelativeLayout 
-        android:layout_width="fill_parent" 
-        android:layout_height="fill_parent"
-        android:id="@+id/hint_root_view"
-        android:visibility="gone"
-        android:background="@color/black_transparent_half">
-    </RelativeLayout>
-
-    
 </RelativeLayout>

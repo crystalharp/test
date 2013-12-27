@@ -10,31 +10,32 @@ import java.util.List;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.AbsListView.OnScrollListener;
 
 import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
+import com.tigerknows.map.TrafficOverlayHelper;
 import com.tigerknows.model.TrafficModel;
 import com.tigerknows.model.TrafficModel.AddtionalInfo;
 import com.tigerknows.model.TrafficModel.Plan;
 import com.tigerknows.model.TrafficModel.Plan.PlanTag;
 import com.tigerknows.model.TrafficQuery;
 import com.tigerknows.ui.BaseFragment;
+import com.tigerknows.ui.common.ResultMapFragment;
 import com.tigerknows.util.Utility;
 
 /**
@@ -85,6 +86,10 @@ public class TrafficResultFragment extends BaseFragment {
     
     private TextView mDescriptionTxv;
     
+    private View mTrafficTitieView;
+    
+    private RadioGroup mTrafficTitleRadioGroup;
+    
     int focusedIndex = Integer.MAX_VALUE;
     
     private static final String TAG = "TrafficResultFragment";
@@ -106,6 +111,8 @@ public class TrafficResultFragment extends BaseFragment {
         
         mRootView = mLayoutInflater.inflate(R.layout.traffic_result, container, false);
         mFooterView = mLayoutInflater.inflate(R.layout.traffic_transfer_result_footer, null);
+        
+        mTrafficTitieView = mLayoutInflater.inflate(R.layout.traffic_query_bar, null);
 
         findViews();
         setListener();
@@ -121,7 +128,9 @@ public class TrafficResultFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
 
-        mTitleBtn.setText(getString(R.string.title_type_transfer));
+        mTitleBtn.setVisibility(View.GONE);
+        mTitleView.addView(mTrafficTitieView);
+        mTrafficTitleRadioGroup.check(R.id.traffic_transfer_rbt);
         mRightBtn.setVisibility(View.GONE);
         
         mFootLayout.setVisibility(View.GONE);
@@ -147,6 +156,7 @@ public class TrafficResultFragment extends BaseFragment {
     @Override
     public void onPause() {
         super.onPause();
+        mTitleView.removeView(mTrafficTitieView);
     }
    
     protected void findViews() {
@@ -154,20 +164,37 @@ public class TrafficResultFragment extends BaseFragment {
         mFootLayout = (LinearLayout)mRootView.findViewById(R.id.bottom_buttons_view);
         mSearchReturnView = mFooterView.findViewById(R.id.search_return_view);
         mDescriptionTxv = (TextView) mFooterView.findViewById(R.id.description_txv);
+        mTrafficTitleRadioGroup = (RadioGroup) mTrafficTitieView.findViewById(R.id.traffic_rgp);
     }
 
     protected void setListener() {
+        mTrafficTitleRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if (checkedId == R.id.traffic_drive_rbt) {
+                    changeTrafficType(Plan.Step.TYPE_DRIVE);
+                } else if (checkedId == R.id.traffic_walk_rbt) {
+                    changeTrafficType(Plan.Step.TYPE_WALK);
+                }
+            }
+        });
         mResultLsv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view,
-					int position, long id) {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                    int position, long id) {
 
-				mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position);
-				focusedIndex = position;
-				mSphinx.getTrafficDetailFragment().setData(mTrafficModel.getPlanList(), position);
-				mSphinx.showView(R.id.view_traffic_result_detail);
-			}
+                mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position);
+                focusedIndex = position;
+                mSphinx.getTrafficDetailFragment().setData(mTrafficQuery,
+                        mPlanList,
+                        mSphinx.getTrafficDetailFragment().getDrivePlanList(),
+                        mSphinx.getTrafficDetailFragment().getWalkPlanList(),
+                        mPlanList.get(0).getType(),
+                        position);
+                mSphinx.showView(R.id.view_traffic_result_detail);
+            }
 
         });
         
@@ -185,39 +212,86 @@ public class TrafficResultFragment extends BaseFragment {
 //            
 //            @Override
 //            public void onScrollStateChanged(AbsListView arg0, int arg1) {
-//            	if (downView != null) {
-//            		PlanViewHolder viewHandler = (PlanViewHolder)downView.getTag();
-//                	if (viewHandler.position != focusedIndex) {
-////                		viewHandler.index.setBackgroundResource(R.drawable.btn_index);
-//                	}
-//            	}
+//                if (downView != null) {
+//                    PlanViewHolder viewHandler = (PlanViewHolder)downView.getTag();
+//                    if (viewHandler.position != focusedIndex) {
+////                        viewHandler.index.setBackgroundResource(R.drawable.btn_index);
+//                    }
+//                }
 //            }
 //
-//			@Override
-//			public void onScroll(AbsListView view, int firstVisibleItem,
-//					int visibleItemCount, int totalItemCount) {
-//			}
+//            @Override
+//            public void onScroll(AbsListView view, int firstVisibleItem,
+//                    int visibleItemCount, int totalItemCount) {
+//            }
 //        });
 //        
 //        mResultLsv.setOnTouchListener(new OnTouchListener() {
-//			
-//			@Override
-//			public boolean onTouch(View v, MotionEvent event) {
-//				if ((event.getAction() == MotionEvent.ACTION_UP) && (downView != null)) {
-//					if (downView.isSelected() || downView.isFocused() || downView.isPressed()) {
-//						LogWrapper.d(TAG, "set index bg: " + "bg_index_focused");
-//						PlanViewHolder planHolder = (PlanViewHolder)downView.getTag();
-////		        		planHolder.index.setBackgroundResource(R.drawable.bg_index_focused);
-//					}
-//				}
-//				return false;
-//			}
-//		});
+//            
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//                if ((event.getAction() == MotionEvent.ACTION_UP) && (downView != null)) {
+//                    if (downView.isSelected() || downView.isFocused() || downView.isPressed()) {
+//                        LogWrapper.d(TAG, "set index bg: " + "bg_index_focused");
+//                        PlanViewHolder planHolder = (PlanViewHolder)downView.getTag();
+////                        planHolder.index.setBackgroundResource(R.drawable.bg_index_focused);
+//                    }
+//                }
+//                return false;
+//            }
+//        });
+    }
+    
+    private void changeTrafficType(int type) {
+        TrafficDetailFragment trafficDetailFragment = mSphinx.getTrafficDetailFragment();
+        TrafficQuery trafficQuery = trafficDetailFragment.getTrafficQuery();
+        List<Plan> list = null;
+
+        if (type == Plan.Step.TYPE_DRIVE) {
+            list = trafficDetailFragment.getDrivePlanList();
+        } else if (type == Plan.Step.TYPE_WALK) {
+            list = trafficDetailFragment.getWalkPlanList();
+        } else {
+            return;
+        }
+        
+        if (list.isEmpty()) {
+            TrafficQuery newTrafficQuery = new TrafficQuery(mContext);
+            newTrafficQuery.setup(trafficQuery.getStart(),
+                    trafficQuery.getEnd(),
+                    type,
+                    TrafficResultFragment.this.getId(),
+                    getString(R.string.doing_and_wait));
+            newTrafficQuery.setCityId(trafficQuery.getCityId());
+            mSphinx.queryStart(newTrafficQuery);
+        } else {
+            trafficDetailFragment.setData(trafficQuery,
+                    trafficDetailFragment.getTransferPlanList(),
+                    trafficDetailFragment.getDrivePlanList(), 
+                    trafficDetailFragment.getWalkPlanList(),
+                    type,
+                    0);
+            if (type == Plan.Step.TYPE_DRIVE) {
+                ResultMapFragment resultMapFragment = mSphinx.getResultMapFragment();
+                resultMapFragment.setData(null, ActionLog.TrafficDriveMap);
+                mSphinx.showView(R.id.view_result_map);
+                
+                TrafficOverlayHelper.drawTrafficPlanListOverlay(mSphinx, list, 0);
+                TrafficOverlayHelper.panToViewWholeOverlay(list.get(0), mSphinx.getMapView(), mSphinx);
+            } else if (type == Plan.Step.TYPE_WALK) {
+                ResultMapFragment resultMapFragment = mSphinx.getResultMapFragment();
+                resultMapFragment.setData(null, ActionLog.TrafficWalkMap);
+                mSphinx.showView(R.id.view_result_map);
+                
+                TrafficOverlayHelper.drawTrafficPlanListOverlay(mSphinx, list, 0);
+                TrafficOverlayHelper.panToViewWholeOverlay(list.get(0), mSphinx.getMapView(), mSphinx);
+            }
+        }
     }
     
     public void setData(TrafficQuery trafficQuery) {
 
-    	mTrafficQuery = trafficQuery;
+        mTrafficQuery = trafficQuery;
         mTrafficModel = mTrafficQuery.getTrafficModel();
         
         focusedIndex = Integer.MAX_VALUE;
@@ -228,140 +302,130 @@ public class TrafficResultFragment extends BaseFragment {
     }
 
     public static class PlanViewHolder {
-    	public TextView title;
-    	public TextView distance;
-    	public TextView walkDistance;
-    	public TextView bustime;
-    	public TextView busstop;
-    	public LinearLayout tags;
+        public TextView title;
+        public TextView distance;
+        public TextView walkDistance;
+        public TextView bustime;
+        public TextView busstop;
+        public LinearLayout tags;
         public int position;
     }
     
     class TransferProjectListAdapter extends BaseAdapter{
 
-		public TransferProjectListAdapter() {
-			super();
-		}
-
-		@Override
-		public int getCount() {
-			return mPlanList.size();
-		}
-
-		@Override
-		public Object getItem(int position) {
-			return mPlanList.get(position);
-		}
-
-		@Override
-		public long getItemId(int position) {
-			return position;
-		}
-
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			PlanViewHolder planHolder = null;
-        	if(convertView == null) {
-        		convertView = new ChildView(mContext);
-        		
-        		planHolder = new PlanViewHolder();
-        		planHolder.distance = (TextView)convertView.findViewById(R.id.distance_txv);
-        		planHolder.title = (TextView)convertView.findViewById(R.id.title_txv);
-        		planHolder.busstop = (TextView) convertView.findViewById(R.id.busstop_txv);
-        		planHolder.bustime = (TextView) convertView.findViewById(R.id.bustime_txv);
-        		planHolder.walkDistance = (TextView) convertView.findViewById(R.id.walk_distance_txv);
-        		planHolder.tags = (LinearLayout) convertView.findViewById(R.id.tags_view);
-        		planHolder.position = position;
-        		
-        		convertView.setTag(planHolder);
-        	}else {
-        		planHolder = (PlanViewHolder)convertView.getTag();
-        	}
-        	
-        	Plan plan = (Plan) getItem(position);
-        	planHolder.title.setText(plan.getTitle(mSphinx));
-        	planHolder.distance.setText(plan.getLengthStr(mSphinx));
-        	planHolder.busstop.setText(plan.getBusstopNum());
-        	planHolder.bustime.setText(plan.getExpectedBusTime());
-        	planHolder.walkDistance.setText(plan.getWalkDistance());
-        	planHolder.tags.removeAllViews();
-        	List<PlanTag> list = plan.getPlanTagList();
-        	if (list != null) {
-        	    int tagNum = Math.min(MAX_TAG_NUM, plan.getPlanTagList().size());
-        	    for (int i = 0; i < tagNum; i++) {
-        	        PlanTag tag = list.get(i);
-        	        if (tag.getBackgroundtype() < 1 || tag.getBackgroundtype() > 5) {
-        	            continue;
-        	        }
-        	        TextView txv = new TextView(mSphinx);
-        	        txv.setText(tag.getDescription());
-        	        int dpPadding2 = Utility.dip2px(mSphinx, 2);
-        	        txv.setPadding(dpPadding2, 0, dpPadding2, 0);
-        	        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-        	                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1);  
-        	        int dpMargin = Utility.dip2px(mSphinx, 4);
-        	        lp.setMargins(dpMargin, 0, dpMargin, 0); 
-        	        txv.setLayoutParams(lp); 
-        	        txv.setBackgroundResource(tagResList[tag.getBackgroundtype()]);
-        	        txv.setTextSize(11f);
-        	        txv.setTextColor(Color.WHITE);
-        	        planHolder.tags.addView(txv);
-        	    }
-        	}
-        	
-        	planHolder.position = position;
-        	
-        	return convertView;
-		}
-    	
-    }
-
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        switch (keyCode) {
-            case KeyEvent.KEYCODE_BACK:
-                mTrafficModel = null;
-                break;
-                
-            default:
-                break;
+        public TransferProjectListAdapter() {
+            super();
         }
-        return super.onKeyDown(keyCode, event);
+
+        @Override
+        public int getCount() {
+            return mPlanList.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return mPlanList.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            PlanViewHolder planHolder = null;
+            if(convertView == null) {
+                convertView = new ChildView(mContext);
+                
+                planHolder = new PlanViewHolder();
+                planHolder.distance = (TextView)convertView.findViewById(R.id.distance_txv);
+                planHolder.title = (TextView)convertView.findViewById(R.id.title_txv);
+                planHolder.busstop = (TextView) convertView.findViewById(R.id.busstop_txv);
+                planHolder.bustime = (TextView) convertView.findViewById(R.id.bustime_txv);
+                planHolder.walkDistance = (TextView) convertView.findViewById(R.id.walk_distance_txv);
+                planHolder.tags = (LinearLayout) convertView.findViewById(R.id.tags_view);
+                planHolder.position = position;
+                
+                convertView.setTag(planHolder);
+            }else {
+                planHolder = (PlanViewHolder)convertView.getTag();
+            }
+            
+            Plan plan = (Plan) getItem(position);
+            planHolder.title.setText(plan.getTitle(mSphinx));
+            planHolder.distance.setText(plan.getLengthStr(mSphinx));
+            planHolder.busstop.setText(plan.getBusstopNum());
+            planHolder.bustime.setText(plan.getExpectedBusTime());
+            planHolder.walkDistance.setText(plan.getWalkDistance());
+            planHolder.tags.removeAllViews();
+            List<PlanTag> list = plan.getPlanTagList();
+            if (list != null) {
+                int tagNum = Math.min(MAX_TAG_NUM, plan.getPlanTagList().size());
+                for (int i = 0; i < tagNum; i++) {
+                    PlanTag tag = list.get(i);
+                    if (tag.getBackgroundtype() < 1 || tag.getBackgroundtype() > 5) {
+                        continue;
+                    }
+                    TextView txv = new TextView(mSphinx);
+                    txv.setText(tag.getDescription());
+                    int dpPadding2 = Utility.dip2px(mSphinx, 2);
+                    txv.setPadding(dpPadding2, 0, dpPadding2, 0);
+                    LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1);  
+                    int dpMargin = Utility.dip2px(mSphinx, 4);
+                    lp.setMargins(dpMargin, 0, dpMargin, 0); 
+                    txv.setLayoutParams(lp); 
+                    txv.setBackgroundResource(tagResList[tag.getBackgroundtype()]);
+                    txv.setTextSize(11f);
+                    txv.setTextColor(Color.WHITE);
+                    planHolder.tags.addView(txv);
+                }
+            }
+            
+            planHolder.position = position;
+            
+            return convertView;
+        }
+        
     }
     
     class ChildView extends RelativeLayout {
 
-    	public ChildView(Context context) {
-			super(context);
-			mLayoutInflater.inflate(R.layout.traffic_group_traffic, this, true);
-			setBackgroundResource(R.drawable.list_selector_background_gray_light);
-		}
-
-		@Override
-		public boolean onTouchEvent(MotionEvent event) {
-			if (event.getAction() == MotionEvent.ACTION_DOWN) {
-				LogWrapper.d(TAG, "ChildView ACTION_DOWN");
-				downView = this;
-				
-				if (Globals.g_ApiVersion <= android.os.Build.VERSION_CODES.FROYO) {
-					setSelected(true);
-				}
-			}
-			
-			return super.onTouchEvent(event);
-		}
-		
-    }
-
-    public List<Plan> getData() {
-        if (mTrafficModel != null) {
-            return mTrafficModel.getPlanList();
+        public ChildView(Context context) {
+            super(context);
+            mLayoutInflater.inflate(R.layout.traffic_group_traffic, this, true);
+            setBackgroundResource(R.drawable.list_selector_background_gray_light);
         }
-        return null;
+
+        @Override
+        public boolean onTouchEvent(MotionEvent event) {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                LogWrapper.d(TAG, "ChildView ACTION_DOWN");
+                downView = this;
+                
+                if (Globals.g_ApiVersion <= android.os.Build.VERSION_CODES.FROYO) {
+                    setSelected(true);
+                }
+            }
+            
+            return super.onTouchEvent(event);
+        }
+        
     }
     
     @Override
     public void dismiss() {
         super.dismiss();
-        mTrafficModel = null;
+    }
+
+    @Override
+    public void onPostExecute(TKAsyncTask tkAsyncTask) {
+        super.onPostExecute(tkAsyncTask);
+        
+        TrafficQueryFragment.dealWithTrafficResponse(mSphinx,
+                mActionTag,
+                (TrafficQuery) tkAsyncTask.getBaseQuery(),
+                false);
     }
 }

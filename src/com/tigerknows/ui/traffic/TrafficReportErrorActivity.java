@@ -18,7 +18,6 @@ import android.widget.RelativeLayout;
 import com.tigerknows.R;
 import com.tigerknows.ui.BaseActivity;
 
-import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.android.location.Position;
 import com.tigerknows.android.os.TKAsyncTask;
@@ -65,8 +64,8 @@ public class TrafficReportErrorActivity extends BaseActivity {
 		findViews();
 		setListener();
 		
-		mRightBtn.setBackgroundResource(R.drawable.btn_submit_comment);
         mTitleBtn.setText(getString(R.string.erreport_title));
+        mRightBtn.setText(R.string.submit);
 		
 		synchronized (sTargetList) {
             int size = sTargetList.size();
@@ -150,7 +149,7 @@ public class TrafficReportErrorActivity extends BaseActivity {
 				}
 				
 				if (TextUtils.isEmpty(stationError) && TextUtils.isEmpty(lineError) && TextUtils.isEmpty(descript)) {
-					Toast.makeText(TrafficReportErrorActivity.this, R.string.errorrecovery_empty, 3000).show();
+					Toast.makeText(TrafficReportErrorActivity.this, R.string.errorrecovery_empty, Toast.LENGTH_LONG).show();
 					return;
 				}
 				

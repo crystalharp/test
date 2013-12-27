@@ -18,7 +18,6 @@ import com.tigerknows.Sphinx.TouchMode;
 import com.tigerknows.android.location.Position;
 import com.tigerknows.model.Dianying;
 import com.tigerknows.model.POI;
-import com.tigerknows.model.TrafficModel.Plan;
 import com.tigerknows.model.Tuangou;
 import com.tigerknows.model.Yanchu;
 import com.tigerknows.model.Zhanlan;
@@ -105,49 +104,6 @@ public class ItemizedOverlayHelper {
             mapView.showOverlay(ItemizedOverlay.MY_LOCATION_OVERLAY, false);
             
             sphinx.showInfoWindow(sphinx.uiStackPeek(), overlayItem);
-            
-            itemizedOverlay = overlay;
-        } catch(APIException e) {
-            e.printStackTrace();
-        }
-        
-        return itemizedOverlay;
-    }
-    
-    public static ItemizedOverlay drawPlanListOverlay(Sphinx sphinx, List<Plan> list, int focusedIndex) {
-        
-        ItemizedOverlay itemizedOverlay = null;
-        final MapView mapView = sphinx.getMapView();
-        
-        try {
-            
-            Plan focusedPlan = null;
-            OverlayItem focusedOverlayItem = null;
-            
-            mapView.deleteOverlaysByName(ItemizedOverlay.PLAN_LIST_OVERLAY);
-            
-            ItemizedOverlay overlay = new ItemizedOverlay(ItemizedOverlay.PLAN_LIST_OVERLAY);
-            
-            for(int i = 0, size = list.size(); i < size; i++) {
-                Plan plan = list.get(i);
-                RotationTilt rt = new RotationTilt(RotateReference.SCREEN,TiltReference.SCREEN);
-                OverlayItem overlayItem = new OverlayItem(new Position(39, 116), Icon.getIcon(sphinx.getResources(), R.drawable.btn_bubble_b_normal, Icon.OFFSET_LOCATION_CENTER_BOTTOM), 
-                        Icon.getIcon(sphinx.getResources(), R.drawable.btn_bubble_b_normal, Icon.OFFSET_LOCATION_CENTER_BOTTOM),
-                        plan.getDescription(), rt);
-                overlayItem.setAssociatedObject(plan);
-                overlay.addOverlayItem(overlayItem);
-                
-                if (focusedIndex == i) {
-                    focusedPlan = plan;
-                    overlayItem.isFoucsed = true;
-                    focusedOverlayItem = overlayItem;
-                }
-            }
-            
-            sphinx.showInfoWindow(focusedOverlayItem);
-            
-            TrafficOverlayHelper.drawOverlay(sphinx, mapView, focusedPlan);
-            TrafficOverlayHelper.panToViewWholeOverlay(focusedPlan, mapView, sphinx);
             
             itemizedOverlay = overlay;
         } catch(APIException e) {

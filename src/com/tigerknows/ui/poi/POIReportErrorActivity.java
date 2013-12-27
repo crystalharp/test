@@ -185,6 +185,8 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
     }
     protected void findViewsDetail() {
         super.findViews();
+        findViewById(R.id.right_btn).setVisibility(View.GONE);
+        findViewById(R.id.keyword_edt).setVisibility(View.GONE);
         mBodyLly = (LinearLayout) findViewById(R.id.body_lly);
         mTelLly = (LinearLayout) findViewById(R.id.tel_lly);
         mNotExistRgp = (RadioGroup) findViewById(R.id.notexist_rgp);
