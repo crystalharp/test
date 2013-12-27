@@ -962,8 +962,6 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
 
         POIResponse poiResponse = (POIResponse)dataQuery.getResponse();
         
-        InputSearchFragment.mapCenterAndBorderRange(mSphinx, poiResponse);
-        
         if (poiResponse.getBPOIList() != null && 
                 poiResponse.getBPOIList().getList() != null && 
                 poiResponse.getBPOIList().getList().size() > 0) {
