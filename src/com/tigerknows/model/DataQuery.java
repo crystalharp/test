@@ -132,7 +132,7 @@ public final class DataQuery extends BaseQuery {
     // ext  String  true    扩展搜索，当前支持busline，表示支持优先展示公交线路搜索结果 
     public static final String SERVER_PARAMETER_EXT = "ext";
     
-    public static final String EXT_BUSLINE = "busline|mix";
+    public static final String EXT_BUSLINE = "busline;mix";
     
     // 评论版本 
     public static final String COMMENT_VERSION = "1";
