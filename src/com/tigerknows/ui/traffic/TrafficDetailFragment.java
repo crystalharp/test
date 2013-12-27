@@ -227,13 +227,11 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
 
             @Override
             public void onPageScrollStateChanged(int arg0) {
-                // TODO Auto-generated method stub
                 
             }
 
             @Override
             public void onPageScrolled(int arg0, float arg1, int arg2) {
-                // TODO Auto-generated method stub
                 
             }
 
@@ -330,7 +328,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
 
         @Override
         public int getCount() {
-            return mPlanList.size();
+            return mDetailItemViewList.size();
         }
 
         @Override
@@ -571,7 +569,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         return mTrafficQuery;
     }
 
-    public static class PlanViewHolder {
+    private static class PlanViewHolder {
         public TextView title;
         public TextView txv1;
         public TextView txv4;

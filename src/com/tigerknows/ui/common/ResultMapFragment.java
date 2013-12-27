@@ -115,6 +115,7 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
         
         if (type > 0) {
             mTitleBtn.setVisibility(View.GONE);
+            mTitleView.removeView(mTrafficTitieView);
             mTitleView.addView(mTrafficTitieView);
             changeTrafficType(type, false);
         }
@@ -274,6 +275,7 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
                                 ResultMapFragment.this.getId(),
                                 getString(R.string.doing_and_wait));
                         newTrafficQuery.setCityId(trafficQuery.getCityId());
+                        newTrafficQuery.addParameter(TrafficQuery.SERVER_PARAMETER_BAIS, String.valueOf(index));
                         mSphinx.queryStart(newTrafficQuery);
                     } else {
                         trafficDetailFragment.setData(trafficQuery,
