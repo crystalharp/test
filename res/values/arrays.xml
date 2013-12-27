@@ -73,6 +73,24 @@
         <item>医院;药店;更多</item>
     </string-array>
     
+    <string-array name="custom_category">
+        <item>买团购;2</item>
+        <item>订酒店;65537</item>
+        <item>看电影;4</item>
+        <item>地铁图;5</item>
+        <item>公交站;1</item>
+        <item>厕所;1</item>
+        <item>演出;13</item>
+        <item>展览;14</item>
+        <item>KTV;1</item>
+        <item>网吧;1</item>
+        <item>洗浴按摩;1</item>
+        <item>ATM;1</item>
+        <item>超市;1</item>
+        <item>商场;1</item>
+        <item>品牌折扣;1</item>
+    </string-array>
+            
     <string-array name="discover_categroy_type">
         <item>1</item><!-- 美食 -->
         <item>8</item><!-- 酒店 -->
