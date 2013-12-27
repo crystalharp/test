@@ -13,6 +13,7 @@ import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -349,6 +350,19 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         	}
             break;
         }
+    }
+    
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+    	if(mFilterListView.getVisibility() == View.VISIBLE){
+    		backHome();
+    	}else{
+            synchronized (mSphinx.mUILock) {
+        	    mActionLog.addAction(mActionTag + ActionLog.TitleLeftButton);
+            	dismiss();
+            }
+    	}
+    	return true;
     }
     
     private void btnClickProcess(View btn){
