@@ -189,8 +189,11 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     
     SpringbackListView.IPagerListCallBack mIPagerListCallBack = null;
     
-    public void setup() {
-        DataQuery lastDataQuery = (DataQuery) this.mTkAsyncTasking.getBaseQuery();
+    public void setup(){
+    	setup((DataQuery) this.mTkAsyncTasking.getBaseQuery());
+    }
+    
+    public void setup(BaseQuery lastDataQuery) {
         if (lastDataQuery == null) {
             return;
         }

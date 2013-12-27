@@ -374,7 +374,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
 		int operationCode = Integer.parseInt(str[1]);
     	switch(operationCode){
     	case CategoryProperty.OP_SEARCH:
-    		submitQuery(str[0]);
+    		submitQuery(str[0], operationCode);
     		break;
     	case CategoryProperty.OP_HOTEL:
     		mSphinx.getHotelHomeFragment().resetDate();
@@ -388,8 +388,10 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     		uiStackAdjust();
     		break;
     	case CategoryProperty.OP_TUANGOU:
-    		//TODO: mSphinx.getDiscoverListFragment();
-    		//mSphinx.showView(R.id.view_discover_list);
+    	case CategoryProperty.OP_YANCHU:
+    	case CategoryProperty.OP_ZHANLAN:
+    	case CategoryProperty.OP_DIANYING:
+    		submitQuery(str[0], operationCode);
     		break;
     	case CategoryProperty.OP_MORE:
         	mTitleBtn.setText(R.string.merchant_type);
@@ -405,26 +407,28 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
      * 查询
      * @param keyword
      */
-    private void submitQuery(String keyword) {
+    private void submitQuery(String keyword, int operationCode) {
         if (!TextUtils.isEmpty(keyword)) {
-            DataQuery poiQuery = new DataQuery(mContext);
+            DataQuery dataQuery = new DataQuery(mContext);
             POI requestPOI = mPOI;
             int cityId = MapEngine.getCityId(requestPOI.getPosition());
-            poiQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_POI);
-            poiQuery.addParameter(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_POI);
-            poiQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
-            poiQuery.addParameter(DataQuery.SERVER_PARAMETER_KEYWORD, keyword);
-            poiQuery.addParameter(DataQuery.SERVER_PARAMETER_POI_ID, requestPOI.getUUID());
+            dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, String.valueOf(operationCode & 65535));
+            if(operationCode == CategoryProperty.OP_SEARCH){
+            	dataQuery.addParameter(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_POI);
+            	dataQuery.addParameter(DataQuery.SERVER_PARAMETER_EXT, DataQuery.EXT_BUSLINE);
+            	dataQuery.addParameter(DataQuery.SERVER_PARAMETER_KEYWORD, keyword);
+            	dataQuery.addParameter(DataQuery.SERVER_PARAMETER_POI_ID, requestPOI.getUUID());
+            	dataQuery.addParameter(DataQuery.SERVER_PARAMETER_INFO, DataQuery.INFO_TYPE_TAG);
+            }
+            dataQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
             Position position = requestPOI.getPosition();
             if (position != null) {
-                poiQuery.addParameter(DataQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
-                poiQuery.addParameter(DataQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
+                dataQuery.addParameter(DataQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
+                dataQuery.addParameter(DataQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
             }
-            poiQuery.addParameter(DataQuery.SERVER_PARAMETER_INFO, DataQuery.INFO_TYPE_TAG);
-            poiQuery.addParameter(DataQuery.SERVER_PARAMETER_EXT, DataQuery.EXT_BUSLINE);
-            poiQuery.setup(getId(), getId(), getString(R.string.doing_and_wait), false, false, requestPOI);
-            poiQuery.setCityId(cityId);
-            mSphinx.queryStart(poiQuery);
+            dataQuery.setup(getId(), getId(), getString(R.string.doing_and_wait), false, false, requestPOI);
+            dataQuery.setCityId(cityId);
+            mSphinx.queryStart(dataQuery);
         } else {
             mSphinx.showTip(R.string.search_input_keyword, Toast.LENGTH_SHORT);
         }
@@ -467,7 +471,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
             for(int j = 0, count = chidrenList.size(); j < count; j++) {
                 Filter chidren = chidrenList.get(j);
                 if (chidren.isSelected()) {
-                	submitQuery(chidren.getFilterOption().getName());
+                	submitQuery(chidren.getFilterOption().getName(), CategoryProperty.OP_SEARCH);
                     return;
                 }
             }
@@ -492,10 +496,22 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         
         String apiType = baseQuery.getAPIType();
         if (BaseQuery.API_TYPE_DATA_QUERY.equals(apiType)) {
-            int result = InputSearchFragment.dealWithPOIResponse((DataQuery) baseQuery, mSphinx, this);
-            if(mFromPOI && result > 0){
-            	uiStackAdjust();
-            }
+        	switch(Integer.parseInt(baseQuery.getParameter(BaseQuery.SERVER_PARAMETER_DATA_TYPE))){
+        	case CategoryProperty.OP_SEARCH:
+        		int result = InputSearchFragment.dealWithPOIResponse((DataQuery) baseQuery, mSphinx, this);
+        		if(mFromPOI && result > 0){
+        			uiStackAdjust();
+        		}
+        		break;
+        	case CategoryProperty.OP_TUANGOU:
+        	case CategoryProperty.OP_YANCHU:
+        	case CategoryProperty.OP_ZHANLAN:
+        	case CategoryProperty.OP_DIANYING:
+        		mSphinx.getDiscoverListFragment().setup(baseQuery);
+                mSphinx.showView(R.id.view_discover_list);
+                break;
+        		
+        	}
         }
     }
     
