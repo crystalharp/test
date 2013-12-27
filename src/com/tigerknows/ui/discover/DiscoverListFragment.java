@@ -377,7 +377,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         }
         return title;
     }
-    
+    @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             DataQuery lastDataQuery = mDataQuery;
