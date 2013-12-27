@@ -22,4 +22,27 @@
         android:scrollingCache="false"
 		android:divider="@drawable/bg_line_split"
         android:background="@color/normal_background" />
+    
+    <RelativeLayout android:id="@+id/traffic_rly"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/result_lsv"
+        android:visibility="gone"
+        >
+        <android.support.v4.view.ViewPager  
+            android:id="@+id/view_pager"
+            android:layout_width="fill_parent"
+            android:layout_height="64dp"
+            android:focusable="true"
+            />
+        <LinearLayout
+            android:id="@+id/page_indicator_view"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_horizontal"
+            android:layout_alignParentBottom="true"
+            android:paddingBottom="8dp"
+            />
+    </RelativeLayout>
 </RelativeLayout>

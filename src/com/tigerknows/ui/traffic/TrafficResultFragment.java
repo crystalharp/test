@@ -35,6 +35,8 @@ import com.tigerknows.model.TrafficModel.Plan;
 import com.tigerknows.model.TrafficModel.Plan.PlanTag;
 import com.tigerknows.model.TrafficQuery;
 import com.tigerknows.ui.BaseFragment;
+import com.tigerknows.ui.traffic.TrafficDetailFragment.PlanViewHolder;
+import com.tigerknows.ui.traffic.TrafficDetailFragment.TrafficDetailItem;
 import com.tigerknows.util.Utility;
 
 /**
@@ -62,17 +64,7 @@ public class TrafficResultFragment extends BaseFragment {
     
     private TrafficModel mTrafficModel = null;
     
-    private static final int MAX_TAG_NUM = 3;
     
-    private static final int tagResList[] = {0, 
-        R.drawable.bg_transfer_tag1,
-        R.drawable.bg_transfer_tag2,
-        R.drawable.bg_transfer_tag3,
-        R.drawable.bg_transfer_tag4,
-        R.drawable.bg_transfer_tag5,
-        R.drawable.bg_transfer_tag6,
-        R.drawable.bg_transfer_tag7
-        }; 
 
     /*
      * 用于控制序号图片显示
@@ -177,7 +169,7 @@ public class TrafficResultFragment extends BaseFragment {
             public void onClick(View v) {
                 // TODO Auto-generated method stub
                 mSphinx.getTrafficQueryFragment().switchStartEnd();
-                dismiss();
+                mSphinx.getTrafficQueryFragment().query();
             }
         });
         
@@ -227,15 +219,6 @@ public class TrafficResultFragment extends BaseFragment {
         mResultAdapter.notifyDataSetChanged();
     }
 
-    public static class PlanViewHolder {
-    	public TextView title;
-    	public TextView distance;
-    	public TextView walkDistance;
-    	public TextView bustime;
-    	public TextView busstop;
-    	public LinearLayout tags;
-        public int position;
-    }
     
     class TransferProjectListAdapter extends BaseAdapter{
 
@@ -260,56 +243,35 @@ public class TrafficResultFragment extends BaseFragment {
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			PlanViewHolder planHolder = null;
+			TrafficDetailItem item = null;
         	if(convertView == null) {
-        		convertView = new ChildView(mContext);
+        		item = new TrafficDetailItem(mSphinx);
+        		convertView = item.getView();
         		
-        		planHolder = new PlanViewHolder();
-        		planHolder.distance = (TextView)convertView.findViewById(R.id.distance_txv);
-        		planHolder.title = (TextView)convertView.findViewById(R.id.title_txv);
-        		planHolder.busstop = (TextView) convertView.findViewById(R.id.busstop_txv);
-        		planHolder.bustime = (TextView) convertView.findViewById(R.id.bustime_txv);
-        		planHolder.walkDistance = (TextView) convertView.findViewById(R.id.walk_distance_txv);
-        		planHolder.tags = (LinearLayout) convertView.findViewById(R.id.tags_view);
-        		planHolder.position = position;
+//        		planHolder.txv1 = (TextView)convertView.findViewById(R.id.distance_txv);
+//        		planHolder.txv1 = (TextView)v.findViewById(R.id.txv1);
+//        		planHolder.busstop = (TextView) v.findViewById(R.id.txv2);
+//        		planHolder.bustime = (TextView) v.findViewById(R.id.txv3);
+//        		planHolder.walkDistance = (TextView) v.findViewById(R.id.txv4);
+//        		planHolder.tags = (LinearLayout) convertView.findViewById(R.id.tags_view);
+//        		planHolder.position = position;
         		
-        		convertView.setTag(planHolder);
+        		convertView.setTag(item);
         	}else {
-        		planHolder = (PlanViewHolder)convertView.getTag();
+        		item = (TrafficDetailItem)convertView.getTag();
         	}
         	
         	Plan plan = (Plan) getItem(position);
-        	planHolder.title.setText(plan.getTitle(mSphinx));
-        	planHolder.distance.setText(plan.getLengthStr(mSphinx));
-        	planHolder.busstop.setText(plan.getBusstopNum());
-        	planHolder.bustime.setText(plan.getExpectedBusTime());
-        	planHolder.walkDistance.setText(plan.getWalkDistance());
-        	planHolder.tags.removeAllViews();
-        	List<PlanTag> list = plan.getPlanTagList();
-        	if (list != null) {
-        	    int tagNum = Math.min(MAX_TAG_NUM, plan.getPlanTagList().size());
-        	    for (int i = 0; i < tagNum; i++) {
-        	        PlanTag tag = list.get(i);
-        	        if (tag.getBackgroundtype() < 1 || tag.getBackgroundtype() > 5) {
-        	            continue;
-        	        }
-        	        TextView txv = new TextView(mSphinx);
-        	        txv.setText(tag.getDescription());
-        	        int dpPadding2 = Utility.dip2px(mSphinx, 2);
-        	        txv.setPadding(dpPadding2, 0, dpPadding2, 0);
-        	        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-        	                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1);  
-        	        int dpMargin = Utility.dip2px(mSphinx, 4);
-        	        lp.setMargins(dpMargin, 0, dpMargin, 0); 
-        	        txv.setLayoutParams(lp); 
-        	        txv.setBackgroundResource(tagResList[tag.getBackgroundtype()]);
-        	        txv.setTextSize(11f);
-        	        txv.setTextColor(Color.WHITE);
-        	        planHolder.tags.addView(txv);
-        	    }
-        	}
+        	item.refresh(plan);
+//        	planHolder.title.setText(plan.getTitle(mSphinx));
+//        	planHolder.txv1.setText(plan.getLengthStr(mSphinx));
+//        	planHolder.busstop.setText(plan.getBusstopNum());
+//        	planHolder.bustime.setText(plan.getExpectedBusTime());
+//        	planHolder.walkDistance.setText(plan.getWalkDistance());
+//        	planHolder.tags.removeAllViews();
         	
-        	planHolder.position = position;
+        	
+//        	planHolder.position = position;
         	
         	return convertView;
 		}

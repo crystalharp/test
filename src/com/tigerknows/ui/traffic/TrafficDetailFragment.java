@@ -13,6 +13,9 @@ import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,6 +40,7 @@ import com.tigerknows.map.MapView.MapScene;
 import com.tigerknows.model.BaseData;
 import com.tigerknows.model.TrafficModel;
 import com.tigerknows.model.TrafficModel.Plan;
+import com.tigerknows.model.TrafficModel.Plan.PlanTag;
 import com.tigerknows.model.TrafficQuery;
 import com.tigerknows.provider.Tigerknows;
 import com.tigerknows.share.ShareAPI;
@@ -79,6 +83,10 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
     private Plan plan = null;
     
     private LinearLayout mBottomButtonsView;
+    
+    private View mViewPagerLayout;
+    
+    private ViewPager mViewPager;
     
     private int mChildLayoutId = R.layout.traffic_child_traffic;
     
@@ -139,6 +147,13 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         if (mPlanList.size() > 0) {
             //有内容，需要弹出顶部切换菜单
             mTitleBtn.setText(getString(R.string.title_transfer_plan_popup, TrafficQuery.numToStr(mSphinx, curLineNum + 1)));
+            mViewPagerLayout.setVisibility(View.VISIBLE);
+//            Utility.pageIndicatorInit(mSphinx, mPageIndicatorView, mPagecount, 0, R.drawable.ic_notice_dot_normal, R.drawable.ic_notice_dot_selected);
+//            mNoticeRly.setVisibility(View.VISIBLE);
+//            mViewPager.setCurrentItem(mPagecount * VIEW_PAGE_LEFT);
+//            mPosition = 0;
+        } else {
+            mViewPagerLayout.setVisibility(View.GONE);
         }
         
         Utility.setFavoriteBtn(mSphinx, mFavorateBtn, plan.checkFavorite(mContext));
@@ -171,6 +186,8 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         mFavorateBtn = (ViewGroup) mRootView.findViewById(R.id.favorite_btn);
         mShareBtn = (ViewGroup) mRootView.findViewById(R.id.share_btn);
         mBottomButtonsView.findViewById(R.id.nearby_search_btn).setVisibility(View.GONE);
+        mViewPagerLayout = mRootView.findViewById(R.id.traffic_rly);
+        mViewPager = (ViewPager) mRootView.findViewById(R.id.view_pager);
     }
 
     protected void setListener() {
@@ -187,6 +204,25 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
             	TrafficOverlayHelper.panToPosition(mSphinx, position, mSphinx.getMapView());
             }
         });
+        
+        mViewPager.setOnPageChangeListener(new OnPageChangeListener() {
+
+            @Override
+            public void onPageScrollStateChanged(int arg0) {
+                // TODO Auto-generated method stub
+                
+            }
+
+            @Override
+            public void onPageScrolled(int arg0, float arg1, int arg2) {
+                // TODO Auto-generated method stub
+                
+            }
+
+            @Override
+            public void onPageSelected(int arg0) {
+                updateResult(mPlanList.get(arg0));
+            } });
     }
     
 	@Override
@@ -219,6 +255,12 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         mPlanList.clear();
         this.mPlanList.addAll(list);
 
+        updateResult(plan);
+
+        plan.updateHistory(mContext);
+    }
+    
+    private void updateResult(Plan plan) {
         mStrList.clear();
         mTypes.clear();
         
@@ -231,8 +273,6 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         mStrList.add(plan.getEnd().getName());
         mTypes.add(TYPE_RESULT_LIST_END);
         mResultAdapter.notifyDataSetChanged();
-
-        plan.updateHistory(mContext);
     }
 
     public static class StepViewHolder {
@@ -240,6 +280,21 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
     	public TextView textView;
     }
 
+    class PlanListAdapter extends PagerAdapter {
+
+        @Override
+        public int getCount() {
+            return mPlanList.size();
+        }
+
+        @Override
+        public boolean isViewFromObject(View arg0, Object arg1) {
+            // TODO Auto-generated method stub
+            return arg0 == arg1;
+        }
+        
+    }
+    
     class StringListAdapter extends BaseAdapter{
 
         public StringListAdapter(Context context) {
@@ -460,5 +515,90 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
     
     public int getCurLine(){
         return curLineNum;
+    }
+
+    public static class PlanViewHolder {
+        public TextView title;
+        public TextView txv1;
+        public TextView txv4;
+        public TextView txv3;
+        public TextView txv2;
+        public LinearLayout tags;
+        public int position;
+    }
+    
+    public static class TrafficDetailItem {
+        View v;
+        Plan plan;
+        int resid = R.layout.traffic_group_traffic;
+        PlanViewHolder planHolder;
+        Sphinx mSphinx;
+        private static final int MAX_TAG_NUM = 3;
+        
+        private static final int tagResList[] = {0, 
+            R.drawable.bg_transfer_tag1,
+            R.drawable.bg_transfer_tag2,
+            R.drawable.bg_transfer_tag3,
+            R.drawable.bg_transfer_tag4,
+            R.drawable.bg_transfer_tag5,
+            R.drawable.bg_transfer_tag6,
+            R.drawable.bg_transfer_tag7
+            }; 
+        
+        public TrafficDetailItem(Sphinx sphinx) {
+            v = sphinx.getLayoutInflater().inflate(resid, null);
+            mSphinx = sphinx;
+            planHolder = new PlanViewHolder();
+            planHolder.title = (TextView)v.findViewById(R.id.title_txv);
+            planHolder.txv1 = (TextView)v.findViewById(R.id.txv1);
+            planHolder.txv2 = (TextView) v.findViewById(R.id.txv2);
+            planHolder.txv3 = (TextView) v.findViewById(R.id.txv3);
+            planHolder.txv4 = (TextView) v.findViewById(R.id.txv4);
+            planHolder.tags = (LinearLayout) v.findViewById(R.id.tags_view);
+        }
+        
+        public void refresh(Plan p) {
+            this.plan = p;
+            planHolder.title.setText(plan.getTitle(mSphinx));
+            if (p.getType() == TrafficQuery.QUERY_TYPE_TRANSFER) {
+                planHolder.txv1.setText(plan.getExpectedBusTime());
+                planHolder.txv2.setText(plan.getLengthStr(mSphinx));
+                planHolder.txv3.setText(plan.getWalkDistance());
+                planHolder.txv4.setText(plan.getBusstopNum());
+            } else if (p.getType() == TrafficQuery.QUERY_TYPE_DRIVE) {
+                planHolder.txv1.setText(plan.getDriveDistance());
+                planHolder.txv2.setText(plan.getExpectedDriveTime());
+                planHolder.txv3.setText(plan.getTrafficLightNum());
+                planHolder.txv4.setText(plan.getTaxiCost());
+            }
+            planHolder.tags.removeAllViews();
+            List<PlanTag> list = plan.getPlanTagList();
+            if (list != null) {
+                int tagNum = Math.min(MAX_TAG_NUM, plan.getPlanTagList().size());
+                for (int i = 0; i < tagNum; i++) {
+                    PlanTag tag = list.get(i);
+                    if (tag.getBackgroundtype() < 1 || tag.getBackgroundtype() > 5) {
+                        continue;
+                    }
+                    TextView txv = new TextView(mSphinx);
+                    txv.setText(tag.getDescription());
+                    int dpPadding2 = Utility.dip2px(mSphinx, 2);
+                    txv.setPadding(dpPadding2, 0, dpPadding2, 0);
+                    LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1);  
+                    int dpMargin = Utility.dip2px(mSphinx, 4);
+                    lp.setMargins(dpMargin, 0, dpMargin, 0); 
+                    txv.setLayoutParams(lp); 
+                    txv.setBackgroundResource(tagResList[tag.getBackgroundtype()]);
+                    txv.setTextSize(11f);
+                    txv.setTextColor(Color.WHITE);
+                    planHolder.tags.addView(txv);
+                }
+            }
+        }
+        
+        public View getView() {
+            return v;
+        }
     }
 }

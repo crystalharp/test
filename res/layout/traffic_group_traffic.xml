@@ -27,62 +27,54 @@
   	    android:layout_width="fill_parent"
   	    android:layout_height="wrap_content"
   	    android:orientation="horizontal"
+  	    android:padding="8dp"
       	android:layout_below="@id/title_txv"
   	     >
 	  	<TextView
-	  	    android:id="@+id/bustime_txv"
+	  	    android:id="@+id/txv1"
 	  	    android:layout_width="wrap_content"
 	  	    android:layout_height="wrap_content"
-	      	android:padding="8dp"
+	      	android:paddingRight="8dp"
 	  	    android:ellipsize="end"
 	  	    android:singleLine="true"
 	  	    android:textColor="@color/text_hint_gray"
 	  	    android:text="bustime"
 	  	    android:textSize="14sp" />
-
-	  	<ImageView
-	  	    android:layout_width="wrap_content"
-	  	    android:layout_height="match_parent"
-	  	    android:src="@drawable/ic_vertical_split" />
 	  	
 	  	<TextView
-	  	    android:id="@+id/distance_txv"
+	  	    android:id="@+id/txv2"
 	  	    android:layout_width="wrap_content"
 	  	    android:layout_height="wrap_content"
-	      	android:padding="8dp"
 	  	    android:ellipsize="end"
+	  	    android:paddingRight="8dp"
+	  	    android:drawableLeft="@drawable/ic_vertical_split"
+	  	    android:drawablePadding="8dp"
 	  	    android:singleLine="true"
 	  	    android:textColor="@color/text_hint_gray"
 	  	    android:text="distance"
 	  	    android:textSize="14sp" />
 	  	
-	  	<ImageView
-	  	    android:layout_width="wrap_content"
-	  	    android:layout_height="match_parent"
-	  	    android:src="@drawable/ic_vertical_split" />
 	  	
 	  	<TextView
-	  	    android:id="@+id/walk_distance_txv"
+	  	    android:id="@+id/txv3"
 	  	    android:layout_width="wrap_content"
 	  	    android:layout_height="wrap_content"
-	      	android:padding="8dp"
 	  	    android:singleLine="true"
+	  	    android:paddingRight="8dp"
+	  	    android:drawableLeft="@drawable/ic_vertical_split"
 	  	    android:textColor="@color/text_hint_gray"
+	  	    android:drawablePadding="8dp"
 	  	    android:text="walk_distance"
 	  	    android:textSize="14sp" />
 	  	
-	  	<ImageView
-	  	    android:layout_width="wrap_content"
-	  	    android:layout_height="match_parent"
-	  	    android:src="@drawable/ic_vertical_split" />
-	  	
 	  	<TextView
-	  	    android:id="@+id/busstop_txv"
+	  	    android:id="@+id/txv4"
 	  	    android:layout_width="wrap_content"
 	  	    android:layout_height="wrap_content"
-	      	android:padding="8dp"
 	  	    android:ellipsize="end"
 	  	    android:singleLine="true"
+	  	    android:drawableLeft="@drawable/ic_vertical_split"
+	  	    android:drawablePadding="8dp"
 	  	    android:textColor="@color/text_hint_gray"
 	  	    android:text="busstop_num"
 	  	    android:textSize="14sp" />
