@@ -37,6 +37,38 @@ public class TrafficOverlayHelper {
 	private static final float HIGHLIGHT_POSITION_ACCURACY = 0.00001f;
 	
 	private static final String TAG = "TrafficOverlayHelper";
+    
+    public static ItemizedOverlay drawTrafficPlanListOverlay(Sphinx sphinx, List<Plan> list, int focusedIndex) {
+        
+        ItemizedOverlay itemizedOverlay = null;
+        try {
+            OverlayItem focusedOverlayItem = null;
+            ItemizedOverlay overlay = new ItemizedOverlay(ItemizedOverlay.TRAFFIC_PLAN_LIST_OVERLAY);
+            
+            for(int i = 0, size = list.size(); i < size; i++) {
+                Plan plan = list.get(i);
+                RotationTilt rt = new RotationTilt(RotateReference.SCREEN,TiltReference.SCREEN);
+                OverlayItem overlayItem = new OverlayItem(new Position(39, 116), Icon.getIcon(sphinx.getResources(), R.drawable.btn_bubble_b_normal, Icon.OFFSET_LOCATION_CENTER_BOTTOM), 
+                        Icon.getIcon(sphinx.getResources(), R.drawable.btn_bubble_b_normal, Icon.OFFSET_LOCATION_CENTER_BOTTOM),
+                        plan.getDescription(), rt);
+                overlayItem.setAssociatedObject(plan);
+                overlay.addOverlayItem(overlayItem);
+                
+                if (focusedIndex == i) {
+                    overlayItem.isFoucsed = true;
+                    focusedOverlayItem = overlayItem;
+                }
+            }
+            
+            sphinx.showInfoWindow(focusedOverlayItem);
+            
+            itemizedOverlay = overlay;
+        } catch(APIException e) {
+            e.printStackTrace();
+        }
+        
+        return itemizedOverlay;
+    }
 
 	/**
 	 * 绘制交通图层
@@ -45,13 +77,13 @@ public class TrafficOverlayHelper {
 	 * @param plan
 	 * @param type
 	 */
-	public static void drawOverlay(final Sphinx sphinx, 
-			final MapView mapView, Plan plan) {
+	public static void drawOverlay(Sphinx sphinx, Plan plan) {
 	    
 	    sphinx.clearMap();
 	    
 		try {
 	        if(plan!=null){
+	            MapView mapView = sphinx.getMapView();
 	        	mapView.getMapPreference().setRouteId(ItemizedOverlay.TRAFFIC_OVERLAY); 
 	            
 	        	// 线路所经过的路径
@@ -119,7 +151,6 @@ public class TrafficOverlayHelper {
 	            overlayItem.setPreferZoomLevel(DEFAULT_SHOW_STEP_ZOOMLEVEL);
                 overlay.addOverlayItem(overlayItem);
                 
-                // 更新地图, 并显示"上下按钮"
                 mapView.addOverlay(overlay);
 
                 mapView.showOverlay(ItemizedOverlay.MY_LOCATION_OVERLAY, false);

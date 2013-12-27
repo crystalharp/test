@@ -283,4 +283,10 @@
         <item>站点搜索</item>
         <item>地铁图</item>
     </string-array>
+    
+    <string-array name="drvie_search_option">
+        <item>时间最短</item>
+        <item>路程最短</item>
+        <item>避免高速</item>
+    </string-array>
 </resources>

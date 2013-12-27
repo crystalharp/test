@@ -773,6 +773,8 @@ public class TrafficModel extends XMapData {
             };
         }
         
+        public int drivePreference;
+        
         private String description;
         
         private int length;

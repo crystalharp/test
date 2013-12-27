@@ -415,7 +415,7 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             Plan plan = (Plan) mItemizedOverlay.get(position).getAssociatedObject();
             setPlanListToView(view, plan);
             
-            TrafficOverlayHelper.drawOverlay(mSphinx, mapView, plan);
+            TrafficOverlayHelper.drawOverlay(mSphinx, plan);
             TrafficOverlayHelper.panToViewWholeOverlay(plan, mapView, mSphinx);
             
             if (position - 1 >= 0) {
@@ -669,6 +669,12 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
                         mSphinx.showView(R.id.view_discover_yanchu_detail);
                     }
                     mSphinx.getYanchuDetailFragment().setData(target);
+                }
+            } else if (overlayName.equals(ItemizedOverlay.TRAFFIC_PLAN_LIST_OVERLAY)) {
+                if (mSphinx.uiStackContains(R.id.view_traffic_result_detail)) {
+                    mSphinx.dismissView(R.id.view_result_map);
+                } else {
+                    mSphinx.showView(R.id.view_traffic_result_detail);
                 }
             } else if (overlayName.equals(ItemizedOverlay.TRAFFIC_OVERLAY)) {
                 if (mSphinx.uiStackContains(R.id.view_traffic_result_detail)) {

@@ -3626,8 +3626,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             if (itemizedOverlay != null) {
                 result = true;
                 mMapView.refreshMap();
-                ResultMapFragment resultMapFragment = getResultMapFragment();
-                itemizedOverlay = resultMapFragment.getItemizedOverlay();
+                itemizedOverlay = mMapView.getCurrentOverlay();
                 if (itemizedOverlay != null) {
                     showInfoWindow(R.id.view_result_map, itemizedOverlay.getItemByFocused());
                 }

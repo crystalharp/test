@@ -513,13 +513,13 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
                 break;
                 
             case Tigerknows.Favorite.FAVORITE_TRANSFER:
-                mSphinx.getTrafficDetailFragment().setData(traffic.getTrafficQuery().getTrafficModel().getPlanList().get(0));
+                mSphinx.getTrafficDetailFragment().setData(traffic.getTrafficQuery(), traffic.getTrafficQuery().getTrafficModel().getPlanList(), null, null, traffic.getTrafficQuery().getTrafficModel().getPlanList().get(0).getType(), 0);
                 mSphinx.showView(R.id.view_traffic_result_detail);
                 break;
             case Tigerknows.Favorite.FAVORITE_DRIVE:
             case Tigerknows.Favorite.FAVORITE_WALK:
-                mSphinx.getTrafficDetailFragment().setData(traffic.getTrafficQuery().getTrafficModel().getPlanList().get(0));
-                mSphinx.getTrafficDetailFragment().viewPlanMap();
+                mSphinx.getTrafficDetailFragment().setData(traffic.getTrafficQuery(), traffic.getTrafficQuery().getTrafficModel().getPlanList(), null, null, traffic.getTrafficQuery().getTrafficModel().getPlanList().get(0).getType(), 0);
+                mSphinx.getTrafficDetailFragment().viewMap();
                 break;
 
             default:
