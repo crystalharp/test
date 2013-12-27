@@ -1215,11 +1215,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                             if (id == R.id.button0_view) {
                                 
                                 mActionLog.addAction(ActionLog.MapSubway);
-                                CityInfo cityInfo = Globals.getCurrentCityInfo(mThis);
-                                if (cityInfo != null && cityInfo.isAvailably()) {
-                                    getSubwayMapFragment().setData(cityInfo);
-                                    showView(R.id.view_subway_map);
-                                }
+                                getSubwayMapFragment().setData(Globals.getCurrentCityInfo(mThis, false));
+                                showView(R.id.view_subway_map);
                                 
                             } else if (id == R.id.button1_view) {
                                 mActionLog.addAction(ActionLog.MapTakeScreenshot);

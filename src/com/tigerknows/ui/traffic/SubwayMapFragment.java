@@ -126,6 +126,7 @@ public class SubwayMapFragment extends BaseFragment implements RetryView.CallBac
                     }
                 }
                 mCityAdapter = new StringArrayAdapter(mSphinx, cityNameList);
+                mCityAdapter.isRoundCorner = false;
                 mCityLsv.setAdapter(mCityAdapter);
             }
             
@@ -261,7 +262,6 @@ public class SubwayMapFragment extends BaseFragment implements RetryView.CallBac
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
                 CityInfo cityInfo = mCityList.get(position);
-                mSphinx.changeCity(cityInfo);
                 setData(cityInfo);
                 
                 showSubwayMap();

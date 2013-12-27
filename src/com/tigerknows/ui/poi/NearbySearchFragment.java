@@ -5,6 +5,7 @@
 package com.tigerknows.ui.poi;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -63,19 +65,23 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     /**
      * 分类名称列表
      */
+    private String[] mHotNames;
     private String[] mCategoryNames;
     private String[] mSubCategoryNames;
     private LinearLayout[][] mCategoryLlys;
     private Button[][] mCategoryBtns;
 
-    private LinearLayout mHotLly;
-    private Button[] mHotBtns;
+    private LinearLayout mHotBaseLly;
+    private LinearLayout[] mHotLlys;
+    private View[] mHotBtnViews;
     
     private boolean mFromPOI;
     
     private CategoryProperty[] mCategoryList;
     
     private static final int NUM_OF_CATGEGORY = 10;
+    private static final int NUM_OF_HOT = 15;
+    private static final int NUM_OF_HOT_LLY = 4;
     
     private static final int FOOD = 0;
     private static final int HOTEL = 1;
@@ -105,6 +111,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     	for(int i=0; i<SPECIAL_OP.length; i++){
     		mCategoryList[SPECIAL_OP[i][0]].setOperationType(SPECIAL_OP[i][1], SPECIAL_OP[i][2]);
     	}
+    	mHotNames = mContext.getResources().getStringArray(R.array.custom_category);
     	mCategoryNames = mContext.getResources().getStringArray(R.array.home_category);
     	mSubCategoryNames = mContext.getResources().getStringArray(R.array.home_sub_category);
     	for(int i=0; i<NUM_OF_CATGEGORY; i++){
@@ -177,7 +184,15 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
 
     protected void findViews() {
         mLocationTxv = (TextView) mRootView.findViewById(R.id.location_txv);
-        mHotLly = (LinearLayout) mRootView.findViewById(R.id.hot_lly);
+        mHotBaseLly = (LinearLayout) mRootView.findViewById(R.id.hot_lly);
+        mHotLlys = new LinearLayout[NUM_OF_HOT_LLY];
+        mHotBtnViews = new View[NUM_OF_HOT + 1];
+        for(int i = 0; i < NUM_OF_HOT_LLY; i++){
+        	mHotLlys[i] = (LinearLayout) mRootView.findViewById(HOT_LLY_ID[i]);
+        }
+        for(int i = 0; i < NUM_OF_HOT + 1; i++){
+        	mHotBtnViews[i] = (View)mRootView.findViewById(HOT_BTN_ID[i]);
+        }
         mCategoryBtns = new Button[NUM_OF_CATGEGORY][];
         mCategoryLlys = new LinearLayout[NUM_OF_CATGEGORY][];
         mCategoryViews = new View[NUM_OF_CATGEGORY];
@@ -207,16 +222,52 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     			mCategoryBtns[i][j].setOnClickListener(this);
     		}
     	}
+    	for(int i = 0; i < NUM_OF_HOT; i++){
+    		mHotBtnViews[i].setOnClickListener(this);
+    	}
     }
     
     private void refreshHotView(String customPrefs){
+    	int countBtnView = 0;
+    	int countLly = 0;
+    	for(int i = 0; i < NUM_OF_HOT_LLY; i++){
+    		mHotLlys[i].setVisibility(View.GONE);
+    	}
+    	for(int i = 0; i < NUM_OF_HOT + 1; i++){
+    		mHotBtnViews[i].setVisibility(View.GONE);
+    	}
+    	for(int i = 0; i < customPrefs.length(); i++){
+    		if(customPrefs.charAt(i) == '1'){
+    			String[] str = mHotNames[i].split(";");
+    			mHotBtnViews[countBtnView].setContentDescription(mHotNames[i]);
+    			((TextView)mHotBtnViews[countBtnView].findViewById(R.id.app_name_txv)).setText(str[0]);
+    			mHotBtnViews[countBtnView].setVisibility(View.VISIBLE);
+    			countBtnView++;
+    			if(countLly * 4 < countBtnView){
+    				mHotLlys[countLly].setVisibility(View.VISIBLE);
+    				countLly++;
+    			}
+    		}
+    	}
+    	mHotBtnViews[countBtnView].setContentDescription("自定义;" + CategoryProperty.OP_CUSTOM);
+    	((TextView)mHotBtnViews[countBtnView].findViewById(R.id.app_name_txv)).setText("自定义");
+    	mHotBtnViews[countBtnView].setVisibility(View.VISIBLE);
+    	countBtnView++;
+		if(countLly * 4 < countBtnView){
+			mHotLlys[countLly].setVisibility(View.VISIBLE);
+			countLly++;
+		}
+    	for(int i = countBtnView; i<countLly * 4; i++){
+    		mHotBtnViews[i].setVisibility(View.INVISIBLE);
+    	}
 
     }
     
     private void setButtonView(){
     	for(int i = 0; i < NUM_OF_CATGEGORY; i++){
     		CategoryProperty cp = mCategoryList[i];
-    		mCategoryBtns[i][9].setText(cp.getName());
+    		mCategoryBtns[i][CategoryProperty.NUM_OF_SUBBUTTONS].setText(cp.getName());
+    		mCategoryBtns[i][CategoryProperty.NUM_OF_SUBBUTTONS].setContentDescription(cp.getName() + ";" + String.valueOf(CategoryProperty.OP_SEARCH));
     		for(int j = 0; j < CategoryProperty.LINEAR_ARRAY.length; j++){
     			if((CategoryProperty.LINEAR_ARRAY[j] & mCategoryList[i].getLlyVisibility()) == 0){
     				mCategoryLlys[i][j].setVisibility(View.GONE);
@@ -227,11 +278,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     		for(int j = 0; j < CategoryProperty.NUM_OF_SUBBUTTONS; j++){
     			mCategoryBtns[i][j].setText(cp.getButtonText(j));
     			int OP = mCategoryList[i].getOperationType(j);
-    			if(OP == CategoryProperty.OP_MORE){
-    				mCategoryBtns[i][j].setTag(mCategoryList[i].getName());
-    			}else{
-    				mCategoryBtns[i][j].setTag(OP);
-    			}
+    			mCategoryBtns[i][j].setContentDescription(cp.getButtonText(j) + ";" + String.valueOf(OP));
     		}
     	}
     }
@@ -282,8 +329,6 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         	}
         	break;
         case R.id.category_btn:
-        	submitQuery(((Button)view).getText().toString());
-        	break;
         case R.id.sub_0_btn:
         case R.id.sub_1_btn:
         case R.id.sub_2_btn:
@@ -292,42 +337,69 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         case R.id.sub_5_btn:
         case R.id.sub_6_btn:
         case R.id.sub_7_btn:
-        	Button btn = (Button)view;
-        	int op = (Integer) btn.getTag();
-        	switch(op){
-        	case CategoryProperty.OP_SEARCH:
-        		submitQuery(btn.getText().toString());
-        		break;
-        	case CategoryProperty.OP_HOTEL:
-        		mSphinx.getHotelHomeFragment().resetDate();
-        		mSphinx.getHotelHomeFragment().setCityInfo(Globals.getCurrentCityInfo(mContext));
-        		mSphinx.showView(R.id.view_hotel_home);
-        		uiStackAdjust();
-        		break;
-        	case CategoryProperty.OP_SUBWAY:
-        		mSphinx.getSubwayMapFragment().setData(Globals.getCurrentCityInfo(mContext));
-        		mSphinx.showView(R.id.view_subway_map);
-        		uiStackAdjust();
-        		break;
-        	case CategoryProperty.OP_TUANGOU:
-        		mSphinx.getDiscoverListFragment();
-        		mSphinx.showView(R.id.view_discover_list);
-        		break;
-        	default:
-        		break;
-        	}
-        	break;
         case R.id.sub_more_btn:
         	//TODO: mActionLog
-        	mTitleBtn.setText(R.string.merchant_type);
-            mFilterListView.setData(mFilterList, FilterResponse.FIELD_FILTER_CATEGORY_INDEX, this, false, false, mActionTag);
-            mFilterListView.setVisibility(View.VISIBLE);
+        	btnClickProcess(view);
         	break;
         default:
+        	for(int i = 0; i < HOT_BTN_ID.length; i++){
+        		if(HOT_BTN_ID[i] == view.getId()){
+        			btnClickProcess(view);
+        			break;
+        		}
+        	}
             break;
         }
     }
     
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+    	if(mFilterListView.getVisibility() == View.VISIBLE){
+    		backHome();
+    	}else{
+            synchronized (mSphinx.mUILock) {
+        	    mActionLog.addAction(mActionTag + ActionLog.TitleLeftButton);
+            	dismiss();
+            }
+    	}
+    	return true;
+    }
+    
+    private void btnClickProcess(View btn){
+		String[] str = btn.getContentDescription().toString().split(";");
+    	LogWrapper.d("Trap", "cd: "+str.length + btn.getContentDescription());
+		if(str.length < 2){
+			return;
+		}
+		int operationCode = Integer.parseInt(str[1]);
+    	switch(operationCode){
+    	case CategoryProperty.OP_SEARCH:
+    		submitQuery(str[0]);
+    		break;
+    	case CategoryProperty.OP_HOTEL:
+    		mSphinx.getHotelHomeFragment().resetDate();
+    		mSphinx.getHotelHomeFragment().setCityInfo(Globals.getCurrentCityInfo(mContext));
+    		mSphinx.showView(R.id.view_hotel_home);
+    		uiStackAdjust();
+    		break;
+    	case CategoryProperty.OP_SUBWAY:
+    		mSphinx.getSubwayMapFragment().setData(Globals.getCurrentCityInfo(mContext, false));
+    		mSphinx.showView(R.id.view_subway_map);
+    		uiStackAdjust();
+    		break;
+    	case CategoryProperty.OP_TUANGOU:
+    		//TODO: mSphinx.getDiscoverListFragment();
+    		//mSphinx.showView(R.id.view_discover_list);
+    		break;
+    	case CategoryProperty.OP_MORE:
+        	mTitleBtn.setText(R.string.merchant_type);
+            mFilterListView.setData(mFilterList, FilterResponse.FIELD_FILTER_CATEGORY_INDEX, this, false, false, mActionTag);
+            mFilterListView.setVisibility(View.VISIBLE);
+            break;
+    	default:
+    		break;
+    	}    	
+    }
     
     /**
      * 查询

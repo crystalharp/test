@@ -20,6 +20,7 @@ public class CategoryProperty {
 	public static final int OP_DIANYING = 4;
 	public static final int OP_SUBWAY = 5;
 	public static final int OP_DISH = 24;
+	public static final int OP_CUSTOM = 6;
 	public CategoryProperty(int id, int llyVisibility){
 		this.ID = id;
 		this.linearLayoutVisibility = llyVisibility;
