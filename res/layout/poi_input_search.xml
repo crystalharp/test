@@ -17,19 +17,22 @@
             android:id="@+id/btn_my_position"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="my pos" />
+            android:layout_weight="1"
+            android:text="@string/my_location" />
 
         <Button
             android:id="@+id/btn_fav_position"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="fav pos" />
+            android:layout_weight="1"
+            android:text="@string/favorite" />
 
         <Button
             android:id="@+id/btn_map_position"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="map pos" />
+            android:layout_weight="1"
+            android:text="@string/map_select_point" />
         
     </LinearLayout>
         

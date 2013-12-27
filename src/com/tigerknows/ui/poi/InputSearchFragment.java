@@ -92,6 +92,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
     private LinearLayout mTrafficBtnGroup;
     private View mMapSelectPointBtn;
     private Button mFavBtn;
+    private Button mMyPosBtn;
     
     private SuggestWordListManager mSuggestWordListManager;
     
@@ -227,6 +228,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         mTrafficBtnGroup = (LinearLayout) mRootView.findViewById(R.id.traffic_btn_group);
         mMapSelectPointBtn = mTrafficBtnGroup.findViewById(R.id.btn_map_position);
         mFavBtn = (Button) mRootView.findViewById(R.id.btn_fav_position);
+        mMyPosBtn = (Button) mRootView.findViewById(R.id.btn_my_position);
     }
 
     protected void setListener() {
@@ -266,13 +268,9 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         
         mMapSelectPointBtn.setOnClickListener(this);
         
-        mFavBtn.setOnClickListener(new View.OnClickListener() {
-            
-            @Override
-            public void onClick(View v) {
-                mSphinx.showView(mSphinx.getFetchFavoriteFragment().getId());
-            }
-        });
+        mMyPosBtn.setOnClickListener(this);
+        
+        mFavBtn.setOnClickListener(this);
         
     }
 
@@ -308,6 +306,23 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                 } else {
                     dismiss();
                 }
+                break;
+                
+            case R.id.btn_my_position:
+                CityInfo c = Globals.g_My_Location_City_Info;
+                if (c != null && c.getPosition() != null) {
+                    POI p = new POI();
+                    p.setPosition(c.getPosition());
+                    p.setName(getString(R.string.my_location));
+                    onConfirmed(p);
+                    dismiss();
+                } else {
+                    mSphinx.showTip(R.string.location_failed, Toast.LENGTH_SHORT);
+                }
+                break;
+                
+            case R.id.btn_fav_position:
+                mSphinx.showView(mSphinx.getFetchFavoriteFragment().getId());
                 break;
             default:
         }

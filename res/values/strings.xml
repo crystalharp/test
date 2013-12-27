@@ -1352,5 +1352,5 @@
     <string name="query_line">查路线</string>
     <string name="confirm_place">确定地点</string>
     <string name="set_common_place">设置常用地点</string>
-    <string name="click_set_place">点击设置地点</string>
+    <string name="click_set_place">点击设置常用地点</string>
 </resources>
