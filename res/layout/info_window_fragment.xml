@@ -8,6 +8,7 @@
     android:background="@drawable/btn_home_bottom" >
 
     <RelativeLayout
+        android:id="@+id/message_view"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:padding="8dp" >
@@ -115,7 +116,14 @@
             android:textColor="@color/orange"
             android:textSize="12sp" >
         </TextView>
+
+
     </RelativeLayout>
+    <include
+        android:id="@+id/traffic_plan_item"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        layout="@layout/traffic_group_traffic" />
 
     <RelativeLayout
         android:id="@+id/tuangou_view"

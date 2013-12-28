@@ -35,7 +35,7 @@ import com.tigerknows.model.TrafficModel.AddtionalInfo;
 import com.tigerknows.model.TrafficModel.Plan;
 import com.tigerknows.model.TrafficQuery;
 import com.tigerknows.ui.BaseFragment;
-import com.tigerknows.ui.traffic.TrafficDetailFragment.TrafficDetailItem;
+import com.tigerknows.ui.traffic.TrafficDetailFragment.PlanItemRefresher;
 import com.tigerknows.ui.common.ResultMapFragment;
 
 /**
@@ -283,17 +283,13 @@ public class TrafficResultFragment extends BaseFragment {
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			TrafficDetailItem item = null;
+			PlanItemRefresher item = null;
         	if(convertView == null) {
-        		item = new TrafficDetailItem(mSphinx);
-        		convertView = item.getView();
-        		convertView.setTag(item);
-        	}else {
-        		item = (TrafficDetailItem)convertView.getTag();
+        	    convertView = mLayoutInflater.inflate(R.layout.traffic_group_traffic, null);
         	}
         	
         	Plan plan = (Plan) getItem(position);
-        	item.refresh(plan);
+        	PlanItemRefresher.refresh(mSphinx, plan, convertView);
         	
         	return convertView;
 		}

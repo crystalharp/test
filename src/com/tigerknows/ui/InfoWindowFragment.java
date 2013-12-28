@@ -7,6 +7,7 @@ package com.tigerknows.ui;
 import com.decarta.android.exception.APIException;
 import com.decarta.android.map.ItemizedOverlay;
 import com.decarta.android.map.OverlayItem;
+import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.Sphinx.TouchMode;
@@ -31,6 +32,7 @@ import com.tigerknows.model.DataQuery.GeoCoderResponse.GeoCoderList;
 import com.tigerknows.ui.discover.CycleViewPager;
 import com.tigerknows.ui.discover.CycleViewPager.CycleOnPageChangeListener;
 import com.tigerknows.ui.discover.CycleViewPager.CyclePagerAdapter;
+import com.tigerknows.ui.traffic.TrafficDetailFragment.PlanItemRefresher;
 import com.tigerknows.util.Utility;
 
 import android.os.Bundle;
@@ -88,6 +90,8 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
     private int mHotelHeight;
     private int mTuangouHeight;
     private int mBottomHeight;
+    
+    private final static String TAG = "InfoWindowFragment";
     
     public InfoWindowFragment(Sphinx sphinx) {
         super(sphinx);
@@ -189,6 +193,8 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
         } else {
             mType = TYPE_MESSAGE;
         }
+        
+        LogWrapper.d(TAG, "mType = " + mType);
 
         List<View> list = getInfoWindowViewList();
         mCyclePagerAdapter.viewList = list;
@@ -433,26 +439,24 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
     private void layoutInfoWindowView() {
         for(int i = mCyclePagerAdapter.viewList.size()-1; i >= 0; i--) {
             View v = mCyclePagerAdapter.viewList.get(i);
-            if (mType == TYPE_POI) {
-                v.findViewById(R.id.poi_view).setVisibility(View.VISIBLE);
-                v.findViewById(R.id.hotel_view).setVisibility(View.GONE);
-                v.findViewById(R.id.tuangou_view).setVisibility(View.GONE);
-            } else if (mType == TYPE_HOTEL) {
-                v.findViewById(R.id.poi_view).setVisibility(View.GONE);
-                v.findViewById(R.id.hotel_view).setVisibility(View.VISIBLE);
-                v.findViewById(R.id.tuangou_view).setVisibility(View.GONE);
-            } else if (mType == TYPE_TUANGUO) {
-                v.findViewById(R.id.poi_view).setVisibility(View.GONE);
-                v.findViewById(R.id.hotel_view).setVisibility(View.GONE);
-                v.findViewById(R.id.tuangou_view).setVisibility(View.VISIBLE);
-            } else {
-                v.findViewById(R.id.poi_view).setVisibility(View.GONE);
-                v.findViewById(R.id.hotel_view).setVisibility(View.GONE);
-                v.findViewById(R.id.tuangou_view).setVisibility(View.GONE);
-            }
+            v.findViewById(R.id.poi_view).setVisibility(View.GONE);
+            v.findViewById(R.id.hotel_view).setVisibility(View.GONE);
+            v.findViewById(R.id.tuangou_view).setVisibility(View.GONE);
             v.findViewById(R.id.title_txv).setVisibility(View.GONE);
+            v.findViewById(R.id.traffic_plan_item).setVisibility(View.GONE);
             v.findViewById(R.id.detail_btn).setVisibility(View.VISIBLE);
             v.findViewById(R.id.bottom_view).setVisibility(View.VISIBLE);
+            v.findViewById(R.id.message_view).setVisibility(View.VISIBLE);
+            if (mType == TYPE_POI) {
+                v.findViewById(R.id.poi_view).setVisibility(View.VISIBLE);
+            } else if (mType == TYPE_HOTEL) {
+                v.findViewById(R.id.hotel_view).setVisibility(View.VISIBLE);
+            } else if (mType == TYPE_TUANGUO) {
+                v.findViewById(R.id.tuangou_view).setVisibility(View.VISIBLE);
+            } else if (mType == TYPE_PLAN_LIST) {
+                v.findViewById(R.id.traffic_plan_item).setVisibility(View.VISIBLE);
+                v.findViewById(R.id.message_view).setVisibility(View.GONE);
+            }
         }
     }
     
@@ -474,12 +478,13 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
     
     private void setPlanListToView(View v, Plan plan) {
         
-        TextView titleTxv = (TextView) v.findViewById(R.id.title_txv);
-        titleTxv.setVisibility(View.VISIBLE);
-        titleTxv.setText(plan.getTitle(mSphinx));
-        
-        TextView nameTxv=(TextView)v.findViewById(R.id.name_txv);
-        nameTxv.setText(plan.getDescription());
+//        TextView titleTxv = (TextView) v.findViewById(R.id.title_txv);
+//        titleTxv.setVisibility(View.VISIBLE);
+//        titleTxv.setText(plan.getTitle(mSphinx));
+//        
+//        TextView nameTxv=(TextView)v.findViewById(R.id.name_txv);
+//        nameTxv.setText(plan.getDescription());
+        PlanItemRefresher.refresh(mSphinx, plan, v.findViewById(R.id.traffic_plan_item));
 
         v.findViewById(R.id.detail_btn).setVisibility(View.GONE);
         v.findViewById(R.id.bottom_view).setVisibility(View.GONE);

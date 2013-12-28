@@ -61,7 +61,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
     
     private StringListAdapter mResultAdapter;
     
-    private PlanListAdapter mPlanListAdapter;
+    private PlanPagerAdapter mPlanListAdapter;
 
     private List<Integer> mTypes = new ArrayList<Integer>();
     
@@ -97,7 +97,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
     
     private List<Plan> mWalkPlanList = new ArrayList<TrafficModel.Plan>();
     
-    private List<TrafficDetailItem> mDetailItemViewList = new ArrayList<TrafficDetailItem>();
+    private List<View> mDetailItemViewList = new ArrayList<View>();
     
     private int mIndex = -1;
     
@@ -125,7 +125,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         mResultAdapter = new StringListAdapter(mContext);
         mResultLsv.setAdapter(mResultAdapter);
         
-        mPlanListAdapter = new PlanListAdapter();
+        mPlanListAdapter = new PlanPagerAdapter();
         mViewPager.setAdapter(mPlanListAdapter);
         
         return mRootView;
@@ -163,8 +163,8 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
             mViewPagerLayout.setVisibility(View.VISIBLE);
             mDetailItemViewList.clear();
             for (Plan plan : mPlanList) {
-                TrafficDetailItem item = new TrafficDetailItem(mSphinx);
-                item.refresh(plan);
+                View item = mLayoutInflater.inflate(R.layout.traffic_group_traffic, null);
+                PlanItemRefresher.refresh(mSphinx, plan, item);
                 mDetailItemViewList.add(item);
             }
             Utility.pageIndicatorInit(mSphinx, mPageIndicatorView, mPlanList.size(), mIndex, R.drawable.ic_notice_dot_normal, R.drawable.ic_notice_dot_selected);
@@ -239,6 +239,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
             public void onPageSelected(int arg0) {
                 Utility.pageIndicatorChanged(mSphinx, mPageIndicatorView, arg0, R.drawable.ic_notice_dot_normal, R.drawable.ic_notice_dot_selected);
                 updateResult(mPlanList.get(arg0));
+                setSelectionFromTop();
             } });
     }
     
@@ -313,17 +314,17 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         public TextView textView;
     }
 
-    class PlanListAdapter extends PagerAdapter {
+    class PlanPagerAdapter extends PagerAdapter {
 
         @Override
         public void destroyItem(ViewGroup container, int position, Object object) {
-            ((ViewPager) container).removeView(mDetailItemViewList.get(position).getView());
+            ((ViewPager) container).removeView(mDetailItemViewList.get(position));
         }
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
-            container.addView(mDetailItemViewList.get(position).getView(), 0);//添加页卡  
-            return mDetailItemViewList.get(position).getView(); 
+            container.addView(mDetailItemViewList.get(position), 0);//添加页卡  
+            return mDetailItemViewList.get(position); 
         }
 
         @Override
@@ -579,12 +580,9 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         public int position;
     }
     
-    public static class TrafficDetailItem {
-        View v;
-        Plan plan;
+    public static class PlanItemRefresher {
         static int resid = R.layout.traffic_group_traffic;
-        PlanViewHolder planHolder;
-        Sphinx mSphinx;
+        static PlanViewHolder planHolder = new PlanViewHolder();
         private static final int MAX_TAG_NUM = 3;
         
         private static final int tagResList[] = {0, 
@@ -597,33 +595,26 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
             R.drawable.bg_transfer_tag7
             }; 
         
-        public TrafficDetailItem(Sphinx sphinx) {
-            this(sphinx, sphinx.getLayoutInflater().inflate(resid, null));
-        }
-        
-        public TrafficDetailItem(Sphinx sphinx, View view) {
-            v = view;
-            mSphinx = sphinx;
-            planHolder = new PlanViewHolder();
-            planHolder.title = (TextView)v.findViewById(R.id.title_txv);
-            planHolder.txv1 = (TextView)v.findViewById(R.id.txv1);
-            planHolder.txv2 = (TextView) v.findViewById(R.id.txv2);
-            planHolder.txv3 = (TextView) v.findViewById(R.id.txv3);
-            planHolder.txv4 = (TextView) v.findViewById(R.id.txv4);
-            planHolder.tags = (LinearLayout) v.findViewById(R.id.tags_view);
+        public static void refresh(Sphinx sphinx, Plan plan, View v) {
+            try {
+                planHolder.title = (TextView)v.findViewById(R.id.title_txv);
+                planHolder.txv1 = (TextView)v.findViewById(R.id.txv1);
+                planHolder.txv2 = (TextView) v.findViewById(R.id.txv2);
+                planHolder.txv3 = (TextView) v.findViewById(R.id.txv3);
+                planHolder.txv4 = (TextView) v.findViewById(R.id.txv4);
+                planHolder.tags = (LinearLayout) v.findViewById(R.id.tags_view);
+            } catch (Exception e) {
+                return;
+            }
             planHolder.title.setSingleLine();
             planHolder.title.setEllipsize(TextUtils.TruncateAt.END);
-        }
-        
-        public void refresh(Plan p) {
-            this.plan = p;
-            planHolder.title.setText(plan.getTitle(mSphinx));
-            if (p.getType() == TrafficQuery.QUERY_TYPE_TRANSFER) {
+            planHolder.title.setText(plan.getTitle(sphinx));
+            if (plan.getType() == TrafficQuery.QUERY_TYPE_TRANSFER) {
                 planHolder.txv1.setText(plan.getExpectedBusTime());
-                planHolder.txv2.setText(plan.getLengthStr(mSphinx));
+                planHolder.txv2.setText(plan.getLengthStr(sphinx));
                 planHolder.txv3.setText(plan.getWalkDistance());
                 planHolder.txv4.setText(plan.getBusstopNum());
-            } else if (p.getType() == TrafficQuery.QUERY_TYPE_DRIVE) {
+            } else if (plan.getType() == TrafficQuery.QUERY_TYPE_DRIVE) {
                 planHolder.txv1.setText(plan.getDriveDistance());
                 planHolder.txv2.setText(plan.getExpectedDriveTime());
                 planHolder.txv3.setText(plan.getTrafficLightNum());
@@ -638,13 +629,13 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
                     if (tag.getBackgroundtype() < 1 || tag.getBackgroundtype() > 5) {
                         continue;
                     }
-                    TextView txv = new TextView(mSphinx);
+                    TextView txv = new TextView(sphinx);
                     txv.setText(tag.getDescription());
-                    int dpPadding2 = Utility.dip2px(mSphinx, 2);
+                    int dpPadding2 = Utility.dip2px(sphinx, 2);
                     txv.setPadding(dpPadding2, 0, dpPadding2, 0);
                     LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                             LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1);  
-                    int dpMargin = Utility.dip2px(mSphinx, 4);
+                    int dpMargin = Utility.dip2px(sphinx, 4);
                     lp.setMargins(dpMargin, 0, dpMargin, 0); 
                     txv.setLayoutParams(lp); 
                     txv.setBackgroundResource(tagResList[tag.getBackgroundtype()]);
@@ -655,8 +646,5 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
             }
         }
         
-        public View getView() {
-            return v;
-        }
     }
 }
