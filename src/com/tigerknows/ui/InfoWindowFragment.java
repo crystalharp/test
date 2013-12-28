@@ -24,6 +24,7 @@ import com.tigerknows.model.Dianying;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.Response;
 import com.tigerknows.model.TrafficModel.Plan;
+import com.tigerknows.model.TrafficModel.Plan.Step;
 import com.tigerknows.model.Tuangou;
 import com.tigerknows.model.Yanchu;
 import com.tigerknows.model.Zhanlan;
@@ -32,6 +33,7 @@ import com.tigerknows.model.DataQuery.GeoCoderResponse.GeoCoderList;
 import com.tigerknows.ui.discover.CycleViewPager;
 import com.tigerknows.ui.discover.CycleViewPager.CycleOnPageChangeListener;
 import com.tigerknows.ui.discover.CycleViewPager.CyclePagerAdapter;
+import com.tigerknows.ui.traffic.TrafficDetailFragment;
 import com.tigerknows.ui.traffic.TrafficDetailFragment.PlanItemRefresher;
 import com.tigerknows.util.Utility;
 
@@ -146,6 +148,18 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             }
         } else if (id == R.id.detail_btn) {
             infoWindowClicked();
+        } else if (id == R.id.traffic_plan_item) {
+            TrafficDetailFragment f = mSphinx.getTrafficDetailFragment();
+            Plan plan = (Plan) mItemizedOverlay.get(0).getAssociatedObject();
+            if (plan.getType() == Step.TYPE_DRIVE) {
+                f.setData(f.getTrafficQuery(), 
+                        f.getTransferPlanList(),
+                        f.getDrivePlanList(), 
+                        f.getWalkPlanList(),
+                        Plan.Step.TYPE_DRIVE,
+                        0);
+                mSphinx.showView(R.id.view_traffic_result_detail);
+            }
         }
         
     }
@@ -253,6 +267,7 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
         v.findViewById(R.id.detail_btn).setOnClickListener(this);
         v.findViewById(R.id.poi_btn).setOnClickListener(this);
         v.findViewById(R.id.traffic_btn).setOnClickListener(this);
+        v.findViewById(R.id.traffic_plan_item).setOnClickListener(this);
     }
     
     /**
