@@ -283,7 +283,6 @@ public class TrafficResultFragment extends BaseFragment {
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			PlanItemRefresher item = null;
         	if(convertView == null) {
         	    convertView = mLayoutInflater.inflate(R.layout.traffic_group_traffic, null);
         	}

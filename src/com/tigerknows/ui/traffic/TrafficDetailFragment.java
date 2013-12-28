@@ -164,7 +164,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
             mDetailItemViewList.clear();
             for (Plan plan : mPlanList) {
                 View item = mLayoutInflater.inflate(R.layout.traffic_group_traffic, null);
-                PlanItemRefresher.refresh(mSphinx, plan, item);
+                PlanItemRefresher.refresh(mSphinx, plan, item, true);
                 mDetailItemViewList.add(item);
             }
             Utility.pageIndicatorInit(mSphinx, mPageIndicatorView, mPlanList.size(), mIndex, R.drawable.ic_notice_dot_normal, R.drawable.ic_notice_dot_selected);
@@ -596,6 +596,10 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
             }; 
         
         public static void refresh(Sphinx sphinx, Plan plan, View v) {
+            refresh(sphinx, plan, v, false);
+        }
+        
+        public static void refresh(Sphinx sphinx, Plan plan, View v, boolean titleSingleLine) {
             try {
                 planHolder.title = (TextView)v.findViewById(R.id.title_txv);
                 planHolder.txv1 = (TextView)v.findViewById(R.id.txv1);
@@ -606,19 +610,24 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
             } catch (Exception e) {
                 return;
             }
-            planHolder.title.setSingleLine();
-            planHolder.title.setEllipsize(TextUtils.TruncateAt.END);
-            planHolder.title.setText(plan.getTitle(sphinx));
+            planHolder.title.setSingleLine(titleSingleLine);
+            if (titleSingleLine) {
+                planHolder.title.setEllipsize(TextUtils.TruncateAt.END);
+            } else {
+                planHolder.title.setEllipsize(TextUtils.TruncateAt.MARQUEE);
+            }
             if (plan.getType() == TrafficQuery.QUERY_TYPE_TRANSFER) {
-                planHolder.txv1.setText(plan.getExpectedBusTime());
-                planHolder.txv2.setText(plan.getLengthStr(sphinx));
-                planHolder.txv3.setText(plan.getWalkDistance());
-                planHolder.txv4.setText(plan.getBusstopNum());
+                setTxvText(planHolder.title, plan.getTitle(sphinx));
+                setTxvText(planHolder.txv1, plan.getExpectedBusTime());
+                setTxvText(planHolder.txv2, plan.getLengthStr(sphinx));
+                setTxvText(planHolder.txv3, plan.getWalkDistance());
+                setTxvText(planHolder.txv4, plan.getBusstopNum());
             } else if (plan.getType() == TrafficQuery.QUERY_TYPE_DRIVE) {
-                planHolder.txv1.setText(plan.getDriveDistance());
-                planHolder.txv2.setText(plan.getExpectedDriveTime());
-                planHolder.txv3.setText(plan.getTrafficLightNum());
-                planHolder.txv4.setText(plan.getTaxiCost());
+                setTxvText(planHolder.title, sphinx.getString(R.string.title_type_drive));
+                setTxvText(planHolder.txv1, plan.getDriveDistance());
+                setTxvText(planHolder.txv2, plan.getExpectedDriveTime());
+                setTxvText(planHolder.txv3, plan.getTrafficLightNum());
+                setTxvText(planHolder.txv4, plan.getTaxiCost());
             }
             planHolder.tags.removeAllViews();
             List<PlanTag> list = plan.getPlanTagList();

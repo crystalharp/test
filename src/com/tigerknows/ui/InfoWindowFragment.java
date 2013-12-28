@@ -478,13 +478,7 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
     
     private void setPlanListToView(View v, Plan plan) {
         
-//        TextView titleTxv = (TextView) v.findViewById(R.id.title_txv);
-//        titleTxv.setVisibility(View.VISIBLE);
-//        titleTxv.setText(plan.getTitle(mSphinx));
-//        
-//        TextView nameTxv=(TextView)v.findViewById(R.id.name_txv);
-//        nameTxv.setText(plan.getDescription());
-        PlanItemRefresher.refresh(mSphinx, plan, v.findViewById(R.id.traffic_plan_item));
+        PlanItemRefresher.refresh(mSphinx, plan, v.findViewById(R.id.traffic_plan_item), true);
 
         v.findViewById(R.id.detail_btn).setVisibility(View.GONE);
         v.findViewById(R.id.bottom_view).setVisibility(View.GONE);
