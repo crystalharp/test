@@ -329,6 +329,76 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         public ImageView image;
         public TextView textView;
     }
+
+    public CharSequence getStepDescription(int position) {
+        return mStrList.get(position);
+    }
+
+    public Drawable getStepIcon(int position){
+        Integer steptype = mTypes.get(position);
+        if (mType == Plan.Step.TYPE_TRANSFER) {
+            return getTransferDrawable(steptype);
+        } else {
+            return getDirectionDrawable(steptype);
+        }
+    }
+    
+    public Drawable getTransferDrawable(int steptype) {
+        int res = R.drawable.icon_marker_bus;
+        
+        switch(steptype){
+        case TrafficModel.Plan.Step.TYPE_TRANSFER:
+            res = R.drawable.icon_marker_bus;
+            break;
+        case TrafficModel.Plan.Step.TYPE_WALK:
+            res = R.drawable.icon_marker_walk;
+            break;
+        case TYPE_RESULT_LIST_START:
+            res = R.drawable.icon_marker_start;
+            break;
+        case TYPE_RESULT_LIST_END:
+            res = R.drawable.icon_marker_end;
+            break;
+        default:
+            
+        }
+        return mContext.getResources().getDrawable(res);
+    }
+    
+    public Drawable getDirectionDrawable(int steptype) {
+        int res = R.drawable.icon_marker_drive_forward;
+        
+        switch(steptype){
+        
+        case TrafficModel.Plan.Step.TYPE_FORWARD:
+            res = R.drawable.icon_marker_drive_forward;
+            break;
+        case TrafficModel.Plan.Step.TYPE_BACK:
+            res = R.drawable.icon_marker_drive_back;
+            break;
+        case TrafficModel.Plan.Step.TYPE_ROUND_LEFT:
+            res = R.drawable.icon_marker_drive_round_left;
+            break;
+        case TrafficModel.Plan.Step.TYPE_LEFT:
+            res = R.drawable.icon_marker_drive_left;
+            break;
+        case TrafficModel.Plan.Step.TYPE_ROUND_RIGHT:
+            res = R.drawable.icon_marker_drive_round_right;
+            break;
+        case TrafficModel.Plan.Step.TYPE_RIGHT:
+            res = R.drawable.icon_marker_drive_right;
+            break;
+        case TYPE_RESULT_LIST_START:
+            res = R.drawable.icon_marker_start;
+            break;
+        case TYPE_RESULT_LIST_END:
+            res = R.drawable.icon_marker_end;
+            break;
+        default:
+            
+        }
+        return mContext.getResources().getDrawable(res);
+    }
     
     class StringListAdapter extends BaseAdapter{
 
@@ -339,10 +409,6 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         @Override
         public int getCount() {
             return mStrList.size();
-        }
-
-        private CharSequence getItemContent(int position) {
-            return mStrList.get(position);
         }
 
         @Override
@@ -358,9 +424,8 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
 
             StepViewHolder stepHolder = (StepViewHolder)convertView.getTag();
             
-            Integer stepType = mTypes.get(position);
-            stepHolder.image.setBackgroundDrawable(getDrawable(stepType));
-            stepHolder.textView.setText(getItemContent(position));
+            stepHolder.image.setBackgroundDrawable(getStepIcon(position));
+            stepHolder.textView.setText(getStepDescription(position));
             stepHolder.textView.setTextColor(Color.parseColor("#000000"));
             //convertView.setBackgroundResource(R.drawable.btn_traffic_detail_end_normal);
                 
@@ -368,70 +433,6 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
 
         }
         
-        private Drawable getDrawable(int steptype){
-            if (mType == Plan.Step.TYPE_TRANSFER) {
-                return getTransferDrawable(steptype);
-            } else {
-                return getDirectionDrawable(steptype);
-            }
-        }
-        
-        private Drawable getTransferDrawable(int steptype) {
-            int res = R.drawable.icon_marker_bus;
-            
-            switch(steptype){
-            case TrafficModel.Plan.Step.TYPE_TRANSFER:
-                res = R.drawable.icon_marker_bus;
-                break;
-            case TrafficModel.Plan.Step.TYPE_WALK:
-                res = R.drawable.icon_marker_walk;
-                break;
-            case TYPE_RESULT_LIST_START:
-                res = R.drawable.icon_marker_start;
-                break;
-            case TYPE_RESULT_LIST_END:
-                res = R.drawable.icon_marker_end;
-                break;
-            default:
-                
-            }
-            return mContext.getResources().getDrawable(res);
-        }
-        
-        private Drawable getDirectionDrawable(int steptype) {
-            int res = R.drawable.icon_marker_drive_forward;
-            
-            switch(steptype){
-            
-            case TrafficModel.Plan.Step.TYPE_FORWARD:
-                res = R.drawable.icon_marker_drive_forward;
-                break;
-            case TrafficModel.Plan.Step.TYPE_BACK:
-                res = R.drawable.icon_marker_drive_back;
-                break;
-            case TrafficModel.Plan.Step.TYPE_ROUND_LEFT:
-                res = R.drawable.icon_marker_drive_round_left;
-                break;
-            case TrafficModel.Plan.Step.TYPE_LEFT:
-                res = R.drawable.icon_marker_drive_left;
-                break;
-            case TrafficModel.Plan.Step.TYPE_ROUND_RIGHT:
-                res = R.drawable.icon_marker_drive_round_right;
-                break;
-            case TrafficModel.Plan.Step.TYPE_RIGHT:
-                res = R.drawable.icon_marker_drive_right;
-                break;
-            case TYPE_RESULT_LIST_START:
-                res = R.drawable.icon_marker_start;
-                break;
-            case TYPE_RESULT_LIST_END:
-                res = R.drawable.icon_marker_end;
-                break;
-            default:
-                
-            }
-            return mContext.getResources().getDrawable(res);
-        }
 
         @Override
         public Object getItem(int position) {
