@@ -1648,7 +1648,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             mPopupWindowTools.dismiss();
         }
         
-        LogUpload.uploadLog(mThis, mActionLog, mTKLocationManager.getGPSLocationUpload(), mTKLocationManager.getNetworkLocationUpload());
+        LogUpload.upload(mThis, mActionLog, mTKLocationManager.getGPSLocationUpload(), mTKLocationManager.getNetworkLocationUpload());
         
         if (mSensorOrientation) {
             mSensorManager.unregisterListener(mSensorListener);
