@@ -923,13 +923,20 @@ public class Utility {
     }
 
     public static void refreshButton(Context context, Button button) {
+        String text = button.getText().toString();
+        refreshButton(context, button, text, text);
+    }
+
+    public static void refreshButton(Context context, Button button, String confirmText, String cancelText) {
         
         if (button.isEnabled()) {
             int mRightBtnConfirmColor = context.getResources().getColor(R.color.white);
+            button.setText(confirmText);
             button.setTextColor(mRightBtnConfirmColor);
             button.setBackgroundResource(R.drawable.btn_confirm);
         } else {
             int mRightBtnCancelColor = context.getResources().getColor(R.color.black_light);
+            button.setText(cancelText);
             button.setTextColor(mRightBtnCancelColor);
             button.setBackgroundResource(R.drawable.btn_cancel);
         }

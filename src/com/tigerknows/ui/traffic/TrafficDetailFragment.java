@@ -13,7 +13,6 @@ import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.TextUtils;
@@ -98,8 +97,6 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
     
     private List<Plan> mWalkPlanList = new ArrayList<TrafficModel.Plan>();
     
-    private List<View> mDetailItemViewList = new ArrayList<View>();
-    
     private int mIndex = -1;
     
     private TrafficQuery mTrafficQuery;
@@ -126,7 +123,14 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         mResultAdapter = new StringListAdapter(mContext);
         mResultLsv.setAdapter(mResultAdapter);
         
-        mPlanListAdapter = new CyclePagerAdapter();
+        List<View> viewList = new ArrayList<View>();
+        View item = mLayoutInflater.inflate(R.layout.traffic_group_traffic, null);
+        viewList.add(item);
+        item = mLayoutInflater.inflate(R.layout.traffic_group_traffic, null);
+        viewList.add(item);
+        item = mLayoutInflater.inflate(R.layout.traffic_group_traffic, null);
+        viewList.add(item);
+        mPlanListAdapter = new CyclePagerAdapter(viewList);
         mViewPager.setAdapter(mPlanListAdapter);
         
         return mRootView;
@@ -160,26 +164,8 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
             default:
         }
         
-        if (mPlanList.size() > 0) {
-            mViewPagerLayout.setVisibility(View.VISIBLE);
-            mDetailItemViewList.clear();
-            for (Plan plan : mPlanList) {
-                View item = mLayoutInflater.inflate(R.layout.traffic_group_traffic, null);
-                PlanItemRefresher.refresh(mSphinx, plan, item, true);
-                mDetailItemViewList.add(item);
-            }
-            Utility.pageIndicatorInit(mSphinx, mPageIndicatorView, mPlanList.size(), mIndex, R.drawable.ic_notice_dot_normal, R.drawable.ic_notice_dot_selected);
-            mViewPager.setCurrentItem(mIndex);
-        } else {
-            mViewPagerLayout.setVisibility(View.GONE);
-        }
-        
         Utility.setFavoriteBtn(mSphinx, mFavorateBtn, plan.checkFavorite(mContext));
         
-        mPlanListAdapter.viewList = mDetailItemViewList;
-        mPlanListAdapter.count = mDetailItemViewList.size();
-        mPlanListAdapter.notifyDataSetChanged();
-
         if (mDismissed) {
             setSelectionFromTop();
         }
@@ -241,11 +227,25 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
             }
 
             @Override
-            public void onPageSelected(int arg0) {
-                Utility.pageIndicatorChanged(mSphinx, mPageIndicatorView, arg0, R.drawable.ic_notice_dot_normal, R.drawable.ic_notice_dot_selected);
-                updateResult(mPlanList.get(arg0));
-                setSelectionFromTop();
-            } });
+            public void onPageSelected(int position) {
+                pageSelected(position);
+            } 
+        });
+    }
+    
+    private void pageSelected(int position) {
+        Utility.pageIndicatorChanged(mSphinx, mPageIndicatorView, position, R.drawable.ic_notice_dot_normal, R.drawable.ic_notice_dot_selected);
+        View view = mPlanListAdapter.viewList.get((position) % mPlanListAdapter.viewList.size());
+        PlanItemRefresher.refresh(mSphinx, mPlanList.get(position), view, true);
+        if (position > 0) {
+            view = mPlanListAdapter.viewList.get((position-1) % mPlanListAdapter.viewList.size());
+            PlanItemRefresher.refresh(mSphinx, mPlanList.get(position-1), view, true);
+        } else if (position + 1 < mPlanListAdapter.count) {
+            view = mPlanListAdapter.viewList.get((position+1) % mPlanListAdapter.viewList.size());
+            PlanItemRefresher.refresh(mSphinx, mPlanList.get(position+1), view, true);
+        }
+        updateResult(mPlanList.get(position));
+        setSelectionFromTop();
     }
     
     @Override
@@ -290,13 +290,24 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         } else if (type == Plan.Step.TYPE_WALK) {
             mPlanList.addAll(mWalkPlanList);
         }
-        
+
         mIndex = index;
         plan = mPlanList.get(mIndex);
-
+        
         updateResult(plan);
-
+        
         plan.updateHistory(mContext);
+        
+        if (mPlanList.size() > 0) {
+            mViewPagerLayout.setVisibility(View.VISIBLE);
+            Utility.pageIndicatorInit(mSphinx, mPageIndicatorView, mPlanList.size(), mIndex, R.drawable.ic_notice_dot_normal, R.drawable.ic_notice_dot_selected);
+            mPlanListAdapter.count = mPlanList.size();
+            mPlanListAdapter.notifyDataSetChanged();
+            pageSelected(mIndex);
+        } else {
+            mViewPagerLayout.setVisibility(View.GONE);
+        }
+        
     }
     
     private void updateResult(Plan plan) {

@@ -5,7 +5,6 @@
 package com.tigerknows.ui.poi;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import android.os.Bundle;
@@ -36,10 +35,16 @@ import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.CategoryProperty;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.DataQuery;
+import com.tigerknows.model.Response;
+import com.tigerknows.model.DataQuery.DianyingResponse;
 import com.tigerknows.model.DataQuery.Filter;
 import com.tigerknows.model.DataQuery.FilterCategoryOrder;
 import com.tigerknows.model.DataQuery.FilterOption;
 import com.tigerknows.model.DataQuery.FilterResponse;
+import com.tigerknows.model.DataQuery.TuangouResponse;
+import com.tigerknows.model.DataQuery.YanchuResponse;
+import com.tigerknows.model.DataQuery.ZhanlanResponse;
+import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.widget.FilterListView;
 
@@ -182,7 +187,9 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         super.onPause();
     }
 
+    @Override
     protected void findViews() {
+        super.findViews();
         mLocationTxv = (TextView) mRootView.findViewById(R.id.location_txv);
         mHotBaseLly = (LinearLayout) mRootView.findViewById(R.id.hot_lly);
         mHotLlys = new LinearLayout[NUM_OF_HOT_LLY];
@@ -216,7 +223,9 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         }
     }
 
+    @Override
     protected void setListener() {
+        super.setListener();
     	for(int i = 0; i < NUM_OF_CATGEGORY; i++){
     		for(int j = 0; j < CategoryProperty.NUM_OF_SUBBUTTONS + 1; j++){
     			mCategoryBtns[i][j].setOnClickListener(this);
@@ -372,6 +381,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
 			return;
 		}
 		int operationCode = Integer.parseInt(str[1]);
+		DataQuery dataQuery;
     	switch(operationCode){
     	case CategoryProperty.OP_SEARCH:
     		submitQuery(str[0]);
@@ -387,10 +397,25 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     		mSphinx.showView(R.id.view_subway_map);
     		uiStackAdjust();
     		break;
-    	case CategoryProperty.OP_TUANGOU:
-    		//TODO: mSphinx.getDiscoverListFragment();
-    		//mSphinx.showView(R.id.view_discover_list);
-    		break;
+        case CategoryProperty.OP_DISH:
+            dataQuery = getDataQuery(BaseQuery.DATA_TYPE_POI);
+            dataQuery.addParameter(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_POI);
+            dataQuery.addParameter(DataQuery.SERVER_PARAMETER_KEYWORD, getString(R.string.cate));
+            dataQuery.addParameter(DataQuery.SERVER_PARAMETER_BIAS, DataQuery.BIAS_DISH);
+            mSphinx.queryStart(dataQuery);
+            break;
+        case CategoryProperty.OP_TUANGOU:
+            mSphinx.queryStart(getDataQuery(BaseQuery.DATA_TYPE_TUANGOU));
+            break;
+        case CategoryProperty.OP_DIANYING:
+            mSphinx.queryStart(getDataQuery(BaseQuery.DATA_TYPE_DIANYING));
+            break;
+        case CategoryProperty.OP_YANCHU:
+            mSphinx.queryStart(getDataQuery(BaseQuery.DATA_TYPE_YANCHU));
+            break;
+        case CategoryProperty.OP_ZHANLAN:
+            mSphinx.queryStart(getDataQuery(BaseQuery.DATA_TYPE_ZHANLAN));
+            break;
     	case CategoryProperty.OP_MORE:
         	mTitleBtn.setText(R.string.merchant_type);
             mFilterListView.setData(mFilterList, FilterResponse.FIELD_FILTER_CATEGORY_INDEX, this, false, false, mActionTag);
@@ -399,6 +424,17 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     	default:
     		break;
     	}    	
+    }
+    
+    private DataQuery getDataQuery(String dataType) {
+        DataQuery dataQuery = new DataQuery(mSphinx);
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, dataType);
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
+        Position position = mPOI.getPosition();
+        dataQuery.addParameter(BaseQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
+        dataQuery.addParameter(BaseQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
+        dataQuery.setup(getId(), getId(), getString(R.string.doing_and_wait), false, false, mPOI);
+        return dataQuery;
     }
     
     /**
@@ -492,13 +528,86 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         
         String apiType = baseQuery.getAPIType();
         if (BaseQuery.API_TYPE_DATA_QUERY.equals(apiType)) {
-            int result = InputSearchFragment.dealWithPOIResponse((DataQuery) baseQuery, mSphinx, this);
-            if(mFromPOI && result > 0){
-            	uiStackAdjust();
+            String dataType = baseQuery.getParameter(BaseQuery.SERVER_PARAMETER_DATA_TYPE);
+            if (BaseQuery.DATA_TYPE_POI.equals(dataType)) {
+                int result = InputSearchFragment.dealWithPOIResponse((DataQuery) baseQuery, mSphinx, this);
+                if(mFromPOI && result > 0){
+                	uiStackAdjust();
+                }
+            } else if (BaseQuery.DATA_TYPE_TUANGOU.equals(dataType) ||
+                    BaseQuery.DATA_TYPE_DIANYING.equals(dataType) ||
+                    BaseQuery.DATA_TYPE_YANCHU.equals(dataType) ||
+                    BaseQuery.DATA_TYPE_ZHANLAN.equals(dataType)) {
+                
+                dealWithDynamicPOIResponse((DataQuery) baseQuery);
             }
         }
     }
     
+    private void dealWithDynamicPOIResponse(DataQuery dataQuery) {
+        Response response = dataQuery.getResponse();
+        // check whether the use has loged in at another device
+        if (BaseActivity.checkReLogin(dataQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), getId(), getId(), getId(), mCancelLoginListener)) {
+            isReLogin = true;
+            return;
+        }
+        
+        if (BaseActivity.checkResponseCode(dataQuery, mSphinx, new int[]{Response.RESPONSE_CODE_DISCOVER_NO_SUPPORT}, true, this, false)) {
+            return;
+        }
+        
+        int responseCode = response.getResponseCode();
+        if (responseCode == Response.RESPONSE_CODE_DISCOVER_NO_SUPPORT){
+            Toast.makeText(mSphinx, "本城市没有所请求的发现类型"+dataQuery.getParameter(BaseQuery.SERVER_PARAMETER_DATA_TYPE), Toast.LENGTH_LONG).show();
+            return;
+        }
+         
+        boolean noResult = true;
+        if (response instanceof TuangouResponse) {
+            TuangouResponse tuangouResponse = (TuangouResponse)dataQuery.getResponse();
+            
+            if (tuangouResponse.getList() != null 
+                    && tuangouResponse.getList().getList() != null 
+                    && tuangouResponse.getList().getList().size() > 0) {
+                
+                noResult = false;
+            }
+        } else if (response instanceof DianyingResponse) {
+            DianyingResponse dianyingResponse = (DianyingResponse)dataQuery.getResponse();
+            
+            if (dianyingResponse.getList() != null 
+                    && dianyingResponse.getList().getList() != null 
+                    && dianyingResponse.getList().getList().size() > 0) {
+                
+                noResult = false;
+            }
+        } else if (response instanceof YanchuResponse) {
+            YanchuResponse yanchuResponse = (YanchuResponse)dataQuery.getResponse();
+            
+            if (yanchuResponse.getList() != null 
+                    && yanchuResponse.getList().getList() != null 
+                    && yanchuResponse.getList().getList().size() > 0) {
+                
+                noResult = false;
+            }
+        } else if (response instanceof ZhanlanResponse) {
+            ZhanlanResponse zhanlanResponse = (ZhanlanResponse)dataQuery.getResponse();
+            
+            if (zhanlanResponse.getList() != null 
+                    && zhanlanResponse.getList().getList() != null 
+                    && zhanlanResponse.getList().getList().size() > 0) {
+                
+                noResult = false;
+            }
+        }
+        
+        if (noResult) {
+            Toast.makeText(mSphinx, R.string.no_result, Toast.LENGTH_LONG).show();
+        } else {
+            mSphinx.getDiscoverListFragment().setData(dataQuery);
+            mSphinx.showView(R.id.view_discover_list);
+        }
+    }
     
     public void uiStackAdjust() {
         if (mSphinx.uiStackContains(R.id.view_more_favorite)) {

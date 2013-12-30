@@ -86,7 +86,6 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
     private int mType;
     private int mPostion;
 
-    private int mTotalHeight;
     private int mTitleHeight;
     private int mPOIHeight;
     private int mHotelHeight;
@@ -233,9 +232,7 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             setListenerToView(view);
             viewList.add(view);
             
-            view.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-            mTotalHeight = view.getMeasuredHeight();
-            View v = view.findViewById(R.id.title_txv);
+            View v = view.findViewById(R.id.message_view);
             v.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
             mTitleHeight = v.getMeasuredHeight();
             v = view.findViewById(R.id.poi_view);
@@ -249,7 +246,7 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             mHotelHeight = v.getMeasuredHeight();
             v = view.findViewById(R.id.bottom_view);
             v.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-            mBottomHeight = v.getMeasuredHeight();
+            mBottomHeight = v.getMeasuredHeight() + Utility.dip2px(mSphinx, 16);
             v = view.findViewById(R.id.traffic_plan_item);
             v.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
             mTrafficPlanHeight = v.getMeasuredHeight();

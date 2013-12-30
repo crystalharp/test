@@ -48,7 +48,9 @@ public class TitleFragment extends BaseFragment {
         return mRootView;
     }
     
+    @Override
     protected void findViews() {
+        super.findViews();
         mTitleView = (ViewGroup) mRootView.findViewById(R.id.center_view);
         mTitleBtn = (Button) mRootView.findViewById(R.id.title_btn);
         mKeywordEdt = (TKEditText) mRootView.findViewById(R.id.keyword_edt);
@@ -91,17 +93,5 @@ public class TitleFragment extends BaseFragment {
         mRightBtn.setEnabled(true);
         mRightBtn.setOnClickListener(null);
         mRightBtn.setVisibility(View.VISIBLE);
-    }
-
-    public void refreshRightBtn(String keyword) {
-        if (keyword.trim().length() > 0) {
-            mRightBtn.setText(R.string.confirm);
-            mRightBtn.setTextColor(mRightBtnConfirmColor);
-            mRightBtn.setBackgroundResource(R.drawable.btn_confirm);
-        } else {
-            mRightBtn.setText(R.string.cancel);
-            mRightBtn.setTextColor(mRightBtnCancelColor);
-            mRightBtn.setBackgroundResource(R.drawable.btn_cancel);
-        }
     }
 }

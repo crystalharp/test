@@ -43,7 +43,7 @@
         android:focusable="true"
         android:scrollingCache="false"
         android:fadingEdge="none"
-        android:divider="@drawable/list_selector_background_gray_light"
+        android:divider="@drawable/bg_line_split"
         />
     
 </LinearLayout>

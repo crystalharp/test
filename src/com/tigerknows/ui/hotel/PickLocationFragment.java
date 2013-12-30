@@ -109,7 +109,8 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
         }
 
         public void afterTextChanged(Editable s) {
-            mTitleFragment.refreshRightBtn(s.toString());
+            mRightBtn.setEnabled(s.toString().trim().length() > 0);
+            Utility.refreshButton(mSphinx, mRightBtn, getString(R.string.confirm), getString(R.string.cancel));
         }
     };
     
@@ -187,7 +188,8 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
         mKeywordEdt.setOnEditorActionListener(mOnEditorActionListener);
         
         mRightBtn.setOnClickListener(this);
-        mTitleFragment.refreshRightBtn(mKeywordEdt.getText().toString());
+        mRightBtn.setEnabled(mKeywordEdt.getText().toString().trim().length() > 0);
+        Utility.refreshButton(mSphinx, mRightBtn, getString(R.string.confirm), getString(R.string.cancel));
     }
 
     @Override
