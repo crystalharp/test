@@ -215,7 +215,7 @@ public class LocationUpload extends LogUpload {
         }
     }
     
-    void reset() {
+    private void reset() {
         synchronized (mLock) {
             sdt = 0;
             sdx = 0;

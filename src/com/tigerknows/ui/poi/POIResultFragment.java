@@ -155,18 +155,13 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         return mPOIList;
     }
     
-    public void setup(DataQuery dataQuery) {
+    /**
+     * 显示查询状态
+     * @param dataQuery
+     */
+    private void showQuering(DataQuery dataQuery) {
         if (dataQuery == null) {
             return;
-        }
-        
-        mInputText = dataQuery.getParameter(DataQuery.SERVER_PARAMETER_KEYWORD);
-        
-        if (dataQuery.getSourceViewId() != getId()) {
-            mDataQuery = null;
-            mFilterControlView.setVisibility(View.GONE);
-            mAPOI = null;
-            mFilterList.clear();
         }
 
         mQueryingTxv.setText(R.string.searching);
@@ -207,7 +202,9 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         mDataQuery = null;
     }
     
+    @Override
     protected void findViews() {
+        super.findViews();
         mFilterControlView = (ViewGroup)mRootView.findViewById(R.id.filter_control_view);
         mResultLsv = (SpringbackListView)mRootView.findViewById(R.id.result_lsv);
         View nearbySearchBarView = mLayoutInflater.inflate(R.layout.poi_nearby_search_bar, null);
@@ -227,7 +224,9 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         mNavigationWidget = (NavigationWidget) mRootView.findViewById(R.id.navigation_widget);
     }
 
+    @Override
     protected void setListener() {
+        super.setListener();
         mRetryView.setCallBack(this, mActionTag);
         mResultLsv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -262,7 +261,10 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         mLocationTxv.setOnClickListener(this);
     }
     
-    void showAddMerchant() {
+    /**
+     * 跳转到添加商户界面
+     */
+    private void showAddMerchant() {
         mActionLog.addAction(mActionTag + ActionLog.POIListAddMerchanty);
         Intent intent = new Intent();
         if (TextUtils.isEmpty(mInputText) == false) {
@@ -271,6 +273,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         mSphinx.showView(R.id.activity_more_add_merchant, intent);
     }
     
+    @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             DataQuery lastDataQuery = mDataQuery;
@@ -286,6 +289,10 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         return false;
     }
     
+    /**
+     * 刷新标题栏文字
+     * @param dataQuery
+     */
     private void refreshResultTitleText(DataQuery dataQuery) {
         String str = getString(R.string.no_result);
         if (dataQuery != null) {
@@ -316,6 +323,10 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         }
     }
     
+    /**
+     * 刷新筛选项
+     * @param filterList
+     */
     private void refreshFilter(List<Filter> filterList) {
         synchronized (mFilterList) {
             if (mFilterList != filterList) {
@@ -364,6 +375,9 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         super.onPause();
     }
     
+    /**
+     * 根据状态显示的内容
+     */
     private void updateView() {
         if (mState == STATE_QUERYING) {
             mQueryingView.setVisibility(View.VISIBLE);
@@ -449,6 +463,9 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         refreshResultTitleText(null);
     }
     
+    /**
+     * 翻页
+     */
     private void turnPage(){
         synchronized (this) {
         DataQuery lastDataQuery = mDataQuery;
@@ -470,7 +487,11 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         }
     }
 
-    public void viewMap(int firstVisiblePosition) {
+    /**
+     * 查看地图
+     * @param firstVisiblePosition
+     */
+    private void viewMap(int firstVisiblePosition) {
         if (firstVisiblePosition < 0 || mPOIList.size() < firstVisiblePosition || mPOIList.isEmpty()) {
             return;            
         }
@@ -498,6 +519,10 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         ItemizedOverlayHelper.drawPOIOverlay(mSphinx, poiList, firstIndex);
     }
     
+    /**
+     * 筛选操作
+     */
+    @Override
     public void doFilter(String name) {
         FilterListView.refreshFilterButton(mFilterControlView, mFilterList, mSphinx, this);
         
@@ -514,10 +539,14 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         poiQuery.addParameter(DataQuery.SERVER_PARAMETER_FILTER, DataQuery.makeFilterRequest(mFilterList));
         poiQuery.setup(getId(), getId(), null, false, false, requestPOI);
         mSphinx.queryStart(poiQuery);
-        setup(poiQuery);
+        showQuering(poiQuery);
         dismissPopupWindow();
     }
     
+    /**
+     * 取消筛选
+     */
+    @Override
     public void cancelFilter() {
         dismissPopupWindow();
         if (mResultLsv.isFooterSpringback() && mFilterListView.isTurnPaging()) {
@@ -579,6 +608,11 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         }
     }
     
+    /**
+     * POI的Apdater（普通POI和酒店POI）
+     * @author pengwenwue
+     *
+     */
     public static class POIAdapter extends ArrayAdapter<POI>{
         private static final int RESOURCE_ID = R.layout.poi_list_item;
         
@@ -1023,17 +1057,27 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         
     }
 
-    
+    /**
+     * 取消翻页
+     * @return
+     */
     private boolean canTurnPage() {
         return mPOIList.size() < mBTotal;
     }
 
+    /**
+     * 刷新POI列表的点评戳
+     */
     public void refreshStamp() {
         if (mResultAdapter != null) {
             mResultAdapter.notifyDataSetChanged();
         }
     }
     
+    /**
+     * 显示筛选项列表
+     * @param parent
+     */
     private void showFilterListView(View parent) {
         mActionLog.addAction(mActionTag + ActionLog.PopupWindowFilter);
         if (mPopupWindow == null) {
@@ -1069,7 +1113,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 mBaseQuerying.get(i).setResponse(null);
         	}
             mSphinx.queryStart(mBaseQuerying);
-            setup((DataQuery) mBaseQuerying.get(0));
+            showQuering((DataQuery) mBaseQuerying.get(0));
         }
     }
     

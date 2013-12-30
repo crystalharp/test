@@ -115,8 +115,8 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
         
         if (type > 0) {
             mTitleBtn.setVisibility(View.GONE);
-            mTitleView.removeView(mTrafficTitieView);
             mTitleView.addView(mTrafficTitieView);
+            mRightBtn.setVisibility(View.INVISIBLE);
             changeTrafficType(type, false);
         }
         
@@ -320,6 +320,8 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
             list = trafficDetailFragment.getDrivePlanList();
         } else if (type == Plan.Step.TYPE_WALK) {
             list = trafficDetailFragment.getWalkPlanList();
+        } else {
+            return result;
         }
         
         if (list == null || list.isEmpty()) {
@@ -339,10 +341,6 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
                     type,
                     0);
             if (type == Plan.Step.TYPE_TRANSFER) {
-                mActionTag = ActionLog.TrafficTransferListMap;
-                mTrafficTransferRbt.setChecked(true);
-                mRightBtn.setVisibility(View.GONE);
-
                 if (jumpTransferResultFragment) {
                     TrafficQuery newTrafficQuery = new TrafficQuery(mContext);
                     newTrafficQuery.setup(trafficQuery.getStart(),
@@ -356,6 +354,10 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
                     newTrafficQuery.setTrafficModel(trafficModel);
                     mSphinx.getTrafficResultFragment().setData(newTrafficQuery);
                     mSphinx.showView(R.id.view_traffic_result_transfer);
+                } else {
+                    mActionTag = ActionLog.TrafficTransferListMap;
+                    mTrafficTransferRbt.setChecked(true);
+                    mRightBtn.setVisibility(View.GONE);
                 }
                 result = true;
             } else if (type == Plan.Step.TYPE_DRIVE) {

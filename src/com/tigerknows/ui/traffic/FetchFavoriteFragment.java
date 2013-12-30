@@ -117,7 +117,7 @@ public class FetchFavoriteFragment extends BaseFragment {
                 if (getPOI(mPosition) != null) {
                 	mActionLog.addAction(mActionTag + ActionLog.ListViewItem, mPosition);
                 	dismiss();
-                	mSphinx.getInputSearchFragment().onConfirmed(getPOI(mPosition));
+                	mSphinx.getInputSearchFragment().responsePOI(getPOI(mPosition));
                 }
             }
         });

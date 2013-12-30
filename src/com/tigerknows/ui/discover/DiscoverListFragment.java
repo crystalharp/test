@@ -189,22 +189,19 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     
     SpringbackListView.IPagerListCallBack mIPagerListCallBack = null;
     
-    public void setup() {
-        DataQuery lastDataQuery = (DataQuery) this.mTkAsyncTasking.getBaseQuery();
-        if (lastDataQuery == null) {
+    /**
+     * 显示查询状态
+     * @param dataQuery
+     */
+    private void showQuering(DataQuery dataQuery) {
+        if (dataQuery == null) {
             return;
-        }
-        if (lastDataQuery.getSourceViewId() != getId()
-                || lastDataQuery.getParameter(BaseQuery.SERVER_PARAMETER_DATA_TYPE).equals(mDataType) == false) {
-            mDataQuery = null;
-            mFilterControlView.setVisibility(View.GONE);
-            mFilterList.clear();
         }
         
         String str = getString(R.string.searching);
         mQueryingTxv.setText(str);
         
-        mDataType = lastDataQuery.getParameter(BaseQuery.SERVER_PARAMETER_DATA_TYPE);
+        mDataType = dataQuery.getParameter(BaseQuery.SERVER_PARAMETER_DATA_TYPE);
         if (BaseQuery.DATA_TYPE_TUANGOU.equals(mDataType)) {
             if (mTuangouAdapter == null) {
                 mTuangouAdapter = new TuangouAdapter(mSphinx, mTuangouList);
@@ -271,7 +268,9 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         mDataQuery = null;
     }
     
+    @Override
     protected void findViews() {
+        super.findViews();
         mDingdanBtn = (ImageButton) mRootView.findViewById(R.id.dingdan_btn);
         mFilterControlView = (ViewGroup)mRootView.findViewById(R.id.filter_control_view);
         mResultLsv = (SpringbackListView)mRootView.findViewById(R.id.result_lsv);
@@ -301,7 +300,9 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
 		}
     }
     
+    @Override
     protected void setListener() {
+        super.setListener();
         mRetryView.setCallBack(this, mActionTag);
         mResultLsv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -349,7 +350,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         mDingdanBtn.setOnClickListener(this);
     }
     
-    public static String getSelectFilterName(Filter filter) {
+    private static String getSelectFilterName(Filter filter) {
         String title = null;
         if (filter != null) {
             List<Filter> chidrenFilterList = filter.getChidrenFilterList();
@@ -377,6 +378,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         }
         return title;
     }
+    
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
@@ -542,7 +544,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         }
     }
 
-    public void viewMap(int firstVisiblePosition, int lastVisiblePosition) {
+    private void viewMap(int firstVisiblePosition, int lastVisiblePosition) {
         if (mList == null) {
             return;            
         }
@@ -606,7 +608,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         dataQuery.setParameter(DataQuery.SERVER_PARAMETER_FILTER, DataQuery.makeFilterRequest(mFilterList));
         dataQuery.setup(getId(), getId(), null, false, false, requestPOI);
         mSphinx.queryStart(dataQuery);
-        setup();
+        showQuering(dataQuery);
         
         /*
          * First set up the views that is under the filter list
@@ -949,11 +951,11 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         }
 
         mResultLsv.setFooterSpringback(false);
-        setDataQuery(dataQuery);
+        setData(dataQuery);
         invokeIPagerListCallBack();
     }
     
-    private void setDataQuery(DataQuery dataQuery) {
+    public void setData(DataQuery dataQuery) {
         Response response = dataQuery.getResponse();
         if (response instanceof TuangouResponse) {
             TuangouResponse tuangouResponse = (TuangouResponse)dataQuery.getResponse();
@@ -1222,12 +1224,12 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
 
     @Override
     public void retry() {
-        if (mBaseQuerying != null) {
+        if (mBaseQuerying != null && mBaseQuerying.size() > 0) {
             for(int i = 0, size = mBaseQuerying.size(); i < size; i++) {
                 mBaseQuerying.get(i).setResponse(null);
             }
             mSphinx.queryStart(mBaseQuerying);
+            showQuering((DataQuery) mBaseQuerying.get(0));
         }
-        setup();
     } 
 }

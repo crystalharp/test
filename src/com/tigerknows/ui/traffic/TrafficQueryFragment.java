@@ -281,10 +281,10 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 
                     mSphinx.getInputSearchFragment().setData(null,
                             InputSearchFragment.MODE_TRAFFIC,
-                            new InputSearchFragment.Callback(){
+                            new InputSearchFragment.IResponsePOI(){
 
                                 @Override
-                                public void onConfirmed(POI p) {
+                                public void responsePOI(POI p) {
                                     mCommonPlaces.setPOI(0, p);
                                     mCommonPlaceAdapter.refreshList(mCommonPlaces.getList());
                                 }
@@ -340,9 +340,6 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
     
 	@Override
 	public void onResume() {
-	    if (TKConfig.getPref(mSphinx, TKConfig.PREFS_HINT_LOCATION) == null) {
-	        mSphinx.showHint(TKConfig.PREFS_HINT_LOCATION, R.layout.hint_location);
-	    }
 	    super.onResume();
          
 	    mRightBtn.setOnClickListener(this);
@@ -940,10 +937,10 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
         case R.id.end_btn:
             mSphinx.getInputSearchFragment().setData(null,
                     InputSearchFragment.MODE_TRAFFIC,
-                    new InputSearchFragment.Callback(){
+                    new InputSearchFragment.IResponsePOI(){
 
                         @Override
-                        public void onConfirmed(POI p) {
+                        public void responsePOI(POI p) {
                             mEnd.setPOI(p);
                             autoStartQuery(true);
                         }
@@ -955,10 +952,10 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
         case R.id.start_btn:
             mSphinx.getInputSearchFragment().setData(null,
                     InputSearchFragment.MODE_TRAFFIC,
-                    new InputSearchFragment.Callback(){
+                    new InputSearchFragment.IResponsePOI(){
 
                         @Override
-                        public void onConfirmed(POI p) {
+                        public void responsePOI(POI p) {
                             mStart.setPOI(p);
                             autoStartQuery(true);
                         }

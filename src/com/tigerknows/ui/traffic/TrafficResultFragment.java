@@ -7,23 +7,20 @@ package com.tigerknows.ui.traffic;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnTouchListener;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
@@ -79,6 +76,9 @@ public class TrafficResultFragment extends BaseFragment {
     private View mTrafficTitieView;
     
     private RadioGroup mTrafficTitleRadioGroup;
+    private RadioButton mTrafficTransferRbt;
+    private RadioButton mTrafficDriveRbt;
+    private RadioButton mTrafficWalkRbt;
     
     int focusedIndex = Integer.MAX_VALUE;
     
@@ -122,7 +122,8 @@ public class TrafficResultFragment extends BaseFragment {
         mTitleView.removeView(mTrafficTitieView);
         mTitleView.addView(mTrafficTitieView);
         mTrafficTitleRadioGroup.check(R.id.traffic_transfer_rbt);
-        mRightBtn.setVisibility(View.GONE);
+        mRightBtn.setBackgroundResource(R.drawable.btn_back);
+        mRightBtn.setVisibility(View.INVISIBLE);
         
         mFootLayout.setVisibility(View.GONE);
         AddtionalInfo info = mTrafficModel.getAddtionalInfo();
@@ -156,20 +157,30 @@ public class TrafficResultFragment extends BaseFragment {
         mSearchReturnView = mFooterView.findViewById(R.id.search_return_view);
         mDescriptionTxv = (TextView) mFooterView.findViewById(R.id.description_txv);
         mTrafficTitleRadioGroup = (RadioGroup) mTrafficTitieView.findViewById(R.id.traffic_rgp);
+        mTrafficTransferRbt = (RadioButton) mTrafficTitieView.findViewById(R.id.traffic_transfer_rbt);
+        mTrafficDriveRbt = (RadioButton) mTrafficTitieView.findViewById(R.id.traffic_drive_rbt);
+        mTrafficWalkRbt = (RadioButton) mTrafficTitieView.findViewById(R.id.traffic_walk_rbt);
     }
 
     protected void setListener() {
-        mTrafficTitleRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+        View.OnTouchListener onTouchListener = new OnTouchListener() {
             
             @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if (checkedId == R.id.traffic_drive_rbt) {
-                    changeTrafficType(Plan.Step.TYPE_DRIVE);
-                } else if (checkedId == R.id.traffic_walk_rbt) {
-                    changeTrafficType(Plan.Step.TYPE_WALK);
+            public boolean onTouch(View v, MotionEvent event) {
+                int id = v.getId();
+                int action = event.getAction() & MotionEvent.ACTION_MASK;
+                if (action == MotionEvent.ACTION_UP) {
+                    if (R.id.traffic_drive_rbt == id) {
+                        return !changeTrafficType(Plan.Step.TYPE_DRIVE);
+                    } else if (R.id.traffic_walk_rbt == id) {
+                        return !changeTrafficType(Plan.Step.TYPE_WALK);
+                    }
                 }
+                return false;
             }
-        });
+        };
+        mTrafficDriveRbt.setOnTouchListener(onTouchListener);
+        mTrafficWalkRbt.setOnTouchListener(onTouchListener);
         mResultLsv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
@@ -200,7 +211,9 @@ public class TrafficResultFragment extends BaseFragment {
         
     }
     
-    private void changeTrafficType(int type) {
+    private boolean changeTrafficType(int type) {
+        boolean result = false;
+        
         TrafficDetailFragment trafficDetailFragment = mSphinx.getTrafficDetailFragment();
         TrafficQuery trafficQuery = trafficDetailFragment.getTrafficQuery();
         List<Plan> list = null;
@@ -210,10 +223,10 @@ public class TrafficResultFragment extends BaseFragment {
         } else if (type == Plan.Step.TYPE_WALK) {
             list = trafficDetailFragment.getWalkPlanList();
         } else {
-            return;
+            return result;
         }
         
-        if (list.isEmpty()) {
+        if (list == null || list.isEmpty()) {
             TrafficQuery newTrafficQuery = new TrafficQuery(mContext);
             newTrafficQuery.setup(trafficQuery.getStart(),
                     trafficQuery.getEnd(),
@@ -236,6 +249,8 @@ public class TrafficResultFragment extends BaseFragment {
                 
                 TrafficOverlayHelper.drawTrafficPlanListOverlay(mSphinx, list, 0);
                 TrafficOverlayHelper.panToViewWholeOverlay(list.get(0), mSphinx.getMapView(), mSphinx);
+                
+                result = true;
             } else if (type == Plan.Step.TYPE_WALK) {
                 ResultMapFragment resultMapFragment = mSphinx.getResultMapFragment();
                 resultMapFragment.setData(null, ActionLog.TrafficWalkMap);
@@ -243,8 +258,12 @@ public class TrafficResultFragment extends BaseFragment {
                 
                 TrafficOverlayHelper.drawTrafficPlanListOverlay(mSphinx, list, 0);
                 TrafficOverlayHelper.panToViewWholeOverlay(list.get(0), mSphinx.getMapView(), mSphinx);
+
+                result = true;
             }
         }
+        
+        return result;
     }
     
     public void setData(TrafficQuery trafficQuery) {

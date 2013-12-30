@@ -248,10 +248,6 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
         setOnTouchListener(null);
         
         mRevocationBtn.setTextColor(mTitleFragment.mRightBtnConfirmColor);
-        mRevocationBtn.setPadding(mTitleFragment.mRightBtnPaddingLeft,
-                mTitleFragment.mRightBtnPaddingTop,
-                mTitleFragment.mRightBtnPaddingLeft,
-                mTitleFragment.mRightBtnPaddingTop);
         ViewGroup mRightView = (ViewGroup) mRightBtn.getParent();
         mRightView.addView(mRevocationBtn, mRevocationBtnLayoutParams);
         

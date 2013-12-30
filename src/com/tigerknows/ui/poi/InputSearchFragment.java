@@ -96,20 +96,26 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
     
     private SuggestWordListManager mSuggestWordListManager;
     
-    private Callback mCallback;
+    private IResponsePOI mIResponsePOI;
     
     private TKWord mTKWord;
     
-    //页面的数据输出回调接口，这个页面主要用来获取一个POI，所以用POI来做参数
-    public interface Callback {
-        public void onConfirmed(POI poi);
+    /**
+     * 返回POI的接口
+     */
+    public interface IResponsePOI {
+        /**
+         * 返回POI
+         * @param poi
+         */
+        public void responsePOI(POI poi);
     }
     
     public InputSearchFragment(Sphinx sphinx) {
         super(sphinx);
     }
 
-    private OnEditorActionListener mOnEditorActionListener = new OnEditorActionListener() {
+    private OnEditorActionListener mKeywordEdtOnEditorActionListener = new OnEditorActionListener() {
         
         @Override
         public boolean onEditorAction(TextView arg0, int actionId, KeyEvent event) {
@@ -126,7 +132,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         }
     };
     
-    private OnTouchListener mOnTouchListener = new OnTouchListener() {
+    private OnTouchListener mKeywordEdtOnTouchListener = new OnTouchListener() {
         
         @Override
         public boolean onTouch(View v, MotionEvent event) {
@@ -137,7 +143,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         }
     };
     
-    private final TextWatcher mFindEdtWatcher = new TextWatcher() {
+    private final TextWatcher mKeywordEdtTextWatcher = new TextWatcher() {
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
         }
 
@@ -187,9 +193,9 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         mKeywordEdt.setVisibility(View.VISIBLE);
         
         mKeywordEdt.mActionTag = mActionTag;
-        mKeywordEdt.setOnEditorActionListener(mOnEditorActionListener);
-        mKeywordEdt.addTextChangedListener(mFindEdtWatcher);
-        mKeywordEdt.setOnTouchListener(mOnTouchListener);
+        mKeywordEdt.setOnEditorActionListener(mKeywordEdtOnEditorActionListener);
+        mKeywordEdt.addTextChangedListener(mKeywordEdtTextWatcher);
+        mKeywordEdt.setOnTouchListener(mKeywordEdtOnTouchListener);
 
         mRightBtn.setOnClickListener(this);
         
@@ -220,10 +226,12 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
     public void onPause() {
         super.onPause();
         mKeywordEdt.clearFocus();
-        mKeywordEdt.removeTextChangedListener(mFindEdtWatcher);
+        mKeywordEdt.removeTextChangedListener(mKeywordEdtTextWatcher);
     }
 
+    @Override
     protected void findViews() {
+        super.findViews();
         mSuggestLsv = (ListView)mRootView.findViewById(R.id.suggest_lsv);
         mTrafficBtnGroup = (LinearLayout) mRootView.findViewById(R.id.traffic_btn_group);
         mMapSelectPointBtn = mTrafficBtnGroup.findViewById(R.id.btn_map_position);
@@ -231,8 +239,9 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         mMyPosBtn = (Button) mRootView.findViewById(R.id.btn_my_position);
     }
 
+    @Override
     protected void setListener() {
-        
+        super.setListener();
         mSuggestLsv.setOnItemClickListener(new OnItemClickListener() {
 
             @Override
@@ -274,6 +283,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         
     }
 
+    @Override
     public void onClick(View view) {
         switch (view.getId()) {
             
@@ -314,7 +324,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                     POI p = new POI();
                     p.setPosition(c.getPosition());
                     p.setName(getString(R.string.my_location));
-                    onConfirmed(p);
+                    responsePOI(p);
                     dismiss();
                 } else {
                     mSphinx.showTip(R.string.location_failed, Toast.LENGTH_SHORT);
@@ -338,7 +348,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                 if (mRequest == REQUEST_TRAFFIC_START || mRequest == REQUEST_TRAFFIC_END) {
                     POI poi = new POI();
                     poi.setName(keyword);
-                    onConfirmed(poi);
+                    responsePOI(poi);
                 } else if (mRequest == REQUEST_COMMON_PLACE) {
                     submitGeoCoderQuery(keyword);
                 }
@@ -364,11 +374,11 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
 
                 if (mRequest == REQUEST_TRAFFIC_START || mRequest == REQUEST_TRAFFIC_END) {
                     POI poi = tkWord.toPOI();
-                    onConfirmed(poi);
+                    responsePOI(poi);
                 } else if (mRequest == REQUEST_COMMON_PLACE) {
                     if (tkWord.position != null) {
                         POI poi = tkWord.toPOI();
-                        onConfirmed(poi);
+                        responsePOI(poi);
                     } else {
                         submitGeoCoderQuery(tkWord.word);
                     }
@@ -383,21 +393,21 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
     }
     
     /**
-     * 目前仅用于交通模式
+     * 返回POI，目前仅用于交通模式
      * @param poi
      */
-    public void onConfirmed(POI poi) {
+    public void responsePOI(POI poi) {
         if (poi == null || TextUtils.isEmpty(poi.getName())) {
             return;
         }
         
         if (mCurMode == MODE_TRAFFIC) {
             if (mRequest == REQUEST_TRAFFIC_START || mRequest == REQUEST_TRAFFIC_END) {
-                mCallback.onConfirmed(poi);
+                mIResponsePOI.responsePOI(poi);
                 dismiss();
             } else if (mRequest == REQUEST_COMMON_PLACE) {
                 if (poi.getPosition() != null) {
-                    mCallback.onConfirmed(poi);
+                    mIResponsePOI.responsePOI(poi);
                     dismiss();
                 } else {
                     submitGeoCoderQuery(poi.getName());
@@ -406,6 +416,10 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         }
     }
     
+    /**
+     * POI搜索
+     * @param keyword
+     */
     public void submitPOIQuery(String keyword) {
         if (TextUtils.isEmpty(keyword)) {
             mSphinx.showTip(R.string.search_input_keyword, Toast.LENGTH_SHORT);
@@ -421,7 +435,11 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         
         mSphinx.queryStart(poiQuery);
     }
-        
+    
+    /**
+     * 公交线路搜索
+     * @param keyword
+     */
     private void submitBuslineQuery(String keyword) {
         if (TextUtils.isEmpty(keyword)){
             mSphinx.showTip(R.string.busline_name_, Toast.LENGTH_SHORT);
@@ -437,7 +455,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
     }
     
     /**
-     * 搜索地点
+     * 反向定位POI
      * @param keyword
      */
     private void submitGeoCoderQuery(String keyword) {
@@ -465,12 +483,12 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         setData(text, mode, null, REQUEST_NONE);
     }
     
-    public void setData(String text, int mode, Callback callback, int request) {
+    public void setData(String text, int mode, IResponsePOI iResponsePOI, int request) {
         mKeywordEdt.setText(text);
 
         mCurMode = mode;
         mCurHisWordType = mode;
-        mCallback = callback;
+        mIResponsePOI = iResponsePOI;
         mRequest = request;
     }
     
@@ -517,14 +535,14 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
     }
 
     /**
-     * 根据POI搜索结果给出提示及实现界面跳转
+     * 处理POI搜索结果，实现界面跳转和给出相应提示
      * @param sphinx
      * @param poiResponse
      */
     public static int dealWithPOIResponse(final DataQuery dataQuery, final Sphinx sphinx, BaseFragment baseFragment) {
-        int result = 0;
+        int result = -4;
         if (dataQuery.isStop()) {
-            result = -1;
+            result = -3;
             return result;
         }
         
@@ -535,37 +553,63 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         }
         
         if (BaseActivity.checkResponseCode(dataQuery, sphinx, null, true, baseFragment, false)) {
-            result = -3;
+            result = -1;
             return result;
         }
 
         POIResponse poiResponse = (POIResponse)dataQuery.getResponse();
-        if (mapCenterAndBorderRange(sphinx, poiResponse)) {
-            return 0;
-        }
         
+        // 公交线路数据
+        // 存在此数据则跳转到公交线路列表结果界面
         BuslineModel buslineModel = poiResponse.getBuslineModel();
         if (buslineModel != null) {
             if (buslineModel.getType() == BuslineModel.TYPE_BUSLINE) {
                 sphinx.getBuslineResultLineFragment().setData(null, dataQuery);
                 sphinx.showView(R.id.view_traffic_busline_line_result);
                 
-                result = 1;
+                result = POIResponse.FIELD_EXT_BUSLINE;
                 return result;
             }
-            
         }
         
-        List<POI> poiList = null;
-        POIList bPOIList = poiResponse.getBPOIList();
-        if (bPOIList != null) {
-            poiList = bPOIList.getList();
-        }
-
+        // 地图的中心和边界范围数据
+        // 若存在此数据则设置地图中心及比例尺，跳转到首页
         final MapView mapView = sphinx.getMapView();
+        MapCenterAndBorderRange mapCenterAndBorderRange = poiResponse.getMapCenterAndBorderRange();
+        if (mapCenterAndBorderRange != null) {
+            
+            Position mapCenter = mapCenterAndBorderRange.getMapCenter();
+            float zoomLevel = mapView.getZoomLevel();
+            
+            ArrayList<Position> borderRange = mapCenterAndBorderRange.getBorderRange();
+            if (borderRange != null
+                    && borderRange.size() > 0) {
+                
+                DisplayMetrics displayMetrics = Globals.g_metrics;
+                try {
+                    Rect rect = mapView.getPadding();
+                    zoomLevel = Util.getZoomLevelToFitPositions(displayMetrics.widthPixels,
+                            displayMetrics.heightPixels,
+                            rect,
+                            borderRange);
+                } catch (APIException e) {
+                    e.printStackTrace();
+                }
+                
+            }
+            
+            if (mapCenter != null) {
+                mapView.centerOnPosition(mapCenter, zoomLevel);
+                sphinx.uiStackClearTop(R.id.view_home);
+                result = POIResponse.FIELD_MAP_CENTER_AND_BORDER_RANGE;
+                return result;
+            }
+        }
+        
+        // 城市及结果数量列表数据
         final List<CityIdAndResultTotal> cityIdAndResultTotalList = poiResponse.getCityIdAndResultTotalList();
         if (cityIdAndResultTotalList != null && cityIdAndResultTotalList.size() > 0) {
-            
+            // 若只存在一个城市及结果数量时，设置地图中心及比例尺，以地图中心位置发起搜索
             if (cityIdAndResultTotalList.size() == 1) {
                 try {
                     int cityId = (int) cityIdAndResultTotalList.get(0).getCityId();
@@ -577,9 +621,10 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                 } catch (APIException e) {
                     e.printStackTrace();
                 }
-                result = 2;
+                result = POIResponse.FIELD_CITY_ID_AND_RESULT_TOTAL;
                 return result;
                 
+            // 若存在多个城市及结果时，提示城市列表，用户选择后设置地图中心及比例尺，设置地图中心及比例尺，以地图中心位置发起搜索
             } else {
                 final List<CityInfo> cityList = new ArrayList<CityInfo>();
                 List<String> cityNameList = new ArrayList<String>();
@@ -622,42 +667,51 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                 button.setVisibility(View.GONE);
                 
                 dialog.show();
+
+                result = POIResponse.FIELD_CITY_ID_AND_RESULT_TOTAL;
+                return result;
+            }
+        }        
+        
+        // POI结果列表
+        POIList bPOIList = poiResponse.getBPOIList();
+        if (bPOIList != null) {
+            List<POI> poiList = bPOIList.getList();
+            
+            if (poiList != null
+                    && poiList.size() > 0) {
+                
+                // 将地图中心移动到POI结果列表中第一个POI的位置
+                POI poi = poiList.get(0);
+                Position position = poi.getPosition();
+                int cityId = MapEngine.getCityId(position);
+                if (cityId != Globals.getCurrentCityInfo(sphinx).getId()) {
+                    try {
+                        mapView.centerOnPosition(position);
+                    } catch (APIException e) {
+                        e.printStackTrace();
+                    }
+                }
+                
+                POIResultFragment poiResultFragment = sphinx.getPOIResultFragment();
+                poiResultFragment.setData(dataQuery);
+                
+                // 跳转到POI结果列表界面
+                if (bPOIList.getShowType() == 0) {
+                    sphinx.showView(R.id.view_poi_result);
+                
+                // 跳转到POI结果地图界面
+                } else if (bPOIList.getShowType() == 1) {
+                    ItemizedOverlayHelper.drawPOIOverlay(sphinx, poiList, 0);
+                    sphinx.getResultMapFragment().setData(sphinx.getString(R.string.result_map), ActionLog.POIListMap);
+                    sphinx.showView(R.id.view_result_map);
+                }
+                // 若从公交线路结果列表界面跳转过来，则将其从UI堆栈中移除
+                sphinx.uiStackRemove(R.id.view_traffic_busline_line_result);
                 
                 result = 3;
                 return result;
             }
-            
-        }
-        
-        if (poiList != null
-                && poiList.size() > 0) {
-            
-            POI poi = poiList.get(0);
-            Position position = poi.getPosition();
-            int cityId = MapEngine.getCityId(position);
-            if (cityId != Globals.getCurrentCityInfo(sphinx).getId()) {
-                try {
-                    mapView.centerOnPosition(position);
-                } catch (APIException e) {
-                    e.printStackTrace();
-                }
-            }
-            
-            POIResultFragment poiResultFragment = sphinx.getPOIResultFragment();
-            poiResultFragment.setData(dataQuery);
-            
-            if (bPOIList.getShowType() == 0) {
-                sphinx.showView(R.id.view_poi_result);
-                sphinx.uiStackRemove(R.id.view_traffic_busline_line_result);
-            } else if (bPOIList.getShowType() == 1) {
-                ItemizedOverlayHelper.drawPOIOverlay(sphinx, poiList, 0);
-                sphinx.getResultMapFragment().setData(sphinx.getString(R.string.result_map), ActionLog.POIListMap);
-                sphinx.showView(R.id.view_result_map);
-            }
-            
-            result = 4;
-            return result;
-            
         } else {
             Toast.makeText(sphinx, sphinx.getString(R.string.no_result), Toast.LENGTH_LONG).show();
         }
@@ -666,50 +720,12 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
     }
     
     /**
-     * 根据POI搜索结果中地图的中心和边界范围数据来设置地图中心及比例尺
+     * 处理公交线路结果，实现界面跳转和给出相应提示
      * @param sphinx
-     * @param poiResponse
+     * @param buslineQuery
+     * @param actionTag
+     * @param listView
      */
-    private static boolean mapCenterAndBorderRange(Sphinx sphinx, POIResponse poiResponse) {
-        boolean result = false;
-        if (sphinx == null || poiResponse == null) {
-            return result;
-        }
-        
-        MapCenterAndBorderRange mapCenterAndBorderRange = poiResponse.getMapCenterAndBorderRange();
-        if (mapCenterAndBorderRange != null) {
-            MapView mapView = sphinx.getMapView();
-            
-            Position mapCenter = mapCenterAndBorderRange.getMapCenter();
-            float zoomLevel = mapView.getZoomLevel();
-            
-            ArrayList<Position> borderRange = mapCenterAndBorderRange.getBorderRange();
-            if (borderRange != null
-                    && borderRange.size() > 0) {
-                
-                DisplayMetrics displayMetrics = Globals.g_metrics;
-                try {
-                    Rect rect = mapView.getPadding();
-                    zoomLevel = Util.getZoomLevelToFitPositions(displayMetrics.widthPixels,
-                            displayMetrics.heightPixels,
-                            rect,
-                            borderRange);
-                } catch (APIException e) {
-                    e.printStackTrace();
-                }
-                
-            }
-            
-            if (mapCenter != null) {
-                mapView.centerOnPosition(mapCenter, zoomLevel);
-                sphinx.uiStackClearTop(R.id.view_home);
-                result = true;
-            }
-        }
-        
-        return result;
-    }
-    
     public static void dealWithBuslineResponse(Sphinx sphinx, BuslineQuery buslineQuery, String actionTag, SpringbackListView listView) {
         
         ActionLog actionLog = ActionLog.getInstance(sphinx);
@@ -760,6 +776,11 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         }
     }
 
+    /**
+     * 反向定位POI的Apapter
+     * @author pengwenwue
+     *
+     */
     private class PlaceAdapter extends BaseAdapter {
         List<POI> mList;
 
@@ -800,6 +821,10 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         
     }
     
+    /**
+     * 显示反向定位POI结果列表对话框
+     * @param list
+     */
     private void showPlaceListDialog(final List<POI> list) {
         
         PlaceAdapter adapter = new PlaceAdapter(list);
@@ -821,7 +846,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
                 
                 dialog.dismiss();
-                onConfirmed(list.get(position));
+                responsePOI(list.get(position));
             }
             
         });

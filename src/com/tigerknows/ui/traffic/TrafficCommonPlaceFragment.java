@@ -22,7 +22,7 @@ import com.tigerknows.provider.CommonPlaceTable;
 import com.tigerknows.provider.CommonPlaceTable.CommonPlace;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.ui.poi.InputSearchFragment;
-import com.tigerknows.ui.poi.InputSearchFragment.Callback;
+import com.tigerknows.ui.poi.InputSearchFragment.IResponsePOI;
 
 public class TrafficCommonPlaceFragment extends BaseFragment{
 
@@ -34,10 +34,10 @@ public class TrafficCommonPlaceFragment extends BaseFragment{
     
     private int mClickedPos;
     
-    private Callback mCallback = new Callback() {
+    private IResponsePOI mCallback = new IResponsePOI() {
 
         @Override
-        public void onConfirmed(POI poi) {
+        public void responsePOI(POI poi) {
             mList.setPOI(mClickedPos, poi);
             mAdapter.notifyDataSetChanged();
         }

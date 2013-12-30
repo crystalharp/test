@@ -924,18 +924,14 @@ public class Utility {
 
     public static void refreshButton(Context context, Button button) {
         
-        int left = Utility.dip2px(context, 12);
-        int top = Utility.dip2px(context, 8);
         if (button.isEnabled()) {
             int mRightBtnConfirmColor = context.getResources().getColor(R.color.white);
             button.setTextColor(mRightBtnConfirmColor);
             button.setBackgroundResource(R.drawable.btn_confirm);
-            button.setPadding(left, top, left, top);
         } else {
             int mRightBtnCancelColor = context.getResources().getColor(R.color.black_light);
             button.setTextColor(mRightBtnCancelColor);
             button.setBackgroundResource(R.drawable.btn_cancel);
-            button.setPadding(left, top, left, top);
         }
     }
 

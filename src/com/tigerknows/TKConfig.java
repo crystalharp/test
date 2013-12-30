@@ -742,6 +742,11 @@ public class TKConfig {
     public static final String PREFS_CUSTOM_CATEGORY = "prefs_custom_category";
     
     /**
+     * 地图上是否显示放大缩小按钮
+     */
+    public static final String PREFS_SHOW_ZOOM_BUTTON = "prefs_show_zoom_button";
+    
+    /**
      * 发现分类图片尺寸的Key
      */
     public static final int PICTURE_DISCOVER_HOME = 1;
@@ -1717,6 +1722,59 @@ public class TKConfig {
         SharedPreferences sharedPreferences = context.getSharedPreferences(TKConfig.TIGERKNOWS_PREFS, Context.MODE_PRIVATE);
         try {
             value = sharedPreferences.getString(name, defaultValue);
+        } catch (Exception e) {
+            Editor editor = sharedPreferences.edit();
+            editor.remove(name).commit();
+            editor.putString(name, value).commit();
+        }
+        return value;
+    }
+    
+    /**
+     * 判断其Pref的值是否为1
+     * @param context
+     * @param name
+     * @return
+     */
+    public static boolean isPref(Context context, String name) {
+        boolean result = false;
+        if (context == null || TextUtils.isEmpty(name)) {
+            return result;
+        }
+        SharedPreferences sharedPreferences = context.getSharedPreferences(TKConfig.TIGERKNOWS_PREFS, Context.MODE_PRIVATE);
+        try {
+            String value = sharedPreferences.getString(name, null);
+            if ("1".equals(value)) {
+                result = true;
+            } else {
+                result = false;
+            }
+        } catch (Exception e) {
+            
+        }
+        return result;
+    }
+
+    /**
+     * get preference
+     * @param 名称
+     * @defaultValue 默认值
+     */
+    public static String reversePref(Context context, String name) {
+        String value = null;
+        if (context == null || TextUtils.isEmpty(name)) {
+            return value;
+        }
+        SharedPreferences sharedPreferences = context.getSharedPreferences(TKConfig.TIGERKNOWS_PREFS, Context.MODE_PRIVATE);
+        try {
+            value = sharedPreferences.getString(name, null);
+            if ("1".equals(value)) {
+                value = null;
+            } else {
+                value = "1";
+            }
+            Editor editor = sharedPreferences.edit();
+            editor.putString(name, value).commit();
         } catch (Exception e) {
             Editor editor = sharedPreferences.edit();
             editor.remove(name).commit();

@@ -34,26 +34,6 @@
         >
         
         <LinearLayout
-            android:id="@+id/contentPanel"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center_vertical"
-            android:paddingLeft="16dp"
-            android:paddingTop="16dp"
-            android:paddingBottom="16dp"
-            >
-            <TextView android:id="@+id/title_txv"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@color/black_light"
-                android:textSize="16sp"
-                android:text="@string/tools"
-                android:layout_gravity="center_vertical"
-                android:gravity="left"/>
-        </LinearLayout>
-        
-        <LinearLayout
             android:id="@+id/buttonPanel"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -70,8 +50,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="horizontal"
-                android:gravity="center"
-                android:background="@drawable/btn_dialog_map_tools_left"  >
+                android:gravity="center"  >
                 <TextView
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
@@ -91,8 +70,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="horizontal"
-                android:gravity="center"
-                android:background="@drawable/btn_dialog_map_tools_middle"  >
+                android:gravity="center"  >
                 <TextView
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
@@ -112,8 +90,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="horizontal"
-                android:gravity="center"
-                android:background="@drawable/btn_dialog_map_tools_middle"  >
+                android:gravity="center"  >
                 <TextView
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
@@ -133,8 +110,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="horizontal"
-                android:gravity="center"
-                android:background="@drawable/btn_dialog_map_tools_right"  >
+                android:gravity="center"  >
                 <TextView
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
@@ -148,6 +124,33 @@
                     android:text="@string/compass"/>
             </LinearLayout>
          </LinearLayout>
+    
+        <ImageView 
+             android:layout_width="fill_parent"
+             android:layout_height="wrap_content"
+             android:background="@drawable/bg_line_split"/>
+        
+        <RelativeLayout android:id="@+id/show_zoom_button_view"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="8dp"
+            >
+            <CheckBox 
+                android:id="@+id/show_zoom_button_chb"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                />
+            <TextView 
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@id/show_zoom_button_chb"
+                android:layout_centerVertical="true"
+                android:text="@string/show_zoom_button"
+                android:textColor="@color/black_light"
+                />
+         </RelativeLayout>
     </LinearLayout>
     
     <RelativeLayout android:id="@+id/bottomPanel"

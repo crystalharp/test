@@ -23,6 +23,7 @@
         <Button android:id="@+id/left_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
             android:background="@drawable/btn_back"
             android:textSize="14sp"
             android:textColor="@color/btn_title"
@@ -46,10 +47,6 @@
             android:textSize="14sp"
             android:textColor="@color/white"
             android:gravity="center"
-            android:paddingLeft="12dp"
-            android:paddingTop="8dp"
-            android:paddingRight="12dp"
-            android:paddingBottom="8dp"
             />
     </LinearLayout>
 
@@ -60,15 +57,14 @@
         android:layout_centerVertical="true"
         android:layout_toRightOf="@id/left_view"
         android:layout_toLeftOf="@id/right_view"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="16dp"
+        android:gravity="center"
         >
         <Button 
             android:id="@+id/title_btn"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
             android:background="@color/transparent"
             android:text="@string/app_name"
             android:textSize="20sp"
@@ -82,6 +78,8 @@
             android:id="@+id/keyword_edt"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
             android:layout_toLeftOf="@id/query_btn"
             android:layout_centerVertical="true"
             tkandroid:hint="@string/find_poi"
