@@ -620,6 +620,12 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
                 setTxvText(planHolder.txv2, plan.getExpectedDriveTime());
                 setTxvText(planHolder.txv3, plan.getTrafficLightNum());
                 setTxvText(planHolder.txv4, plan.getTaxiCost());
+            } else if (plan.getType() == TrafficQuery.QUERY_TYPE_WALK) {
+                setTxvText(planHolder.title, sphinx.getString(R.string.title_type_walk));
+                setTxvText(planHolder.txv1, null);
+                setTxvText(planHolder.txv2, null);
+                setTxvText(planHolder.txv3, null);
+                setTxvText(planHolder.txv4, null);
             }
             planHolder.tags.removeAllViews();
             List<PlanTag> list = plan.getPlanTagList();
