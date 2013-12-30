@@ -46,6 +46,7 @@ import com.tigerknows.provider.Tigerknows;
 import com.tigerknows.share.ShareAPI;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.ui.common.ResultMapFragment;
+import com.tigerknows.ui.discover.CycleViewPager.CyclePagerAdapter;
 import com.tigerknows.util.Utility;
 import com.tigerknows.util.NavigationSplitJointRule;
 
@@ -61,7 +62,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
     
     private StringListAdapter mResultAdapter;
     
-    private PlanPagerAdapter mPlanListAdapter;
+    private CyclePagerAdapter mPlanListAdapter;
 
     private List<Integer> mTypes = new ArrayList<Integer>();
     
@@ -125,7 +126,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         mResultAdapter = new StringListAdapter(mContext);
         mResultLsv.setAdapter(mResultAdapter);
         
-        mPlanListAdapter = new PlanPagerAdapter();
+        mPlanListAdapter = new CyclePagerAdapter();
         mViewPager.setAdapter(mPlanListAdapter);
         
         return mRootView;
@@ -174,6 +175,10 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         }
         
         Utility.setFavoriteBtn(mSphinx, mFavorateBtn, plan.checkFavorite(mContext));
+        
+        mPlanListAdapter.viewList = mDetailItemViewList;
+        mPlanListAdapter.count = mDetailItemViewList.size();
+        mPlanListAdapter.notifyDataSetChanged();
 
         if (mDismissed) {
             setSelectionFromTop();
@@ -312,31 +317,6 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
     public static class StepViewHolder {
         public ImageView image;
         public TextView textView;
-    }
-
-    class PlanPagerAdapter extends PagerAdapter {
-
-        @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
-            ((ViewPager) container).removeView(mDetailItemViewList.get(position));
-        }
-
-        @Override
-        public Object instantiateItem(ViewGroup container, int position) {
-            container.addView(mDetailItemViewList.get(position), 0);//添加页卡  
-            return mDetailItemViewList.get(position); 
-        }
-
-        @Override
-        public int getCount() {
-            return mDetailItemViewList.size();
-        }
-
-        @Override
-        public boolean isViewFromObject(View arg0, Object arg1) {
-            return arg0 == arg1;
-        }
-        
     }
     
     class StringListAdapter extends BaseAdapter{
