@@ -405,16 +405,11 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
             mSphinx.queryStart(dataQuery);
             break;
         case CategoryProperty.OP_TUANGOU:
-            mSphinx.queryStart(getDataQuery(BaseQuery.DATA_TYPE_TUANGOU));
-            break;
         case CategoryProperty.OP_DIANYING:
-            mSphinx.queryStart(getDataQuery(BaseQuery.DATA_TYPE_DIANYING));
-            break;
         case CategoryProperty.OP_YANCHU:
-            mSphinx.queryStart(getDataQuery(BaseQuery.DATA_TYPE_YANCHU));
-            break;
         case CategoryProperty.OP_ZHANLAN:
-            mSphinx.queryStart(getDataQuery(BaseQuery.DATA_TYPE_ZHANLAN));
+            mSphinx.queryStart(getDataQuery(String.valueOf(operationCode)));
+            uiStackAdjust();
             break;
     	case CategoryProperty.OP_MORE:
         	mTitleBtn.setText(R.string.merchant_type);
