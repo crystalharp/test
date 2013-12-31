@@ -39,6 +39,8 @@ public class TrafficOverlayHelper {
 	private static final String TAG = "TrafficOverlayHelper";
     
     public static ItemizedOverlay drawTrafficPlanListOverlay(Sphinx sphinx, List<Plan> list, int focusedIndex) {
+
+        sphinx.clearMap();
         
         ItemizedOverlay itemizedOverlay = null;
         try {

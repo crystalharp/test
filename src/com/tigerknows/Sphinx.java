@@ -332,7 +332,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     if (infoWindowFragment == mBottomFragment) {
                         ItemizedOverlay itemizedOverlay = infoWindowFragment.getItemizedOverlay();
                         String overlayName = itemizedOverlay.getName();
-                        if (ItemizedOverlay.BUSLINE_OVERLAY.equals(overlayName) ||
+                        if (ItemizedOverlay.BUSLINE_OVERLAY.equals(overlayName)||
+                                ItemizedOverlay.TRAFFIC_PLAN_LIST_OVERLAY.equals(overlayName) ||
                                 ItemizedOverlay.TRAFFIC_OVERLAY.equals(overlayName)) {
                             return;
                         }
@@ -473,7 +474,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 
                 @Override
                 public void onClick(View arg0) {
-                    //TODO:行为日志
+                    mActionLog.addAction(ActionLog.MapCleanMap);
                     clearMap();
                     uiStackClearTop(R.id.view_home);
                 }
@@ -531,6 +532,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                         ItemizedOverlay itemizedOverlay = infoWindowFragment.getItemizedOverlay();
                         String overlayName = itemizedOverlay.getName();
                         if (ItemizedOverlay.BUSLINE_OVERLAY.equals(overlayName) ||
+                                ItemizedOverlay.TRAFFIC_PLAN_LIST_OVERLAY.equals(overlayName) ||
                                 ItemizedOverlay.TRAFFIC_OVERLAY.equals(overlayName)) {
                             return;
                         }
@@ -540,6 +542,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     POI poi = new POI();
                     poi.setPosition(position);
                     poi.setName(name);
+                    poi.setFrom(POI.FROM_LOCAL);
                     poi.setSourceType(POI.SOURCE_TYPE_MAP_POI);
                     
                     ItemizedOverlayHelper.drawPOIOverlay(ItemizedOverlay.MAP_POI_OVERLAY, Sphinx.this, poi);
@@ -626,6 +629,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                         ItemizedOverlay itemizedOverlay = infoWindowFragment.getItemizedOverlay();
                         String overlayName = itemizedOverlay.getName();
                         if (ItemizedOverlay.BUSLINE_OVERLAY.equals(overlayName) ||
+                                ItemizedOverlay.TRAFFIC_PLAN_LIST_OVERLAY.equals(overlayName) ||
                                 ItemizedOverlay.TRAFFIC_OVERLAY.equals(overlayName)) {
                             return;
                         }
@@ -663,6 +667,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                         ItemizedOverlay itemizedOverlay = infoWindowFragment.getItemizedOverlay();
                         String overlayName = itemizedOverlay.getName();
                         if (ItemizedOverlay.BUSLINE_OVERLAY.equals(overlayName) ||
+                                ItemizedOverlay.TRAFFIC_PLAN_LIST_OVERLAY.equals(overlayName) ||
                                 ItemizedOverlay.TRAFFIC_OVERLAY.equals(overlayName)) {
                             return;
                         }
@@ -1845,6 +1850,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     }
 
     public boolean showInfoWindow(int fragmentId, OverlayItem overlayItem) {
+        return showInfoWindow(fragmentId, overlayItem, true);
+    }
+
+    public boolean showInfoWindow(int fragmentId, OverlayItem overlayItem, boolean replaceBottomUI) {
 
         if (overlayItem == null) {
             return false;
@@ -1855,7 +1864,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         if (fragment != null && infoWindowFragment != null) {
             infoWindowFragment.setData(fragmentId, overlayItem.getOwnerOverlay(), fragment.mActionTag);
             fragment.mBottomFrament = infoWindowFragment;
-            replaceBottomUI(fragment);
+            if (replaceBottomUI) {
+                replaceBottomUI(fragment);
+            }
         }
 
         return true;
@@ -2048,8 +2059,12 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                             id == R.id.view_discover_tuangou_detail || 
                             id == R.id.view_discover_dianying_detail || 
                             id == R.id.view_discover_yanchu_detail ||
-                            id == R.id.view_discover_zhanlan_detail) {
+                            id == R.id.view_discover_zhanlan_detail ||
+                            id == R.id.view_traffic_busline_detail ||
+                            id == R.id.view_traffic_result_detail) {
                         uiStackRemove(R.id.view_result_map);
+                    } else if (id == R.id.view_traffic_result_transfer) {
+                        uiStackClearTop(R.id.view_traffic_home);
                     }
                 } else if (uiStackPeek() == R.id.view_poi_detail) {
                     if (id == R.id.view_hotel_order_detail) {

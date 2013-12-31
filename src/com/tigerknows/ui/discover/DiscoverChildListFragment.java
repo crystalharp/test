@@ -236,8 +236,9 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
         } else if (BaseQuery.DATA_TYPE_YINGXUN.equals(mDataType)) {
             mTitleBtn.setText(R.string.dianyingyuan_list);
         }
-        mRightBtn.setText(R.string.map);
-        mRightBtn.setOnClickListener(this);
+//        mRightBtn.setText(R.string.map);
+//        mRightBtn.setOnClickListener(this);
+        mRightBtn.setVisibility(View.GONE);
         
         if (isReLogin()) {
             return;
@@ -250,11 +251,11 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
     }
     
     private void refreshRightBtn() {
-        if (getList().isEmpty()) {
-            mRightBtn.setVisibility(View.GONE);
-        } else {
-            mRightBtn.setVisibility(View.VISIBLE);
-        }
+//        if (getList().isEmpty()) {
+//            mRightBtn.setVisibility(View.GONE);
+//        } else {
+//            mRightBtn.setVisibility(View.VISIBLE);
+//        }
     }
     
     private void turnPage(){

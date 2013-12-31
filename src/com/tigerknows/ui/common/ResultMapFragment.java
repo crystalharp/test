@@ -12,6 +12,7 @@ import com.tigerknows.TKConfig;
 import com.tigerknows.android.location.Position;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
+import com.tigerknows.map.MapView.MapScene;
 import com.tigerknows.map.MapView.SnapMap;
 import com.tigerknows.map.TrafficOverlayHelper;
 import com.tigerknows.model.POI;
@@ -130,6 +131,7 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
     }
     
     public void setData(String title, String actionTag) {
+        saveResultData(actionTag);
         mTitle = title;
         mActionTag = actionTag;
     }
@@ -386,7 +388,9 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
     @Override
     public void dismiss() {
         super.dismiss();
-        mSphinx.clearMap();
+
+        mSphinx.getCenterTokenView().setVisibility(View.INVISIBLE);
+        restoreDataBean();
     }
 
     @Override
@@ -396,5 +400,61 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
                 mActionTag,
                 (TrafficQuery) tkAsyncTask.getBaseQuery(),
                 false);
+    }
+    
+    // 在进入到交通选点界面和交通结果地图界面时，保存之前的地图相关信息
+    private ResultData mResultData;
+    
+    private void saveResultData(String actionTag) {
+
+        if (ActionLog.ResultMapSelectPoint.equals(actionTag) ||
+                ActionLog.TrafficTransferMap.equals(actionTag) ||
+                ActionLog.TrafficDriveMap.equals(actionTag) ||
+                ActionLog.TrafficWalkMap.equals(actionTag) ||
+                ActionLog.TrafficTransferListMap.equals(actionTag)) {
+            
+            if (ActionLog.ResultMapSelectPoint.equals(mActionTag) == false &&
+                    ActionLog.TrafficTransferMap.equals(mActionTag) == false &&
+                    ActionLog.TrafficDriveMap.equals(mActionTag) == false &&
+                    ActionLog.TrafficWalkMap.equals(mActionTag) == false &&
+                    ActionLog.TrafficTransferListMap.equals(mActionTag) == false) {
+                
+                mResultData = new ResultData();
+                mResultData.title = mTitle;
+                mResultData.actionTag = mActionTag;
+                mResultData.mapScene = mSphinx.getMapView().getCurrentMapScene();
+            }
+        }
+    }
+    
+    private void restoreDataBean() {
+        if (ActionLog.ResultMapSelectPoint.equals(mActionTag) ||
+                ActionLog.TrafficTransferMap.equals(mActionTag) ||
+                ActionLog.TrafficDriveMap.equals(mActionTag) ||
+                ActionLog.TrafficWalkMap.equals(mActionTag) ||
+                ActionLog.TrafficTransferListMap.equals(mActionTag)) {
+            
+            if (mResultData != null) {
+                if (ActionLog.ResultMapSelectPoint.equals(mResultData.actionTag) == false &&
+                        ActionLog.TrafficTransferMap.equals(mResultData.actionTag) == false &&
+                        ActionLog.TrafficDriveMap.equals(mResultData.actionTag) == false &&
+                        ActionLog.TrafficWalkMap.equals(mResultData.actionTag) == false &&
+                        ActionLog.TrafficTransferListMap.equals(mResultData.actionTag) == false) {
+                    
+                    if (mActionTag.equals(mResultData.actionTag) == false) {
+                        mSphinx.clearMap();
+                        setData(mResultData.title, mResultData.actionTag);
+                        mSphinx.getMapView().restoreScene(mResultData.mapScene);
+                        mResultData = null;
+                    }
+                }
+            }
+        }
+    }
+    
+    public class ResultData {
+        public String title;
+        public String actionTag;
+        public MapScene mapScene;
     }
 }

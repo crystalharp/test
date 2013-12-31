@@ -81,7 +81,6 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
     private List<View> mInfoWindow = null;
     
     private ItemizedOverlay mItemizedOverlay;
-    private OverlayItem mOverlayItem;
     private int mOwerFragmentId;
     private int mType;
     private int mPostion;
@@ -169,16 +168,16 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
         mItemizedOverlay = itemizedOverlay;
         mActionTag = actionTag;
         
-        mOverlayItem = mItemizedOverlay.getItemByFocused();
+        OverlayItem overlayItem = mItemizedOverlay.getItemByFocused();
         
-        if (mOverlayItem == null) {
-            mOverlayItem = itemizedOverlay.get(0);
-            mOverlayItem.isFoucsed = true;
+        if (overlayItem == null) {
+            overlayItem = itemizedOverlay.get(0);
+            overlayItem.isFoucsed = true;
         }
 
         mPostion = itemizedOverlay.getPositionByFocused();
         
-        Object object = mOverlayItem.getAssociatedObject();
+        Object object = overlayItem.getAssociatedObject();
         
         if (object instanceof POI) {
             final POI poi = (POI) object;
@@ -579,6 +578,10 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
     }
     
     private void infoWindowClicked() {
+        infoWindowClicked(true);
+    }
+    
+    private void infoWindowClicked(boolean query) {
         mActionLog.addAction(ActionLog.MapInfoWindowBody);
         
         if (mItemizedOverlay == null) {
@@ -611,7 +614,7 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             POI poi = (POI) overlayItem.getAssociatedObject();
             
             String name = poi.getName();
-            if (poi.getFrom() == POI.FROM_LOCAL && name != null) {
+            if (poi.getFrom() == POI.FROM_LOCAL && name != null && query) {
                 DataQuery dataQuery = new DataQuery(mSphinx);
                 dataQuery.setup(getId(), getId(), getString(R.string.doing_and_wait), false, false, poi);
                 dataQuery.addParameter(BaseQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_GEOCODER);
@@ -710,10 +713,6 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
     public ItemizedOverlay getItemizedOverlay() {
         return mItemizedOverlay;
     }
-
-    public OverlayItem getOverlayItem() {
-        return mOverlayItem;
-    }
     
     public int getType() {
         return mType;
@@ -753,6 +752,6 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             }
         }
         
-        infoWindowClicked();
+        infoWindowClicked(false);
     }
 }

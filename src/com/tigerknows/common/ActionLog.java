@@ -462,6 +462,7 @@ public class ActionLog extends LogUpload {
     public static final String MapDistance = Map + "BP";
     public static final String MapCompass = Map + "BQ";
     public static final String MapSubway = Map + "BR";
+    public static final String MapCleanMap = Map + "BS";
     
     // 微博发送界面    
     public static final String WeiboSend = "FC";

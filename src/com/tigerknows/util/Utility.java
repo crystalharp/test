@@ -1234,7 +1234,6 @@ public class Utility {
                         && MapEngine.getCityId(poi.getPosition()) == MapEngine.getCityId(locationCityInfo.getPosition())) {
                     trafficQueryFragment.autoStartQuery(true);
                 } else {
-                    sphinx.uiStackRemove(R.id.view_result_map);   // 再回退时不出现地图界面
                     trafficQueryFragment.setShowStartMyLocation(false);
                 }
                 sphinx.showView(R.id.view_traffic_home);

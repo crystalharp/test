@@ -76,7 +76,9 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         mTitleBtn.setHint(R.string.find_poi);
         mTitleBtn.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
         RelativeLayout.LayoutParams layoutParams = (android.widget.RelativeLayout.LayoutParams) mTitleBtn.getLayoutParams();
+        layoutParams.leftMargin = mTitleBtnPaddingLeft;
         layoutParams.topMargin = mTitleBtnPaddingLeft;
+        layoutParams.rightMargin = mTitleBtnPaddingLeft;
         layoutParams.bottomMargin = mTitleBtnPaddingLeft;
         
         if (mSearchDrawable == null) {
@@ -87,13 +89,14 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         mTitleBtn.setCompoundDrawables(mSearchDrawable, null, null, null);
         mTitleBtn.setCompoundDrawablePadding(mTitleBtnPaddingRight);
         mTitleBtn.setPadding(mTitleBtnPaddingLeft, mTitleBtnPaddingRight, mTitleBtnPaddingLeft, mTitleBtnPaddingRight);
-        mTitleBtn.getLayoutParams().height = Utility.dip2px(mSphinx, 40);
+        layoutParams.height = Utility.dip2px(mSphinx, 40);
 
         mLeftBtn.setVisibility(View.GONE);
         mRightBtn.setVisibility(View.GONE);
         
         mTitleFragment.mRootView.setBackgroundDrawable(null);
         
+        mSphinx.clearMap();
         MapView mapView = mSphinx.getMapView();
         mapView.setStopRefreshMyLocation(false);
         

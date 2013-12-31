@@ -51,6 +51,7 @@ import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
 import com.tigerknows.android.location.Position;
 import com.tigerknows.common.ActionLog;
+import com.tigerknows.ui.InfoWindowFragment;
 import com.tigerknows.util.Utility;
 import com.tigerknows.widget.ZoomControls;
 
@@ -1085,25 +1086,26 @@ public class MapView extends RelativeLayout implements
         MapScene mapScene = new MapScene();
         mapScene.position = getCenterPosition();
         mapScene.zoomLevel = (int) getZoomLevel();
-        List<ItemizedOverlay> itemizedOverlay = new ArrayList<ItemizedOverlay>();
-        itemizedOverlay.addAll(tilesView.getOverlays());
-        for (int i = itemizedOverlay.size() - 1; i >= 0; i--) {
-            if (itemizedOverlay.get(i).getName().equals(ItemizedOverlay.MY_LOCATION_OVERLAY)) {
-                itemizedOverlay.remove(i);
+        List<ItemizedOverlay> itemizedOverlayList = new ArrayList<ItemizedOverlay>();
+        itemizedOverlayList.addAll(tilesView.getOverlays());
+        for (int i = itemizedOverlayList.size() - 1; i >= 0; i--) {
+            if (itemizedOverlayList.get(i).getName().equals(ItemizedOverlay.MY_LOCATION_OVERLAY)) {
+                itemizedOverlayList.remove(i);
             }
         }
-        mapScene.itemizedOverlay = itemizedOverlay;
-        List<Shape> shape = new ArrayList<Shape>();
-        shape.addAll(tilesView.getShapes());
-        for (int i = shape.size() - 1; i >= 0; i--) {
-            if (shape.get(i).getName().equals(Shape.MY_LOCATION)) {
-                shape.remove(i);
+        mapScene.itemizedOverlayList = itemizedOverlayList;
+        List<Shape> shapeList = new ArrayList<Shape>();
+        shapeList.addAll(tilesView.getShapes());
+        for (int i = shapeList.size() - 1; i >= 0; i--) {
+            if (shapeList.get(i).getName().equals(Shape.MY_LOCATION)) {
+                shapeList.remove(i);
             }
         }
-        mapScene.shape = shape;
-        InfoWindow infoWindow = tilesView.getInfoWindow();
-        if (infoWindow.isVisible()) {
-            mapScene.overlayItem = infoWindow.getAssociatedOverlayItem();
+        mapScene.shapeList = shapeList;
+        InfoWindowFragment infoWindowFragment = sphinx.getInfoWindowFragment();
+        ItemizedOverlay itemizedOverlay = infoWindowFragment.getItemizedOverlay();
+        if (itemizedOverlay != null) {
+            mapScene.overlayItem = itemizedOverlay.getItemByFocused();
         } else {
             mapScene.overlayItem = null;
         }
@@ -1121,17 +1123,17 @@ public class MapView extends RelativeLayout implements
             }
             
             clearMap();
-            if (mapScene.shape != null) {
-                tilesView.getShapes().addAll(mapScene.shape);
+            if (mapScene.shapeList != null) {
+                tilesView.getShapes().addAll(mapScene.shapeList);
             }
-            if (mapScene.itemizedOverlay != null) {
-                tilesView.getOverlays().addAll(mapScene.itemizedOverlay);
+            if (mapScene.itemizedOverlayList != null) {
+                tilesView.getOverlays().addAll(mapScene.itemizedOverlayList);
             }
             showOverlay(ItemizedOverlay.MY_LOCATION_OVERLAY, false);
             if (mapScene.position != null) {
                 centerOnPosition(mapScene.position, mapScene.zoomLevel);
             }
-            sphinx.showInfoWindow(sphinx.uiStackPeek(), mapScene.overlayItem);
+            sphinx.showInfoWindow(R.id.view_result_map, mapScene.overlayItem, false);
         } catch (APIException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -1141,8 +1143,8 @@ public class MapView extends RelativeLayout implements
     public static class MapScene {
         public Position position;
         public int zoomLevel;
-        public List<ItemizedOverlay> itemizedOverlay;
-        public List<Shape> shape;
+        public List<ItemizedOverlay> itemizedOverlayList;
+        public List<Shape> shapeList;
         public OverlayItem overlayItem;
     }
     

@@ -609,7 +609,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         }
     }
     
-    public void uiStackAdjust() {
+    private void uiStackAdjust() {
         if (mSphinx.uiStackContains(R.id.view_more_favorite)) {
             mSphinx.uiStackClearBetween(R.id.view_more_favorite, getId());
         } else if (mSphinx.uiStackContains(R.id.view_more_history)) {

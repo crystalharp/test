@@ -137,12 +137,6 @@ public class TrafficResultFragment extends BaseFragment {
         if (mDismissed) {
             mResultLsv.setSelectionFromTop(0, 0);
         }
-     
-        // 下一行代码为避免以下操作会出现问题
-        // 搜索-结果列表-详情-地图-点击气泡中的交通按钮-选择到这里去/公交-公交方案-公交详情-点击地图显示公交方案页(期望进入 地图界面)
-        // 确保整个UI堆栈里不能出现重复的结果地图界面
-        // Fixed: [And4.30-287] [确实有]【交通】公交详情界面点击“地图”返回到公交方案界面，地图不加载。
-        mSphinx.uiStackRemove(R.id.view_result_map); 
     }
 
     @Override
