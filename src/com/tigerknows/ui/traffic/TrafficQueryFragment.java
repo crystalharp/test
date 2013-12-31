@@ -304,7 +304,6 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 
 	        @Override
 	        public View getView(Object data, View child, int pos) {
-	            //FIXME:进行严格检查
 	            TextView aliasTxv = (TextView) child.findViewById(R.id.alias_txv);
 	            TextView nameTxv = (TextView) child.findViewById(R.id.name_txv);
 	            child.setTag(data);
@@ -402,7 +401,6 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
     }
 	
 	POI getMylocationPOI() {
-	    //TODO:有定位信息则返回
 	    POI p = new POI();
 	    p.setName(MY_LOCATION);
 	    return p;
@@ -617,7 +615,6 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
         return queryType;
     }
 	    
-    //TODO:把这个函数也重写，mSettedRadioBtn不要这么用
     public void setQueryType(int queryType) {
         
         mSettedRadioBtn = R.id.traffic_transfer_rbt;
@@ -881,7 +878,6 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
     public void onClick(View v) {
         switch (v.getId()) {
         case R.id.right_btn:
-            // TODO:弹出三个按钮或者变成确定按钮
             if (!mStart.textEmpty() && !mEnd.textEmpty()) {
                 query();
             } else {
