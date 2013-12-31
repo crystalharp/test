@@ -132,7 +132,7 @@
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:layout_width="fill_parent"
-        android:layout_height="90dp" >
+        android:layout_height="wrap_content" >
 
         <ImageView
             android:id="@+id/step_icon"
@@ -143,8 +143,10 @@
             android:id="@+id/step_txv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/app_name"
+            android:gravity="left|center_vertical"
+            android:text="1\n1\n1"
             android:textSize="16sp"
+            android:lines="3"
              >
         </TextView>
         

@@ -203,7 +203,7 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
         super.onResume();
         mTitleBtn.setText(R.string.history_browse);
         mRightBtn.setOnClickListener(this);
-        mRightBtn.setBackgroundResource(R.drawable.btn_delete_all);
+        mRightBtn.setText(R.string.clear);
         int total = 0;
         if (mDismissed) {
             total = readPOI(mPOIList, Long.MAX_VALUE, 0, false);

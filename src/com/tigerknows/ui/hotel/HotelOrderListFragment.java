@@ -206,6 +206,7 @@ public class HotelOrderListFragment extends BaseFragment{
     public void onResume() {
     	super.onResume();
         mTitleBtn.setText(getString(R.string.hotel_ordered));
+        mRightBtn.setVisibility(View.GONE);
 
         if (Test_Pull_Order_List) {
             fillOrderDb();

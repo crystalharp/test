@@ -147,7 +147,20 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             if (mType == TYPE_MY_LOCATION) {
                 mSphinx.showView(R.id.view_traffic_home);
             } else {
-                Utility.queryTraffic(mSphinx, (POI) overlayItem.getAssociatedObject(), mActionTag);
+                Object object = overlayItem.getAssociatedObject();
+                POI poi = null;
+                if (object instanceof POI) {
+                    poi = (POI) object;
+                } else if (object instanceof Tuangou) {
+                    poi = ((Tuangou) object).getPOI();
+                } else if (object instanceof Dianying) {
+                    poi = ((Dianying) object).getPOI();
+                } else if (object instanceof Yanchu) {
+                    poi = ((Yanchu) object).getPOI();
+                } else if (object instanceof Zhanlan) {
+                    poi = ((Zhanlan) object).getPOI();
+                }
+                Utility.queryTraffic(mSphinx, poi , mActionTag);
             }
         } else if (id == R.id.detail_btn) {
             infoWindowClicked();
@@ -667,11 +680,13 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
         }
 
         TextView nameTxv = (TextView) v.findViewById(R.id.name_txv);
+        nameTxv.setVisibility(View.GONE);
         RatingBar starsRtb = (RatingBar) v.findViewById(R.id.poi_stars_rtb);
         TextView priceTxv= (TextView)v.findViewById(R.id.poi_price_txv);
         priceTxv.setVisibility(View.GONE);
-
-        nameTxv.setText(name);
+        TextView titleTxv = (TextView) v.findViewById(R.id.title_txv);
+        titleTxv.setText(name);
+        titleTxv.setVisibility(View.VISIBLE);
         starsRtb.setProgress((int) rating);
     }
     

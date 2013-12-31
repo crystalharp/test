@@ -160,6 +160,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         mTitleBtn.setText(getString(R.string.hotel_room_title));
         final HotelVendor hotelVendor = HotelVendor.getHotelVendorById(mRoomType.getVendorID(), mSphinx, null);
         if(hotelVendor == null || TextUtils.isEmpty(hotelVendor.getReserveTel())){
+            mRightBtn.setVisibility(View.GONE);
         }else{
             mRightBtn.setText(getString(R.string.tel_reserve));
             mRightBtn.setOnClickListener(new OnClickListener() {
@@ -169,6 +170,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
                     Utility.telephone(mSphinx, hotelVendor.getReserveTel());
 				}
 			});
+            mRightBtn.setVisibility(View.VISIBLE);
         }
         refreshData();
     }
