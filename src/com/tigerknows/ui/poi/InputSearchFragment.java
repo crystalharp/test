@@ -152,8 +152,8 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         }
 
         public void afterTextChanged(Editable s) {
-            mRightBtn.setEnabled(s.toString().trim().length() > 0);
-            Utility.refreshButton(mSphinx, mRightBtn, getString(R.string.confirm), getString(R.string.cancel));
+            Utility.refreshButton(mSphinx, mRightBtn, getString(R.string.confirm), getString(R.string.cancel), 
+                    (s.toString().trim().length() > 0));
         }
     };
 
@@ -202,8 +202,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         
         mSphinx.showSoftInput(mKeywordEdt.getInput());
         mKeywordEdt.getInput().requestFocus();
-        mRightBtn.setEnabled(mKeywordEdt.getText().toString().trim().length() > 0);
-        Utility.refreshButton(mSphinx, mRightBtn, getString(R.string.confirm), getString(R.string.cancel));
+        Utility.refreshButton(mSphinx, mRightBtn, getString(R.string.confirm), getString(R.string.cancel), mKeywordEdt.isEmpty());
         
         mSuggestWordListManager.refresh(mKeywordEdt, mCurHisWordType);
         
