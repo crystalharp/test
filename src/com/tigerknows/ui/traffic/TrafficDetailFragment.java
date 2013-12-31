@@ -13,8 +13,6 @@ import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v4.view.ViewPager;
-import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,7 +43,6 @@ import com.tigerknows.provider.Tigerknows;
 import com.tigerknows.share.ShareAPI;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.ui.common.ResultMapFragment;
-import com.tigerknows.ui.discover.CycleViewPager.CyclePagerAdapter;
 import com.tigerknows.util.Utility;
 import com.tigerknows.util.NavigationSplitJointRule;
 
@@ -61,8 +58,6 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
     
     private StringListAdapter mResultAdapter;
     
-    private CyclePagerAdapter mPlanListAdapter;
-
     private List<Integer> mTypes = new ArrayList<Integer>();
     
     private List<CharSequence> mStrList = new ArrayList<CharSequence>();
@@ -75,17 +70,13 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
     
     private ViewGroup mErrorRecoveryBtn = null;
     
-    private ViewGroup mPageIndicatorView = null;
-    
     private int mType = -1;
 
     private Plan plan = null;
     
     private LinearLayout mBottomButtonsView;
     
-    private View mViewPagerLayout;
-    
-    private ViewPager mViewPager;
+    private View mSummaryLayout;
     
     private int mChildLayoutId = R.layout.traffic_child_traffic;
     
@@ -120,18 +111,9 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         mShareBtn.setOnClickListener(new ResultOnClickListener());
         mErrorRecoveryBtn.setOnClickListener(new ResultOnClickListener());
         
+        mResultLsv.addHeaderView(mSummaryLayout);
         mResultAdapter = new StringListAdapter(mContext);
         mResultLsv.setAdapter(mResultAdapter);
-        
-        List<View> viewList = new ArrayList<View>();
-        View item = mLayoutInflater.inflate(R.layout.traffic_group_traffic, null);
-        viewList.add(item);
-        item = mLayoutInflater.inflate(R.layout.traffic_group_traffic, null);
-        viewList.add(item);
-        item = mLayoutInflater.inflate(R.layout.traffic_group_traffic, null);
-        viewList.add(item);
-        mPlanListAdapter = new CyclePagerAdapter(viewList);
-        mViewPager.setAdapter(mPlanListAdapter);
         
         return mRootView;
     }
@@ -194,9 +176,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         mFavorateBtn = (ViewGroup) mRootView.findViewById(R.id.favorite_btn);
         mShareBtn = (ViewGroup) mRootView.findViewById(R.id.share_btn);
         mBottomButtonsView.findViewById(R.id.nearby_search_btn).setVisibility(View.GONE);
-        mViewPagerLayout = mRootView.findViewById(R.id.traffic_rly);
-        mViewPager = (ViewPager) mRootView.findViewById(R.id.view_pager);
-        mPageIndicatorView = (ViewGroup) mRootView.findViewById(R.id.page_indicator_view);
+        mSummaryLayout = mLayoutInflater.inflate(R.layout.traffic_group_traffic, null);
     }
 
     protected void setListener() {
@@ -214,38 +194,6 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
             }
         });
         
-        mViewPager.setOnPageChangeListener(new OnPageChangeListener() {
-
-            @Override
-            public void onPageScrollStateChanged(int arg0) {
-                
-            }
-
-            @Override
-            public void onPageScrolled(int arg0, float arg1, int arg2) {
-                
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                pageSelected(position);
-            } 
-        });
-    }
-    
-    private void pageSelected(int position) {
-        Utility.pageIndicatorChanged(mSphinx, mPageIndicatorView, position, R.drawable.ic_notice_dot_normal, R.drawable.ic_notice_dot_selected);
-        View view = mPlanListAdapter.viewList.get((position) % mPlanListAdapter.viewList.size());
-        PlanItemRefresher.refresh(mSphinx, mPlanList.get(position), view, true);
-        if (position > 0) {
-            view = mPlanListAdapter.viewList.get((position-1) % mPlanListAdapter.viewList.size());
-            PlanItemRefresher.refresh(mSphinx, mPlanList.get(position-1), view, true);
-        } else if (position + 1 < mPlanListAdapter.count) {
-            view = mPlanListAdapter.viewList.get((position+1) % mPlanListAdapter.viewList.size());
-            PlanItemRefresher.refresh(mSphinx, mPlanList.get(position+1), view, true);
-        }
-        updateResult(mPlanList.get(position));
-        setSelectionFromTop();
     }
     
     @Override
@@ -295,18 +243,9 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         plan = mPlanList.get(mIndex);
         
         updateResult(plan);
+        PlanItemRefresher.refresh(mSphinx, plan, mSummaryLayout, true);
         
         plan.updateHistory(mContext);
-        
-        if (mPlanList.size() > 0) {
-            mViewPagerLayout.setVisibility(View.VISIBLE);
-            Utility.pageIndicatorInit(mSphinx, mPageIndicatorView, mPlanList.size(), mIndex, R.drawable.ic_notice_dot_normal, R.drawable.ic_notice_dot_selected);
-            mPlanListAdapter.count = mPlanList.size();
-            mPlanListAdapter.notifyDataSetChanged();
-            pageSelected(mIndex);
-        } else {
-            mViewPagerLayout.setVisibility(View.GONE);
-        }
         
     }
     

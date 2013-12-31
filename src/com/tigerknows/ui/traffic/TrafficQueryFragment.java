@@ -889,9 +889,9 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
             } else {
                 String[] list = mSphinx.getResources().getStringArray(R.array.traffic_search_option);
                 int[] leftCompoundIconList = new int[3];
-                leftCompoundIconList[0] = R.drawable.ic_share_sina;
-                leftCompoundIconList[1] = R.drawable.ic_share_sina;
-                leftCompoundIconList[2] = R.drawable.ic_share_sina;
+                leftCompoundIconList[0] = R.drawable.ic_search_busline;
+                leftCompoundIconList[1] = R.drawable.ic_search_busstop;
+                leftCompoundIconList[2] = R.drawable.ic_map_tools_subway;
                 final ArrayAdapter<String> adapter = new StringArrayAdapter(mSphinx, list, leftCompoundIconList);
                 
                 View alterListView = mSphinx.getLayoutInflater().inflate(R.layout.alert_listview, null, false);
