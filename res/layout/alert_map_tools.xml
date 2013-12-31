@@ -60,7 +60,7 @@
                     android:textSize="14sp"
                     android:textColor="@color/black_light"
                     android:gravity="center"
-                    android:drawableTop="@drawable/ic_map_toosl_submay"
+                    android:drawableTop="@drawable/ic_map_tools_subway"
                     android:text="@string/subway_map"/>
             </LinearLayout>
                 

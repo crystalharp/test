@@ -28,6 +28,7 @@ import com.tigerknows.Sphinx.TouchMode;
 import com.tigerknows.android.location.Position;
 import com.tigerknows.model.TrafficModel.Plan;
 import com.tigerknows.model.TrafficModel.Plan.Step;
+import com.tigerknows.model.xobject.XMap;
 import com.tigerknows.util.NavigationSplitJointRule;
 
 public class TrafficOverlayHelper {
@@ -110,6 +111,7 @@ public class TrafficOverlayHelper {
 	    	    // 添加起点item. 包括终点图标, 起点文本:"起点"
 	    	    OverlayItem overlayItem = new OverlayItem(steps.get(0).getPositionList().get(0), start, start, 
             			sphinx.getString(R.string.start), rt);
+	    	    overlayItem.setAssociatedObject(new Step(new XMap()));
 	            addTouchEventListenerToOverlayItem(sphinx, mapView, overlayItem);
                 overlayItem.setPreferZoomLevel(DEFAULT_SHOW_STEP_ZOOMLEVEL);
                 overlay.addOverlayItem(overlayItem);
@@ -138,6 +140,7 @@ public class TrafficOverlayHelper {
 	                			strings.get(i).toString(), rt);
 	                }
 	                overlayItem.setPreferZoomLevel(DEFAULT_SHOW_STEP_ZOOMLEVEL);
+	                overlayItem.setAssociatedObject(steps.get(i));
 	                
 	                // 设置每一个item的点击事件
 	                addTouchEventListenerToOverlayItem(sphinx, mapView, overlayItem);
@@ -149,6 +152,7 @@ public class TrafficOverlayHelper {
 	            Position endPos = lastStep.getPositionList().get(lastStep.getPositionList().size()-1);
 	            overlayItem = new OverlayItem(endPos, end, end, 
 	            		sphinx.getString(R.string.traffic_goto_end_station), rt);
+	    	    overlayItem.setAssociatedObject(new Step(new XMap()));
 	            addTouchEventListenerToOverlayItem(sphinx, mapView, overlayItem);
 	            overlayItem.setPreferZoomLevel(DEFAULT_SHOW_STEP_ZOOMLEVEL);
                 overlay.addOverlayItem(overlayItem);

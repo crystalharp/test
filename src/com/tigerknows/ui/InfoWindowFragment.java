@@ -43,6 +43,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -73,6 +74,8 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
     public static final int TYPE_MAP_POI = 8;
 
     public static final int TYPE_PLAN_LIST = 9;
+    
+    public static final int TYPE_STEP = 10;
 
     /**
      * 下面这些ViewGroup用于InfoWindow
@@ -91,6 +94,7 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
     private int mTuangouHeight;
     private int mBottomHeight;
     private int mTrafficPlanHeight;
+    private int mTrafficStepHeight;
     
     private final static String TAG = "InfoWindowFragment";
     
@@ -150,12 +154,12 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
         } else if (id == R.id.traffic_plan_item) {
             TrafficDetailFragment f = mSphinx.getTrafficDetailFragment();
             Plan plan = (Plan) mItemizedOverlay.get(0).getAssociatedObject();
-            if (plan.getType() == Step.TYPE_DRIVE) {
+            if (plan.getType() == Step.TYPE_DRIVE || plan.getType() == Step.TYPE_WALK) {
                 f.setData(f.getTrafficQuery(), 
                         f.getTransferPlanList(),
                         f.getDrivePlanList(), 
                         f.getWalkPlanList(),
-                        Plan.Step.TYPE_DRIVE,
+                        plan.getType(),
                         0);
                 mSphinx.showView(R.id.view_traffic_result_detail);
             }
@@ -203,6 +207,8 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             mType = TYPE_TUANGUO;
         } else if (object instanceof Plan) {
             mType = TYPE_PLAN_LIST;
+        } else if (object instanceof Step) {
+            mType = TYPE_STEP;
         } else {
             mType = TYPE_MESSAGE;
         }
@@ -249,6 +255,10 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             v = view.findViewById(R.id.traffic_plan_item);
             v.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
             mTrafficPlanHeight = v.getMeasuredHeight();
+            v = view.findViewById(R.id.traffic_step_item);
+            v.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+            mTrafficStepHeight = v.getMeasuredHeight();
+            LogWrapper.d(TAG, "step height:" + mTrafficStepHeight);
             
             view = mLayoutInflater.inflate(R.layout.info_window_fragment, this, false);
             setListenerToView(view);
@@ -446,6 +456,21 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
                 view = mCyclePagerAdapter.viewList.get((position+1) % mCyclePagerAdapter.viewList.size());
                 setPlanListToView(view, (Plan) mItemizedOverlay.get(position).getAssociatedObject());
             }
+        } else if (mType == TYPE_STEP) {
+            mHeight = mTrafficStepHeight;
+            mSphinx.setMapViewPaddingBottom(mHeight);
+            
+            View view = (View) mCyclePagerAdapter.viewList.get((position) % mCyclePagerAdapter.viewList.size());
+            setStepToView(view, position);
+            
+            if (position - 1 >= 0) {
+                view = mCyclePagerAdapter.viewList.get((position-1) % mCyclePagerAdapter.viewList.size());
+                setStepToView(view, position);
+            }
+            if (position + 1 < mCyclePagerAdapter.count) {
+                view = mCyclePagerAdapter.viewList.get((position+1) % mCyclePagerAdapter.viewList.size());
+                setStepToView(view, position);
+            }
         }
         mViewPager.getLayoutParams().height = mHeight;
     }
@@ -458,6 +483,7 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             v.findViewById(R.id.tuangou_view).setVisibility(View.GONE);
             v.findViewById(R.id.title_txv).setVisibility(View.GONE);
             v.findViewById(R.id.traffic_plan_item).setVisibility(View.GONE);
+            v.findViewById(R.id.traffic_step_item).setVisibility(View.GONE);
             v.findViewById(R.id.detail_btn).setVisibility(View.VISIBLE);
             v.findViewById(R.id.bottom_view).setVisibility(View.VISIBLE);
             v.findViewById(R.id.message_view).setVisibility(View.VISIBLE);
@@ -469,6 +495,9 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
                 v.findViewById(R.id.tuangou_view).setVisibility(View.VISIBLE);
             } else if (mType == TYPE_PLAN_LIST) {
                 v.findViewById(R.id.traffic_plan_item).setVisibility(View.VISIBLE);
+                v.findViewById(R.id.message_view).setVisibility(View.GONE);
+            } else if (mType == TYPE_STEP) {
+                v.findViewById(R.id.traffic_step_item).setVisibility(View.VISIBLE);
                 v.findViewById(R.id.message_view).setVisibility(View.GONE);
             }
         }
@@ -496,6 +525,13 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
 
         v.findViewById(R.id.detail_btn).setVisibility(View.GONE);
         v.findViewById(R.id.bottom_view).setVisibility(View.GONE);
+    }
+    
+    private void setStepToView(View v, int position) {
+        ImageView img = (ImageView) v.findViewById(R.id.step_icon);
+        TextView txv = (TextView) v.findViewById(R.id.step_txv);
+        img.setBackgroundDrawable(mSphinx.getTrafficDetailFragment().getStepIcon(position));
+        txv.setText(mSphinx.getTrafficDetailFragment().getStepDescription(position));
     }
     
     private void setClickSelectPointToView(View v, OverlayItem overlayItem) {
