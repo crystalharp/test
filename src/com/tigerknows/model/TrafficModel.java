@@ -94,13 +94,19 @@ public class TrafficModel extends XMapData {
         // 0x13    x_string    红绿灯数(驾车类)
         private static final byte FIELD_TRAFFIC_LIGHT_NUM = 0x13;
         // 0x14    x_string    打车费用(驾车类)
-        private static final byte FIELD_TAXI_COST = 0x14;
+        private static final byte FIELD_TAXI_COST_D = 0x14;
+        // 0x17    x_string    预计时间(步行类)
+        private static final byte FIELD_EXPECTED_WALK_TIME = 0x17;
+        // 0x18    x_string    全程距离(步行类)
+        private static final byte FIELD_WALK_DISTANCE_W = 0x18;
+        // 0x19    x_string    打车费用(步行类)
+        private static final byte FIELD_TAXI_COST_W = 0x19;
         // 0x21    x_string    预计时间(公交类)
         private static final byte FIELD_EXPECTED_BUS_TIME = 0x21;
         // 0x22    x_string    全程长度(公交类)
         private static final byte FIELD_BUS_DISTANCE = 0x22;
         // 0x23    x_string    总步行距离(公交类)
-        private static final byte FIELD_WALK_DISTANCE = 0x23;
+        private static final byte FIELD_WALK_DISTANCE_T = 0x23;
         // 0x24    x_string    公交站数(公交类) 
         private static final byte FIELD_BUSSTOP_NUM = 0x24;
         // 0x30    x_array<x_map>  array<方案标签>(公交类)
@@ -795,13 +801,19 @@ public class TrafficModel extends XMapData {
         
         private String trafficLightNum;
         
-        private String taxiCost;
+        private String taxiCost_drive;
+        
+        private String expectedWalkTime;
+        
+        private String walkDistance_walk;
+        
+        private String taxiCost_walk;
         
         private String expectedBusTime;
         
         private String busDistance;
         
-        private String walkDistance;
+        private String walkDistance_transfer;
         
         private String busstopNum;
         
@@ -878,15 +890,21 @@ public class TrafficModel extends XMapData {
         
         public String getTrafficLightNum() {  return trafficLightNum;}
         
-        public String getTaxiCost() {  return taxiCost;}
+        public String getTaxiCost4Drive() {  return taxiCost_drive;}
         
         public String getExpectedBusTime() {  return expectedBusTime;}
         
         public String getBusDistance() {  return busDistance;}
         
-        public String getWalkDistance() {  return walkDistance;}
+        public String getWalkDistance4Transfer() {  return walkDistance_transfer;}
         
         public String getBusstopNum() {  return busstopNum;}
+        
+        public String getExpectedWalkTime() { return expectedWalkTime;}
+        
+        public String getWalkDistance4Walk() { return walkDistance_walk;}
+        
+        public String getTaxiCost4Walk() { return taxiCost_walk;}
         
         /**
          * 获取交通方案路线所经过的所有经纬坐标点
@@ -918,11 +936,14 @@ public class TrafficModel extends XMapData {
             expectedDriveTime = getStringFromData(FIELD_EXPECTED_DRIVE_TIME, reset ? null : expectedDriveTime);
             driveDistance = getStringFromData(FIELD_DRIVE_DISTANCE, reset ? null : driveDistance);
             trafficLightNum = getStringFromData(FIELD_TRAFFIC_LIGHT_NUM, reset ? null : trafficLightNum);
-            taxiCost = getStringFromData(FIELD_TAXI_COST, reset ? null : taxiCost);
+            taxiCost_drive = getStringFromData(FIELD_TAXI_COST_D, reset ? null : taxiCost_drive);
             expectedBusTime = getStringFromData(FIELD_EXPECTED_BUS_TIME, reset ? null : expectedBusTime);
             busDistance = getStringFromData(FIELD_BUS_DISTANCE, reset ? null : busDistance);
-            walkDistance = getStringFromData(FIELD_WALK_DISTANCE, reset ? null : walkDistance);
+            walkDistance_transfer = getStringFromData(FIELD_WALK_DISTANCE_T, reset ? null : walkDistance_transfer);
             busstopNum = getStringFromData(FIELD_BUSSTOP_NUM, reset ? null : busstopNum);
+            expectedWalkTime = getStringFromData(FIELD_EXPECTED_WALK_TIME, reset ? null : expectedWalkTime);
+            walkDistance_walk = getStringFromData(FIELD_WALK_DISTANCE_W, reset ? null : walkDistance_walk);
+            taxiCost_walk = getStringFromData(FIELD_TAXI_COST_W, reset ? null : taxiCost_walk);
 
             if (stepList != null) {
                 for (int i = 0, size = stepList.size(); i < size; i++) {
