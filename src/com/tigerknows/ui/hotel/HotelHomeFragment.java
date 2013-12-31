@@ -170,9 +170,9 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
             mRightBtn.setText(R.string.tel_reserve);
             mRightBtn.setTag(hotelVendor.getReserveTel());
             mRightBtn.setOnClickListener(this);
+            mRightBtn.setVisibility(View.VISIBLE);
         } else {
-            mRightBtn.setText(null);
-            mRightBtn.setOnClickListener(null);
+            mRightBtn.setVisibility(View.GONE);
         }
     }
     

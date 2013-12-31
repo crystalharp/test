@@ -155,7 +155,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         
-        mRootView = mLayoutInflater.inflate(R.layout.poi_nearby_search, container, false);
+        mRootView = mLayoutInflater.inflate(R.layout.hotel_pick_location, container, false);
         
         findViews();
         setListener();
@@ -200,7 +200,6 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
     }
 
     protected void findViews() {
-        mRootView.findViewById(R.id.location_txv).setVisibility(View.GONE);
         mViewPager = (ViewPager) mRootView.findViewById(R.id.view_pager);
         
         mFilterListView = new FilterListView(mSphinx);

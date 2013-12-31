@@ -261,6 +261,10 @@ public final class DataQuery extends BaseQuery {
     public POI getPOI() {
         return poi;
     }
+    
+    public void setPOI(POI poi) {
+        this.poi = poi;
+    }
 
     public List<Filter> getFilterList() {
         return filterList;
