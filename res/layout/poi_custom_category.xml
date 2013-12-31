@@ -10,19 +10,19 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         >
-	    <include 
+	    <include android:id="@+id/custom_00_btn"
 	        layout="@layout/poi_custom_category_item"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
 	        android:layout_weight="1"
 	        />        
-	    <include 
+	    <include android:id="@+id/custom_01_btn"
 	        layout="@layout/poi_custom_category_item"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
 	        android:layout_weight="1"
 	        />  
-	    <include 
+	    <include android:id="@+id/custom_02_btn"
 	        layout="@layout/poi_custom_category_item"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
@@ -34,19 +34,19 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         >
-	    <include 
+	    <include android:id="@+id/custom_03_btn"
 	        layout="@layout/poi_custom_category_item"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
 	        android:layout_weight="1"
 	        />        
-	    <include 
+	    <include android:id="@+id/custom_04_btn"
 	        layout="@layout/poi_custom_category_item"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
 	        android:layout_weight="1"
 	        />  
-	    <include 
+	    <include android:id="@+id/custom_05_btn"
 	        layout="@layout/poi_custom_category_item"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
@@ -58,19 +58,67 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         >
-	    <include 
+	    <include android:id="@+id/custom_06_btn"
 	        layout="@layout/poi_custom_category_item"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
 	        android:layout_weight="1"
 	        />        
-	    <include 
+	    <include android:id="@+id/custom_07_btn"
 	        layout="@layout/poi_custom_category_item"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
 	        android:layout_weight="1"
 	        />  
-	    <include 
+	    <include android:id="@+id/custom_08_btn"
+	        layout="@layout/poi_custom_category_item"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1"
+	        />  	        
+	</LinearLayout>
+    <LinearLayout 
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+	    <include android:id="@+id/custom_09_btn"
+	        layout="@layout/poi_custom_category_item"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1"
+	        />        
+	    <include android:id="@+id/custom_10_btn"
+	        layout="@layout/poi_custom_category_item"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1"
+	        />  
+	    <include android:id="@+id/custom_11_btn"
+	        layout="@layout/poi_custom_category_item"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1"
+	        />  	        
+	</LinearLayout>
+	<LinearLayout 
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+	    <include android:id="@+id/custom_12_btn"
+	        layout="@layout/poi_custom_category_item"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1"
+	        />        
+	    <include android:id="@+id/custom_13_btn"
+	        layout="@layout/poi_custom_category_item"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1"
+	        />  
+	    <include android:id="@+id/custom_14_btn"
 	        layout="@layout/poi_custom_category_item"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"

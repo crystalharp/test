@@ -24,6 +24,7 @@
     <item type="id" name="view_poi_result" />
     <item type="id" name="view_poi_detail" />
     <item type="id" name="view_poi_nearby_search" />
+    <item type="id" name="view_poi_custom_category" />
     <item type="id" name="activity_poi_report_error" />
     <item type="id" name="activity_poi_comment_list" />
     <item type="id" name="activity_poi_edit_comment" />

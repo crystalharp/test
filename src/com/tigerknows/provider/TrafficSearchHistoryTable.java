@@ -231,6 +231,7 @@ public class TrafficSearchHistoryTable {
         public POI start;
         public POI end;
         long id;
+        final static String arrow = "\u2192";
         
         public SearchHistory(POI s, POI e) {
             start = s;
@@ -238,7 +239,7 @@ public class TrafficSearchHistoryTable {
         }
         
         public String genDescription() {
-            return start.getName() + "->" + end.getName();
+            return start.getName() + arrow + end.getName();
         }
         
         public boolean equals(Object o) {

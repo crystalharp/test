@@ -158,6 +158,7 @@ import com.tigerknows.ui.more.SettingActivity;
 import com.tigerknows.ui.poi.CommentListActivity;
 import com.tigerknows.ui.poi.CouponDetailFragment;
 import com.tigerknows.ui.poi.CouponListFragment;
+import com.tigerknows.ui.poi.CustomCategoryFragment;
 import com.tigerknows.ui.poi.DishActivity;
 import com.tigerknows.ui.poi.EditCommentActivity;
 import com.tigerknows.ui.poi.POIReportErrorActivity;
@@ -2563,6 +2564,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     private POIResultFragment mPOIResultFragment;
     private InputSearchFragment mInputSearchFragment;
     private NearbySearchFragment mPOINearbyFragment;
+    private CustomCategoryFragment mCustomCategoryFragment;
     private TrafficDetailFragment mTrafficDetailFragment = null;
     private TrafficResultFragment mTrafficResultFragment = null;
     private TrafficCommonPlaceFragment mTrafficCommonAddressFragment = null;
@@ -2646,6 +2648,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             case R.id.view_poi_nearby_search:
                 baseFragment = getPOINearbyFragment();
                 break;
+                
+            case R.id.view_poi_custom_category:
+            	baseFragment = getCustomCategoryFragment();
+            	break;
                 
             case R.id.view_traffic_result_transfer:
                 baseFragment = getTrafficResultFragment();
@@ -2940,6 +2946,18 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             }
             return mPOINearbyFragment;
         }
+    }
+    
+    public CustomCategoryFragment getCustomCategoryFragment() {
+        synchronized (mUILock) {
+            if (mCustomCategoryFragment == null) {
+            	CustomCategoryFragment customCategoryFragment = new CustomCategoryFragment(Sphinx.this);
+            	customCategoryFragment.setId(R.id.view_poi_custom_category);
+            	customCategoryFragment.onCreate(null);
+                mCustomCategoryFragment = customCategoryFragment;
+            }
+            return mCustomCategoryFragment;
+        }    	
     }
 
     public TrafficResultFragment getTrafficResultFragment() {

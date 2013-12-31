@@ -11,7 +11,7 @@
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
 	        android:padding="12dp"
-	        android:background="@color/traffic_input_background_gray">
+	        android:background="@color/white">
 	        
 	        <Button android:id="@+id/traffic_switch_btn"
 	            android:layout_alignParentRight="true"
@@ -39,7 +39,7 @@
 	                <ImageView
 	                    android:layout_width="wrap_content"
 	                    android:layout_height="wrap_content"
-	                    android:padding="4dp"
+	                    android:padding="2dp"
 	                    android:src="@drawable/ic_start_to_end" />
 	            
 	                <ImageView
@@ -70,6 +70,8 @@
 			            android:layout_width="fill_parent"
 			            android:layout_height="40dp"
 			            android:textSize="16sp"
+			            android:paddingLeft="8dp"
+			            android:gravity="left|center_vertical"
 			            android:focusable="true" />
         		</LinearLayout>
 
@@ -91,6 +93,8 @@
 			            android:background="@color/transparent"
 			            android:layout_width="fill_parent"
 			            android:textSize="16sp"
+			            android:paddingLeft="8dp"
+			            android:gravity="left|center_vertical"
 			            android:layout_height="40dp" />
         		</LinearLayout>
 	        </LinearLayout>
@@ -98,6 +102,12 @@
 
 	    </RelativeLayout>
 
+        <ImageView
+               android:layout_width="fill_parent"
+               android:layout_height="wrap_content"
+               android:scaleType="fitXY"
+               android:src="@drawable/ic_line_tile" />
+        
 	    <RelativeLayout android:id="@+id/busline_rll"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"

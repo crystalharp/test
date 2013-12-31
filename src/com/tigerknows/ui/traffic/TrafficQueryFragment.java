@@ -114,7 +114,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	
 	LinearLayout mCommonPlaceLst;
 	
-	LinearLayout mQueryHistory;
+	View mQueryHistory;
 	
 	LinearLayout mQueryHistoryLst;
 	
@@ -230,7 +230,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
     	mStart = new InputBtn(startBtn);
     	mEnd = new InputBtn(endBtn);
     	
-    	mQueryHistory = (LinearLayout) mRootView.findViewById(R.id.query_history_title);
+    	mQueryHistory = mRootView.findViewById(R.id.query_history_title);
     	mQueryHistoryLst = (LinearLayout)mRootView.findViewById(R.id.query_history_lst);
 //    	mAddCommonPlace = (LinearLayout)mRootView.findViewById(R.id.add_common_place);
     	mCommonPlaceLst = (LinearLayout)mRootView.findViewById(R.id.common_place_lsv);
@@ -304,7 +304,6 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 
 	        @Override
 	        public View getView(Object data, View child, int pos) {
-	            //FIXME:进行严格检查
 	            TextView aliasTxv = (TextView) child.findViewById(R.id.alias_txv);
 	            TextView nameTxv = (TextView) child.findViewById(R.id.name_txv);
 	            child.setTag(data);
@@ -402,7 +401,6 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
     }
 	
 	POI getMylocationPOI() {
-	    //TODO:有定位信息则返回
 	    POI p = new POI();
 	    p.setName(MY_LOCATION);
 	    return p;
@@ -617,7 +615,6 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
         return queryType;
     }
 	    
-    //TODO:把这个函数也重写，mSettedRadioBtn不要这么用
     public void setQueryType(int queryType) {
         
         mSettedRadioBtn = R.id.traffic_transfer_rbt;
@@ -881,7 +878,6 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
     public void onClick(View v) {
         switch (v.getId()) {
         case R.id.right_btn:
-            // TODO:弹出三个按钮或者变成确定按钮
             if (!mStart.textEmpty() && !mEnd.textEmpty()) {
                 query();
             } else {
@@ -900,7 +896,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
                 final Dialog dialog = Utility.getChoiceDialog(mSphinx, alterListView, R.style.AlterChoiceDialog);
                 
                 TextView titleTxv = (TextView)alterListView.findViewById(R.id.title_txv);
-                titleTxv.setText(R.string.share);
+                titleTxv.setText(R.string.more);
                 
                 Button button = (Button)alterListView.findViewById(R.id.confirm_btn);
                 button.setVisibility(View.GONE);

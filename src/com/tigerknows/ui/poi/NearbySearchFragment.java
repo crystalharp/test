@@ -82,7 +82,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     private CategoryProperty[] mCategoryList;
     
     private static final int NUM_OF_CATGEGORY = 10;
-    private static final int NUM_OF_HOT = 15;
+    public static final int NUM_OF_HOT = 15;
     private static final int NUM_OF_HOT_LLY = 4;
     
     private static final int FOOD = 0;
@@ -228,7 +228,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     			mCategoryBtns[i][j].setOnClickListener(this);
     		}
     	}
-    	for(int i = 0; i < NUM_OF_HOT; i++){
+    	for(int i = 0; i < NUM_OF_HOT + 1; i++){
     		mHotBtnViews[i].setOnClickListener(this);
     	}
     }
@@ -413,6 +413,9 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
             mFilterListView.setData(mFilterList, FilterResponse.FIELD_FILTER_CATEGORY_INDEX, this, false, false, mActionTag);
             mFilterListView.setVisibility(View.VISIBLE);
             break;
+    	case CategoryProperty.OP_CUSTOM:
+    		mSphinx.showView(R.id.view_poi_custom_category);
+    		break;
     	default:
     		break;
     	}    	
