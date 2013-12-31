@@ -202,7 +202,7 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
         initQZone();
         
         mTitleBtn.setText(mStatus == STATUS_NEW ? R.string.publish_comment : R.string.modify_comment);
-        mRightBtn.setBackgroundResource(R.drawable.btn_submit_comment);
+        mRightBtn.setText(R.string.submit);
         Comment comment = mPOI.getMyComment();
         if (Comment.isAuthorMe(comment) <= 0) {
             comment = new Comment();
@@ -416,6 +416,7 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
         mComment.setClientUid(Globals.g_ClientUID);
     }
 
+    @Override
 	protected void findViews() {
         super.findViews();
         mGradeRtb = (RatingBar) findViewById(R.id.grade_rtb);
@@ -454,6 +455,7 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
         mBuyAvgEdt = (EditText) mExpandBuyView.findViewById(R.id.avg_edt);
     }
 
+    @Override
     protected void setListener() {
         super.setListener();
         mLeftBtn.setOnClickListener(this);

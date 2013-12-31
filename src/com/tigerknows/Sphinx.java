@@ -3429,7 +3429,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     
                 if (mRequestLocation) {
                     mRequestLocation = false;
-                    showTip(getString(R.string.location_success, Utility.formatMeterString((int)myLocation.getAccuracy())), 3000);
                     if (uiStackPeek() == R.id.view_home) {
                         showInfoWindow(R.id.view_home, mMyLocation);
                     }
@@ -3463,7 +3462,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         } else {
             try {
                 if (mMyLocation.mode == MyLocation.MODE_NONE || mMyLocation.mode == MyLocation.MODE_NORMAL) {
-                    showTip(getString(R.string.location_success, Utility.formatMeterString((int)position.getAccuracy())), 3000);
                     updateLoactionButtonState(MyLocation.MODE_NAVIGATION);
                     int zoomLevel = (int)mMapView.getZoomLevel();
                     if(zoomLevel < TKConfig.ZOOM_LEVEL_LOCATION) {
@@ -3698,7 +3696,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     }
     
     public POI getCenterPOI() {
-        POI poi = getPOI(mMapView.getCenterPosition(), getString(R.string.map_center));
+        POI poi = new POI();
+        poi.setPosition(mMapView.getCenterPosition());
+        poi.setName(getString(R.string.map_center));
         poi.setSourceType(POI.SOURCE_TYPE_MAP_CENTER);
         return poi;
     }

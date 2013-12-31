@@ -171,6 +171,9 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         }
         mRightBtn.setVisibility(View.GONE);
         String name = mPOI.getName();
+        if (mPOI.getSourceType() == POI.SOURCE_TYPE_MY_LOCATION) {
+            name = getString(R.string.my_location);
+        }
         String title = getString(R.string.at_where_search, name);
         SpannableStringBuilder style = new SpannableStringBuilder(title);
         int focusedColor = mSphinx.getResources().getColor(R.color.black_dark);

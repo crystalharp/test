@@ -615,22 +615,20 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         // 城市及结果数量列表数据
         final List<CityIdAndResultTotal> cityIdAndResultTotalList = poiResponse.getCityIdAndResultTotalList();
         if (cityIdAndResultTotalList != null && cityIdAndResultTotalList.size() > 0) {
-            // 若只存在一个城市及结果数量时，设置地图中心及比例尺，以地图中心位置发起搜索
+            // 若只存在一个城市及结果数量时，以城市中心位置发起搜索，不移动地图
             if (cityIdAndResultTotalList.size() == 1) {
-                try {
-                    int cityId = (int) cityIdAndResultTotalList.get(0).getCityId();
-                    CityInfo cityInfo = MapEngine.getCityInfo(cityId);
-                    mapView.centerOnPosition(cityInfo.getPosition());
-                    DataQuery newDataQuery = new DataQuery(dataQuery);
-                    newDataQuery.setCityId(cityId);
-                    sphinx.queryStart(newDataQuery);
-                } catch (APIException e) {
-                    e.printStackTrace();
-                }
+                int cityId = (int) cityIdAndResultTotalList.get(0).getCityId();
+                CityInfo cityInfo = MapEngine.getCityInfo(cityId);
+                DataQuery newDataQuery = new DataQuery(dataQuery);
+                Position position = cityInfo.getPosition();
+                newDataQuery.addParameter(BaseQuery.SERVER_PARAMETER_CENTER_LONGITUDE, String.valueOf(position.getLon()));
+                newDataQuery.addParameter(BaseQuery.SERVER_PARAMETER_CENTER_LATITUDE, String.valueOf(position.getLat()));
+                newDataQuery.setCityId(cityId);
+                sphinx.queryStart(newDataQuery);
                 result = POIResponse.FIELD_CITY_ID_AND_RESULT_TOTAL;
                 return result;
                 
-            // 若存在多个城市及结果时，提示城市列表，用户选择后设置地图中心及比例尺，设置地图中心及比例尺，以地图中心位置发起搜索
+            // 若存在多个城市及结果时，提示城市列表，用户选择后以城市中心位置发起搜索，不移动地图
             } else {
                 final List<CityInfo> cityList = new ArrayList<CityInfo>();
                 List<String> cityNameList = new ArrayList<String>();
@@ -652,22 +650,20 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View arg1, int position, long arg3) {
-                        try {
-                            mapView.centerOnPosition(cityList.get(position).getPosition());
-                            CityIdAndResultTotal cityIdAndResultTotal = cityIdAndResultTotalList.get(position);
-                            DataQuery newDataQuery = new DataQuery(dataQuery);
-                            newDataQuery.setCityId((int) cityIdAndResultTotal.getCityId());
-                            sphinx.queryStart(newDataQuery);
-                        } catch (APIException e) {
-                            e.printStackTrace();
-                        }
+                        CityIdAndResultTotal cityIdAndResultTotal = cityIdAndResultTotalList.get(position);
+                        DataQuery newDataQuery = new DataQuery(dataQuery);
+                        Position pos = cityList.get(position).getPosition();
+                        newDataQuery.addParameter(BaseQuery.SERVER_PARAMETER_CENTER_LONGITUDE, String.valueOf(pos.getLon()));
+                        newDataQuery.addParameter(BaseQuery.SERVER_PARAMETER_CENTER_LATITUDE, String.valueOf(pos.getLat()));
+                        newDataQuery.setCityId((int) cityIdAndResultTotal.getCityId());
+                        sphinx.queryStart(newDataQuery);
                     }
                 });
                 
                 Dialog dialog = Utility.getChoiceDialog(sphinx, alterListView, R.style.AlterChoiceDialog);
                 
                 TextView titleTxv = (TextView)alterListView.findViewById(R.id.title_txv);
-                titleTxv.setText(R.string.app_name);
+                titleTxv.setText(R.string.cityid_and_result_total_list);
                 
                 Button button = (Button)alterListView.findViewById(R.id.confirm_btn);
                 button.setVisibility(View.GONE);
@@ -685,18 +681,6 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
             List<POI> poiList = bPOIList.getList();
             if (poiList != null
                     && poiList.size() > 0) {
-                
-                // 将地图中心移动到POI结果列表中第一个POI的位置
-                POI poi = poiList.get(0);
-                Position position = poi.getPosition();
-                int cityId = MapEngine.getCityId(position);
-                if (cityId != Globals.getCurrentCityInfo(sphinx).getId()) {
-                    try {
-                        mapView.centerOnPosition(position);
-                    } catch (APIException e) {
-                        e.printStackTrace();
-                    }
-                }
                 
                 POIResultFragment poiResultFragment = sphinx.getPOIResultFragment();
                 poiResultFragment.setData(dataQuery);

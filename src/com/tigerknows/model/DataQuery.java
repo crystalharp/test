@@ -510,7 +510,8 @@ public final class DataQuery extends BaseQuery {
 
                 // 定位，地图中心，基准位置参数已经拷贝过来
                 
-            } else if (dataType.equals(DATA_TYPE_PULL_MESSAGE) == false){
+            } else if (dataType.equals(DATA_TYPE_PULL_MESSAGE) == false) {
+                // 更新定位信息
                 delParameter(SERVER_PARAMETER_LOCATION_CITY);
                 delParameter(SERVER_PARAMETER_LOCATION_LONGITUDE);
                 delParameter(SERVER_PARAMETER_LOCATION_LATITUDE);
@@ -519,7 +520,9 @@ public final class DataQuery extends BaseQuery {
                 CityInfo cityInfo = Globals.getCurrentCityInfo(context);
                 Position position = cityInfo.getPosition();
                 if (position != null &&
-                        cityInfo.order == 0) {
+                        cityInfo.order == 0 &&
+                        (hasParameter(SERVER_PARAMETER_CENTER_LONGITUDE) == false ||
+                            hasParameter(SERVER_PARAMETER_CENTER_LATITUDE) == false)) {
                     requestParameters.add(SERVER_PARAMETER_CENTER_LONGITUDE, String.valueOf(position.getLon()));
                     requestParameters.add(SERVER_PARAMETER_CENTER_LATITUDE, String.valueOf(position.getLat()));
                 }

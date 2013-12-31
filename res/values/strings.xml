@@ -99,7 +99,7 @@
     <string name="correct_to_how">精确到%1$s</string> 
     <string name="are_your_change_to_location_city">定位显示您在%1$s，您是否需要</string> 
     <string name="are_your_change_to_map_center_city">你的地图已经切换到%1$s，是否切换？</string> 
-    <string name="current_location">当前位置：%1$s附近</string> 
+    <string name="current_location">我的位置：%1$s附近</string> 
     <string name="find_poi">输入地点、商户名</string> 
     <string name="no_comment">目前暂无评论</string> 
     
@@ -276,8 +276,8 @@
     <string name="i_know">我知道了</string>
 
     <string name="are_you_sure_download_this_software">确定下载此软件？</string>
-    <string name="my_location">当前位置</string>
-    <string name="my_location_with_accuracy">当前位置（精确到%1$s）</string>
+    <string name="my_location">我的位置</string>
+    <string name="my_location_with_accuracy">我的位置（精确到%1$s）</string>
     <string name="pop_categories">热门搜索</string>
     <string name="pop_location">热门地点</string>
     <string name="search_location_me_failure_and_select">暂时无法获取当前位置，请选择具体位置或在地图上指定位置！</string>
@@ -322,7 +322,6 @@
     <string name="do_not_show_this_message">以后不再提醒</string>
     <string name="location_waiting">正在等待定位</string>
     <string name="location_failed">暂时无法获得你的位置，正在重试</string>
-    <string name="location_success">定位精确到%1$s</string>
     <string name="mapview_start_click">点击即可选择该点</string>
     
     <!-- \u2192为一个箭头符号，这个用于交通方案的路线换乘表示。328路 \u2192 239路 -->
@@ -1358,4 +1357,5 @@
     <string name="transfer_map">公交地图</string>
     <string name="show_zoom_button">显示放大缩小按钮</string>
     <string name="cate">美食</string>
+    <string name="cityid_and_result_total_list">在以下城市发现结果，请选择</string>
 </resources>

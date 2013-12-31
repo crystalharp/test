@@ -86,7 +86,7 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
     private ItemizedOverlay mItemizedOverlay;
     private int mOwerFragmentId;
     private int mType;
-    private int mPostion;
+    private int mPosition;
 
     private int mTitleHeight;
     private int mPOIHeight;
@@ -179,7 +179,7 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             overlayItem.isFoucsed = true;
         }
 
-        mPostion = itemizedOverlay.getPositionByFocused();
+        mPosition = itemizedOverlay.getPositionByFocused();
         
         Object object = overlayItem.getAssociatedObject();
         
@@ -221,7 +221,7 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
         mCyclePagerAdapter.notifyDataSetChanged();
         mCycleOnPageChangeListener.count = mCyclePagerAdapter.count;
         layoutInfoWindowView();
-        refreshViews(mPostion);
+        refreshViews(mPosition);
 
     }
     
@@ -296,18 +296,18 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
     @Override
     public void refreshViews(int position) {
         MapView mapView = mSphinx.getMapView();
-        if (position < mPostion) {
+        if (position < mPosition) {
             mActionLog.addAction(ActionLog.MapStepUp);
             mItemizedOverlay.switchItem(false);
             ItemizedOverlayHelper.centerShowCurrentOverlayFocusedItem(mSphinx);
             mapView.showOverlay(ItemizedOverlay.MY_LOCATION_OVERLAY, false);
-        } else if (position > mPostion) {
+        } else if (position > mPosition) {
             mActionLog.addAction(ActionLog.MapStepDown);
             mItemizedOverlay.switchItem(true);
             ItemizedOverlayHelper.centerShowCurrentOverlayFocusedItem(mSphinx);
             mapView.showOverlay(ItemizedOverlay.MY_LOCATION_OVERLAY, false);
         }
-        mPostion = position;
+        mPosition = position;
         mHeight = mTitleHeight + mBottomHeight;
         if (mType == TYPE_POI) {
             
@@ -356,21 +356,51 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
                 view = mCyclePagerAdapter.viewList.get((position+1) % mCyclePagerAdapter.viewList.size());
                 setMessageToView(view, mItemizedOverlay.get(position).getMessage(), null, false);
             }
-        } else if (mType == TYPE_LONG_CLICKED_SELECT_POINT
-                || mType == TYPE_MAP_POI) {
+        } else if (mType == TYPE_LONG_CLICKED_SELECT_POINT) {
 
             mSphinx.setMapViewPaddingBottom(mHeight);
             
             View view = (View) mCyclePagerAdapter.viewList.get((position) % mCyclePagerAdapter.viewList.size());
-            setMessageToView(view, ((POI) mItemizedOverlay.get(position).getAssociatedObject()).getName(), getString(R.string.detail), true);
+            setMessageToView(view, ((POI) mItemizedOverlay.get(position).getAssociatedObject()).getName(), null, true);
             
             if (position - 1 >= 0) {
                 view = mCyclePagerAdapter.viewList.get((position-1) % mCyclePagerAdapter.viewList.size());
-                setMessageToView(view, ((POI) mItemizedOverlay.get(position).getAssociatedObject()).getName(), getString(R.string.detail), true);
+                setMessageToView(view, ((POI) mItemizedOverlay.get(position).getAssociatedObject()).getName(), null, true);
             }
             if (position + 1 < mCyclePagerAdapter.count) {
                 view = mCyclePagerAdapter.viewList.get((position+1) % mCyclePagerAdapter.viewList.size());
-                setMessageToView(view, ((POI) mItemizedOverlay.get(position).getAssociatedObject()).getName(), getString(R.string.detail), true);
+                setMessageToView(view, ((POI) mItemizedOverlay.get(position).getAssociatedObject()).getName(), null, true);
+            }
+        } else if (mType == TYPE_MAP_POI) {
+
+            mSphinx.setMapViewPaddingBottom(mHeight);
+            
+            View view = (View) mCyclePagerAdapter.viewList.get((position) % mCyclePagerAdapter.viewList.size());
+            POI poi = (POI) mItemizedOverlay.get(position).getAssociatedObject();
+            String name = poi.getName();
+            setMessageToView(view, poi.getName(), poi.getUUID() != null ? getString(R.string.detail) : null, true);
+            if (poi.getFrom() == POI.FROM_LOCAL && name != null) {
+                DataQuery dataQuery = new DataQuery(mSphinx);
+                dataQuery.setup(getId(), getId(), null, false, false, poi);
+                dataQuery.addParameter(BaseQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_GEOCODER);
+                dataQuery.addParameter(BaseQuery.SERVER_PARAMETER_NEED_FIELD, POI.NEED_FIELD);
+                dataQuery.addParameter(DataQuery.SERVER_PARAMETER_KEYWORD, name);
+                Position pos = poi.getPosition();
+                dataQuery.addParameter(BaseQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(pos.getLon()));
+                dataQuery.addParameter(BaseQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(pos.getLat()));
+                dataQuery.setCityId(MapEngine.getCityId(poi.getPosition()));
+                mSphinx.queryStart(dataQuery);
+            }
+            
+            if (position - 1 >= 0) {
+                view = mCyclePagerAdapter.viewList.get((position-1) % mCyclePagerAdapter.viewList.size());
+                poi = (POI) mItemizedOverlay.get(position-1).getAssociatedObject();
+                setMessageToView(view, poi.getName(), poi.getUUID() != null ? getString(R.string.detail) : null, true);
+            }
+            if (position + 1 < mCyclePagerAdapter.count) {
+                view = mCyclePagerAdapter.viewList.get((position+1) % mCyclePagerAdapter.viewList.size());
+                poi = (POI) mItemizedOverlay.get(position+1).getAssociatedObject();
+                setMessageToView(view, poi.getName(), poi.getUUID() != null ? getString(R.string.detail) : null, true);
             }
         } else if (mType == TYPE_HOTEL) {
 
@@ -538,7 +568,13 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
         } else {
             priceTxv.setText("");
         }
-        detaileBtn.setText(R.string.detail);
+        
+        if (poi.getUUID() != null) {
+            detaileBtn.setText(R.string.detail);
+            detaileBtn.setVisibility(View.VISIBLE);
+        } else {
+            detaileBtn.setVisibility(View.GONE);
+        }
     }
     
     private void setPlanListToView(View v, Plan plan) {
@@ -571,7 +607,7 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
         titleTxv.setVisibility(View.VISIBLE);
         titleTxv.setText(getString(R.string.my_location_with_accuracy, Utility.formatMeterString((int)poi.getPosition().getAccuracy())));
         
-        setMessageToView(v, poi.getName(), getString(R.string.detail), true);
+        setMessageToView(v, poi.getName(), null, true);
     }
     
     private void setMessageToView(View v, String name, String detailBtnText, boolean showBottomView) {
@@ -640,10 +676,6 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
     }
     
     private void infoWindowClicked() {
-        infoWindowClicked(true);
-    }
-    
-    private void infoWindowClicked(boolean query) {
         mActionLog.addAction(ActionLog.MapInfoWindowBody);
         
         if (mItemizedOverlay == null) {
@@ -674,27 +706,12 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             mSphinx.getPOIDetailFragment().setData(poi);
         } else if(mType == TYPE_MAP_POI) {
             POI poi = (POI) overlayItem.getAssociatedObject();
-            
-            String name = poi.getName();
-            if (poi.getFrom() == POI.FROM_LOCAL && name != null && query) {
-                DataQuery dataQuery = new DataQuery(mSphinx);
-                dataQuery.setup(getId(), getId(), getString(R.string.doing_and_wait), false, false, poi);
-                dataQuery.addParameter(BaseQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_GEOCODER);
-                dataQuery.addParameter(BaseQuery.SERVER_PARAMETER_NEED_FIELD, POI.NEED_FIELD);
-                dataQuery.addParameter(DataQuery.SERVER_PARAMETER_KEYWORD, name);
-                Position position = poi.getPosition();
-                dataQuery.addParameter(BaseQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
-                dataQuery.addParameter(BaseQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
-                dataQuery.setCityId(MapEngine.getCityId(poi.getPosition()));
-                mSphinx.queryStart(dataQuery);
+            if (mSphinx.uiStackContains(R.id.view_poi_detail)) {
+                mSphinx.dismissView(R.id.view_result_map);
             } else {
-                if (mSphinx.uiStackContains(R.id.view_poi_detail)) {
-                    mSphinx.dismissView(R.id.view_result_map);
-                } else {
-                    mSphinx.showView(R.id.view_poi_detail);
-                }
-                mSphinx.getPOIDetailFragment().setData(poi);
+                mSphinx.showView(R.id.view_poi_detail);
             }
+            mSphinx.getPOIDetailFragment().setData(poi);
         } else if (overlayItem != null) {
             if (overlayName.equals(ItemizedOverlay.POI_OVERLAY)) {
                 Object object = overlayItem.getAssociatedObject();
@@ -806,6 +823,7 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
                             poi.init(list.get(0).getData(), true);
                             poi.setPosition(position);
                             poi.setFrom(POI.FROM_ONLINE);
+                            refreshViews(mPosition);
                         } catch (APIException e) {
                             e.printStackTrace();
                         }
@@ -813,7 +831,5 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
                 }
             }
         }
-        
-        infoWindowClicked(false);
     }
 }

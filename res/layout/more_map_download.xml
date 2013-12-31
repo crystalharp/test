@@ -22,7 +22,7 @@
 	        android:drawableLeft="@drawable/ic_add_city"
 	        android:gravity="center_vertical"
 	        android:text="@string/city_list"
-	        android:textColor="@color/black_dark"
+	        android:textColor="#dbdbdc"
 	        android:textSize="16sp" />
     </LinearLayout>
     <RelativeLayout
