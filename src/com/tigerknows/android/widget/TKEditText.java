@@ -229,6 +229,10 @@ public class TKEditText extends LinearLayout implements OnClickListener {
         return mInputEdt.getText();
     }
     
+    public final boolean isEmpty() {
+        return getText().toString().trim().length() > 0;
+    }
+    
     public void setOnTouchListener(OnTouchListener onTouchListener) {
         mInputEdt.setOnTouchListener(onTouchListener);
     }

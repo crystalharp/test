@@ -359,12 +359,15 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
         updateCommonPlace();
         if (!mStart.textEmpty() 
                 && !mEnd.textEmpty()) {
-            mRightBtn.setBackgroundResource(R.drawable.btn_search);
+            mRightBtn.setBackgroundResource(R.drawable.btn_confirm);
+            mRightBtn.setText(R.string.search);
             if (autoStartQuery) {
                 query();
             }
         } else {
+            mRightBtn.setText("");
             mRightBtn.setBackgroundResource(R.drawable.btn_traffic_more_type);
+            mRightBtn.setPadding(0, 0, 0, 0);
         }
 	}
     

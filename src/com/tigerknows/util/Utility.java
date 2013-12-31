@@ -928,8 +928,12 @@ public class Utility {
     }
 
     public static void refreshButton(Context context, Button button, String confirmText, String cancelText) {
+        refreshButton(context, button, confirmText, cancelText, button.isEnabled());
+    }
+    
+    public static void refreshButton(Context context, Button button, String confirmText, String cancelText, boolean isConfirm) {
         
-        if (button.isEnabled()) {
+        if (isConfirm) {
             int mRightBtnConfirmColor = context.getResources().getColor(R.color.white);
             button.setText(confirmText);
             button.setTextColor(mRightBtnConfirmColor);
