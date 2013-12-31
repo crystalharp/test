@@ -156,6 +156,10 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     
     private String mDataType;
     
+    private TextView mLocationTxv;
+    
+    private POI mAPOI = null;
+    
     private Runnable mTurnPageRun = new Runnable() {
         
         @Override
@@ -243,6 +247,9 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         mDingdanBtn = (ImageButton) mRootView.findViewById(R.id.dingdan_btn);
         mFilterControlView = (ViewGroup)mRootView.findViewById(R.id.filter_control_view);
         mResultLsv = (SpringbackListView)mRootView.findViewById(R.id.result_lsv);
+        View nearbySearchBarView = mLayoutInflater.inflate(R.layout.poi_nearby_search_bar, null);
+        mResultLsv.addHeaderView(nearbySearchBarView, false);
+        mLocationTxv = (TextView) nearbySearchBarView.findViewById(R.id.location_txv);
         View v = mLayoutInflater.inflate(R.layout.loading, null);
         mResultLsv.addFooterView(v);
         mQueryingView = (QueryingView)mRootView.findViewById(R.id.querying_view);
@@ -317,6 +324,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             }
         });
         mDingdanBtn.setOnClickListener(this);
+        mLocationTxv.setOnClickListener(this);
     }
     
     private static String getSelectFilterName(Filter filter) {
@@ -468,6 +476,14 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                     }
                 }
             }
+            
+            if (mAPOI != null) {
+                this.mResultLsv.changeHeaderViewByState(true, SpringbackListView.PULL_TO_REFRESH);
+                this.mLocationTxv.setText(this.mAPOI.getName());
+            } else {
+                this.mResultLsv.changeHeaderViewByState(true, SpringbackListView.DONE);
+                this.mLocationTxv.setText(null);
+            }
         }
     }
     
@@ -498,10 +514,13 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         }
         int size = getList().size();
         int[] page = Utility.makePagedIndex(mResultLsv, size, firstVisiblePosition);
+        List<BaseData> dataList = new ArrayList<BaseData>();
+        if (mAPOI != null) {
+            dataList.add(mAPOI);
+        }
         
         int minIndex = page[0];
         int maxIndex = page[1];
-        List<BaseData> dataList = new ArrayList<BaseData>();
         if (BaseQuery.DATA_TYPE_TUANGOU.equals(mDataType)) {
             for(;minIndex >= 0 && minIndex <= maxIndex && minIndex < mTuangouList.size(); minIndex++) {
                 Tuangou data = mTuangouList.get(minIndex);
@@ -537,7 +556,11 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         }
         mSphinx.getResultMapFragment().setData(getString(name), actionTag);
         mSphinx.showView(R.id.view_result_map);   
-        ItemizedOverlayHelper.drawPOIOverlay(mSphinx, dataList, page[2]);
+        int firstIndex = page[2];
+        if (mAPOI != null) {
+            firstIndex++;
+        }
+        ItemizedOverlayHelper.drawPOIOverlay(mSphinx, dataList, firstIndex);
     }
     
     public void doFilter(String name) {
@@ -589,6 +612,18 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 mActionLog.addAction(mActionTag +  ActionLog.TuangouListDingdan);
                 mSphinx.getMyOrderFragment().setData(true);
                 mSphinx.showView(R.id.view_more_my_order);
+                break;
+                
+            case R.id.location_txv:
+                if (mAPOI != null) {
+                    mActionLog.addAction(mActionTag + ActionLog.ListViewItem, 0, mAPOI.getUUID(), mAPOI.getName());
+                    if (mAPOI.getSourceType() == POI.SOURCE_TYPE_SUBWAY &&
+                            mAPOI.getFrom() == POI.FROM_LOCAL) {
+                        mSphinx.getPOIDetailFragment().needForceReload();
+                    }
+                    mSphinx.showView(R.id.view_poi_detail);
+                    mSphinx.getPOIDetailFragment().setData(mAPOI, 0);
+                }
                 break;
                 
             default:
@@ -926,6 +961,10 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                             mResultLsv.setSelectionFromTop(0, 0);
                         }
                     });
+                    mAPOI = dataQuery.getPOI();
+                    if (mAPOI != null) {
+                        mAPOI.setOnlyAPOI(true);
+                    }
                 }
                 
                 List<Filter> filterList = mDataQuery.getFilterList();
@@ -942,7 +981,9 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 if (mTuangouAdapter == null) {
                     mTuangouAdapter = new TuangouAdapter(mSphinx, mTuangouList);
                 }
-                mResultLsv.setAdapter(mTuangouAdapter);
+                if (mResultLsv.getAdapter() != mTuangouAdapter) {
+                    mResultLsv.setAdapter(mTuangouAdapter);
+                }
                 
                 if (getList().size() < mList.getTotal()) {
                     mResultLsv.setFooterSpringback(true);
@@ -974,6 +1015,10 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                             mResultLsv.setSelectionFromTop(0, 0);
                         }
                     });
+                    mAPOI = dataQuery.getPOI();
+                    if (mAPOI != null) {
+                        mAPOI.setOnlyAPOI(true);
+                    }
                 }
 
                 refreshFilter(mDataQuery.getFilterList());
@@ -988,7 +1033,9 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 if (mDianyingAdapter == null) {
                     mDianyingAdapter = new DianyingAdapter(mSphinx, mDianyingList);
                 }
-                mResultLsv.setAdapter(mDianyingAdapter);
+                if (mResultLsv.getAdapter() != mDianyingAdapter) {
+                    mResultLsv.setAdapter(mDianyingAdapter);
+                }
                 
                 if (getList().size() < mList.getTotal()) {
                     mResultLsv.setFooterSpringback(true);
@@ -1021,13 +1068,19 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                             mResultLsv.setSelectionFromTop(0, 0);
                         }
                     });
+                    mAPOI = dataQuery.getPOI();
+                    if (mAPOI != null) {
+                        mAPOI.setOnlyAPOI(true);
+                    }
                 }
                 
                 mYanchuList.addAll(yanchuResponse.getList().getList());
                 if (mYanchuAdapter == null) {
                     mYanchuAdapter = new YanchuAdapter(mSphinx, mYanchuList);
                 }
-                mResultLsv.setAdapter(mYanchuAdapter);
+                if (mResultLsv.getAdapter() != mYanchuAdapter) {
+                    mResultLsv.setAdapter(mYanchuAdapter);
+                }
                 
                 if (getList().size() < mList.getTotal()) {
                     mResultLsv.setFooterSpringback(true);
@@ -1061,17 +1114,23 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                             mResultLsv.setSelectionFromTop(0, 0);
                         }
                     });
+                    mAPOI = dataQuery.getPOI();
+                    if (mAPOI != null) {
+                        mAPOI.setOnlyAPOI(true);
+                    }
                 }
                 
                 mZhanlanList.addAll(zhanlanResponse.getList().getList());
                 if (mZhanlanAdapter == null) {
                     mZhanlanAdapter = new ZhanlanAdapter(mSphinx, mZhanlanList);
                 }
+                if (mResultLsv.getAdapter() != mZhanlanAdapter) {
+                    mResultLsv.setAdapter(mZhanlanAdapter);
+                }
                 
                 if (getList().size() < mList.getTotal()) {
                     mResultLsv.setFooterSpringback(true);
                 }
-                mResultLsv.setAdapter(mZhanlanAdapter);
                 refreshFilter(mDataQuery.getFilterList());
                 makeFilterArea(dataQuery);
             } else {

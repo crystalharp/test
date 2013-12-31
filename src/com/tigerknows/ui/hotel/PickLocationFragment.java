@@ -199,7 +199,9 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
         mKeywordEdt.removeTextChangedListener(mKeywordEdtWatcher);
     }
 
+    @Override
     protected void findViews() {
+        super.findViews();
         mViewPager = (ViewPager) mRootView.findViewById(R.id.view_pager);
         
         mFilterListView = new FilterListView(mSphinx);
@@ -219,7 +221,9 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
         Utility.pageIndicatorInit(mSphinx, mPageIndicatorView, mViewList.size());
     }
 
+    @Override
     protected void setListener() {
+        super.setListener();
         mViewPager.setOnPageChangeListener(new OnPageChangeListener() {
             
             @Override

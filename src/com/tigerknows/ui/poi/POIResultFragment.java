@@ -504,7 +504,9 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         int size = mPOIList.size();
         List<POI> poiList = new ArrayList<POI>();
         int[] page = Utility.makePagedIndex(mResultLsv, size, firstVisiblePosition);
-        poiList.add(mAPOI);
+        if (mAPOI != null) {
+            poiList.add(mAPOI);
+        }
         
         int minIndex = page[0];
         int maxIndex = page[1];
@@ -513,7 +515,9 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             poiList.add(poi);
         }
         int firstIndex = page[2];
-        firstIndex++;
+        if (mAPOI != null) {
+            firstIndex++;
+        }
         mSphinx.getResultMapFragment().setData(getString(R.string.result_map), BaseQuery.SUB_DATA_TYPE_HOTEL.equals(mResultAdapter.getSubDataType()) ? ActionLog.POIHotelListMap : ActionLog.POIListMap);
         mSphinx.showView(R.id.view_result_map);   
         ItemizedOverlayHelper.drawPOIOverlay(mSphinx, poiList, firstIndex);
@@ -1023,7 +1027,9 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                     }
                 });
                 mAPOI = dataQuery.getPOI();
-                mAPOI.setOnlyAPOI(true);
+                if (mAPOI != null) {
+                    mAPOI.setOnlyAPOI(true);
+                }
             }
 
             if (bPOIList != null) {
