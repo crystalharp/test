@@ -158,6 +158,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	            btn.setText(null);
 	        }
 	        poi = p;
+	        refreshRightBtn();
 	    }
 	    
 	    public POI getPOI() {
@@ -356,22 +357,22 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
         mTitleView.addView(mTitleBar);
         initHistory();
         updateCommonPlace();
-        if (!mStart.textEmpty() 
+        refreshRightBtn();
+        if (autoStartQuery && !mStart.textEmpty() && !mEnd.textEmpty()) {
+            query();
+        }
+	}
+    	
+	void refreshRightBtn() {
+	    if (!mStart.textEmpty() 
                 && !mEnd.textEmpty()) {
             mRightBtn.setBackgroundResource(R.drawable.btn_confirm);
             mRightBtn.setText(R.string.search);
-            if (autoStartQuery) {
-                query();
-            }
         } else {
             mRightBtn.setText("");
             mRightBtn.setBackgroundResource(R.drawable.btn_traffic_more_type);
             mRightBtn.setPadding(0, 0, 0, 0);
         }
-	}
-    
-	void makeToast(String s) {
-	    Toast.makeText(getContext(), s, Toast.LENGTH_SHORT).show();
 	}
 	
 	public void setShowStartMyLocation(boolean showMyLocation) {
