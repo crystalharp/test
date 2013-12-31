@@ -394,15 +394,30 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             mSphinx.setMapViewPaddingBottom(mHeight);
             
             View view = (View) mCyclePagerAdapter.viewList.get((position) % mCyclePagerAdapter.viewList.size());
-            setTuangouToView(view, (Tuangou) mItemizedOverlay.get(position).getAssociatedObject());
+            Object object = mItemizedOverlay.get(position).getAssociatedObject();
+            if (object instanceof Tuangou) {
+                setTuangouToView(view, (Tuangou) object);
+            } else {
+                setPOIToView(view, (POI) object);
+            }
             
             if (position - 1 >= 0) {
                 view = mCyclePagerAdapter.viewList.get((position-1) % mCyclePagerAdapter.viewList.size());
-                setTuangouToView(view, (Tuangou) mItemizedOverlay.get(position).getAssociatedObject());
+                object = mItemizedOverlay.get(position-1).getAssociatedObject();
+                if (object instanceof Tuangou) {
+                    setTuangouToView(view, (Tuangou) object);
+                } else {
+                    setPOIToView(view, (POI) object);
+                }
             }
             if (position + 1 < mCyclePagerAdapter.count) {
                 view = mCyclePagerAdapter.viewList.get((position+1) % mCyclePagerAdapter.viewList.size());
-                setTuangouToView(view, (Tuangou) mItemizedOverlay.get(position).getAssociatedObject());
+                object = mItemizedOverlay.get(position+1).getAssociatedObject();
+                if (object instanceof Tuangou) {
+                    setTuangouToView(view, (Tuangou) object);
+                } else {
+                    setPOIToView(view, (POI) object);
+                }
             }
         } else if (mType == TYPE_DYNAMIC_POI) {
 
