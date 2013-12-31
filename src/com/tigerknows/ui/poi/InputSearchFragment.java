@@ -677,24 +677,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         // POI结果列表
         POIList bPOIList = poiResponse.getBPOIList();
         if (bPOIList != null) {
-            Position centerPosition = bPOIList.getPosition();
-            if (centerPosition != null) {
-                try {
-                    mapView.centerOnPosition(centerPosition);
-                } catch (APIException e) {
-                    e.printStackTrace();
-                }
-                POI poi = dataQuery.getPOI();
-                if (!centerPosition.equals(poi.getPosition())) {
-                    POI centerPOI = new POI();
-                    centerPOI.setPosition(centerPosition);
-                    centerPOI.setName(sphinx.getString(R.string.map_center));
-                    dataQuery.setPOI(centerPOI);
-                }
-            }
-            
             List<POI> poiList = bPOIList.getList();
-            
             if (poiList != null
                     && poiList.size() > 0) {
                 

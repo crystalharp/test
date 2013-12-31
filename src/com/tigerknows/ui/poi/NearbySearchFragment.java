@@ -33,17 +33,14 @@ import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.MapEngine;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.CategoryProperty;
+import com.tigerknows.model.DataQuery.DiscoverCategoreResponse;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.Response;
-import com.tigerknows.model.DataQuery.DianyingResponse;
 import com.tigerknows.model.DataQuery.Filter;
 import com.tigerknows.model.DataQuery.FilterCategoryOrder;
 import com.tigerknows.model.DataQuery.FilterOption;
 import com.tigerknows.model.DataQuery.FilterResponse;
-import com.tigerknows.model.DataQuery.TuangouResponse;
-import com.tigerknows.model.DataQuery.YanchuResponse;
-import com.tigerknows.model.DataQuery.ZhanlanResponse;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.widget.FilterListView;
@@ -558,42 +555,15 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         }
          
         boolean noResult = true;
-        if (response instanceof TuangouResponse) {
-            TuangouResponse tuangouResponse = (TuangouResponse)dataQuery.getResponse();
-            
-            if (tuangouResponse.getList() != null 
-                    && tuangouResponse.getList().getList() != null 
-                    && tuangouResponse.getList().getList().size() > 0) {
+        if (response instanceof DiscoverCategoreResponse) {
+            DiscoverCategoreResponse discoverCategoreResponse = (DiscoverCategoreResponse)dataQuery.getResponse();
+            if (discoverCategoreResponse.getDiscoverResult() != null 
+                    && discoverCategoreResponse.getDiscoverResult().getList() != null 
+                    && discoverCategoreResponse.getDiscoverResult().getList().size() > 0) {
                 
                 noResult = false;
             }
-        } else if (response instanceof DianyingResponse) {
-            DianyingResponse dianyingResponse = (DianyingResponse)dataQuery.getResponse();
             
-            if (dianyingResponse.getList() != null 
-                    && dianyingResponse.getList().getList() != null 
-                    && dianyingResponse.getList().getList().size() > 0) {
-                
-                noResult = false;
-            }
-        } else if (response instanceof YanchuResponse) {
-            YanchuResponse yanchuResponse = (YanchuResponse)dataQuery.getResponse();
-            
-            if (yanchuResponse.getList() != null 
-                    && yanchuResponse.getList().getList() != null 
-                    && yanchuResponse.getList().getList().size() > 0) {
-                
-                noResult = false;
-            }
-        } else if (response instanceof ZhanlanResponse) {
-            ZhanlanResponse zhanlanResponse = (ZhanlanResponse)dataQuery.getResponse();
-            
-            if (zhanlanResponse.getList() != null 
-                    && zhanlanResponse.getList().getList() != null 
-                    && zhanlanResponse.getList().getList().size() > 0) {
-                
-                noResult = false;
-            }
         }
         
         if (noResult) {

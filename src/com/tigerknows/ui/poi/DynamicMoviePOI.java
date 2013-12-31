@@ -237,7 +237,7 @@ public class DynamicMoviePOI extends DynamicPOIViewTemplate {
                     return;
                 }
                 DianyingResponse dianyingResponse = (DianyingResponse) response;
-                DianyingList dianyingList = dianyingResponse.getList();
+                DianyingList dianyingList = (DianyingList) dianyingResponse.getDiscoverResult();
                 if (dianyingList != null) {
                     mPOI.setDynamicDianyingList(dianyingList.getList());
                     refresh();

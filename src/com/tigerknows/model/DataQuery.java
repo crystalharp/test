@@ -503,20 +503,26 @@ public final class DataQuery extends BaseQuery {
     protected void addMyLocationParameters() {
         if (isTurnPage == false) {
             String dataType = getParameter(SERVER_PARAMETER_DATA_TYPE);
-            if (DATA_TYPE_FENDIAN.equals(dataType) || DATA_TYPE_YINGXUN.equals(dataType) ||
-                    (SUB_DATA_TYPE_HOTEL.equals(getParameter(SERVER_PARAMETER_SUB_DATA_TYPE)) && hasParameter(SERVER_PARAMETER_LOCATION_CITY))) {
-//                if (criteria.containsKey(SERVER_PARAMETER_LOCATION_CITY)
-//                        && criteria.containsKey(SERVER_PARAMETER_LOCATION_LONGITUDE)
-//                        && criteria.containsKey(SERVER_PARAMETER_LOCATION_LATITUDE)) {
-//                    requestParameters.add(SERVER_PARAMETER_LOCATION_CITY, criteria.get(SERVER_PARAMETER_LOCATION_CITY));
-//                    requestParameters.add(SERVER_PARAMETER_LOCATION_LONGITUDE, criteria.get(SERVER_PARAMETER_LOCATION_LONGITUDE));
-//                    requestParameters.add(SERVER_PARAMETER_LOCATION_LATITUDE, criteria.get(SERVER_PARAMETER_LOCATION_LATITUDE));
-//                }
+            if (DATA_TYPE_FENDIAN.equals(dataType) ||
+                    DATA_TYPE_YINGXUN.equals(dataType) ||
+                    (SUB_DATA_TYPE_HOTEL.equals(getParameter(SERVER_PARAMETER_SUB_DATA_TYPE)) &&
+                            hasParameter(SERVER_PARAMETER_LOCATION_CITY))) {
+
+                // 定位，地图中心，基准位置参数已经拷贝过来
+                
             } else if (dataType.equals(DATA_TYPE_PULL_MESSAGE) == false){
                 delParameter(SERVER_PARAMETER_LOCATION_CITY);
                 delParameter(SERVER_PARAMETER_LOCATION_LONGITUDE);
                 delParameter(SERVER_PARAMETER_LOCATION_LATITUDE);
                 super.addMyLocationParameters();
+                
+                CityInfo cityInfo = Globals.getCurrentCityInfo(context);
+                Position position = cityInfo.getPosition();
+                if (position != null &&
+                        cityInfo.order == 0) {
+                    requestParameters.add(SERVER_PARAMETER_CENTER_LONGITUDE, String.valueOf(position.getLon()));
+                    requestParameters.add(SERVER_PARAMETER_CENTER_LATITUDE, String.valueOf(position.getLat()));
+                }
             }
         }
     }
@@ -1621,13 +1627,22 @@ public final class DataQuery extends BaseQuery {
 
     public static class DiscoverCategoreResponse extends FilterResponse {
         
+        // 0x02    x_map   团购结果
+        public static final byte FIELD_LIST = 0x02;
+        
         // 0x03 x_string    dbv，即database version，数据版本号（以索引目录为种子生成的uuid） 
         public static final byte FIELD_DATABASE_VERSION = 0x03;
 
         protected String databaseVersion;
+        
+        protected DiscoverResult discoverResult;
 
         public String getDatabaseVersion() {
             return databaseVersion;
+        }
+        
+        public DiscoverResult getDiscoverResult() {
+            return discoverResult;
         }
         
         public DiscoverCategoreResponse(XMap data) throws APIException {
@@ -1883,21 +1898,44 @@ public final class DataQuery extends BaseQuery {
     }
 
     public static class DiscoverResult extends BaseList {
+
+        // 0x02 x_array<x_map> 列表
+        public static final byte FIELD_LIST = 0x02;
+        
         // 0x04 x_int 附近团购数量
         public static final byte FIELD_TOTAL_NEARBY = 0x04;
 
         // 0x05 x_int 全市团购数量
         public static final byte FIELD_TOTAL_CITY = 0x05;
+        
+        // 0x11    x_map   搜索结果所环绕的中心点，没有该key返回，则需要客户端自己取中心点
+        public static final byte FIELD_CENTER_POSITION = 0x11;
 
         protected long totalNearby;
 
         protected long totalCity;
+        
+        private Position centerPosition;
+        
+        protected List list;
+        
+        public List getList() {
+            return list;
+        }
+        
+        public Position getCenterPosition() {
+            return centerPosition;
+        }
 
         public DiscoverResult(XMap data) throws APIException {
             super(data);
 
             this.totalNearby = getLongFromData(FIELD_TOTAL_NEARBY);
             this.totalCity = getLongFromData(FIELD_TOTAL_CITY);
+            if (this.data.containsKey(FIELD_CENTER_POSITION)) {
+                XMap xMap = this.data.getXMap(FIELD_CENTER_POSITION);
+                this.centerPosition = getPositionFromData(xMap, (byte)0x01, (byte)0x02, null);
+            }
         }
 
         public long getTotalNearby() {
@@ -1910,38 +1948,21 @@ public final class DataQuery extends BaseQuery {
     }
     
     public static class TuangouResponse extends DiscoverCategoreResponse {
-        // 0x02    x_map   团购结果
-        public static final byte FIELD_LIST = 0x02;
-
-        private TuangouList list;
 
         public TuangouResponse(XMap data) throws APIException {
             super(data);
 
             if (this.data.containsKey(FIELD_LIST)) {
-                this.list = new TuangouList(this.data.getXMap(FIELD_LIST));
+                this.discoverResult = new TuangouList(this.data.getXMap(FIELD_LIST));
             }
         }
 
-        public TuangouList getList() {
-            return list;
-        }
-
-        public static class TuangouList extends BaseList {
-
-            // 0x02 x_array<x_map> 列表
-            public static final byte FIELD_LIST = 0x02;
-
-            private List<Tuangou> list;
+        public static class TuangouList extends DiscoverResult {
 
             public TuangouList(XMap data) throws APIException {
                 super(data);
 
                 this.list = getListFromData(FIELD_LIST, Tuangou.Initializer);
-            }
-
-            public List<Tuangou> getList() {
-                return list;
             }
         }
     }
@@ -2139,38 +2160,21 @@ public final class DataQuery extends BaseQuery {
     }
     
     public static class DianyingResponse extends DiscoverCategoreResponse {
-        // 0x02    x_map   影片结果
-        public static final byte FIELD_LIST = 0x02;
-
-        private DianyingList list;
 
         public DianyingResponse(XMap data) throws APIException {
             super(data);
 
             if (this.data.containsKey(FIELD_LIST)) {
-                this.list = new DianyingList(this.data.getXMap(FIELD_LIST));
+                this.discoverResult = new DianyingList(this.data.getXMap(FIELD_LIST));
             }
         }
 
-        public DianyingList getList() {
-            return list;
-        }
-
         public static class DianyingList extends DiscoverResult {
-
-            // 0x02 x_array<x_map> 列表
-            public static final byte FIELD_LIST = 0x02;
-
-            private List<Dianying> list;
 
             public DianyingList(XMap data) throws APIException {
                 super(data);
 
                 this.list = getListFromData(FIELD_LIST, Dianying.Initializer);
-            }
-
-            public List<Dianying> getList() {
-                return list;
             }
         }
     }
@@ -2213,75 +2217,41 @@ public final class DataQuery extends BaseQuery {
     }
 
     public static class YanchuResponse extends DiscoverCategoreResponse {
-        // 0x02    x_map   演出结果
-        public static final byte FIELD_LIST = 0x02;
-
-        private YanchuList list;
 
         public YanchuResponse(XMap data) throws APIException {
             super(data);
 
             if (this.data.containsKey(FIELD_LIST)) {
-                this.list = new YanchuList(this.data.getXMap(FIELD_LIST));
+                this.discoverResult = new YanchuList(this.data.getXMap(FIELD_LIST));
             }
         }
 
-        public YanchuList getList() {
-            return list;
-        }
-
         public static class YanchuList extends DiscoverResult {
-
-            // 0x02 x_array<x_map> 列表
-            public static final byte FIELD_LIST = 0x02;
-
-            private List<Yanchu> list;
 
             public YanchuList(XMap data) throws APIException {
                 super(data);
 
                 this.list = getListFromData(FIELD_LIST, Yanchu.Initializer);
             }
-
-            public List<Yanchu> getList() {
-                return list;
-            }
         }
     }
 
     public static class ZhanlanResponse extends DiscoverCategoreResponse {
-        // 0x02    x_map   展览结果
-        public static final byte FIELD_LIST = 0x02;
-
-        private ZhanlanList list;
 
         public ZhanlanResponse(XMap data) throws APIException {
             super(data);
 
             if (this.data.containsKey(FIELD_LIST)) {
-                this.list = new ZhanlanList(this.data.getXMap(FIELD_LIST));
+                this.discoverResult = new ZhanlanList(this.data.getXMap(FIELD_LIST));
             }
         }
 
-        public ZhanlanList getList() {
-            return list;
-        }
-
         public static class ZhanlanList extends DiscoverResult {
-
-            // 0x02 x_array<x_map> 列表
-            public static final byte FIELD_LIST = 0x02;
-            
-            private List<Zhanlan> list;
 
             public ZhanlanList(XMap data) throws APIException {
                 super(data);
 
                 this.list = getListFromData(FIELD_LIST, Zhanlan.Initializer);
-            }
-
-            public List<Zhanlan> getList() {
-                return list;
             }
         }
     }

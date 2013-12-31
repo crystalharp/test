@@ -5,9 +5,11 @@
 package com.tigerknows.ui.poi;
 
 import com.decarta.Globals;
+import com.decarta.android.exception.APIException;
 import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.android.location.Position;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.ItemizedOverlayHelper;
@@ -232,16 +234,17 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
 
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                if (position < adapterView.getCount()) {
-                    POI poi = (POI) adapterView.getAdapter().getItem(position);
+                position -= 1;
+                if (position < mPOIList.size()) {
+                    POI poi = mPOIList.get(position);
                     if (poi != null) {
                         mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position, poi.getUUID(), poi.getName());
                         mSphinx.showView(R.id.view_poi_detail);
                         mSphinx.getPOIDetailFragment().setData(poi, position);
-                    } else if (mResultLsv.isFooterSpringback() == false) {
-                        showAddMerchant();
                     }
-                } 
+                } else if (mResultLsv.isFooterSpringback() == false) {
+                    showAddMerchant();
+                }
             }
             
         });
@@ -1000,20 +1003,37 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
 
         POIResponse poiResponse = (POIResponse)dataQuery.getResponse();
         
-        if (poiResponse.getBPOIList() != null && 
-                poiResponse.getBPOIList().getList() != null && 
-                poiResponse.getBPOIList().getList().size() > 0) {
-      
+        POIList poiList = poiResponse.getBPOIList();
+        
+        if (poiList != null && 
+                poiList.getList() != null && 
+                poiList.getList().size() > 0) {
+
+            Position centerPosition = poiList.getPosition();
+            if (centerPosition != null) {
+                try {
+                    mSphinx.getMapView().centerOnPosition(centerPosition);
+                } catch (APIException e) {
+                    e.printStackTrace();
+                }
+                POI poi = dataQuery.getPOI();
+                if (!centerPosition.equals(poi.getPosition())) {
+                    POI centerPOI = new POI();
+                    centerPOI.setPosition(centerPosition);
+                    centerPOI.setName(mSphinx.getString(R.string.map_center));
+                    dataQuery.setPOI(centerPOI);
+                }
+            } else {
+                dataQuery.setPOI(null);
+            }
+            
             mDataQuery = dataQuery;
             mState = STATE_LIST;
 
-            POIList poiList = poiResponse.getBPOIList();
             List<POI> bPOIList = null;
             if (poiList != null) {
                 mBTotal = poiList.getTotal();
                 bPOIList = poiList.getList();
-            } else {
-                mBTotal = 0;
             }
             
             poiList = poiResponse.getAPOIList();

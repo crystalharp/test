@@ -4,9 +4,11 @@
 
 package com.tigerknows.ui.discover;
 
+import com.decarta.android.exception.APIException;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
+import com.tigerknows.android.location.Position;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.ItemizedOverlayHelper;
@@ -21,12 +23,10 @@ import com.tigerknows.model.Tuangou;
 import com.tigerknows.model.Yanchu;
 import com.tigerknows.model.Zhanlan;
 import com.tigerknows.model.DataQuery.BaseList;
-import com.tigerknows.model.DataQuery.DianyingResponse;
+import com.tigerknows.model.DataQuery.DiscoverCategoreResponse;
+import com.tigerknows.model.DataQuery.DiscoverResult;
 import com.tigerknows.model.DataQuery.Filter;
 import com.tigerknows.model.DataQuery.FilterCategoryOrder;
-import com.tigerknows.model.DataQuery.TuangouResponse;
-import com.tigerknows.model.DataQuery.YanchuResponse;
-import com.tigerknows.model.DataQuery.ZhanlanResponse;
 import com.tigerknows.model.Yingxun.Changci;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.util.Utility;
@@ -153,6 +153,8 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     private String mFilterArea;
     
     private BaseList mList;
+    
+    private ArrayAdapter mArrayAdapter;
     
     private String mDataType;
     
@@ -284,8 +286,10 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
 
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                if (position < adapterView.getCount()) {
-                    Object object = adapterView.getAdapter().getItem(position);
+                position -= 1;
+                List list = getList();
+                if (list != null && position < list.size()) {
+                    Object object = list.get(position);
                     if (object != null) {
                         if (object instanceof Tuangou) {
                             Tuangou tagret = (Tuangou) object;
@@ -940,216 +944,112 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     
     public void setData(DataQuery dataQuery) {
         Response response = dataQuery.getResponse();
-        if (response instanceof TuangouResponse) {
-            mActionTag = ActionLog.TuangouList;
-            mDataType = BaseQuery.DATA_TYPE_TUANGOU;
-            TuangouResponse tuangouResponse = (TuangouResponse)dataQuery.getResponse();
-            
-            if (tuangouResponse.getList() != null 
-                    && tuangouResponse.getList().getList() != null 
-                    && tuangouResponse.getList().getList().size() > 0) {
-                mState = STATE_LIST;
-                mDataQuery = dataQuery;
-                mList = tuangouResponse.getList();
 
-                if (dataQuery.isTurnPage() == false) {
-                    getList().clear();
-                    mSphinx.getHandler().post(new Runnable() {
-                        
-                        @Override
-                        public void run() {
-                            mResultLsv.setSelectionFromTop(0, 0);
-                        }
-                    });
-                    mAPOI = dataQuery.getPOI();
-                    if (mAPOI != null) {
-                        mAPOI.setOnlyAPOI(true);
-                    }
-                }
-                
-                List<Filter> filterList = mDataQuery.getFilterList();
-                if (filterList != null && filterList.size() > 0) {
-                    refreshFilter(filterList);
-                }
-                makeFilterArea(dataQuery);
-                
-                List<Tuangou> list = tuangouResponse.getList().getList();
-                for(Tuangou item : list) {
-                    item.setFilterArea(mFilterArea);
-                }
-                mTuangouList.addAll(list);
-                if (mTuangouAdapter == null) {
-                    mTuangouAdapter = new TuangouAdapter(mSphinx, mTuangouList);
-                }
-                if (mResultLsv.getAdapter() != mTuangouAdapter) {
-                    mResultLsv.setAdapter(mTuangouAdapter);
-                }
-                
-                if (getList().size() < mList.getTotal()) {
-                    mResultLsv.setFooterSpringback(true);
-                }
-            } else {
-                if (dataQuery.isTurnPage()) {
-                    return;
-                }
-                mState = STATE_EMPTY;
-            }
-        } else if (response instanceof DianyingResponse) {
-            mActionTag = ActionLog.DianyingList;
-            mDataType = BaseQuery.DATA_TYPE_DIANYING;
-            DianyingResponse dianyingResponse = (DianyingResponse)dataQuery.getResponse();
-
-            if (dianyingResponse.getList() != null 
-                    && dianyingResponse.getList().getList() != null 
-                    && dianyingResponse.getList().getList().size() > 0) {
-                mState = STATE_LIST;
-                mDataQuery = dataQuery;
-                mList = dianyingResponse.getList();
-
-                if (dataQuery.isTurnPage() == false) {
-                    getList().clear();
-                    mSphinx.getHandler().post(new Runnable() {
-                        
-                        @Override
-                        public void run() {
-                            mResultLsv.setSelectionFromTop(0, 0);
-                        }
-                    });
-                    mAPOI = dataQuery.getPOI();
-                    if (mAPOI != null) {
-                        mAPOI.setOnlyAPOI(true);
-                    }
-                }
-
-                refreshFilter(mDataQuery.getFilterList());
-                makeFilterArea(dataQuery);
-                
-                List<Dianying> list = dianyingResponse.getList().getList();
-                updateChangeciOption(list);
-                for(Dianying item : list) {
-                    item.setFilterArea(mFilterArea);
-                }
-                mDianyingList.addAll(list);
-                if (mDianyingAdapter == null) {
-                    mDianyingAdapter = new DianyingAdapter(mSphinx, mDianyingList);
-                }
-                if (mResultLsv.getAdapter() != mDianyingAdapter) {
-                    mResultLsv.setAdapter(mDianyingAdapter);
-                }
-                
-                if (getList().size() < mList.getTotal()) {
-                    mResultLsv.setFooterSpringback(true);
-                }
-                
-            } else {
-                if (dataQuery.isTurnPage()) {
-                    return;
-                }
-                mState = STATE_EMPTY;
-            }
-        } else if (response instanceof YanchuResponse) {
-            mActionTag = ActionLog.YanchuList;
-            mDataType = BaseQuery.DATA_TYPE_YANCHU;
-            YanchuResponse yanchuResponse = (YanchuResponse)dataQuery.getResponse();
-            
-            if (yanchuResponse.getList() != null 
-                    && yanchuResponse.getList().getList() != null 
-                    && yanchuResponse.getList().getList().size() > 0) {
-                mState = STATE_LIST;
-                mDataQuery = dataQuery;
-                mList = yanchuResponse.getList();
-
-                if (dataQuery.isTurnPage() == false) {
-                    getList().clear();
-                    mSphinx.getHandler().post(new Runnable() {
-                        
-                        @Override
-                        public void run() {
-                            mResultLsv.setSelectionFromTop(0, 0);
-                        }
-                    });
-                    mAPOI = dataQuery.getPOI();
-                    if (mAPOI != null) {
-                        mAPOI.setOnlyAPOI(true);
-                    }
-                }
-                
-                mYanchuList.addAll(yanchuResponse.getList().getList());
-                if (mYanchuAdapter == null) {
-                    mYanchuAdapter = new YanchuAdapter(mSphinx, mYanchuList);
-                }
-                if (mResultLsv.getAdapter() != mYanchuAdapter) {
-                    mResultLsv.setAdapter(mYanchuAdapter);
-                }
-                
-                if (getList().size() < mList.getTotal()) {
-                    mResultLsv.setFooterSpringback(true);
-                }
-                refreshFilter(mDataQuery.getFilterList());
-                makeFilterArea(dataQuery);
-            } else {
-                if (dataQuery.isTurnPage()) {
-                    return;
-                }
-                mState = STATE_EMPTY;
-            }
-        } else if (response instanceof ZhanlanResponse) {
-            mActionTag = ActionLog.ZhanlanList;
-            mDataType = BaseQuery.DATA_TYPE_ZHANLAN;
-            ZhanlanResponse zhanlanResponse = (ZhanlanResponse)dataQuery.getResponse();
-            
-            if (zhanlanResponse.getList() != null 
-                    && zhanlanResponse.getList().getList() != null 
-                    && zhanlanResponse.getList().getList().size() > 0) {
-                mState = STATE_LIST;
-                mDataQuery = dataQuery;
-                mList = zhanlanResponse.getList();
-
-                if (dataQuery.isTurnPage() == false) {
-                    getList().clear();
-                    mSphinx.getHandler().post(new Runnable() {
-                        
-                        @Override
-                        public void run() {
-                            mResultLsv.setSelectionFromTop(0, 0);
-                        }
-                    });
-                    mAPOI = dataQuery.getPOI();
-                    if (mAPOI != null) {
-                        mAPOI.setOnlyAPOI(true);
-                    }
-                }
-                
-                mZhanlanList.addAll(zhanlanResponse.getList().getList());
-                if (mZhanlanAdapter == null) {
-                    mZhanlanAdapter = new ZhanlanAdapter(mSphinx, mZhanlanList);
-                }
-                if (mResultLsv.getAdapter() != mZhanlanAdapter) {
-                    mResultLsv.setAdapter(mZhanlanAdapter);
-                }
-                
-                if (getList().size() < mList.getTotal()) {
-                    mResultLsv.setFooterSpringback(true);
-                }
-                refreshFilter(mDataQuery.getFilterList());
-                makeFilterArea(dataQuery);
-            } else {
-                if (dataQuery.isTurnPage()) {
-                    return;
-                }
-                mState = STATE_EMPTY;
-            }
-        }
-
+        dealWithList(dataQuery, (DiscoverCategoreResponse) response);
+        
         refreshResultText(dataQuery);
         updateView();
-        ArrayAdapter adapter = getAdapter();
-        if (adapter != null) {
-            adapter.notifyDataSetChanged();
-        }
+        getAdapter().notifyDataSetChanged();
         
         if (mResultLsv.isFooterSpringback()) {
             mSphinx.getHandler().postDelayed(mTurnPageRun, 1000);
+        }
+    }
+    
+    private void dealWithList(DataQuery dataQuery, DiscoverCategoreResponse discoverCategoreResponse) {
+        String dataType = dataQuery.getParameter(BaseQuery.SERVER_PARAMETER_DATA_TYPE);
+        mDataType = dataType;
+
+        if (BaseQuery.DATA_TYPE_TUANGOU.equals(mDataType)) {
+            mActionTag = ActionLog.TuangouList;
+        } else if (BaseQuery.DATA_TYPE_DIANYING.equals(mDataType)) {
+            mActionTag = ActionLog.DianyingList;
+        } else if (BaseQuery.DATA_TYPE_YANCHU.equals(mDataType)) {
+            mActionTag = ActionLog.YanchuList;
+        } else if (BaseQuery.DATA_TYPE_ZHANLAN.equals(mDataType)) {
+            mActionTag = ActionLog.ZhanlanList;
+        }
+
+        DiscoverResult discoverResult = discoverCategoreResponse.getDiscoverResult();
+        
+        if (discoverCategoreResponse.getDiscoverResult() != null 
+                && discoverCategoreResponse.getDiscoverResult().getList() != null 
+                && discoverCategoreResponse.getDiscoverResult().getList().size() > 0) {
+            
+            mState = STATE_LIST;
+            mDataQuery = dataQuery;
+            mList = discoverResult;
+            
+            if (dataQuery.isTurnPage() == false) {
+                dealWithCenterPosition(discoverResult, dataQuery);
+                getList().clear();
+                mSphinx.getHandler().post(new Runnable() {
+                    
+                    @Override
+                    public void run() {
+                        mResultLsv.setSelectionFromTop(0, 0);
+                    }
+                });
+                mAPOI = dataQuery.getPOI();
+                if (mAPOI != null) {
+                    mAPOI.setOnlyAPOI(true);
+                }
+            }
+            
+            List discoverResultList = discoverResult.getList();
+            
+            List list = getList();
+            ArrayAdapter arrayAdapter = getAdapter();
+            
+            if (BaseQuery.DATA_TYPE_TUANGOU.equals(mDataType)) {
+                List<Tuangou> tuangouList = discoverResultList;
+                for(Tuangou item : tuangouList) {
+                    item.setFilterArea(mFilterArea);
+                }
+            } else if (BaseQuery.DATA_TYPE_DIANYING.equals(mDataType)) {
+                List<Dianying> dianyingList = discoverResultList;
+                updateChangeciOption(dianyingList);
+                for(Dianying item : dianyingList) {
+                    item.setFilterArea(mFilterArea);
+                }
+            }
+            list.addAll(discoverResultList);
+            
+            if (mArrayAdapter != arrayAdapter) {
+                mResultLsv.setAdapter(arrayAdapter);
+            }
+            mArrayAdapter = arrayAdapter;
+            
+            if (getList().size() < mList.getTotal()) {
+                mResultLsv.setFooterSpringback(true);
+            }
+            refreshFilter(mDataQuery.getFilterList());
+            makeFilterArea(dataQuery);
+        } else {
+            if (dataQuery.isTurnPage()) {
+                return;
+            }
+            mState = STATE_EMPTY;
+        }
+    }
+    
+    private void dealWithCenterPosition(DiscoverResult discoverResult, DataQuery dataQuery) {
+        Position centerPosition = discoverResult.getCenterPosition();
+        if (centerPosition != null) {
+            try {
+                mSphinx.getMapView().centerOnPosition(centerPosition);
+            } catch (APIException e) {
+                e.printStackTrace();
+            }
+            POI poi = dataQuery.getPOI();
+            if (!centerPosition.equals(poi.getPosition())) {
+                POI centerPOI = new POI();
+                centerPOI.setPosition(centerPosition);
+                centerPOI.setName(mSphinx.getString(R.string.map_center));
+                dataQuery.setPOI(centerPOI);
+            }
+        } else {
+            dataQuery.setPOI(null);
         }
     }
     
@@ -1182,18 +1082,30 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         } else if (BaseQuery.DATA_TYPE_ZHANLAN.equals(mDataType)) {
             return mZhanlanList;
         }
-        return new ArrayList<Tuangou>();
+        return null;
     }
-    
+
     @SuppressWarnings("rawtypes")
     private ArrayAdapter getAdapter() {
         if (BaseQuery.DATA_TYPE_TUANGOU.equals(mDataType)) {
+            if (mTuangouAdapter == null) {
+                mTuangouAdapter = new TuangouAdapter(mSphinx, mTuangouList);
+            }
             return mTuangouAdapter;
         } else if (BaseQuery.DATA_TYPE_DIANYING.equals(mDataType)) {
+            if (mDianyingAdapter == null) {
+                mDianyingAdapter = new DianyingAdapter(mSphinx, mDianyingList);
+            }
             return mDianyingAdapter;
         } else if (BaseQuery.DATA_TYPE_YANCHU.equals(mDataType)) {
+            if (mYanchuAdapter == null) {
+                mYanchuAdapter = new YanchuAdapter(mSphinx, mYanchuList);
+            }
             return mYanchuAdapter;
         } else if (BaseQuery.DATA_TYPE_ZHANLAN.equals(mDataType)) {
+            if (mZhanlanAdapter == null) {
+                mZhanlanAdapter = new ZhanlanAdapter(mSphinx, mZhanlanList);
+            }
             return mZhanlanAdapter;
         }
         return null;

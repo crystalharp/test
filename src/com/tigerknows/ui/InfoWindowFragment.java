@@ -522,6 +522,7 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
         TextView nameTxv=(TextView)v.findViewById(R.id.name_txv);
         RatingBar starsRtb = (RatingBar) v.findViewById(R.id.poi_stars_rtb);
         TextView priceTxv= (TextView)v.findViewById(R.id.poi_price_txv);
+        Button detaileBtn= (Button)v.findViewById(R.id.detail_btn);
         priceTxv.setVisibility(View.VISIBLE);
         
         nameTxv.setText(poi.getName());
@@ -532,6 +533,7 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
         } else {
             priceTxv.setText("");
         }
+        detaileBtn.setText(R.string.detail);
     }
     
     private void setPlanListToView(View v, Plan plan) {

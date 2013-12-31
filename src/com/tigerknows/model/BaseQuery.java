@@ -426,16 +426,7 @@ public abstract class BaseQuery {
         addUUIDParameter();
         requestParameters.add(SERVER_PARAMETER_CLIENT_STATUS, sClentStatus);
         
-        String dataType = getParameter(SERVER_PARAMETER_DATA_TYPE);
-        if (DATA_TYPE_PULL_MESSAGE.equals(dataType) == false) {
-            addMyLocationParameters();
-            
-            Position position = cityInfo.getPosition();
-            if (position != null && cityInfo.order == 0) {
-                requestParameters.add(SERVER_PARAMETER_CENTER_LONGITUDE, String.valueOf(position.getLon()));
-                requestParameters.add(SERVER_PARAMETER_CENTER_LATITUDE, String.valueOf(position.getLat()));
-            }
-        }
+        addMyLocationParameters();
     }
     
     /**
