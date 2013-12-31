@@ -94,7 +94,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
     
     private AlternativeResponse mAlternativeResponse;
     
-    private TKWord mTKWord = new TKWord();
+    private TKWord mTKWord = null;
     
     private final TextWatcher mKeywordEdtWatcher = new TextWatcher() {
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -102,8 +102,10 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
 
         public void onTextChanged(CharSequence s, int start, int before, int count) {
             mSuggestWordListManager.refresh();
-            mTKWord.word = s.toString();
-            mTKWord.position = null;
+            if (mTKWord != null &&
+                    s.toString().trim().equals(mTKWord.word)) {
+                mTKWord = null;
+            }
             mSuggestLsv.setVisibility(View.VISIBLE);
             mAlternativeLsv.setVisibility(View.GONE);
         }
@@ -318,7 +320,10 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
      */
     private void submit() {
         TKWord tkWord = mTKWord;
-        String word = tkWord.word.trim();
+        String word = mKeywordEdt.getText().toString().trim();
+        if (tkWord != null) {
+            tkWord.word.trim();
+        }
         if (TextUtils.isEmpty(word)) {
             mSphinx.showTip(R.string.search_input_keyword, Toast.LENGTH_SHORT);
             return;
@@ -340,7 +345,6 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
      */
     public void reset() {
         mSuggestLsv.setSelectionFromTop(0, 0);
-        mTKWord = new TKWord();
         mKeywordEdt.setText(null);
         mKeywordEdt.clearFocus();
         mViewPager.setCurrentItem(0);

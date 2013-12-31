@@ -154,6 +154,10 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         public void afterTextChanged(Editable s) {
             Utility.refreshButton(mSphinx, mRightBtn, getString(R.string.confirm), getString(R.string.cancel), 
                     (s.toString().trim().length() > 0));
+            if (mTKWord != null &&
+                    s.toString().trim().equals(mTKWord.word) == false) {
+                mTKWord = null;
+            }
         }
     };
 
@@ -177,7 +181,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
             @Override
             public void onBtnClicked(TKWord tkWord, int position) {
                 mKeywordEdt.setText(tkWord.word);
-                mTKWord = tkWord;
+                mTKWord = tkWord.clone();
                 mActionLog.addAction(mActionTag + ActionLog.HistoryWordInput, position, tkWord.word, tkWord.attribute);
             }
         };
@@ -253,6 +257,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                     HistoryWordTable.clearHistoryWord(mSphinx, mCurHisWordType);
                     mSuggestWordListManager.refresh(mKeywordEdt, mCurHisWordType);
                 } else {
+                    mTKWord = tkWord.clone();
                     if (tkWord.attribute == TKWord.ATTRIBUTE_HISTORY) {
                         mActionLog.addAction(mActionTag + ActionLog.ListViewItemHistory, position, tkWord.word);
                     } else {
