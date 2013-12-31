@@ -551,19 +551,19 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
                 setTxvText(planHolder.title, plan.getTitle(sphinx));
                 setTxvText(planHolder.txv1, plan.getExpectedBusTime());
                 setTxvText(planHolder.txv2, plan.getLengthStr(sphinx));
-                setTxvText(planHolder.txv3, plan.getWalkDistance());
+                setTxvText(planHolder.txv3, plan.getWalkDistance4Transfer());
                 setTxvText(planHolder.txv4, plan.getBusstopNum());
             } else if (plan.getType() == TrafficQuery.QUERY_TYPE_DRIVE) {
                 setTxvText(planHolder.title, sphinx.getString(R.string.title_type_drive));
                 setTxvText(planHolder.txv1, plan.getDriveDistance());
                 setTxvText(planHolder.txv2, plan.getExpectedDriveTime());
                 setTxvText(planHolder.txv3, plan.getTrafficLightNum());
-                setTxvText(planHolder.txv4, plan.getTaxiCost());
+                setTxvText(planHolder.txv4, plan.getTaxiCost4Drive());
             } else if (plan.getType() == TrafficQuery.QUERY_TYPE_WALK) {
                 setTxvText(planHolder.title, sphinx.getString(R.string.title_type_walk));
-                setTxvText(planHolder.txv1, null);
-                setTxvText(planHolder.txv2, null);
-                setTxvText(planHolder.txv3, null);
+                setTxvText(planHolder.txv1, plan.getWalkDistance4Walk());
+                setTxvText(planHolder.txv2, plan.getExpectedWalkTime());
+                setTxvText(planHolder.txv3, plan.getTaxiCost4Walk());
                 setTxvText(planHolder.txv4, null);
             }
             planHolder.tags.removeAllViews();
