@@ -812,7 +812,7 @@ public class ActionLog extends LogUpload {
                 mStringBuilder.append(actionLog);
                 LogWrapper.d(TAG, actionLog);
     
-                tryUpload();
+                writeAndUpload();
                 
             } catch (Exception e) {
                 LogWrapper.e(TAG, e.getMessage());
@@ -829,21 +829,6 @@ public class ActionLog extends LogUpload {
     @Override
     protected String getLogOutToken() {
         return SEPARATOR_STAET+(simpleDateFormat.format(CalendarUtil.getExactTime(mContext)))+SEPARATOR_MIDDLE+LogOut;
-    }
-
-    @Override
-    protected void onLogOut() {
-        super.onLogOut();
-        synchronized (mLock) {
-            if (mStringBuilder == null) {
-                return;
-            }
-            StringBuilder s = mStringBuilder;
-            mStringBuilder = new StringBuilder();
-            mStringBuilder.append(getLogOutToken());
-            mStringBuilder.append(s);
-            LogWrapper.d(TAG, LogOut);
-        }
     }
     
     /**

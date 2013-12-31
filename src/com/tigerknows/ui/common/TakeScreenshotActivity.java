@@ -57,10 +57,6 @@ public class TakeScreenshotActivity extends BaseActivity implements View.OnClick
         mShareLayoutParams.rightMargin = Utility.dip2px(mThis, 12);
         
         mShareBtn.setTextColor(mRightBtn.getTextColors());
-        mShareBtn.setPadding(mRightBtn.getPaddingLeft(),
-                mRightBtn.getPaddingTop(),
-                mRightBtn.getPaddingRight(),
-                mRightBtn.getPaddingBottom());
         ViewGroup mRightView = (ViewGroup) mRightBtn.getParent();
         mRightView.addView(mShareBtn, mShareLayoutParams);
         

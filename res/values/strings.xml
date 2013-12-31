@@ -1355,4 +1355,6 @@
     <string name="click_set_place">点击设置常用地点</string>
     <string name="preference">偏好</string>
     <string name="transfer_map">公交地图</string>
+    <string name="show_zoom_button">显示放大缩小按钮</string>
+    <string name="cate">美食</string>
 </resources>

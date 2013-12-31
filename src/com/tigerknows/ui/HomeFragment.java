@@ -20,6 +20,7 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
 /**
  * @author Peng Wenyue
@@ -61,8 +62,9 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         return mRootView;
     }
 
+    @Override
     protected void setListener() {
-        
+        // 不拦截触摸事件
     }
 
     @Override
@@ -73,6 +75,9 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         mTitleBtn.setOnClickListener(this);
         mTitleBtn.setHint(R.string.find_poi);
         mTitleBtn.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
+        RelativeLayout.LayoutParams layoutParams = (android.widget.RelativeLayout.LayoutParams) mTitleBtn.getLayoutParams();
+        layoutParams.topMargin = mTitleBtnPaddingLeft;
+        layoutParams.bottomMargin = mTitleBtnPaddingLeft;
         
         if (mSearchDrawable == null) {
             mSearchDrawable = mSphinx.getResources().getDrawable(R.drawable.ic_home_search);

@@ -448,8 +448,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 
             mLocationListener = new MyLocationListener(this, mLocationChangedRun);
             
-            mZoomView.setVisibility(View.INVISIBLE);
-            
             ZoomControls zoomControls = mMapView.getZoomControls();
             zoomControls.setOnZoomInClickListener(new OnClickListener(){
                 public void onClick(View view){
@@ -468,6 +466,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                         
             // add zoom controller to zoom view
             mZoomView.addView(zoomControls);
+            
+            refreshZoomView();
             
             mMapCleanBtn.setOnClickListener(new OnClickListener() {
                 
@@ -986,7 +986,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 	protected void onStart() {
 		super.onStart();
 		BaseQuery.sClentStatus = BaseQuery.CLIENT_STATUS_START;
-		mZoomView.setVisibility(View.VISIBLE);
         
         IntentFilter intentFilter= new IntentFilter(MapEngine.ACTION_REMOVE_CITY_MAP_DATA);
         registerReceiver(mRemoveCityMapDataBroadcastReceiver, intentFilter);
@@ -1203,6 +1202,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     View button1 = view.findViewById(R.id.button1_view);
                     View button2 = view.findViewById(R.id.button2_view);
                     View button3 = view.findViewById(R.id.button3_view);
+                    View showZoomView = view.findViewById(R.id.show_zoom_button_view);
+                    final CheckBox showZoonChb = (CheckBox) view.findViewById(R.id.show_zoom_button_chb);
+                    showZoonChb.setChecked(!TKConfig.isPref(mThis, TKConfig.PREFS_SHOW_ZOOM_BUTTON));
                     
                     View.OnClickListener onClickListener = new OnClickListener() {
                         
@@ -1217,7 +1219,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                                 mActionLog.addAction(ActionLog.MapSubway);
                                 getSubwayMapFragment().setData(Globals.getCurrentCityInfo(mThis, false));
                                 showView(R.id.view_subway_map);
-                                
+                                mPopupWindowTools.dismiss();
                             } else if (id == R.id.button1_view) {
                                 mActionLog.addAction(ActionLog.MapTakeScreenshot);
                                 
@@ -1234,6 +1236,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                                     }
                                 }, mMapView.getCenterPosition(), mMapView.getCurrentMapScene());
                                 
+                                mPopupWindowTools.dismiss();
+                                
                             } else if (id == R.id.button2_view) {
                                 mActionLog.addAction(ActionLog.MapDistance);
                                 
@@ -1241,18 +1245,25 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                                 showView(R.id.view_measure_distance);
                                 
                                 Toast.makeText(mThis, R.string.measure_distance_tip, Toast.LENGTH_LONG).show();
+                                mPopupWindowTools.dismiss();
                             } else if (id == R.id.button3_view) {
                                 mActionLog.addAction(ActionLog.MapCompass);
                                 
                                 showView(R.id.activity_traffic_compass);
+                                mPopupWindowTools.dismiss();
+                            } else if (id == R.id.show_zoom_button_view || id == R.id.show_zoom_button_chb) {
+                                TKConfig.reversePref(mThis, TKConfig.PREFS_SHOW_ZOOM_BUTTON);
+                                showZoonChb.setChecked(!TKConfig.isPref(mThis, TKConfig.PREFS_SHOW_ZOOM_BUTTON));
+                                refreshZoomView();
                             }
-                            mPopupWindowTools.dismiss();
                         }
                     };
                     button0.setOnClickListener(onClickListener);
                     button1.setOnClickListener(onClickListener);
                     button2.setOnClickListener(onClickListener);
                     button3.setOnClickListener(onClickListener);
+                    showZoomView.setOnClickListener(onClickListener);
+                    showZoonChb.setOnClickListener(onClickListener);
                     
                     view.findViewById(R.id.bottomPanel).setOnTouchListener(new OnTouchListener() {
                         
@@ -1648,7 +1659,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             mPopupWindowTools.dismiss();
         }
         
-        LogUpload.uploadLog(mThis, mActionLog, mTKLocationManager.getGPSLocationUpload(), mTKLocationManager.getNetworkLocationUpload());
+        LogUpload.upload(mThis, mActionLog, mTKLocationManager.getGPSLocationUpload(), mTKLocationManager.getNetworkLocationUpload());
         
         if (mSensorOrientation) {
             mSensorManager.unregisterListener(mSensorListener);
@@ -3564,6 +3575,14 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     	}
     }
     // TODO: upload app list end
+
+    public void refreshZoomView() {
+        if (TKConfig.isPref(mThis, TKConfig.PREFS_SHOW_ZOOM_BUTTON)) {
+            mZoomView.setVisibility(View.INVISIBLE);
+        } else {
+            mZoomView.setVisibility(View.VISIBLE);
+        }
+    }
 
     public View getLocationView() {
         return mLocationView;

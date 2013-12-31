@@ -38,6 +38,14 @@ public final class TrafficQuery extends BaseQuery {
     // 3:步行导航
     public static final int QUERY_TYPE_WALK = Step.TYPE_WALK;
     
+    // 驾车类型，最少时间，最短距离，避免高速
+    public static final int DRIVE_LEAST_TIME = 1;
+    public static final int DRIVE_SHORTEST = 2;
+    public static final int DRIVE_NO_HIGHWAY = 3;
+
+    // bais 整数   false,只在驾车导航时提交     1:最少时间; 2:最短距离; 3:避免高速
+    public static final String SERVER_PARAMETER_BAIS = "bais";
+    
     /*
      * 每次默认的最大方案请求数目.
      */

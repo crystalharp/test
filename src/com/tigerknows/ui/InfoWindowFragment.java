@@ -7,6 +7,7 @@ package com.tigerknows.ui;
 import com.decarta.android.exception.APIException;
 import com.decarta.android.map.ItemizedOverlay;
 import com.decarta.android.map.OverlayItem;
+import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.Sphinx.TouchMode;
@@ -23,6 +24,7 @@ import com.tigerknows.model.Dianying;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.Response;
 import com.tigerknows.model.TrafficModel.Plan;
+import com.tigerknows.model.TrafficModel.Plan.Step;
 import com.tigerknows.model.Tuangou;
 import com.tigerknows.model.Yanchu;
 import com.tigerknows.model.Zhanlan;
@@ -31,6 +33,8 @@ import com.tigerknows.model.DataQuery.GeoCoderResponse.GeoCoderList;
 import com.tigerknows.ui.discover.CycleViewPager;
 import com.tigerknows.ui.discover.CycleViewPager.CycleOnPageChangeListener;
 import com.tigerknows.ui.discover.CycleViewPager.CyclePagerAdapter;
+import com.tigerknows.ui.traffic.TrafficDetailFragment;
+import com.tigerknows.ui.traffic.TrafficDetailFragment.PlanItemRefresher;
 import com.tigerknows.util.Utility;
 
 import android.os.Bundle;
@@ -39,6 +43,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -69,6 +74,8 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
     public static final int TYPE_MAP_POI = 8;
 
     public static final int TYPE_PLAN_LIST = 9;
+    
+    public static final int TYPE_STEP = 10;
 
     /**
      * 下面这些ViewGroup用于InfoWindow
@@ -82,12 +89,15 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
     private int mType;
     private int mPostion;
 
-    private int mTotalHeight;
     private int mTitleHeight;
     private int mPOIHeight;
     private int mHotelHeight;
     private int mTuangouHeight;
     private int mBottomHeight;
+    private int mTrafficPlanHeight;
+    private int mTrafficStepHeight;
+    
+    private final static String TAG = "InfoWindowFragment";
     
     public InfoWindowFragment(Sphinx sphinx) {
         super(sphinx);
@@ -142,6 +152,18 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             }
         } else if (id == R.id.detail_btn) {
             infoWindowClicked();
+        } else if (id == R.id.traffic_plan_item) {
+            TrafficDetailFragment f = mSphinx.getTrafficDetailFragment();
+            Plan plan = (Plan) mItemizedOverlay.get(0).getAssociatedObject();
+            if (plan.getType() == Step.TYPE_DRIVE || plan.getType() == Step.TYPE_WALK) {
+                f.setData(f.getTrafficQuery(), 
+                        f.getTransferPlanList(),
+                        f.getDrivePlanList(), 
+                        f.getWalkPlanList(),
+                        plan.getType(),
+                        0);
+                mSphinx.showView(R.id.view_traffic_result_detail);
+            }
         }
         
     }
@@ -186,9 +208,13 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             mType = TYPE_TUANGUO;
         } else if (object instanceof Plan) {
             mType = TYPE_PLAN_LIST;
+        } else if (object instanceof Step) {
+            mType = TYPE_STEP;
         } else {
             mType = TYPE_MESSAGE;
         }
+        
+        LogWrapper.d(TAG, "mType = " + mType);
 
         List<View> list = getInfoWindowViewList();
         mCyclePagerAdapter.viewList = list;
@@ -212,9 +238,7 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             setListenerToView(view);
             viewList.add(view);
             
-            view.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-            mTotalHeight = view.getMeasuredHeight();
-            View v = view.findViewById(R.id.title_txv);
+            View v = view.findViewById(R.id.message_view);
             v.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
             mTitleHeight = v.getMeasuredHeight();
             v = view.findViewById(R.id.poi_view);
@@ -228,7 +252,14 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             mHotelHeight = v.getMeasuredHeight();
             v = view.findViewById(R.id.bottom_view);
             v.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-            mBottomHeight = v.getMeasuredHeight();
+            mBottomHeight = v.getMeasuredHeight() + Utility.dip2px(mSphinx, 16);
+            v = view.findViewById(R.id.traffic_plan_item);
+            v.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+            mTrafficPlanHeight = v.getMeasuredHeight();
+            v = view.findViewById(R.id.traffic_step_item);
+            v.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+            mTrafficStepHeight = v.getMeasuredHeight();
+            LogWrapper.d(TAG, "step height:" + mTrafficStepHeight);
             
             view = mLayoutInflater.inflate(R.layout.info_window_fragment, this, false);
             setListenerToView(view);
@@ -247,6 +278,7 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
         v.findViewById(R.id.detail_btn).setOnClickListener(this);
         v.findViewById(R.id.poi_btn).setOnClickListener(this);
         v.findViewById(R.id.traffic_btn).setOnClickListener(this);
+        v.findViewById(R.id.traffic_plan_item).setOnClickListener(this);
     }
     
     /**
@@ -277,9 +309,10 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             mapView.showOverlay(ItemizedOverlay.MY_LOCATION_OVERLAY, false);
         }
         mPostion = position;
+        mHeight = mTitleHeight + mBottomHeight;
         if (mType == TYPE_POI) {
             
-            mHeight = mTotalHeight - mHotelHeight - mTuangouHeight;
+            mHeight += mPOIHeight;
             mSphinx.setMapViewPaddingBottom(mHeight);
             
             View view = (View) mCyclePagerAdapter.viewList.get((position) % mCyclePagerAdapter.viewList.size());
@@ -295,7 +328,6 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             }
         } else if (mType == TYPE_MY_LOCATION) {
 
-            mHeight = mTotalHeight - mPOIHeight - mHotelHeight - mTuangouHeight;
             mSphinx.setMapViewPaddingBottom(mHeight);
             
             View view = (View) mCyclePagerAdapter.viewList.get((position) % mCyclePagerAdapter.viewList.size());
@@ -311,7 +343,7 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             }
         } else if (mType == TYPE_MESSAGE) {
 
-            mHeight = mTotalHeight - mPOIHeight - mHotelHeight - mTuangouHeight - mBottomHeight;
+            mHeight -= mBottomHeight;
             mSphinx.setMapViewPaddingBottom(mHeight);
             
             View view = (View) mCyclePagerAdapter.viewList.get((position) % mCyclePagerAdapter.viewList.size());
@@ -328,7 +360,6 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
         } else if (mType == TYPE_LONG_CLICKED_SELECT_POINT
                 || mType == TYPE_MAP_POI) {
 
-            mHeight = mTotalHeight - mPOIHeight - mHotelHeight - mTuangouHeight;
             mSphinx.setMapViewPaddingBottom(mHeight);
             
             View view = (View) mCyclePagerAdapter.viewList.get((position) % mCyclePagerAdapter.viewList.size());
@@ -344,7 +375,7 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             }
         } else if (mType == TYPE_HOTEL) {
 
-            mHeight = mTotalHeight - mPOIHeight - mTuangouHeight;
+            mHeight += mHotelHeight;
             mSphinx.setMapViewPaddingBottom(mHeight);
             
             View view = (View) mCyclePagerAdapter.viewList.get((position) % mCyclePagerAdapter.viewList.size());
@@ -360,7 +391,7 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             }
         } else if (mType == TYPE_TUANGUO) {
 
-            mHeight = mTotalHeight - mPOIHeight - mHotelHeight - mTuangouHeight;
+            mHeight += mTuangouHeight;
             mSphinx.setMapViewPaddingBottom(mHeight);
             
             View view = (View) mCyclePagerAdapter.viewList.get((position) % mCyclePagerAdapter.viewList.size());
@@ -376,7 +407,7 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             }
         } else if (mType == TYPE_DYNAMIC_POI) {
 
-            mHeight = mTotalHeight - mHotelHeight - mTuangouHeight;
+            mHeight += mPOIHeight;
             mSphinx.setMapViewPaddingBottom(mHeight);
             
             View view = (View) mCyclePagerAdapter.viewList.get((position) % mCyclePagerAdapter.viewList.size());
@@ -392,7 +423,7 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             }
         } else if (mType == TYPE_CLICKED_SELECT_POINT) {
 
-            mHeight = mTotalHeight - mPOIHeight - mHotelHeight - mTuangouHeight - mBottomHeight;
+            mHeight -= mBottomHeight;
             mSphinx.setMapViewPaddingBottom(mHeight);
             
             View view = (View) mCyclePagerAdapter.viewList.get((position) % mCyclePagerAdapter.viewList.size());
@@ -408,7 +439,7 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             }
         } else if (mType == TYPE_PLAN_LIST) {
 
-            mHeight = mTotalHeight - mPOIHeight - mHotelHeight - mTuangouHeight - mBottomHeight;
+            mHeight = mTrafficPlanHeight;
             mSphinx.setMapViewPaddingBottom(mHeight);
             
             View view = (View) mCyclePagerAdapter.viewList.get((position) % mCyclePagerAdapter.viewList.size());
@@ -426,6 +457,21 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
                 view = mCyclePagerAdapter.viewList.get((position+1) % mCyclePagerAdapter.viewList.size());
                 setPlanListToView(view, (Plan) mItemizedOverlay.get(position).getAssociatedObject());
             }
+        } else if (mType == TYPE_STEP) {
+            mHeight = mTrafficStepHeight;
+            mSphinx.setMapViewPaddingBottom(mHeight);
+            
+            View view = (View) mCyclePagerAdapter.viewList.get((position) % mCyclePagerAdapter.viewList.size());
+            setStepToView(view, position);
+            
+            if (position - 1 >= 0) {
+                view = mCyclePagerAdapter.viewList.get((position-1) % mCyclePagerAdapter.viewList.size());
+                setStepToView(view, position);
+            }
+            if (position + 1 < mCyclePagerAdapter.count) {
+                view = mCyclePagerAdapter.viewList.get((position+1) % mCyclePagerAdapter.viewList.size());
+                setStepToView(view, position);
+            }
         }
         mViewPager.getLayoutParams().height = mHeight;
     }
@@ -433,26 +479,28 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
     private void layoutInfoWindowView() {
         for(int i = mCyclePagerAdapter.viewList.size()-1; i >= 0; i--) {
             View v = mCyclePagerAdapter.viewList.get(i);
-            if (mType == TYPE_POI) {
-                v.findViewById(R.id.poi_view).setVisibility(View.VISIBLE);
-                v.findViewById(R.id.hotel_view).setVisibility(View.GONE);
-                v.findViewById(R.id.tuangou_view).setVisibility(View.GONE);
-            } else if (mType == TYPE_HOTEL) {
-                v.findViewById(R.id.poi_view).setVisibility(View.GONE);
-                v.findViewById(R.id.hotel_view).setVisibility(View.VISIBLE);
-                v.findViewById(R.id.tuangou_view).setVisibility(View.GONE);
-            } else if (mType == TYPE_TUANGUO) {
-                v.findViewById(R.id.poi_view).setVisibility(View.GONE);
-                v.findViewById(R.id.hotel_view).setVisibility(View.GONE);
-                v.findViewById(R.id.tuangou_view).setVisibility(View.VISIBLE);
-            } else {
-                v.findViewById(R.id.poi_view).setVisibility(View.GONE);
-                v.findViewById(R.id.hotel_view).setVisibility(View.GONE);
-                v.findViewById(R.id.tuangou_view).setVisibility(View.GONE);
-            }
+            v.findViewById(R.id.poi_view).setVisibility(View.GONE);
+            v.findViewById(R.id.hotel_view).setVisibility(View.GONE);
+            v.findViewById(R.id.tuangou_view).setVisibility(View.GONE);
             v.findViewById(R.id.title_txv).setVisibility(View.GONE);
+            v.findViewById(R.id.traffic_plan_item).setVisibility(View.GONE);
+            v.findViewById(R.id.traffic_step_item).setVisibility(View.GONE);
             v.findViewById(R.id.detail_btn).setVisibility(View.VISIBLE);
             v.findViewById(R.id.bottom_view).setVisibility(View.VISIBLE);
+            v.findViewById(R.id.message_view).setVisibility(View.VISIBLE);
+            if (mType == TYPE_POI) {
+                v.findViewById(R.id.poi_view).setVisibility(View.VISIBLE);
+            } else if (mType == TYPE_HOTEL) {
+                v.findViewById(R.id.hotel_view).setVisibility(View.VISIBLE);
+            } else if (mType == TYPE_TUANGUO) {
+                v.findViewById(R.id.tuangou_view).setVisibility(View.VISIBLE);
+            } else if (mType == TYPE_PLAN_LIST) {
+                v.findViewById(R.id.traffic_plan_item).setVisibility(View.VISIBLE);
+                v.findViewById(R.id.message_view).setVisibility(View.GONE);
+            } else if (mType == TYPE_STEP) {
+                v.findViewById(R.id.traffic_step_item).setVisibility(View.VISIBLE);
+                v.findViewById(R.id.message_view).setVisibility(View.GONE);
+            }
         }
     }
     
@@ -474,15 +522,17 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
     
     private void setPlanListToView(View v, Plan plan) {
         
-        TextView titleTxv = (TextView) v.findViewById(R.id.title_txv);
-        titleTxv.setVisibility(View.VISIBLE);
-        titleTxv.setText(plan.getTitle(mSphinx));
-        
-        TextView nameTxv=(TextView)v.findViewById(R.id.name_txv);
-        nameTxv.setText(plan.getDescription());
+        PlanItemRefresher.refresh(mSphinx, plan, v.findViewById(R.id.traffic_plan_item), true);
 
         v.findViewById(R.id.detail_btn).setVisibility(View.GONE);
         v.findViewById(R.id.bottom_view).setVisibility(View.GONE);
+    }
+    
+    private void setStepToView(View v, int position) {
+        ImageView img = (ImageView) v.findViewById(R.id.step_icon);
+        TextView txv = (TextView) v.findViewById(R.id.step_txv);
+        img.setBackgroundDrawable(mSphinx.getTrafficDetailFragment().getStepIcon(position));
+        txv.setText(mSphinx.getTrafficDetailFragment().getStepDescription(position));
     }
     
     private void setClickSelectPointToView(View v, OverlayItem overlayItem) {
@@ -581,7 +631,7 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             
             POI poi = (POI) overlayItem.getAssociatedObject();
             mSphinx.getFragment(mOwerFragmentId).dismiss();
-            mSphinx.getInputSearchFragment().onConfirmed(poi);
+            mSphinx.getInputSearchFragment().responsePOI(poi);
             
         } else if(mType == TYPE_LONG_CLICKED_SELECT_POINT
                 || mType == TYPE_MY_LOCATION) {

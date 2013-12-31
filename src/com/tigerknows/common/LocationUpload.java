@@ -143,7 +143,8 @@ public class LocationUpload extends LogUpload {
                 }
                 
                 if (info.length() > 0) {
-                    if (mLogFileLength > 0 || mStringBuilder.length() > 0) {
+                    long length = (mUploading ? mTmpLogFileLength : mLogFileLength);
+                    if (length > 0 || mStringBuilder.length() > 0) {
                         mStringBuilder.append('|');
                     }
                     long t = System.currentTimeMillis();
@@ -188,11 +189,10 @@ public class LocationUpload extends LogUpload {
                     mStringBuilder.append(','); 
                     mStringBuilder.append(info);
                     
-                    tryUpload();
+                    writeAndUpload();
                 }
             }
             
-                
         }
     }
 
@@ -208,33 +208,18 @@ public class LocationUpload extends LogUpload {
     }
 
     @Override
-    protected void onLogOut() {
+    protected boolean write(boolean temp) {
         synchronized (mLock) {
-            super.onLogOut();
-            if (mStringBuilder == null) {
-                return;
-            }
             reset();
-            StringBuilder s = mStringBuilder;
-            if (s.length() > 0 && s.charAt(0) == '|') {
-                s = s.deleteCharAt(0);
-            }
-            mStringBuilder = new StringBuilder();
-            mStringBuilder.append(s);
-        }
-    }
-
-    @Override
-    protected void write() {
-        synchronized (mLock) {
-            super.write();
-            reset();
+            return super.write(temp);
         }
     }
     
-    void reset() {
-        sdt = 0;
-        sdx = 0;
-        sdy = 0;
+    private void reset() {
+        synchronized (mLock) {
+            sdt = 0;
+            sdx = 0;
+            sdy = 0;
+        }
     }
 }

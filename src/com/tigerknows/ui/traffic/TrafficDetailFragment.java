@@ -13,7 +13,6 @@ import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.TextUtils;
@@ -46,6 +45,7 @@ import com.tigerknows.provider.Tigerknows;
 import com.tigerknows.share.ShareAPI;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.ui.common.ResultMapFragment;
+import com.tigerknows.ui.discover.CycleViewPager.CyclePagerAdapter;
 import com.tigerknows.util.Utility;
 import com.tigerknows.util.NavigationSplitJointRule;
 
@@ -61,7 +61,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
     
     private StringListAdapter mResultAdapter;
     
-    private PlanListAdapter mPlanListAdapter;
+    private CyclePagerAdapter mPlanListAdapter;
 
     private List<Integer> mTypes = new ArrayList<Integer>();
     
@@ -97,8 +97,6 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
     
     private List<Plan> mWalkPlanList = new ArrayList<TrafficModel.Plan>();
     
-    private List<TrafficDetailItem> mDetailItemViewList = new ArrayList<TrafficDetailItem>();
-    
     private int mIndex = -1;
     
     private TrafficQuery mTrafficQuery;
@@ -125,7 +123,14 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         mResultAdapter = new StringListAdapter(mContext);
         mResultLsv.setAdapter(mResultAdapter);
         
-        mPlanListAdapter = new PlanListAdapter();
+        List<View> viewList = new ArrayList<View>();
+        View item = mLayoutInflater.inflate(R.layout.traffic_group_traffic, null);
+        viewList.add(item);
+        item = mLayoutInflater.inflate(R.layout.traffic_group_traffic, null);
+        viewList.add(item);
+        item = mLayoutInflater.inflate(R.layout.traffic_group_traffic, null);
+        viewList.add(item);
+        mPlanListAdapter = new CyclePagerAdapter(viewList);
         mViewPager.setAdapter(mPlanListAdapter);
         
         return mRootView;
@@ -159,22 +164,8 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
             default:
         }
         
-        if (mPlanList.size() > 0) {
-            mViewPagerLayout.setVisibility(View.VISIBLE);
-            mDetailItemViewList.clear();
-            for (Plan plan : mPlanList) {
-                TrafficDetailItem item = new TrafficDetailItem(mSphinx);
-                item.refresh(plan);
-                mDetailItemViewList.add(item);
-            }
-            Utility.pageIndicatorInit(mSphinx, mPageIndicatorView, mPlanList.size(), mIndex, R.drawable.ic_notice_dot_normal, R.drawable.ic_notice_dot_selected);
-            mViewPager.setCurrentItem(mIndex);
-        } else {
-            mViewPagerLayout.setVisibility(View.GONE);
-        }
-        
         Utility.setFavoriteBtn(mSphinx, mFavorateBtn, plan.checkFavorite(mContext));
-
+        
         if (mDismissed) {
             setSelectionFromTop();
         }
@@ -227,21 +218,34 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
 
             @Override
             public void onPageScrollStateChanged(int arg0) {
-                // TODO Auto-generated method stub
                 
             }
 
             @Override
             public void onPageScrolled(int arg0, float arg1, int arg2) {
-                // TODO Auto-generated method stub
                 
             }
 
             @Override
-            public void onPageSelected(int arg0) {
-                Utility.pageIndicatorChanged(mSphinx, mPageIndicatorView, arg0, R.drawable.ic_notice_dot_normal, R.drawable.ic_notice_dot_selected);
-                updateResult(mPlanList.get(arg0));
-            } });
+            public void onPageSelected(int position) {
+                pageSelected(position);
+            } 
+        });
+    }
+    
+    private void pageSelected(int position) {
+        Utility.pageIndicatorChanged(mSphinx, mPageIndicatorView, position, R.drawable.ic_notice_dot_normal, R.drawable.ic_notice_dot_selected);
+        View view = mPlanListAdapter.viewList.get((position) % mPlanListAdapter.viewList.size());
+        PlanItemRefresher.refresh(mSphinx, mPlanList.get(position), view, true);
+        if (position > 0) {
+            view = mPlanListAdapter.viewList.get((position-1) % mPlanListAdapter.viewList.size());
+            PlanItemRefresher.refresh(mSphinx, mPlanList.get(position-1), view, true);
+        } else if (position + 1 < mPlanListAdapter.count) {
+            view = mPlanListAdapter.viewList.get((position+1) % mPlanListAdapter.viewList.size());
+            PlanItemRefresher.refresh(mSphinx, mPlanList.get(position+1), view, true);
+        }
+        updateResult(mPlanList.get(position));
+        setSelectionFromTop();
     }
     
     @Override
@@ -286,13 +290,24 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         } else if (type == Plan.Step.TYPE_WALK) {
             mPlanList.addAll(mWalkPlanList);
         }
-        
+
         mIndex = index;
         plan = mPlanList.get(mIndex);
-
+        
         updateResult(plan);
-
+        
         plan.updateHistory(mContext);
+        
+        if (mPlanList.size() > 0) {
+            mViewPagerLayout.setVisibility(View.VISIBLE);
+            Utility.pageIndicatorInit(mSphinx, mPageIndicatorView, mPlanList.size(), mIndex, R.drawable.ic_notice_dot_normal, R.drawable.ic_notice_dot_selected);
+            mPlanListAdapter.count = mPlanList.size();
+            mPlanListAdapter.notifyDataSetChanged();
+            pageSelected(mIndex);
+        } else {
+            mViewPagerLayout.setVisibility(View.GONE);
+        }
+        
     }
     
     private void updateResult(Plan plan) {
@@ -315,29 +330,74 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         public TextView textView;
     }
 
-    class PlanListAdapter extends PagerAdapter {
+    public CharSequence getStepDescription(int position) {
+        return mStrList.get(position);
+    }
 
-        @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
-            ((ViewPager) container).removeView(mDetailItemViewList.get(position).getView());
+    public Drawable getStepIcon(int position){
+        Integer steptype = mTypes.get(position);
+        if (mType == Plan.Step.TYPE_TRANSFER) {
+            return getTransferDrawable(steptype);
+        } else {
+            return getDirectionDrawable(steptype);
         }
-
-        @Override
-        public Object instantiateItem(ViewGroup container, int position) {
-            container.addView(mDetailItemViewList.get(position).getView(), 0);//添加页卡  
-            return mDetailItemViewList.get(position).getView(); 
-        }
-
-        @Override
-        public int getCount() {
-            return mPlanList.size();
-        }
-
-        @Override
-        public boolean isViewFromObject(View arg0, Object arg1) {
-            return arg0 == arg1;
-        }
+    }
+    
+    public Drawable getTransferDrawable(int steptype) {
+        int res = R.drawable.icon_marker_bus;
         
+        switch(steptype){
+        case TrafficModel.Plan.Step.TYPE_TRANSFER:
+            res = R.drawable.icon_marker_bus;
+            break;
+        case TrafficModel.Plan.Step.TYPE_WALK:
+            res = R.drawable.icon_marker_walk;
+            break;
+        case TYPE_RESULT_LIST_START:
+            res = R.drawable.icon_marker_start;
+            break;
+        case TYPE_RESULT_LIST_END:
+            res = R.drawable.icon_marker_end;
+            break;
+        default:
+            
+        }
+        return mContext.getResources().getDrawable(res);
+    }
+    
+    public Drawable getDirectionDrawable(int steptype) {
+        int res = R.drawable.icon_marker_drive_forward;
+        
+        switch(steptype){
+        
+        case TrafficModel.Plan.Step.TYPE_FORWARD:
+            res = R.drawable.icon_marker_drive_forward;
+            break;
+        case TrafficModel.Plan.Step.TYPE_BACK:
+            res = R.drawable.icon_marker_drive_back;
+            break;
+        case TrafficModel.Plan.Step.TYPE_ROUND_LEFT:
+            res = R.drawable.icon_marker_drive_round_left;
+            break;
+        case TrafficModel.Plan.Step.TYPE_LEFT:
+            res = R.drawable.icon_marker_drive_left;
+            break;
+        case TrafficModel.Plan.Step.TYPE_ROUND_RIGHT:
+            res = R.drawable.icon_marker_drive_round_right;
+            break;
+        case TrafficModel.Plan.Step.TYPE_RIGHT:
+            res = R.drawable.icon_marker_drive_right;
+            break;
+        case TYPE_RESULT_LIST_START:
+            res = R.drawable.icon_marker_start;
+            break;
+        case TYPE_RESULT_LIST_END:
+            res = R.drawable.icon_marker_end;
+            break;
+        default:
+            
+        }
+        return mContext.getResources().getDrawable(res);
     }
     
     class StringListAdapter extends BaseAdapter{
@@ -349,10 +409,6 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         @Override
         public int getCount() {
             return mStrList.size();
-        }
-
-        private CharSequence getItemContent(int position) {
-            return mStrList.get(position);
         }
 
         @Override
@@ -368,9 +424,8 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
 
             StepViewHolder stepHolder = (StepViewHolder)convertView.getTag();
             
-            Integer stepType = mTypes.get(position);
-            stepHolder.image.setBackgroundDrawable(getDrawable(stepType));
-            stepHolder.textView.setText(getItemContent(position));
+            stepHolder.image.setBackgroundDrawable(getStepIcon(position));
+            stepHolder.textView.setText(getStepDescription(position));
             stepHolder.textView.setTextColor(Color.parseColor("#000000"));
             //convertView.setBackgroundResource(R.drawable.btn_traffic_detail_end_normal);
                 
@@ -378,70 +433,6 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
 
         }
         
-        private Drawable getDrawable(int steptype){
-            if (mType == Plan.Step.TYPE_TRANSFER) {
-                return getTransferDrawable(steptype);
-            } else {
-                return getDirectionDrawable(steptype);
-            }
-        }
-        
-        private Drawable getTransferDrawable(int steptype) {
-            int res = R.drawable.icon_marker_bus;
-            
-            switch(steptype){
-            case TrafficModel.Plan.Step.TYPE_TRANSFER:
-                res = R.drawable.icon_marker_bus;
-                break;
-            case TrafficModel.Plan.Step.TYPE_WALK:
-                res = R.drawable.icon_marker_walk;
-                break;
-            case TYPE_RESULT_LIST_START:
-                res = R.drawable.icon_marker_start;
-                break;
-            case TYPE_RESULT_LIST_END:
-                res = R.drawable.icon_marker_end;
-                break;
-            default:
-                
-            }
-            return mContext.getResources().getDrawable(res);
-        }
-        
-        private Drawable getDirectionDrawable(int steptype) {
-            int res = R.drawable.icon_marker_drive_forward;
-            
-            switch(steptype){
-            
-            case TrafficModel.Plan.Step.TYPE_FORWARD:
-                res = R.drawable.icon_marker_drive_forward;
-                break;
-            case TrafficModel.Plan.Step.TYPE_BACK:
-                res = R.drawable.icon_marker_drive_back;
-                break;
-            case TrafficModel.Plan.Step.TYPE_ROUND_LEFT:
-                res = R.drawable.icon_marker_drive_round_left;
-                break;
-            case TrafficModel.Plan.Step.TYPE_LEFT:
-                res = R.drawable.icon_marker_drive_left;
-                break;
-            case TrafficModel.Plan.Step.TYPE_ROUND_RIGHT:
-                res = R.drawable.icon_marker_drive_round_right;
-                break;
-            case TrafficModel.Plan.Step.TYPE_RIGHT:
-                res = R.drawable.icon_marker_drive_right;
-                break;
-            case TYPE_RESULT_LIST_START:
-                res = R.drawable.icon_marker_start;
-                break;
-            case TYPE_RESULT_LIST_END:
-                res = R.drawable.icon_marker_end;
-                break;
-            default:
-                
-            }
-            return mContext.getResources().getDrawable(res);
-        }
 
         @Override
         public Object getItem(int position) {
@@ -571,7 +562,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         return mTrafficQuery;
     }
 
-    public static class PlanViewHolder {
+    private static class PlanViewHolder {
         public TextView title;
         public TextView txv1;
         public TextView txv4;
@@ -581,12 +572,9 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         public int position;
     }
     
-    public static class TrafficDetailItem {
-        View v;
-        Plan plan;
+    public static class PlanItemRefresher {
         static int resid = R.layout.traffic_group_traffic;
-        PlanViewHolder planHolder;
-        Sphinx mSphinx;
+        static PlanViewHolder planHolder = new PlanViewHolder();
         private static final int MAX_TAG_NUM = 3;
         
         private static final int tagResList[] = {0, 
@@ -599,37 +587,45 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
             R.drawable.bg_transfer_tag7
             }; 
         
-        public TrafficDetailItem(Sphinx sphinx) {
-            this(sphinx, sphinx.getLayoutInflater().inflate(resid, null));
+        public static void refresh(Sphinx sphinx, Plan plan, View v) {
+            refresh(sphinx, plan, v, false);
         }
         
-        public TrafficDetailItem(Sphinx sphinx, View view) {
-            v = view;
-            mSphinx = sphinx;
-            planHolder = new PlanViewHolder();
-            planHolder.title = (TextView)v.findViewById(R.id.title_txv);
-            planHolder.txv1 = (TextView)v.findViewById(R.id.txv1);
-            planHolder.txv2 = (TextView) v.findViewById(R.id.txv2);
-            planHolder.txv3 = (TextView) v.findViewById(R.id.txv3);
-            planHolder.txv4 = (TextView) v.findViewById(R.id.txv4);
-            planHolder.tags = (LinearLayout) v.findViewById(R.id.tags_view);
-            planHolder.title.setSingleLine();
-            planHolder.title.setEllipsize(TextUtils.TruncateAt.END);
-        }
-        
-        public void refresh(Plan p) {
-            this.plan = p;
-            planHolder.title.setText(plan.getTitle(mSphinx));
-            if (p.getType() == TrafficQuery.QUERY_TYPE_TRANSFER) {
-                planHolder.txv1.setText(plan.getExpectedBusTime());
-                planHolder.txv2.setText(plan.getLengthStr(mSphinx));
-                planHolder.txv3.setText(plan.getWalkDistance());
-                planHolder.txv4.setText(plan.getBusstopNum());
-            } else if (p.getType() == TrafficQuery.QUERY_TYPE_DRIVE) {
-                planHolder.txv1.setText(plan.getDriveDistance());
-                planHolder.txv2.setText(plan.getExpectedDriveTime());
-                planHolder.txv3.setText(plan.getTrafficLightNum());
-                planHolder.txv4.setText(plan.getTaxiCost());
+        public static void refresh(Sphinx sphinx, Plan plan, View v, boolean titleSingleLine) {
+            try {
+                planHolder.title = (TextView)v.findViewById(R.id.title_txv);
+                planHolder.txv1 = (TextView)v.findViewById(R.id.txv1);
+                planHolder.txv2 = (TextView) v.findViewById(R.id.txv2);
+                planHolder.txv3 = (TextView) v.findViewById(R.id.txv3);
+                planHolder.txv4 = (TextView) v.findViewById(R.id.txv4);
+                planHolder.tags = (LinearLayout) v.findViewById(R.id.tags_view);
+            } catch (Exception e) {
+                return;
+            }
+            planHolder.title.setSingleLine(titleSingleLine);
+            if (titleSingleLine) {
+                planHolder.title.setEllipsize(TextUtils.TruncateAt.END);
+            } else {
+                planHolder.title.setEllipsize(TextUtils.TruncateAt.MARQUEE);
+            }
+            if (plan.getType() == TrafficQuery.QUERY_TYPE_TRANSFER) {
+                setTxvText(planHolder.title, plan.getTitle(sphinx));
+                setTxvText(planHolder.txv1, plan.getExpectedBusTime());
+                setTxvText(planHolder.txv2, plan.getLengthStr(sphinx));
+                setTxvText(planHolder.txv3, plan.getWalkDistance());
+                setTxvText(planHolder.txv4, plan.getBusstopNum());
+            } else if (plan.getType() == TrafficQuery.QUERY_TYPE_DRIVE) {
+                setTxvText(planHolder.title, sphinx.getString(R.string.title_type_drive));
+                setTxvText(planHolder.txv1, plan.getDriveDistance());
+                setTxvText(planHolder.txv2, plan.getExpectedDriveTime());
+                setTxvText(planHolder.txv3, plan.getTrafficLightNum());
+                setTxvText(planHolder.txv4, plan.getTaxiCost());
+            } else if (plan.getType() == TrafficQuery.QUERY_TYPE_WALK) {
+                setTxvText(planHolder.title, sphinx.getString(R.string.title_type_walk));
+                setTxvText(planHolder.txv1, null);
+                setTxvText(planHolder.txv2, null);
+                setTxvText(planHolder.txv3, null);
+                setTxvText(planHolder.txv4, null);
             }
             planHolder.tags.removeAllViews();
             List<PlanTag> list = plan.getPlanTagList();
@@ -640,13 +636,13 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
                     if (tag.getBackgroundtype() < 1 || tag.getBackgroundtype() > 5) {
                         continue;
                     }
-                    TextView txv = new TextView(mSphinx);
+                    TextView txv = new TextView(sphinx);
                     txv.setText(tag.getDescription());
-                    int dpPadding2 = Utility.dip2px(mSphinx, 2);
+                    int dpPadding2 = Utility.dip2px(sphinx, 2);
                     txv.setPadding(dpPadding2, 0, dpPadding2, 0);
                     LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                             LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1);  
-                    int dpMargin = Utility.dip2px(mSphinx, 4);
+                    int dpMargin = Utility.dip2px(sphinx, 4);
                     lp.setMargins(dpMargin, 0, dpMargin, 0); 
                     txv.setLayoutParams(lp); 
                     txv.setBackgroundResource(tagResList[tag.getBackgroundtype()]);
@@ -657,8 +653,5 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
             }
         }
         
-        public View getView() {
-            return v;
-        }
     }
 }

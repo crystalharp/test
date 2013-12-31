@@ -111,10 +111,6 @@ public class UserLoginRegistActivity extends UserBaseActivity implements View.On
             titleLoginBtn.setBackgroundResource(R.drawable.btn_all_comment);
             titleRegistBtn.setBackgroundResource(R.drawable.btn_hot_comment_focused);
         }
-        int left = Utility.dip2px(mThis, 12);
-        int top = Utility.dip2px(mThis, 8);
-        titleLoginBtn.setPadding(left, top, left, top);
-        titleRegistBtn.setPadding(left, top, left, top);
         hideSoftInput();
     }
     

@@ -20,15 +20,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/logout"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:gravity="center"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:background="@drawable/btn_confirm"
-            android:paddingLeft="12dp"
-            android:paddingTop="8dp"
-            android:paddingRight="12dp"
-            android:paddingBottom="8dp"
             android:textColor="@color/white"/>
 
         <Button
@@ -37,16 +33,13 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="@string/send"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:textColor="@color/white"
             android:focusable="true"
             android:background="@drawable/btn_confirm"
-            android:paddingLeft="12dp"
-            android:paddingTop="8dp"
-            android:paddingRight="12dp"
-            android:paddingBottom="8dp"/>
+            />
 
         <TextView
             android:id="@+id/title_txv"

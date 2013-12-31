@@ -3,10 +3,8 @@
  */
 package com.tigerknows.common;
 
-import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.TKConfig;
-import com.tigerknows.map.CityInfo;
 import com.tigerknows.model.FeedbackUpload;
 import com.tigerknows.util.Utility;
 
@@ -15,8 +13,6 @@ import android.text.TextUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,14 +73,21 @@ public class LogUpload {
     protected String mLogFilePath;
     
     /**
-     * 日志文件名
-     */
-    protected String mLogFileName;
-    
-    /**
      * 当前日志文件的长度
      */
-    protected int mLogFileLength = 0;
+    protected long mLogFileLength = 0;
+    
+    /**
+     * 临时日志文件的路径
+     */
+    protected String mTmpLogFilePath;
+    
+    /**
+     * 临时日志文件的长度
+     */
+    protected long mTmpLogFileLength = 0;
+    
+    protected boolean mUploading = false;
     
     /**
      * 提交到服务器的参数名称
@@ -107,9 +110,8 @@ public class LogUpload {
     public LogUpload(Context context, String logFileName, String serverParameterKey) {
         synchronized (mLock) {
             mContext = context;
-            mLogFileName = logFileName;
-            mLogFilePath = TKConfig.getDataPath(false) + mLogFileName;
-            mLogFileLength = 0;
+            mLogFilePath = TKConfig.getDataPath(false) + logFileName;
+            mTmpLogFilePath = mLogFilePath + ".tmp";
             mServerParameterKey = serverParameterKey;
             
             try {
@@ -120,11 +122,28 @@ public class LogUpload {
                         return;
                     }
                 }
-                FileInputStream fis = new FileInputStream(file);
-                mLogFileLength = fis.available();
-                fis.close();
-    
+                mLogFileLength = file.length();
+                
                 mStringBuilder = new StringBuilder();
+                
+                file = new File(mTmpLogFilePath);
+                if (file.exists()) {
+                    String log = readLogText(true);
+                    if (TextUtils.isEmpty(log) == false) {
+                        mStringBuilder.append(log);
+                        write(false);
+                    }
+                    if (file.delete() == false) {
+                        LogWrapper.e(TAG, "Unable to delete file: " + mTmpLogFilePath);
+                        return;
+                    }
+                }
+                
+                if (!file.createNewFile()) {
+                    LogWrapper.e(TAG, "Unable to create new file: " + mTmpLogFilePath);
+                    return;
+                }
+    
             } catch (Exception e) {
                 LogWrapper.e(TAG, e.getMessage());
                 e.printStackTrace();
@@ -135,7 +154,7 @@ public class LogUpload {
     /**
      * 检测是否可以写入数据及上传日志
      */
-    protected void tryUpload() {
+    protected void writeAndUpload() {
         synchronized (mLock) {
             try {
                 if (mStringBuilder == null) {
@@ -144,12 +163,13 @@ public class LogUpload {
     
                 // 判断是否要写入文件
                 if (mStringBuilder.length() > WRITE_FILE_SIZE) {
-                    write();
+                    write(mUploading);
                     
-                    // 判断是否要上传
-                    if (mLogFileLength > FILE_LENGTH_OUT) {
-                        upload();
-                    }
+                }
+                
+                // 判断是否要上传
+                if (mLogFileLength > FILE_LENGTH_OUT) {
+                    upload();
                 }
                 
             } catch (Exception e) {
@@ -163,11 +183,11 @@ public class LogUpload {
      * 获取日志文件的文本内容
      * @return
      */
-    String getLogText() {
+    String readLogText(boolean temp) {
         synchronized (mLock) {
             String logText = null;
             try {
-                File file = new File(mLogFilePath);
+                File file = new File(temp ? mTmpLogFilePath : mLogFilePath);
                 if(file.exists()){
                     FileInputStream fis = new FileInputStream(file);
                     logText = Utility.readFile(fis);
@@ -183,17 +203,21 @@ public class LogUpload {
     /**
      * 删除日志文件
      */
-    void deleteLogFile() {
+    boolean deleteLogFile(boolean temp) {
         synchronized (mLock) {
+            boolean result = false;
             try {
-                File file = new File(mLogFilePath);
+                File file = new File(temp ? mTmpLogFilePath : mLogFilePath);
                 if(file.exists()){
-                    file.delete();
-                    onLogOut();
+                    result = file.delete();
+                } else {
+                    result = true;
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            
+            return result;
         }
     }
     
@@ -202,7 +226,7 @@ public class LogUpload {
      * @param context
      * @param logUploadArray
      */
-    public static void uploadLog(final Context context, final LogUpload... logUploadArray) {
+    public static void upload(final Context context, final LogUpload... logUploadArray) {
         if (context == null || logUploadArray == null || logUploadArray.length == 0) {
             return;
         }
@@ -217,12 +241,15 @@ public class LogUpload {
                 long currentTime = System.currentTimeMillis();
                 for(int i = 0, length = logUploadArray.length; i < length; i++) {
                     LogUpload logUpload = logUploadArray[i];
-                    String logText = logUpload.getLogText();
-                    long lastUploadTime = logUpload.mLastUploadTime;
-                    if (lastUploadTime != 0 && currentTime - lastUploadTime > UPLOAD_TIME_OUT && TextUtils.isEmpty(logText) == false) {
-                        logUpload.mLastUploadTime = currentTime;
-                        feedbackUpload.addParameter(logUpload.mServerParameterKey, logText);
-                        logUploadList.add(logUpload);
+                    synchronized (logUpload.mLock) {
+                        String logText = logUpload.readLogText(false);
+                        long lastUploadTime = logUpload.mLastUploadTime;
+                        if (logUpload.mUploading == false && lastUploadTime != 0 && currentTime - lastUploadTime > UPLOAD_TIME_OUT && TextUtils.isEmpty(logText) == false) {
+                            logUpload.mUploading = true;
+                            logUpload.mLastUploadTime = currentTime;
+                            feedbackUpload.addParameter(logUpload.mServerParameterKey, logText);
+                            logUploadList.add(logUpload);
+                        }
                     }
                 }
                 LogWrapper.d(TAG, "UploadLog() logUploadList.size="+logUploadList.size());
@@ -234,7 +261,10 @@ public class LogUpload {
                 com.tigerknows.model.Response response = feedbackUpload.getResponse();
                 if ((response != null && response.getResponseCode() == com.tigerknows.model.Response.RESPONSE_CODE_OK)) {
                     for(int i = logUploadList.size()-1; i >= 0; i--) {
-                        logUploadList.get(i).deleteLogFile();
+                        synchronized (logUploadList.get(i).mLock) {
+                            logUploadList.get(i).swapfile();
+                            logUploadList.get(i).mUploading = false;
+                        }
                     }
                 }
             }
@@ -247,62 +277,96 @@ public class LogUpload {
     protected void upload() {
         synchronized (mLock) {
             try {
-                if (mStringBuilder == null) {
+                if (mUploading || canUpload() == false) {
                     return;
                 }
-                final File file = new File(mLogFilePath);
-                if(!file.exists()){
-                	file.createNewFile();
-                }
-                FileInputStream fis = new FileInputStream(file);
-                String logText = Utility.readFile(fis);
-                fis.close();
+                String logText = readLogText(false);
                 if (TextUtils.isEmpty(logText)) {
                     return;
                 }
                 final String log = logText + getLogOutToken();
                 
-                if (canUpload()) {
-                    mLastUploadTime = System.currentTimeMillis();
-                    new Thread(new Runnable() {
+                mUploading = true;
+                mLastUploadTime = System.currentTimeMillis();
+                mStringBuilder.append(getLogOutToken());
+                write(true);
+                
+                new Thread(new Runnable() {
+                    
+                    @Override
+                    public void run() {
+                        mLastUploadTime = System.currentTimeMillis();
                         
-                        @Override
-                        public void run() {
-                            mLastUploadTime = System.currentTimeMillis();
-                            
-                            FeedbackUpload feedbackUpload = new FeedbackUpload(mContext);
-                            feedbackUpload.addParameter(mServerParameterKey, log);
-                            
-                            feedbackUpload.query();
-                            
+                        FeedbackUpload feedbackUpload = new FeedbackUpload(mContext);
+                        feedbackUpload.addParameter(mServerParameterKey, log);
+                        
+                        feedbackUpload.query();
+                        
+                        synchronized (mLock) {
                             com.tigerknows.model.Response response = feedbackUpload.getResponse();
                             // 提交成功或日志文件已经超长最大长度
                             if ((response != null && response.getResponseCode() == com.tigerknows.model.Response.RESPONSE_CODE_OK) ||
                                     mLogFileLength > FILE_MAX_LENGTH) {
-
-                                synchronized (mLock) {
-                                    if (file.delete()) {
-                                        try {
-                                            if (!file.createNewFile()) {
-                                                mStringBuilder = null;
-                                                LogWrapper.e(TAG, "Unable to create new file: " + mLogFilePath);
-                                            }
-                                        } catch (IOException e) {
-                                            mStringBuilder = null;
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                    
-                                    onLogOut();
-                                }
+                                swapfile();
                             }
+                            
+                            mUploading = false;
                         }
-                    }).start();
-                }
+                    }
+                }).start();
             } catch (Exception e) {
                 LogWrapper.e(TAG, e.getMessage());
                 e.printStackTrace();
             }
+        }
+    }
+    
+    boolean swapfile() {
+        synchronized (mLock) {
+            boolean result = false;
+            try {
+                if (deleteLogFile(false) == false) {
+                    return result;
+                }
+                
+                File file = new File(mLogFilePath);
+                if (!file.createNewFile()) {
+                    LogWrapper.e(TAG, "Unable to create new file: " + mLogFilePath);
+                    return result;
+                }
+                mLogFileLength = 0;
+                
+                StringBuilder newStringBuilder = new StringBuilder();
+                
+                String oldLogText = readLogText(true);
+                if (oldLogText != null) {
+                    newStringBuilder.append(oldLogText);
+                }
+                if (mStringBuilder != null) {
+                    newStringBuilder.append(mStringBuilder);
+                }
+
+                mStringBuilder = newStringBuilder;
+                
+                write(false);
+
+                if (deleteLogFile(true) == false) {
+                    return result;
+                }
+                
+                file = new File(mTmpLogFilePath);
+                if (!file.createNewFile()) {
+                    LogWrapper.e(TAG, "Unable to create new file: " + mTmpLogFilePath);
+                    return result;
+                }
+                mTmpLogFileLength = 0;
+                
+                result = true;
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return result;
         }
     }
     
@@ -323,14 +387,7 @@ public class LogUpload {
     }
     
     /**
-     * 日志超长事件
-     */
-    protected void onLogOut() {
-        mLogFileLength = 0;
-    }
-    
-    /**
-     * 在主Acitivty执行onCreate()时调用
+     * 在Acitivty执行onCreate()时调用
      */
     public void onCreate() {
         synchronized (mLock) {
@@ -355,7 +412,7 @@ public class LogUpload {
      */
     public void onDestroy() {
         synchronized (mLock) {
-            write();
+            write(mUploading);
             onCreate = false;
         }
     }
@@ -365,34 +422,43 @@ public class LogUpload {
      */
     public void onTerminate() {
         synchronized (mLock) {
-            write();
-            onCreate = false;
+            write(mUploading);
         }
     }
     
     /**
      * 将缓存区的数据以追加方式写入到日志文件
      */
-    protected void write() {
+    protected boolean write(boolean temp) {
         synchronized (mLock) {
+            boolean result = false;
+            
             if (mStringBuilder == null) {
-                return;
+                return result;
             }
+            
             if (mStringBuilder.length() > 0) {
                 try {
-                    File file = new File(mLogFilePath); 
-                    FileOutputStream fileOutputStream = new FileOutputStream(file, true);
-                    byte[] data = mStringBuilder.toString().getBytes();
-                    fileOutputStream.write(data);
-                    fileOutputStream.flush();
-                    fileOutputStream.close();
+                    if (temp) {
+                        Utility.writeFile(mTmpLogFilePath, mStringBuilder.toString().getBytes(), false);
+                        File file = new File(mTmpLogFilePath);
+                        mTmpLogFileLength = file.length();
+                    } else {
+                        Utility.writeFile(mLogFilePath, mStringBuilder.toString().getBytes(), false);
+                        File file = new File(mLogFilePath);
+                        mLogFileLength = file.length();
+                    }
+                    
                     mStringBuilder = new StringBuilder();
-                    mLogFileLength += data.length;
+                    result = true;
+                    
                 } catch (Exception e) {
                     mStringBuilder = null;
                     e.printStackTrace();
                 }
             }
+            
+            return result;
         }
     }
 }

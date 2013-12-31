@@ -98,6 +98,7 @@ public class MyOrderFragment extends BaseFragment{
 	public void onResume() {
 		super.onResume();
 		mTitleBtn.setText(getString(R.string.wodedingdan));
+		mRightBtn.setVisibility(View.GONE);
 		
         if (isReLogin()) {
             return;

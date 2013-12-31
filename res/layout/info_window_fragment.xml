@@ -8,6 +8,7 @@
     android:background="@drawable/btn_home_bottom" >
 
     <RelativeLayout
+        android:id="@+id/message_view"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:padding="8dp" >
@@ -45,10 +46,6 @@
             android:layout_gravity="center_vertical"
             android:textColor="@color/white"
             android:background="@drawable/btn_confirm"
-            android:paddingLeft="12dp"
-            android:paddingTop="8dp"
-            android:paddingRight="12dp"
-            android:paddingBottom="8dp"
             android:text="@string/detail" />
     </RelativeLayout>
 
@@ -115,7 +112,37 @@
             android:textColor="@color/orange"
             android:textSize="12sp" >
         </TextView>
+
+
     </RelativeLayout>
+    <include
+        android:id="@+id/traffic_plan_item"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        layout="@layout/traffic_group_traffic" />
+
+    <LinearLayout
+        android:id="@+id/traffic_step_item"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="90dp" >
+
+        <ImageView
+            android:id="@+id/step_icon"
+            android:background="@drawable/icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/step_txv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            android:textSize="16sp"
+             >
+        </TextView>
+        
+    </LinearLayout>
 
     <RelativeLayout
         android:id="@+id/tuangou_view"

@@ -10,28 +10,36 @@
         android:id="@+id/traffic_btn_group"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" 
-        android:visibility="gone"
         >
 
         <Button
             android:id="@+id/btn_my_position"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:padding="12dp"
             android:layout_weight="1"
+            android:drawableLeft="@drawable/ic_mylocation"
+            android:background="@drawable/btn_filter1"
             android:text="@string/my_location" />
 
         <Button
             android:id="@+id/btn_fav_position"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:padding="12dp"
             android:layout_weight="1"
+            android:drawableLeft="@drawable/ic_favorite"
+            android:background="@drawable/btn_filter1"
             android:text="@string/favorite" />
 
         <Button
             android:id="@+id/btn_map_position"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:padding="12dp"
             android:layout_weight="1"
+            android:drawableLeft="@drawable/ic_select_point"
+            android:background="@drawable/btn_filter2"
             android:text="@string/map_select_point" />
         
     </LinearLayout>
@@ -43,7 +51,7 @@
         android:focusable="true"
         android:scrollingCache="false"
         android:fadingEdge="none"
-        android:divider="@drawable/list_selector_background_gray_light"
+        android:divider="@drawable/bg_line_split"
         />
     
 </LinearLayout>

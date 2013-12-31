@@ -36,6 +36,7 @@ import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.TextView;
 
 /**
  * @author Peng Wenyue
@@ -400,11 +401,20 @@ public class BaseFragment extends LinearLayout {
 		}
     }
     
-    public String getString(int resId) {
+    public final String getString(int resId) {
         return mContext.getString(resId);
     }
     
-    public String getString(int resId, Object... formatArgs) {
+    public final String getString(int resId, Object... formatArgs) {
         return mContext.getString(resId, formatArgs);
+    }
+    
+    public static final void setTxvText(TextView txv, String s) {
+        if (TextUtils.isEmpty(s)) {
+            txv.setVisibility(View.GONE);
+        } else {
+            txv.setVisibility(View.VISIBLE);
+            txv.setText(s);
+        }
     }
 }

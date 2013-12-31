@@ -290,7 +290,8 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         super.onResume();
         mTitleBtn.setText(R.string.more);
         mRightBtn.setOnClickListener(this);
-        mRightBtn.setBackgroundDrawable(getResources().getDrawable(R.drawable.btn_settings));
+        mRightBtn.setBackgroundResource(R.drawable.btn_settings);
+        mRightBtn.setPadding(0, 0, 0, 0);
         if (mDismissed) {
             //mListLsv.setSelection(0);
         }

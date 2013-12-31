@@ -13,19 +13,18 @@
         android:layout_alignParentBottom="true"
         layout="@layout/bottom_buttons_view" />
     
-    <include android:id="@+id/traffic_rly"
+    <!-- <include android:id="@+id/traffic_rly"
         android:layout_width="fill_parent" 
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:visibility="gone"
         layout="@layout/traffic_plan_view_pager"
-        />
+        /> -->
         
     <ListView android:id="@+id/result_lsv"
         android:layout_width="fill_parent" 
         android:layout_height="fill_parent"
         android:layout_above="@id/bottom_buttons_view"
-        android:layout_below="@id/traffic_rly"
         android:fadingEdge="none"
         android:drawSelectorOnTop="false"
         android:scrollingCache="false"

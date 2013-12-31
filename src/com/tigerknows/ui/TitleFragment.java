@@ -16,14 +16,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 
 /**
  * @author Peng Wenyue
  */
 public class TitleFragment extends BaseFragment {
     
-    public int mRightBtnPaddingLeft;
-    public int mRightBtnPaddingTop;
     public int mRightBtnConfirmColor;
     public int mRightBtnCancelColor;
     
@@ -42,9 +41,6 @@ public class TitleFragment extends BaseFragment {
         findViews();
         setListener();
         
-        mRightBtnPaddingLeft = mRightBtn.getPaddingLeft();
-        mRightBtnPaddingTop = mRightBtn.getPaddingTop();
-        
         Resources resources = mSphinx.getResources();
         mRightBtnConfirmColor = resources.getColor(R.color.white);
         mRightBtnCancelColor = resources.getColor(R.color.black_dark);
@@ -52,7 +48,9 @@ public class TitleFragment extends BaseFragment {
         return mRootView;
     }
     
+    @Override
     protected void findViews() {
+        super.findViews();
         mTitleView = (ViewGroup) mRootView.findViewById(R.id.center_view);
         mTitleBtn = (Button) mRootView.findViewById(R.id.title_btn);
         mKeywordEdt = (TKEditText) mRootView.findViewById(R.id.keyword_edt);
@@ -78,6 +76,9 @@ public class TitleFragment extends BaseFragment {
         mTitleBtn.getLayoutParams().height = LayoutParams.WRAP_CONTENT;
         mTitleBtn.setOnClickListener(null);
         mTitleBtn.setVisibility(View.VISIBLE);
+        RelativeLayout.LayoutParams layoutParams = (android.widget.RelativeLayout.LayoutParams) mTitleBtn.getLayoutParams();
+        layoutParams.topMargin = 0;
+        layoutParams.bottomMargin = 0;
         
         mKeywordEdt.setVisibility(View.GONE);
         
@@ -87,25 +88,10 @@ public class TitleFragment extends BaseFragment {
         mLeftBtn.setVisibility(View.VISIBLE);
         
         mRightBtn.setBackgroundResource(R.drawable.btn_confirm);
-        mRightBtn.setPadding(mRightBtnPaddingLeft, mRightBtnPaddingTop, mRightBtnPaddingLeft, mRightBtnPaddingTop);
         mRightBtn.setTextColor(mRightBtnConfirmColor);
         mRightBtn.setText(null);
         mRightBtn.setEnabled(true);
         mRightBtn.setOnClickListener(null);
         mRightBtn.setVisibility(View.VISIBLE);
-    }
-
-    public void refreshRightBtn(String keyword) {
-        if (keyword.trim().length() > 0) {
-            mRightBtn.setText(R.string.confirm);
-            mRightBtn.setTextColor(mRightBtnConfirmColor);
-            mRightBtn.setBackgroundResource(R.drawable.btn_confirm);
-            mRightBtn.setPadding(mRightBtnPaddingLeft, mRightBtnPaddingTop, mRightBtnPaddingLeft, mRightBtnPaddingTop);
-        } else {
-            mRightBtn.setText(R.string.cancel);
-            mRightBtn.setTextColor(mRightBtnCancelColor);
-            mRightBtn.setBackgroundResource(R.drawable.btn_cancel);
-            mRightBtn.setPadding(mRightBtnPaddingLeft, mRightBtnPaddingTop, mRightBtnPaddingLeft, mRightBtnPaddingTop);
-        }
     }
 }

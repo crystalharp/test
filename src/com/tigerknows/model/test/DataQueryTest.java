@@ -656,6 +656,7 @@ public class DataQueryTest {
     public static XMap launchPOIList(int total, String message, int size) {
         XMap data = new XMap();
         launchBaseList(data, total, message);
+        data.put(POIList.FIELD_SHOW_TYPE, 1);
         XArray<XMap> list = new XArray<XMap>();
         for(int i = 0 ; i < size; i ++) {
             list.add(launchPOI("POI"+i+"POIPOIPOIPOIPOIPOIPOIPOIPOIPOIPOIPOIPOIPOIPOIPOIPOI"));
