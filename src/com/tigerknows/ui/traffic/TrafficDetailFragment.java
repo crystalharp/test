@@ -545,7 +545,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
             if (titleSingleLine) {
                 planHolder.title.setEllipsize(TextUtils.TruncateAt.END);
             } else {
-                planHolder.title.setEllipsize(TextUtils.TruncateAt.MARQUEE);
+                planHolder.title.setEllipsize(null);
             }
             if (plan.getType() == TrafficQuery.QUERY_TYPE_TRANSFER) {
                 setTxvText(planHolder.title, plan.getTitle(sphinx));
