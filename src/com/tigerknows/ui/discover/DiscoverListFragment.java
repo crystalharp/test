@@ -988,6 +988,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 if (mDianyingAdapter == null) {
                     mDianyingAdapter = new DianyingAdapter(mSphinx, mDianyingList);
                 }
+                mResultLsv.setAdapter(mDianyingAdapter);
                 
                 if (getList().size() < mList.getTotal()) {
                     mResultLsv.setFooterSpringback(true);
@@ -1026,6 +1027,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 if (mYanchuAdapter == null) {
                     mYanchuAdapter = new YanchuAdapter(mSphinx, mYanchuList);
                 }
+                mResultLsv.setAdapter(mYanchuAdapter);
                 
                 if (getList().size() < mList.getTotal()) {
                     mResultLsv.setFooterSpringback(true);
@@ -1069,6 +1071,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 if (getList().size() < mList.getTotal()) {
                     mResultLsv.setFooterSpringback(true);
                 }
+                mResultLsv.setAdapter(mZhanlanAdapter);
                 refreshFilter(mDataQuery.getFilterList());
                 makeFilterArea(dataQuery);
             } else {
