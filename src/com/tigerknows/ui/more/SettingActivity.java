@@ -4,8 +4,6 @@
 
 package com.tigerknows.ui.more;
 
-import com.decarta.Globals;
-import com.decarta.android.exception.APIException;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
@@ -297,7 +295,7 @@ public class SettingActivity extends BaseActivity {
 	                    	intent = new Intent(mThis, BrowserActivity.class);
 	                        intent.putExtra(BrowserActivity.TITLE, getString(R.string.help));
 	                        HelpQuery baseQuery = new HelpQuery(mThis);
-	                        intent.putExtra(BrowserActivity.URL, String.format(TKConfig.getHelpUrl(), TKConfig.getHelpHost()) + "?" + baseQuery.getParameters().getEncodedPostParam(TKConfig.getEncoding()));
+	                        intent.putExtra(BrowserActivity.URL, String.format(TKConfig.getHelpUrl(), TKConfig.getHelpHost()) + "?" + baseQuery.getEncodedPostParam());
 	                        startActivityForResult(intent, 0);
 	                    	break;
 	                    case DataBean.TYPE_ABOUT:

@@ -9,6 +9,7 @@
 package com.tigerknows.model;
 
 import com.decarta.android.exception.APIException;
+import com.tigerknows.TKConfig;
 
 import android.content.Context;
 
@@ -18,6 +19,11 @@ public class HelpQuery extends BaseQuery {
     
     public HelpQuery(Context context) {
         super(context, API_TYPE_HELP);
+    }
+    
+    public String getEncodedPostParam() {
+        addCommonParameters();
+        return getParameters().getEncodedPostParam(TKConfig.getEncoding());
     }
 
     @Override
