@@ -76,9 +76,9 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         mTitleBtn.setHint(R.string.find_poi);
         mTitleBtn.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
         RelativeLayout.LayoutParams layoutParams = (android.widget.RelativeLayout.LayoutParams) mTitleBtn.getLayoutParams();
-        layoutParams.leftMargin = mTitleBtnPaddingLeft;
+        layoutParams.leftMargin = mTitleBtnPaddingRight;
         layoutParams.topMargin = mTitleBtnPaddingLeft;
-        layoutParams.rightMargin = mTitleBtnPaddingLeft;
+        layoutParams.rightMargin = mTitleBtnPaddingRight;
         layoutParams.bottomMargin = mTitleBtnPaddingLeft;
         
         if (mSearchDrawable == null) {

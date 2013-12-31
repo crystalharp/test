@@ -26,7 +26,6 @@ import com.tigerknows.model.DataQuery.POIResponse.POIList;
 import com.tigerknows.model.POI.DynamicPOI;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
-import com.tigerknows.ui.HomeFragment;
 import com.tigerknows.ui.hotel.NavigationWidget;
 import com.tigerknows.ui.more.AddMerchantActivity;
 import com.tigerknows.util.Utility;
@@ -123,6 +122,10 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     static final int STATE_EMPTY = 2;
     static final int STATE_LIST = 3;
     
+    private int mTitleBtnPaddingLeft;
+    
+    private int mTitleBtnPaddingTop;
+    
     private int mState = STATE_QUERYING;
     
     private Runnable mTurnPageRun = new Runnable() {
@@ -182,6 +185,9 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {  
+        
+        mTitleBtnPaddingLeft = Utility.dip2px(mSphinx, 16);
+        mTitleBtnPaddingTop = Utility.dip2px(mSphinx, 14);
         
         mRootView = mLayoutInflater.inflate(R.layout.poi_result, container, false);
 
@@ -348,13 +354,10 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     public void onResume() {
         super.onResume();
         
-        mTitleBtn.setBackgroundResource(R.drawable.edt_home);
+        mTitleBtn.setBackgroundResource(R.drawable.textfield);
         mTitleBtn.setOnClickListener(this);
-        mTitleBtn.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
-
-        HomeFragment homeFragment = mSphinx.getHomeFragment();
-        mTitleBtn.setPadding(homeFragment.mTitleBtnPaddingLeft, homeFragment.mTitleBtnPaddingRight, homeFragment.mTitleBtnPaddingLeft, homeFragment.mTitleBtnPaddingRight);
-        mTitleBtn.getLayoutParams().height = Utility.dip2px(mSphinx, 40);
+        mTitleBtn.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+        mTitleBtn.setPadding(mTitleBtnPaddingLeft, mTitleBtnPaddingTop, mTitleBtnPaddingLeft, mTitleBtnPaddingTop);
         
         mRightBtn.setText(R.string.map);
         mRightBtn.setOnClickListener(this);

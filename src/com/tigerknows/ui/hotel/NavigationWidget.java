@@ -19,6 +19,7 @@ package com.tigerknows.ui.hotel;
 import com.tigerknows.R;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -35,7 +36,7 @@ public class NavigationWidget extends LinearLayout {
     /**
      * 当前状态的文字颜色
      */
-    static final int TEXT_COLOR = 0xffffffff;
+    private int mSelectTextColor;
 
     public static final int STATE_SELECT_HOTEL = 0;
 
@@ -58,6 +59,9 @@ public class NavigationWidget extends LinearLayout {
         super(context, attrs);
         setFocusable(false);
         
+        Resources resources = context.getResources();
+        mSelectTextColor = resources.getColor(R.color.orange);
+        
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.hotel_navigation, this, // we are the parent
@@ -71,17 +75,13 @@ public class NavigationWidget extends LinearLayout {
             int state = a.getInt(R.styleable.hotelNavigationWidget_navigationState, 0);
             
             if (state == STATE_SELECT_HOTEL) {
-                mSelectHotelTxv.setBackgroundResource(R.drawable.bg_hotel_navigation_left);
-                mSelectHotelTxv.setTextColor(TEXT_COLOR);
+                mSelectHotelTxv.setTextColor(mSelectTextColor);
             } else if (state == STATE_SELECT_ROOM_TYPE) {
-                mSelectRoomTypeTxv.setBackgroundResource(R.drawable.bg_hotel_navigation_middle);
-                mSelectRoomTypeTxv.setTextColor(TEXT_COLOR);
+                mSelectRoomTypeTxv.setTextColor(mSelectTextColor);
             } else if (state == STATE_WRITE_ORDER) {
-                mWriteOrderTxv.setBackgroundResource(R.drawable.bg_hotel_navigation_middle);
-                mWriteOrderTxv.setTextColor(TEXT_COLOR);
+                mWriteOrderTxv.setTextColor(mSelectTextColor);
             } else if (state == STATE_RESERVE_SUCCESS) {
-                mReserveSuccessTxv.setBackgroundResource(R.drawable.bg_hotel_navigation_right);
-                mReserveSuccessTxv.setTextColor(TEXT_COLOR);
+                mReserveSuccessTxv.setTextColor(mSelectTextColor);
             }
             a.recycle();
         }

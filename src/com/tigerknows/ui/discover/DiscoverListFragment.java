@@ -996,6 +996,9 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 }
             }
             
+            refreshFilter(mDataQuery.getFilterList());
+            makeFilterArea(dataQuery);
+            
             List discoverResultList = discoverResult.getList();
             
             List list = getList();
@@ -1023,8 +1026,6 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             if (getList().size() < mList.getTotal()) {
                 mResultLsv.setFooterSpringback(true);
             }
-            refreshFilter(mDataQuery.getFilterList());
-            makeFilterArea(dataQuery);
         } else {
             if (dataQuery.isTurnPage()) {
                 return;

@@ -535,7 +535,8 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), getId(), getId(), getId(), mCancelLoginListener)) {
             isReLogin = true;
             return;
-        } else if (DataQuery.APPENDACTION_NOSEARCH.contains(baseQuery.getParameter(DataQuery.SERVER_PARAMETER_APPENDACTION))) {
+        } else if (baseQuery.hasParameter(baseQuery.getParameter(DataQuery.SERVER_PARAMETER_APPENDACTION)) &&
+                DataQuery.APPENDACTION_NOSEARCH.contains(baseQuery.getParameter(DataQuery.SERVER_PARAMETER_APPENDACTION))) {
             Response response = baseQuery.getResponse();
             mResponse = response;
             if (response == null) {

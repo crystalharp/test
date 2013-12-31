@@ -1149,10 +1149,10 @@
     <string name="order_again">再订一单</string>
     <string name="delete_order">删除订单</string>
     
-    <string name="choose_hotel">选择酒店</string>
-    <string name="choose_room_type">选择房型</string>
-    <string name="fill_order">填写订单</string>
-    <string name="reserve_success">预订成功</string>
+    <string name="choose_hotel">1.选择酒店</string>
+    <string name="choose_room_type">2.选择房型</string>
+    <string name="fill_order">3.填写订单</string>
+    <string name="reserve_success">4.预订成功</string>
 
     <string name="hotel_order_id">订\u2002单\u2002号：</string>
     <string name="hotel_order_state">订单状态：</string>

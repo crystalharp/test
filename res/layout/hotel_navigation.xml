@@ -5,6 +5,7 @@
     android:layout_height="wrap_content"
     android:background="@drawable/bg_hotel_navigation"
     android:weightSum="4"
+    android:padding="8dp"
     >
     <TextView 
         android:id="@+id/select_hotel_txv"

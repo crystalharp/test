@@ -53,4 +53,5 @@
     <color name="home_list_bg">#f8f6ff</color>
     
     <color name="normal_background">#fff0f0f0</color>
+    <color name="list_background">#fffdfdfd</color>
 </resources>

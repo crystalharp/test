@@ -242,7 +242,7 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             mTitleHeight = v.getMeasuredHeight();
             v = view.findViewById(R.id.poi_view);
             v.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-            mPOIHeight = v.getMeasuredHeight();
+            mPOIHeight = v.getMeasuredHeight()-Utility.dip2px(mSphinx, 16);
             v = view.findViewById(R.id.tuangou_view);
             v.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
             mTuangouHeight = v.getMeasuredHeight();
@@ -520,12 +520,17 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
     
     private void setPOIToView(View v, POI poi) {
         TextView nameTxv=(TextView)v.findViewById(R.id.name_txv);
+        nameTxv.setVisibility(View.GONE);
+        
         RatingBar starsRtb = (RatingBar) v.findViewById(R.id.poi_stars_rtb);
         TextView priceTxv= (TextView)v.findViewById(R.id.poi_price_txv);
         Button detaileBtn= (Button)v.findViewById(R.id.detail_btn);
         priceTxv.setVisibility(View.VISIBLE);
         
-        nameTxv.setText(poi.getName());
+        TextView titleTxv = (TextView) v.findViewById(R.id.title_txv);
+        titleTxv.setVisibility(View.VISIBLE);
+        titleTxv.setText(poi.getName());
+        
         starsRtb.setRating(poi.getGrade()/2.0f);
         long money = poi.getPerCapity();
         if (money > -1) {
@@ -572,7 +577,11 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
     private void setMessageToView(View v, String name, String detailBtnText, boolean showBottomView) {
         
         TextView nameTxv=(TextView)v.findViewById(R.id.name_txv);
-        nameTxv.setText(name);
+        nameTxv.setVisibility(View.GONE);
+        
+        TextView titleTxv = (TextView) v.findViewById(R.id.title_txv);
+        titleTxv.setVisibility(View.VISIBLE);
+        titleTxv.setText(name);
         
         Button detailBtn = (Button) v.findViewById(R.id.detail_btn);
         if (detailBtnText != null) {

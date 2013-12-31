@@ -76,6 +76,11 @@
 	               layout="@layout/poi_list_item_add_merchant"
 	               />
             </RelativeLayout>
+            <ImageView 
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_sawtooth"
+                />
         </FrameLayout>
     </LinearLayout>
     <ImageButton 
