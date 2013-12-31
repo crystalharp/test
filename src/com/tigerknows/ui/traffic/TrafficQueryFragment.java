@@ -114,7 +114,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	
 	LinearLayout mCommonPlaceLst;
 	
-	LinearLayout mQueryHistory;
+	View mQueryHistory;
 	
 	LinearLayout mQueryHistoryLst;
 	
@@ -230,7 +230,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
     	mStart = new InputBtn(startBtn);
     	mEnd = new InputBtn(endBtn);
     	
-    	mQueryHistory = (LinearLayout) mRootView.findViewById(R.id.query_history_title);
+    	mQueryHistory = mRootView.findViewById(R.id.query_history_title);
     	mQueryHistoryLst = (LinearLayout)mRootView.findViewById(R.id.query_history_lst);
 //    	mAddCommonPlace = (LinearLayout)mRootView.findViewById(R.id.add_common_place);
     	mCommonPlaceLst = (LinearLayout)mRootView.findViewById(R.id.common_place_lsv);
@@ -896,7 +896,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
                 final Dialog dialog = Utility.getChoiceDialog(mSphinx, alterListView, R.style.AlterChoiceDialog);
                 
                 TextView titleTxv = (TextView)alterListView.findViewById(R.id.title_txv);
-                titleTxv.setText(R.string.share);
+                titleTxv.setText(R.string.more);
                 
                 Button button = (Button)alterListView.findViewById(R.id.confirm_btn);
                 button.setVisibility(View.GONE);
