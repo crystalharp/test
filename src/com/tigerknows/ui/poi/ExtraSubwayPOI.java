@@ -13,6 +13,7 @@ import com.tigerknows.R;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.MapEngine;
+import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.BuslineQuery;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.POI.Description;
@@ -134,12 +135,12 @@ public class ExtraSubwayPOI extends DynamicPOIView {
                             String keyword = busstopTxv.getText().toString();
                             POI poi = new POI();
                             poi.setName(keyword);
-                            mPOIDetailFragment.mSphinx.getTrafficQueryFragment().addHistoryWord(poi, HistoryWordTable.TYPE_BUSLINE);
+                            mSphinx.getTrafficQueryFragment().addHistoryWord(poi, HistoryWordTable.TYPE_BUSLINE);
                             BuslineQuery buslineQuery = new BuslineQuery(mPOIDetailFragment.mSphinx);
                             buslineQuery.setup(keyword, 0, false, R.id.view_traffic_home, getString(R.string.doing_and_wait));
                             buslineQuery.setCityId(cityId);
                             
-                            mPOIDetailFragment.mSphinx.queryStart(buslineQuery);
+                            queryStart(buslineQuery);
 
                         }
                     });
@@ -153,7 +154,11 @@ public class ExtraSubwayPOI extends DynamicPOIView {
     
     @Override
     public void onPostExecute(TKAsyncTask tkAsyncTask) {
-
+        BaseQuery baseQuery = tkAsyncTask.getBaseQuery();
+        String apiType = baseQuery.getAPIType();
+        if (BaseQuery.API_TYPE_BUSLINE_QUERY.equals(apiType)) {
+            InputSearchFragment.dealWithBuslineResponse(mSphinx, (BuslineQuery)baseQuery, mPOIDetailFragment.mActionTag, null);
+        }
     }
 
     @Override
