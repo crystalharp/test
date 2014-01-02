@@ -20,8 +20,7 @@
     <string name="quit">退出</string>
     <string name="clean_history_message">你要清除所有记录？</string>
     <string name="advice_open_gps_title">提高“我的位置”精确度</string>
-    <string name="location_failed_and_jump_settings">为了更快更精确的获得您的位置，建议您：\n\n * 开启位置设置中GPS功能</string>
-    <string name="location_failed_and_change_city">定位失败，无法找到所在城市，是否直接选择城市？</string>
+    <string name="location_failed_and_jump_settings">为了提高定位精度，建议开启‘设置&gt;位置’中的GPS功能</string>
     <string name="location_doing">正在定位…</string>
     <string name="prompt_location">定位提示</string>
     <string name="prompt_location_return_to_">回到%1$s</string>
@@ -314,7 +313,7 @@
     <string name="low_memory">手机SD卡空间已用完！请删除一些文件来腾出空间。</string>
     <string name="not_memory">手机上没有SD卡，或没有可读写的空间，程序将不能正常运行！</string>
     <string name="prompt">提示</string>
-    <string name="exit_app">你确定要退出应用程序?</string>
+    <string name="exit_app">再按一次退出老虎地图</string>
     <string name="delete_confirm">删除确认</string>
     <string name="nubmer_more">*</string>
 
