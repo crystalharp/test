@@ -50,7 +50,7 @@ static void _tk_insert_feature(tk_feature_t *cur_feature, tk_feature_t *feature_
     if (cur_feature->next == NULL && feature_to_insert->prev == NULL) {
         start = cur_feature_data->points + (cur_feature_data->points_num - 1);
         end = feature_data_to_insert->points;
-        if (start->level_code == 1 && end->level_code == 1 && start->x == end->x && start->y == end->y){
+        if (start->level_code == end->level_code && start->x == end->x && start->y == end->y){
             cur_feature->next = feature_to_insert;
             feature_to_insert->prev = cur_feature;
             return;
@@ -59,7 +59,7 @@ static void _tk_insert_feature(tk_feature_t *cur_feature, tk_feature_t *feature_
     if (cur_feature->prev == NULL && feature_to_insert->next == NULL) {
         start = feature_data_to_insert->points + (feature_data_to_insert->points_num - 1);
         end = cur_feature_data->points;
-        if (start->level_code == 1 && end->level_code == 1 && start->x == end->x && start->y == end->y) {
+        if (start->level_code == end->level_code && start->x == end->x && start->y == end->y) {
             feature_to_insert->next = cur_feature;
             cur_feature->prev = feature_to_insert;
             return;
@@ -87,14 +87,14 @@ static void _tk_connect_tile_features(tk_tile_t *tiles_head, tk_tile_t *tile) {
                 while (feature_to_insert) {
                     feature_data_to_insert = feature_to_insert->feature;
                     if (cur_feature_data->type == feature_data_to_insert->type && cur_feature_data != feature_data_to_insert) {
-                        if (!cur_feature_data->has_name && !feature_data_to_insert->has_name ) {
-                            _tk_insert_feature(cur_feature, feature_to_insert);
-                        }
-                        else if ((cur_feature_data->name_length == feature_data_to_insert->name_length) &&
-                                 (feature_data_to_insert->name_length > 0) &&
-                                 (0 == strncmp(cur_feature_data->name, feature_data_to_insert->name, feature_data_to_insert->name_length))) {
-                            _tk_insert_feature(cur_feature, feature_to_insert);
-                        }
+                    	if (!cur_feature_data->has_name && !feature_data_to_insert->has_name ) {
+                    		_tk_insert_feature(cur_feature, feature_to_insert);
+                    	}
+                    	else if ((cur_feature_data->name_length == feature_data_to_insert->name_length) &&
+                    	                                 (feature_data_to_insert->name_length > 0) &&
+                    	                                 (0 == strncmp(cur_feature_data->name, feature_data_to_insert->name, feature_data_to_insert->name_length))) {
+                    		_tk_insert_feature(cur_feature, feature_to_insert);
+                    	}
                     }
                     feature_to_insert = feature_to_insert->header_next;
                 }
