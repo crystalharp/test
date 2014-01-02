@@ -174,7 +174,6 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         }else{
         	mTitleBtn.setText(R.string.merchant_type);
         }
-        mRightBtn.setVisibility(View.GONE);
         String name = mPOI.getName();
         if (mPOI.getSourceType() == POI.SOURCE_TYPE_MY_LOCATION) {
             name = getString(R.string.my_location);

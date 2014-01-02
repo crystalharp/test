@@ -189,6 +189,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
         mKeywordEdt.setOnTouchListener(mOnTouchListener);
         mKeywordEdt.setOnEditorActionListener(mOnEditorActionListener);
         
+        mRightBtn.setVisibility(View.VISIBLE);
         mRightBtn.setOnClickListener(this);
         mRightBtn.setEnabled(mKeywordEdt.getText().toString().trim().length() > 0);
         Utility.refreshButton(mSphinx, mRightBtn, getString(R.string.confirm), getString(R.string.cancel));

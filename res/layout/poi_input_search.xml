@@ -30,7 +30,7 @@
             android:layout_weight="1"
             android:drawableLeft="@drawable/ic_favorite"
             android:background="@drawable/btn_filter1"
-            android:text="@string/favorite" />
+            android:text="@string/favorite_point" />
 
         <Button
             android:id="@+id/btn_map_position"

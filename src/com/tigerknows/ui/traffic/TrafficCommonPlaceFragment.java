@@ -76,7 +76,6 @@ public class TrafficCommonPlaceFragment extends BaseFragment{
     public void onResume() {
         super.onResume();
         mTitleBtn.setText(R.string.set_common_place);
-        mRightBtn.setVisibility(View.GONE);
         mList.updateData();
     }
 

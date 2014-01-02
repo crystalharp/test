@@ -93,7 +93,6 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         layoutParams.height = Utility.dip2px(mSphinx, 40);
 
         mLeftBtn.setVisibility(View.GONE);
-        mRightBtn.setVisibility(View.GONE);
         
         mTitleFragment.mRootView.setBackgroundDrawable(null);
         

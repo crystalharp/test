@@ -202,6 +202,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         mKeywordEdt.addTextChangedListener(mKeywordEdtTextWatcher);
         mKeywordEdt.setOnTouchListener(mKeywordEdtOnTouchListener);
 
+        mRightBtn.setVisibility(View.VISIBLE);
         mRightBtn.setOnClickListener(this);
         
         mSphinx.showSoftInput(mKeywordEdt.getInput());

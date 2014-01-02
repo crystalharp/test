@@ -252,6 +252,7 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
         mRightView.removeView(mRevocationBtn);
         mRightView.addView(mRevocationBtn, mRevocationBtnLayoutParams);
         
+        mRightBtn.setVisibility(View.VISIBLE);
         mRightBtn.setText(R.string.clear);
         mRightBtn.setOnClickListener(this);
         

@@ -340,6 +340,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	public void onResume() {
 	    super.onResume();
          
+        mRightBtn.setVisibility(View.VISIBLE);
 	    mRightBtn.setOnClickListener(this);
 	    /*
          * 由于在一个“session”中会多次调用onresume，导致在地图选点和收藏夹选点之后返回本页面都会调用initstart

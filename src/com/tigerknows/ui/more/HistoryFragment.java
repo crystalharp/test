@@ -202,6 +202,7 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
     public void onResume() {
         super.onResume();
         mTitleBtn.setText(R.string.history_browse);
+        mRightBtn.setVisibility(View.VISIBLE);
         mRightBtn.setOnClickListener(this);
         mRightBtn.setText(R.string.clear);
         int total = 0;

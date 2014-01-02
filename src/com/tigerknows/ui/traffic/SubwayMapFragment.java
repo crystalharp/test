@@ -102,7 +102,6 @@ public class SubwayMapFragment extends BaseFragment implements RetryView.CallBac
         super.onResume();
         
         mTitleBtn.setText(mTitle);
-        mRightBtn.setVisibility(View.GONE);
         
         if (!mDismissed) {
             return;
