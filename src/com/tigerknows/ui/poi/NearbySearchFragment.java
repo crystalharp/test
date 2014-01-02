@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.ImageView;
 
 import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
@@ -130,6 +131,23 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     	R.id.hot_1_0_btn, R.id.hot_1_1_btn, R.id.hot_1_2_btn, R.id.hot_1_3_btn,
     	R.id.hot_2_0_btn, R.id.hot_2_1_btn, R.id.hot_2_2_btn, R.id.hot_2_3_btn,
     	R.id.hot_3_0_btn, R.id.hot_3_1_btn, R.id.hot_3_2_btn, R.id.hot_3_3_btn
+    };
+    private static final int[] HOT_DRAWABLE_ID = {R.drawable.ic_custom_tuangou,
+    	R.drawable.ic_custom_hotel,
+    	R.drawable.ic_custom_movie,
+    	R.drawable.ic_custom_subway,
+    	R.drawable.ic_custom_bus,
+    	R.drawable.ic_custom_toilet,
+    	R.drawable.ic_custom_yanchu,
+    	R.drawable.ic_custom_zhanlan,
+    	R.drawable.ic_custom_ktv,
+    	R.drawable.ic_custom_netbar,
+    	R.drawable.ic_custom_bath,
+    	R.drawable.ic_custom_atm,
+    	R.drawable.ic_custom_market,
+    	R.drawable.ic_custom_mall,
+    	R.drawable.ic_custom_sale,
+    	R.drawable.ic_custom_add,
     };
     
     private View[] mCategoryViews;
@@ -265,6 +283,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     			String[] str = mHotNames[i].split(";");
     			mHotBtnViews[countBtnView].setContentDescription(mHotNames[i]);
     			((TextView)mHotBtnViews[countBtnView].findViewById(R.id.app_name_txv)).setText(str[0]);
+    			((ImageView)mHotBtnViews[countBtnView].findViewById(R.id.app_icon_imv)).setBackgroundResource(HOT_DRAWABLE_ID[i]);
     			mHotBtnViews[countBtnView].setVisibility(View.VISIBLE);
     			countBtnView++;
     			if(mCountLly * 4 < countBtnView){
