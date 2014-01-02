@@ -165,8 +165,8 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     @Override
     public void onResume() {
         super.onResume();
-        refreshHotView(TKConfig.getPref(mContext, TKConfig.PREFS_CUSTOM_CATEGORY, "111111100000000"));
         mIsFold = TKConfig.getPref(mContext, TKConfig.PREFS_CUSTOM_FOLD, "Yes");
+        refreshHotView(TKConfig.getPref(mContext, TKConfig.PREFS_CUSTOM_CATEGORY, "111111100000000"));
         doFold();
         mLeftBtn.setOnClickListener(this);
         if(mFilterListView.getVisibility() == View.GONE){
@@ -359,6 +359,11 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         	btnClickProcess(view);
         	break;
         case R.id.hot_fold_btn:
+        	if(TextUtils.equals("No", mIsFold)){
+        		mIsFold = "Yes";
+        	}else{
+        		mIsFold = "No";
+        	}
         	doFold();
         	break;
         default:
@@ -436,17 +441,15 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     }
     
     private void doFold(){
-    	if(TextUtils.equals("Yes", mIsFold)){
+    	if(TextUtils.equals("No", mIsFold)){
     		for(int i = 1; i < mCountLly; i++){
     			mHotLlys[i].setVisibility(View.VISIBLE);
     			mHotFoldBtn.setBackgroundResource(R.drawable.btn_to_fold);
-    			mIsFold = "No";
     		}
     	}else{
     		for(int i = 1; i < NUM_OF_HOT_LLY; i++){
     			mHotLlys[i].setVisibility(View.GONE);
     			mHotFoldBtn.setBackgroundResource(R.drawable.btn_to_expand);
-    			mIsFold = "Yes";
     		}
     	}
     	TKConfig.setPref(mContext, TKConfig.PREFS_CUSTOM_FOLD, mIsFold);
