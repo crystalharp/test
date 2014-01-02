@@ -1204,7 +1204,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     View button3 = view.findViewById(R.id.button3_view);
                     View showZoomView = view.findViewById(R.id.show_zoom_button_view);
                     final CheckBox showZoonChb = (CheckBox) view.findViewById(R.id.show_zoom_button_chb);
-                    showZoonChb.setChecked(!TKConfig.isPref(mThis, TKConfig.PREFS_SHOW_ZOOM_BUTTON));
                     
                     View.OnClickListener onClickListener = new OnClickListener() {
                         
@@ -1274,6 +1273,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                         }
                     });
                 }
+                CheckBox showZoonChb = (CheckBox) mPopupWindowTools.getContentView().findViewById(R.id.show_zoom_button_chb);
+                showZoonChb.setChecked(!TKConfig.isPref(mThis, TKConfig.PREFS_SHOW_ZOOM_BUTTON));
                     
                 mPopupWindowTools.showAsDropDown(mMapToolsBtn, 0, 0);
                 

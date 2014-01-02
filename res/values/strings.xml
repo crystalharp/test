@@ -99,7 +99,7 @@
     <string name="are_your_change_to_location_city">定位显示您在%1$s，您是否需要</string> 
     <string name="are_your_change_to_map_center_city">你的地图已经切换到%1$s，是否切换？</string> 
     <string name="current_location">我的位置：%1$s附近</string> 
-    <string name="find_poi">输入地点、商户名</string> 
+    <string name="find_poi">输入地点&#160;&#160;线路</string> 
     <string name="no_comment">目前暂无评论</string> 
     
     <string name="hotspot">热点</string>    
@@ -154,7 +154,7 @@
     <string name="walk">步行</string>
     <string name="input_start_station">输入起点</string>
     <string name="transfer_drive">公交驾车</string>
-    <string name="busline">交通线路</string>
+    <string name="busline">线路</string>
     <string name="from">从</string>
     <string name="to">到</string>
     <string name="transfer_non_support_city_tip">目前找不到你要的跨市公交换乘！</string>
@@ -250,7 +250,6 @@
     <string name="user_home">个人中心</string>
     <string name="give_favourable_comment">给个好评吧！</string>
     <string name="more_favorite">收藏</string>
-    <string name="manage_common_place">管理常用地点</string>
     
     <string name="settings_open_gps">开启GPS（卫星定位）</string>
     <string name="settings_close_gps">关闭GPS（卫星定位）</string>
