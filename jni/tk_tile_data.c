@@ -423,7 +423,7 @@ static tk_base_tile_data_t *_tk_load_tile_from_region(tk_region_t *region, tk_co
     base_tile = _tk_create_base_tile(feature_num, point_num, name_length, tile_data_buf.buf_length);////todo: 考虑拆分成check和create
     if (!base_tile) {
         if (tk_get_last_result() == TK_STATUS_TILE_DATA_ERROR) {
-            LOG_INFO("_tk_load_tile_from_region failed: TK_STATUS_TILE_DATA_ERROR, base tile error: %d, %d, %d, %d",
+            LOG_INFO("_tk_load_tile_from_region %d failed: TK_STATUS_TILE_DATA_ERROR, base tile error: %d, %d, %d, %d",region->rid,
             		feature_num, point_num, name_length, tile_data_buf.buf_length);
             //todo: 将tile末尾标记为该tile未下载
             tk_context_add_lost_data(context, region->rid, tile_offset, tile_data_buf.buf_length, TK_LOST_TYPE_DATA_ERROR);//重新下载该tile，而不是删除整个region
