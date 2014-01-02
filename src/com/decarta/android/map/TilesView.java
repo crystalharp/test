@@ -791,6 +791,11 @@ public class TilesView extends GLSurfaceView {
 				mapMode.resetZEasing();
 				easingRecord.reset();
 				zoomingRecord.reset();
+				
+				if (compass != null && compass.isVisible()) {
+				    compass.setVisible(false);
+				    refreshMap();
+				}
 			}
 
 			infoWindowClicked = false;
