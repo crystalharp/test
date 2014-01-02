@@ -24,6 +24,7 @@ import com.tigerknows.model.BuslineModel.Line;
 import com.tigerknows.model.TrafficModel.Plan;
 import com.tigerknows.model.TrafficQuery;
 import com.tigerknows.model.xobject.XArray;
+import com.tigerknows.model.xobject.XDouble;
 import com.tigerknows.model.xobject.XInt;
 import com.tigerknows.model.xobject.XMap;
 import com.tigerknows.model.xobject.XObject;
@@ -212,13 +213,16 @@ public class BaseQueryTest {
         }
         String type = null;
         if (value instanceof XInt ||
-                value instanceof XString) {
+                value instanceof XString ||
+                value instanceof XDouble) {
             final EditText valueEdt = new EditText(activty);
             if (value instanceof XInt) {
                 type = "XInt";
                 valueEdt.setInputType(InputType.TYPE_CLASS_NUMBER);
             } else if (value instanceof XString) {
                 type = "XString";
+            } else if (value instanceof XDouble) {
+                type = "XDouble";
             }
             
             valueEdt.setText(value.toString());
@@ -231,6 +235,8 @@ public class BaseQueryTest {
                         ((XInt) value).setValue(Integer.parseInt(valueEdt.getEditableText().toString()));
                     } else if (value instanceof XString) {
                         ((XString) value).setValue(valueEdt.getEditableText().toString());
+                    } else if (value instanceof XDouble) {
+                        ((XDouble) value).setValue(Double.valueOf(valueEdt.getEditableText().toString()));
                     }
                 }
             });

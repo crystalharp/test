@@ -352,8 +352,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
     
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK
-                && event.getAction() == KeyEvent.ACTION_DOWN) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
             if (mFilterListView.getVisibility() == View.VISIBLE) {
                 mFilterListView.setVisibility(View.GONE);
                 backHome();

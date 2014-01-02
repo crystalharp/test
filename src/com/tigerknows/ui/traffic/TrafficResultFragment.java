@@ -119,7 +119,7 @@ public class TrafficResultFragment extends BaseFragment {
         super.onResume();
 
         mTitleBtn.setVisibility(View.GONE);
-        mTitleView.removeView(mTrafficTitieView);
+        mTitleView.removeAllViews();
         mTitleView.addView(mTrafficTitieView);
         mTrafficTitleRadioGroup.check(R.id.traffic_transfer_rbt);
         mRightBtn.setBackgroundResource(R.drawable.btn_back);

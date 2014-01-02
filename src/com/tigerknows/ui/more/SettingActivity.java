@@ -44,7 +44,7 @@ import java.util.ArrayList;
 public class SettingActivity extends BaseActivity {
 
     private View[] mViewList;
-    private static final int NUM_OF_SETTINGS = 6;
+    private static final int NUM_OF_SETTINGS = 7;
     
     private ArrayList<DataBean> mBeans;
     
@@ -57,8 +57,9 @@ public class SettingActivity extends BaseActivity {
     
     private static final int[] LIST_BACKGROUND = {R.drawable.list_header,
     	R.drawable.list_middle,
-    	R.drawable.list_middle,
     	R.drawable.list_footer,
+        R.drawable.list_header,
+        R.drawable.list_footer,
     	R.drawable.list_header,
     	R.drawable.list_footer
     };
@@ -95,13 +96,23 @@ public class SettingActivity extends BaseActivity {
         	}
         };
         
-        // 是否开启GPS
         mBeans = new ArrayList<DataBean>();
         DataBean dataBean = null;
-        dataBean = new DataBean(mThis.getString(R.string.settings_open_gps), mThis.getString(R.string.settings_gps_description_open));
-        dataBean.showIcon = true;
-        dataBean.type = DataBean.TYPE_GPS;
-        mBeans.add(dataBean);
+        
+        final DataBean mapZoomBean = new DataBean(mThis.getString(R.string.map_zoom_button), "");
+        mapZoomBean.onClickListener = new OnClickListener() {
+            
+            @Override
+            public void onClick(View view) {
+                CheckBox checkBox = (CheckBox) view;
+                mapZoomBean.checked = !mapZoomBean.checked;
+                switchMapZoom();
+                mActionLog.addAction(mActionTag + ActionLog.ListViewItem, ActionLog.SettingMapZoom, checkBox.isChecked());
+            }
+        };
+        mapZoomBean.showIcon = false;
+        mapZoomBean.type = DataBean.TYPE_MAP_ZOOM;
+        mBeans.add(mapZoomBean);
         
         // 保持屏幕常亮
         final DataBean wakeLockBean = new DataBean(mThis.getString(R.string.settings_acquire_wakelock), mThis.getString(R.string.settings_acquire_wakelock_description));
@@ -140,6 +151,12 @@ public class SettingActivity extends BaseActivity {
         radarPushBean.showIcon = false;
         radarPushBean.type = DataBean.TYPE_RADARPUSH;
         mBeans.add(radarPushBean);
+
+        // 是否开启GPS
+        dataBean = new DataBean(mThis.getString(R.string.settings_open_gps), mThis.getString(R.string.settings_gps_description_open));
+        dataBean.showIcon = true;
+        dataBean.type = DataBean.TYPE_GPS;
+        mBeans.add(dataBean);
         
         // 一键清理缓存
         final DataBean clearCacheBean = new DataBean(mThis.getString(R.string.settings_clear_cache), "");
@@ -162,6 +179,10 @@ public class SettingActivity extends BaseActivity {
 
         refreshDataSetChanged();
         mBodyScv.smoothScrollTo(0, 0);
+    }
+    
+    private void switchMapZoom() {
+        TKConfig.reversePref(mThis, TKConfig.PREFS_SHOW_ZOOM_BUTTON);
     }
     
     private void switchWakeLock() {
@@ -245,12 +266,13 @@ public class SettingActivity extends BaseActivity {
         super.findViews();
         mBodyScv = (ScrollView)findViewById(R.id.body_scv);
         mViewList = new View[NUM_OF_SETTINGS];
-        mViewList[0] = (View)findViewById(R.id.gps_view);
+        mViewList[0] = (View)findViewById(R.id.map_zoom_view);
         mViewList[1] = (View)findViewById(R.id.wake_view);
         mViewList[2] = (View)findViewById(R.id.radar_view);
-        mViewList[3] = (View)findViewById(R.id.clear_cache_view);
-        mViewList[4] = (View)findViewById(R.id.help_view);
-        mViewList[5] = (View)findViewById(R.id.about_view);
+        mViewList[3] = (View)findViewById(R.id.gps_view);
+        mViewList[4] = (View)findViewById(R.id.clear_cache_view);
+        mViewList[5] = (View)findViewById(R.id.help_view);
+        mViewList[6] = (View)findViewById(R.id.about_view);
         
     }
     
@@ -269,6 +291,11 @@ public class SettingActivity extends BaseActivity {
 	                int type = dataBean.type;
 	                Intent intent;
 	                switch (type) {
+                        case DataBean.TYPE_MAP_ZOOM:
+                            mActionLog.addAction(mActionTag + ActionLog.SettingMapZoom, String.valueOf(dataBean.checked));
+                            refreshDataSetChanged(type-1);
+                            switchMapZoom();
+                            break;
 	                    case DataBean.TYPE_GPS:
 	                        mActionLog.addAction(mActionTag + ActionLog.SettingGPS, String.valueOf(checkGPS(mThis)));
 	                        intent = new Intent("android.settings.LOCATION_SOURCE_SETTINGS");
@@ -317,6 +344,10 @@ public class SettingActivity extends BaseActivity {
         super.onResume();
         boolean enableGps = checkGPS(mThis);
         DataBean dataBean = null;
+        dataBean = getDataBeanByType(DataBean.TYPE_MAP_ZOOM);
+        if (dataBean != null) {
+            dataBean.checked = TextUtils.isEmpty(TKConfig.getPref(mThis, TKConfig.PREFS_SHOW_ZOOM_BUTTON));
+        }
         dataBean = getDataBeanByType(DataBean.TYPE_GPS);
         if (dataBean != null) {
             if (enableGps) {
@@ -404,13 +435,14 @@ public class SettingActivity extends BaseActivity {
     
 
     private class DataBean {
-        
-        static final int TYPE_GPS = 1;
+
+        static final int TYPE_MAP_ZOOM = 1;
         static final int TYPE_WAKELOCK = 2;
         static final int TYPE_RADARPUSH = 3;
-        static final int TYPE_CLEARCACHE = 4;
-        static final int TYPE_HELP = 5;
-        static final int TYPE_ABOUT = 6;
+        static final int TYPE_GPS = 4;
+        static final int TYPE_CLEARCACHE = 5;
+        static final int TYPE_HELP = 6;
+        static final int TYPE_ABOUT = 7;
         
         protected int type;
         

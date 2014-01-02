@@ -7,7 +7,7 @@ import java.io.IOException;
  * @author duliang
  *
  */
-class XDouble extends XObject {
+public class XDouble extends XObject {
     private double value;
 
     protected XDouble(double d) {
@@ -17,6 +17,10 @@ class XDouble extends XObject {
     
     protected double getValue(){
         return value;
+    }
+    
+    public void setValue(double value){
+        this.value = value;
     }
 
     @Override

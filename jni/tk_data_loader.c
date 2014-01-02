@@ -87,14 +87,14 @@ static void _tk_connect_tile_features(tk_tile_t *tiles_head, tk_tile_t *tile) {
                 while (feature_to_insert) {
                     feature_data_to_insert = feature_to_insert->feature;
                     if (cur_feature_data->type == feature_data_to_insert->type && cur_feature_data != feature_data_to_insert) {
-                    	if (!cur_feature_data->has_name && !feature_data_to_insert->has_name ) {
-                    		_tk_insert_feature(cur_feature, feature_to_insert);
-                    	}
-                    	else if ((cur_feature_data->name_length == feature_data_to_insert->name_length) &&
-                    	                                 (feature_data_to_insert->name_length > 0) &&
-                    	                                 (0 == strncmp(cur_feature_data->name, feature_data_to_insert->name, feature_data_to_insert->name_length))) {
-                    		_tk_insert_feature(cur_feature, feature_to_insert);
-                    	}
+                        if (!cur_feature_data->has_name && !feature_data_to_insert->has_name ) {
+                            _tk_insert_feature(cur_feature, feature_to_insert);
+                        }
+                        else if ((cur_feature_data->name_length == feature_data_to_insert->name_length) &&
+                                 (feature_data_to_insert->name_length > 0) &&
+                                 (0 == strncmp(cur_feature_data->name, feature_data_to_insert->name, feature_data_to_insert->name_length))) {
+                            _tk_insert_feature(cur_feature, feature_to_insert);
+                        }
                     }
                     feature_to_insert = feature_to_insert->header_next;
                 }
