@@ -742,6 +742,11 @@ public class TKConfig {
     public static final String PREFS_CUSTOM_CATEGORY = "prefs_custom_category";
     
     /**
+     * 自定义热门类别是否收起
+     */
+    public static final String PREFS_CUSTOM_FOLD = "prefs_custom_fold";
+    
+    /**
      * 地图上是否显示放大缩小按钮
      */
     public static final String PREFS_SHOW_ZOOM_BUTTON = "prefs_show_zoom_button";

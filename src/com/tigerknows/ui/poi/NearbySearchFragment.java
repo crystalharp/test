@@ -72,12 +72,15 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     private String[] mSubCategoryNames;
     private LinearLayout[][] mCategoryLlys;
     private Button[][] mCategoryBtns;
+    private Button mHotFoldBtn;
 
     private LinearLayout mHotBaseLly;
     private LinearLayout[] mHotLlys;
     private View[] mHotBtnViews;
     
+    private String mIsFold;
     private boolean mFromPOI;
+    private int mCountLly;
     
     private CategoryProperty[] mCategoryList;
     
@@ -163,6 +166,8 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     public void onResume() {
         super.onResume();
         refreshHotView(TKConfig.getPref(mContext, TKConfig.PREFS_CUSTOM_CATEGORY, "111111100000000"));
+        mIsFold = TKConfig.getPref(mContext, TKConfig.PREFS_CUSTOM_FOLD, "Yes");
+        doFold();
         mLeftBtn.setOnClickListener(this);
         if(mFilterListView.getVisibility() == View.GONE){
         	mTitleBtn.setText(R.string.nearby_search);
@@ -184,6 +189,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
 
     @Override
     public void onPause() {
+        TKConfig.setPref(mContext, TKConfig.PREFS_CUSTOM_FOLD, mIsFold);
         super.onPause();
     }
 
@@ -200,6 +206,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         for(int i = 0; i < NUM_OF_HOT + 1; i++){
         	mHotBtnViews[i] = (View)mRootView.findViewById(HOT_BTN_ID[i]);
         }
+        mHotFoldBtn = (Button) mRootView.findViewById(R.id.hot_fold_btn);
         mCategoryBtns = new Button[NUM_OF_CATGEGORY][];
         mCategoryLlys = new LinearLayout[NUM_OF_CATGEGORY][];
         mCategoryViews = new View[NUM_OF_CATGEGORY];
@@ -234,11 +241,12 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     	for(int i = 0; i < NUM_OF_HOT + 1; i++){
     		mHotBtnViews[i].setOnClickListener(this);
     	}
+    	mHotFoldBtn.setOnClickListener(this);
     }
     
     private void refreshHotView(String customPrefs){
     	int countBtnView = 0;
-    	int countLly = 0;
+    	mCountLly = 0;
     	for(int i = 0; i < NUM_OF_HOT_LLY; i++){
     		mHotLlys[i].setVisibility(View.GONE);
     	}
@@ -252,9 +260,9 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     			((TextView)mHotBtnViews[countBtnView].findViewById(R.id.app_name_txv)).setText(str[0]);
     			mHotBtnViews[countBtnView].setVisibility(View.VISIBLE);
     			countBtnView++;
-    			if(countLly * 4 < countBtnView){
-    				mHotLlys[countLly].setVisibility(View.VISIBLE);
-    				countLly++;
+    			if(mCountLly * 4 < countBtnView){
+    				mHotLlys[mCountLly].setVisibility(View.VISIBLE);
+    				mCountLly++;
     			}
     		}
     	}
@@ -262,11 +270,11 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     	((TextView)mHotBtnViews[countBtnView].findViewById(R.id.app_name_txv)).setText("自定义");
     	mHotBtnViews[countBtnView].setVisibility(View.VISIBLE);
     	countBtnView++;
-		if(countLly * 4 < countBtnView){
-			mHotLlys[countLly].setVisibility(View.VISIBLE);
-			countLly++;
+		if(mCountLly * 4 < countBtnView){
+			mHotLlys[mCountLly].setVisibility(View.VISIBLE);
+			mCountLly++;
 		}
-    	for(int i = countBtnView; i<countLly * 4; i++){
+    	for(int i = countBtnView; i<mCountLly * 4; i++){
     		mHotBtnViews[i].setVisibility(View.INVISIBLE);
     	}
 
@@ -350,6 +358,9 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         	//TODO: mActionLog
         	btnClickProcess(view);
         	break;
+        case R.id.hot_fold_btn:
+        	doFold();
+        	break;
         default:
         	for(int i = 0; i < HOT_BTN_ID.length; i++){
         		if(HOT_BTN_ID[i] == view.getId()){
@@ -422,6 +433,23 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     	default:
     		break;
     	}    	
+    }
+    
+    private void doFold(){
+    	if(TextUtils.equals("Yes", mIsFold)){
+    		for(int i = 1; i < mCountLly; i++){
+    			mHotLlys[i].setVisibility(View.VISIBLE);
+    			mHotFoldBtn.setBackgroundResource(R.drawable.btn_to_fold);
+    			mIsFold = "No";
+    		}
+    	}else{
+    		for(int i = 1; i < NUM_OF_HOT_LLY; i++){
+    			mHotLlys[i].setVisibility(View.GONE);
+    			mHotFoldBtn.setBackgroundResource(R.drawable.btn_to_expand);
+    			mIsFold = "Yes";
+    		}
+    	}
+    	TKConfig.setPref(mContext, TKConfig.PREFS_CUSTOM_FOLD, mIsFold);
     }
     
     private DataQuery getDataQuery(String dataType) {
