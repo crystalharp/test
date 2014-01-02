@@ -23,10 +23,10 @@ tk_context_t* tk_get_context() {
 };
 
 static void _tk_set_context_rect(tk_context_t *context, int tile_size) {    
-    context->draw_rect.left = -8;
-    context->draw_rect.right = tile_size + 8;
-    context->draw_rect.top = -8;
-    context->draw_rect.bottom = tile_size + 8;
+    context->draw_rect.left = -14;
+    context->draw_rect.right = tile_size + 14;
+    context->draw_rect.top = -14;
+    context->draw_rect.bottom = tile_size + 14;
 }
 
 static void _tk_set_context_cairo(tk_context_t *context, unsigned char *img_buf, int tile_size) {
@@ -206,10 +206,10 @@ void tk_context_set_xyz(tk_context_t *context, int tile_x, int tile_y, int zoom)
     tile_pix_box->bottom = tile_pix_box->top + tile_size ;
 
     feature_filter_rect = &context->line_feature_filter_rect;
-    feature_filter_rect->left = tile_pix_box->left - 16;
-    feature_filter_rect->right = tile_pix_box->right + 16;
-    feature_filter_rect->top = tile_pix_box->top - 16;
-    feature_filter_rect->bottom = tile_pix_box->bottom + 16;
+    feature_filter_rect->left = tile_pix_box->left - 8;
+    feature_filter_rect->right = tile_pix_box->right + 8;
+    feature_filter_rect->top = tile_pix_box->top - 8;
+    feature_filter_rect->bottom = tile_pix_box->bottom + 8;
     
     feature_filter_rect = &context->polygon_feature_filter_rect;
     feature_filter_rect->left = tile_pix_box->left;
