@@ -213,6 +213,7 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
     public void onResume() {
         super.onResume();
         mTitleBtn.setText(R.string.favorite);
+        mRightBtn.setVisibility(View.VISIBLE);
         mRightBtn.setOnClickListener(this);
         mRightBtn.setText(R.string.clear);
 

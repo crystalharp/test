@@ -358,7 +358,8 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         mTitleBtn.setOnClickListener(this);
         mTitleBtn.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
         mTitleBtn.setPadding(mTitleBtnPaddingLeft, mTitleBtnPaddingTop, mTitleBtnPaddingLeft, mTitleBtnPaddingTop);
-        
+
+        mRightBtn.setVisibility(View.VISIBLE);
         mRightBtn.setText(R.string.map);
         mRightBtn.setOnClickListener(this);
         

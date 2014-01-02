@@ -236,9 +236,12 @@ public class SingleRectLabel extends Label {
     private void draw(float x, float y, float rot, float scale, int width, int height, Texture iconTexture, Texture textTexture,
     		ByteBuffer TEXTURE_COORDS, FloatBuffer vertexBuffer) {
     	GLES10.glPushMatrix();
-    	GLES10.glTranslatef(Math.round(x), Math.round(y), 0);
     	if (scale != 1) {
     		GLES10.glScalef(1/scale, 1/scale, 1);
+        	GLES10.glTranslatef(Math.round(x*scale), Math.round(y*scale), 0);
+    	}
+    	else {
+        	GLES10.glTranslatef(Math.round(x), Math.round(y), 0);
     	}
     	GLES10.glRotatef(-rot, 0, 0, 1);
     	GLES10.glEnable(GLES10.GL_BLEND);

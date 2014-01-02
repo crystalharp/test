@@ -20,8 +20,7 @@
     <string name="quit">退出</string>
     <string name="clean_history_message">你要清除所有记录？</string>
     <string name="advice_open_gps_title">提高“我的位置”精确度</string>
-    <string name="location_failed_and_jump_settings">为了更快更精确的获得您的位置，建议您：\n\n * 开启位置设置中GPS功能</string>
-    <string name="location_failed_and_change_city">定位失败，无法找到所在城市，是否直接选择城市？</string>
+    <string name="location_failed_and_jump_settings">为了提高定位精度，建议开启‘设置&gt;位置’中的GPS功能</string>
     <string name="location_doing">正在定位…</string>
     <string name="prompt_location">定位提示</string>
     <string name="prompt_location_return_to_">回到%1$s</string>
@@ -100,7 +99,7 @@
     <string name="are_your_change_to_location_city">定位显示您在%1$s，您是否需要</string> 
     <string name="are_your_change_to_map_center_city">你的地图已经切换到%1$s，是否切换？</string> 
     <string name="current_location">我的位置：%1$s附近</string> 
-    <string name="find_poi">输入地点、商户名</string> 
+    <string name="find_poi">输入地点&#160;&#160;线路</string> 
     <string name="no_comment">目前暂无评论</string> 
     
     <string name="hotspot">热点</string>    
@@ -155,7 +154,7 @@
     <string name="walk">步行</string>
     <string name="input_start_station">输入起点</string>
     <string name="transfer_drive">公交驾车</string>
-    <string name="busline">交通线路</string>
+    <string name="busline">线路</string>
     <string name="from">从</string>
     <string name="to">到</string>
     <string name="transfer_non_support_city_tip">目前找不到你要的跨市公交换乘！</string>
@@ -173,7 +172,7 @@
     <string name="start_equal_to_end">起点与终点相同, 请重新输入!</string>
     <string name="start_equal_to_end_select">起点与终点相同, 请重新选择!</string>
     <string name="busline_name_">请输入线路名或站点名</string>
-    <string name="busline_search_hint">输入线路、站点名</string>
+    <string name="busline_search_hint">输入线路 站点名</string>
     <string name="traffic_search_hint">输入地点</string>
     <string name="transfer_operation_time">运营时间:\u0020\u0020%1$s</string>
     <string name="bus_index_station">%1$d. %2$s</string>
@@ -227,6 +226,7 @@
     <string name="settings">设置</string>
     <string name="system_settings">系统设置</string>
     <string name="select_point">地图上的点</string>
+    <string name="favorite_point">收藏的点</string>
     
     <string name="more">更多</string>
     <string name="message_tip_software_update">嗷，小虎有新版本了，快来下载吧！</string>
@@ -251,7 +251,6 @@
     <string name="user_home">个人中心</string>
     <string name="give_favourable_comment">给个好评吧！</string>
     <string name="more_favorite">收藏</string>
-    <string name="manage_common_place">管理常用地点</string>
     
     <string name="settings_open_gps">开启GPS（卫星定位）</string>
     <string name="settings_close_gps">关闭GPS（卫星定位）</string>
@@ -314,7 +313,7 @@
     <string name="low_memory">手机SD卡空间已用完！请删除一些文件来腾出空间。</string>
     <string name="not_memory">手机上没有SD卡，或没有可读写的空间，程序将不能正常运行！</string>
     <string name="prompt">提示</string>
-    <string name="exit_app">你确定要退出应用程序?</string>
+    <string name="exit_app">再按一次退出老虎地图</string>
     <string name="delete_confirm">删除确认</string>
     <string name="nubmer_more">*</string>
 

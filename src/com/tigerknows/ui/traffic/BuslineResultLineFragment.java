@@ -116,7 +116,6 @@ public class BuslineResultLineFragment extends BaseFragment {
         mCommentTxv.setText(getString(R.string.busline_result_title, mBuslineQuery.getKeyword(), 
         		mBuslineModel.getTotal()));
         mTitleBtn.setText(getString(R.string.title_busline_result));
-        mRightBtn.setVisibility(View.GONE);
     	
         if (mResultLsv.isFooterSpringback()) {
             mSphinx.getHandler().postDelayed(mTurnPageRun, 1000);
@@ -190,21 +189,6 @@ public class BuslineResultLineFragment extends BaseFragment {
             }
         });
         
-        mResultLsv.setOnTouchListener(new OnTouchListener() {
-			
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				// TODO Auto-generated method stub
-				if ((event.getAction() == MotionEvent.ACTION_UP) && (downView != null)) {
-					if (downView.isSelected() || downView.isFocused() || downView.isPressed()) {
-						LogWrapper.d(TAG, "set index bg: " + "bg_index_focused");
-						ViewHolder viewHandler = (ViewHolder)downView.getTag();
-//						viewHandler.index.setBackgroundResource(R.drawable.bg_index_focused);
-					}
-				}
-				return false;
-			}
-		});
 	}
 
     /**

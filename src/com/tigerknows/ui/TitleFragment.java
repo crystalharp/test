@@ -93,6 +93,6 @@ public class TitleFragment extends BaseFragment {
         mRightBtn.setText(null);
         mRightBtn.setEnabled(true);
         mRightBtn.setOnClickListener(null);
-        mRightBtn.setVisibility(View.VISIBLE);
+        mRightBtn.setVisibility(View.GONE);
     }
 }

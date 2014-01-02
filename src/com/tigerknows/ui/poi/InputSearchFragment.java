@@ -202,6 +202,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         mKeywordEdt.addTextChangedListener(mKeywordEdtTextWatcher);
         mKeywordEdt.setOnTouchListener(mKeywordEdtOnTouchListener);
 
+        mRightBtn.setVisibility(View.VISIBLE);
         mRightBtn.setOnClickListener(this);
         
         mSphinx.showSoftInput(mKeywordEdt.getInput());
@@ -429,6 +430,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
     public void submitPOIQuery(String keyword) {
         if (TextUtils.isEmpty(keyword)) {
             mSphinx.showTip(R.string.search_input_keyword, Toast.LENGTH_SHORT);
+            return;
         }
         
         HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, keyword), HistoryWordTable.TYPE_POI);

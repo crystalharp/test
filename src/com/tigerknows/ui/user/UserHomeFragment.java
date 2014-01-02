@@ -164,7 +164,6 @@ public class UserHomeFragment extends UserBaseFragment {
 		LogWrapper.d(TAG, "onResume()");
 		
         mTitleBtn.setText(getString(R.string.title_user_home));
-        mRightBtn.setVisibility(View.GONE);
         
 		if (Globals.g_User != null) {
 			nickNameBtn.setText(getString(R.string.nickname_colon) + Globals.g_User.getNickName());

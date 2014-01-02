@@ -92,8 +92,6 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	
 	Button mTrafficSwitchBtn;
 	
-	Button mBuslineQueryBtn;
-	
 	RadioGroup mRadioGroup = null;
 	
 	LinearLayout mBlock;
@@ -221,7 +219,6 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 		
     	mBackBtn = (Button)mRootView.findViewById(R.id.back_btn);
     	mTrafficSwitchBtn = (Button)mRootView.findViewById(R.id.traffic_switch_btn);
-    	mBuslineQueryBtn = (Button)mRootView.findViewById(R.id.busline_query_btn);
         mTitleBar = mLayoutInflater.inflate(R.layout.traffic_query_bar, null);
     	mRadioGroup = (RadioGroup)mTitleBar.findViewById(R.id.traffic_rgp);
     	
@@ -343,6 +340,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	public void onResume() {
 	    super.onResume();
          
+        mRightBtn.setVisibility(View.VISIBLE);
 	    mRightBtn.setOnClickListener(this);
 	    /*
          * 由于在一个“session”中会多次调用onresume，导致在地图选点和收藏夹选点之后返回本页面都会调用initstart

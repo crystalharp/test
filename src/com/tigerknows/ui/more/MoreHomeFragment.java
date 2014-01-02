@@ -289,6 +289,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     public void onResume() {
         super.onResume();
         mTitleBtn.setText(R.string.more);
+        mRightBtn.setVisibility(View.VISIBLE);
         mRightBtn.setOnClickListener(this);
         mRightBtn.setBackgroundResource(R.drawable.btn_settings);
         mRightBtn.setPadding(0, 0, 0, 0);

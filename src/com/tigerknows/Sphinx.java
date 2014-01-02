@@ -265,7 +265,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     
     private BaseFragment mBodyFragment;
     private BaseFragment mBottomFragment;
+    
+    private static final int EXIT_APP_TIME = 2000;
 
+    private long mLastBackKeyDown = -1;
     
     /**
      * 来自第三方的调用
@@ -1122,34 +1125,26 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 }
                 
                 if (!uiStackBack()) {
-                    Utility.showNormalDialog(Sphinx.this,
-                            getString(R.string.prompt), 
-                            getString(R.string.exit_app),
-                            new DialogInterface.OnClickListener() {
-                        
-                        @Override
-                        public void onClick(DialogInterface dialog, int id) {
-                            switch (id) {
-                                case DialogInterface.BUTTON_POSITIVE:
-                                	if(checkUploadApp()){
-                                		mHandler.post(new Runnable(){
-											@Override
-											public void run() {
-												submitUploadApp();
-											}
-                                		});
-                                	}
-                                    BaseFragment baseFragment = getFragment(uiStackPeek());
-                                    if (baseFragment != null) {
-                                        baseFragment.dismiss();
-                                    }
-                                    Sphinx.this.finish();
-                                    break;
-                                default:
-                                    break;
-                            }
+                    long time = System.currentTimeMillis();
+                    if (mLastBackKeyDown != -1 && time - mLastBackKeyDown < EXIT_APP_TIME){
+                        if(checkUploadApp()){
+                            mHandler.post(new Runnable(){
+                                @Override
+                                public void run() {
+                                    submitUploadApp();
+                                }
+                            });
                         }
-                    });
+                        baseFragment = getFragment(uiStackPeek());
+                        if (baseFragment != null) {
+                            baseFragment.dismiss();
+                        }
+                        Sphinx.this.finish();
+                    } else {
+                        mLastBackKeyDown = time;
+                        Toast.makeText(mThis, R.string.exit_app, Toast.LENGTH_SHORT).show();
+                    }
+                    
                     return true;
                 }
                 return true;
@@ -1209,7 +1204,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     View button3 = view.findViewById(R.id.button3_view);
                     View showZoomView = view.findViewById(R.id.show_zoom_button_view);
                     final CheckBox showZoonChb = (CheckBox) view.findViewById(R.id.show_zoom_button_chb);
-                    showZoonChb.setChecked(!TKConfig.isPref(mThis, TKConfig.PREFS_SHOW_ZOOM_BUTTON));
                     
                     View.OnClickListener onClickListener = new OnClickListener() {
                         
@@ -1279,6 +1273,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                         }
                     });
                 }
+                CheckBox showZoonChb = (CheckBox) mPopupWindowTools.getContentView().findViewById(R.id.show_zoom_button_chb);
+                showZoonChb.setChecked(!TKConfig.isPref(mThis, TKConfig.PREFS_SHOW_ZOOM_BUTTON));
                     
                 mPopupWindowTools.showAsDropDown(mMapToolsBtn, 0, 0);
                 
