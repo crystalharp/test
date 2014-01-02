@@ -327,7 +327,7 @@ static int _tk_find_index_swcity(int cid) {
     if(cid == -1)
         return -1;
     int i = 0;
-    for(i = 0; i < tk_global_info.city_num; ++i){
+    for(i = 0; i < tk_global_info.subway_infos.city_num; ++i) {
         if(tk_global_info.subway_infos.city_infos[i].cityid == cid){
             return  i;
         }
