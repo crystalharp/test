@@ -469,8 +469,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             // add zoom controller to zoom view
             mZoomView.addView(zoomControls);
             
-            refreshZoomView();
-            
             mMapCleanBtn.setOnClickListener(new OnClickListener() {
                 
                 @Override
@@ -934,6 +932,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 		super.onResume();
 		mOnPause = false;
 		LogWrapper.i(TAG,"onResume()");
+        refreshZoomView();
 		mActionLog.onResume();
 		mMapView.resume();
 		if (mMapView.isStopRefreshMyLocation() == false) {
@@ -3607,7 +3606,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     }
     // TODO: upload app list end
 
-    public void refreshZoomView() {
+    private void refreshZoomView() {
         if (TKConfig.isPref(mThis, TKConfig.PREFS_SHOW_ZOOM_BUTTON)) {
             mZoomView.setVisibility(View.INVISIBLE);
         } else {

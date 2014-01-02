@@ -376,6 +376,7 @@ public class ActionLog extends LogUpload {
     public static final String SettingClearCache = "BD";
     public static final String SettingHelp = "BE";
     public static final String SettingAboutMe = "BF";
+    public static final String SettingMapZoom = "BG";
 
     // 意见反馈页 
     public static final String Feedback = "CG";

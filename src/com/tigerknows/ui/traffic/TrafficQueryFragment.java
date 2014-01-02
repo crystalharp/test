@@ -334,6 +334,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
     
     public void onPause() {
     	super.onPause();
+    	mTitleView.removeView(mTitleBar);
     	mSettedRadioBtn = 0;
     	autoStartQuery = false;
     }

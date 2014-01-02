@@ -1356,6 +1356,7 @@
     <string name="preference">偏好</string>
     <string name="transfer_map">公交地图</string>
     <string name="show_zoom_button">显示放大缩小按钮</string>
+    <string name="map_zoom_button">地图放大缩小按钮</string>
     <string name="cate">美食</string>
     <string name="cityid_and_result_total_list">在以下城市发现结果，请选择</string>
 </resources>

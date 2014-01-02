@@ -116,6 +116,7 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
         
         if (type > 0) {
             mTitleBtn.setVisibility(View.GONE);
+            mTitleView.removeAllViews();
             mTitleView.addView(mTrafficTitieView);
             mRightBtn.setVisibility(View.INVISIBLE);
             changeTrafficType(type, false);
