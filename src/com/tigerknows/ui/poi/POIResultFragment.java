@@ -239,9 +239,9 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         mResultLsv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                position -= 1;
-                if (position < mPOIList.size()) {
+            public void onItemClick(AdapterView<?> adapterView, View view, int location, long id) {
+                int position = (int)id;
+                if (id < mPOIList.size()) {
                     POI poi = mPOIList.get(position);
                     if (poi != null) {
                         mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position, poi.getUUID(), poi.getName());

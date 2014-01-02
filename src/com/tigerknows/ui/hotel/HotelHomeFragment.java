@@ -769,10 +769,8 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     }
     
     private void submit() {
-        DataQuery dataQuery = new DataQuery(mSphinx);
-        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_POI);
+        DataQuery dataQuery = mSphinx.getHomeFragment().getDataQuery(null);
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_HOTEL);
-        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_CHECKIN, SIMPLE_DATE_FORMAT.format(getDateListView().getCheckin().getTime()));
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_CHECKOUT, SIMPLE_DATE_FORMAT.format(getDateListView().getCheckout().getTime()));
         

@@ -234,6 +234,7 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
         mCyclePagerAdapter.notifyDataSetChanged();
         mCycleOnPageChangeListener.count = mCyclePagerAdapter.count;
         layoutInfoWindowView();
+        mViewPager.setCurrentItem(mPosition);
         refreshViews(mPosition);
 
     }
@@ -332,11 +333,11 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             
             if (position - 1 >= 0) {
                 view = mCyclePagerAdapter.viewList.get((position-1) % mCyclePagerAdapter.viewList.size());
-                setPOIToView(view, (POI) mItemizedOverlay.get(position).getAssociatedObject());
+                setPOIToView(view, (POI) mItemizedOverlay.get(position-1).getAssociatedObject());
             }
             if (position + 1 < mCyclePagerAdapter.count) {
                 view = mCyclePagerAdapter.viewList.get((position+1) % mCyclePagerAdapter.viewList.size());
-                setPOIToView(view, (POI) mItemizedOverlay.get(position).getAssociatedObject());
+                setPOIToView(view, (POI) mItemizedOverlay.get(position+1).getAssociatedObject());
             }
         } else if (mType == TYPE_MY_LOCATION) {
 
@@ -347,11 +348,11 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             
             if (position - 1 >= 0) {
                 view = mCyclePagerAdapter.viewList.get((position-1) % mCyclePagerAdapter.viewList.size());
-                setMyLocationToView(view, (POI) mItemizedOverlay.get(position).getAssociatedObject());
+                setMyLocationToView(view, (POI) mItemizedOverlay.get(position-1).getAssociatedObject());
             }
             if (position + 1 < mCyclePagerAdapter.count) {
                 view = mCyclePagerAdapter.viewList.get((position+1) % mCyclePagerAdapter.viewList.size());
-                setMyLocationToView(view, (POI) mItemizedOverlay.get(position).getAssociatedObject());
+                setMyLocationToView(view, (POI) mItemizedOverlay.get(position+1).getAssociatedObject());
             }
         } else if (mType == TYPE_MESSAGE) {
 
@@ -363,11 +364,11 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             
             if (position - 1 >= 0) {
                 view = mCyclePagerAdapter.viewList.get((position-1) % mCyclePagerAdapter.viewList.size());
-                setMessageToView(view, mItemizedOverlay.get(position).getMessage(), null, false);
+                setMessageToView(view, mItemizedOverlay.get(position-1).getMessage(), null, false);
             }
             if (position + 1 < mCyclePagerAdapter.count) {
                 view = mCyclePagerAdapter.viewList.get((position+1) % mCyclePagerAdapter.viewList.size());
-                setMessageToView(view, mItemizedOverlay.get(position).getMessage(), null, false);
+                setMessageToView(view, mItemizedOverlay.get(position+1).getMessage(), null, false);
             }
         } else if (mType == TYPE_LONG_CLICKED_SELECT_POINT) {
 
@@ -378,11 +379,11 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             
             if (position - 1 >= 0) {
                 view = mCyclePagerAdapter.viewList.get((position-1) % mCyclePagerAdapter.viewList.size());
-                setMessageToView(view, ((POI) mItemizedOverlay.get(position).getAssociatedObject()).getName(), null, true);
+                setMessageToView(view, ((POI) mItemizedOverlay.get(position-1).getAssociatedObject()).getName(), null, true);
             }
             if (position + 1 < mCyclePagerAdapter.count) {
                 view = mCyclePagerAdapter.viewList.get((position+1) % mCyclePagerAdapter.viewList.size());
-                setMessageToView(view, ((POI) mItemizedOverlay.get(position).getAssociatedObject()).getName(), null, true);
+                setMessageToView(view, ((POI) mItemizedOverlay.get(position+1).getAssociatedObject()).getName(), null, true);
             }
         } else if (mType == TYPE_MAP_POI) {
 
@@ -425,11 +426,11 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             
             if (position - 1 >= 0) {
                 view = mCyclePagerAdapter.viewList.get((position-1) % mCyclePagerAdapter.viewList.size());
-                setHotelToView(view, (POI) mItemizedOverlay.get(position).getAssociatedObject());
+                setHotelToView(view, (POI) mItemizedOverlay.get(position-1).getAssociatedObject());
             }
             if (position + 1 < mCyclePagerAdapter.count) {
                 view = mCyclePagerAdapter.viewList.get((position+1) % mCyclePagerAdapter.viewList.size());
-                setHotelToView(view, (POI) mItemizedOverlay.get(position).getAssociatedObject());
+                setHotelToView(view, (POI) mItemizedOverlay.get(position+1).getAssociatedObject());
             }
         } else if (mType == TYPE_TUANGUO) {
 
@@ -472,11 +473,11 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             
             if (position - 1 >= 0) {
                 view = mCyclePagerAdapter.viewList.get((position-1) % mCyclePagerAdapter.viewList.size());
-                setDynamicPOIToView(view, mItemizedOverlay.get(position).getAssociatedObject());
+                setDynamicPOIToView(view, mItemizedOverlay.get(position-1).getAssociatedObject());
             }
             if (position + 1 < mCyclePagerAdapter.count) {
                 view = mCyclePagerAdapter.viewList.get((position+1) % mCyclePagerAdapter.viewList.size());
-                setDynamicPOIToView(view, mItemizedOverlay.get(position).getAssociatedObject());
+                setDynamicPOIToView(view, mItemizedOverlay.get(position+1).getAssociatedObject());
             }
         } else if (mType == TYPE_CLICKED_SELECT_POINT) {
 
@@ -488,11 +489,11 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             
             if (position - 1 >= 0) {
                 view = mCyclePagerAdapter.viewList.get((position-1) % mCyclePagerAdapter.viewList.size());
-                setClickSelectPointToView(view, mItemizedOverlay.get(position));
+                setClickSelectPointToView(view, mItemizedOverlay.get(position-1));
             }
             if (position + 1 < mCyclePagerAdapter.count) {
                 view = mCyclePagerAdapter.viewList.get((position+1) % mCyclePagerAdapter.viewList.size());
-                setClickSelectPointToView(view, mItemizedOverlay.get(position));
+                setClickSelectPointToView(view, mItemizedOverlay.get(position+1));
             }
         } else if (mType == TYPE_PLAN_LIST) {
 
@@ -508,11 +509,11 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             
             if (position - 1 >= 0) {
                 view = mCyclePagerAdapter.viewList.get((position-1) % mCyclePagerAdapter.viewList.size());
-                setPlanListToView(view, (Plan) mItemizedOverlay.get(position).getAssociatedObject());
+                setPlanListToView(view, (Plan) mItemizedOverlay.get(position-1).getAssociatedObject());
             }
             if (position + 1 < mCyclePagerAdapter.count) {
                 view = mCyclePagerAdapter.viewList.get((position+1) % mCyclePagerAdapter.viewList.size());
-                setPlanListToView(view, (Plan) mItemizedOverlay.get(position).getAssociatedObject());
+                setPlanListToView(view, (Plan) mItemizedOverlay.get(position+1).getAssociatedObject());
             }
         } else if (mType == TYPE_STEP) {
             mHeight = mTrafficStepHeight;
@@ -523,11 +524,11 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             
             if (position - 1 >= 0) {
                 view = mCyclePagerAdapter.viewList.get((position-1) % mCyclePagerAdapter.viewList.size());
-                setStepToView(view, position);
+                setStepToView(view, position-1);
             }
             if (position + 1 < mCyclePagerAdapter.count) {
                 view = mCyclePagerAdapter.viewList.get((position+1) % mCyclePagerAdapter.viewList.size());
-                setStepToView(view, position);
+                setStepToView(view, position+1);
             }
         }
         mViewPager.getLayoutParams().height = mHeight;
@@ -627,7 +628,14 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
         titleTxv.setVisibility(View.VISIBLE);
         titleTxv.setText(getString(R.string.my_location_with_accuracy, Utility.formatMeterString((int)poi.getPosition().getAccuracy())));
         
-        setMessageToView(v, poi.getName(), null, true);
+        TextView nameTxv=(TextView)v.findViewById(R.id.name_txv);
+        nameTxv.setVisibility(View.VISIBLE);
+        nameTxv.setText(poi.getName());
+        
+        Button detailBtn = (Button) v.findViewById(R.id.detail_btn);
+        detailBtn.setVisibility(View.GONE);
+    
+        v.findViewById(R.id.bottom_view).setVisibility(View.VISIBLE);
     }
     
     private void setMessageToView(View v, String name, String detailBtnText, boolean showBottomView) {

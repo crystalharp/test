@@ -184,7 +184,8 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
-                    int position, long id) {
+                    int location, long id) {
+                int position = (int) id;
                 mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position);
 
                 // 绘制交通图层
@@ -380,7 +381,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
 
         @Override
         public long getItemId(int position) {
-            return 0;
+            return position;
         }
     }
 

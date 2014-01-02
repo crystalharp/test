@@ -285,8 +285,8 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         mResultLsv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                position -= 1;
+            public void onItemClick(AdapterView<?> adapterView, View view, int location, long id) {
+                int position = (int)id;
                 List list = getList();
                 if (list != null && position < list.size()) {
                     Object object = list.get(position);
