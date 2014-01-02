@@ -92,8 +92,6 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	
 	Button mTrafficSwitchBtn;
 	
-	Button mBuslineQueryBtn;
-	
 	RadioGroup mRadioGroup = null;
 	
 	LinearLayout mBlock;
@@ -221,7 +219,6 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 		
     	mBackBtn = (Button)mRootView.findViewById(R.id.back_btn);
     	mTrafficSwitchBtn = (Button)mRootView.findViewById(R.id.traffic_switch_btn);
-    	mBuslineQueryBtn = (Button)mRootView.findViewById(R.id.busline_query_btn);
         mTitleBar = mLayoutInflater.inflate(R.layout.traffic_query_bar, null);
     	mRadioGroup = (RadioGroup)mTitleBar.findViewById(R.id.traffic_rgp);
     	

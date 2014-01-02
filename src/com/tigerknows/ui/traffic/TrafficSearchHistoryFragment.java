@@ -56,7 +56,7 @@ public class TrafficSearchHistoryFragment extends BaseFragment {
         super.onResume();
         mTitleBtn.setText(R.string.title_traffic_search_history);
         initData();
-        mRightBtn.setBackgroundResource(R.drawable.btn_delete_all);
+        mRightBtn.setText(R.string.clear);
         mRightBtn.setOnClickListener(new View.OnClickListener() {
             
             @Override

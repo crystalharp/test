@@ -18,5 +18,4 @@
     <item android:state_pressed="true" android:state_enabled="true" android:drawable="@drawable/btn_switch_start_end_focused"/>
     <item android:state_focused="false" android:state_enabled="true" android:drawable="@drawable/btn_switch_start_end_normal"/>
     <item android:state_focused="true" android:state_enabled="true" android:drawable="@drawable/btn_switch_start_end_focused"/>
-    <item android:state_enabled="false" android:drawable="@drawable/btn_traffic_query_disabled"/>
 </selector>
