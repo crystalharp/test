@@ -225,7 +225,8 @@
     <string name="clean_history">清空记录</string>
     <string name="settings">设置</string>
     <string name="system_settings">系统设置</string>
-    <string name="select_point">地图上的点</string>
+    <string name="select_point">选定的点</string>
+    <string name="map_point">地图上的点</string>
     <string name="favorite_point">收藏的点</string>
     
     <string name="more">更多</string>

@@ -43,7 +43,7 @@ public class ItemizedOverlayHelper {
             poi.setPosition(position);
             String name = sphinx.getMapEngine().getPositionName(position);
             if (name == null) {
-                name = sphinx.getString(R.string.select_point);
+                name = sphinx.getString(R.string.map_point);
             }
             poi.setName(name);
             poi.setSourceType(POI.SOURCE_TYPE_CLICKED_SELECT_POINT);
@@ -208,7 +208,7 @@ public class ItemizedOverlayHelper {
                         poi = target.getPOI();
                     } else {
                         Dianying target = (Dianying) data;
-                        poi = target.getYingxun().getPOI(POI.SOURCE_TYPE_DIANYING);
+                        poi = target.getPOI();
                     }
                     positions.add(poi.getPosition());
                     overlayItem = new OverlayItem(poi.getPosition(), icon, iconFocused, poi.getName(), rt);
