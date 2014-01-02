@@ -105,6 +105,7 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
     public void onResume() {
         super.onResume();
 
+        mRightBtn.setVisibility(View.VISIBLE);
         mRightBtn.setText(R.string.map);
         mRightBtn.setOnClickListener(this);
 

@@ -95,7 +95,6 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
         mSphinx.getMapView().setStopRefreshMyLocation(false);
         mTitleBtn.setText(mTitle);
         setOnTouchListener(null);
-        mRightBtn.setVisibility(View.GONE);
         
         int fromThirdPartye = mSphinx.getFromThirdParty();
         if (fromThirdPartye == Sphinx.THIRD_PARTY_SONY_MY_LOCATION ||

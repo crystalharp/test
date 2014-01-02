@@ -336,6 +336,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
         mTitleBtn.setText(getString(R.string.hotel_order_detail));
         if(mHotelVendor == null || TextUtils.isEmpty(mHotelVendor.getServiceName())){
         }else{
+            mRightBtn.setVisibility(View.VISIBLE);
             mRightBtn.setText(mHotelVendor.getServiceName());
             mRightBtn.setOnClickListener(new OnClickListener() {
 				@Override

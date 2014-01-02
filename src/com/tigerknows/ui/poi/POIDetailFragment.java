@@ -608,6 +608,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     public void onResume() {
         super.onResume();
         mTitleBtn.setText(R.string.detail_info);
+        mRightBtn.setVisibility(View.VISIBLE);
         mRightBtn.setText(R.string.map);
         mRightBtn.setOnClickListener(this); 
         

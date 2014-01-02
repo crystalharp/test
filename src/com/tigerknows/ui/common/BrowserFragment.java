@@ -88,7 +88,6 @@ public class BrowserFragment extends BaseFragment implements View.OnClickListene
         } else {
             mTitleBtn.setText(mTitle);
         }
-        mRightBtn.setVisibility(View.GONE);
 
         mWebWbv.requestFocusFromTouch();
         
