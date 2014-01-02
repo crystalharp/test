@@ -62,6 +62,8 @@
     </LinearLayout>
     
     <include android:id="@+id/bottom_buttons_view"
+        android:layout_width="fill_parent" 
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         layout="@layout/bottom_buttons_view" />
  	

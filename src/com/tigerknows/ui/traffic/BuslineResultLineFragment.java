@@ -190,21 +190,6 @@ public class BuslineResultLineFragment extends BaseFragment {
             }
         });
         
-        mResultLsv.setOnTouchListener(new OnTouchListener() {
-			
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				// TODO Auto-generated method stub
-				if ((event.getAction() == MotionEvent.ACTION_UP) && (downView != null)) {
-					if (downView.isSelected() || downView.isFocused() || downView.isPressed()) {
-						LogWrapper.d(TAG, "set index bg: " + "bg_index_focused");
-						ViewHolder viewHandler = (ViewHolder)downView.getTag();
-//						viewHandler.index.setBackgroundResource(R.drawable.bg_index_focused);
-					}
-				}
-				return false;
-			}
-		});
 	}
 
     /**

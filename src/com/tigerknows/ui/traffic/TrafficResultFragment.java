@@ -301,7 +301,7 @@ public class TrafficResultFragment extends BaseFragment {
         	}
         	
         	Plan plan = (Plan) getItem(position);
-        	PlanItemRefresher.refresh(mSphinx, plan, convertView);
+        	PlanItemRefresher.refresh(mSphinx, plan, convertView, true);
         	
         	return convertView;
 		}

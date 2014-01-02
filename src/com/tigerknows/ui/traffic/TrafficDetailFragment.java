@@ -15,6 +15,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -185,6 +186,10 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                     int location, long id) {
+                //添加的header不能点击
+                if (location == 0) {
+                    return;
+                }
                 int position = (int) id;
                 mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position);
 
@@ -244,7 +249,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         plan = mPlanList.get(mIndex);
         
         updateResult(plan);
-        PlanItemRefresher.refresh(mSphinx, plan, mSummaryLayout, true);
+        PlanItemRefresher.refresh(mSphinx, plan, mSummaryLayout);
         
         plan.updateHistory(mContext);
         
