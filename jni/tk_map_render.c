@@ -448,18 +448,18 @@ static tk_status_t _tk_draw_road(tk_context_t *context, tk_layer_t *road_layer) 
         }
         
         //create line path
-        if (relation == TK_RECT_COVER) {
+//        if (relation == TK_RECT_COVER) {
             points_buf_to_draw = &context->feature_point_buf;
             if (points_buf_to_draw->point_num >= 2) {
                 _tk_draw_normal_line(context, points_buf_to_draw->points, points_buf_to_draw->point_num);
             }
-        }
-        else {
-            points_buf_to_draw = &context->clipped_point_buf;
-            if (points_buf_to_draw->point_num >= 2) {
-                _tk_draw_line_with_boudary(context, points_buf_to_draw->points, points_buf_to_draw->point_num);
-            }
-        }
+//        }
+//        else {
+//            points_buf_to_draw = &context->clipped_point_buf;
+//            if (points_buf_to_draw->point_num >= 2) {
+//                _tk_draw_line_with_boudary(context, points_buf_to_draw->points, points_buf_to_draw->point_num);
+//            }
+//        }
     NEXT:
         road_feature = road_feature->layer_next;
     }
