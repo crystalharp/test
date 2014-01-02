@@ -117,12 +117,7 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
         	mTimeTxv.setVisibility(View.GONE);
         }
         
-        if (mLineList != null && curLineNum != -1) {
-            mTitleBtn.setText(getString(R.string.title_busline_line_popup, TrafficQuery.numToStr(mSphinx, curLineNum + 1)));
-        } else {
-        	//不用顶部弹出切换
-            mTitleBtn.setText(getString(R.string.title_busline_line));
-        }
+        mTitleBtn.setText(getString(R.string.title_busline_line));
         Utility.setFavoriteBtn(mSphinx, mFavorateBtn, line.checkFavorite(mContext));
 
         history();
