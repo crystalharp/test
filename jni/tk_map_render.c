@@ -108,18 +108,18 @@ static tk_status_t _tk_get_points_from_line_feature(tk_context_t *context, tk_fe
             }
         }
         points_num = feature_data->points_num;
-        for (i = 1; i < points_num - 1; i++) {//中间的feature的两个边界点不要
+        for (i = 1; i < points_num; i++) {//中间的feature的两个边界点要去掉一个，但不能两个都去掉，否则会出现错位）
             point = cur_feature->feature->points + i;
             if(tk_point_buf_add_one(point_buf, (point->x - ref_x) * context->scale, (point->y - ref_y) * context->scale, 0) == TK_STATUS_NO_MEMORY) {//不需要feature的level_code
                 return TK_STATUS_NO_MEMORY;
             }
         }
-        if (cur_feature->next == NULL) {//最后一个
-            point = feature_data->points + points_num - 1;
-            if(tk_point_buf_add_one(point_buf, (point->x - ref_x) * context->scale, (point->y - ref_y) * context->scale, 0) == TK_STATUS_NO_MEMORY) {//不需要feature的level_code
-                return TK_STATUS_NO_MEMORY;
-            }
-        }
+//        if (cur_feature->next == NULL) {//最后一个
+//            point = feature_data->points + points_num - 1;
+//            if(tk_point_buf_add_one(point_buf, (point->x - ref_x) * context->scale, (point->y - ref_y) * context->scale, 0) == TK_STATUS_NO_MEMORY) {//不需要feature的level_code
+//                return TK_STATUS_NO_MEMORY;
+//            }
+//        }
         cur_feature = cur_feature->next;
     }
     context->point_num += context->feature_point_buf.point_num;
@@ -470,7 +470,8 @@ static tk_status_t _tk_draw_road(tk_context_t *context, tk_layer_t *road_layer) 
     cairo_set_source_rgb(cr, (double)(GET_RED(gdi->background_color ))/(double)256,
                          (double)(GET_GREEN(gdi->background_color))/(double)256,
                          (double)(GET_BLUE(gdi->background_color))/(double)256);
-    if (!(road_layer->features->feature->type == 2 && context->zoom == 14)) {
+    if (!((road_layer->features->feature->type == 2 && (context->zoom >= 14 && context->zoom <=16))
+    		|| (road_layer->features->feature->type == 3 && (context->zoom >= 10 && context->zoom <=13)))) {
         cairo_stroke_preserve(cr);
         // draw foreground
         if (gdi->pen_size > 4) {
@@ -485,6 +486,11 @@ static tk_status_t _tk_draw_road(tk_context_t *context, tk_layer_t *road_layer) 
         cairo_set_source_rgb(cr, (double)(GET_RED(gdi->color ))/(double)256,
                              (double)(GET_GREEN(gdi->color))/(double)256,
                              (double)(GET_BLUE(gdi->color))/(double)256);
+    }
+    if((road_layer->features->feature->type == 5 && (context->zoom == 10))) {
+    	cairo_set_source_rgb(cr, (double)(GET_RED(gdi->color ))/(double)256,
+    	                             (double)(GET_GREEN(gdi->color))/(double)256,
+    	                             (double)(GET_BLUE(gdi->color))/(double)256);
     }
     cairo_stroke(cr);
     LOG_DBG("render road_layer success");

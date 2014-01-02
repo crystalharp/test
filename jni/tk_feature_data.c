@@ -208,12 +208,19 @@ static tk_status_t _tk_read_feature(tk_context_t *context, tk_region_t *region, 
             LOG_INFO("_tk_read_feature failed: name_length < 0");
             goto CATCH;
         }
-        reading_feature->name = base_tile->mem_pool.names_buf + base_tile->mem_pool.cur_name_index;
-        if (tk_read_string_from_buf(tile_buf, reading_feature->name, reading_feature->name_length) == TK_STATUS_BUF_OVERFLOAT) {
-            LOG_INFO("_tk_read_feature failed: TK_STATUS_BUF_OVERFLOAT3");
-            goto CATCH;
+        if (reading_feature->name_length == 0 && base_tile->feature_num > 0) {
+            tk_feature_data_t *last_feature = base_tile->features + base_tile->feature_num - 1;
+            reading_feature->name = last_feature->name;
+            reading_feature->name_length = last_feature->name_length;
         }
-        base_tile->mem_pool.cur_name_index += reading_feature->name_length;
+        else {
+            reading_feature->name = base_tile->mem_pool.names_buf + base_tile->mem_pool.cur_name_index;
+            if (tk_read_string_from_buf(tile_buf, reading_feature->name, reading_feature->name_length) == TK_STATUS_BUF_OVERFLOAT) {
+                LOG_INFO("_tk_read_feature failed: TK_STATUS_BUF_OVERFLOAT3");
+                goto CATCH;
+            }
+            base_tile->mem_pool.cur_name_index += reading_feature->name_length;
+        }
         reading_feature->has_name = TK_YES;
     }
     
