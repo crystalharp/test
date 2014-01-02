@@ -2,6 +2,7 @@ package com.tigerknows;
 
 import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
+import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.android.app.TKActivity;
 import com.tigerknows.common.ActionLog;

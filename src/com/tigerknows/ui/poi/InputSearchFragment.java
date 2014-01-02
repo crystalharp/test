@@ -436,6 +436,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         POI requestPOI = mSphinx.getCenterPOI();
         
         DataQuery poiQuery = mSphinx.getHomeFragment().getDataQuery(keyword);
+        
         poiQuery.addParameter(DataQuery.SERVER_PARAMETER_EXT, DataQuery.EXT_BUSLINE);
         poiQuery.setup(getId(), getId(), getString(R.string.doing_and_wait), false, false, requestPOI);
         
@@ -701,10 +702,9 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                 result = 3;
                 return result;
             }
-        } else {
-            Toast.makeText(sphinx, sphinx.getString(R.string.no_result), Toast.LENGTH_LONG).show();
         }
         
+        Toast.makeText(sphinx, sphinx.getString(R.string.no_result), Toast.LENGTH_LONG).show();
         return result;
     }
     

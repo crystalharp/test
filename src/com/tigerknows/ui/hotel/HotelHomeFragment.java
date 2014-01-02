@@ -164,7 +164,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         smoothScrollToTop();
     }
     
-    void refreshTitleRightBtn() {
+    private void refreshTitleRightBtn() {
         HotelVendor hotelVendor = HotelVendor.getHotelVendorById(HotelVendor.SOURCE_DEFAULT, mSphinx, null);
         if (hotelVendor != null && hotelVendor.getReserveTel() != null) {
             mRightBtn.setText(R.string.tel_reserve);
@@ -192,7 +192,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         mSphinx.queryStart(dataQuery);
     }
     
-    void stopQuery() {
+    private void stopQuery() {
         List<BaseQuery> list = mBaseQuerying;
         if (list != null && list.size() > 0) {
             for(int i = 0, size = list.size(); i < size; i++) {
@@ -214,7 +214,9 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         mScrollView.smoothScrollTo(0, 0);
     }
 
+    @Override
     protected void findViews() {
+        super.findViews();
         mPopupWindowContain = new LinearLayout(mSphinx);
         mScrollView = (ScrollView) mRootView.findViewById(R.id.scroll_view);
         mCityView = mRootView.findViewById(R.id.city_view);
@@ -230,7 +232,9 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         mQueryAllHotelView = mRootView.findViewById(R.id.query_all_hotel_view);
     }
 
+    @Override
     protected void setListener() {
+        super.setListener();
         mCityView.setOnClickListener(this);
         mCheckInTimeView.setOnClickListener(this);
         mLocationView.setOnClickListener(this);
@@ -373,7 +377,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         mPOI = null;
     }
     
-    void refreshFilterCategory() {
+    private void refreshFilterCategory() {
         synchronized (mFilterList) {
             if (checkFilter(mFilterList, FilterCategoryOrder.FIELD_LIST_CATEGORY) == false) {
                 FilterCategoryOrder filterCategory = DataQuery.getHotelFilterCategoryOrder();
@@ -395,7 +399,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         refreshFilterCategoryView();
     }
     
-    void refreshFilterArea(boolean reset) {
+    private void refreshFilterArea(boolean reset) {
         synchronized (mFilterList) {
             int filterAreaState;
             CityInfo locationCityInfo = Globals.g_My_Location_City_Info;
@@ -503,7 +507,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
      * 显示进度对话框
      * @param id
      */
-    void showProgressDialog() {
+    private void showProgressDialog() {
         if (mProgressDialog == null) {
             View custom = mSphinx.getLayoutInflater().inflate(R.layout.loading, null);
             TextView loadingTxv = (TextView)custom.findViewById(R.id.loading_txv);
@@ -521,7 +525,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     /**
      * 关闭进度对话框
      */
-    void dismissProgressDialog() {
+    private void dismissProgressDialog() {
         if (mProgressDialog != null && mProgressDialog.isShowing()) {
             mProgressDialog.dismiss();
         }
@@ -535,8 +539,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), getId(), getId(), getId(), mCancelLoginListener)) {
             isReLogin = true;
             return;
-        } else if (baseQuery.hasParameter(baseQuery.getParameter(DataQuery.SERVER_PARAMETER_APPENDACTION)) &&
-                DataQuery.APPENDACTION_NOSEARCH.contains(baseQuery.getParameter(DataQuery.SERVER_PARAMETER_APPENDACTION))) {
+        } else if (baseQuery.hasParameter(DataQuery.SERVER_PARAMETER_APPENDACTION)) {
             Response response = baseQuery.getResponse();
             mResponse = response;
             if (response == null) {
@@ -610,7 +613,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         }
     }
     
-    boolean isSupportHotelQuery() {
+    private boolean isSupportHotelQuery() {
         boolean result = true;
         Response response = mResponse;
         if (response != null && response.getResponseCode() != Response.RESPONSE_CODE_OK) {
@@ -716,7 +719,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         mFilterCategoryListView.setData(mFilterList, FilterCategoryOrder.FIELD_LIST_CATEGORY, this, false, false, mActionTag);
     }
     
-    FilterListView getFilterCategoryListView() {
+    private FilterListView getFilterCategoryListView() {
         if (mFilterCategoryListView == null) {
             FilterListView view = new FilterListView(mSphinx);
             view.findViewById(R.id.body_view).setPadding(0, Globals.g_metrics.heightPixels-((int) (320*Globals.g_metrics.density)), 0, 0);
@@ -738,7 +741,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         view.refresh(getCheckin(), getCheckout());
     }
     
-    DateListView getDateListView() {
+    private DateListView getDateListView() {
         if (mDateListView == null) {
             DateListView view = new DateListView(mSphinx);
             View v = mLayoutInflater.inflate(R.layout.time_list_item, this, false);
@@ -765,7 +768,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         dismissPopupWindow();
     }
     
-    void submit() {
+    private void submit() {
         DataQuery dataQuery = new DataQuery(mSphinx);
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_POI);
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_HOTEL);

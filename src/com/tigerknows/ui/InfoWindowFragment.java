@@ -606,12 +606,19 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
     }
     
     private void setClickSelectPointToView(View v, OverlayItem overlayItem) {
-        
         TextView titleTxv = (TextView) v.findViewById(R.id.title_txv);
         titleTxv.setVisibility(View.VISIBLE);
         titleTxv.setText(overlayItem.getMessage());
         
-        setMessageToView(v, ((POI) overlayItem.getAssociatedObject()).getName(), getString(R.string.confirm), false);
+        TextView nameTxv=(TextView)v.findViewById(R.id.name_txv);
+        nameTxv.setVisibility(View.VISIBLE);
+        nameTxv.setText(((POI) overlayItem.getAssociatedObject()).getName());
+        
+        Button detailBtn = (Button) v.findViewById(R.id.detail_btn);
+        detailBtn.setText(R.string.confirm);
+        detailBtn.setVisibility(View.VISIBLE);
+        
+        v.findViewById(R.id.bottom_view).setVisibility(View.GONE);
     }
     
     private void setMyLocationToView(View v, POI poi) {

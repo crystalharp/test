@@ -44,7 +44,7 @@
             android:layout_marginRight="8dp"
             android:background="@drawable/btn_confirm"
             android:textSize="14sp"
-            android:textColor="@color/white"
+            android:textColor="@color/btn_confirm"
             />
     </LinearLayout>
 

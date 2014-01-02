@@ -165,6 +165,7 @@ public class PullService extends TKService {
                     dataQuery.addParameter(DataQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
                     dataQuery.addParameter(DataQuery.SERVER_PARAMETER_LOCATION_LONGITUDE, String.valueOf(position.getLon()));
                     dataQuery.addParameter(DataQuery.SERVER_PARAMETER_LOCATION_LATITUDE, String.valueOf(position.getLat()));
+                    dataQuery.addParameter(DataQuery.SERVER_PARAMETER_LOCATION_TYPE, String.valueOf(position.getType()));
                     if (mTriggerMode.equals(TRIGGER_MODE_NET)) {
                         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_INFO, DataQuery.INFO_TYPE_NETWORK_PUSH);
                     }

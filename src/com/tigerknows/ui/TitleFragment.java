@@ -9,6 +9,7 @@ import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.android.widget.TKEditText;
 
+import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.TypedValue;
@@ -23,7 +24,7 @@ import android.widget.RelativeLayout;
  */
 public class TitleFragment extends BaseFragment {
     
-    public int mRightBtnConfirmColor;
+    public ColorStateList mRightBtnConfirmColor;
     public int mRightBtnCancelColor;
     
     public TitleFragment(Sphinx sphinx) {
@@ -42,7 +43,7 @@ public class TitleFragment extends BaseFragment {
         setListener();
         
         Resources resources = mSphinx.getResources();
-        mRightBtnConfirmColor = resources.getColor(R.color.white);
+        mRightBtnConfirmColor = resources.getColorStateList(R.color.btn_confirm);
         mRightBtnCancelColor = resources.getColor(R.color.black_dark);
         
         return mRootView;

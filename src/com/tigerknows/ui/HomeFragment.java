@@ -7,6 +7,7 @@ package com.tigerknows.ui;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.android.location.Position;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.MapView;
 import com.tigerknows.model.BaseQuery;
@@ -111,6 +112,17 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         poiQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_POI);
         poiQuery.addParameter(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_POI);
         poiQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
+
+        
+        // 我的定位显示在屏幕可视区域，并且比例尺小于或等于1千米时，则请求中包含lx和ly且不包含cx和cy，否则请求参数中包含cx和cy
+        MapView mapView = mSphinx.getMapView();
+        Position position = mapView.getCenterPosition();
+        float zoomLevle = mapView.getZoomLevel();
+        if (mSphinx.positionInScreen(position)
+                && zoomLevle >= 12) { // 12级别是1千米
+            poiQuery.addParameter(DataQuery.SERVER_PARAMETER_CENTER_LONGITUDE, String.valueOf(position.getLon()));
+            poiQuery.addParameter(DataQuery.SERVER_PARAMETER_CENTER_LATITUDE, String.valueOf(position.getLat()));
+        }
         
         if (keyWord != null) {
             poiQuery.addParameter(DataQuery.SERVER_PARAMETER_KEYWORD, keyWord);

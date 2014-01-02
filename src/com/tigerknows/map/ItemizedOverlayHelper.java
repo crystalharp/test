@@ -37,7 +37,15 @@ public class ItemizedOverlayHelper {
         try {
             sphinx.clearMap();
             
-            POI poi = sphinx.getCenterPOI();
+            MapView mapView = sphinx.getMapView();
+            Position position = mapView.getCenterPosition();
+            POI poi = new POI();
+            poi.setPosition(position);
+            String name = sphinx.getMapEngine().getPositionName(position);
+            if (name == null) {
+                name = sphinx.getString(R.string.select_point);
+            }
+            poi.setName(name);
             poi.setSourceType(POI.SOURCE_TYPE_CLICKED_SELECT_POINT);
             
             OverlayItem overlayItem = new OverlayItem(poi.getPosition(), null, null, title, null);

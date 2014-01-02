@@ -226,7 +226,7 @@
     <string name="clean_history">清空记录</string>
     <string name="settings">设置</string>
     <string name="system_settings">系统设置</string>
-    <string name="select_point">选择该点</string>
+    <string name="select_point">地图上的点</string>
     
     <string name="more">更多</string>
     <string name="message_tip_software_update">嗷，小虎有新版本了，快来下载吧！</string>

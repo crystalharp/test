@@ -42,6 +42,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.AssetManager;
+import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -934,9 +935,9 @@ public class Utility {
     public static void refreshButton(Context context, Button button, String confirmText, String cancelText, boolean isConfirm) {
         
         if (isConfirm) {
-            int mRightBtnConfirmColor = context.getResources().getColor(R.color.white);
+            ColorStateList colorStateList = context.getResources().getColorStateList(R.color.btn_confirm);
             button.setText(confirmText);
-            button.setTextColor(mRightBtnConfirmColor);
+            button.setTextColor(colorStateList);
             button.setBackgroundResource(R.drawable.btn_confirm);
         } else {
             int mRightBtnCancelColor = context.getResources().getColor(R.color.black_light);

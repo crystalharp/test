@@ -363,13 +363,6 @@ public class Globals {
                         if (cityInfoTmp != null && cityInfoTmp.isAvailably()) {
                             cityInfo = cityInfoTmp;
                             cityInfo.setPosition(position);
-                            
-                            // 我的定位显示在屏幕可视区域，并且比例尺小于或等于1千米时，则请求中包含lx和ly且不包含cx和cy，否则请求参数中包含cx和cy
-                            float zoomLevle = mapView.getZoomLevel();
-                            if (sphinx.positionInScreen(position)
-                                    && zoomLevle >= 12) { // 12级别是1千米
-                                cityInfo.order = 1;
-                            }
                         }
                     }
                 }

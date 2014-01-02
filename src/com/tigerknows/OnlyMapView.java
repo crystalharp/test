@@ -1,6 +1,7 @@
 package com.tigerknows;
 
 import com.decarta.android.exception.APIException;
+import com.tigerknows.R;
 import com.tigerknows.android.app.TKActivity;
 import com.tigerknows.map.CityInfo;
 import com.tigerknows.map.MapEngine;
