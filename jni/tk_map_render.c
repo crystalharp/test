@@ -223,9 +223,9 @@ static tk_rect_relation_t _tk_get_line_feature_point(tk_context_t *context, tk_f
         return TK_RECT_DISJOINT;
     }
     
-    if (relation != TK_RECT_COVER) {//need clip
-        _tk_clip_line(&context->clipped_point_buf, &context->feature_point_buf, context->draw_rect);
-    }
+//    if (relation != TK_RECT_COVER) {//need clip
+//        _tk_clip_line(&context->clipped_point_buf, &context->feature_point_buf, context->draw_rect);
+//    }
     return relation;
 }
 
@@ -324,18 +324,18 @@ static tk_status_t _tk_draw_subways(tk_context_t *context, tk_layer_t *subway_la
         }
         
         //create line path
-        if (relation == TK_RECT_COVER) {
+//        if (relation == TK_RECT_COVER) {
             points_buf_to_draw = &context->feature_point_buf;
             if (points_buf_to_draw->point_num >= 2) {
                 _tk_draw_normal_line(context, points_buf_to_draw->points, points_buf_to_draw->point_num);
             }
-        }
-        else {
-            points_buf_to_draw = &context->clipped_point_buf;
-            if (points_buf_to_draw->point_num >= 2) {
-                _tk_draw_line_with_boudary(context, points_buf_to_draw->points, points_buf_to_draw->point_num);
-            }
-        }
+//        }
+//        else {
+//            points_buf_to_draw = &context->clipped_point_buf;
+//            if (points_buf_to_draw->point_num >= 2) {
+//                _tk_draw_line_with_boudary(context, points_buf_to_draw->points, points_buf_to_draw->point_num);
+//            }
+//        }
         LOG_DBG("to draw subway_layer with cairo");
         //draw
         cairo_set_line_width(cr, gdi->pen_size + 2);
@@ -382,18 +382,18 @@ static tk_status_t _tk_draw_railway(tk_context_t *context, tk_layer_t *rail_laye
         
         // to draw black line first
         //create line path
-        if (relation == TK_RECT_COVER) {
+//        if (relation == TK_RECT_COVER) {
             points_buf_to_draw = &context->feature_point_buf;
             if (points_buf_to_draw->point_num >= 2) {
                 _tk_draw_normal_line(context, points_buf_to_draw->points, points_buf_to_draw->point_num);
             }
-        }
-        else {
-            points_buf_to_draw = &context->clipped_point_buf;
-            if (points_buf_to_draw->point_num >= 2) {
-                _tk_draw_line_with_boudary(context, points_buf_to_draw->points, points_buf_to_draw->point_num);
-            }
-        }
+//        }
+//        else {
+//            points_buf_to_draw = &context->clipped_point_buf;
+//            if (points_buf_to_draw->point_num >= 2) {
+//                _tk_draw_line_with_boudary(context, points_buf_to_draw->points, points_buf_to_draw->point_num);
+//            }
+//        }
         LOG_DBG("to draw rail_layer with cairo");
         //draw black line
         cairo_set_line_width(cr, gdi->pen_size);
