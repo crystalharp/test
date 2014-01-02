@@ -176,7 +176,9 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         }
         if(mFromPOI){
         	mRightBtn.setVisibility(View.VISIBLE);
-        	mRightBtn.setBackgroundResource(R.drawable.btn_traffic_query);
+        	mRightBtn.setBackgroundResource(R.drawable.ic_home_search_nearby);
+        	mRightBtn.setOnClickListener(this);
+        	mRightBtn.setPadding(0, 0, 0, 0);
         }else{
         	mRightBtn.setVisibility(View.GONE);
         }
@@ -365,6 +367,11 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
                 }
         	}
         	break;
+        case R.id.right_btn:
+        	mSphinx.getInputSearchFragment().setData(null,
+                    InputSearchFragment.MODE_POI);
+            mSphinx.showView(R.id.view_poi_input_search);
+            break;
         case R.id.category_btn:
         case R.id.sub_0_btn:
         case R.id.sub_1_btn:
