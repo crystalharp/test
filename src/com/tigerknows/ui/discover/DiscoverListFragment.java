@@ -288,7 +288,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             public void onItemClick(AdapterView<?> adapterView, View view, int location, long id) {
                 int position = (int)id;
                 List list = getList();
-                if (list != null && position < list.size()) {
+                if (list != null && position >= 0 && position < list.size()) {
                     Object object = list.get(position);
                     if (object != null) {
                         if (object instanceof Tuangou) {

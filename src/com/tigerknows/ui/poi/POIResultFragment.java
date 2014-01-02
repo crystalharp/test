@@ -241,7 +241,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int location, long id) {
                 int position = (int)id;
-                if (id < mPOIList.size()) {
+                if (position >= 0 && position < mPOIList.size()) {
                     POI poi = mPOIList.get(position);
                     if (poi != null) {
                         mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position, poi.getUUID(), poi.getName());
