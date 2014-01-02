@@ -470,7 +470,7 @@ static tk_status_t _tk_draw_road(tk_context_t *context, tk_layer_t *road_layer) 
     cairo_set_source_rgb(cr, (double)(GET_RED(gdi->background_color ))/(double)256,
                          (double)(GET_GREEN(gdi->background_color))/(double)256,
                          (double)(GET_BLUE(gdi->background_color))/(double)256);
-    if (!((road_layer->features->feature->type == 2 && (context->zoom >= 14 && context->zoom <=16))
+    if (!((road_layer->features->feature->type == 2 && (context->zoom >= 14 && context->zoom <=15))
     		|| (road_layer->features->feature->type == 3 && (context->zoom >= 10 && context->zoom <=13)))) {
         cairo_stroke_preserve(cr);
         // draw foreground
