@@ -86,6 +86,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     private View mDingdanView;
     private POI mPOI;
     private View mQueryAllHotelView;
+    private CityInfo mCityInfo;
     
     private FilterListView mFilterCategoryListView = null;
     
@@ -189,6 +190,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_CHECKOUT, SIMPLE_DATE_FORMAT.format(mCheckOutDat.getTime()));
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
         dataQuery.setup(getId(), getId(), null, true);
+        dataQuery.setCityId(mCityInfo.getId());
         mSphinx.queryStart(dataQuery);
     }
     
@@ -364,6 +366,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     }
     
     public void setCityInfo(CityInfo cityInfo) {
+        mCityInfo = cityInfo;
         mCityTxv.setText(cityInfo.getCName());
 
         DataQuery.initStaticField(BaseQuery.DATA_TYPE_POI, BaseQuery.SUB_DATA_TYPE_HOTEL, mSphinx, cityInfo.getId());
@@ -375,6 +378,10 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         mRefreshFilterArea = true;
         refreshFilterArea(true);
         mPOI = null;
+    }
+    
+    public CityInfo getCityInfo() {
+        return mCityInfo;
     }
     
     private void refreshFilterCategory() {
@@ -404,7 +411,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
             int filterAreaState;
             CityInfo locationCityInfo = Globals.g_My_Location_City_Info;
             if (locationCityInfo != null &&
-            		locationCityInfo.getId() == Globals.getCurrentCityInfo(mSphinx).getId()) {
+            		locationCityInfo.getId() == mCityInfo.getId()) {
                 filterAreaState = 1;
                 mLocationCityInfo = locationCityInfo;
             } else {
@@ -769,8 +776,10 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     }
     
     private void submit() {
-        DataQuery dataQuery = mSphinx.getHomeFragment().getDataQuery(null);
+        DataQuery dataQuery = new DataQuery(mSphinx);
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_POI);
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_HOTEL);
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_CHECKIN, SIMPLE_DATE_FORMAT.format(getDateListView().getCheckin().getTime()));
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_CHECKOUT, SIMPLE_DATE_FORMAT.format(getDateListView().getCheckout().getTime()));
         
@@ -794,7 +803,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
             CityInfo locationCityInfo = mLocationCityInfo;
             int id = FilterListView.getSelectedIdByFilter(getFilter(mFilterList, FilterArea.FIELD_LIST));
             if (locationCityInfo != null &&
-                    locationCityInfo.getId() == Globals.getCurrentCityInfo(mSphinx).getId() &&
+                    locationCityInfo.getId() == mCityInfo.getId() &&
                     id >= 6 &&
                     id <= 10) {
                 dataQuery.addParameter(DataQuery.SERVER_PARAMETER_LOCATION_CITY, String.valueOf(locationCityInfo.getId()));
@@ -806,6 +815,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_FILTER, DataQuery.makeFilterRequest(filterList, key));
                 
         dataQuery.setup(getId(), getId(), getString(R.string.doing_and_wait), false, false, poi);
+        dataQuery.setCityId(mCityInfo.getId());
         mSphinx.queryStart(dataQuery);
     }
     

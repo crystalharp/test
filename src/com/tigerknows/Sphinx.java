@@ -864,9 +864,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             if (data != null && RESULT_OK == resultCode) {
                 CityInfo cityInfo = data.getParcelableExtra(ChangeCityActivity.EXTRA_CITYINFO);
                 boolean changeHotelCity = data.getBooleanExtra(ChangeCityActivity.EXTRA_ONLY_CHANGE_HOTEL_CITY, false);
-                changeCity(cityInfo);
                 if (changeHotelCity) {
                     getHotelHomeFragment().setCityInfo(cityInfo);
+                } else {
+                    changeCity(cityInfo);
                 }
             }
         } else if (R.id.activity_setting_location == requestCode) {
