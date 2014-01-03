@@ -12,7 +12,7 @@
     </FrameLayout>
        	
     <ScrollView
-        android:id="@+id/scrollView1"
+        android:id="@+id/traffic_scroll"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/content_frl"
