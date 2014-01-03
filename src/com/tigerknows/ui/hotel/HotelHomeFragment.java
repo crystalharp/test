@@ -85,7 +85,6 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     private Button mQueryBtn;
     private View mDingdanView;
     private POI mPOI;
-    private View mQueryAllHotelView;
     private CityInfo mCityInfo;
     
     private FilterListView mFilterCategoryListView = null;
@@ -231,7 +230,6 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         mPriceTxv = (TextView) mRootView.findViewById(R.id.price_txv);
         mQueryBtn = (Button) mRootView.findViewById(R.id.query_btn);
         mDingdanView = mRootView.findViewById(R.id.dingdan_view);
-        mQueryAllHotelView = mRootView.findViewById(R.id.query_all_hotel_view);
     }
 
     @Override
@@ -243,7 +241,6 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         mPriceView.setOnClickListener(this);
         mQueryBtn.setOnClickListener(this);
         mDingdanView.setOnClickListener(this);
-        mQueryAllHotelView.setOnClickListener(this);
     }
         
     @Override
@@ -302,18 +299,6 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                 if (tel != null) {
                     Utility.telephone(mSphinx, tel);
                 }
-                break;
-                
-            case R.id.query_all_hotel_view:
-                mActionLog.addAction(mActionTag + ActionLog.HotelQueryAll);
-                DataQuery poiQuery = new DataQuery(mContext);
-                poiQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_POI);
-                poiQuery.addParameter(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_POI);
-                poiQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
-                poiQuery.addParameter(DataQuery.SERVER_PARAMETER_KEYWORD, getString(R.string.hotel));
-                poiQuery.setup(getId(), getId(), getString(R.string.doing_and_wait), false, false, null);
-                poiQuery.setCityId(mCityInfo.getId());
-                mSphinx.queryStart(poiQuery);
                 break;
                 
             default:
