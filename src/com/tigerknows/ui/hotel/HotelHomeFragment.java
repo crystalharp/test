@@ -306,9 +306,14 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                 
             case R.id.query_all_hotel_view:
                 mActionLog.addAction(mActionTag + ActionLog.HotelQueryAll);
-                DataQuery dataQuery = mSphinx.getHomeFragment().getDataQuery(getString(R.string.hotel));
-                dataQuery.setup(getId(), getId(), getString(R.string.doing_and_wait), false, false, mSphinx.getCenterPOI());
-                mSphinx.queryStart(dataQuery);
+                DataQuery poiQuery = new DataQuery(mContext);
+                poiQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_POI);
+                poiQuery.addParameter(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_POI);
+                poiQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
+                poiQuery.addParameter(DataQuery.SERVER_PARAMETER_KEYWORD, getString(R.string.hotel));
+                poiQuery.setup(getId(), getId(), getString(R.string.doing_and_wait), false, false, null);
+                poiQuery.setCityId(mCityInfo.getId());
+                mSphinx.queryStart(poiQuery);
                 break;
                 
             default:
