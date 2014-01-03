@@ -87,7 +87,9 @@ public class FetchFavoriteFragment extends BaseFragment {
         return mRootView;
 	}
 	
+    @Override
 	protected void findViews() {
+        super.findViews();
         mFavoriteLsv = (ListView)mRootView.findViewById(R.id.favorite_lsv);
         mFavoriteLoadingView = (LinearLayout)mRootView.findViewById(R.id.loading_lnl);
 //        mFavoriteLsv.addFooterView(mFavoriteLoadingView);
@@ -107,8 +109,9 @@ public class FetchFavoriteFragment extends BaseFragment {
         mTitleBtn.setText(getString(R.string.favorite_point));
     }
 
-
+    @Override
     protected void setListener() {
+        super.setListener();
 		mFavoriteLsv.setOnItemClickListener(new OnItemClickListener() {
 
             @Override

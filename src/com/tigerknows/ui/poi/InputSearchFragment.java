@@ -686,18 +686,21 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                     && poiList.size() > 0) {
                 
                 POIResultFragment poiResultFragment = sphinx.getPOIResultFragment();
-                poiResultFragment.setData(dataQuery);
-                
                 // 跳转到POI结果列表界面
                 if (bPOIList.getShowType() == 0) {
+                    sphinx.uiStackRemove(R.id.view_poi_result);
+                    poiResultFragment.setData(dataQuery);
                     sphinx.showView(R.id.view_poi_result);
                 
                 // 跳转到POI结果地图界面
                 } else if (bPOIList.getShowType() == 1) {
+                    poiResultFragment.setData(dataQuery);
+                    
                     ItemizedOverlayHelper.drawPOIOverlay(sphinx, poiList, 0);
                     sphinx.getResultMapFragment().setData(sphinx.getString(R.string.result_map), ActionLog.POIListMap);
                     sphinx.showView(R.id.view_result_map);
                 }
+                
                 // 若从公交线路结果列表界面跳转过来，则将其从UI堆栈中移除
                 sphinx.uiStackRemove(R.id.view_traffic_busline_line_result);
                 

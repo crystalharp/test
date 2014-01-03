@@ -165,15 +165,9 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
         } else if (id == R.id.detail_btn) {
             infoWindowClicked();
         } else if (id == R.id.traffic_plan_item) {
-            TrafficDetailFragment f = mSphinx.getTrafficDetailFragment();
             Plan plan = (Plan) mItemizedOverlay.get(0).getAssociatedObject();
             if (plan.getType() == Step.TYPE_DRIVE || plan.getType() == Step.TYPE_WALK) {
-                f.setData(f.getTrafficQuery(), 
-                        f.getTransferPlanList(),
-                        f.getDrivePlanList(), 
-                        f.getWalkPlanList(),
-                        plan.getType(),
-                        0);
+                mSphinx.getTrafficDetailFragment().refreshResult(plan.getType());
                 mSphinx.showView(R.id.view_traffic_result_detail);
             }
         }
