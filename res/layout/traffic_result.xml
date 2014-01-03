@@ -20,6 +20,5 @@
         android:fadingEdge="none"
         android:drawSelectorOnTop="false"
         android:scrollingCache="false"
-		android:divider="@drawable/bg_line_split"
-        android:background="@color/normal_background" />
+		android:divider="@drawable/bg_line_split" />
 </RelativeLayout>

@@ -675,26 +675,21 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
             	
             } else if (trafficModel.getType() == TrafficModel.TYPE_PROJECT) {
                 List<Plan> planList = trafficModel.getPlanList();
-                if (reset) {
-                    sphinx.getTrafficDetailFragment().getTransferPlanList().clear();
-                    sphinx.getTrafficDetailFragment().getDrivePlanList().clear();
-                    sphinx.getTrafficDetailFragment().getWalkPlanList().clear();
-                }
-                List<Plan> transferPlanList = sphinx.getTrafficDetailFragment().getTransferPlanList();
-                List<Plan> drivePlanList = sphinx.getTrafficDetailFragment().getDrivePlanList();
-                List<Plan> walkPlanList = sphinx.getTrafficDetailFragment().getWalkPlanList();
+//                if (reset) {
+//                }
                 
                 actionLog.addAction(actionTag + ActionLog.TrafficResultTraffic, planList.size());
             	
             	int type = planList.get(0).getType();
+            	TrafficDetailFragment f = sphinx.getTrafficDetailFragment();
+            	f.addResult(trafficQuery, type, planList);
+            	f.refreshResult(type);
             	if (type == Plan.Step.TYPE_TRANSFER) {
             	    // 换乘方式
-            	    sphinx.getTrafficDetailFragment().setData(trafficQuery, planList, drivePlanList, walkPlanList, type, 0);
             	    sphinx.getTrafficResultFragment().setData(trafficQuery);
             	    sphinx.showView(R.id.view_traffic_result_transfer);
             	} else if (type == Plan.Step.TYPE_DRIVE) {
             	    // 驾车
-            		sphinx.getTrafficDetailFragment().setData(trafficQuery, transferPlanList, planList, walkPlanList, type, 0);
             		if (sphinx.uiStackPeek() == R.id.view_result_map) {
                         sphinx.getResultMapFragment().changeTrafficType(type);
                     } else {
@@ -705,7 +700,6 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
                     }
             	} else if (type == Plan.Step.TYPE_WALK) {
                     // 步行方式
-                    sphinx.getTrafficDetailFragment().setData(trafficQuery, transferPlanList, drivePlanList, planList, type, 0);
                     if (sphinx.uiStackPeek() == R.id.view_result_map) {
                         sphinx.getResultMapFragment().changeTrafficType(type);
                     } else {

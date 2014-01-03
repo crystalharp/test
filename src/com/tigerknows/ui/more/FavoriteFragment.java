@@ -14,6 +14,7 @@ import com.tigerknows.model.BaseData;
 import com.tigerknows.model.Favorite;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.BuslineQuery;
+import com.tigerknows.model.TrafficModel.Plan.Step;
 import com.tigerknows.model.TrafficQuery;
 import com.tigerknows.model.BuslineModel.Line;
 import com.tigerknows.provider.Tigerknows;
@@ -514,15 +515,18 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
                 break;
                 
             case Tigerknows.Favorite.FAVORITE_TRANSFER:
-                mSphinx.getTrafficDetailFragment().setData(traffic.getTrafficQuery(), traffic.getTrafficQuery().getTrafficModel().getPlanList(), null, null, traffic.getTrafficQuery().getTrafficModel().getPlanList().get(0).getType(), 0);
+                mSphinx.getTrafficDetailFragment().addResult(traffic.getTrafficQuery(), Step.TYPE_TRANSFER, traffic.getTrafficQuery().getTrafficModel().getPlanList());
+                mSphinx.getTrafficDetailFragment().refreshResult(Step.TYPE_TRANSFER);
                 mSphinx.showView(R.id.view_traffic_result_detail);
                 break;
             case Tigerknows.Favorite.FAVORITE_DRIVE:
-                mSphinx.getTrafficDetailFragment().setData(traffic.getTrafficQuery(), null, traffic.getTrafficQuery().getTrafficModel().getPlanList(), null, traffic.getTrafficQuery().getTrafficModel().getPlanList().get(0).getType(), 0);
+                mSphinx.getTrafficDetailFragment().addResult(traffic.getTrafficQuery(), Step.TYPE_DRIVE, traffic.getTrafficQuery().getTrafficModel().getPlanList());
+                mSphinx.getTrafficDetailFragment().refreshResult(Step.TYPE_DRIVE);
                 mSphinx.getTrafficDetailFragment().viewMap();
                 break;
             case Tigerknows.Favorite.FAVORITE_WALK:
-                mSphinx.getTrafficDetailFragment().setData(traffic.getTrafficQuery(), null, null, traffic.getTrafficQuery().getTrafficModel().getPlanList(), traffic.getTrafficQuery().getTrafficModel().getPlanList().get(0).getType(), 0);
+                mSphinx.getTrafficDetailFragment().addResult(traffic.getTrafficQuery(), Step.TYPE_WALK, traffic.getTrafficQuery().getTrafficModel().getPlanList());
+                mSphinx.getTrafficDetailFragment().refreshResult(Step.TYPE_WALK);
                 mSphinx.getTrafficDetailFragment().viewMap();
                 break;
 
