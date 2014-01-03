@@ -186,6 +186,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
         super.onResume();
         
         mTitleBtn.setText(mTitle);
+        mKeywordEdt.getInput().setHint(R.string.find_poi_merchant);
         mKeywordEdt.setVisibility(View.VISIBLE);
         
         mKeywordEdt.addTextChangedListener(mKeywordEdtWatcher);
