@@ -135,9 +135,11 @@ public class TilesView extends GLSurfaceView {
 	private static float Cos30 = (float) Math.cos(30 * Math.PI / 180);
 	private static float Cos60 = (float) Math.cos(60 * Math.PI / 180);
 
+	private SingleRectLabel touchLabel;
+
 	// Tigerknows begin
     ArrayList<SingleRectLabel> shownLabels = new ArrayList<SingleRectLabel>();
-    
+
 	public static class Texture {
 		public int textureRef = 0;
 		public XYInteger size = new XYInteger(0, 0);
@@ -163,7 +165,7 @@ public class TilesView extends GLSurfaceView {
 	public boolean isPaused() {
 		return paused;
 	}
-	
+
 	public void tkRotateZToDegree(float zRotation) {
 		synchronized (drawingLock) {
 			tkZRotation = zRotation;
@@ -249,7 +251,7 @@ public class TilesView extends GLSurfaceView {
 
 	/**
 	 * 请求快照地图
-	 * 
+	 *
 	 * @param position
 	 */
 	public void requestSnap(Position snapCenterPos) {
@@ -262,7 +264,7 @@ public class TilesView extends GLSurfaceView {
 
 	/**
 	 * 获取快照地图
-	 * 
+	 *
 	 * @return
 	 */
 	public Bitmap getSnapBitmap() {
@@ -277,7 +279,7 @@ public class TilesView extends GLSurfaceView {
 
 	/**
 	 * 快照地图
-	 * 
+	 *
 	 * @param x
 	 * @param y
 	 * @param w
@@ -305,18 +307,18 @@ public class TilesView extends GLSurfaceView {
 				bt[(h - i - 1) * w + j] = pix1;
 			}
 		}
-		
+
 		Bitmap.Config config = Config.RGB_565;
 		Bitmap origBm = Bitmap.createBitmap(bt, w, h, config);
-		
+
         Bitmap bm = origBm.copy(config, true);
         origBm.recycle();
-		
+
 		Canvas canvas = new Canvas(bm);
 		Bitmap watermark = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_water_mark);
 		canvas.drawBitmap(watermark, w-watermark.getWidth()-8, h-watermark.getHeight()-8, new Paint());
 		watermark.recycle();
-		
+
 		return bm;
 	}
 
@@ -349,9 +351,9 @@ public class TilesView extends GLSurfaceView {
 	 * info window. There is only one instance of info window.
 	 */
 	private InfoWindow infoWindow = new InfoWindow();
-	
+
 	private ScaleView scaleView = new ScaleView();
-	
+
 	private XYInteger gridSize = new XYInteger(0, 0);
 	private XYInteger displaySize = new XYInteger(0, 0);
 	private double radiusX;
@@ -436,7 +438,7 @@ public class TilesView extends GLSurfaceView {
 	/***************************************** public methods **************************************************/
 	/**
 	 * constructor, initialize all objects required.
-	 * 
+	 *
 	 * @param context
 	 * @param mapView
 	 */
@@ -511,7 +513,7 @@ public class TilesView extends GLSurfaceView {
 
 	/**
 	 * 若背景线程已经被其它的运行实例停止，则重新生成背景线程
-	 * 
+	 *
 	 * @return 否重新生成背景线程
 	 */
 	public boolean ensureThreadsRunning() {
@@ -601,7 +603,7 @@ public class TilesView extends GLSurfaceView {
 	/**
 	 * it's a wrapper of redraw request. parameters are used to define a rect to
 	 * be redrawn.
-	 * 
+	 *
 	 * @param left
 	 * @param top
 	 * @param right
@@ -638,7 +640,7 @@ public class TilesView extends GLSurfaceView {
 //			});
 //		}
 	}
-	
+
 	public void changeMapType(MapType mapType) {
 		if (this.mapType.equals(mapType))
 			return;
@@ -695,7 +697,7 @@ public class TilesView extends GLSurfaceView {
 
 	/**
 	 * clear the routeId, overlays and infowindow
-	 * 
+	 *
 	 * @throws APIException
 	 */
 	public void clearMap() throws APIException {
@@ -730,7 +732,7 @@ public class TilesView extends GLSurfaceView {
 		TileThread.stopAllThreads();
 		DownloadThread.stopAllThreads();
 		clearTilesWaitForLoading();
-		
+
 		resetLongTouchTimer();
 
 		overlays.clear();
@@ -752,7 +754,7 @@ public class TilesView extends GLSurfaceView {
 			tilesWaitForLoading.clear();
 		}
 	}
-	
+
 	private void resetRecord() {
 	    touchRecord1.reset();
         touchRecord2.reset();
@@ -791,7 +793,7 @@ public class TilesView extends GLSurfaceView {
 				mapMode.resetZEasing();
 				easingRecord.reset();
 				zoomingRecord.reset();
-				
+
 				if (compass != null && compass.isVisible()) {
 				    compass.setVisible(false);
 				    refreshMap();
@@ -1089,7 +1091,7 @@ public class TilesView extends GLSurfaceView {
 
 			isTouchBegin = false;
 			resetLongTouchTimer();
-			
+
 			// LongClick事件派发出去之后就不再派发TouchUp事件
 			if (longClicked == false) {
     			Position pos = screenXYConvToPos(xy0Conv.x, xy0Conv.y);
@@ -1218,9 +1220,9 @@ public class TilesView extends GLSurfaceView {
                         // 判断是否点击在地图上的POI上
                         shownLabels.clear();
                         synchronized (drawingLock) {
-                            
+
                             ArrayList<Label>[] onlineShownLabels = mapRender.getShownLabels();
-                            
+
                             if (onlineShownLabels != null) {
                                 int length = onlineShownLabels.length;
                                 for(int i = 0; i < length; i++) {
@@ -1239,43 +1241,26 @@ public class TilesView extends GLSurfaceView {
                                 }
                             }
                         }
-                        SingleRectLabel touchLabel = null;
+                        boolean lableTouched = false;
                         for(int i = 0, s = shownLabels.size(); i < s; i++) {
                             SingleRectLabel label = shownLabels.get(i);
                             if (xy0Conv.x >= label.rect.left
                                     && xy0Conv.x <= label.rect.right
                                     && xy0Conv.y >= label.rect.top
                                     && xy0Conv.y <= label.rect.bottom) {
-                                
-                                float scale = (float) Math.pow(2, zoomLevel - centerXYZ.z);
-                                float rotation = mapMode.getzRotation();
-                                float sinRot = mapMode.getSinZ();
-                                float cosRot = mapMode.getCosZ();
-                                XYInteger center = new XYInteger(displaySize.x / 2,
-                                        displaySize.y / 2);
-                                int tileSize = CONFIG.TILE_SIZE;
-                                int cx = center.x;
-                                int cy = center.y;
-                                float refx = cx + centerDelta.x + (label.x - centerXYZ.x) * tileSize - (tileSize >> 1);//label所在tile的左上角坐标
-                                float refy = cy + centerDelta.y + (centerXYZ.y - label.y) * tileSize - (tileSize >> 1);
-                                float sx = label.point.x + refx;//point.x + refx为实际原始坐标
-                                float sy = label.point.y + refy;
-                                float dx = scale == 1 ? (sx - cx) : scale * (sx - cx);
-                                float dy = scale == 1 ? (sy - cy) : scale * (sy - cy);
-                                float x = rotation == 0 ? (dx + cx) : (cosRot * (dx) - (dy) * sinRot + cx);//旋转变换
-                                float y = rotation == 0 ? (dy + cy) : ((dx) * sinRot + (dy) * cosRot + cy);
-                                
-                                Position pos = screenXYConvToPos(x, y);
+
+                                Position pos = getSingleLabelPostion(label);
                                 mParentMapView.executeClickPOIEventListener(pos, label.name);
                                 touchLabel = label;
+                                lableTouched = true;
                                 break;
                             }
                         }
-                        
-                        if (touchLabel == null) {
+
+                        if (!lableTouched) {
                             mParentMapView.executeTouchListeners(position);
                         }
-                        
+
 						if (lastTouchUpTime != 0
 								&& (touchUpTime - lastTouchUpTime) < DOUBLE_CLICK_INTERVAL_TIME_MAX
 								&& (Math.abs(event.getX(0) - lastTouchUp.x) + Math
@@ -1364,6 +1349,29 @@ public class TilesView extends GLSurfaceView {
 		return true;
 	}
 
+	private Position getSingleLabelPostion(SingleRectLabel label) {
+		float scale = (float) Math.pow(2, zoomLevel - centerXYZ.z);
+		float rotation = mapMode.getzRotation();
+		float sinRot = mapMode.getSinZ();
+		float cosRot = mapMode.getCosZ();
+		XYInteger center = new XYInteger(displaySize.x / 2,
+		        displaySize.y / 2);
+		int tileSize = CONFIG.TILE_SIZE;
+		int cx = center.x;
+		int cy = center.y;
+		float refx = cx + centerDelta.x + (label.x - centerXYZ.x) * tileSize - (tileSize >> 1);//label所在tile的左上角坐标
+		float refy = cy + centerDelta.y + (centerXYZ.y - label.y) * tileSize - (tileSize >> 1);
+		float sx = label.point.x + refx;//point.x + refx为实际原始坐标
+		float sy = label.point.y + refy;
+		float dx = scale == 1 ? (sx - cx) : scale * (sx - cx);
+		float dy = scale == 1 ? (sy - cy) : scale * (sy - cy);
+		float x = rotation == 0 ? (dx + cx) : (cosRot * (dx) - (dy) * sinRot + cx);//旋转变换
+		float y = rotation == 0 ? (dy + cy) : ((dx) * sinRot + (dy) * cosRot + cy);
+
+		Position pos = screenXYConvToPos(x, y);
+		return pos;
+	}
+
 	/**
 	 * main method for repaint. zoom layer and overlays have their center
 	 * position stored, move canvas the distance between stored center and
@@ -1384,7 +1392,7 @@ public class TilesView extends GLSurfaceView {
 
 	/**
 	 * centers the map on a given position and renders tiles
-	 * 
+	 *
 	 * @param position
 	 */
 	public void centerOnPosition(Position position) throws APIException {
@@ -1432,7 +1440,7 @@ public class TilesView extends GLSurfaceView {
 				throw APIException.wrapToAPIException(e);
 			}
 		}
-		
+
 		if (refreshMap) {
     		refreshMap();
 		}
@@ -1470,7 +1478,7 @@ public class TilesView extends GLSurfaceView {
 
 	/**
 	 * moves the map to a given position
-	 * 
+	 *
 	 * @param position
 	 */
 	public void panToPosition(Position position, long duration,
@@ -1479,7 +1487,7 @@ public class TilesView extends GLSurfaceView {
 			return;
 
 		resetRecord();
-		
+
 		boolean moveJustDown = false;
 		if (duration == -1) {
 			duration = MapView.PAN_TO_POSITION_TIME_DEF;
@@ -1544,7 +1552,7 @@ public class TilesView extends GLSurfaceView {
 	/**
 	 * returns the current boundingbox for the viewable area of map on the
 	 * screen, useful for clipping
-	 * 
+	 *
 	 * @return BoundingBox
 	 */
 	public BoundingBox getScreenBoundingBox() {
@@ -1598,7 +1606,7 @@ public class TilesView extends GLSurfaceView {
 
 	/**
 	 * sets new zoom level for next request that centers the map.
-	 * 
+	 *
 	 * @param newLevel
 	 */
 	public void setZoomLevel(float newLevel) throws APIException {
@@ -1640,7 +1648,7 @@ public class TilesView extends GLSurfaceView {
 		}
 		if (zoomCenter != null) {
 			XYFloat screenXY = positionToScreenXYConv(zoomCenter);
-			zoomTo(newZoomLevel, screenXY, duration, listener);	
+			zoomTo(newZoomLevel, screenXY, duration, listener);
 		} else if ((zoomLevel > CONFIG.ZOOM_JUMP && newZoomLevel == CONFIG.ZOOM_JUMP - 1)
 				|| (zoomLevel < CONFIG.ZOOM_JUMP && newZoomLevel == CONFIG.ZOOM_JUMP + 1)) {
 			setZoomLevel(newZoomLevel);
@@ -1711,7 +1719,7 @@ public class TilesView extends GLSurfaceView {
 	    }
 	    return ret;
 	}
-	
+
 	public void zoomView(float newZoomLevel, XYFloat zoomCenterXY)
 			throws APIException {
 //		newZoomLevel = tkJumpZoomLevel(newZoomLevel);
@@ -1821,10 +1829,10 @@ public class TilesView extends GLSurfaceView {
 
 	/**
 	 * move all tiles as if they are inside one container
-	 * 
+	 *
 	 * @param left
 	 * @param top
-	 * 
+	 *
 	 */
 	public void moveView(float left, float top) {
 		if (zooming)
@@ -1873,6 +1881,16 @@ public class TilesView extends GLSurfaceView {
 
 	public List<ItemizedOverlay> getOverlays() {
 		return overlays;
+	}
+
+	public ItemizedOverlay getOverlaysByName(String overlayName) {
+		for(int i=0, size = getOverlays().size(); i < size; i++) {
+			ItemizedOverlay overlay = getOverlays().get(i);
+			if(overlay.getName().equals(overlayName)){
+				return overlay;
+			}
+		}
+		return null;
 	}
 
 	public List<Shape> getShapes() {
@@ -2305,9 +2323,9 @@ public class TilesView extends GLSurfaceView {
 	/**
 	 * retrieve the screen coordinate from the lat lon based on current center
 	 * and zoom level
-	 * 
+	 *
 	 * @param pos
-	 * 
+	 *
 	 */
 	private XYFloat positionToScreenXYConv(Position pos) throws APIException {
 		XYDouble mercXY = Util.posToMercPix(pos, zoomLevel);
@@ -2316,9 +2334,9 @@ public class TilesView extends GLSurfaceView {
 
 	/**
 	 * retrieve the lat lon from the screen coordinate
-	 * 
+	 *
 	 * @param screenXY
-	 * 
+	 *
 	 */
 	private Position screenXYConvToPos(float sx, float sy) {
 		XYDouble xy = screenXYConvToMercXY(sx, sy, zoomLevel);
@@ -2343,7 +2361,7 @@ public class TilesView extends GLSurfaceView {
 			refreshMap();
 		}
 	}
-	
+
 	public void zoomInAtPosition(Position position) {
 		int newZoom = Math.round(zoomLevel) + 1;
 		long duration = Math.round(MapView.DIGITAL_ZOOMING_TIME_PER_LEVEL
@@ -2359,7 +2377,7 @@ public class TilesView extends GLSurfaceView {
 	/**
 	 * initilize/reset tiles, set coordinate for each tile, put tiles for
 	 * loading queue
-	 * 
+	 *
 	 * @param resp
 	 */
 	private void renderMap(TileGridResponse resp) throws APIException {
@@ -2425,7 +2443,7 @@ public class TilesView extends GLSurfaceView {
 	/**
 	 * add the MapPreference class for map preference, it contains routeId and
 	 * will be used when composing new portraymap request
-	 * 
+	 *
 	 */
 	public class MapPreference {
 		// add the routeId to the map
@@ -2453,7 +2471,7 @@ public class TilesView extends GLSurfaceView {
 
 	/**
 	 * structure to store moving points
-	 * 
+	 *
 	 */
 	public class TouchRecord {
 		private int capacity = 0;
@@ -2490,9 +2508,9 @@ public class TilesView extends GLSurfaceView {
 	}
 
 	/**
-	 * 
+	 *
 	 * structure to store easing related parameters
-	 * 
+	 *
 	 */
 	public class EasingRecord {
 		public double TIME_SCALE = 33 * 1E6; // 33 miniseconds
@@ -2547,7 +2565,7 @@ public class TilesView extends GLSurfaceView {
 
 	/**
 	 * the render class for opengl drawing
-	 * 
+	 *
 	 */
 	public class MapRender implements GLSurfaceView.Renderer {
 
@@ -2617,11 +2635,11 @@ public class TilesView extends GLSurfaceView {
 		private int maxLabelPriority = 0;
 		ArrayList<Label>[] priorityLabels;
 		ArrayList<Label>[] shownLabels;
-		
+
 		protected ArrayList<Label>[] getShownLabels() {
 		    return shownLabels;
 		}
-		
+
 		ArrayList<Label>[] lastShownLabels;
 
 		private boolean isLabelShown(Label label) {
@@ -2719,6 +2737,20 @@ public class TilesView extends GLSurfaceView {
 								TEXTURE_COORDS, mVertexBuffer, isDrawNew,
 								maxLabelToDraw, textTexturePool, mapWordIconPool);
 						if (label.state != Label.LABEL_STATE_CANT_BE_SHOWN) {
+							if (touchLabel != null) {
+								ItemizedOverlay overlay = getOverlaysByName(ItemizedOverlay.MAP_POI_OVERLAY);
+								if (overlay == null) { //如果MAP_POI_OVERLAY没有了，就把touchLabel置为null，下次就不用再检查
+									touchLabel = null;
+								} else {
+									if (label.name.equals(touchLabel.name) && label.type == touchLabel.type) {
+										if (label instanceof SingleRectLabel) {
+											touchLabel = (SingleRectLabel)label;
+											Position position = getSingleLabelPostion((SingleRectLabel)label);
+											mParentMapView.executeUpdateMapPOIPostionEventListener(position, label.name);
+										}
+									}
+								}
+							}
 							shownLabelList.add(label);
 						} else {
 							if (label.state == Label.LABEL_STATE_CANT_BE_SHOWN)
@@ -2820,7 +2852,7 @@ public class TilesView extends GLSurfaceView {
 					}
 				};
 			}
-			
+
 			if (mapWordIconPool == null) {
 				mapWordIconPool = new LinkedHashMap<Integer, Texture>(
 						MAX_ICON_POOL_SIZE * 2, 0.75f, true) {
@@ -2897,7 +2929,7 @@ public class TilesView extends GLSurfaceView {
 	        }
 	        textTexturePool.clear();
 	    }
-	    
+
 	    public void clearIconTexture() {
             if (mapWordIconPool == null) {
                 return;
@@ -2933,7 +2965,7 @@ public class TilesView extends GLSurfaceView {
 				clearIconTexture();
 				scaleView.clearTexture();
 				clearTexRefs();
-				
+
 				Label.clearTextBitmap();
 				SingleRectLabel.clearIcon();
 			}
@@ -3042,7 +3074,7 @@ public class TilesView extends GLSurfaceView {
 					float bgg = ((CONFIG.BACKGROUND_COLOR_OPENGL & 0x0000ff00) >> 8) / 255.0f;
 					float bgb = (CONFIG.BACKGROUND_COLOR_OPENGL & 0x000000ff) / 255.0f;
 					gl.glClearColor(bgr, bgg, bgb, 1);
-					
+
 					if (executeDrawFrameListeners == false) {
 					    executeDrawFrameListeners = true;
 					    mParentMapView.executeDrawFrameListeners();
@@ -3521,8 +3553,8 @@ public class TilesView extends GLSurfaceView {
 								&& ((easingRecord.startMoveTime == 0
 										&& zoomingRecord.digitalZoomEndTime == 0 && !touching))
 								|| zoomingJustDoneL || isManuelZoom
-								|| rotatingZJustDoneL || rotatingXJustDoneL || 
-								((isStaying && !isTouchBegin && !isBeginMoving && !movingL) || 
+								|| rotatingZJustDoneL || rotatingXJustDoneL ||
+								((isStaying && !isTouchBegin && !isBeginMoving && !movingL) ||
 										(!touching && !movingL)));
 						isLabelFading = this.shownLabels((float) zoomScale,
 								refreshText, refreshText);
@@ -3545,7 +3577,7 @@ public class TilesView extends GLSurfaceView {
 							++movingFrameCount;
 						}
 					}
-				
+
 					// draw the shapes
 					gl.glEnable(GL10.GL_BLEND);
 					gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
@@ -3684,7 +3716,7 @@ public class TilesView extends GLSurfaceView {
 					}
 					gl.glDisable(GL10.GL_BLEND);
 					gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
-					
+
 					// draw the info window
 					if (infoWindow.isVisible()
 							&& infoWindow.getMercXY() != null) {
@@ -3719,7 +3751,7 @@ public class TilesView extends GLSurfaceView {
 						infoWindow.drawInfoWindowOpenGL(gl, new XYFloat(0, 0));
 						gl.glPopMatrix();
 					}
-					
+
 					//draw scale view
 					gl.glPushMatrix();
 					gl.glTranslatef(displaySize.x/2.0f, displaySize.y/2.0f, 0);//中心点移到屏幕中心点
@@ -3732,7 +3764,7 @@ public class TilesView extends GLSurfaceView {
 			        XYFloat leftTop = new XYFloat(8 * density, displaySize.y - 24 * density - padding.bottom);
 					scaleView.renderGL(leftTop, zoomLevel, (float)centerPos.getLat(), centerXYZ.z, TEXTURE_COORDS);
 					gl.glPopMatrix();
-					
+
 					gl.glColor4f(1, 1, 1, 1);
 					gl.glDisable(GL_BLEND);
 					gl.glEnable(GL_TEXTURE_2D);
@@ -3796,12 +3828,12 @@ public class TilesView extends GLSurfaceView {
     					    requestRender();
     					}
                     }
-					
+
 					if (zoomingL || isLastLabelFading || (touching && !refreshText)
 							|| isLabelFading || fading || movingL || rotatingX
 							|| rotatingZ) {
 						requestRender();
-					} 
+					}
 
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -3861,7 +3893,7 @@ public class TilesView extends GLSurfaceView {
 
 //			clearTexRefs();
 		}
-		
+
 		private void clearIconPool() {
             if (iconPool == null) {
                 return;
@@ -3874,7 +3906,7 @@ public class TilesView extends GLSurfaceView {
 			}
 			iconPool.clear();
 		}
-		
+
 		private void clearClusterTextPool() {
             if (clusterTextPool == null) {
                 return;
@@ -3887,7 +3919,7 @@ public class TilesView extends GLSurfaceView {
 			}
 			clusterTextPool.clear();
 		}
-		
+
 		/**************************************************** private methods *************************************************/
 		private void clearTexRefs() {
 			clearIconPool();
@@ -3913,7 +3945,7 @@ public class TilesView extends GLSurfaceView {
 			return textureRefBuf.get(0);
 
 		}
-		
+
 		private void deleteTextureRef(int textureRef) {
 			if (textureRef == 0)
 				return;
@@ -3923,7 +3955,7 @@ public class TilesView extends GLSurfaceView {
 			textureRefBuf.position(0);
 			GLES10.glDeleteTextures(1, textureRefBuf);
 		}
-		
+
 		private void deleteTextureRef(GL10 gl, int textureRef) {
 			if (textureRef == 0)
 				return;
@@ -4093,7 +4125,7 @@ public class TilesView extends GLSurfaceView {
 					Bitmap bm = Bitmap.createBitmap(bmSizeX, bmSizeY, config);
 					Canvas canvas = new Canvas(bm);
 					bm.eraseColor(0);
-					
+
 					canvas.drawBitmap(icon.getImage(), null, new RectF(0, 0,
 							size.x, size.y), null);
 
