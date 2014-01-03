@@ -97,6 +97,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         mTitleFragment.mRootView.setBackgroundDrawable(null);
         
         mSphinx.clearMap();
+        mSphinx.replaceBottomUI(this);
         MapView mapView = mSphinx.getMapView();
         mapView.setStopRefreshMyLocation(false);
         

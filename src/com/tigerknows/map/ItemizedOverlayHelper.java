@@ -21,7 +21,6 @@ import com.tigerknows.model.POI;
 import com.tigerknows.model.Tuangou;
 import com.tigerknows.model.Yanchu;
 import com.tigerknows.model.Zhanlan;
-import com.tigerknows.model.DataQuery.POIResponse;
 
 import android.content.res.Resources;
 import android.graphics.Rect;
@@ -155,16 +154,36 @@ public class ItemizedOverlayHelper {
     }
     
     public static ItemizedOverlay drawPOIOverlay(final Sphinx sphinx, List dataList, int index) {
-        return drawPOIOverlay(sphinx, dataList, index, true);
+        return drawPOIOverlay(sphinx, dataList, index, null, true);
     }
     
-    public static ItemizedOverlay drawPOIOverlay(final Sphinx sphinx, List dataList, int index, boolean showInfoWindow) {
+    public static ItemizedOverlay drawPOIOverlay(final Sphinx sphinx, List dataList, int index, POI nearbyPOI) {
+        return drawPOIOverlay(sphinx, dataList, index, nearbyPOI, true);
+    }
+    
+    public static ItemizedOverlay drawPOIOverlay(final Sphinx sphinx, List dataList, int index, POI nearbyPOI, boolean showInfoWindow) {
         
         ItemizedOverlay itemizedOverlay = null;
         MapView mapView = sphinx.getMapView();
         
         try {
             sphinx.clearMap();
+            
+            Resources resources = sphinx.getResources();
+            if (nearbyPOI != null) {
+                RotationTilt rt=new RotationTilt(RotateReference.SCREEN,TiltReference.SCREEN);
+                Icon icon = Icon.getIcon(resources, R.drawable.ic_bubble_nearby, Icon.OFFSET_LOCATION_CENTER_BOTTOM);
+                OverlayItem overlayItem = new OverlayItem(nearbyPOI.getPosition(), icon, icon, null, rt);
+                overlayItem.setAssociatedObject(nearbyPOI);
+                
+                ItemizedOverlay nearbyPOIOverlay = new ItemizedOverlay(ItemizedOverlay.POI_NEARBY_OVERLAY);
+                nearbyPOIOverlay.addOverlayItem(overlayItem);
+                
+                mapView.addOverlay(nearbyPOIOverlay);
+            } else {
+                mapView.deleteOverlaysByName(ItemizedOverlay.POI_NEARBY_OVERLAY);
+            }
+            
             //add pins
             mapView.deleteOverlaysByName(ItemizedOverlay.POI_OVERLAY);
             if (dataList == null || dataList.isEmpty()) {
@@ -173,10 +192,8 @@ public class ItemizedOverlayHelper {
             }
             final ItemizedOverlay overlay=new ItemizedOverlay(ItemizedOverlay.POI_OVERLAY);
             
-            Resources resources = sphinx.getResources();
             Icon icon = Icon.getIcon(resources, R.drawable.btn_bubble_b_normal, Icon.OFFSET_LOCATION_CENTER_BOTTOM);
             Icon iconFocused = Icon.getIcon(resources, R.drawable.btn_bubble_b_focused, Icon.OFFSET_LOCATION_CENTER_BOTTOM);
-            Icon iconA = Icon.getIcon(resources, R.drawable.btn_bubble_a_normal, Icon.OFFSET_LOCATION_CENTER_BOTTOM);
             
             ArrayList<Position> positions = new ArrayList<Position>();
             Position srcreenPosition = null;
@@ -188,7 +205,7 @@ public class ItemizedOverlayHelper {
                 if (data instanceof POI) {
                     POI target = (POI) data;
                     positions.add(target.getPosition());
-                    overlayItem=new OverlayItem(target.getPosition(),target.getResultType() == POIResponse.FIELD_A_POI_LIST ? iconA : icon, iconFocused, target.getName(),rt);
+                    overlayItem=new OverlayItem(target.getPosition(), icon, iconFocused, target.getName(),rt);
                     overlayItem.setAssociatedObject(target);
                     overlayItem.setPreferZoomLevel(TKConfig.ZOOM_LEVEL_POI);
                     if (index == i) {

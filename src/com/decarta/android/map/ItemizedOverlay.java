@@ -35,6 +35,7 @@ public class ItemizedOverlay {
     public static String MEASURE_DISTANCE_OVERLAY = "measure_distance";
     public static String MAP_POI_OVERLAY = "map_poi";
     public static String TRAFFIC_PLAN_LIST_OVERLAY = "traffic_plan_list";
+    public static String POI_NEARBY_OVERLAY = "poi_nearby";
     
 	public static final int ZOOM_LEVEL=13;
 	private static int GRANULARITY=20;

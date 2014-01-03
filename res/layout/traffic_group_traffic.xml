@@ -5,9 +5,11 @@
  	android:layout_width="fill_parent"
   	android:layout_height="wrap_content"
   	android:layout_alignParentTop="true"
-  	android:paddingLeft="4dp"
-  	android:paddingBottom="4dp"
-	android:gravity="center_vertical|left" >
+  	android:paddingLeft="12dp"
+  	android:paddingRight="12dp"
+  	android:paddingBottom="16dp"
+	android:gravity="center_vertical|left"
+    android:background="@drawable/list_selector_background_gray_light">
 
   	<TextView
   	    android:id="@+id/title_txv"
@@ -15,9 +17,7 @@
   	    android:layout_height="wrap_content"
   	    android:layout_alignParentLeft="true"
   	    android:lineSpacingExtra="4dp"
-  	    android:paddingLeft="8dp"
-  	    android:paddingTop="12dp"
-  	    android:paddingBottom="2dp"
+  	    android:paddingTop="16dp"
   	    android:textColor="@color/black"
   	    android:text="title"
   	    android:textSize="16sp" />
@@ -27,7 +27,6 @@
   	    android:layout_width="fill_parent"
   	    android:layout_height="wrap_content"
   	    android:orientation="horizontal"
-  	    android:padding="8dp"
       	android:layout_below="@id/title_txv"
   	     >
 	  	<TextView
@@ -37,7 +36,7 @@
 	      	android:paddingRight="8dp"
 	  	    android:ellipsize="end"
 	  	    android:singleLine="true"
-	  	    android:textColor="@color/text_hint_gray"
+	  	    android:textColor="@color/black_light"
 	  	    android:text="bustime"
 	  	    android:textSize="14sp" />
 	  	
@@ -50,7 +49,7 @@
 	  	    android:drawableLeft="@drawable/ic_vertical_split"
 	  	    android:drawablePadding="8dp"
 	  	    android:singleLine="true"
-	  	    android:textColor="@color/text_hint_gray"
+	  	    android:textColor="@color/black_light"
 	  	    android:text="distance"
 	  	    android:textSize="14sp" />
 	  	
@@ -62,7 +61,7 @@
 	  	    android:singleLine="true"
 	  	    android:paddingRight="8dp"
 	  	    android:drawableLeft="@drawable/ic_vertical_split"
-	  	    android:textColor="@color/text_hint_gray"
+	  	    android:textColor="@color/black_light"
 	  	    android:drawablePadding="8dp"
 	  	    android:text="walk_distance"
 	  	    android:textSize="14sp" />
@@ -75,7 +74,7 @@
 	  	    android:singleLine="true"
 	  	    android:drawableLeft="@drawable/ic_vertical_split"
 	  	    android:drawablePadding="8dp"
-	  	    android:textColor="@color/text_hint_gray"
+	  	    android:textColor="@color/black_light"
 	  	    android:text="busstop_num"
 	  	    android:textSize="14sp" />
   	</LinearLayout>

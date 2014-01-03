@@ -36,6 +36,7 @@ import com.tigerknows.Sphinx;
 import com.tigerknows.android.os.TKAsyncTask;
 import android.widget.Toast;
 import com.tigerknows.common.ActionLog;
+import com.tigerknows.map.CityInfo;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataQuery.AlternativeResponse;
 import com.tigerknows.model.DataQuery.FilterArea;
@@ -96,12 +97,14 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
     
     private TKWord mTKWord = null;
     
+    private CityInfo mCityInfo;
+    
     private final TextWatcher mKeywordEdtWatcher = new TextWatcher() {
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
         }
 
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            mSuggestWordListManager.refresh();
+            mSuggestWordListManager.refresh(mCityInfo.getId());
             if (mTKWord != null &&
                     s.toString().trim().equals(mTKWord.word)) {
                 mTKWord = null;
@@ -122,7 +125,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
         public boolean onTouch(View v, MotionEvent event) {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
                 mActionLog.addAction(mActionTag+ActionLog.HotelPickLocationInput);
-                mSuggestWordListManager.refresh();
+                mSuggestWordListManager.refresh(mCityInfo.getId());
                 mViewPager.setCurrentItem(1);
             }
             return false;
@@ -193,6 +196,8 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
         mRightBtn.setOnClickListener(this);
         mRightBtn.setEnabled(mKeywordEdt.getText().toString().trim().length() > 0);
         Utility.refreshButton(mSphinx, mRightBtn, getString(R.string.confirm), getString(R.string.cancel));
+        
+        mCityInfo = mSphinx.getHotelHomeFragment().getCityInfo();
     }
 
     @Override
@@ -252,7 +257,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
                 if (tkWord.attribute == TKWord.ATTRIBUTE_CLEANUP) {
                     mActionLog.addAction(mActionTag + ActionLog.ListViewItemHistoryClear);
                     HistoryWordTable.clearHistoryWord(mSphinx, HistoryWordTable.TYPE_TRAFFIC);
-                    mSuggestWordListManager.refresh();
+                    mSuggestWordListManager.refresh(mCityInfo.getId());
                 } else {
                     if (tkWord.attribute == TKWord.ATTRIBUTE_HISTORY) {
                         mActionLog.addAction(mActionTag + ActionLog.ListViewItemHistory, position, tkWord.word);
@@ -336,6 +341,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
             poiQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
             poiQuery.addParameter(DataQuery.SERVER_PARAMETER_KEYWORD, word);
             poiQuery.setup(getId(), getId(), getString(R.string.doing_and_wait), false, false, null);
+            poiQuery.setCityId(mCityInfo.getId());
             
             mSphinx.queryStart(poiQuery);
         }

@@ -181,14 +181,13 @@ public class TrafficResultFragment extends BaseFragment {
             public void onItemClick(AdapterView<?> parent, View view,
                     int position, long id) {
 
+                if (position >= mPlanList.size()) {
+                    return;
+                }
                 mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position);
                 focusedIndex = position;
-                mSphinx.getTrafficDetailFragment().setData(mTrafficQuery,
-                        mPlanList,
-                        mSphinx.getTrafficDetailFragment().getDrivePlanList(),
-                        mSphinx.getTrafficDetailFragment().getWalkPlanList(),
-                        mPlanList.get(0).getType(),
-                        position);
+                mSphinx.getTrafficDetailFragment().addResult(mTrafficQuery, mPlanList.get(0).getType(), mPlanList);
+                mSphinx.getTrafficDetailFragment().refreshResult(mPlanList.get(0).getType(), position);
                 mSphinx.showView(R.id.view_traffic_result_detail);
             }
 
@@ -210,17 +209,12 @@ public class TrafficResultFragment extends BaseFragment {
         
         TrafficDetailFragment trafficDetailFragment = mSphinx.getTrafficDetailFragment();
         TrafficQuery trafficQuery = trafficDetailFragment.getTrafficQuery();
-        List<Plan> list = null;
 
-        if (type == Plan.Step.TYPE_DRIVE) {
-            list = trafficDetailFragment.getDrivePlanList();
-        } else if (type == Plan.Step.TYPE_WALK) {
-            list = trafficDetailFragment.getWalkPlanList();
-        } else {
+        if (type != Plan.Step.TYPE_DRIVE && type != Plan.Step.TYPE_WALK) {
             return result;
         }
         
-        if (list == null || list.isEmpty()) {
+        if (!trafficDetailFragment.hasResult(type)) {
             TrafficQuery newTrafficQuery = new TrafficQuery(mContext);
             newTrafficQuery.setup(trafficQuery.getStart(),
                     trafficQuery.getEnd(),
@@ -230,12 +224,8 @@ public class TrafficResultFragment extends BaseFragment {
             newTrafficQuery.setCityId(trafficQuery.getCityId());
             mSphinx.queryStart(newTrafficQuery);
         } else {
-            trafficDetailFragment.setData(trafficQuery,
-                    trafficDetailFragment.getTransferPlanList(),
-                    trafficDetailFragment.getDrivePlanList(), 
-                    trafficDetailFragment.getWalkPlanList(),
-                    type,
-                    0);
+            List<Plan> list = trafficDetailFragment.getResult(type);
+            trafficDetailFragment.refreshResult(type);
             if (type == Plan.Step.TYPE_DRIVE) {
                 ResultMapFragment resultMapFragment = mSphinx.getResultMapFragment();
                 resultMapFragment.setData(null, ActionLog.TrafficDriveMap);
@@ -271,7 +261,6 @@ public class TrafficResultFragment extends BaseFragment {
         mPlanList.addAll(mTrafficModel.getPlanList());
         mResultAdapter.notifyDataSetChanged();
     }
-
     
     class TransferProjectListAdapter extends BaseAdapter{
 
