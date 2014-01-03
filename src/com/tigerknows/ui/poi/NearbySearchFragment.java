@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.ImageView;
 
@@ -76,6 +77,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     private Button[][] mCategoryBtns;
     private Button mHotFoldBtn;
 
+    private ScrollView mBodyScv;
     private LinearLayout mHotBaseLly;
     private LinearLayout[] mHotLlys;
     private View[] mHotBtnViews;
@@ -148,7 +150,6 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     	R.drawable.ic_custom_market,
     	R.drawable.ic_custom_mall,
     	R.drawable.ic_custom_sale,
-    	R.drawable.ic_custom_add,
     };
     
     private View[] mCategoryViews;
@@ -222,6 +223,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     @Override
     protected void findViews() {
         super.findViews();
+        mBodyScv = (ScrollView) mRootView.findViewById(R.id.body_scv);
         mLocationTxv = (TextView) mRootView.findViewById(R.id.location_txv);
         mHotBaseLly = (LinearLayout) mRootView.findViewById(R.id.hot_lly);
         mHotLlys = new LinearLayout[NUM_OF_HOT_LLY];
@@ -296,6 +298,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     	mHotBtnViews[countBtnView].setContentDescription("自定义;" + CategoryProperty.OP_CUSTOM);
     	((TextView)mHotBtnViews[countBtnView].findViewById(R.id.app_name_txv)).setText("自定义");
     	mHotBtnViews[countBtnView].setVisibility(View.VISIBLE);
+    	mHotBtnViews[countBtnView].setBackgroundResource(R.drawable.ic_custom_add);
     	countBtnView++;
 		if(mCountLly * 4 < countBtnView){
 			mHotLlys[mCountLly].setVisibility(View.VISIBLE);
@@ -571,6 +574,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         if(fromPOI && mSphinx.uiStackContains(R.id.view_poi_nearby_search)){
         	mSphinx.uiStackRemove(R.id.view_poi_nearby_search);
         }
+        mBodyScv.scrollTo(0, 0);
         setFilterListView();
     }
     
