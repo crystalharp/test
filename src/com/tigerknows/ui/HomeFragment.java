@@ -105,23 +105,26 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         mSphinx.getMapCleanBtn().setVisibility(View.INVISIBLE);
         mSphinx.getLocationView().setVisibility(View.VISIBLE);
     }
+    
+    public static void addCenterPositionParameter(Sphinx sphinx, DataQuery dataQuery){
+    	// 我的定位显示在屏幕可视区域，并且比例尺小于或等于1千米时，则请求中包含lx和ly且不包含cx和cy，否则请求参数中包含cx和cy
+        MapView mapView = sphinx.getMapView();
+        Position position = mapView.getCenterPosition();
+        float zoomLevel = mapView.getZoomLevel();
+        if (sphinx.positionInScreen(position)
+                && zoomLevel >= 12) { // 12级别是1千米
+        	dataQuery.addParameter(DataQuery.SERVER_PARAMETER_CENTER_LONGITUDE, String.valueOf(position.getLon()));
+        	dataQuery.addParameter(DataQuery.SERVER_PARAMETER_CENTER_LATITUDE, String.valueOf(position.getLat()));
+        }    	
+    }
 
     public DataQuery getDataQuery(String keyWord) {
         DataQuery poiQuery = new DataQuery(mContext);
         poiQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_POI);
         poiQuery.addParameter(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_POI);
         poiQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
-
         
-        // 我的定位显示在屏幕可视区域，并且比例尺小于或等于1千米时，则请求中包含lx和ly且不包含cx和cy，否则请求参数中包含cx和cy
-        MapView mapView = mSphinx.getMapView();
-        Position position = mapView.getCenterPosition();
-        float zoomLevle = mapView.getZoomLevel();
-        if (mSphinx.positionInScreen(position)
-                && zoomLevle >= 12) { // 12级别是1千米
-            poiQuery.addParameter(DataQuery.SERVER_PARAMETER_CENTER_LONGITUDE, String.valueOf(position.getLon()));
-            poiQuery.addParameter(DataQuery.SERVER_PARAMETER_CENTER_LATITUDE, String.valueOf(position.getLat()));
-        }
+        addCenterPositionParameter(mSphinx, poiQuery);
         
         if (keyWord != null) {
             poiQuery.addParameter(DataQuery.SERVER_PARAMETER_KEYWORD, keyWord);

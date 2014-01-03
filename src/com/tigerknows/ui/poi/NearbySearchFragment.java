@@ -44,6 +44,7 @@ import com.tigerknows.model.DataQuery.FilterOption;
 import com.tigerknows.model.DataQuery.FilterResponse;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
+import com.tigerknows.ui.HomeFragment;
 import com.tigerknows.widget.FilterListView;
 
 /**
@@ -513,9 +514,13 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         DataQuery dataQuery = new DataQuery(mSphinx);
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, dataType);
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
-        Position position = mPOI.getPosition();
-        dataQuery.addParameter(BaseQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
-        dataQuery.addParameter(BaseQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
+        if(mFromPOI){
+        	Position position = mPOI.getPosition();
+        	dataQuery.addParameter(BaseQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
+        	dataQuery.addParameter(BaseQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
+        }else{
+        	HomeFragment.addCenterPositionParameter(mSphinx, dataQuery);
+        }
         dataQuery.setup(getId(), getId(), getString(R.string.doing_and_wait), false, false, mPOI);
         return dataQuery;
     }
@@ -532,12 +537,18 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
             poiQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_POI);
             poiQuery.addParameter(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_POI);
             poiQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
-            poiQuery.addParameter(DataQuery.SERVER_PARAMETER_KEYWORD, keyword);
+            if(mFromPOI){
+            	poiQuery.addParameter(DataQuery.SERVER_PARAMETER_KEYWORD, keyword);
+            }
             poiQuery.addParameter(DataQuery.SERVER_PARAMETER_POI_ID, requestPOI.getUUID());
-            Position position = requestPOI.getPosition();
-            if (position != null) {
-                poiQuery.addParameter(DataQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
-                poiQuery.addParameter(DataQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
+            if(mFromPOI){
+            	Position position = requestPOI.getPosition();
+            	if (position != null) {
+            		poiQuery.addParameter(DataQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
+            		poiQuery.addParameter(DataQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
+            	}
+            }else{
+            	HomeFragment.addCenterPositionParameter(mSphinx, poiQuery);
             }
             poiQuery.addParameter(DataQuery.SERVER_PARAMETER_INFO, DataQuery.INFO_TYPE_TAG);
             poiQuery.addParameter(DataQuery.SERVER_PARAMETER_EXT, DataQuery.EXT_BUSLINE);
