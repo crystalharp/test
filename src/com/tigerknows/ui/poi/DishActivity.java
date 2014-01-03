@@ -209,6 +209,10 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
         super.onCreate(savedInstanceState);
         mActionTag = ActionLog.Dish;
         mId = R.id.activity_poi_dish;
+        
+        Resources resources = getResources();
+        mColorNormal = resources.getColor(R.color.black_dark);
+        mColorSelect = resources.getColor(R.color.orange);
 
         setContentView(R.layout.poi_dish);
         
@@ -271,10 +275,6 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
         mTitleBtn.setBackgroundResource(R.drawable.btn_all_comment_focused);
         mRightBtn.setVisibility(View.GONE);
         
-        Resources resources = getResources();
-        mColorNormal = resources.getColor(R.color.black_dark);
-        mColorSelect = resources.getColor(R.color.orange);
-        
         mPOI = sPOI;
         
         Intent intent = getIntent();
@@ -310,6 +310,8 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
         mAllBtn = (Button) findViewById(R.id.all_btn);
 
         mMyLikeBtn = (Button) findViewById(R.id.my_like_btn);
+        mMyLikeBtn.setBackgroundResource(R.drawable.btn_tab_selected);
+        mMyLikeBtn.setTextColor(mColorSelect);
         mRecommendBtn = (Button) findViewById(R.id.recommend_btn);
         
         mSelectedView = findViewById(R.id.selected_view);
