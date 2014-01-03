@@ -696,7 +696,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                 } else if (bPOIList.getShowType() == 1) {
                     poiResultFragment.setData(dataQuery);
                     
-                    ItemizedOverlayHelper.drawPOIOverlay(sphinx, poiList, 0);
+                    ItemizedOverlayHelper.drawPOIOverlay(sphinx, poiList, 0, poiResultFragment.getAPOI());
                     sphinx.getResultMapFragment().setData(sphinx.getString(R.string.result_map), ActionLog.POIListMap);
                     sphinx.showView(R.id.view_result_map);
                 }

@@ -248,7 +248,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                         mSphinx.showView(R.id.view_poi_detail);
                         mSphinx.getPOIDetailFragment().setData(poi, position);
                     }
-                } else if (mResultLsv.isFooterSpringback() == false) {
+                } else if (location > 0 && mResultLsv.isFooterSpringback() == false) {
                     showAddMerchant();
                 }
             }
@@ -265,9 +265,6 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 turnPage();
             }
         });
-        
-        mAddMerchantItemView.setOnClickListener(this);
-        mLocationTxv.setOnClickListener(this);
     }
     
     /**
@@ -353,6 +350,9 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     @Override
     public void onResume() {
         super.onResume();
+
+        // 5.8.0 2.2.2 2)从搜索结果列表页返回时，不应再返回搜索输入页，应跨过搜索输入页直接跳回搜索输入页的上一页
+        mSphinx.uiStackRemove(R.id.view_poi_input_search);
         
         mTitleBtn.setBackgroundResource(R.drawable.textfield);
         mTitleBtn.setOnClickListener(this);
@@ -511,9 +511,6 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         int size = mPOIList.size();
         List<POI> poiList = new ArrayList<POI>();
         int[] page = Utility.makePagedIndex(mResultLsv, size, firstVisiblePosition);
-        if (mAPOI != null) {
-            poiList.add(mAPOI);
-        }
         
         int minIndex = page[0];
         int maxIndex = page[1];
@@ -522,12 +519,9 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             poiList.add(poi);
         }
         int firstIndex = page[2];
-        if (mAPOI != null) {
-            firstIndex++;
-        }
         mSphinx.getResultMapFragment().setData(getString(R.string.result_map), BaseQuery.SUB_DATA_TYPE_HOTEL.equals(mResultAdapter.getSubDataType()) ? ActionLog.POIHotelListMap : ActionLog.POIListMap);
         mSphinx.showView(R.id.view_result_map);   
-        ItemizedOverlayHelper.drawPOIOverlay(mSphinx, poiList, firstIndex);
+        ItemizedOverlayHelper.drawPOIOverlay(mSphinx, poiList, firstIndex, mAPOI);
     }
     
     /**
@@ -572,7 +566,6 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 if (mPOIList.isEmpty() || mState != STATE_LIST) {
                     return;
                 }
-                mSphinx.uiStackRemove(R.id.view_poi_input_search);
                 mActionLog.addAction(mActionTag + ActionLog.TitleCenterButton);
                 mSphinx.getInputSearchFragment().setData(mInputText, InputSearchFragment.MODE_POI);
                 mSphinx.showView(R.id.view_poi_input_search);
@@ -584,22 +577,6 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 }
                 mActionLog.addAction(mActionTag + ActionLog.TitleRightButton);
                 viewMap(mResultLsv.getFirstVisiblePosition());
-                break;
-                
-            case R.id.add_merchant_item_view:
-                showAddMerchant();
-                break;
-                
-            case R.id.location_txv:
-                if (mAPOI != null) {
-                    mActionLog.addAction(mActionTag + ActionLog.ListViewItem, 0, mAPOI.getUUID(), mAPOI.getName());
-                    if (mAPOI.getSourceType() == POI.SOURCE_TYPE_SUBWAY &&
-                            mAPOI.getFrom() == POI.FROM_LOCAL) {
-                        mSphinx.getPOIDetailFragment().needForceReload();
-                    }
-                    mSphinx.showView(R.id.view_poi_detail);
-                    mSphinx.getPOIDetailFragment().setData(mAPOI, 0);
-                }
                 break;
                 
             default:
@@ -1044,6 +1021,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             
             poiList = poiResponse.getAPOIList();
             if (!dataQuery.isTurnPage()) {
+                mInputText = dataQuery.getParameter(BaseQuery.SERVER_PARAMETER_KEYWORD);
                 mPOIList.clear();
                 mSphinx.getHandler().post(new Runnable() {
 
@@ -1155,5 +1133,9 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     
     public List<Filter> getFilterList() {
         return mFilterList;
+    }
+    
+    public POI getAPOI() {
+        return mAPOI;
     }
 }

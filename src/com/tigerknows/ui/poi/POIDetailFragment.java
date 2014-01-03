@@ -1112,7 +1112,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         List<POI> pois = new ArrayList<POI>();
         pois.add(poi);
 
-        ItemizedOverlayHelper.drawPOIOverlay(mSphinx, pois, 0, false);
+        ItemizedOverlayHelper.drawPOIOverlay(mSphinx, pois, 0, null, false);
         ShareAPI.share(mSphinx, poi, poi.getPosition(), mActionTag);
     }
     

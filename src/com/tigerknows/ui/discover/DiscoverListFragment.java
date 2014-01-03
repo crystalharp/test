@@ -519,9 +519,6 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         int size = getList().size();
         int[] page = Utility.makePagedIndex(mResultLsv, size, firstVisiblePosition);
         List<BaseData> dataList = new ArrayList<BaseData>();
-        if (mAPOI != null) {
-            dataList.add(mAPOI);
-        }
         
         int minIndex = page[0];
         int maxIndex = page[1];
@@ -561,10 +558,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         mSphinx.getResultMapFragment().setData(getString(name), actionTag);
         mSphinx.showView(R.id.view_result_map);   
         int firstIndex = page[2];
-        if (mAPOI != null) {
-            firstIndex++;
-        }
-        ItemizedOverlayHelper.drawPOIOverlay(mSphinx, dataList, firstIndex);
+        ItemizedOverlayHelper.drawPOIOverlay(mSphinx, dataList, firstIndex, mAPOI);
     }
     
     public void doFilter(String name) {
