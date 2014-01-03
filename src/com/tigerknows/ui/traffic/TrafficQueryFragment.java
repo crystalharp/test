@@ -28,7 +28,6 @@ import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
-import com.tigerknows.TKConfig;
 import com.tigerknows.android.location.Position;
 import com.tigerknows.android.os.TKAsyncTask;
 import android.widget.Toast;
@@ -228,8 +227,9 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
         return mRootView;
     }
 	
+	@Override
     protected void findViews() {
-    	
+    	super.findViews();
         mBlock = (LinearLayout)mRootView.findViewById(R.id.content_lnl);
 		
     	mBackBtn = (Button)mRootView.findViewById(R.id.back_btn);
@@ -248,10 +248,12 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 //    	mAddCommonPlace = (LinearLayout)mRootView.findViewById(R.id.add_common_place);
     	mCommonPlaceLst = (LinearLayout)mRootView.findViewById(R.id.common_place_lsv);
 		
-    	setListeners();
+    	setListener();
     }
 	
-	void setListeners() {
+    @Override
+	protected void setListener() {
+	    super.setListener();
 	    mStart.setOnClickListener(this);
 	    mEnd.setOnClickListener(this);
 //	    mAddCommonPlace.setOnClickListener(this);
