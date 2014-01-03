@@ -1000,7 +1000,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                     e.printStackTrace();
                 }
                 POI poi = dataQuery.getPOI();
-                if (!centerPosition.equals(poi.getPosition())) {
+                if (poi == null || !centerPosition.equals(poi.getPosition())) {
                     POI centerPOI = new POI();
                     centerPOI.setPosition(centerPosition);
                     centerPOI.setName(mSphinx.getString(R.string.map_center));

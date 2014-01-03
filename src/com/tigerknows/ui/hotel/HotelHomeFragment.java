@@ -85,7 +85,6 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     private Button mQueryBtn;
     private View mDingdanView;
     private POI mPOI;
-    private View mQueryAllHotelView;
     private CityInfo mCityInfo;
     
     private FilterListView mFilterCategoryListView = null;
@@ -231,7 +230,6 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         mPriceTxv = (TextView) mRootView.findViewById(R.id.price_txv);
         mQueryBtn = (Button) mRootView.findViewById(R.id.query_btn);
         mDingdanView = mRootView.findViewById(R.id.dingdan_view);
-        mQueryAllHotelView = mRootView.findViewById(R.id.query_all_hotel_view);
     }
 
     @Override
@@ -243,7 +241,6 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         mPriceView.setOnClickListener(this);
         mQueryBtn.setOnClickListener(this);
         mDingdanView.setOnClickListener(this);
-        mQueryAllHotelView.setOnClickListener(this);
     }
         
     @Override
@@ -302,13 +299,6 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                 if (tel != null) {
                     Utility.telephone(mSphinx, tel);
                 }
-                break;
-                
-            case R.id.query_all_hotel_view:
-                mActionLog.addAction(mActionTag + ActionLog.HotelQueryAll);
-                DataQuery dataQuery = mSphinx.getHomeFragment().getDataQuery(getString(R.string.hotel));
-                dataQuery.setup(getId(), getId(), getString(R.string.doing_and_wait), false, false, mSphinx.getCenterPOI());
-                mSphinx.queryStart(dataQuery);
                 break;
                 
             default:

@@ -114,8 +114,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
         }
 
         public void afterTextChanged(Editable s) {
-            mRightBtn.setEnabled(s.toString().trim().length() > 0);
-            Utility.refreshButton(mSphinx, mRightBtn, getString(R.string.confirm), getString(R.string.cancel));
+            Utility.refreshButton(mSphinx, mRightBtn, getString(R.string.confirm), getString(R.string.cancel), s.toString().trim().length() > 0);
         }
     };
     
@@ -186,6 +185,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
         super.onResume();
         
         mTitleBtn.setText(mTitle);
+        mKeywordEdt.getInput().setHint(R.string.find_poi_merchant);
         mKeywordEdt.setVisibility(View.VISIBLE);
         
         mKeywordEdt.addTextChangedListener(mKeywordEdtWatcher);
@@ -194,8 +194,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
         
         mRightBtn.setVisibility(View.VISIBLE);
         mRightBtn.setOnClickListener(this);
-        mRightBtn.setEnabled(mKeywordEdt.getText().toString().trim().length() > 0);
-        Utility.refreshButton(mSphinx, mRightBtn, getString(R.string.confirm), getString(R.string.cancel));
+        Utility.refreshButton(mSphinx, mRightBtn, getString(R.string.confirm), getString(R.string.cancel), mKeywordEdt.getText().toString().trim().length() > 0);
         
         mCityInfo = mSphinx.getHotelHomeFragment().getCityInfo();
     }
