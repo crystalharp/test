@@ -219,7 +219,11 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
             break;
         case MODE_TRAFFIC:
             mTrafficBtnGroup.setVisibility(View.VISIBLE);
-            mKeywordEdt.setHint(getString(R.string.traffic_search_hint));
+            if (mRequest == REQUEST_TRAFFIC_END) {
+                mKeywordEdt.setHint(getString(R.string.end_));
+            } else if (mRequest == REQUEST_TRAFFIC_START) {
+                mKeywordEdt.setHint(getString(R.string.start_));
+            }
             break;
         case MODE_POI:
             mTrafficBtnGroup.setVisibility(View.GONE);
@@ -646,6 +650,8 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                 
                 View alterListView = sphinx.getLayoutInflater().inflate(R.layout.alert_listview, null, false);
                 
+                final Dialog dialog = Utility.getChoiceDialog(sphinx, alterListView, R.style.AlterChoiceDialog);
+                
                 ListView listView = (ListView) alterListView.findViewById(R.id.listview);
                 listView.setAdapter(adapter);
                 
@@ -660,10 +666,10 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                         newDataQuery.addParameter(BaseQuery.SERVER_PARAMETER_CENTER_LATITUDE, String.valueOf(pos.getLat()));
                         newDataQuery.setCityId((int) cityIdAndResultTotal.getCityId());
                         sphinx.queryStart(newDataQuery);
+                        dialog.dismiss();
                     }
                 });
                 
-                Dialog dialog = Utility.getChoiceDialog(sphinx, alterListView, R.style.AlterChoiceDialog);
                 
                 TextView titleTxv = (TextView)alterListView.findViewById(R.id.title_txv);
                 titleTxv.setText(R.string.cityid_and_result_total_list);
@@ -696,7 +702,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                 } else if (bPOIList.getShowType() == 1) {
                     poiResultFragment.setData(dataQuery);
                     
-                    ItemizedOverlayHelper.drawPOIOverlay(sphinx, poiList, 0);
+                    ItemizedOverlayHelper.drawPOIOverlay(sphinx, poiList, 0, poiResultFragment.getAPOI());
                     sphinx.getResultMapFragment().setData(sphinx.getString(R.string.result_map), ActionLog.POIListMap);
                     sphinx.showView(R.id.view_result_map);
                 }

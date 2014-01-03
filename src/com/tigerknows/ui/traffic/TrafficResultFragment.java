@@ -181,6 +181,9 @@ public class TrafficResultFragment extends BaseFragment {
             public void onItemClick(AdapterView<?> parent, View view,
                     int position, long id) {
 
+                if (position >= mPlanList.size()) {
+                    return;
+                }
                 mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position);
                 focusedIndex = position;
                 mSphinx.getTrafficDetailFragment().addResult(mTrafficQuery, mPlanList.get(0).getType(), mPlanList);
@@ -258,7 +261,6 @@ public class TrafficResultFragment extends BaseFragment {
         mPlanList.addAll(mTrafficModel.getPlanList());
         mResultAdapter.notifyDataSetChanged();
     }
-
     
     class TransferProjectListAdapter extends BaseAdapter{
 

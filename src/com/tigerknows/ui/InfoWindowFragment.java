@@ -141,7 +141,21 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
         
         int id = v.getId();
         if (id == R.id.poi_btn) {
-            mSphinx.getPOINearbyFragment().setData((POI) overlayItem.getAssociatedObject());
+            Object object = overlayItem.getAssociatedObject();
+            POI poi = null;
+            if (object instanceof POI) {
+                poi = (POI) object;
+            } else if (object instanceof Tuangou) {
+                poi = ((Tuangou) object).getPOI();
+            } else if (object instanceof Dianying) {
+                poi = ((Dianying) object).getPOI();
+            } else if (object instanceof Yanchu) {
+                poi = ((Yanchu) object).getPOI();
+            } else if (object instanceof Zhanlan) {
+                poi = ((Zhanlan) object).getPOI();
+            }
+            
+            mSphinx.getPOINearbyFragment().setData(poi);
             mSphinx.showView(R.id.view_poi_nearby_search);
         } else if (id == R.id.traffic_btn) {
             if (mType == TYPE_MY_LOCATION) {

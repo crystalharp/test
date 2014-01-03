@@ -61,24 +61,24 @@ public class SuggestWordListManager {
         mSuggestAdapter.notifyDataSetChanged();
     }
     
-    public void refresh(final TKEditText tkEditText, final int type){
+    public void refresh(TKEditText tkEditText, int type){
         mWatchingEdt = tkEditText;
         mSuggestType = type;
-        refresh();
+        refresh(Globals.getCurrentCityInfo(mSphinx).getId());
     }
     
-    public void refresh(){
+    public void refresh(int cityId){
         String key = mWatchingEdt.getText().toString();
-        updateSuggestWord(mSphinx, mSuggestWordList, key);
+        updateSuggestWord(mSphinx, mSuggestWordList, key, cityId);
         mSuggestAdapter.key = key;
         mSuggestAdapter.notifyDataSetChanged();
         mSuggestLsv.setSelectionFromTop(0, 0);
     }
     
-    private void updateSuggestWord(Sphinx sphinx, List<TKWord> tkWordList, String searchWord) {
+    private void updateSuggestWord(Sphinx sphinx, List<TKWord> tkWordList, String searchWord, int ciytId) {
         tkWordList.clear();
         MapEngine mapEngine = MapEngine.getInstance();
-        mapEngine.suggestwordCheck(sphinx, Globals.getCurrentCityInfo(sphinx).getId());
+        mapEngine.suggestwordCheck(sphinx, ciytId);
         tkWordList.addAll(HistoryWordTable.generateSuggestWordList(sphinx, searchWord, mSuggestType));
     }
 }
