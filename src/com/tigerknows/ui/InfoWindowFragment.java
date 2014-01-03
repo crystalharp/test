@@ -208,7 +208,7 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
                 mType = TYPE_POI;
             }
             
-        } else if (object instanceof Zhanlan || object instanceof Yanchu) {
+        } else if (object instanceof Zhanlan || object instanceof Yanchu || object instanceof Dianying) {
             mType = TYPE_DYNAMIC_POI;
         } else if (object instanceof Tuangou) {
             mType = TYPE_TUANGUO;
@@ -548,7 +548,7 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             v.findViewById(R.id.detail_btn).setVisibility(View.VISIBLE);
             v.findViewById(R.id.bottom_view).setVisibility(View.VISIBLE);
             v.findViewById(R.id.message_view).setVisibility(View.VISIBLE);
-            if (mType == TYPE_POI) {
+            if (mType == TYPE_POI || mType == TYPE_DYNAMIC_POI) {
                 v.findViewById(R.id.poi_view).setVisibility(View.VISIBLE);
             } else if (mType == TYPE_HOTEL) {
                 v.findViewById(R.id.hotel_view).setVisibility(View.VISIBLE);
@@ -589,7 +589,7 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             detaileBtn.setText(R.string.detail);
             detaileBtn.setVisibility(View.VISIBLE);
         } else {
-            detaileBtn.setVisibility(View.GONE);
+            detaileBtn.setVisibility(View.INVISIBLE);
         }
     }
     
@@ -677,9 +677,11 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
         String price = tuangou.getPrice();
 
         TextView nameTxv = (TextView) v.findViewById(R.id.name_txv);
+        nameTxv.setVisibility(View.GONE);
         TextView priceTxv = (TextView) v.findViewById(R.id.tuangou_price_txv);
-
-        nameTxv.setText(tuangou.getShortDesc());
+        TextView titleTxv = (TextView) v.findViewById(R.id.title_txv);
+        titleTxv.setVisibility(View.VISIBLE);
+        titleTxv.setText(tuangou.getShortDesc());
         priceTxv.setText(price);
     }
     
@@ -690,10 +692,14 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             Zhanlan target = (Zhanlan) object;
             name = target.getName();
             rating = target.getHot();
-        } else {
+        } else if (object instanceof Yanchu) {
             Yanchu target = (Yanchu) object;
             name = target.getName();
             rating = target.getHot();
+        } else {
+            Dianying target = (Dianying) object;
+            name = target.getName();
+            rating = target.getRank();
         }
 
         TextView nameTxv = (TextView) v.findViewById(R.id.name_txv);

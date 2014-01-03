@@ -103,9 +103,8 @@ public class DianyingDetailFragment extends BaseDetailFragment
         mSphinx.getResultMapFragment().setData(getString(R.string.dianying_ditu), ActionLog.ResultMapDianyingDetail);
         super.viewMap();
         Dianying data = mDataList.get(mViewPager.getCurrentItem());
-        List<POI> list = new ArrayList<POI>();
-        POI poi = data.getPOI();
-        list.add(poi);
+        List<Dianying> list = new ArrayList<Dianying>();
+        list.add(data);
         ItemizedOverlayHelper.drawPOIOverlay(mSphinx, list, 0);
     }
     

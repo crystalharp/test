@@ -375,7 +375,11 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
     public void dismiss() {
         super.dismiss();
 
-        mSphinx.getCenterTokenView().setVisibility(View.INVISIBLE);
+        View view = mSphinx.getCenterTokenView();
+        if (view.getVisibility() == View.VISIBLE) {
+            view.setVisibility(View.INVISIBLE);
+            mSphinx.replaceBottomUI(null);
+        }
         restoreDataBean();
     }
 

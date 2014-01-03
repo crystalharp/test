@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.ImageView;
 
 import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
@@ -131,6 +132,23 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     	R.id.hot_2_0_btn, R.id.hot_2_1_btn, R.id.hot_2_2_btn, R.id.hot_2_3_btn,
     	R.id.hot_3_0_btn, R.id.hot_3_1_btn, R.id.hot_3_2_btn, R.id.hot_3_3_btn
     };
+    private static final int[] HOT_DRAWABLE_ID = {R.drawable.ic_custom_tuangou,
+    	R.drawable.ic_custom_hotel,
+    	R.drawable.ic_custom_movie,
+    	R.drawable.ic_custom_subway,
+    	R.drawable.ic_custom_bus,
+    	R.drawable.ic_custom_toilet,
+    	R.drawable.ic_custom_yanchu,
+    	R.drawable.ic_custom_zhanlan,
+    	R.drawable.ic_custom_ktv,
+    	R.drawable.ic_custom_netbar,
+    	R.drawable.ic_custom_bath,
+    	R.drawable.ic_custom_atm,
+    	R.drawable.ic_custom_market,
+    	R.drawable.ic_custom_mall,
+    	R.drawable.ic_custom_sale,
+    	R.drawable.ic_custom_add,
+    };
     
     private View[] mCategoryViews;
 
@@ -172,7 +190,15 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         if(mFilterListView.getVisibility() == View.GONE){
         	mTitleBtn.setText(R.string.nearby_search);
         }else{
-        	mTitleBtn.setText(R.string.merchant_type);
+        	mTitleBtn.setText(R.string.more);
+        }
+        if(mFromPOI){
+        	mRightBtn.setVisibility(View.VISIBLE);
+        	mRightBtn.setBackgroundResource(R.drawable.ic_home_search_nearby);
+        	mRightBtn.setOnClickListener(this);
+        	mRightBtn.setPadding(0, 0, 0, 0);
+        }else{
+        	mRightBtn.setVisibility(View.GONE);
         }
         String name = mPOI.getName();
         if (mPOI.getSourceType() == POI.SOURCE_TYPE_MY_LOCATION) {
@@ -257,6 +283,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     			String[] str = mHotNames[i].split(";");
     			mHotBtnViews[countBtnView].setContentDescription(mHotNames[i]);
     			((TextView)mHotBtnViews[countBtnView].findViewById(R.id.app_name_txv)).setText(str[0]);
+    			((ImageView)mHotBtnViews[countBtnView].findViewById(R.id.app_icon_imv)).setBackgroundResource(HOT_DRAWABLE_ID[i]);
     			mHotBtnViews[countBtnView].setVisibility(View.VISIBLE);
     			countBtnView++;
     			if(mCountLly * 4 < countBtnView){
@@ -299,11 +326,24 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     	}
     }
     
-    private void setFilterListView() {
+    /**
+     * 查询筛选数据，在查询之前需要将之前的查询停止
+     */
+    private void queryFilter() {
+        DataQuery dataQuery = new DataQuery(mSphinx);
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_FILTER);
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_CONFIGINFO, DataQuery.CONFIGINFO_POI_CATEGORY_ORDER);
+        dataQuery.setup(getId(), getId(), null, true);
+        mSphinx.queryStart(dataQuery);
+    }
+    
+    private boolean setFilterListView() {
+    	boolean result = false;
         mFilterListView = (FilterListView) mRootView.findViewById(R.id.filter_list_view);
         mFilterListView.findViewById(R.id.body_view).setPadding(0, 0, 0, 0);    	
-        if (mFilterList != null) {
+        if (mFilterList != null && mFilterList.size() > 0) {
             FilterListView.selectedFilter(mFilterList.get(0), -1);
+            result = true;
         } else {
             DataQuery.initStaticField(BaseQuery.DATA_TYPE_POI, BaseQuery.SUB_DATA_TYPE_POI, mContext, MapEngine.getCityId(mPOI.getPosition()));
             FilterCategoryOrder filterCategory = DataQuery.getPOIFilterCategoryOrder();
@@ -326,9 +366,11 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
                 
                 mFilterList = new ArrayList<Filter>();
                 mFilterList.add(categoryFilter);
+                mFilterListView.setData(mFilterList, FilterResponse.FIELD_FILTER_CATEGORY_INDEX, this, false, false, mActionTag);
+                result = true;
             }
-            mFilterListView.setData(mFilterList, FilterResponse.FIELD_FILTER_CATEGORY_INDEX, this, false, false, mActionTag);
         }
+        return result;
     }
 
     @Override
@@ -344,6 +386,11 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
                 }
         	}
         	break;
+        case R.id.right_btn:
+        	mSphinx.getInputSearchFragment().setData(null,
+                    InputSearchFragment.MODE_POI);
+            mSphinx.showView(R.id.view_poi_input_search);
+            break;
         case R.id.category_btn:
         case R.id.sub_0_btn:
         case R.id.sub_1_btn:
@@ -427,9 +474,11 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
             uiStackAdjust();
             break;
     	case CategoryProperty.OP_MORE:
-        	mTitleBtn.setText(R.string.merchant_type);
-            mFilterListView.setData(mFilterList, FilterResponse.FIELD_FILTER_CATEGORY_INDEX, this, false, false, mActionTag);
-            mFilterListView.setVisibility(View.VISIBLE);
+    		if(setFilterListView()){
+    			setFilterOrder();
+    		}else{
+    			queryFilter();
+    		}
             break;
     	case CategoryProperty.OP_CUSTOM:
     		mSphinx.showView(R.id.view_poi_custom_category);
@@ -439,7 +488,13 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     	}    	
     }
     
-    private void doFold(){
+    private void setFilterOrder() {
+		mTitleBtn.setText(R.string.merchant_type);
+		mFilterListView.setData(mFilterList, FilterResponse.FIELD_FILTER_CATEGORY_INDEX, this, false, false, mActionTag);
+		mFilterListView.setVisibility(View.VISIBLE);
+	}
+
+	private void doFold(){
     	if(TextUtils.equals("No", mIsFold)){
     		for(int i = 1; i < mCountLly; i++){
     			mHotLlys[i].setVisibility(View.VISIBLE);
@@ -568,6 +623,10 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
                     BaseQuery.DATA_TYPE_ZHANLAN.equals(dataType)) {
                 
                 dealWithDynamicPOIResponse((DataQuery) baseQuery);
+            } else if(BaseQuery.DATA_TYPE_FILTER.equals(dataType)){
+            	if(setFilterListView()){
+            		setFilterOrder();
+            	}
             }
         }
     }

@@ -101,11 +101,8 @@ public class YanchuDetailFragment extends BaseDetailFragment
         mSphinx.getResultMapFragment().setData(getString(R.string.yanchu_didian_ditu), ActionLog.ResultMapYanchuDetail);
         super.viewMap();
         Yanchu data = mDataList.get(mViewPager.getCurrentItem());
-        List<POI> list = new ArrayList<POI>();
-        POI poi = data.getPOI();
-        poi.setName(data.getPlaceName());
-        poi.setAddress(data.getAddress());
-        list.add(poi);
+        List<Yanchu> list = new ArrayList<Yanchu>();
+        list.add(data);
         ItemizedOverlayHelper.drawPOIOverlay(mSphinx, list, 0);
     }
     

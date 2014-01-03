@@ -241,7 +241,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int location, long id) {
                 int position = (int)id;
-                if (id < mPOIList.size()) {
+                if (position >= 0 && position < mPOIList.size()) {
                     POI poi = mPOIList.get(position);
                     if (poi != null) {
                         mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position, poi.getUUID(), poi.getName());
@@ -572,8 +572,10 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 if (mPOIList.isEmpty() || mState != STATE_LIST) {
                     return;
                 }
+                mSphinx.uiStackRemove(R.id.view_poi_input_search);
                 mActionLog.addAction(mActionTag + ActionLog.TitleCenterButton);
-                dismiss();
+                mSphinx.getInputSearchFragment().setData(mInputText, InputSearchFragment.MODE_POI);
+                mSphinx.showView(R.id.view_poi_input_search);
                 break;
                 
             case R.id.right_btn:

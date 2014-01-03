@@ -102,11 +102,8 @@ public class ZhanlanDetailFragment extends BaseDetailFragment
         mSphinx.getResultMapFragment().setData(getString(R.string.zhanlan_didian_ditu), ActionLog.ResultMapZhanlanDetail);
         super.viewMap();
         Zhanlan data = mDataList.get(mViewPager.getCurrentItem());
-        List<POI> list = new ArrayList<POI>();
-        POI poi = data.getPOI();
-        poi.setName(data.getPlaceName());
-        poi.setAddress(data.getAddress());
-        list.add(poi);
+        List<Zhanlan> list = new ArrayList<Zhanlan>();
+        list.add(data);
         ItemizedOverlayHelper.drawPOIOverlay(mSphinx, list, 0);
     }
     

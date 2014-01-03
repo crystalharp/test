@@ -170,13 +170,8 @@ public class TuangouDetailFragment extends BaseDetailFragment
         super.viewMap();
     	//Get Fendian poi
         Tuangou data = this.mDataList.get(mViewPager.getCurrentItem());
-        Fendian fendian = data.getFendian();
-        if (fendian == null) {
-            return;
-        }
-        List<POI> list = new ArrayList<POI>();
-        POI poi = fendian.getPOI(POI.SOURCE_TYPE_TUANGOU);
-        list.add(poi);
+        List<Tuangou> list = new ArrayList<Tuangou>();
+        list.add(data);
 
         //Show it on map
         ItemizedOverlayHelper.drawPOIOverlay(mSphinx, list, 0);
