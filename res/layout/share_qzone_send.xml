@@ -52,7 +52,7 @@
             android:ellipsize="marquee"
             android:gravity="center"
             android:textSize="18sp"
-            android:textColor="@color/white"/>
+            android:textColor="@color/black_dark"/>
     </RelativeLayout>
     
     <EditText
