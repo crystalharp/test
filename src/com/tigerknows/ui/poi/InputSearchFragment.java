@@ -219,7 +219,11 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
             break;
         case MODE_TRAFFIC:
             mTrafficBtnGroup.setVisibility(View.VISIBLE);
-            mKeywordEdt.setHint(getString(R.string.traffic_search_hint));
+            if (mRequest == REQUEST_TRAFFIC_END) {
+                mKeywordEdt.setHint(getString(R.string.end_));
+            } else if (mRequest == REQUEST_TRAFFIC_START) {
+                mKeywordEdt.setHint(getString(R.string.start_));
+            }
             break;
         case MODE_POI:
             mTrafficBtnGroup.setVisibility(View.GONE);

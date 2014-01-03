@@ -1,5 +1,6 @@
 package com.tigerknows.ui.traffic;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -128,6 +129,14 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
     TrafficSearchHistoryTable mHistoryTable = new TrafficSearchHistoryTable(mSphinx);
     
 //	int oldCheckButton;
+    List<String> keywordList;
+	
+	private boolean isKeyword(String input) {
+	    if (keywordList.contains(input)) {
+	        return true;
+	    }
+	    return false;
+	}
 
 	public static final String TAG = "TrafficQueryFragment";
 	
@@ -209,6 +218,12 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
         
         mStart.setHint(getString(R.string.start_));
         mEnd.setHint(getString(R.string.end_));
+        
+        String[] KEYWORDS = new String[]{
+                getString(R.string.my_location),
+                getString(R.string.map_point),
+        };
+        keywordList = Arrays.asList(KEYWORDS);
 		
         return mRootView;
     }
@@ -548,8 +563,8 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	    POI start, end;
 	    start = mStart.getPOI();
 	    end = mEnd.getPOI();
-		if (getString(R.string.select_has_point).equals(mStart.getText())
-				&& getString(R.string.select_has_point).equals(mEnd.getText())) {
+		if (isKeyword(mStart.getText())
+				&& isKeyword(mEnd.getText())) {
 			if (POI.isPositionEqual(start, end)) {
 				mSphinx.showTip(R.string.start_equal_to_end, Toast.LENGTH_SHORT);
 				return true;
@@ -922,8 +937,13 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
             }
             break;
             
+            //TODO
         case R.id.end_btn:
-            mSphinx.getInputSearchFragment().setData(null,
+            String e = null;
+            if (!isKeyword(mEnd.getText())) {
+                e = mEnd.getText();
+            }
+            mSphinx.getInputSearchFragment().setData(e,
                     InputSearchFragment.MODE_TRAFFIC,
                     new InputSearchFragment.IResponsePOI(){
 
@@ -938,7 +958,11 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
             break;
             
         case R.id.start_btn:
-            mSphinx.getInputSearchFragment().setData(null,
+            String s = null;
+            if (!isKeyword(mStart.getText())) {
+                s = mStart.getText();
+            }
+            mSphinx.getInputSearchFragment().setData(s,
                     InputSearchFragment.MODE_TRAFFIC,
                     new InputSearchFragment.IResponsePOI(){
 
