@@ -21,6 +21,7 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioGroup;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.decarta.Globals;
@@ -111,6 +112,8 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 //	LinearLayout mAddCommonPlace;
 	
 	LinearLayout mCommonPlaceLst;
+	
+	ScrollView mScrollView;
 	
 	View mQueryHistory;
 	
@@ -243,6 +246,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
     	mTrafficSwitchBtn = (Button)mRootView.findViewById(R.id.traffic_switch_btn);
         mTitleBar = mLayoutInflater.inflate(R.layout.traffic_query_bar, null);
     	mRadioGroup = (RadioGroup)mTitleBar.findViewById(R.id.traffic_rgp);
+    	mScrollView = (ScrollView) mRootView.findViewById(R.id.traffic_scroll);
     	
     	Button startBtn, endBtn;
     	startBtn = (Button)mRootView.findViewById(R.id.start_btn);
@@ -381,6 +385,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
         initHistory();
         updateCommonPlace();
         refreshRightBtn();
+        mScrollView.scrollTo(0, 0);
         if (autoStartQuery && !mStart.textEmpty() && !mEnd.textEmpty()) {
             query();
         }
