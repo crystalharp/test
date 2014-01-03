@@ -572,8 +572,10 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 if (mPOIList.isEmpty() || mState != STATE_LIST) {
                     return;
                 }
+                mSphinx.uiStackRemove(R.id.view_poi_input_search);
                 mActionLog.addAction(mActionTag + ActionLog.TitleCenterButton);
-                dismiss();
+                mSphinx.getInputSearchFragment().setData(mInputText, InputSearchFragment.MODE_POI);
+                mSphinx.showView(R.id.view_poi_input_search);
                 break;
                 
             case R.id.right_btn:
