@@ -64,14 +64,14 @@ public class MapView extends RelativeLayout implements
 	public static HashMap<MapType,ArrayList<MapLayerType>> MapType_MapLayer_Visibility=new HashMap<MapType,ArrayList<MapLayerType>>();
 	public static int ZOOM_LEVEL=13;
 	/**
-	 * map tilt from 0 to -45 when tilt the top of the map to the back of screen, and the bottom 
+	 * map tilt from 0 to -45 when tilt the top of the map to the back of screen, and the bottom
 	 * of map to the front of screen
 	 */
 	public static float MAP_TILT_MIN=-45;
 	public static long PAN_TO_POSITION_TIME_DEF=300*1000000;//500 miniseconds
 	public static int DIGITAL_ZOOMING_TIME_PER_LEVEL=300*1000000;
-	
-	
+
+
 	static{
 		for(int i=0;i<MapType.values().length;i++){
 			MapType mapType=MapType.values()[i];
@@ -84,18 +84,18 @@ public class MapView extends RelativeLayout implements
 				mapLayerVisible.add(MapLayerType.SATELLITE);
 				mapLayerVisible.add(MapLayerType.TRANSPARENT);
 			}
-			
+
 			MapType_MapLayer_Visibility.put(mapType, mapLayerVisible);
 		}
-		
+
 	}
-	
+
 	private ZoomControls zoomControls;
 	private TilesView tilesView;
 	private Map<Integer, ArrayList<EventListener>> eventListeners = new HashMap<Integer, ArrayList<EventListener>>();
     Compass compass;
 	private float xRotation = 0;
-	
+
 	private Sphinx sphinx;
 
     public void setSphinx(Sphinx sphinx) {
@@ -105,7 +105,7 @@ public class MapView extends RelativeLayout implements
     /**
 	 * initialize zoom controls, register listener for zoom controls, initialize
 	 * tiles view
-	 * 
+	 *
 	 * @param context
 	 */
 	public MapView(Context context) {
@@ -115,7 +115,7 @@ public class MapView extends RelativeLayout implements
 
 	/**
 	 * The constructor to setup the map and map controls.
-	 * 
+	 *
 	 * @param context
 	 *            the activity which set this view as the content view
 	 * @param attrs
@@ -125,36 +125,36 @@ public class MapView extends RelativeLayout implements
 		super(context, attrs);
 		init(context);
 	}
-	
+
 	public void init(Context context){
 		if(this.isInEditMode()){
 			LogWrapper.i("MapView", "init view isInEditMode:true");
-			return; 
+			return;
 		}
 		LogWrapper.i("MapView", "init view isInEditMode:false");
-		
+
 		Util.init();
-        
+
 		zoomControls = new ZoomControls(context);
 		zoomControls.setOnZoomInClickListener(new OnClickListener() {
 		    public void onClick(View view) {
 		        MapView.this.zoomIn();
 		    }
 		});
-		
+
 		zoomControls.setOnZoomOutClickListener(new OnClickListener() {
 		    public void onClick(View view) {
 		        MapView.this.zoomOut();
 		    }
 		});
-		
+
 		if(CONFIG.COMPASS_PLACE_LOCATION>-1 && CONFIG.COMPASS_PLACE_LOCATION<=4){
 		    Icon icon=Icon.getIcon(getResources(), R.drawable.ic_compass);
 		    compass=new Compass(icon.getSize(), icon.getOffset(), PlaceLocation.TOP_LEFT, icon);
 		    compass.setPlaceLocation(PlaceLocation.values()[CONFIG.COMPASS_PLACE_LOCATION]);
 		    try{
 		        compass.addEventListener(EventType.TOUCH, new Compass.TouchEventListener() {
-		            
+
 		            @Override
 		            public void onTouchEvent(EventSource eventSource) {
 		                // TODO Auto-generated method stub
@@ -167,13 +167,13 @@ public class MapView extends RelativeLayout implements
 		                        xRotation = MapView.MAP_TILT_MIN;
 		                    }
 		                }catch(Exception e){
-		                    
+
 		                }
 		                //rotateZToDegree(0);
 		            }
 		        });
 		    }catch(Exception e){
-		        
+
 		    }
 		}
 
@@ -182,7 +182,7 @@ public class MapView extends RelativeLayout implements
 		addView(tilesView, android.view.ViewGroup.LayoutParams.FILL_PARENT,
 				android.view.ViewGroup.LayoutParams.FILL_PARENT);
         tilesView.setCompass(compass);
-		
+
 	}
 
 	@Override
@@ -198,17 +198,17 @@ public class MapView extends RelativeLayout implements
 	}
 
 	/**
-	 * 
+	 *
 	 * @return zoomControls for zoom in and zoom out
 	 */
 	public ZoomControls getZoomControls() {
 		return zoomControls;
 	}
-	
-	
+
+
 
 	/**
-	 * 
+	 *
 	 * @return event listener specific to the map only, not for the pin, info
 	 *         window
 	 */
@@ -219,7 +219,7 @@ public class MapView extends RelativeLayout implements
 	/**
 	 * defines the event type, now it supports 4 types: TOUCH, MOVEEND, ZOOMEND,
 	 * DOUBLECLICK
-	 * 
+	 *
 	 */
 	public static class EventType extends com.decarta.android.event.EventType {
         public static int DRAWFRAME = 1;
@@ -228,7 +228,7 @@ public class MapView extends RelativeLayout implements
 		public static int ZOOMEND = 4;
 		public static int DOUBLECLICK = 5;
 		public static int LONGCLICK = 6;
-		
+
 		public static int ROTATEEND=7;
 		public static int TILTEND=8;
         public static int DOWNLOAD = 10;
@@ -236,39 +236,44 @@ public class MapView extends RelativeLayout implements
         public static int TOUCHUP = 11;
         public static int MULTITOUCHZOOM = 12;
         public static int CLICKPOI = 13;
+        public static int UPDATEPOIPOSITION = 14; //地图上选中的poi修正了位置
 	}
-	
+
     public interface DrawFrameEventListener extends EventListener{
         public void onDrawFrameEvent();
     }
-	
+
 	/**
 	 * listener for touchdown event
 	 */
 	public interface SurfaceCreatedEventListener extends EventListener{
 		public void onSurfaceCreatedEvent();
 	}
-	
+
 	/**
 	 * listener for touch event
 	 */
 	public interface TouchEventListener extends EventListener{
 		public void onTouchEvent(EventSource eventSource, Position pos);
 	}
-	
+
     public interface ClickPOIEventListener extends EventListener{
         public void onClickPOIEvent(EventSource eventSource, Position pos, String name);
     }
 
+    public interface UpdatePoiPositionListener extends EventListener{
+    	public void onUpdatePoiPosition(EventSource eventSource, Position pos, String name);
+    }
+
 	/**
 	 * define the moveend listener of map
-	 * 
+	 *
 	 */
 	public interface MoveEndEventListener extends
 			com.decarta.android.event.EventListener {
 		public void onMoveEndEvent(MapView mapView, Position position);
 	}
-    
+
     public interface DownloadEventListener extends
             com.decarta.android.event.EventListener {
         public static final int STATE_DOWNLOADING = 1;
@@ -276,7 +281,7 @@ public class MapView extends RelativeLayout implements
         public static final int STATE_DOWNLOAD_ERROR = 400;
         public void onDownloadEvent(int state);
     }
-    
+
     public interface MapEventListener extends
             com.decarta.android.event.EventListener {
         public void onShowedEvent();
@@ -284,16 +289,16 @@ public class MapView extends RelativeLayout implements
 
 	/**
 	 * define zoomend listener of map
-	 * 
+	 *
 	 */
 	public interface ZoomEndEventListener extends
 			com.decarta.android.event.EventListener {
 		public void onZoomEndEvent(MapView mapView, int newZoomLevel);
 	}
-	
+
 	/**
 	 * define dobule click listener of map
-	 * 
+	 *
 	 */
 	public interface DoubleClickEventListener extends
 			com.decarta.android.event.EventListener {
@@ -302,7 +307,7 @@ public class MapView extends RelativeLayout implements
 
     /**
      * define multi touch zoom listener of map
-     * 
+     *
      */
     public interface MultiTouchZoomEventListener extends
             com.decarta.android.event.EventListener {
@@ -311,17 +316,17 @@ public class MapView extends RelativeLayout implements
 
 	/**
 	 * define long click listener of map
-	 * 
+	 *
 	 */
 	public interface LongClickEventListener extends
 			com.decarta.android.event.EventListener {
 		public void onLongClickEvent(MapView mapView, Position position);
 	}
-	
+
 	public interface RotateEndEventListener extends EventListener{
 		public void onRotateEndEvent(MapView mapView,float rotation);
 	}
-	
+
 	public interface TiltEndEventListener extends EventListener{
 		public void onTiltEndEvent(MapView mapView,float tilt);
 	}
@@ -371,6 +376,8 @@ public class MapView extends RelativeLayout implements
                 && (listener instanceof DrawFrameEventListener)
                 || eventType == EventType.CLICKPOI
                 && (listener instanceof ClickPOIEventListener)
+                || eventType == EventType.UPDATEPOIPOSITION
+                && (listener instanceof UpdatePoiPositionListener)
 				)
 			return true;
 		else
@@ -395,7 +402,7 @@ public class MapView extends RelativeLayout implements
 			eventListeners.get(eventType).remove(listener);
 		}
 	}
-    
+
     public void executeClickPOIEventListener(Position position, String name) {
         if (eventListeners.containsKey(MapView.EventType.CLICKPOI)) {
             ArrayList<EventListener> listeners = eventListeners
@@ -405,7 +412,17 @@ public class MapView extends RelativeLayout implements
             }
         }
     }
-    
+
+    public void executeUpdateMapPOIPostionEventListener(Position position, String name) {
+        if (eventListeners.containsKey(MapView.EventType.UPDATEPOIPOSITION)) {
+            ArrayList<EventListener> listeners = eventListeners
+                    .get(MapView.EventType.UPDATEPOIPOSITION);
+            for (int i = 0; i < listeners.size(); i++) {
+                ((UpdatePoiPositionListener) (listeners.get(i))).onUpdatePoiPosition(this, position, name);
+            }
+        }
+    }
+
     public void executeDrawFrameListeners() {
         if (eventListeners.containsKey(MapView.EventType.DRAWFRAME)) {
             ArrayList<EventListener> listeners = eventListeners
@@ -415,7 +432,7 @@ public class MapView extends RelativeLayout implements
             }
         }
     }
-	
+
 	public void executeSurfaceCreatedListeners() {
 		if (eventListeners.containsKey(MapView.EventType.SURFACECREATED)) {
 			ArrayList<EventListener> listeners = eventListeners
@@ -425,10 +442,10 @@ public class MapView extends RelativeLayout implements
 			}
 		}
 	}
-    
+
 	/**
 	 * provide a simple way to call all the moveend listeners together
-	 * 
+	 *
 	 * @param position
 	 *            the position that the map center have moved to
 	 */
@@ -442,7 +459,7 @@ public class MapView extends RelativeLayout implements
 			}
 		}
 	}
-    
+
     public void executeDownloadListeners(int state) {
         if (eventListeners.containsKey(MapView.EventType.DOWNLOAD)) {
             ArrayList<EventListener> listeners = eventListeners
@@ -455,7 +472,7 @@ public class MapView extends RelativeLayout implements
 
 	/**
 	 * provide a simple way to call all the zoomend listeners together
-	 * 
+	 *
 	 * @param newZoomLevel
 	 *            the new zoom level the map has zoomed to
 	 */
@@ -472,7 +489,7 @@ public class MapView extends RelativeLayout implements
 
 	/**
 	 * provide a simple way to call all the multi touch listeners together
-	 * 
+	 *
 	 * @param newZoomLevel
 	 *            the new zoom level the map has zoomed to
 	 */
@@ -486,7 +503,7 @@ public class MapView extends RelativeLayout implements
 			}
 		}
 	}
-	
+
 	public void executeTouchUpListeners(Position position) {
 		if (eventListeners.containsKey(MapView.EventType.TOUCHUP)) {
 			ArrayList<EventListener> listeners = eventListeners.get(MapView.EventType.TOUCHUP);
@@ -496,7 +513,7 @@ public class MapView extends RelativeLayout implements
 			}
 		}
 	}
-	
+
 	public void executeTouchListeners(Position position) {
 		if (eventListeners
 				.containsKey(com.decarta.android.event.EventType.TOUCH)) {
@@ -541,7 +558,7 @@ public class MapView extends RelativeLayout implements
 			}
 		}
 	}
-	
+
 	public void executeRotateEndListeners(float rotation) {
 		if (eventListeners.containsKey(MapView.EventType.ROTATEEND)) {
 			ArrayList<EventListener> listeners = eventListeners
@@ -552,7 +569,7 @@ public class MapView extends RelativeLayout implements
 			}
 		}
 	}
-	
+
 	public void executeTiltEndListeners(float tilt) {
 		if(!CONFIG.DRAW_BY_OPENGL) return;
 		if (eventListeners.containsKey(MapView.EventType.TILTEND)) {
@@ -573,7 +590,7 @@ public class MapView extends RelativeLayout implements
 	public void refreshMap() {
 		tilesView.refreshMap();
 	}
-	
+
 	/**
 	 * switch map between street map, satellite map and hybrid map
 	 * @param mapType
@@ -581,26 +598,26 @@ public class MapView extends RelativeLayout implements
 	public void changeMapType(MapType mapType){
 		tilesView.changeMapType(mapType);
 	}
-	
+
 	public MapType getMapType(){
 		return tilesView.getMapType();
 	}
-	
+
 	public void rotateZToDegree(float zRotation){
 		tilesView.rotateZToDegree(zRotation);
 	}
-    
+
     public void rotateLocationZToDegree(float zRotation){
         tilesView.tkRotateZToDegree(zRotation);
     }
-	
+
 	public void rotateXToDegree(float xRotation){
 		tilesView.rotateXToDegree(xRotation);
 	}
-	
+
 	/**
 	 * convert the screen xy coordinate the position
-	 * 
+	 *
 	 * @param pos
 	 */
 	public XYFloat positionToScreenXY(Position pos) {
@@ -633,7 +650,7 @@ public class MapView extends RelativeLayout implements
 	/**
 	 * compose web service request using the position and current zoom level,
 	 * initialize/reset the tiles and render
-	 * 
+	 *
 	 * @param position
 	 * @throws APIException
 	 */
@@ -644,7 +661,7 @@ public class MapView extends RelativeLayout implements
 	/**
 	 * compose web service request using the position and zoom level,
 	 * initialize/reset the tiles and render
-	 * 
+	 *
 	 * @param position
 	 * @param zoomLevel
 	 * @throws APIException
@@ -659,7 +676,7 @@ public class MapView extends RelativeLayout implements
 
 	/**
 	 * pan to the specified position
-	 * 
+	 *
 	 * @param position
 	 */
 	public void panToPosition(Position position) {
@@ -669,10 +686,10 @@ public class MapView extends RelativeLayout implements
             LogWrapper.w("MapView", "panToPosition exception:"+e.getMessage());
         }
 	}
-	
+
 	/**
 	 * pan to the specified position
-	 * 
+	 *
 	 * @param position
 	 */
 	public void panToPosition(Position position, long duration) {
@@ -682,7 +699,7 @@ public class MapView extends RelativeLayout implements
             e.printStackTrace();
         }
 	}
-	
+
 	/**
 	 * pan to the position inside duration time, and execute listener when the pan is done.
 	 * @param position
@@ -700,7 +717,7 @@ public class MapView extends RelativeLayout implements
 
 	/**
 	 * clear the routeId, overlays and info window
-	 * 
+	 *
 	 * @throws APIException
 	 */
 	public void clearMap() throws APIException {
@@ -709,7 +726,7 @@ public class MapView extends RelativeLayout implements
 
 	/**
 	 * get the current zoom level
-	 * 
+	 *
 	 */
 	public float getZoomLevel() {
 		return tilesView.getZoomLevel();
@@ -717,15 +734,15 @@ public class MapView extends RelativeLayout implements
 
 	/**
 	 * get the current center position
-	 * 
+	 *
 	 */
 	public Position getCenterPosition() {
 		return tilesView.getCenterPosition();
 	}
-	
+
 	/**
 	 * get the info window
-	 * 
+	 *
 	 */
 	public InfoWindow getInfoWindow() {
 		return tilesView.getInfoWindow();
@@ -748,7 +765,7 @@ public class MapView extends RelativeLayout implements
 		}
 		return null;
 	}
-	
+
     public Shape deleteShapeByName(String shapeName) {
         for(int i=tilesView.getShapes().size()-1;i>=0;i--){
             if(tilesView.getShapes().get(i).getName().equals(shapeName)){
@@ -770,21 +787,15 @@ public class MapView extends RelativeLayout implements
 		}
 		tilesView.getOverlays().add(overlay);
 	}
-	
+
 	/**
 	 * get pin group/overlay by unique name
 	 * @param overlayName
 	 */
-	public ItemizedOverlay getOverlaysByName(String overlayName){
-		for(int i=0, size = tilesView.getOverlays().size(); i < size; i++){
-			ItemizedOverlay overlay = tilesView.getOverlays().get(i);
-			if(overlay.getName().equals(overlayName)){
-				return overlay;
-			}
-		}
-		return null;
+	public ItemizedOverlay getOverlaysByName(String overlayName) {
+		return tilesView.getOverlaysByName(overlayName);
 	}
-	
+
     public ItemizedOverlay getCurrentOverlay(){
         for(int i=0;i<tilesView.getOverlays().size();i++){
             ItemizedOverlay overlay=tilesView.getOverlays().get(i);
@@ -794,7 +805,7 @@ public class MapView extends RelativeLayout implements
         }
         return null;
     }
-    
+
     public Shape getCurrentShape() {
         for(int i=0;i<tilesView.getShapes().size();i++){
             Shape overlay=tilesView.getShapes().get(i);
@@ -804,7 +815,7 @@ public class MapView extends RelativeLayout implements
         }
         return null;
     }
-	
+
 	/**
 	 * get shape by it's unique name
 	 * @param shapeName
@@ -814,11 +825,11 @@ public class MapView extends RelativeLayout implements
 			if(tilesView.getShapes().get(i).getName().equals(shapeName)){
 				return tilesView.getShapes().get(i);
 			}
-			
+
 		}
 		return null;
 	}
-	
+
 	/**
 	 * add shape to shapes
 	 * @param shape
@@ -833,7 +844,7 @@ public class MapView extends RelativeLayout implements
 		}
 		tilesView.getShapes().add(shape);
 	}
-	
+
 	/**
 	 * remove shape by it's unique name
 	 * @param shapeName
@@ -844,18 +855,18 @@ public class MapView extends RelativeLayout implements
 			if(tilesView.getShapes().get(i).getName().equals(shapeName)){
 				return tilesView.getShapes().remove(i);
 			}
-			
+
 		}
 		return null;
 	}
-	
+
 	public Compass getCompass(){
 		return tilesView.getCompass();
 	}
 
 	/**
 	 * convert screen coordinate to position
-	 * 
+	 *
 	 * @param screenXY
 	 */
 	public Position screenXYToPos(XYFloat screenXY){
@@ -865,10 +876,10 @@ public class MapView extends RelativeLayout implements
 	/**
 	 * move the map to left and above pixels specified. Negative number means
 	 * opposite direction.
-	 * 
+	 *
 	 * @param left
 	 * @param top
-	 * 
+	 *
 	 */
 	public void moveView(float left, float top) {
 		tilesView.moveView(left, top);
@@ -886,7 +897,7 @@ public class MapView extends RelativeLayout implements
         	zoomControls.setIsZoomOutEnabled(true);
         }
 	}
-	
+
 	public void setZoomLevel(int newZoomLevel){
 		try{
 			tilesView.setZoomLevel(newZoomLevel);
@@ -899,7 +910,7 @@ public class MapView extends RelativeLayout implements
 	/**
 	 * zoom the map to the new level. This can be used instead of setZoomLevel,
 	 * which only set the zoom level and doesn't render the map again.
-	 * 
+	 *
 	 * @param newZoomLevel
 	 */
 	public void zoomTo(int newZoomLevel, ZoomEndEventListener listener) {
@@ -951,19 +962,19 @@ public class MapView extends RelativeLayout implements
         int cityId = MapEngine.getCityId(position);
         return cityId;
     }
-    
+
     public Rect getPadding() {
         return tilesView.getPadding();
     }
-	
+
     public RectF getInfoWindowRecF() {
     	return tilesView.getInfoWindow().getInfoWindowRecF();
     }
-    
+
     public interface SnapMap {
         public void finish(Uri uri);
     }
-    
+
     /**
      * 快照地图，完成后还原地图状态
      * @param activity
@@ -983,12 +994,12 @@ public class MapView extends RelativeLayout implements
         TextView loadingTxv = (TextView)custom.findViewById(R.id.loading_txv);
         loadingTxv.setText(R.string.doing_and_wait);
         ActionLog.getInstance(activity).addAction(ActionLog.Dialog, activity.getString(R.string.doing_and_wait));
-        
+
         final Dialog tipProgressDialog = Utility.showNormalDialog(activity, custom);
         tipProgressDialog.setCancelable(true);
         tipProgressDialog.setCanceledOnTouchOutside(false);
         tipProgressDialog.setOnCancelListener(new OnCancelListener() {
-            
+
             @Override
             public void onCancel(DialogInterface dialog) {
                 tilesView.isCancelSnap = true;
@@ -998,14 +1009,14 @@ public class MapView extends RelativeLayout implements
             }
         });
         tipProgressDialog.show();
-        
+
         new Thread(new Runnable() {
-            
+
             @Override
             public void run() {
-                
+
                 tilesView.requestSnap(centerPos);
-                
+
                 synchronized (centerPos) {
                     try {
                         centerPos.wait();
@@ -1014,16 +1025,16 @@ public class MapView extends RelativeLayout implements
                         e.printStackTrace();
                     }
                 }
-                
+
                 activity.runOnUiThread(new Runnable() {
-                    
+
                     @Override
                     public void run() {
-                        
+
                         if (tipProgressDialog != null && tipProgressDialog.isShowing()) {
                             tipProgressDialog.dismiss();
-                        }            
-                        
+                        }
+
                         tilesView.stopSnap();
                         restoreScene(mapScene);
 
@@ -1046,10 +1057,10 @@ public class MapView extends RelativeLayout implements
                 });
             }
         }).start();
-        
+
         // 此线程在60s后唤醒centerPos，如果此时快照地图还没有完成，则立即结束
         new Thread(new Runnable() {
-            
+
             @Override
             public void run() {
                 try {
@@ -1064,24 +1075,24 @@ public class MapView extends RelativeLayout implements
             }
         }).start();
     }
-    
+
     public void showOverlay(String overlayName, boolean top){
         tilesView.showOverlay(overlayName, top);
     }
-    
+
     public boolean isStopRefreshMyLocation() {
         return tilesView.stopRefreshMyLocation;
     }
-    
+
     public void setStopRefreshMyLocation(boolean stopRefreshMyLocation) {
         tilesView.stopRefreshMyLocation = stopRefreshMyLocation;
-        
+
         if (stopRefreshMyLocation == false) {
             sphinx.updateMyLocation();
             tilesView.refreshMap();
         }
     }
-    
+
     public MapScene getCurrentMapScene() {
         MapScene mapScene = new MapScene();
         mapScene.position = getCenterPosition();
@@ -1111,7 +1122,7 @@ public class MapView extends RelativeLayout implements
         }
         return mapScene;
     }
-    
+
     /**
      * 还原地图状态（中心点、Shape、OverlayItem）
      * @param mapScene
@@ -1121,7 +1132,7 @@ public class MapView extends RelativeLayout implements
             if (mapScene == null) {
                 return;
             }
-            
+
             clearMap();
             if (mapScene.shapeList != null) {
                 tilesView.getShapes().addAll(mapScene.shapeList);
@@ -1147,27 +1158,27 @@ public class MapView extends RelativeLayout implements
         public List<Shape> shapeList;
         public OverlayItem overlayItem;
     }
-    
+
     public boolean ensureThreadRunning() {
         return tilesView.ensureThreadsRunning();
     }
-    
+
     public void clearTileTextures() {
     	tilesView.clearTileTextures();
     }
-    
+
     public void pause() {
     	tilesView.pause();
     }
-    
+
     public void resume() {
     	tilesView.resume();
     }
-    
+
     public void zoomInAtPosition(Position position) {
     	tilesView.zoomInAtPosition(position);
     }
-    
+
     public XYFloat mercXYToScreenXYConv(XYDouble mercXY, float zoomLevel) {
         return tilesView.mercXYToScreenXYConv(mercXY, zoomLevel);
     }

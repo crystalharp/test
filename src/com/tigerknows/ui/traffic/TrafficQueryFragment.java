@@ -176,6 +176,13 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	        return poi;
 	    }
 	    
+	    public POI getClonedPOI() {
+	        if (TextUtils.isEmpty(btn.getText())) {
+	            return new POI();
+	        }
+	        return poi.clone();
+	    }
+	    
 	    public final void setHint(String s) {
 	        btn.setHint(s);
 	    }
@@ -445,8 +452,8 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	}
 	
 	public final void query() {
-	    POI start = mStart.getPOI().clone();
-        POI end = mEnd.getPOI().clone();
+	    POI start = mStart.getClonedPOI();
+        POI end = mEnd.getClonedPOI();
         
         if (start == null || end == null)
             return;
@@ -856,7 +863,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
                     mActionLog.addAction(ActionLog.TrafficAlternative + (start ? ActionLog.TrafficAlterStart : ActionLog.TrafficAlterEnd), which, station.getName());
                 }
                 if (start == false || end == false) {
-                    submitTrafficQuery(mStart.getPOI(), mEnd.getPOI());
+                    submitTrafficQuery(mStart.getClonedPOI(), mEnd.getClonedPOI());
                 } else {
                 	showAlternativeDialog(null, endStationList);
                 }

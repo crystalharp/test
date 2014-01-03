@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.ImageView;
 
@@ -44,6 +45,7 @@ import com.tigerknows.model.DataQuery.FilterOption;
 import com.tigerknows.model.DataQuery.FilterResponse;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
+import com.tigerknows.ui.HomeFragment;
 import com.tigerknows.widget.FilterListView;
 
 /**
@@ -75,6 +77,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     private Button[][] mCategoryBtns;
     private Button mHotFoldBtn;
 
+    private ScrollView mBodyScv;
     private LinearLayout mHotBaseLly;
     private LinearLayout[] mHotLlys;
     private View[] mHotBtnViews;
@@ -147,7 +150,6 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     	R.drawable.ic_custom_market,
     	R.drawable.ic_custom_mall,
     	R.drawable.ic_custom_sale,
-    	R.drawable.ic_custom_add,
     };
     
     private View[] mCategoryViews;
@@ -221,6 +223,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     @Override
     protected void findViews() {
         super.findViews();
+        mBodyScv = (ScrollView) mRootView.findViewById(R.id.body_scv);
         mLocationTxv = (TextView) mRootView.findViewById(R.id.location_txv);
         mHotBaseLly = (LinearLayout) mRootView.findViewById(R.id.hot_lly);
         mHotLlys = new LinearLayout[NUM_OF_HOT_LLY];
@@ -295,6 +298,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     	mHotBtnViews[countBtnView].setContentDescription("自定义;" + CategoryProperty.OP_CUSTOM);
     	((TextView)mHotBtnViews[countBtnView].findViewById(R.id.app_name_txv)).setText("自定义");
     	mHotBtnViews[countBtnView].setVisibility(View.VISIBLE);
+    	mHotBtnViews[countBtnView].setBackgroundResource(R.drawable.ic_custom_add);
     	countBtnView++;
 		if(mCountLly * 4 < countBtnView){
 			mHotLlys[mCountLly].setVisibility(View.VISIBLE);
@@ -513,9 +517,13 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         DataQuery dataQuery = new DataQuery(mSphinx);
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, dataType);
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
-        Position position = mPOI.getPosition();
-        dataQuery.addParameter(BaseQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
-        dataQuery.addParameter(BaseQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
+        if(mFromPOI){
+        	Position position = mPOI.getPosition();
+        	dataQuery.addParameter(BaseQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
+        	dataQuery.addParameter(BaseQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
+        }else{
+        	HomeFragment.addCenterPositionParameter(mSphinx, dataQuery);
+        }
         dataQuery.setup(getId(), getId(), getString(R.string.doing_and_wait), false, false, mPOI);
         return dataQuery;
     }
@@ -532,12 +540,18 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
             poiQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_POI);
             poiQuery.addParameter(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_POI);
             poiQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
-            poiQuery.addParameter(DataQuery.SERVER_PARAMETER_KEYWORD, keyword);
+            if(mFromPOI){
+            	poiQuery.addParameter(DataQuery.SERVER_PARAMETER_KEYWORD, keyword);
+            }
             poiQuery.addParameter(DataQuery.SERVER_PARAMETER_POI_ID, requestPOI.getUUID());
-            Position position = requestPOI.getPosition();
-            if (position != null) {
-                poiQuery.addParameter(DataQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
-                poiQuery.addParameter(DataQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
+            if(mFromPOI){
+            	Position position = requestPOI.getPosition();
+            	if (position != null) {
+            		poiQuery.addParameter(DataQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
+            		poiQuery.addParameter(DataQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
+            	}
+            }else{
+            	HomeFragment.addCenterPositionParameter(mSphinx, poiQuery);
             }
             poiQuery.addParameter(DataQuery.SERVER_PARAMETER_INFO, DataQuery.INFO_TYPE_TAG);
             poiQuery.addParameter(DataQuery.SERVER_PARAMETER_EXT, DataQuery.EXT_BUSLINE);
@@ -560,6 +574,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         if(fromPOI && mSphinx.uiStackContains(R.id.view_poi_nearby_search)){
         	mSphinx.uiStackRemove(R.id.view_poi_nearby_search);
         }
+        mBodyScv.scrollTo(0, 0);
         setFilterListView();
     }
     
