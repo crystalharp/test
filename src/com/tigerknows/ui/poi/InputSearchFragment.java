@@ -316,6 +316,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                     title = getString(R.string.confirm_place);
                 }
                 
+                Toast.makeText(mSphinx, R.string.move_map_select_point, Toast.LENGTH_LONG).show();
                 mSphinx.getResultMapFragment().setData(getString(R.string.map_select_point), ActionLog.ResultMapSelectPoint);
                 mSphinx.showView(R.id.view_result_map);
                 

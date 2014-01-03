@@ -1361,4 +1361,5 @@
     <string name="cate">美食</string>
     <string name="cityid_and_result_total_list">在以下城市发现结果，请选择</string>
     <string name="view_picture">查看图片</string> 
+    <string name="move_map_select_point">移动地图选点</string>
 </resources>
