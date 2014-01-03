@@ -46,7 +46,7 @@
             android:id="@+id/title_txv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/app_name"
+            android:text="@string/view_picture"
             android:layout_toRightOf="@id/back_btn"
             android:layout_toLeftOf="@id/delete_btn"
             android:layout_centerInParent="true"

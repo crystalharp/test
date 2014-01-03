@@ -33,7 +33,6 @@ import com.tigerknows.model.DataQuery.GeoCoderResponse.GeoCoderList;
 import com.tigerknows.ui.discover.CycleViewPager;
 import com.tigerknows.ui.discover.CycleViewPager.CycleOnPageChangeListener;
 import com.tigerknows.ui.discover.CycleViewPager.CyclePagerAdapter;
-import com.tigerknows.ui.traffic.TrafficDetailFragment;
 import com.tigerknows.ui.traffic.TrafficDetailFragment.PlanItemRefresher;
 import com.tigerknows.util.Utility;
 
@@ -267,13 +266,13 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             mPOIHeight = v.getMeasuredHeight()-Utility.dip2px(mSphinx, 16);
             v = view.findViewById(R.id.tuangou_view);
             v.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-            mTuangouHeight = v.getMeasuredHeight();
+            mTuangouHeight = v.getMeasuredHeight()-Utility.dip2px(mSphinx, 16);
             v = view.findViewById(R.id.hotel_view);
             v.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-            mHotelHeight = v.getMeasuredHeight();
+            mHotelHeight = v.getMeasuredHeight()-Utility.dip2px(mSphinx, 16);
             v = view.findViewById(R.id.bottom_view);
             v.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-            mBottomHeight = v.getMeasuredHeight() + Utility.dip2px(mSphinx, 16);
+            mBottomHeight = v.getMeasuredHeight();
             v = view.findViewById(R.id.traffic_plan_item);
             v.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
             mTrafficPlanHeight = v.getMeasuredHeight();
@@ -317,6 +316,7 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
 
     @Override
     public void refreshViews(int position) {
+        mSphinx.resetLoactionButtonState();
         MapView mapView = mSphinx.getMapView();
         if (position < mPosition) {
             mActionLog.addAction(ActionLog.MapStepUp);
@@ -681,9 +681,11 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
     private void setHotelToView(View v, POI poi) {
 
         TextView nameTxv = (TextView) v.findViewById(R.id.name_txv);
+        nameTxv.setVisibility(View.GONE);
         TextView priceTxv = (TextView) v.findViewById(R.id.hotel_price_txv);
-
-        nameTxv.setText(poi.getName());
+        TextView titleTxv = (TextView) v.findViewById(R.id.title_txv);
+        titleTxv.setVisibility(View.VISIBLE);
+        titleTxv.setText(poi.getName());
         priceTxv.setText(poi.getPrice());
     }
     
