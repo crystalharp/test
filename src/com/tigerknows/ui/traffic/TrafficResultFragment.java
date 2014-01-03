@@ -261,7 +261,6 @@ public class TrafficResultFragment extends BaseFragment {
         mPlanList.addAll(mTrafficModel.getPlanList());
         mResultAdapter.notifyDataSetChanged();
     }
-
     
     class TransferProjectListAdapter extends BaseAdapter{
 
