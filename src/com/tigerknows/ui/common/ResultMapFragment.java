@@ -330,16 +330,7 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
             List<Plan> list = trafficDetailFragment.getResult(type);
             if (type == Plan.Step.TYPE_TRANSFER) {
                 if (jumpTransferResultFragment) {
-                    TrafficQuery newTrafficQuery = new TrafficQuery(mContext);
-                    newTrafficQuery.setup(trafficQuery.getStart(),
-                            trafficQuery.getEnd(),
-                            type,
-                            ResultMapFragment.this.getId(),
-                            getString(R.string.doing_and_wait));
-                    newTrafficQuery.setCityId(trafficQuery.getCityId());
-                    TrafficModel trafficModel = new TrafficModel();
-                    trafficModel.setPlanList(list);
-                    newTrafficQuery.setTrafficModel(trafficModel);
+                    TrafficQuery newTrafficQuery = mSphinx.getTrafficResultFragment().getTrafficQuery();
                     mSphinx.getTrafficResultFragment().setData(newTrafficQuery);
                     mSphinx.showView(R.id.view_traffic_result_transfer);
                 } else {
