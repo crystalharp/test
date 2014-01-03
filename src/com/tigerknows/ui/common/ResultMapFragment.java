@@ -17,6 +17,7 @@ import com.tigerknows.map.MapView.SnapMap;
 import com.tigerknows.map.TrafficOverlayHelper;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.TrafficModel;
+import com.tigerknows.model.TrafficModel.Plan.Step;
 import com.tigerknows.model.TrafficQuery;
 import com.tigerknows.model.TrafficModel.Plan;
 import com.tigerknows.ui.BaseFragment;
@@ -260,7 +261,7 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
 
                     TrafficDetailFragment trafficDetailFragment = mSphinx.getTrafficDetailFragment();
                     TrafficQuery trafficQuery = trafficDetailFragment.getTrafficQuery();
-                    List<Plan> list = trafficDetailFragment.getDrivePlanList();
+                    List<Plan> list = trafficDetailFragment.getResult(Step.TYPE_DRIVE);
 
                     int position = -1;
                     for(int i = list.size()-1; i >= 0; i--) {
@@ -280,12 +281,8 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
                         newTrafficQuery.addParameter(TrafficQuery.SERVER_PARAMETER_BAIS, String.valueOf(index));
                         mSphinx.queryStart(newTrafficQuery);
                     } else {
-                        trafficDetailFragment.setData(trafficQuery,
-                                trafficDetailFragment.getTransferPlanList(),
-                                list, 
-                                trafficDetailFragment.getWalkPlanList(),
-                                Plan.Step.TYPE_DRIVE,
-                                position);
+                        trafficDetailFragment.addResult(trafficQuery, Step.TYPE_DRIVE, list);
+                        trafficDetailFragment.refreshResult(Step.TYPE_DRIVE, position);
                         trafficDetailFragment.viewMap();
                     }
                     
@@ -314,19 +311,12 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
         boolean result = false;
         TrafficDetailFragment trafficDetailFragment = mSphinx.getTrafficDetailFragment();
         TrafficQuery trafficQuery = trafficDetailFragment.getTrafficQuery();
-        List<Plan> list = null;
 
-        if (type == Plan.Step.TYPE_TRANSFER) {
-            list = trafficDetailFragment.getTransferPlanList();
-        } else if (type == Plan.Step.TYPE_DRIVE) {
-            list = trafficDetailFragment.getDrivePlanList();
-        } else if (type == Plan.Step.TYPE_WALK) {
-            list = trafficDetailFragment.getWalkPlanList();
-        } else {
+        if (type != Plan.Step.TYPE_TRANSFER && type != Plan.Step.TYPE_DRIVE && type != Plan.Step.TYPE_WALK) {
             return result;
         }
         
-        if (list == null || list.isEmpty()) {
+        if (!trafficDetailFragment.hasResult(type)) {
             TrafficQuery newTrafficQuery = new TrafficQuery(mContext);
             newTrafficQuery.setup(trafficQuery.getStart(),
                     trafficQuery.getEnd(),
@@ -336,12 +326,8 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
             newTrafficQuery.setCityId(trafficQuery.getCityId());
             mSphinx.queryStart(newTrafficQuery);
         } else {
-            trafficDetailFragment.setData(trafficQuery,
-                    trafficDetailFragment.getTransferPlanList(),
-                    trafficDetailFragment.getDrivePlanList(), 
-                    trafficDetailFragment.getWalkPlanList(),
-                    type,
-                    0);
+            trafficDetailFragment.refreshResult(type);
+            List<Plan> list = trafficDetailFragment.getResult(type);
             if (type == Plan.Step.TYPE_TRANSFER) {
                 if (jumpTransferResultFragment) {
                     TrafficQuery newTrafficQuery = new TrafficQuery(mContext);

@@ -39,6 +39,7 @@ import com.tigerknows.model.BaseData;
 import com.tigerknows.model.TrafficModel;
 import com.tigerknows.model.TrafficModel.Plan;
 import com.tigerknows.model.TrafficModel.Plan.PlanTag;
+import com.tigerknows.model.TrafficModel.Plan.Step;
 import com.tigerknows.model.TrafficQuery;
 import com.tigerknows.provider.Tigerknows;
 import com.tigerknows.share.ShareAPI;
@@ -71,6 +72,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
     
     private ViewGroup mErrorRecoveryBtn = null;
     
+    //TODO:把mtype和mindex也重构到结果中
     private int mType = -1;
 
     private Plan plan = null;
@@ -81,17 +83,9 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
     
     private int mChildLayoutId = R.layout.traffic_child_traffic;
     
-    private List<Plan> mPlanList = new ArrayList<TrafficModel.Plan>();
-    
-    private List<Plan> mTransferPlanList = new ArrayList<TrafficModel.Plan>();
-    
-    private List<Plan> mDrivePlanList = new ArrayList<TrafficModel.Plan>();
-    
-    private List<Plan> mWalkPlanList = new ArrayList<TrafficModel.Plan>();
+    private TrafficResult mResult = new TrafficResult();
     
     private int mIndex = -1;
-    
-    private TrafficQuery mTrafficQuery;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -211,48 +205,99 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         }
     }
     
-    public void setData(TrafficQuery trafficQuery, List<Plan> transferList, List<Plan> driveList, List<Plan> walkList, int type, int index) {
+    class TrafficResult {
+        TrafficQuery query;
+        List<ArrayList<Plan>> planLists;
 
-        mTrafficQuery = trafficQuery;
+        int mType;
+        final static int TRANSTER = Step.TYPE_TRANSFER;
+        final static int DRIVE = Step.TYPE_DRIVE;
+        final static int WALK = Step.TYPE_WALK;
         
-        if (mTransferPlanList != transferList) {
-            mTransferPlanList.clear();
-            if (transferList != null) {
-                mTransferPlanList.addAll(transferList);
+        public TrafficResult() {
+            planLists = new ArrayList<ArrayList<Plan>>();
+            planLists.add(null);
+            planLists.add(new ArrayList<Plan>());
+            planLists.add(new ArrayList<Plan>());
+            planLists.add(new ArrayList<Plan>());
+        }
+        
+        public void setResult(int type, List<Plan>plans) {
+            if (plans == null || (type != TRANSTER && type != DRIVE && type !=WALK)) {
+                return;
+            }
+            mType = type;
+            List<Plan> list = planLists.get(type);
+            if (list == null) {
+                list = new ArrayList<Plan>();
+            }
+            list.clear();
+            list.addAll(plans);
+        }
+        
+        public void setQuery(TrafficQuery q) {
+            query = q;
+        }
+        
+        public TrafficQuery getQuery() {
+            return query;
+        }
+        
+        public void reset() {
+            query = null;
+            planLists.get(DRIVE).clear();
+            planLists.get(TRANSTER).clear();
+            planLists.get(WALK).clear();
+            mType = 0;
+        }
+        
+        public List<Plan> getResult() {
+            return planLists.get(mType);
+        }
+        
+        public List<Plan> getResult(int type) {
+            return planLists.get(type);
+        }
+    }
+    
+    public final void addResult(TrafficQuery query, int type, List<Plan>resultList) {
+        TrafficQuery oldQuery = mResult.getQuery();
+        if (oldQuery != null) {
+            if (!oldQuery.getStart().equals(query.getStart()) || 
+                    !oldQuery.getEnd().equals(query.getEnd())) {
+                mResult.reset();
             }
         }
-        if (mDrivePlanList != driveList) {
-            mDrivePlanList.clear();
-            if (driveList != null) {
-                mDrivePlanList.addAll(driveList);
+        mResult.setQuery(query);
+        mResult.setResult(type, resultList);
+    }
+    
+    public void refreshResult(int type, int index) {
+        if (hasResult(type)) {
+            mType = type;
+            mIndex = index;
+            plan = mResult.getResult(type).get(mIndex);
+            updateResult(plan);
+        }
+    }
+    
+    public void refreshResult(int type) {
+        if (hasResult(type)) {
+            if (mType != type) {
+                mType = type;
+                mIndex = 0;
+                plan = mResult.getResult(type).get(mIndex);
+                updateResult(plan);
             }
         }
-        if (mWalkPlanList != walkList) {
-            mWalkPlanList.clear();
-            if (walkList != null) {
-                mWalkPlanList.addAll(walkList);
-            }
-        }
-        
-        mType = type;
-        
-        mPlanList.clear();
-        if (type == Plan.Step.TYPE_TRANSFER) {
-            mPlanList.addAll(mTransferPlanList);
-        } else if (type == Plan.Step.TYPE_DRIVE) {
-            mPlanList.addAll(mDrivePlanList);
-        } else if (type == Plan.Step.TYPE_WALK) {
-            mPlanList.addAll(mWalkPlanList);
-        }
-
-        mIndex = index;
-        plan = mPlanList.get(mIndex);
-        
-        updateResult(plan);
-        PlanItemRefresher.refresh(mSphinx, plan, mSummaryLayout);
-        
-        plan.updateHistory(mContext);
-        
+    }
+    
+    public List<Plan> getResult(int type) {
+        return mResult.getResult(type);
+    }
+    
+    public boolean hasResult(int type) {
+        return mResult.getResult(type).size() != 0;
     }
     
     private void updateResult(Plan plan) {
@@ -268,6 +313,9 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         mStrList.add(plan.getEnd().getName());
         mTypes.add(TYPE_RESULT_LIST_END);
         mResultAdapter.notifyDataSetChanged();
+        
+        PlanItemRefresher.refresh(mSphinx, plan, mSummaryLayout);
+        plan.updateHistory(mContext);
     }
 
     public static class StepViewHolder {
@@ -482,7 +530,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
             mSphinx.showView(R.id.view_result_map);
             
             if (ActionLog.TrafficTransferListMap.equals(actionTag)) {
-                TrafficOverlayHelper.drawTrafficPlanListOverlay(mSphinx, mPlanList, mIndex);
+                TrafficOverlayHelper.drawTrafficPlanListOverlay(mSphinx, mResult.getResult(), mIndex);
             } else {
                 TrafficOverlayHelper.drawOverlay(mSphinx, plan);
                 TrafficOverlayHelper.panToViewWholeOverlay(plan, mSphinx.getMapView(), mSphinx);
@@ -491,20 +539,8 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         }
     }
 
-    public List<Plan> getTransferPlanList() {
-        return mTransferPlanList;
-    }
-
-    public List<Plan> getDrivePlanList() {
-        return mDrivePlanList;
-    }
-
-    public List<Plan> getWalkPlanList() {
-        return mWalkPlanList;
-    }
-    
     public TrafficQuery getTrafficQuery() {
-        return mTrafficQuery;
+        return mResult.getQuery();
     }
 
     private static class PlanViewHolder {
