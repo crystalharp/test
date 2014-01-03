@@ -646,6 +646,8 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                 
                 View alterListView = sphinx.getLayoutInflater().inflate(R.layout.alert_listview, null, false);
                 
+                final Dialog dialog = Utility.getChoiceDialog(sphinx, alterListView, R.style.AlterChoiceDialog);
+                
                 ListView listView = (ListView) alterListView.findViewById(R.id.listview);
                 listView.setAdapter(adapter);
                 
@@ -660,10 +662,10 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                         newDataQuery.addParameter(BaseQuery.SERVER_PARAMETER_CENTER_LATITUDE, String.valueOf(pos.getLat()));
                         newDataQuery.setCityId((int) cityIdAndResultTotal.getCityId());
                         sphinx.queryStart(newDataQuery);
+                        dialog.dismiss();
                     }
                 });
                 
-                Dialog dialog = Utility.getChoiceDialog(sphinx, alterListView, R.style.AlterChoiceDialog);
                 
                 TextView titleTxv = (TextView)alterListView.findViewById(R.id.title_txv);
                 titleTxv.setText(R.string.cityid_and_result_total_list);
