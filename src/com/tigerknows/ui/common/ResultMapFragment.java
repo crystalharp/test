@@ -308,7 +308,6 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
     }
     
     private boolean changeTrafficType(int type, boolean jumpTransferResultFragment) {
-        mSphinx.resetLoactionButtonState();
         boolean result = false;
         TrafficDetailFragment trafficDetailFragment = mSphinx.getTrafficDetailFragment();
         TrafficQuery trafficQuery = trafficDetailFragment.getTrafficQuery();

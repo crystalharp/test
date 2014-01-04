@@ -331,7 +331,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                         return;
                     }
 
-                    resetLoactionButtonState();
                     InfoWindowFragment infoWindowFragment = getInfoWindowFragment();
                     if (infoWindowFragment == mBottomFragment) {
                         ItemizedOverlay itemizedOverlay = infoWindowFragment.getItemizedOverlay();
@@ -546,7 +545,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 
                     mMapView.deleteOverlaysByName(ItemizedOverlay.LONG_CLICKED_OVERLAY);
 
-                    resetLoactionButtonState();
                     InfoWindowFragment infoWindowFragment = getInfoWindowFragment();
                     if (infoWindowFragment == mBottomFragment) {
                         ItemizedOverlay itemizedOverlay = infoWindowFragment.getItemizedOverlay();
@@ -643,7 +641,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                         return;
                     }
 
-                    resetLoactionButtonState();
                     InfoWindowFragment infoWindowFragment = getInfoWindowFragment();
                     if (infoWindowFragment == mBottomFragment) {
                         ItemizedOverlay itemizedOverlay = infoWindowFragment.getItemizedOverlay();
@@ -668,6 +665,19 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 }
             });
 
+            EventRegistry.addEventListener(mMapView, MapView.EventType.TOUCHDOWN, new MapView.TouchEventListener(){
+                @Override
+                public void onTouchEvent(EventSource eventSource, Position position) {
+
+                    resetLoactionButtonState();
+
+                    if (infoWindowBackInHome(ItemizedOverlay.MY_LOCATION_OVERLAY)) {
+                        return;
+                    }
+
+                }
+            });
+
             EventRegistry.addEventListener(mMapView, MapView.EventType.TOUCHUP, new MapView.TouchEventListener(){
                 @Override
                 public void onTouchEvent(EventSource eventSource, Position position) {
@@ -681,7 +691,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                         return;
                     }
 
-                    resetLoactionButtonState();
                     InfoWindowFragment infoWindowFragment = getInfoWindowFragment();
                     if (infoWindowFragment == mBottomFragment) {
                         ItemizedOverlay itemizedOverlay = infoWindowFragment.getItemizedOverlay();
@@ -692,11 +701,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                             return;
                         }
                     }
-
-                    if (infoWindowBackInHome(ItemizedOverlay.MY_LOCATION_OVERLAY)) {
-                        return;
-                    }
-
                 }
             });
 

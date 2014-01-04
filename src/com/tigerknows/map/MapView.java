@@ -237,6 +237,7 @@ public class MapView extends RelativeLayout implements
         public static int MULTITOUCHZOOM = 12;
         public static int CLICKPOI = 13;
         public static int UPDATEPOIPOSITION = 14; //地图上选中的poi修正了位置
+        public static int TOUCHDOWN = 15;
 	}
 
     public interface DrawFrameEventListener extends EventListener{
@@ -378,6 +379,8 @@ public class MapView extends RelativeLayout implements
                 && (listener instanceof ClickPOIEventListener)
                 || eventType == EventType.UPDATEPOIPOSITION
                 && (listener instanceof UpdatePoiPositionListener)
+                || eventType == EventType.TOUCHDOWN
+                && (listener instanceof TouchEventListener)
 				)
 			return true;
 		else
@@ -513,6 +516,16 @@ public class MapView extends RelativeLayout implements
 			}
 		}
 	}
+
+    public void executeTouchDownListeners(Position position) {
+        if (eventListeners.containsKey(MapView.EventType.TOUCHDOWN)) {
+            ArrayList<EventListener> listeners = eventListeners.get(MapView.EventType.TOUCHDOWN);
+            for (int i = 0; i < listeners.size(); i++) {
+                ((TouchEventListener) (listeners.get(i))).onTouchEvent(this,
+                        position);
+            }
+        }
+    }
 
 	public void executeTouchListeners(Position position) {
 		if (eventListeners
