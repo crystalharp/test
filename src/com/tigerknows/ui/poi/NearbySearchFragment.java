@@ -78,6 +78,8 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     private LinearLayout[][] mCategoryLlys;
     private Button[][] mCategoryBtns;
     private Button mHotFoldBtn;
+    
+    private String mCurrentMoreCategory;
 
     private ScrollView mBodyScv;
     private LinearLayout mHotBaseLly;
@@ -351,7 +353,11 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     		for(int j = 0; j < CategoryProperty.NUM_OF_SUBBUTTONS; j++){
     			mCategoryBtns[i][j].setText(cp.getButtonText(j));
     			int OP = mCategoryList[i].getOperationType(j);
-    			mCategoryBtns[i][j].setContentDescription(cp.getButtonText(j) + ";" + String.valueOf(OP));
+    			if(OP == CategoryProperty.OP_MORE){
+    				mCategoryBtns[i][j].setContentDescription(cp.getName() + ";" + String.valueOf(OP));
+    			}else{
+    				mCategoryBtns[i][j].setContentDescription(cp.getButtonText(j) + ";" + String.valueOf(OP));
+    			}
     		}
     		Drawable drawable = mSphinx.getResources().getDrawable(cp.getDrawableID());
     		drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
@@ -413,6 +419,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
                 
                 mFilterList = new ArrayList<Filter>();
                 mFilterList.add(categoryFilter);
+
                 mFilterListView.setData(mFilterList, FilterResponse.FIELD_FILTER_CATEGORY_INDEX, this, false, false, mActionTag);
                 result = true;
             }
@@ -542,6 +549,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
             uiStackAdjust();
             break;
     	case CategoryProperty.OP_MORE:
+    		mCurrentMoreCategory = str[0];
     		if(setFilterListView()){
     			setFilterOrder();
     		}else{
@@ -558,6 +566,17 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     
     private void setFilterOrder() {
 		mTitleBtn.setText(R.string.merchant_type);
+		List<Filter> categoryFilterList = mFilterList.get(0).getChidrenFilterList();
+		Filter currentFilter = null;
+		for(int i = 0; i < categoryFilterList.size(); i++){
+			if(TextUtils.equals(mCurrentMoreCategory, categoryFilterList.get(i).getFilterOption().getName())){
+				currentFilter = categoryFilterList.get(i);
+				break;
+			}
+		}
+		if(currentFilter != null){
+			FilterListView.selectedFilter(mFilterList.get(0), currentFilter);
+		}
 		mFilterListView.setData(mFilterList, FilterResponse.FIELD_FILTER_CATEGORY_INDEX, this, false, false, mActionTag);
 		mFilterListView.setVisibility(View.VISIBLE);
 	}
@@ -667,7 +686,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
                     return;
                 }
             }
-        }		
+        }
 	}
 
 	@Override
