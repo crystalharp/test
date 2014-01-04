@@ -108,16 +108,25 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         mSphinx.getLocationView().setVisibility(View.VISIBLE);
     }
     
-    public static void addCenterPositionParameter(Sphinx sphinx, DataQuery dataQuery){
+    private void addCenterPositionParameter(Sphinx sphinx, DataQuery dataQuery){
     	// 我的定位显示在屏幕可视区域，并且比例尺小于或等于1千米时，则请求中包含lx和ly且不包含cx和cy，否则请求参数中包含cx和cy
+        MapView mapView = sphinx.getMapView();
+        Position position = mapView.getCenterPosition();
+    	if(checkCenterPosition(sphinx)){
+        	dataQuery.addParameter(DataQuery.SERVER_PARAMETER_CENTER_LONGITUDE, String.valueOf(position.getLon()));
+        	dataQuery.addParameter(DataQuery.SERVER_PARAMETER_CENTER_LATITUDE, String.valueOf(position.getLat()));
+        }
+    }
+    
+    public static boolean checkCenterPosition(Sphinx sphinx){
         MapView mapView = sphinx.getMapView();
         Position position = mapView.getCenterPosition();
         float zoomLevel = mapView.getZoomLevel();
         if (sphinx.positionInScreen(position)
                 && zoomLevel >= 12) { // 12级别是1千米
-        	dataQuery.addParameter(DataQuery.SERVER_PARAMETER_CENTER_LONGITUDE, String.valueOf(position.getLon()));
-        	dataQuery.addParameter(DataQuery.SERVER_PARAMETER_CENTER_LATITUDE, String.valueOf(position.getLat()));
-        }    	
+        	return false;
+        }
+        return true;
     }
 
     public DataQuery getDataQuery(String keyWord) {

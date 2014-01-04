@@ -3,8 +3,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" 
-    android:layout_marginLeft="12dp"
-    android:layout_marginRight="12dp">
+    android:paddingLeft="12dp"
+    android:paddingRight="12dp"
+    android:paddingTop="4dp">
     <LinearLayout 
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -17,6 +18,7 @@
 	        android:drawableRight="@drawable/icon_arrow_right"
 	        android:background="@color/transparent"
 	        android:padding="8dp"
+	        android:textSize="18sp"
 	        android:layout_gravity="left|center_vertical"
 	        android:drawablePadding="16dp"
 	        />

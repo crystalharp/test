@@ -84,8 +84,14 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     private LinearLayout[] mHotLlys;
     private View[] mHotBtnViews;
     
+    private int mCityId;
+    private int mFrom;
+    
+    private static final int NORMAL_POI = 0;
+    private static final int MAP_CENTER = 1;
+    private static final int LOCATION = 2;
+    
     private String mIsFold;
-    private boolean mFromPOI;
     private int mCountLly;
     
     private CategoryProperty[] mCategoryList;
@@ -222,16 +228,16 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         }else{
         	mTitleBtn.setText(R.string.more);
         }
-        if(mFromPOI){
+        if(mFrom == NORMAL_POI){
         	mRightBtn.setVisibility(View.VISIBLE);
-        	mRightBtn.setBackgroundResource(R.drawable.ic_home_search_nearby);
+        	mRightBtn.setBackgroundResource(R.drawable.btn_nearby_search);
         	mRightBtn.setOnClickListener(this);
         	mRightBtn.setPadding(0, 0, 0, 0);
         }else{
         	mRightBtn.setVisibility(View.GONE);
         }
         String name = mPOI.getName();
-        if (mPOI.getSourceType() == POI.SOURCE_TYPE_MY_LOCATION) {
+        if (mFrom == LOCATION) {
             name = getString(R.string.my_location);
         }
         String title = getString(R.string.at_where_search, name);
@@ -350,7 +356,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     		Drawable drawable = mSphinx.getResources().getDrawable(cp.getDrawableID());
     		drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
     		mCategoryBtns[i][CategoryProperty.NUM_OF_SUBBUTTONS].setCompoundDrawables(null, null, drawable, null);
-    		mCategoryBtns[i][CategoryProperty.NUM_OF_SUBBUTTONS].setTextColor(cp.getColorID());
+    		mCategoryBtns[i][CategoryProperty.NUM_OF_SUBBUTTONS].setTextColor(mSphinx.getResources().getColor(cp.getColorID()));
     	}
     }
     
@@ -363,6 +369,19 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_CONFIGINFO, DataQuery.CONFIGINFO_POI_CATEGORY_ORDER);
         dataQuery.setup(getId(), getId(), null, true);
         mSphinx.queryStart(dataQuery);
+    }
+    
+    private void refreshPOI(POI poi){
+    	if(poi != null){
+    		mPOI = poi;
+    		mFrom = NORMAL_POI;
+    	}else if(HomeFragment.checkCenterPosition(mSphinx)){
+    		mPOI = mSphinx.getCenterPOI();
+    		mFrom = MAP_CENTER;
+    	}else{
+    		mPOI = mSphinx.getMyLocationPOI();
+    		mFrom = LOCATION;
+    	}
     }
     
     private boolean setFilterListView() {
@@ -466,16 +485,10 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     
     private void btnClickProcess(View btn){
 		String[] str = btn.getContentDescription().toString().split(";");
-    	LogWrapper.d("Trap", "cd: "+str.length + btn.getContentDescription());
 		if(str.length < 2){
 			return;
 		}
-        int cityId;
-        if(mFromPOI) {
-            cityId = MapEngine.getCityId(mPOI.getPosition());
-        } else {
-            cityId = Globals.getCurrentCityInfo(mSphinx, false).getId();
-        }
+
 		int operationCode = Integer.parseInt(str[1]);
 		DataQuery dataQuery;
     	switch(operationCode){
@@ -494,7 +507,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     		uiStackAdjust();
     		break;
         case CategoryProperty.OP_DISH:
-        	if (cityId != CityInfo.CITY_ID_BEIJING) {
+        	if (mCityId != CityInfo.CITY_ID_BEIJING) {
         		Toast.makeText(mSphinx, R.string.this_city_not_support_dish, Toast.LENGTH_LONG).show();
         		return;
         	}
@@ -502,26 +515,26 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
             dataQuery.addParameter(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_POI);
             dataQuery.addParameter(DataQuery.SERVER_PARAMETER_KEYWORD, getString(R.string.cate));
             dataQuery.addParameter(DataQuery.SERVER_PARAMETER_BIAS, DataQuery.BIAS_DISH);
-            dataQuery.setCityId(cityId);
+            dataQuery.setCityId(mCityId);
             mSphinx.queryStart(dataQuery);
             break;
         case CategoryProperty.OP_TUANGOU:
-            if (DataQuery.checkDiscoveryCity(cityId, Long.parseLong(BaseQuery.DATA_TYPE_TUANGOU)) == false) {
+            if (DataQuery.checkDiscoveryCity(mCityId, Long.parseLong(BaseQuery.DATA_TYPE_TUANGOU)) == false) {
                 Toast.makeText(mSphinx, R.string.this_city_not_support_tuangou, Toast.LENGTH_LONG).show();
                 return;
             }
         case CategoryProperty.OP_DIANYING:
-            if (DataQuery.checkDiscoveryCity(cityId, Long.parseLong(BaseQuery.DATA_TYPE_DIANYING)) == false) {
+            if (DataQuery.checkDiscoveryCity(mCityId, Long.parseLong(BaseQuery.DATA_TYPE_DIANYING)) == false) {
                 Toast.makeText(mSphinx, R.string.this_city_not_support_dianying, Toast.LENGTH_LONG).show();
                 return;
             }
         case CategoryProperty.OP_YANCHU:
-            if (DataQuery.checkDiscoveryCity(cityId, Long.parseLong(BaseQuery.DATA_TYPE_YANCHU)) == false) {
+            if (DataQuery.checkDiscoveryCity(mCityId, Long.parseLong(BaseQuery.DATA_TYPE_YANCHU)) == false) {
                 Toast.makeText(mSphinx, R.string.this_city_not_support_yanchu, Toast.LENGTH_LONG).show();
                 return;
             }
         case CategoryProperty.OP_ZHANLAN:
-            if (DataQuery.checkDiscoveryCity(cityId, Long.parseLong(BaseQuery.DATA_TYPE_ZHANLAN)) == false) {
+            if (DataQuery.checkDiscoveryCity(mCityId, Long.parseLong(BaseQuery.DATA_TYPE_ZHANLAN)) == false) {
                 Toast.makeText(mSphinx, R.string.this_city_not_support_zhanlan, Toast.LENGTH_LONG).show();
                 return;
             }
@@ -573,12 +586,13 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         DataQuery dataQuery = new DataQuery(mSphinx);
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, dataType);
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
-        if(mFromPOI){
-        	Position position = mPOI.getPosition();
+        Position position = mPOI.getPosition();
+        if(mFrom == NORMAL_POI){
         	dataQuery.addParameter(BaseQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
         	dataQuery.addParameter(BaseQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
-        }else{
-        	HomeFragment.addCenterPositionParameter(mSphinx, dataQuery);
+        }else if(mFrom == MAP_CENTER){
+        	dataQuery.addParameter(DataQuery.SERVER_PARAMETER_CENTER_LONGITUDE, String.valueOf(position.getLon()));
+        	dataQuery.addParameter(DataQuery.SERVER_PARAMETER_CENTER_LATITUDE, String.valueOf(position.getLat()));
         }
         dataQuery.setup(getId(), getId(), getString(R.string.doing_and_wait), false, false, mPOI);
         return dataQuery;
@@ -592,42 +606,36 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         if (!TextUtils.isEmpty(keyword)) {
             DataQuery poiQuery = new DataQuery(mContext);
             POI requestPOI = mPOI;
-            int cityId = MapEngine.getCityId(requestPOI.getPosition());
             poiQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_POI);
             poiQuery.addParameter(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_POI);
             poiQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
             poiQuery.addParameter(DataQuery.SERVER_PARAMETER_KEYWORD, keyword);
             poiQuery.addParameter(DataQuery.SERVER_PARAMETER_POI_ID, requestPOI.getUUID());
-            if(mFromPOI){
-            	Position position = requestPOI.getPosition();
-            	if (position != null) {
-            		poiQuery.addParameter(DataQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
-            		poiQuery.addParameter(DataQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
-            	}
-            }else{
-            	HomeFragment.addCenterPositionParameter(mSphinx, poiQuery);
+            Position position = requestPOI.getPosition();
+            if(mFrom == NORMAL_POI){
+        		poiQuery.addParameter(DataQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
+        		poiQuery.addParameter(DataQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
+            }else if(mFrom == MAP_CENTER){
+            	poiQuery.addParameter(DataQuery.SERVER_PARAMETER_CENTER_LONGITUDE, String.valueOf(position.getLon()));
+            	poiQuery.addParameter(DataQuery.SERVER_PARAMETER_CENTER_LATITUDE, String.valueOf(position.getLat()));
             }
             poiQuery.addParameter(DataQuery.SERVER_PARAMETER_INFO, DataQuery.INFO_TYPE_TAG);
             poiQuery.addParameter(DataQuery.SERVER_PARAMETER_EXT, DataQuery.EXT_BUSLINE);
             poiQuery.setup(getId(), getId(), getString(R.string.doing_and_wait), false, false, requestPOI);
-            poiQuery.setCityId(cityId);
+            poiQuery.setCityId(mCityId);
             mSphinx.queryStart(poiQuery);
         } else {
             mSphinx.showTip(R.string.search_input_keyword, Toast.LENGTH_SHORT);
         }
     }
     
-    public void setData(POI poi){
-    	setData(poi, true);
-    }
-
-    public void setData(POI poi, boolean fromPOI) {
+    public void setData(POI poi) {
         reset();
-        mPOI = poi;
-        mFromPOI = fromPOI;
-        if(fromPOI && mSphinx.uiStackContains(R.id.view_poi_nearby_search)){
+        refreshPOI(poi);
+        if(mFrom == NORMAL_POI && mSphinx.uiStackContains(R.id.view_poi_nearby_search)){
         	mSphinx.uiStackRemove(R.id.view_poi_nearby_search);
         }
+        mCityId = MapEngine.getCityId(mPOI.getPosition());
         mBodyScv.scrollTo(0, 0);
         setFilterListView();
     }
@@ -683,7 +691,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
             String dataType = baseQuery.getParameter(BaseQuery.SERVER_PARAMETER_DATA_TYPE);
             if (BaseQuery.DATA_TYPE_POI.equals(dataType)) {
                 int result = InputSearchFragment.dealWithPOIResponse((DataQuery) baseQuery, mSphinx, this);
-                if(mFromPOI && result > 0){
+                if(mFrom == NORMAL_POI && result > 0){
                 	uiStackAdjust();
                 }
             } else if (BaseQuery.DATA_TYPE_TUANGOU.equals(dataType) ||

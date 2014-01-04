@@ -416,7 +416,6 @@
     <string name="nearby">附近</string>
     <string name="perimeter">周边</string>
     <string name="result">结果</string>
-    <string name="center_map">地图中心</string>
     <string name="discover_location">位置:%1$s</string>
     <string name="select_start_station">选择起点</string>
     <string name="select_end_station">选择终点</string>

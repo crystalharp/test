@@ -83,11 +83,11 @@ public class CustomCategoryFragment extends BaseFragment {
 					if(mCurrentState.charAt(j) == '1'){
 						sb.setCharAt(j, '0');
 						mCurrentState = sb.toString();
-						imv.setImageResource(R.drawable.btn_fill_in_normal);
+						imv.setImageResource(R.drawable.ic_custom_category_default);
 					}else{
 						sb.setCharAt(j, '1');
 						mCurrentState = sb.toString();
-						imv.setImageResource(R.drawable.btn_fill_in_focused);
+						imv.setImageResource(R.drawable.ic_custom_category_checked);
 					}
 					LogWrapper.d("Trap", mCurrentState);
 				}
@@ -115,9 +115,9 @@ public class CustomCategoryFragment extends BaseFragment {
 			Button btn = (Button) mCustomBtns[i].findViewById(R.id.custom_btn);
 			btn.setText((mHotNames[i].split(";"))[0]);
 			if(mCurrentState.charAt(i) == '1'){
-				imv.setImageResource(R.drawable.btn_fill_in_focused);
+				imv.setImageResource(R.drawable.ic_custom_category_checked);
 			}else{
-				imv.setImageResource(R.drawable.btn_fill_in_normal);
+				imv.setImageResource(R.drawable.ic_custom_category_default);
 			}
 		}
 	}

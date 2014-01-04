@@ -7,12 +7,14 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="@string/app_name"
-        android:layout_margin="12dp"
+        android:background="@drawable/btn_sub_category"
+        android:padding="8dp"
+        android:layout_margin="8dp"
         />
     <ImageView android:id="@+id/icon_imv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/btn_fill_in_normal"
+        android:src="@drawable/ic_custom_category_default"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"/>
 
