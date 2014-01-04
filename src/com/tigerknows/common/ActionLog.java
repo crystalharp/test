@@ -545,6 +545,8 @@ public class ActionLog extends LogUpload {
     public static final String TrafficDriveMap = "BO";
     public static final String TrafficWalkMap = "BP";
     public static final String TrafficTransferListMap = "BS";
+    public static final String TrafficDriveListMap = "BT";
+    public static final String TrafficWalkListMap = "BV";
     
     // 交通指南针页
     public static final String TrafficCompass = "BQ";

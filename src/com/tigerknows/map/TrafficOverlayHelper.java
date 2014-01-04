@@ -26,6 +26,7 @@ import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.Sphinx.TouchMode;
 import com.tigerknows.android.location.Position;
+import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.TrafficModel.Plan;
 import com.tigerknows.model.TrafficModel.Plan.Step;
 import com.tigerknows.model.xobject.XMap;
@@ -184,6 +185,12 @@ public class TrafficOverlayHelper {
 			    @Override
 			    public void onTouchEvent(EventSource eventSource) {
                     if (sphinx.getTouchMode().equals(TouchMode.MEASURE_DISTANCE)) {
+                        return;
+                    }
+                    String tag = sphinx.getResultMapFragment().mActionTag;
+                    if (ActionLog.TrafficTransferListMap.equals(tag) ||
+                            ActionLog.TrafficDriveListMap.equals(tag) ||
+                            ActionLog.TrafficWalkListMap.equals(tag)) {
                         return;
                     }
 			        OverlayItem overlayItem=(OverlayItem) eventSource;  
