@@ -135,7 +135,8 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
         
         OverlayItem overlayItem=mItemizedOverlay.getItemByFocused();
         if (overlayItem == null) {
-            return;
+            mItemizedOverlay.focuseOverlayItem(0);
+            overlayItem = mItemizedOverlay.getItemByFocused();
         }
         
         int id = v.getId();
@@ -195,8 +196,8 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
         OverlayItem overlayItem = mItemizedOverlay.getItemByFocused();
         
         if (overlayItem == null) {
-            overlayItem = itemizedOverlay.get(0);
-            overlayItem.isFoucsed = true;
+            itemizedOverlay.focuseOverlayItem(0);
+            overlayItem = itemizedOverlay.getItemByFocused();
         }
 
         mPosition = itemizedOverlay.getPositionByFocused();
@@ -391,15 +392,28 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             mSphinx.setMapViewPaddingBottom(mHeight);
             
             View view = (View) mCyclePagerAdapter.viewList.get((position) % mCyclePagerAdapter.viewList.size());
-            setMessageToView(view, ((POI) mItemizedOverlay.get(position).getAssociatedObject()).getName(), null, true);
+            String name = ((POI) mItemizedOverlay.get(position).getAssociatedObject()).getName();
+            String selectPoint = getString(R.string.select_point);
+            if (selectPoint.equals(name) == false) {
+            	name += getString(R.string.nearby);
+            }
+            setMessageToView(view, name, null, true);
             
             if (prevPosition != -1) {
                 view = mCyclePagerAdapter.viewList.get(prevPosition % mCyclePagerAdapter.viewList.size());
-                setMessageToView(view, ((POI) mItemizedOverlay.get(prevPosition).getAssociatedObject()).getName(), null, true);
+                name = ((POI) mItemizedOverlay.get(prevPosition).getAssociatedObject()).getName();
+                if (selectPoint.equals(name) == false) {
+                	name += getString(R.string.nearby);
+                }
+                setMessageToView(view, name, null, true);
             }
             if (nextPosition != -1) {
                 view = mCyclePagerAdapter.viewList.get(nextPosition % mCyclePagerAdapter.viewList.size());
-                setMessageToView(view, ((POI) mItemizedOverlay.get(nextPosition).getAssociatedObject()).getName(), null, true);
+                name = ((POI) mItemizedOverlay.get(nextPosition).getAssociatedObject()).getName();
+                if (selectPoint.equals(name) == false) {
+                	name += getString(R.string.nearby);
+                }
+                setMessageToView(view, name, null, true);
             }
         } else if (mType == TYPE_MAP_POI) {
 

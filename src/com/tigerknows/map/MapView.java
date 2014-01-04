@@ -237,6 +237,7 @@ public class MapView extends RelativeLayout implements
         public static int MULTITOUCHZOOM = 12;
         public static int CLICKPOI = 13;
         public static int UPDATEPOIPOSITION = 14; //地图上选中的poi修正了位置
+        public static int TOUCHDOWN = 15;
 	}
 
     public interface DrawFrameEventListener extends EventListener{
@@ -378,6 +379,8 @@ public class MapView extends RelativeLayout implements
                 && (listener instanceof ClickPOIEventListener)
                 || eventType == EventType.UPDATEPOIPOSITION
                 && (listener instanceof UpdatePoiPositionListener)
+                || eventType == EventType.TOUCHDOWN
+                && (listener instanceof TouchEventListener)
 				)
 			return true;
 		else
@@ -513,6 +516,16 @@ public class MapView extends RelativeLayout implements
 			}
 		}
 	}
+
+    public void executeTouchDownListeners(Position position) {
+        if (eventListeners.containsKey(MapView.EventType.TOUCHDOWN)) {
+            ArrayList<EventListener> listeners = eventListeners.get(MapView.EventType.TOUCHDOWN);
+            for (int i = 0; i < listeners.size(); i++) {
+                ((TouchEventListener) (listeners.get(i))).onTouchEvent(this,
+                        position);
+            }
+        }
+    }
 
 	public void executeTouchListeners(Position position) {
 		if (eventListeners
@@ -1095,6 +1108,7 @@ public class MapView extends RelativeLayout implements
 
     public MapScene getCurrentMapScene() {
         MapScene mapScene = new MapScene();
+        mapScene.infoWindow = getInfoWindow().isVisible();
         mapScene.position = getCenterPosition();
         mapScene.zoomLevel = (int) getZoomLevel();
         List<ItemizedOverlay> itemizedOverlayList = new ArrayList<ItemizedOverlay>();
@@ -1115,7 +1129,10 @@ public class MapView extends RelativeLayout implements
         mapScene.shapeList = shapeList;
         InfoWindowFragment infoWindowFragment = sphinx.getInfoWindowFragment();
         ItemizedOverlay itemizedOverlay = infoWindowFragment.getItemizedOverlay();
-        if (itemizedOverlay != null) {
+        ItemizedOverlay currentOverlay = getCurrentOverlay();
+        if (itemizedOverlay != null &&
+                currentOverlay != null &&
+                itemizedOverlay.getName().equals(currentOverlay.getName())) {
             mapScene.overlayItem = itemizedOverlay.getItemByFocused();
         } else {
             mapScene.overlayItem = null;
@@ -1134,6 +1151,7 @@ public class MapView extends RelativeLayout implements
             }
 
             clearMap();
+            getInfoWindow().setVisible(mapScene.infoWindow);
             if (mapScene.shapeList != null) {
                 tilesView.getShapes().addAll(mapScene.shapeList);
             }
@@ -1152,6 +1170,7 @@ public class MapView extends RelativeLayout implements
     }
 
     public static class MapScene {
+    	public boolean infoWindow;
         public Position position;
         public int zoomLevel;
         public List<ItemizedOverlay> itemizedOverlayList;
