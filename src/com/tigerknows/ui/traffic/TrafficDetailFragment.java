@@ -527,6 +527,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
 
             ResultMapFragment resultMapFragment = mSphinx.getResultMapFragment();
             resultMapFragment.setData(title, actionTag);
+            mSphinx.showView(R.id.view_result_map);
             
             if (ActionLog.TrafficTransferListMap.equals(actionTag)) {
                 TrafficOverlayHelper.drawTrafficPlanListOverlay(mSphinx, mResult.getResult(), mIndex);
@@ -534,7 +535,6 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
                 TrafficOverlayHelper.drawOverlay(mSphinx, plan);
                 TrafficOverlayHelper.panToViewWholeOverlay(plan, mSphinx.getMapView(), mSphinx);
             }
-            mSphinx.showView(R.id.view_result_map);
             
         }
     }
