@@ -225,11 +225,7 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
         case R.id.right_btn:
             mActionLog.addAction(mActionTag + ActionLog.TitleRightButton);
             String[] list = mSphinx.getResources().getStringArray(R.array.drvie_search_option);
-            int[] leftCompoundIconList = new int[3];
-            leftCompoundIconList[0] = R.drawable.ic_share_sina;
-            leftCompoundIconList[1] = R.drawable.ic_share_sina;
-            leftCompoundIconList[2] = R.drawable.ic_share_sina;
-            final ArrayAdapter<String> adapter = new StringArrayAdapter(mSphinx, list, leftCompoundIconList);
+            final ArrayAdapter<String> adapter = new StringArrayAdapter(mSphinx, list);
             
             View alterListView = mSphinx.getLayoutInflater().inflate(R.layout.alert_listview, null, false);
             
