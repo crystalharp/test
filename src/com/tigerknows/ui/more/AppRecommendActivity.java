@@ -75,7 +75,6 @@ public class AppRecommendActivity extends BaseActivity {
         setListener();
         
         mTitleBtn.setText(R.string.app_recommend);
-        mRightBtn.setVisibility(View.GONE);
 
         mRecommdAppAdapter = new RecommdAppAdapter(mThis, mRecommendAppList);
         mAppRecommendLsv.setAdapter(mRecommdAppAdapter);

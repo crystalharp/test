@@ -273,7 +273,6 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
         
         mTitleBtn.setText(R.string.recommend_dish);
         mTitleBtn.setBackgroundResource(R.drawable.btn_all_comment_focused);
-        mRightBtn.setVisibility(View.GONE);
         
         mPOI = sPOI;
         

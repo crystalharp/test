@@ -90,7 +90,6 @@ public class ChangeCityActivity extends BaseActivity {
         setListener();
         
         mTitleBtn.setText(R.string.change_city);
-        mRightBtn.setVisibility(View.GONE);
 
         mCityElv.setGroupIndicator(null);
         

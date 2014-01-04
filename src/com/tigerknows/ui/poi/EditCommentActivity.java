@@ -203,6 +203,7 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
         
         mTitleBtn.setText(mStatus == STATUS_NEW ? R.string.publish_comment : R.string.modify_comment);
         mRightBtn.setText(R.string.submit);
+        mRightBtn.setVisibility(View.VISIBLE);
         Comment comment = mPOI.getMyComment();
         if (Comment.isAuthorMe(comment) <= 0) {
             comment = new Comment();

@@ -75,7 +75,6 @@ public class SettingActivity extends BaseActivity {
         setListener();
         mContext = getBaseContext();
         mTitleBtn.setText(R.string.system_settings);
-        mRightBtn.setVisibility(View.GONE);
         mRefreshed = false;
         
         mHandler = new Handler(){

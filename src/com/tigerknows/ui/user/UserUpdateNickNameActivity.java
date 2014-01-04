@@ -57,7 +57,6 @@ public class UserUpdateNickNameActivity extends UserBaseActivity {
 		} else {
 			nickNameImg.setVisibility(View.GONE);
 		}
-        mRightBtn.setVisibility(View.GONE);
         mTitleBtn.setText(getString(R.string.title_update_nickname));
 	}
 

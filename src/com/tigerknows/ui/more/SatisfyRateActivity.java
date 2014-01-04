@@ -53,6 +53,7 @@ public class SatisfyRateActivity extends BaseActivity implements View.OnClickLis
 	private TextView[] mRateTxv;
 	private List<String> mRateList;
 	private boolean mChanged;
+	private boolean mStatus;
 	
 	protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,6 +66,7 @@ public class SatisfyRateActivity extends BaseActivity implements View.OnClickLis
         setListener();    
         mTitleBtn.setText(getString(R.string.satisfy_rate));
         mRightBtn.setText(R.string.submit);
+        mRightBtn.setVisibility(View.VISIBLE);
         refreshSubmitBtn();
         mChanged = false;
     }
@@ -119,15 +121,14 @@ public class SatisfyRateActivity extends BaseActivity implements View.OnClickLis
     }
     
     private void refreshSubmitBtn(){
-    	boolean status = true;
+        mStatus = true;
     	mChanged = false;
     	for (int i=0; i<NUM_OF_RATINGBAR; i++){
     		if (Math.round(mSatisfyRbt[i].getRating())== 0){
-    			status = false;
+    		    mStatus = false;
     		}else mChanged = true;
     	}
-    	mRightBtn.setEnabled(status);
-        Utility.refreshButton(mThis, mRightBtn);
+        Utility.refreshButton(mThis, mRightBtn, getString(R.string.submit), getString(R.string.cancel), mStatus);
     }
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -160,7 +161,11 @@ public class SatisfyRateActivity extends BaseActivity implements View.OnClickLis
     public void onClick(View view) {
     	if(view.getId() == R.id.right_btn){
     		mActionLog.addAction(mActionTag + ActionLog.TitleRightButton);
-    		submit();
+    		if (mStatus) {
+    		    submit();
+    		} else {
+    		    finish();
+    		}
     	}else if(view.getId() == R.id.left_btn){
     		mActionLog.addAction(mActionTag + ActionLog.TitleLeftButton);
     		if (showDiscardDialog() == false){

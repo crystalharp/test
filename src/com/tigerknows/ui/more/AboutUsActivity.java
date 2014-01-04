@@ -47,7 +47,6 @@ public class AboutUsActivity extends BaseActivity implements View.OnClickListene
         setListener();
         
         mTitleBtn.setText(R.string.about_us);
-        mRightBtn.setVisibility(View.GONE);
         
         mAppVersionTxv.setText(mThis.getString(R.string.about_version, TKConfig.CLIENT_SOFT_VERSION));
 //        mAppVersionTxv.setShadowLayer(2.0f, 1.0f, -1.0f, 0xffffffff);

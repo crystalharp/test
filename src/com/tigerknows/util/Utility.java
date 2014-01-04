@@ -922,15 +922,6 @@ public class Utility {
         drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
         textView.setCompoundDrawables(drawable, null, null, null);
     }
-
-    public static void refreshButton(Context context, Button button) {
-        String text = button.getText().toString();
-        refreshButton(context, button, text, text);
-    }
-
-    public static void refreshButton(Context context, Button button, String confirmText, String cancelText) {
-        refreshButton(context, button, confirmText, cancelText, button.isEnabled());
-    }
     
     public static void refreshButton(Context context, Button button, String confirmText, String cancelText, boolean isConfirm) {
         
@@ -940,7 +931,7 @@ public class Utility {
             button.setTextColor(colorStateList);
             button.setBackgroundResource(R.drawable.btn_confirm);
         } else {
-            int mRightBtnCancelColor = context.getResources().getColor(R.color.black_light);
+            int mRightBtnCancelColor = context.getResources().getColor(R.color.black_dark);
             button.setText(cancelText);
             button.setTextColor(mRightBtnCancelColor);
             button.setBackgroundResource(R.drawable.btn_cancel);
