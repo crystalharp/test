@@ -286,13 +286,19 @@ public final class DataQuery extends BaseQuery {
         initStaticField(getParameter(SERVER_PARAMETER_DATA_TYPE), getParameter(SERVER_PARAMETER_SUB_DATA_TYPE), context, this.cityId);
     }
     
-    public static boolean checkDiscoveryCity(int cityId) {
+    /**
+     * 检查指定是否支持指定类型的动态POI信息查询
+     * @param cityId
+     * @param type
+     * @return
+     */
+    public static boolean checkDiscoveryCity(int cityId, long type) {
         boolean exist = false;
         initDiscoverConfigList();
         if (Discover_Config_List != null) {
             List<DiscoverConfig> list = Discover_Config_List.getList();
             for(int i = list.size()-1; i >= 0; i--) {
-                if (list.get(i).seqId == cityId) {
+                if (list.get(i).seqId == cityId && list.get(i).list.contains(type)) {
                     exist = true;
                     break;
                 }

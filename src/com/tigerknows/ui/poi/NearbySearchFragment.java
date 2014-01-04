@@ -447,6 +447,12 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
 		if(str.length < 2){
 			return;
 		}
+        int cityId;
+        if(mFromPOI) {
+            cityId = MapEngine.getCityId(mPOI.getPosition());
+        } else {
+            cityId = Globals.getCurrentCityInfo(mSphinx, false).getId();
+        }
 		int operationCode = Integer.parseInt(str[1]);
 		DataQuery dataQuery;
     	switch(operationCode){
@@ -465,12 +471,6 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     		uiStackAdjust();
     		break;
         case CategoryProperty.OP_DISH:
-        	int cityId;
-        	if(mFromPOI) {
-        		cityId = MapEngine.getCityId(mPOI.getPosition());
-        	} else {
-        		cityId = Globals.getCurrentCityInfo(mSphinx).getId();
-        	}
         	if (cityId != CityInfo.CITY_ID_BEIJING) {
         		Toast.makeText(mSphinx, R.string.this_city_not_support_dish, Toast.LENGTH_LONG).show();
         		return;
@@ -483,9 +483,25 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
             mSphinx.queryStart(dataQuery);
             break;
         case CategoryProperty.OP_TUANGOU:
+            if (DataQuery.checkDiscoveryCity(cityId, Long.parseLong(BaseQuery.DATA_TYPE_TUANGOU)) == false) {
+                Toast.makeText(mSphinx, R.string.this_city_not_support_tuangou, Toast.LENGTH_LONG).show();
+                return;
+            }
         case CategoryProperty.OP_DIANYING:
+            if (DataQuery.checkDiscoveryCity(cityId, Long.parseLong(BaseQuery.DATA_TYPE_DIANYING)) == false) {
+                Toast.makeText(mSphinx, R.string.this_city_not_support_dianying, Toast.LENGTH_LONG).show();
+                return;
+            }
         case CategoryProperty.OP_YANCHU:
+            if (DataQuery.checkDiscoveryCity(cityId, Long.parseLong(BaseQuery.DATA_TYPE_YANCHU)) == false) {
+                Toast.makeText(mSphinx, R.string.this_city_not_support_yanchu, Toast.LENGTH_LONG).show();
+                return;
+            }
         case CategoryProperty.OP_ZHANLAN:
+            if (DataQuery.checkDiscoveryCity(cityId, Long.parseLong(BaseQuery.DATA_TYPE_ZHANLAN)) == false) {
+                Toast.makeText(mSphinx, R.string.this_city_not_support_zhanlan, Toast.LENGTH_LONG).show();
+                return;
+            }
             mSphinx.queryStart(getDataQuery(String.valueOf(operationCode)));
             uiStackAdjust();
             break;
