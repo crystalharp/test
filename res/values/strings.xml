@@ -1362,4 +1362,5 @@
     <string name="cityid_and_result_total_list">在以下城市发现结果，请选择</string>
     <string name="view_picture">查看图片</string> 
     <string name="move_map_select_point">移动地图选点</string>
+    <string name="this_city_not_support_dish">本城市暂无菜单商户</string>
 </resources>

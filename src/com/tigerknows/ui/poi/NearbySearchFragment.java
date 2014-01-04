@@ -32,6 +32,7 @@ import com.tigerknows.android.os.TKAsyncTask;
 
 import android.widget.Toast;
 import com.tigerknows.common.ActionLog;
+import com.tigerknows.map.CityInfo;
 import com.tigerknows.map.MapEngine;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.CategoryProperty;
@@ -464,10 +465,21 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     		uiStackAdjust();
     		break;
         case CategoryProperty.OP_DISH:
+        	int cityId;
+        	if(mFromPOI) {
+        		cityId = MapEngine.getCityId(mPOI.getPosition());
+        	} else {
+        		cityId = Globals.getCurrentCityInfo(mSphinx).getId();
+        	}
+        	if (cityId != CityInfo.CITY_ID_BEIJING) {
+        		Toast.makeText(mSphinx, R.string.this_city_not_support_dish, Toast.LENGTH_LONG).show();
+        		return;
+        	}
             dataQuery = getDataQuery(BaseQuery.DATA_TYPE_POI);
             dataQuery.addParameter(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_POI);
             dataQuery.addParameter(DataQuery.SERVER_PARAMETER_KEYWORD, getString(R.string.cate));
             dataQuery.addParameter(DataQuery.SERVER_PARAMETER_BIAS, DataQuery.BIAS_DISH);
+            dataQuery.setCityId(cityId);
             mSphinx.queryStart(dataQuery);
             break;
         case CategoryProperty.OP_TUANGOU:
