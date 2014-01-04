@@ -1225,9 +1225,7 @@ public class Utility {
                     trafficQueryFragment.setEnd(poiForTraffic);
                 }
                 trafficQueryFragment.setQueryType(queryType);
-                if (queryType != -1
-                        && locationCityInfo != null
-                        && MapEngine.getCityId(poi.getPosition()) == MapEngine.getCityId(locationCityInfo.getPosition())) {
+                if (queryType != -1) {
                     trafficQueryFragment.autoStartQuery(true);
                 } else {
                     trafficQueryFragment.setShowStartMyLocation(false);
