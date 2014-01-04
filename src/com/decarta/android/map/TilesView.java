@@ -818,6 +818,9 @@ public class TilesView extends GLSurfaceView {
 			touchRecord1.push(time, xy0Conv.x, xy0Conv.y);
 //			LogWrapper.i("TilesView","onTouchEvent touch down x,y,pCount:"+(int)(time/1000000)+","+event.getX()+","+event.getY()+","+pCount);
 
+            Position pos = screenXYConvToPos(xy0Conv.x, xy0Conv.y);
+            mParentMapView.executeTouchDownListeners(pos);
+            
 			if (pCount == 1) {
 				lastTouchDownTime = System.nanoTime();
 				lastTouchDown.x = event.getX(0);

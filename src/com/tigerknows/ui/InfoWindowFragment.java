@@ -135,7 +135,8 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
         
         OverlayItem overlayItem=mItemizedOverlay.getItemByFocused();
         if (overlayItem == null) {
-            return;
+            mItemizedOverlay.focuseOverlayItem(0);
+            overlayItem = mItemizedOverlay.getItemByFocused();
         }
         
         int id = v.getId();
@@ -195,8 +196,8 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
         OverlayItem overlayItem = mItemizedOverlay.getItemByFocused();
         
         if (overlayItem == null) {
-            overlayItem = itemizedOverlay.get(0);
-            overlayItem.isFoucsed = true;
+            itemizedOverlay.focuseOverlayItem(0);
+            overlayItem = itemizedOverlay.getItemByFocused();
         }
 
         mPosition = itemizedOverlay.getPositionByFocused();

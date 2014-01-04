@@ -16,11 +16,11 @@ import com.tigerknows.map.MapView.MapScene;
 import com.tigerknows.map.MapView.SnapMap;
 import com.tigerknows.map.TrafficOverlayHelper;
 import com.tigerknows.model.POI;
-import com.tigerknows.model.TrafficModel;
 import com.tigerknows.model.TrafficModel.Plan.Step;
 import com.tigerknows.model.TrafficQuery;
 import com.tigerknows.model.TrafficModel.Plan;
 import com.tigerknows.ui.BaseFragment;
+import com.tigerknows.ui.InfoWindowFragment;
 import com.tigerknows.ui.traffic.TrafficDetailFragment;
 import com.tigerknows.ui.traffic.TrafficQueryFragment;
 import com.tigerknows.util.Utility;
@@ -35,14 +35,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -60,9 +58,19 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
     private Button mConfirmBtn;
     private View mTrafficTitieView;
     private RadioGroup mTrafficTitleRadioGroup;
-    private RadioButton mTrafficTransferRbt;
-    private RadioButton mTrafficDriveRbt;
-    private RadioButton mTrafficWalkRbt;
+    RadioGroup.OnCheckedChangeListener mTitleListener = new RadioGroup.OnCheckedChangeListener() {
+        
+        @Override
+        public void onCheckedChanged(RadioGroup group, int checkedId) {
+            if (R.id.traffic_transfer_rbt == checkedId) {
+                changeTrafficType(Plan.Step.TYPE_TRANSFER);
+            } else if (R.id.traffic_drive_rbt == checkedId) {
+                changeTrafficType(Plan.Step.TYPE_DRIVE);
+            } else if (R.id.traffic_walk_rbt == checkedId) {
+                changeTrafficType(Plan.Step.TYPE_WALK);
+            }
+        }
+    };
     
     public ResultMapFragment(Sphinx sphinx) {
         super(sphinx);
@@ -81,8 +89,6 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
         mRootView = mLayoutInflater.inflate(R.layout.result_map, container, false);
         
         mBottomFrament = mSphinx.getInfoWindowFragment();
-        
-        mTrafficTitieView = mLayoutInflater.inflate(R.layout.traffic_query_bar, null);
         
         findViews();
         setListener();
@@ -108,18 +114,29 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
         int type = 0;
         if (ActionLog.TrafficTransferListMap.equals(mActionTag)) {
             type = Plan.Step.TYPE_TRANSFER;
-        } else if (ActionLog.TrafficDriveMap.equals(mActionTag)) {
+        } else if (ActionLog.TrafficDriveListMap.equals(mActionTag)) {
             type = Plan.Step.TYPE_DRIVE;
-        } else if (ActionLog.TrafficWalkMap.equals(mActionTag)) {
+        } else if (ActionLog.TrafficWalkListMap.equals(mActionTag)) {
             type = Plan.Step.TYPE_WALK;
         }
         
-        if (type > 0) {
+        if (ActionLog.TrafficDriveListMap.equals(mActionTag) ||
+                ActionLog.TrafficWalkListMap.equals(mActionTag)) {
             mTitleBtn.setVisibility(View.GONE);
             mTitleView.removeAllViews();
+            mTrafficTitieView = mSphinx.getTrafficQueryFragment().getTitleView();
+            mTrafficTitleRadioGroup = (RadioGroup) mTrafficTitieView.findViewById(R.id.traffic_rgp);
+            mTrafficTitleRadioGroup.setOnCheckedChangeListener(mTitleListener);
             mTitleView.addView(mTrafficTitieView);
             mRightBtn.setVisibility(View.INVISIBLE);
             changeTrafficType(type, false);
+        } else if (ActionLog.TrafficDriveMap.equals(mActionTag)) {
+            mTitleBtn.setText(getString(R.string.title_drive_result_map));
+        } else if (ActionLog.TrafficWalkMap.equals(mActionTag)) {
+            mTitleBtn.setText(getString(R.string.title_walk_result_map));
+        } else if (ActionLog.TrafficTransferMap.equals(mActionTag) ||
+                ActionLog.TrafficTransferListMap.equals(mActionTag)) {
+            mTitleBtn.setText(getString(R.string.title_transfer_result_map));
         }
         
         mSphinx.showHint(TKConfig.PREFS_HINT_LOCATION, R.layout.hint_location_map);
@@ -127,8 +144,13 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
 
     @Override
     public void onPause() {
+        if (this.isShowing()) {
+            mTitleView.removeView(mTrafficTitieView);
+            if (mTrafficTitleRadioGroup != null) {
+                mTrafficTitleRadioGroup.setOnCheckedChangeListener(null);
+            }
+        }
         super.onPause();
-        mTitleView.removeView(mTrafficTitieView);
     }
     
     public void setData(String title, String actionTag) {
@@ -141,41 +163,11 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
         mSnapView = mRootView.findViewById(R.id.snap_view);
         mCancelBtn = (Button) mRootView.findViewById(R.id.cancel_btn);
         mConfirmBtn = (Button) mRootView.findViewById(R.id.confirm_btn);
-
-        mTrafficTitleRadioGroup = (RadioGroup) mTrafficTitieView.findViewById(R.id.traffic_rgp);
-        mTrafficTransferRbt = (RadioButton) mTrafficTitieView.findViewById(R.id.traffic_transfer_rbt);
-        mTrafficDriveRbt = (RadioButton) mTrafficTitieView.findViewById(R.id.traffic_drive_rbt);
-        mTrafficWalkRbt = (RadioButton) mTrafficTitieView.findViewById(R.id.traffic_walk_rbt);
     }
     
     protected void setListener() {
         mCancelBtn.setOnClickListener(this);
         mConfirmBtn.setOnClickListener(this);
-
-        View.OnTouchListener onTouchListener = new OnTouchListener() {
-            
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                int id = v.getId();
-                if (mTrafficTitleRadioGroup.getCheckedRadioButtonId() == id) {
-                    return true;
-                }
-                int action = event.getAction() & MotionEvent.ACTION_MASK;
-                if (action == MotionEvent.ACTION_UP) {
-                    if (R.id.traffic_transfer_rbt == id) {
-                        return !changeTrafficType(Plan.Step.TYPE_TRANSFER);
-                    } else if (R.id.traffic_drive_rbt == id) {
-                        return !changeTrafficType(Plan.Step.TYPE_DRIVE);
-                    } else if (R.id.traffic_walk_rbt == id) {
-                        return !changeTrafficType(Plan.Step.TYPE_WALK);
-                    }
-                }
-                return false;
-            }
-        };
-        mTrafficTransferRbt.setOnTouchListener(onTouchListener);
-        mTrafficDriveRbt.setOnTouchListener(onTouchListener);
-        mTrafficWalkRbt.setOnTouchListener(onTouchListener);
     }
 
     @Override
@@ -233,11 +225,7 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
         case R.id.right_btn:
             mActionLog.addAction(mActionTag + ActionLog.TitleRightButton);
             String[] list = mSphinx.getResources().getStringArray(R.array.drvie_search_option);
-            int[] leftCompoundIconList = new int[3];
-            leftCompoundIconList[0] = R.drawable.ic_share_sina;
-            leftCompoundIconList[1] = R.drawable.ic_share_sina;
-            leftCompoundIconList[2] = R.drawable.ic_share_sina;
-            final ArrayAdapter<String> adapter = new StringArrayAdapter(mSphinx, list, leftCompoundIconList);
+            final ArrayAdapter<String> adapter = new StringArrayAdapter(mSphinx, list);
             
             View alterListView = mSphinx.getLayoutInflater().inflate(R.layout.alert_listview, null, false);
             
@@ -308,7 +296,6 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
     }
     
     private boolean changeTrafficType(int type, boolean jumpTransferResultFragment) {
-        mSphinx.resetLoactionButtonState();
         boolean result = false;
         TrafficDetailFragment trafficDetailFragment = mSphinx.getTrafficDetailFragment();
         TrafficQuery trafficQuery = trafficDetailFragment.getTrafficQuery();
@@ -336,13 +323,11 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
                     mSphinx.showView(R.id.view_traffic_result_transfer);
                 } else {
                     mActionTag = ActionLog.TrafficTransferListMap;
-                    mTrafficTransferRbt.setChecked(true);
                     mRightBtn.setVisibility(View.GONE);
                 }
                 result = true;
             } else if (type == Plan.Step.TYPE_DRIVE) {
-                mActionTag = ActionLog.TrafficDriveMap;
-                mTrafficDriveRbt.setChecked(true);
+                mActionTag = ActionLog.TrafficDriveListMap;
                 mRightBtn.setText(R.string.preference);
                 mRightBtn.setVisibility(View.VISIBLE);
                 mRightBtn.setOnClickListener(this);
@@ -351,8 +336,7 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
                 TrafficOverlayHelper.panToViewWholeOverlay(list.get(0), mSphinx.getMapView(), mSphinx);
                 result = true;
             } else if (type == Plan.Step.TYPE_WALK) {
-                mActionTag = ActionLog.TrafficWalkMap;
-                mTrafficWalkRbt.setChecked(true);
+                mActionTag = ActionLog.TrafficWalkListMap;
                 mRightBtn.setVisibility(View.GONE);
 
                 TrafficOverlayHelper.drawTrafficPlanListOverlay(mSphinx, list, 0);
@@ -372,7 +356,20 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
             view.setVisibility(View.INVISIBLE);
             mSphinx.replaceBottomUI(null);
         }
-        restoreDataBean();
+        if (mResultData != null) {
+            boolean existPOI = false;
+            List<ItemizedOverlay> list = mResultData.mapScene.itemizedOverlayList;
+            for(int i = list.size() - 1; i >= 0; i--) {
+                if (ItemizedOverlay.POI_OVERLAY.contains(list.get(i).getName())) {
+                    existPOI = true;
+                    break;
+                }
+            }
+            
+            if (existPOI) {
+                restoreDataBean();
+            }
+        }
     }
 
     @Override
@@ -393,12 +390,16 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
                 ActionLog.TrafficTransferMap.equals(actionTag) ||
                 ActionLog.TrafficDriveMap.equals(actionTag) ||
                 ActionLog.TrafficWalkMap.equals(actionTag) ||
+                ActionLog.TrafficDriveListMap.equals(actionTag) ||
+                ActionLog.TrafficWalkListMap.equals(actionTag) ||
                 ActionLog.TrafficTransferListMap.equals(actionTag)) {
             
             if (ActionLog.ResultMapSelectPoint.equals(mActionTag) == false &&
                     ActionLog.TrafficTransferMap.equals(mActionTag) == false &&
                     ActionLog.TrafficDriveMap.equals(mActionTag) == false &&
                     ActionLog.TrafficWalkMap.equals(mActionTag) == false &&
+                    ActionLog.TrafficDriveListMap.equals(mActionTag) == false &&
+                    ActionLog.TrafficWalkListMap.equals(mActionTag) == false &&
                     ActionLog.TrafficTransferListMap.equals(mActionTag) == false) {
                 
                 mResultData = new ResultData();
@@ -414,6 +415,8 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
                 ActionLog.TrafficTransferMap.equals(mActionTag) ||
                 ActionLog.TrafficDriveMap.equals(mActionTag) ||
                 ActionLog.TrafficWalkMap.equals(mActionTag) ||
+                ActionLog.TrafficDriveListMap.equals(mActionTag) ||
+                ActionLog.TrafficWalkListMap.equals(mActionTag) ||
                 ActionLog.TrafficTransferListMap.equals(mActionTag)) {
             
             if (mResultData != null) {
@@ -421,6 +424,8 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
                         ActionLog.TrafficTransferMap.equals(mResultData.actionTag) == false &&
                         ActionLog.TrafficDriveMap.equals(mResultData.actionTag) == false &&
                         ActionLog.TrafficWalkMap.equals(mResultData.actionTag) == false &&
+                        ActionLog.TrafficDriveListMap.equals(mResultData.actionTag) == false &&
+                        ActionLog.TrafficWalkListMap.equals(mResultData.actionTag) == false &&
                         ActionLog.TrafficTransferListMap.equals(mResultData.actionTag) == false) {
                     
                     if (mActionTag.equals(mResultData.actionTag) == false) {

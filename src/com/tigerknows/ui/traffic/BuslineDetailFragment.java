@@ -27,6 +27,8 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.decarta.android.map.ItemizedOverlay;
+import com.decarta.android.map.OverlayItem;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
@@ -372,6 +374,10 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
 			viewMap();
 			// 将地图缩放至可以显示完整的交通路径, 并平移到交通路径中心点
 			BuslineOverlayHelper.panToViewWholeOverlay(line, mSphinx.getMapView(), (Activity)mSphinx);
+			ItemizedOverlay itemizedOverlay = mSphinx.getMapView().getOverlaysByName(ItemizedOverlay.BUSLINE_OVERLAY);
+			itemizedOverlay.focuseOverlayItem(0);
+            OverlayItem overlayItem = itemizedOverlay.getItemByFocused();
+            mSphinx.showInfoWindow(overlayItem);
         }
     }
     
