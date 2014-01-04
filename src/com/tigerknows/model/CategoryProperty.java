@@ -6,6 +6,10 @@ public class CategoryProperty {
 	private int linearLayoutVisibility;
 	private int[] operationType;
 	private String[] buttonText;
+	private int drawableID;
+
+
+	private int colorID;
 	
 	public static final int NUM_OF_SUBBUTTONS = 9;
 	public static final int[] LINEAR_ARRAY = {4,2,1};
@@ -88,4 +92,21 @@ public class CategoryProperty {
 			}
 		}
 	}
+	
+	public int getDrawableID() {
+		return drawableID;
+	}
+
+	public void setDrawableID(int drawableID) {
+		this.drawableID = drawableID;
+	}
+
+	public int getColorID() {
+		return colorID;
+	}
+
+	public void setColorID(int colorID) {
+		this.colorID = colorID;
+	}
+	
 }

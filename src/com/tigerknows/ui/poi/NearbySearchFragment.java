@@ -7,6 +7,7 @@ package com.tigerknows.ui.poi;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -113,8 +114,8 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         	new CategoryProperty(R.id.traffic_category, 3),
         	new CategoryProperty(R.id.shopping_category, 3),
         	new CategoryProperty(R.id.travel_category, 1),
-        	new CategoryProperty(R.id.beauty_category, 1), 
         	new CategoryProperty(R.id.bank_category, 3),
+        	new CategoryProperty(R.id.beauty_category, 1), 
         	new CategoryProperty(R.id.sports_category, 1),
         	new CategoryProperty(R.id.hospital_category, 1)
     	};
@@ -127,8 +128,33 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     	for(int i=0; i<NUM_OF_CATGEGORY; i++){
     		mCategoryList[i].setName(mCategoryNames[i]);
     		mCategoryList[i].setButtonText(mSubCategoryNames[i].split(";"));
+    		mCategoryList[i].setDrawableID(CATEGORY_DRAWABLE_ID[i]);
+    		mCategoryList[i].setColorID(CATEGORY_COLOR_ID[i]);
     	}
     }
+    private static final int[] CATEGORY_DRAWABLE_ID = {R.drawable.ic_arrow_food,
+    	R.drawable.ic_arrow_hotel,
+    	R.drawable.ic_arrow_entertainment,
+    	R.drawable.ic_arrow_traffic,
+    	R.drawable.ic_arrow_shopping,
+    	R.drawable.ic_arrow_travel,
+    	R.drawable.ic_arrow_bank,
+    	R.drawable.ic_arrow_beauty,
+    	R.drawable.ic_arrow_sports,
+    	R.drawable.ic_arrow_hospital
+    };
+    
+    private static final int[] CATEGORY_COLOR_ID = {R.color.nearby_food,
+    	R.color.nearby_hotel,
+    	R.color.nearby_entertainment,
+    	R.color.nearby_traffic,
+    	R.color.nearby_shopping,
+    	R.color.nearby_travel,
+    	R.color.nearby_bank,
+    	R.color.nearby_beauty,
+    	R.color.nearby_sports,
+    	R.color.nearby_hospital
+    };
     
     private static final int[] HOT_LLY_ID = {R.id.hot_0_lly, R.id.hot_1_lly, R.id.hot_2_lly, R.id.hot_3_lly};
     private static final int[] HOT_BTN_ID = {R.id.hot_0_0_btn, R.id.hot_0_1_btn, R.id.hot_0_2_btn, R.id.hot_0_3_btn,
@@ -151,6 +177,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     	R.drawable.ic_custom_market,
     	R.drawable.ic_custom_mall,
     	R.drawable.ic_custom_sale,
+    	R.drawable.ic_custom_add
     };
     
     private View[] mCategoryViews;
@@ -282,8 +309,9 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     	for(int i = 0; i < NUM_OF_HOT + 1; i++){
     		mHotBtnViews[i].setVisibility(View.GONE);
     	}
-    	for(int i = 0; i < customPrefs.length(); i++){
-    		if(customPrefs.charAt(i) == '1'){
+    	for(int i = 0; i < customPrefs.length() + 1; i++){
+    		if(i == customPrefs.length() || 	//“自定义”按钮
+    				customPrefs.charAt(i) == '1'){
     			String[] str = mHotNames[i].split(";");
     			mHotBtnViews[countBtnView].setContentDescription(mHotNames[i]);
     			((TextView)mHotBtnViews[countBtnView].findViewById(R.id.app_name_txv)).setText(str[0]);
@@ -296,15 +324,6 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     			}
     		}
     	}
-    	mHotBtnViews[countBtnView].setContentDescription("自定义;" + CategoryProperty.OP_CUSTOM);
-    	((TextView)mHotBtnViews[countBtnView].findViewById(R.id.app_name_txv)).setText("自定义");
-    	mHotBtnViews[countBtnView].setVisibility(View.VISIBLE);
-    	mHotBtnViews[countBtnView].setBackgroundResource(R.drawable.ic_custom_add);
-    	countBtnView++;
-		if(mCountLly * 4 < countBtnView){
-			mHotLlys[mCountLly].setVisibility(View.VISIBLE);
-			mCountLly++;
-		}
     	for(int i = countBtnView; i<mCountLly * 4; i++){
     		mHotBtnViews[i].setVisibility(View.INVISIBLE);
     	}
@@ -328,6 +347,10 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     			int OP = mCategoryList[i].getOperationType(j);
     			mCategoryBtns[i][j].setContentDescription(cp.getButtonText(j) + ";" + String.valueOf(OP));
     		}
+    		Drawable drawable = mSphinx.getResources().getDrawable(cp.getDrawableID());
+    		drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+    		mCategoryBtns[i][CategoryProperty.NUM_OF_SUBBUTTONS].setCompoundDrawables(null, null, drawable, null);
+    		mCategoryBtns[i][CategoryProperty.NUM_OF_SUBBUTTONS].setTextColor(cp.getColorID());
     	}
     }
     
@@ -527,15 +550,20 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
 	}
 
 	private void doFold(){
-    	if(TextUtils.equals("No", mIsFold)){
+		if(mCountLly == 1){
+			mHotFoldBtn.setVisibility(View.GONE);
+			mIsFold = "No";
+		}else if(TextUtils.equals("No", mIsFold)){
     		for(int i = 1; i < mCountLly; i++){
     			mHotLlys[i].setVisibility(View.VISIBLE);
     			mHotFoldBtn.setBackgroundResource(R.drawable.btn_to_fold);
+    			mHotFoldBtn.setVisibility(View.VISIBLE);
     		}
     	}else{
     		for(int i = 1; i < NUM_OF_HOT_LLY; i++){
     			mHotLlys[i].setVisibility(View.GONE);
     			mHotFoldBtn.setBackgroundResource(R.drawable.btn_to_expand);
+    			mHotFoldBtn.setVisibility(View.VISIBLE);
     		}
     	}
     	TKConfig.setPref(mContext, TKConfig.PREFS_CUSTOM_FOLD, mIsFold);

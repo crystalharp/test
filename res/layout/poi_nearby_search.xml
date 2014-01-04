@@ -15,12 +15,17 @@
             >
 		    <include layout="@layout/poi_nearby_search_bar"
 		        android:layout_width="fill_parent"
-		        android:layout_height="wrap_content"/>
+		        android:layout_height="wrap_content"
+		        />
 		    <LinearLayout android:id="@+id/hot_lly"
 		        android:layout_width="fill_parent"
 		        android:layout_height="wrap_content"
 		        android:orientation="vertical"
-		        android:background="@color/normal_background"
+		        android:background="@drawable/bg_white"
+                android:shadowDx="0"
+                android:shadowDy="1"
+                android:shadowColor="#a77a00"
+                android:shadowRadius="1"		        
 		        >
 		        <LinearLayout android:id="@+id/hot_0_lly"
 		            android:layout_width="fill_parent"
@@ -149,7 +154,8 @@
 		        android:layout_height="wrap_content"
 		        android:background="@drawable/btn_to_expand"
 		        android:layout_gravity="center_horizontal"
-		        android:layout_marginTop="-12dp"
+		        android:layout_marginTop="-16dp"
+		        android:layout_marginBottom="-12dp"
 		        />
 		    <include layout="@layout/poi_nearby_search_category_item"
 		        android:id="@+id/food_category"
@@ -182,12 +188,12 @@
 		        android:layout_height="wrap_content"
 		        />
 		    <include layout="@layout/poi_nearby_search_category_item"
-		        android:id="@+id/beauty_category"
+		        android:id="@+id/bank_category"
 		        android:layout_width="fill_parent"
 		        android:layout_height="wrap_content"
-		        />
+		        />		    
 		    <include layout="@layout/poi_nearby_search_category_item"
-		        android:id="@+id/bank_category"
+		        android:id="@+id/beauty_category"
 		        android:layout_width="fill_parent"
 		        android:layout_height="wrap_content"
 		        />
@@ -207,7 +213,7 @@
     <com.tigerknows.widget.FilterListView
         android:id="@+id/filter_list_view"
         android:layout_width="fill_parent" 
-        android:layout_height="fill_parent" 
+        android:layout_height="wrap_content" 
         android:visibility="gone"
         >
     </com.tigerknows.widget.FilterListView>
