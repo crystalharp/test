@@ -583,6 +583,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
             } catch (Exception e) {
                 return;
             }
+            v.setTag(plan);
             planHolder.title.setSingleLine(titleSingleLine);
             if (titleSingleLine) {
                 planHolder.title.setEllipsize(TextUtils.TruncateAt.END);

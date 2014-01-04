@@ -189,6 +189,7 @@ public class TrafficResultFragment extends BaseFragment {
             public void onClick(View v) {
                 mSphinx.getTrafficQueryFragment().switchStartEnd();
                 mSphinx.getTrafficQueryFragment().query();
+                mDismissed = true;
             }
         });
         

@@ -33,6 +33,7 @@ import com.tigerknows.model.DataQuery.GeoCoderResponse.GeoCoderList;
 import com.tigerknows.ui.discover.CycleViewPager;
 import com.tigerknows.ui.discover.CycleViewPager.CycleOnPageChangeListener;
 import com.tigerknows.ui.discover.CycleViewPager.CyclePagerAdapter;
+import com.tigerknows.ui.traffic.TrafficDetailFragment;
 import com.tigerknows.ui.traffic.TrafficDetailFragment.PlanItemRefresher;
 import com.tigerknows.util.Utility;
 
@@ -179,9 +180,20 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
         } else if (id == R.id.detail_btn) {
             infoWindowClicked();
         } else if (id == R.id.traffic_plan_item) {
-            Plan plan = (Plan) mItemizedOverlay.get(0).getAssociatedObject();
+            Plan plan = (Plan) v.getTag();
+            if (plan == null) {
+                return;
+            }
+            TrafficDetailFragment f = mSphinx.getTrafficDetailFragment();
             if (plan.getType() == Step.TYPE_DRIVE || plan.getType() == Step.TYPE_WALK) {
-                mSphinx.getTrafficDetailFragment().refreshResult(plan.getType());
+                f.refreshResult(plan.getType());
+                mSphinx.showView(R.id.view_traffic_result_detail);
+            } else if (plan.getType() == Step.TYPE_TRANSFER) {
+                int index = f.getResult(Step.TYPE_TRANSFER).indexOf(plan);
+                if (index == -1) {
+                    return;
+                }
+                f.refreshResult(plan.getType(), index);
                 mSphinx.showView(R.id.view_traffic_result_detail);
             }
         }
