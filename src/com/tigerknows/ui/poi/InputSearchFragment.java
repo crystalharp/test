@@ -342,7 +342,11 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                 if (c != null && c.getPosition() != null) {
                     POI p = new POI();
                     p.setPosition(c.getPosition());
-                    p.setName(getString(R.string.my_location));
+                    if (mRequest == REQUEST_COMMON_PLACE) {
+                        p.setName(MapEngine.getInstance().getPositionName(c.getPosition()));
+                    } else {
+                        p.setName(getString(R.string.my_location));
+                    }
                     responsePOI(p);
                     dismiss();
                 } else {
