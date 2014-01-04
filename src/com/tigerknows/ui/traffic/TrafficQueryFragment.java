@@ -358,10 +358,12 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
     }
     
     public void onPause() {
-    	super.onPause();
-    	mTitleView.removeView(mTitleBar);
+        if (this.isShowing()) {
+            mTitleView.removeView(mTitleBar);
+        }
     	mSettedRadioBtn = 0;
     	autoStartQuery = false;
+    	super.onPause();
     }
     
 	@Override
@@ -661,6 +663,10 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
         mRadioGroup.check(mSettedRadioBtn);
         
     }    
+    
+    public View getTitleView() {
+        return mTitleBar;
+    }
 	
 	public void onBack() {
 	    dismiss();
@@ -679,7 +685,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
         } 
 	}
 
-	public static void dealWithTrafficResponse(Sphinx sphinx, String actionTag, TrafficQuery trafficQuery, boolean reset) {
+	public static boolean dealWithTrafficResponse(Sphinx sphinx, String actionTag, TrafficQuery trafficQuery, boolean reset) {
 	    
         TrafficModel trafficModel = trafficQuery.getTrafficModel();
         ActionLog actionLog = ActionLog.getInstance(sphinx);
@@ -687,9 +693,11 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
         if (trafficModel == null) {
             actionLog.addAction(actionTag + ActionLog.TrafficResultTraffic, -1);
             showTrafficErrorTip(sphinx, trafficQuery);
+            return false;
         } else if (trafficModel.getType() == TrafficModel.TYPE_EMPTY) {
             actionLog.addAction(actionTag + ActionLog.TrafficResultTraffic, -2);
             showTrafficErrorTip(sphinx, trafficQuery);
+            return false;
         } else if (trafficModel.getType() == TrafficModel.TYPE_ALTERNATIVES 
         		|| trafficModel.getType() == TrafficModel.TYPE_PROJECT) {
             
@@ -722,7 +730,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
             		if (sphinx.uiStackPeek() == R.id.view_result_map) {
                         sphinx.getResultMapFragment().changeTrafficType(type);
                     } else {
-                        sphinx.getResultMapFragment().setData(null, ActionLog.TrafficDriveMap);
+                        sphinx.getResultMapFragment().setData(null, ActionLog.TrafficDriveListMap);
                         sphinx.showView(R.id.view_result_map);
                         TrafficOverlayHelper.drawTrafficPlanListOverlay(sphinx, planList, 0);
                         TrafficOverlayHelper.panToViewWholeOverlay(planList.get(0), sphinx.getMapView(), sphinx);
@@ -732,7 +740,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
                     if (sphinx.uiStackPeek() == R.id.view_result_map) {
                         sphinx.getResultMapFragment().changeTrafficType(type);
                     } else {
-                        sphinx.getResultMapFragment().setData(null, ActionLog.TrafficWalkMap);
+                        sphinx.getResultMapFragment().setData(null, ActionLog.TrafficWalkListMap);
                         sphinx.showView(R.id.view_result_map);
                         TrafficOverlayHelper.drawTrafficPlanListOverlay(sphinx, planList, 0);
                         TrafficOverlayHelper.panToViewWholeOverlay(planList.get(0), sphinx.getMapView(), sphinx);
@@ -740,6 +748,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
                 }
             }
         } 
+        return true;
     }
     
     private static void showTrafficErrorTip(Sphinx sphinx, TrafficQuery trafficQuery) {

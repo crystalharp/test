@@ -54,4 +54,16 @@
     
     <color name="normal_background">#fff0f0f0</color>
     <color name="list_background">#fffdfdfd</color>
+    
+    <color name="nearby_food">#f2843a</color>
+    <color name="nearby_hotel">#747ccb</color>
+    <color name="nearby_entertainment">#e95147</color>
+    <color name="nearby_traffic">#1abb9c</color>
+    <color name="nearby_shopping">#3497da</color>
+    <color name="nearby_travel">#2ecb71</color>
+    <color name="nearby_bank">#34495e</color>
+    <color name="nearby_beauty">#e46aa1</color>
+    <color name="nearby_sports">#00a0ec</color>
+    <color name="nearby_hospital">#de1a11</color>
+    
 </resources>

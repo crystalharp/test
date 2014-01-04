@@ -193,6 +193,9 @@
     <string name="title_busline_line_popup">线路%1$s</string>
     <string name="title_station_result">站点列表</string>
     <string name="title_traffic_result_map">交通地图</string>
+    <string name="title_transfer_result_map">公交地图</string>
+    <string name="title_drive_result_map">驾车地图</string>
+    <string name="title_walk_result_map">步行地图</string>
     <string name="title_busline_result_map">线路地图</string>
     <string name="title_click_map">地图选点</string>
     <string name="title_traffic_search_history">近期搜索线路</string>
