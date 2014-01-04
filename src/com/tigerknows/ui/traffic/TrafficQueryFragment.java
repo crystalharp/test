@@ -416,7 +416,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	public void initStartContent() {
 
 	    if (showStartMyLocation) {
-	        //如果要求显示起点，定位为设定城市，在起点框填写上当前位置。
+	        //如果要求显示起点，在起点框填写上当前位置。
 	        if (mStart.textEmpty()) {
 	            POI poi = getMylocationPOI();
 	            if (poi != null) {
