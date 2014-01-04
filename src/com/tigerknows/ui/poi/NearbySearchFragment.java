@@ -214,7 +214,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     public void onResume() {
         super.onResume();
         mIsFold = TKConfig.getPref(mContext, TKConfig.PREFS_CUSTOM_FOLD, "Yes");
-        refreshHotView(TKConfig.getPref(mContext, TKConfig.PREFS_CUSTOM_CATEGORY, "111111100000000"));
+        refreshHotView(TKConfig.getPref(mContext, TKConfig.PREFS_CUSTOM_CATEGORY, "111100110001000"));
         doFold();
         mLeftBtn.setOnClickListener(this);
         if(mFilterListView.getVisibility() == View.GONE){

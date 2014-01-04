@@ -105,7 +105,7 @@ public class CustomCategoryFragment extends BaseFragment {
 	public void onResume(){
 		super.onResume();
 		mTitleBtn.setText("自定义分类");
-		mCurrentState = TKConfig.getPref(mContext, TKConfig.PREFS_CUSTOM_CATEGORY, "111111100000000");
+		mCurrentState = TKConfig.getPref(mContext, TKConfig.PREFS_CUSTOM_CATEGORY, "111100110001000");
 		refreshViewByCurrentState();
 	}
 	
