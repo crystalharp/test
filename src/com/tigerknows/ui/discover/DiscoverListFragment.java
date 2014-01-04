@@ -4,7 +4,6 @@
 
 package com.tigerknows.ui.discover;
 
-import com.decarta.android.exception.APIException;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
@@ -1042,6 +1041,8 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             
             if (getList().size() < mList.getTotal()) {
                 mResultLsv.setFooterSpringback(true);
+            } else {
+                mResultLsv.setFooterSpringback(false);
             }
         } else {
             if (dataQuery.isTurnPage()) {
@@ -1054,11 +1055,6 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     private void dealWithCenterPosition(DiscoverResult discoverResult, DataQuery dataQuery) {
         Position centerPosition = discoverResult.getCenterPosition();
         if (centerPosition != null) {
-            try {
-                mSphinx.getMapView().centerOnPosition(centerPosition);
-            } catch (APIException e) {
-                e.printStackTrace();
-            }
             POI poi = dataQuery.getPOI();
             if (!centerPosition.equals(poi.getPosition())) {
                 POI centerPOI = new POI();
