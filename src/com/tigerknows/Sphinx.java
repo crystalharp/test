@@ -1740,7 +1740,13 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     public void changeCity(CityInfo cityInfo) {
         if (cityInfo.isAvailably()) {
 
-            mMapView.centerOnPosition(cityInfo.getPosition(), cityInfo.getLevel(), true);
+            CityInfo myLocationCityInfo = Globals.g_My_Location_City_Info;
+            if (myLocationCityInfo != null &&
+                    myLocationCityInfo.getId() == cityInfo.getId()) {
+                mMapView.centerOnPosition(myLocationCityInfo.getPosition(), TKConfig.ZOOM_LEVEL_LOCATION,true);
+            } else {
+                mMapView.centerOnPosition(cityInfo.getPosition(), cityInfo.getLevel(), true);
+            }
             updateCityInfo(cityInfo);
             if (!mViewedCityInfoList.contains(cityInfo)) {
                 mViewedCityInfoList.add(cityInfo);
