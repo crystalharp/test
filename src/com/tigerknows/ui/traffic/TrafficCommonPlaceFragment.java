@@ -77,6 +77,7 @@ public class TrafficCommonPlaceFragment extends BaseFragment{
         super.onResume();
         mTitleBtn.setText(R.string.set_common_place);
         mList.updateData();
+        mAdapter.notifyDataSetChanged();
     }
 
     public TrafficCommonPlaceFragment(Sphinx sphinx) {

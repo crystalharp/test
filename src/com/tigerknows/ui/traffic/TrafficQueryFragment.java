@@ -513,6 +513,10 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
         if (!mQueryHistorys.contains(sh)) {
             mHistoryTable.add(sh);
             mQueryHistorys.add(0, sh);
+            if (mQueryHistorys.size() == 1) {
+                mQueryHistory.setVisibility(View.VISIBLE);
+                mQueryHistoryLst.setVisibility(View.VISIBLE);
+            }
             mQueryHistoryAdapter.refreshList(mQueryHistorys);
         } else {
             updateSearchHistory(sh);
