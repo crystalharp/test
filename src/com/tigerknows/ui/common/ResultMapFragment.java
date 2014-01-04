@@ -372,7 +372,20 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
             view.setVisibility(View.INVISIBLE);
             mSphinx.replaceBottomUI(null);
         }
-        restoreDataBean();
+        if (mResultData != null) {
+            boolean existPOI = false;
+            List<ItemizedOverlay> list = mResultData.mapScene.itemizedOverlayList;
+            for(int i = list.size() - 1; i >= 0; i--) {
+                if (ItemizedOverlay.POI_OVERLAY.contains(list.get(i).getName())) {
+                    existPOI = true;
+                    break;
+                }
+            }
+            
+            if (existPOI) {
+                restoreDataBean();
+            }
+        }
     }
 
     @Override
