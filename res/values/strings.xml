@@ -25,6 +25,7 @@
     <string name="prompt_location">定位提示</string>
     <string name="prompt_location_return_to_">回到%1$s</string>
     <string name="prompt_location_stay_in_">留在%1$s</string>
+    <string name="setting_success">设置成功</string>
     
     <string name="location_text">定位</string>
     <string name="location_text_doing">定位中</string>
