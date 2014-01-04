@@ -49,7 +49,7 @@
     <string name="distance">距</string>
     <string name="me">我</string>
     <string name="distanceA">距地标</string>
-    <string name="double_bracket">（%1$s个）</string>
+    <string name="double_bracket">【%1$s个】</string>
     <string name="year">年</string>
     <string name="month">月</string>
     
@@ -828,6 +828,7 @@
     <string name="dianying">电影</string>
     <string name="yanchu">演出</string>
     <string name="zhanlan">展览</string>
+    <string name="film">影片</string>
     
     <string name="tuangou_list">团购列表</string>
     <string name="people">人</string>
