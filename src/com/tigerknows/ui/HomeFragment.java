@@ -4,11 +4,13 @@
 
 package com.tigerknows.ui;
 
+import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.android.location.Position;
 import com.tigerknows.common.ActionLog;
+import com.tigerknows.map.CityInfo;
 import com.tigerknows.map.MapView;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataQuery;
@@ -120,9 +122,13 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
     
     public static boolean checkCenterPosition(Sphinx sphinx){
         MapView mapView = sphinx.getMapView();
-        Position position = mapView.getCenterPosition();
+        Position position = null;
+        CityInfo cityInfo = Globals.g_My_Location_City_Info;
+        if(cityInfo != null){
+        	position = cityInfo.getPosition();
+        }
         float zoomLevel = mapView.getZoomLevel();
-        if (sphinx.positionInScreen(position)
+        if (position != null  && sphinx.positionInScreen(position)
                 && zoomLevel >= 12) { // 12级别是1千米
         	return false;
         }
