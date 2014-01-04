@@ -208,7 +208,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         mRightBtn.setVisibility(View.VISIBLE);
         mRightBtn.setOnClickListener(this);
         
-        mSphinx.showSoftInput(mKeywordEdt.getInput());
+        mSphinx.promptShowSoftInput(mKeywordEdt.getInput());
         mKeywordEdt.getInput().requestFocus();
         Utility.refreshButton(mSphinx,
                 mRightBtn,

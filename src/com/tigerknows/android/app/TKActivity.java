@@ -570,6 +570,11 @@ public class TKActivity extends Activity implements TKAsyncTask.EventListener {
     }
     
     // TODO: soft input begin
+    
+    public void promptShowSoftInput(View view) {
+        mSoftInputManager.promptShowSoftInput(view);
+    }
+    
     public void showSoftInput() {
         mSoftInputManager.showSoftInput();
     }

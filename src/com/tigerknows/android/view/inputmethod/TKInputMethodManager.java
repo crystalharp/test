@@ -48,6 +48,17 @@ public class TKInputMethodManager {
      * 显示虚拟键盘
      * @param view 指定需要显示虚拟键盘的view
      */
+    public void promptShowSoftInput(View view) {
+        if (view != null) {
+            view.requestFocus();
+            inputMethodManager.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
+        }
+    }
+    
+    /**
+     * 显示虚拟键盘
+     * @param view 指定需要显示虚拟键盘的view
+     */
     public void showSoftInput(View view) {
         postShowSoftInput(view);
     }
