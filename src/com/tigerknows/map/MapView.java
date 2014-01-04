@@ -1095,6 +1095,7 @@ public class MapView extends RelativeLayout implements
 
     public MapScene getCurrentMapScene() {
         MapScene mapScene = new MapScene();
+        mapScene.infoWindow = getInfoWindow().isVisible();
         mapScene.position = getCenterPosition();
         mapScene.zoomLevel = (int) getZoomLevel();
         List<ItemizedOverlay> itemizedOverlayList = new ArrayList<ItemizedOverlay>();
@@ -1115,7 +1116,10 @@ public class MapView extends RelativeLayout implements
         mapScene.shapeList = shapeList;
         InfoWindowFragment infoWindowFragment = sphinx.getInfoWindowFragment();
         ItemizedOverlay itemizedOverlay = infoWindowFragment.getItemizedOverlay();
-        if (itemizedOverlay != null) {
+        ItemizedOverlay currentOverlay = getCurrentOverlay();
+        if (itemizedOverlay != null &&
+                currentOverlay != null &&
+                itemizedOverlay.getName().equals(currentOverlay.getName())) {
             mapScene.overlayItem = itemizedOverlay.getItemByFocused();
         } else {
             mapScene.overlayItem = null;
@@ -1134,6 +1138,7 @@ public class MapView extends RelativeLayout implements
             }
 
             clearMap();
+            getInfoWindow().setVisible(mapScene.infoWindow);
             if (mapScene.shapeList != null) {
                 tilesView.getShapes().addAll(mapScene.shapeList);
             }
@@ -1152,6 +1157,7 @@ public class MapView extends RelativeLayout implements
     }
 
     public static class MapScene {
+    	public boolean infoWindow;
         public Position position;
         public int zoomLevel;
         public List<ItemizedOverlay> itemizedOverlayList;

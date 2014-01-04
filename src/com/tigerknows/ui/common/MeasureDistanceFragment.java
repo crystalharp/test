@@ -130,7 +130,7 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
      * 移除最近生成的线路中最近添加的点，当最近生成的线路只剩下一个点时则删除此线路
      * @return
      */
-    public boolean removeLastPoint() {
+    private boolean removeLastPoint() {
         
         boolean result = false;
         
@@ -192,7 +192,7 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
     /**
      * 清空测距生成的overylay和shape
      */
-    public void clean() {
+    private void clean() {
         mMapView.deleteOverlaysByName(ItemizedOverlay.MEASURE_DISTANCE_OVERLAY);
         mMapView.deleteShapeByName(Shape.MEASURE_DISTANCE );
         InfoWindowHelper.hideInfoWindow(mMapView);
@@ -230,6 +230,11 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
         return mRootView;
     }
     
+    @Override
+    protected void setListener() {
+    	// 不拦截触摸事件
+    }
+    
     public void setData() {
         Sphinx.TouchMode touchMode = mSphinx.getTouchMode();
         if (touchMode != Sphinx.TouchMode.MEASURE_DISTANCE) {
@@ -245,7 +250,6 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
         super.onResume();
         mMapView.setStopRefreshMyLocation(false);
         mTitleBtn.setText(R.string.measure);
-        setOnTouchListener(null);
         
         mRevocationBtn.setTextColor(mTitleFragment.mRightBtnConfirmColor);
         ViewGroup mRightView = (ViewGroup) mRightBtn.getParent();
