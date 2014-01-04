@@ -15,6 +15,9 @@
 -->
 
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<item android:state_enabled="false" android:drawable="@drawable/btn_sub_category_disabled"/>	
+
     <!-- Non focused states -->
     <item 
         android:state_pressed="false" 
@@ -35,5 +38,6 @@
     <item 
         android:state_pressed="true" 
         android:drawable="@drawable/btn_sub_category_focused" />
+		
         
 </selector>

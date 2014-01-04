@@ -18,7 +18,7 @@
 	        android:drawableRight="@drawable/icon_arrow_right"
 	        android:background="@color/transparent"
 	        android:padding="8dp"
-	        android:textSize="18sp"
+	        android:textSize="20sp"
 	        android:layout_gravity="left|center_vertical"
 	        android:drawablePadding="16dp"
 	        />

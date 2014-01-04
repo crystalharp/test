@@ -71,27 +71,34 @@ public class CustomCategoryFragment extends BaseFragment {
 	@Override
 	protected void setListener(){
 		super.setListener();
-		for(int i=2; i<NearbySearchFragment.NUM_OF_HOT; i++){
+		for(int i=0; i<NearbySearchFragment.NUM_OF_HOT; i++){
 			final int j = i;
 			Button btn = (Button) mCustomBtns[j].findViewById(R.id.custom_btn);
-			btn.setOnClickListener(new OnClickListener(){
-
-				@Override
-				public void onClick(View v) {
-					ImageView imv = (ImageView) mCustomBtns[j].findViewById(R.id.icon_imv);
-					StringBuilder sb = new StringBuilder(mCurrentState);
-					if(mCurrentState.charAt(j) == '1'){
-						sb.setCharAt(j, '0');
-						mCurrentState = sb.toString();
-						imv.setImageResource(R.drawable.ic_custom_category_default);
-					}else{
-						sb.setCharAt(j, '1');
-						mCurrentState = sb.toString();
-						imv.setImageResource(R.drawable.ic_custom_category_checked);
+			if(j < 2){
+				btn.setEnabled(false);
+				ImageView imv = (ImageView) mCustomBtns[j].findViewById(R.id.icon_imv);
+				imv.setVisibility(View.GONE);
+				btn.setTextColor(mSphinx.getResources().getColor(R.color.black_light));
+			}else{
+				btn.setOnClickListener(new OnClickListener(){
+					
+					@Override
+					public void onClick(View v) {
+						ImageView imv = (ImageView) mCustomBtns[j].findViewById(R.id.icon_imv);
+						StringBuilder sb = new StringBuilder(mCurrentState);
+						if(mCurrentState.charAt(j) == '1'){
+							sb.setCharAt(j, '0');
+							mCurrentState = sb.toString();
+							imv.setImageResource(R.drawable.ic_custom_category_default);
+						}else{
+							sb.setCharAt(j, '1');
+							mCurrentState = sb.toString();
+							imv.setImageResource(R.drawable.ic_custom_category_checked);
+						}
+						LogWrapper.d("Trap", mCurrentState);
 					}
-					LogWrapper.d("Trap", mCurrentState);
-				}
-			});
+				});
+			}
 		}
 	}
 	
