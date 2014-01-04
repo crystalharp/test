@@ -71,6 +71,7 @@ public class TakeScreenshotActivity extends BaseActivity implements View.OnClick
         
         mRightBtn.setText(R.string.save);
         mRightBtn.setOnClickListener(this);
+        mRightBtn.setVisibility(View.VISIBLE);
         
         Bitmap bm = Utility.imageUri2Bitmap(mThis, mUri);
         mImageImv.setImageBitmap(bm);

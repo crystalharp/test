@@ -5,7 +5,6 @@
 package com.tigerknows.ui.poi;
 
 import com.decarta.Globals;
-import com.decarta.android.exception.APIException;
 import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
@@ -88,8 +87,6 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     private View mCurrentFootView;
     
     private View mAddMerchantView = null;
-    
-    private View mAddMerchantItemView = null;
     
     private TextView mQueryingTxv = null;
     
@@ -223,7 +220,6 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         mCurrentFootView = mLoadingView;
         mAddMerchantFootView = mLayoutInflater.inflate(R.layout.poi_list_item_add_merchant, null);
         mAddMerchantView = mRootView.findViewById(R.id.add_merchant_view);
-        mAddMerchantItemView = mRootView.findViewById(R.id.add_merchant_item_view);
         mQueryingView = (QueryingView)mRootView.findViewById(R.id.querying_view);
         mEmptyView = mRootView.findViewById(R.id.empty_view);
         mEmptyTxv = (TextView) mEmptyView.findViewById(R.id.empty_txv);
@@ -286,9 +282,9 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             if (mState != STATE_QUERYING && mState != STATE_LIST && lastDataQuery != null) {
                 mActionLog.addAction(ActionLog.KeyCodeBack);
                 mState = STATE_LIST;
+                refreshResultTitleText(lastDataQuery);
                 updateView();
                 refreshFilter(lastDataQuery.getFilterList());
-                refreshResultTitleText(lastDataQuery);
                 return true;
             }
         }
@@ -324,8 +320,19 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
 
         if (BaseQuery.SUB_DATA_TYPE_HOTEL.equals(mResultAdapter.getSubDataType())) {
             mEmptyTxv.setText(R.string.can_not_found_result_and_retry);
+
+            mTitleBtn.setOnClickListener(null);
+            mTitleBtn.setBackgroundDrawable(null);
+            mTitleBtn.setPadding(0, 0, 0, 0);
+            mTitleBtn.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+            
         } else {
             mEmptyTxv.setText(str);
+            
+            mTitleBtn.setOnClickListener(this);
+            mTitleBtn.setBackgroundResource(R.drawable.textfield);
+            mTitleBtn.setPadding(mTitleBtnPaddingLeft, mTitleBtnPaddingTop, mTitleBtnPaddingLeft, mTitleBtnPaddingTop);
+            mTitleBtn.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
         }
     }
     
@@ -353,11 +360,6 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
 
         // 5.8.0 2.2.2 2)从搜索结果列表页返回时，不应再返回搜索输入页，应跨过搜索输入页直接跳回搜索输入页的上一页
         mSphinx.uiStackRemove(R.id.view_poi_input_search);
-        
-        mTitleBtn.setBackgroundResource(R.drawable.textfield);
-        mTitleBtn.setOnClickListener(this);
-        mTitleBtn.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
-        mTitleBtn.setPadding(mTitleBtnPaddingLeft, mTitleBtnPaddingTop, mTitleBtnPaddingLeft, mTitleBtnPaddingTop);
 
         mRightBtn.setVisibility(View.VISIBLE);
         mRightBtn.setText(R.string.map);
@@ -374,7 +376,6 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         }
         
         updateView();
-        
     }
 
     @Override
@@ -994,11 +995,6 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
 
             Position centerPosition = poiList.getPosition();
             if (centerPosition != null) {
-                try {
-                    mSphinx.getMapView().centerOnPosition(centerPosition);
-                } catch (APIException e) {
-                    e.printStackTrace();
-                }
                 POI poi = dataQuery.getPOI();
                 if (poi == null || !centerPosition.equals(poi.getPosition())) {
                     POI centerPOI = new POI();

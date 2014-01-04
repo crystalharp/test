@@ -4,7 +4,6 @@
 
 package com.tigerknows.ui.discover;
 
-import com.decarta.android.exception.APIException;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
@@ -152,7 +151,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     
     private String mFilterArea;
     
-    private BaseList mList;
+    private DiscoverResult mList;
     
     private ArrayAdapter mArrayAdapter;
     
@@ -161,6 +160,8 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     private TextView mLocationTxv;
     
     private POI mAPOI = null;
+    
+    private String mTitleText;
     
     private Runnable mTurnPageRun = new Runnable() {
         
@@ -206,6 +207,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         
         String str = getString(R.string.searching);
         mQueryingTxv.setText(str);
+        mTitleText = getString(R.string.searching_title);
 
         mState = STATE_QUERYING;
         updateView();
@@ -367,24 +369,13 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             if (mState != STATE_QUERYING && mState != STATE_LIST && lastDataQuery != null) {
                 mActionLog.addAction(ActionLog.KeyCodeBack);
                 mState = STATE_LIST;
+                refreshResultTitleText(lastDataQuery);
                 updateView();
                 refreshFilter(lastDataQuery.getFilterList());
                 return true;
             }
         }
         return false;
-    }
-    
-    private void refreshResultText(DataQuery dataQuery) {
-        String str = null;
-        if (dataQuery != null && mList != null) {
-            str = mList.getMessage();
-        }
-
-        if (TextUtils.isEmpty(str)) {
-            str = getString(R.string.no_result);
-        }
-        mEmptyTxv.setText(str);
     }
     
     private void refreshFilter(List<Filter> filterList) {
@@ -407,23 +398,19 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         super.onResume();
         mIPagerListCallBack = null;
         if (BaseQuery.DATA_TYPE_TUANGOU.equals(mDataType)) {
-            mTitleBtn.setText(R.string.tuangou_list);
             mRightBtn.setText(R.string.map);
             mRightBtn.setOnClickListener(this);
             mRightBtn.setVisibility(View.VISIBLE);
             mDingdanBtn.setVisibility(View.VISIBLE);
         } else if (BaseQuery.DATA_TYPE_DIANYING.equals(mDataType)) {
-            mTitleBtn.setText(R.string.dianying_list);
             mRightBtn.setVisibility(View.INVISIBLE);
             mDingdanBtn.setVisibility(View.GONE);
         } else if (BaseQuery.DATA_TYPE_YANCHU.equals(mDataType)) {
-            mTitleBtn.setText(R.string.yanchu_list);
             mRightBtn.setText(R.string.map);
             mRightBtn.setOnClickListener(this);
             mRightBtn.setVisibility(View.VISIBLE);
             mDingdanBtn.setVisibility(View.GONE);
         } else if (BaseQuery.DATA_TYPE_ZHANLAN.equals(mDataType)) {
-            mTitleBtn.setText(R.string.zhanlan_list);
             mRightBtn.setText(R.string.map);
             mRightBtn.setOnClickListener(this);
             mRightBtn.setVisibility(View.VISIBLE);
@@ -489,6 +476,41 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 this.mLocationTxv.setText(null);
             }
         }
+        
+        refreshResultTitleText(null);
+    }
+    
+    /**
+     * 刷新标题栏文字
+     * @param dataQuery
+     */
+    private void refreshResultTitleText(DataQuery dataQuery) {
+        String str = getString(R.string.no_result);
+        if (dataQuery != null) {
+            DiscoverCategoreResponse response = (DiscoverCategoreResponse)dataQuery.getResponse();
+            if (response != null) {
+                DiscoverResult list = response.getDiscoverResult();
+                if (list != null) {
+                    String name = "";
+                    if (BaseQuery.DATA_TYPE_TUANGOU.equals(mDataType)) {
+                        name = getString(R.string.tuangou);
+                    } else if (BaseQuery.DATA_TYPE_DIANYING.equals(mDataType)) {
+                        name = getString(R.string.film);
+                    } else if (BaseQuery.DATA_TYPE_YANCHU.equals(mDataType)) {
+                        name = getString(R.string.yanchu);
+                    } else if (BaseQuery.DATA_TYPE_ZHANLAN.equals(mDataType)) {
+                        name = getString(R.string.zhanlan);
+                    }
+                    mTitleText = name + getString(R.string.double_bracket, list.getTotal());
+                }
+            }
+        }
+        
+        if (getId() == mSphinx.uiStackPeek()) {
+            mTitleBtn.setHint(mTitleText);
+        }
+
+        mEmptyTxv.setText(str);
     }
     
     private void turnPage(String tip){
@@ -941,7 +963,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
 
         dealWithList(dataQuery, (DiscoverCategoreResponse) response);
         
-        refreshResultText(dataQuery);
+        refreshResultTitleText(dataQuery);
         updateView();
         getAdapter().notifyDataSetChanged();
         
@@ -1019,6 +1041,8 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             
             if (getList().size() < mList.getTotal()) {
                 mResultLsv.setFooterSpringback(true);
+            } else {
+                mResultLsv.setFooterSpringback(false);
             }
         } else {
             if (dataQuery.isTurnPage()) {
@@ -1031,11 +1055,6 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     private void dealWithCenterPosition(DiscoverResult discoverResult, DataQuery dataQuery) {
         Position centerPosition = discoverResult.getCenterPosition();
         if (centerPosition != null) {
-            try {
-                mSphinx.getMapView().centerOnPosition(centerPosition);
-            } catch (APIException e) {
-                e.printStackTrace();
-            }
             POI poi = dataQuery.getPOI();
             if (!centerPosition.equals(poi.getPosition())) {
                 POI centerPOI = new POI();

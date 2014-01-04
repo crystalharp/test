@@ -501,7 +501,6 @@ public class MapDownloadActivity extends BaseActivity implements View.OnClickLis
         mColorBlackLight = resources.getColor(R.color.black_light);
         
         mTitleBtn.setText(R.string.download_map);
-        mRightBtn.setVisibility(View.GONE);
         mLeftBtn.setOnClickListener(this);
         
         mDownloadAdapter = new DownloadCityAdapter();

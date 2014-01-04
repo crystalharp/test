@@ -43,7 +43,6 @@ public class UserUpdatePhoneActivity extends UserBaseActivity {
         findViews();
         setListener();
         
-        mRightBtn.setVisibility(View.GONE);
         mTitleBtn.setText(getString(R.string.title_update_phone));
 	}
 

@@ -89,6 +89,8 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     
     private FilterListView mFilterCategoryListView = null;
     
+    private Filter mAreaFilter;
+    
     private DateListView mDateListView = null;
     
     private ViewGroup mPopupWindowContain = null;
@@ -263,7 +265,6 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                     queryFilter();
                     showProgressDialog();
                 } else {
-                    mSphinx.getPickLocationFragment().setTitle(getString(R.string.hotel_select_location));
                     mSphinx.showView(R.id.view_hotel_pick_location);
                 }
                 break;
@@ -409,10 +410,9 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
             	mLocationCityInfo = null;
             }
                     
-            FilterArea filterArea = DataQuery.getFilterArea();
-            if (filterArea != null && filterArea.getAreaFilterOption().size() > 0) {
-                List<FilterOption> filterOptionList = filterArea.getAreaFilterOption();
-                List<Long> indexList = new ArrayList<Long>();
+            if (mAreaFilter != null) {
+                Filter areaFilter = mAreaFilter.clone();
+                long selectId = 0;
                 if (filterAreaState == 0) {
                     long id = 0;
                     if (reset || mSelectedLocation == false) {
@@ -426,7 +426,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                             id = 0;
                         }
                     }
-                    indexList.add(id);
+                    selectId = id;
                 } else if (filterAreaState == 1) {
                     long id = 10;
                     if (reset || mSelectedLocation == false) {
@@ -437,25 +437,39 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                             id = FilterListView.getSelectedIdByFilter(filter);
                         }
                     }
-                    indexList.add(id);
+                    selectId = id;
                 }
-                for(int i = 0, size = filterOptionList.size(); i < size; i++) {
-                    long id = filterOptionList.get(i).getId();
+                List<Filter> list0 = areaFilter.getChidrenFilterList();
+                for(int i = list0.size() -1; i >= 0; i--) {
+                    long id = list0.get(i).getFilterOption().getId();
                     if (filterAreaState == 0) {
                         if (id >= 1 && id <= 10) {
-                            continue;
+                            list0.remove(i);
                         }
                     } else if (filterAreaState == 1) {
                         if (id >= 1 && id <= 5) {
-                            continue;
+                            list0.remove(i);
                         }
                     }
-                    indexList.add(id);
+                    
+                    List<Filter> list1 = list0.get(i).getChidrenFilterList();
+                    for(int j = list1.size() - 1; j >= 0; j--) {
+                        id = list1.get(j).getFilterOption().getId();
+                        if (filterAreaState == 0) {
+                            if (id >= 1 && id <= 10) {
+                                list1.remove(j);
+                            }
+                        } else if (filterAreaState == 1) {
+                            if (id >= 1 && id <= 5) {
+                                list1.remove(j);
+                            }
+                        }
+                    }
                 }
+                FilterListView.selectedFilter(areaFilter, (int)selectId);
     
                 deleteFilter(mFilterList, FilterArea.FIELD_LIST);
-                Filter filter = DataQuery.makeFilterResponse(mSphinx, indexList, filterArea.getVersion(), filterOptionList, FilterArea.FIELD_LIST);
-                mFilterList.add(filter);
+                mFilterList.add(areaFilter);
             } else {
                 FilterArea quanguoFilterArea = DataQuery.getQuanguoFilterArea(mSphinx);
                 if (quanguoFilterArea != null && quanguoFilterArea.getAreaFilterOption().size() > 0) {
@@ -575,6 +589,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                 refresh = false;
                 filter = getFilter(filterList, FilterArea.FIELD_LIST);
                 if (filter != null) {
+                    mAreaFilter = filter;
                 	Filter presetFilter = getFilter(mFilterList, FilterArea.FIELD_LIST);
                 	if (presetFilter != null) {
 	                	if (presetFilter.getVersion().equals(filter.getVersion())) {
@@ -599,7 +614,6 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                 }
                 
                 if (mProgressDialog != null && mProgressDialog.isShowing()) {
-                    mSphinx.getPickLocationFragment().setTitle(getString(R.string.hotel_select_location));
                     mSphinx.showView(R.id.view_hotel_pick_location);
                     dismissProgressDialog();
                 }

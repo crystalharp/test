@@ -73,6 +73,7 @@ public class TitleFragment extends BaseFragment {
         mTitleBtn.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
         mTitleBtn.setText(null);
         mTitleBtn.setBackgroundDrawable(null);
+        mTitleBtn.setPadding(0, 0, 0, 0);
         mTitleBtn.setCompoundDrawables(null, null, null, null);
         mTitleBtn.getLayoutParams().height = LayoutParams.WRAP_CONTENT;
         mTitleBtn.setOnClickListener(null);
@@ -80,6 +81,8 @@ public class TitleFragment extends BaseFragment {
         RelativeLayout.LayoutParams layoutParams = (android.widget.RelativeLayout.LayoutParams) mTitleBtn.getLayoutParams();
         layoutParams.topMargin = 0;
         layoutParams.bottomMargin = 0;
+        layoutParams.leftMargin = 0;
+        layoutParams.rightMargin = 0;
         
         mKeywordEdt.setVisibility(View.GONE);
         mKeywordEdt.getInput().setHint(R.string.find_poi);

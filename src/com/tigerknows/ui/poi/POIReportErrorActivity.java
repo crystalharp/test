@@ -161,8 +161,6 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
         findViewsMain();
         setListenerMain();
 
-        mRightBtn.setVisibility(View.GONE);
-        
         mChecked = HOME_PAGE;
         mPage = HOME_PAGE;
         

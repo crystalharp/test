@@ -520,6 +520,8 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
     }
     
     public void updateSearchHistory(SearchHistory sh) {
+        int index = mQueryHistorys.indexOf(sh);
+        sh = mQueryHistorys.get(index);
         mQueryHistorys.remove(sh);
         mQueryHistorys.add(0, sh);
         mHistoryTable.update(sh);

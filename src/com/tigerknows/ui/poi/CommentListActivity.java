@@ -137,7 +137,6 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
         
         mTitleBtn.setText(R.string.all_comment);
         mTitleBtn.setBackgroundResource(R.drawable.btn_all_comment_focused);
-        mRightBtn.setVisibility(View.GONE);
         mCommentTipView.setVisibility(View.GONE);
         
         mPOI = sPOI;

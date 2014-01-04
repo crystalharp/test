@@ -66,6 +66,7 @@ public class TrafficReportErrorActivity extends BaseActivity {
 		
         mTitleBtn.setText(getString(R.string.erreport_title));
         mRightBtn.setText(R.string.submit);
+        mRightBtn.setVisibility(View.VISIBLE);
 		
 		synchronized (sTargetList) {
             int size = sTargetList.size();

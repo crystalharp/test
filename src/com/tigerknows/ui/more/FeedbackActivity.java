@@ -48,6 +48,7 @@ public class FeedbackActivity extends BaseActivity implements View.OnClickListen
 
         mTitleBtn.setText(R.string.feedback);
         mRightBtn.setText(R.string.submit);
+        mRightBtn.setVisibility(View.VISIBLE);
 //        SpannableString ss = new SpannableString(mThis.getString(R.string.feedback_text2));
 //        ss.setSpan(new ClickableSpan() {
 //            @Override

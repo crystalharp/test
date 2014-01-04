@@ -166,6 +166,7 @@ public class ViewImageActivity extends BaseActivity implements RetryView.CallBac
             if (mCanAdd) {
                 mRightBtn.setBackgroundResource(R.drawable.btn_add_picture_title);
                 mRightBtn.setOnClickListener(this);
+                mRightBtn.setVisibility(View.VISIBLE);
             }
 
             mState = STATE_GALLERY;

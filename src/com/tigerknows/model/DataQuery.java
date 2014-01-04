@@ -423,7 +423,8 @@ public final class DataQuery extends BaseQuery {
                 
                 if (filterDataArea == null || filterDataArea.cityId != cityId){
                     filterDataArea = null;
-                    String path = MapEngine.cityId2Floder(cityId) + String.format(TKConfig.FILTER_FILE, DATA_TYPE_POI, cityId);
+                    // 区域筛选项数据在v5.8.0之后使用新的文件名存储，以避免地图中心点筛选项在之前的客户端显示的问题
+                    String path = MapEngine.cityId2Floder(cityId) + String.format("v5.8.0." + TKConfig.FILTER_FILE, DATA_TYPE_POI, cityId);
                     File file = new File(path);
 
                     // 硬编码部分区域筛选项（全部区域、我的当前位置、指定位置）
@@ -545,7 +546,7 @@ public final class DataQuery extends BaseQuery {
     protected void checkRequestParameters() throws APIException {
         
         String[] ekeys = new String[]{SERVER_PARAMETER_DATA_TYPE, SERVER_PARAMETER_SIZE};
-        String[] okeys = new String[]{SERVER_PARAMETER_TIME_STAMP};
+        String[] okeys = new String[]{SERVER_PARAMETER_TIME_STAMP, SERVER_PARAMETER_EXT};
         String[] discoverOptinalKeys = new String[]{SERVER_PARAMETER_DISCOVER_POI_VERSION, SERVER_PARAMETER_DISCOVER_BASEINDEX_VERSION};
         String[] filterOptionalKeys = new String[]{SERVER_PARAMETER_CITY_FILTER_VERSION, SERVER_PARAMETER_NATION_FILTER_VERSION, 
                 SERVER_PARAMETER_FILTER, SERVER_PARAMETER_FILTER_STRING};
@@ -568,7 +569,7 @@ public final class DataQuery extends BaseQuery {
                             ekeys = Utility.mergeArray(ekeys, new String[]{SERVER_PARAMETER_KEYWORD});
                         }
                     }
-                    okeys = Utility.mergeArray(okeys, new String[]{SERVER_PARAMETER_POI_ID, SERVER_PARAMETER_EXT});
+                    okeys = Utility.mergeArray(okeys, new String[]{SERVER_PARAMETER_POI_ID});
                 } else {
                     ekeys = Utility.mergeArray(ekeys, new String[]{SERVER_PARAMETER_ID_LIST});
                 }
@@ -878,7 +879,13 @@ public final class DataQuery extends BaseQuery {
         if (TextUtils.isEmpty(nfv) == false) {
             addParameter(SERVER_PARAMETER_NATION_FILTER_VERSION, nfv);
         }
-        
+
+        // 在v5.8.0之后增加提交cf值，以避免地图中心点筛选项在之前的客户端显示的问题
+        if (hasParameter(SERVER_PARAMETER_EXT)) {
+            addParameter(SERVER_PARAMETER_EXT, getParameter(SERVER_PARAMETER_EXT) + ";cf");
+        } else {
+            addParameter(SERVER_PARAMETER_EXT, "cf");
+        }
     }
 
     @Override
@@ -1001,7 +1008,7 @@ public final class DataQuery extends BaseQuery {
                 }
                 // 将城市区域筛选数据写入相应文件夹
                 FilterArea filterDataArea = baseResponse.getFilterDataArea();
-                String path = MapEngine.cityId2Floder(cityId) + String.format(TKConfig.FILTER_FILE, DATA_TYPE_POI, cityId);
+                String path = MapEngine.cityId2Floder(cityId) + String.format("v5.8.0." + TKConfig.FILTER_FILE, DATA_TYPE_POI, cityId);
                 if (filterDataArea != null) {
                     staticFilterDataArea = filterDataArea;
                     staticFilterDataArea.cityId = cityId;

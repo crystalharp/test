@@ -75,8 +75,6 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
 
     private ViewPager mViewPager;
     
-    private String mTitle;
-    
     private List<View> mViewList = new ArrayList<View>();
     
     private FilterListView mFilterListView = null;
@@ -184,7 +182,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
     public void onResume() {
         super.onResume();
         
-        mTitleBtn.setText(mTitle);
+        mTitleBtn.setVisibility(View.GONE);
         mKeywordEdt.getInput().setHint(R.string.find_poi_merchant);
         mKeywordEdt.setVisibility(View.VISIBLE);
         
@@ -413,10 +411,6 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
     
     public void setData(List<Filter> filterList) {
         mFilterListView.setData(filterList, FilterResponse.FIELD_FILTER_AREA_INDEX, this, false, false, mActionTag);
-    }
-    
-    public void setTitle(String title) {
-        mTitle = title;
     }
 
     @Override

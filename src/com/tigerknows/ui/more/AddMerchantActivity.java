@@ -131,6 +131,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
 
         mTitleBtn.setText(R.string.add_merchant);
         mRightBtn.setText(R.string.submit);
+        mRightBtn.setVisibility(View.VISIBLE);
         
         CityInfo cityInfo = Globals.getCurrentCityInfo(mThis);
         

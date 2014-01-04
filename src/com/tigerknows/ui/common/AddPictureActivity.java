@@ -106,7 +106,6 @@ public class AddPictureActivity extends BaseActivity implements View.OnClickList
         }
 
         mTitleBtn.setText(R.string.add_picture);
-        mRightBtn.setVisibility(View.GONE);
         mRootView.setVisibility(View.INVISIBLE);
         
     }
