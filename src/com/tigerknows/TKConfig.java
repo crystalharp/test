@@ -79,7 +79,7 @@ public class TKConfig {
     /**
      * 点击定位按钮时显示地图的最低级别
      */
-    public static final int ZOOM_LEVEL_LOCATION = 16; // 100m
+    public static final int ZOOM_LEVEL_LOCATION = 15; // 100m
     
     /**
      * 切换至单个POI时显示地图的最低级别
