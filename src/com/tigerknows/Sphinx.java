@@ -256,6 +256,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     public static int DOWNLOAD_ERROR = 0x14;
 
     public static int SHOW_MAPVIEW = 0x15;
+    
+    public static int UI_STACK_ADJUST_READY = 0x1a;
+    public static int UI_STACK_ADJUST_EXECUTE = 0x1b;
+    public static int UI_STACK_ADJUST_CANCEL = 0x1c;
 
     private static final String TAG = "Sphinx";
     private static final int REQUEST_CODE_LOCATION_SETTINGS = 15;
@@ -266,6 +270,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 
     private BaseFragment mBodyFragment;
     private BaseFragment mBottomFragment;
+    
+    private boolean mUIStackAdjustReady = false;
 
     private static final int EXIT_APP_TIME = 2000;
 
@@ -369,6 +375,15 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 } else if (msg.what == SHOW_MAPVIEW) {
                     checkLocation(true);
                     mMapOverView.setBackgroundDrawable(null);
+                } else if (msg.what == UI_STACK_ADJUST_READY){
+                	mUIStackAdjustReady = true;
+                } else if (msg.what == UI_STACK_ADJUST_EXECUTE){
+                	if(mUIStackAdjustReady){
+                		uiStackAdjust();
+                	}
+                	mUIStackAdjustReady = false;
+                } else if (msg.what == UI_STACK_ADJUST_CANCEL){
+                	mUIStackAdjustReady = false;
                 }
 
             }
@@ -2294,6 +2309,28 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 		}
     }
 
+    public void uiStackAdjust() {
+    	LogWrapper.d(TAG, "uiStackAdjust");
+    	synchronized (mUILock) {
+	        if (uiStackContains(R.id.view_more_favorite)) {
+	            uiStackClearBetween(R.id.view_more_favorite, R.id.view_poi_nearby_search);
+	        } else if (uiStackContains(R.id.view_more_history)) {
+	            uiStackClearBetween(R.id.view_more_history, R.id.view_poi_nearby_search);
+	        } else if (uiStackContains(R.id.view_more_go_comment)) {
+	            uiStackClearBetween(R.id.view_more_go_comment, R.id.view_poi_nearby_search);
+	        } else if (uiStackContains(R.id.view_user_my_comment_list)) {
+	            uiStackClearBetween(R.id.view_user_my_comment_list, R.id.view_poi_nearby_search);
+	        } else if (uiStackContains(R.id.view_more_my_order)) {
+	            uiStackClearBetween(R.id.view_more_my_order, R.id.view_poi_nearby_search);
+	        } else {
+	            if (uiStackContains(R.id.view_home) == false) {
+	                uiStackInsert(R.id.view_home, 0);
+	            }
+	            uiStackClearBetween(R.id.view_home, R.id.view_poi_nearby_search);
+	        }
+    	}
+    }    
+    
     public int uiStackSize() {
         synchronized (mUILock) {
             return mUIStack.size();

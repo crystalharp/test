@@ -240,6 +240,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
                     if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    	mSphinx.getHandler().sendEmptyMessage(Sphinx.UI_STACK_ADJUST_READY);
                     	mSphinx.getInputSearchFragment().setData();
                         mSphinx.showView(R.id.view_poi_input_search);
                     }
@@ -521,12 +522,12 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     		mSphinx.getHotelHomeFragment().resetDate();
     		mSphinx.getHotelHomeFragment().setCityInfo(Globals.getCurrentCityInfo(mContext));
     		mSphinx.showView(R.id.view_hotel_home);
-    		uiStackAdjust();
+    		mSphinx.uiStackAdjust();
     		break;
     	case CategoryProperty.OP_SUBWAY:
     		mSphinx.getSubwayMapFragment().setData(Globals.getCurrentCityInfo(mContext, false));
     		mSphinx.showView(R.id.view_subway_map);
-    		uiStackAdjust();
+    		mSphinx.uiStackAdjust();
     		break;
         case CategoryProperty.OP_DISH:
         	if (cityId != CityInfo.CITY_ID_BEIJING) {
@@ -561,7 +562,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
                 return;
             }
             mSphinx.queryStart(getDataQuery(String.valueOf(operationCode)));
-            uiStackAdjust();
+            mSphinx.uiStackAdjust();
             break;
     	case CategoryProperty.OP_MORE:
     		mCurrentMoreCategory = str[0];
@@ -707,7 +708,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
             if (BaseQuery.DATA_TYPE_POI.equals(dataType)) {
                 int result = InputSearchFragment.dealWithPOIResponse((DataQuery) baseQuery, mSphinx, this);
                 if(mPOI.getSourceType() != POI.SOURCE_TYPE_MAP_CENTER && mPOI.getSourceType() != POI.SOURCE_TYPE_MY_LOCATION && result > 0){
-                	uiStackAdjust();
+                	mSphinx.uiStackAdjust();
                 }
             } else if (BaseQuery.DATA_TYPE_TUANGOU.equals(dataType) ||
                     BaseQuery.DATA_TYPE_DIANYING.equals(dataType) ||
@@ -761,22 +762,5 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         }
     }
     
-    private void uiStackAdjust() {
-        if (mSphinx.uiStackContains(R.id.view_more_favorite)) {
-            mSphinx.uiStackClearBetween(R.id.view_more_favorite, getId());
-        } else if (mSphinx.uiStackContains(R.id.view_more_history)) {
-            mSphinx.uiStackClearBetween(R.id.view_more_history, getId());
-        } else if (mSphinx.uiStackContains(R.id.view_more_go_comment)) {
-            mSphinx.uiStackClearBetween(R.id.view_more_go_comment, getId());
-        } else if (mSphinx.uiStackContains(R.id.view_user_my_comment_list)) {
-            mSphinx.uiStackClearBetween(R.id.view_user_my_comment_list, getId());
-        } else if (mSphinx.uiStackContains(R.id.view_more_my_order)) {
-            mSphinx.uiStackClearBetween(R.id.view_more_my_order, getId());
-        } else {
-            if (mSphinx.uiStackContains(R.id.view_home) == false) {
-                mSphinx.uiStackInsert(R.id.view_home, 0);
-            }
-            mSphinx.uiStackClearBetween(R.id.view_home, getId());
-        }
-    }
+
 }
