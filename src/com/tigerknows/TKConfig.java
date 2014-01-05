@@ -1774,7 +1774,7 @@ public class TKConfig {
         try {
             value = sharedPreferences.getString(name, null);
             if ("1".equals(value)) {
-                value = null;
+                value = "";
             } else {
                 value = "1";
             }

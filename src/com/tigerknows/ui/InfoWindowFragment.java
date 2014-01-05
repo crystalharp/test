@@ -202,17 +202,22 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
     
     public void setData(int fragmentId, ItemizedOverlay itemizedOverlay, String actionTag) {
         mOwerFragmentId = fragmentId;
-        mItemizedOverlay = itemizedOverlay;
         mActionTag = actionTag;
         
-        OverlayItem overlayItem = mItemizedOverlay.getItemByFocused();
+        OverlayItem overlayItem = itemizedOverlay.getItemByFocused();
         
         if (overlayItem == null) {
             itemizedOverlay.focuseOverlayItem(0);
             overlayItem = itemizedOverlay.getItemByFocused();
         }
-
-        mPosition = itemizedOverlay.getPositionByFocused();
+        
+        boolean refresh = true;
+        if (mItemizedOverlay == overlayItem.getOwnerOverlay()) {
+            refresh = false;
+        }
+        
+        mItemizedOverlay = itemizedOverlay;
+        mPosition = mItemizedOverlay.getPositionByFocused();
         
         Object object = overlayItem.getAssociatedObject();
         
@@ -254,8 +259,10 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
         mCyclePagerAdapter.notifyDataSetChanged();
         mCycleOnPageChangeListener.count = mCyclePagerAdapter.count;
         layoutInfoWindowView();
-        mViewPager.setCurrentItem(mPosition);
-        refreshViews(mPosition);
+        if (refresh) {
+            refreshViews(mPosition);
+        }
+        mViewPager.setCurrentItem(mPosition, false);
 
     }
     
@@ -715,6 +722,9 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
         titleTxv.setVisibility(View.VISIBLE);
         titleTxv.setText(poi.getName());
         priceTxv.setText(poi.getPrice());
+        Button detailBtn = (Button) v.findViewById(R.id.detail_btn);
+        detailBtn.setText(R.string.detail);
+        detailBtn.setVisibility(View.VISIBLE);
     }
     
     private void setTuangouToView(View v, Tuangou tuangou) {
@@ -727,6 +737,9 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
         titleTxv.setVisibility(View.VISIBLE);
         titleTxv.setText(tuangou.getShortDesc());
         priceTxv.setText(price);
+        Button detailBtn = (Button) v.findViewById(R.id.detail_btn);
+        detailBtn.setText(R.string.detail);
+        detailBtn.setVisibility(View.VISIBLE);
     }
     
     private void setDynamicPOIToView(View v, Object object) {
@@ -755,6 +768,9 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
         titleTxv.setText(name);
         titleTxv.setVisibility(View.VISIBLE);
         starsRtb.setProgress((int) rating);
+        Button detailBtn = (Button) v.findViewById(R.id.detail_btn);
+        detailBtn.setText(R.string.detail);
+        detailBtn.setVisibility(View.VISIBLE);
     }
     
     private void infoWindowClicked() {

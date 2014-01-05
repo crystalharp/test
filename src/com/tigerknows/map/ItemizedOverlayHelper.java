@@ -262,10 +262,9 @@ public class ItemizedOverlayHelper {
                                 if (sphinx.getTouchMode().equals(TouchMode.MEASURE_DISTANCE)) {
                                     return;
                                 }
-                                overlay.getItemByFocused().isFoucsed = false;
                                 
                                 OverlayItem overlayItem = (OverlayItem) eventSource;
-                                overlayItem.isFoucsed = true;
+                                overlayItem.getOwnerOverlay().focuseOverlayItem(overlayItem);
                                 sphinx.showInfoWindow(overlayItem);
                             }
                         });
