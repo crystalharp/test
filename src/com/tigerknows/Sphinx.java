@@ -343,6 +343,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                         }
                     }
 
+                    mMapView.deleteOverlaysByName(ItemizedOverlay.LONG_CLICKED_OVERLAY);
                     mMapView.deleteOverlaysByName(ItemizedOverlay.MAP_POI_OVERLAY);
 
                     setTouchMode(TouchMode.LONG_CLICK_SELECT_POINT);
@@ -546,6 +547,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     }
 
                     mMapView.deleteOverlaysByName(ItemizedOverlay.LONG_CLICKED_OVERLAY);
+                    mMapView.deleteOverlaysByName(ItemizedOverlay.MAP_POI_OVERLAY);
 
                     InfoWindowFragment infoWindowFragment = getInfoWindowFragment();
                     if (infoWindowFragment == mBottomFragment) {

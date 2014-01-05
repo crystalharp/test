@@ -703,7 +703,7 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             detailBtn.setText(detailBtnText);
             detailBtn.setVisibility(View.VISIBLE);
         } else {
-            detailBtn.setVisibility(View.GONE);
+            detailBtn.setVisibility(View.INVISIBLE);
         }
         
         if (showBottomView) {
@@ -921,7 +921,7 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
                             poi.init(list.get(0).getData(), true);
                             poi.setPosition(position);
                             poi.setFrom(POI.FROM_ONLINE);
-                            refreshViews(mPosition);
+                            mCyclePagerAdapter.notifyDataSetChanged();
                         } catch (APIException e) {
                             e.printStackTrace();
                         }
