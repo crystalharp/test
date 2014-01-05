@@ -982,7 +982,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                 
             case R.id.nearby_search_btn:
                 mActionLog.addAction(mActionTag +  ActionLog.POIDetailSearch);
-                mSphinx.getPOINearbyFragment().setData(poi);
+                mSphinx.getPOINearbyFragment().setData(mSphinx.buildDataQuery(poi));
                 mSphinx.showView(R.id.view_poi_nearby_search);
                 break;
                 

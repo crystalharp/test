@@ -276,6 +276,7 @@ public final class DataQuery extends BaseQuery {
     
     public DataQuery(DataQuery lastDataQuery) {
         super(lastDataQuery);
+        this.poi = lastDataQuery.poi;
     }
 
     public void setup(int sourceViewId, int targetViewId, String tipText, boolean isTurnpage, boolean needReconntection, POI poi) {
@@ -519,11 +520,12 @@ public final class DataQuery extends BaseQuery {
                 
             } else if (dataType.equals(DATA_TYPE_PULL_MESSAGE) == false) { // 推送服务请求已经添加定位相关参数信息
                 // 更新定位信息
-                delParameter(SERVER_PARAMETER_LOCATION_CITY);
-                delParameter(SERVER_PARAMETER_LOCATION_LONGITUDE);
-                delParameter(SERVER_PARAMETER_LOCATION_LATITUDE);
-                delParameter(SERVER_PARAMETER_LOCATION_TYPE);
-                super.addMyLocationParameters();
+            	if (hasParameter(SERVER_PARAMETER_LOCATION_CITY) == false ||
+            			hasParameter(SERVER_PARAMETER_LOCATION_LONGITUDE) == false ||
+            			hasParameter(SERVER_PARAMETER_LOCATION_LATITUDE) == false ||
+            			hasParameter(SERVER_PARAMETER_LOCATION_TYPE) == false) {
+                    super.addMyLocationParameters();
+            	}
             }
         }
     }

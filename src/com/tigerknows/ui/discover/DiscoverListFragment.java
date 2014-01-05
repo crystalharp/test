@@ -1056,7 +1056,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         Position centerPosition = discoverResult.getCenterPosition();
         if (centerPosition != null) {
             POI poi = dataQuery.getPOI();
-            if (!centerPosition.equals(poi.getPosition())) {
+            if (poi == null || !centerPosition.equals(poi.getPosition())) {
                 POI centerPOI = new POI();
                 centerPOI.setPosition(centerPosition);
                 centerPOI.setName(mSphinx.getString(R.string.map_center));

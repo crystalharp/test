@@ -568,7 +568,13 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                     return;
                 }
                 mActionLog.addAction(mActionTag + ActionLog.TitleCenterButton);
-                mSphinx.getInputSearchFragment().setData(mInputText, InputSearchFragment.MODE_POI);
+                DataQuery dataQuery = new DataQuery(mDataQuery);
+                dataQuery.removeParameter(DataQuery.SERVER_PARAMETER_INFO);
+                dataQuery.removeParameter(DataQuery.SERVER_PARAMETER_FILTER);
+                dataQuery.removeParameter(DataQuery.SERVER_PARAMETER_FILTER_STRING);
+                mSphinx.getInputSearchFragment().setData(dataQuery,
+                		mInputText,
+                		InputSearchFragment.MODE_POI);
                 mSphinx.showView(R.id.view_poi_input_search);
                 break;
                 

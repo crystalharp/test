@@ -101,6 +101,7 @@ import com.tigerknows.model.PullMessage.Message.PulledDynamicPOI;
 import com.tigerknows.model.NoticeQuery;
 import com.tigerknows.model.PullMessage;
 import com.tigerknows.model.PullMessage.Message.PulledProductMessage;
+import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.FeedbackUpload;
 import com.tigerknows.model.Response;
 import com.tigerknows.model.Shangjia;
@@ -408,6 +409,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             RotationTilt rt=new RotationTilt(RotateReference.MAP,TiltReference.MAP);
             mMyLocation = new MyLocation(null, icon, iconFocused, icFaceToNormal, icFaceToFocused, null, rt);
             POI poi = new POI();
+            poi.setName(getString(R.string.my_location));
             poi.setSourceType(POI.SOURCE_TYPE_MY_LOCATION);
             mMyLocation.setAssociatedObject(poi);
             mMyLocation.isFoucsed = true;
@@ -1360,7 +1362,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     } else if ("q".equals(parm[0])) {
                         String keyword = parm[1];
                         if (!TextUtils.isEmpty(keyword)) {
-                            getInputSearchFragment().setData(keyword,
+                            getInputSearchFragment().setData(buildDataQuery(),
+                            		keyword,
                                     InputSearchFragment.MODE_POI);
                             showView(R.id.view_poi_input_search);
                             getInputSearchFragment().submitPOIQuery(keyword);
@@ -1414,7 +1417,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     } else if ("q".equals(parm[0])) {
                         String keyword = parm[1];
                         if (!TextUtils.isEmpty(keyword)) {
-                            getInputSearchFragment().setData(keyword,
+                            getInputSearchFragment().setData(buildDataQuery(),
+                            		keyword,
                                     InputSearchFragment.MODE_POI);
                             showView(R.id.view_poi_input_search);
                             getInputSearchFragment().submitPOIQuery(keyword);
@@ -3449,7 +3453,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 
                 POI poi = (POI) mMyLocation.getAssociatedObject();
                 poi.setPosition(myLocation);
-                poi.setName(mMyLocation.getMessage());
 
                 if (mRequestLocation) {
                     mRequestLocation = false;
@@ -3714,16 +3717,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     public POI getMyLocationPOI() {
         POI poi = null;
         if (mMyLocation.getPosition() != null) {
-            poi = ((POI) mMyLocation.getAssociatedObject());
+            poi = ((POI) mMyLocation.getAssociatedObject()).clone();
+            poi.setName(getString(R.string.my_location));
+            poi.setSourceType(POI.SOURCE_TYPE_MY_LOCATION);
         }
-        return poi;
-    }
-
-    public POI getCenterPOI() {
-        POI poi = new POI();
-        poi.setPosition(mMapView.getCenterPosition());
-        poi.setName(getString(R.string.map_center));
-        poi.setSourceType(POI.SOURCE_TYPE_MAP_CENTER);
         return poi;
     }
 
@@ -3744,7 +3741,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
      * 指定点是否在屏幕显示可视区域内
      * @return
      */
-    public boolean positionInScreen(Position position) {
+    private boolean positionInScreen(Position position) {
         boolean result = false;
 
         try {
@@ -3764,5 +3761,76 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         }
 
         return result;
+    }
+    
+    /**
+     * 创建一个DataQuery，添加cx,cy,lx,cy参数
+     * @param poi
+     * @return
+     */
+    public DataQuery buildDataQuery() {
+        return buildDataQuery(null);
+    }
+    
+    /**
+     * 创建一个DataQuery，添加x,y,cx,cy,lx,cy参数
+     * @param poi
+     * @return
+     */
+    public DataQuery buildDataQuery(POI poi) {
+        DataQuery dataQuery = new DataQuery(mThis);
+        if (poi == null) {
+            poi = addCeterPositionParameter(dataQuery);
+        } else {
+            if (poi.getUUID() != null) {
+                dataQuery.addParameter(DataQuery.SERVER_PARAMETER_POI_ID, poi.getUUID());
+            }
+            Position position = poi.getPosition();
+            dataQuery.addParameter(DataQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
+            dataQuery.addParameter(DataQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
+        }
+        dataQuery.setPOI(poi);
+        dataQuery.setCityId(MapEngine.getCityId(poi.getPosition()));
+        return dataQuery;
+    }
+    
+    private POI addCeterPositionParameter(DataQuery dataQuery) {
+        POI poi = new POI();
+        // 我的定位显示在屏幕可视区域，并且比例尺小于或等于1千米时，则请求中包含lx和ly且不包含cx和cy，否则请求参数中包含cx和cy
+        Position position = null;
+        CityInfo cityInfo = Globals.g_My_Location_City_Info;
+        if(cityInfo != null){
+            position = cityInfo.getPosition();
+        }
+        float zoomLevel = mMapView.getZoomLevel();
+        if (position != null) {
+            addMyLocationParameter(dataQuery, position);
+
+            if (positionInScreen(position) &&
+                zoomLevel >= 12) { // 12级别是1千米
+
+                poi.setName(getString(R.string.my_location));
+                poi.setPosition(position);
+                poi.setSourceType(POI.SOURCE_TYPE_MY_LOCATION);
+
+                return poi;         
+            }
+        }
+        position = mMapView.getCenterPosition();
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_CENTER_LONGITUDE, String.valueOf(position.getLon()));
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_CENTER_LATITUDE, String.valueOf(position.getLat()));
+
+        poi.setName(getString(R.string.map_center));
+        poi.setPosition(position);
+        poi.setSourceType(POI.SOURCE_TYPE_MY_LOCATION);
+
+        return poi;
+    }
+    
+    private void addMyLocationParameter(DataQuery dataQuery, Position position) {
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_LOCATION_LATITUDE, String.valueOf(position.getLat()));
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_LOCATION_LONGITUDE, String.valueOf(position.getLon()));
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_LOCATION_CITY, String.valueOf(MapEngine.getCityId(position)));
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_LOCATION_TYPE, String.valueOf(position.getType()));
     }
 }
