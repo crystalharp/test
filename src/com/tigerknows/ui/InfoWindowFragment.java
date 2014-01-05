@@ -329,7 +329,6 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
 
     @Override
     public void refreshViews(int position) {
-        mSphinx.resetLoactionButtonState();
         MapView mapView = mSphinx.getMapView();
         if (position < mPosition) {
             mActionLog.addAction(ActionLog.MapStepUp);
@@ -351,6 +350,9 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
         }
         if (position + 1 < mCyclePagerAdapter.count) {
             nextPosition = position+1;
+        }
+        if (prevPosition != -1 || nextPosition != -1) {
+            mSphinx.resetLoactionButtonState();
         }
         if (mType == TYPE_POI) {
             

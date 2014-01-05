@@ -638,6 +638,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     }
 
                     if(touchMode.equals(TouchMode.MEASURE_DISTANCE)) {
+                        getMeasureDistanceFragment().addPoint(position);
                         return;
                     }
 
@@ -687,7 +688,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     }
 
                     if(touchMode.equals(TouchMode.MEASURE_DISTANCE)) {
-                        getMeasureDistanceFragment().addPoint(position);
                         return;
                     }
 
