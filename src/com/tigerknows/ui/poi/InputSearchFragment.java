@@ -559,7 +559,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
             } else if (BaseQuery.DATA_TYPE_POI.equals(dataType)) {
                 int result = dealWithPOIResponse((DataQuery) baseQuery, mSphinx, this);
                 if(result > 0){
-                	mSphinx.uiStackAdjust();
+                	mSphinx.getHandler().sendEmptyMessage(Sphinx.UI_STACK_ADJUST_EXECUTE);
                 }
             }
         }
