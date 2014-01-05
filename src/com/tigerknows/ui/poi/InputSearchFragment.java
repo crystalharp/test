@@ -84,6 +84,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
     final public static int REQUEST_TRAFFIC_END = 2;
     final public static int REQUEST_COMMON_PLACE = 3;
     
+    private DataQuery mDataQuery;
     private int mCurMode;
     private int mCurHisWordType;
     private int mRequest;
@@ -452,14 +453,14 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         
         HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, keyword), HistoryWordTable.TYPE_POI);
 
-        POI requestPOI = mSphinx.getCenterPOI();
+        DataQuery dataQuery = new DataQuery(mDataQuery);
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_KEYWORD, keyword);
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_POI);
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, DataQuery.SUB_DATA_TYPE_POI);
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_EXT, DataQuery.EXT_BUSLINE);
+        dataQuery.setup(getId(), getId(), getString(R.string.doing_and_wait));
         
-        DataQuery poiQuery = mSphinx.getHomeFragment().getDataQuery(keyword);
-        
-        poiQuery.addParameter(DataQuery.SERVER_PARAMETER_EXT, DataQuery.EXT_BUSLINE);
-        poiQuery.setup(getId(), getId(), getString(R.string.doing_and_wait), false, false, requestPOI);
-        
-        mSphinx.queryStart(poiQuery);
+        mSphinx.queryStart(dataQuery);
     }
     
     /**
@@ -491,27 +492,28 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         }
 
         HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, keyword), HistoryWordTable.TYPE_TRAFFIC);
-        
-        DataQuery dataQuery = new DataQuery(mSphinx);
-        dataQuery.setup(getId(), getId(), getString(R.string.doing_and_wait), false, false, null);
-        dataQuery.addParameter(BaseQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_GEOCODER);
-        dataQuery.addParameter(BaseQuery.SERVER_PARAMETER_NEED_FIELD, POI.NEED_FIELD_SIMPLE);
+
+        DataQuery dataQuery = new DataQuery(mDataQuery);
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_KEYWORD, keyword);
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_GEOCODER);
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_NEED_FIELD, POI.NEED_FIELD_SIMPLE);
+        dataQuery.setup(getId(), getId(), getString(R.string.doing_and_wait));
         
         mSphinx.queryStart(dataQuery);
     }
     
     public void setData() {
-        setData(null, MODE_POI);
+    	setData(mSphinx.buildDataQuery(), null, MODE_POI);
     }
     
-    public void setData(String text, int mode) {
-        setData(text, mode, null, REQUEST_NONE);
+    public void setData(DataQuery dataQuery, String text, int mode) {
+        setData(dataQuery, text, mode, null, REQUEST_NONE);
     }
     
-    public void setData(String text, int mode, IResponsePOI iResponsePOI, int request) {
+    public void setData(DataQuery dataQuery, String text, int mode, IResponsePOI iResponsePOI, int request) {
         mKeywordEdt.setText(text);
 
+        mDataQuery = dataQuery;
         mCurMode = mode;
         mCurHisWordType = mode;
         mIResponsePOI = iResponsePOI;

@@ -37,6 +37,7 @@ import com.tigerknows.map.CityInfo;
 import com.tigerknows.map.MapEngine;
 import com.tigerknows.map.TrafficOverlayHelper;
 import com.tigerknows.model.BaseQuery;
+import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.TKWord;
 import com.tigerknows.model.TrafficModel;
@@ -304,8 +305,10 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
             public void onClick(View v) {
                 CommonPlace c = (CommonPlace) v.getTag();
                 if (c.isEmptyFixedPlace()) {
-
-                    mSphinx.getInputSearchFragment().setData(null,
+                    DataQuery dataQuery = new DataQuery(mSphinx);
+                    dataQuery.setCityId(getCityId(mStart.getPOI(), mEnd.getPOI()));
+                    mSphinx.getInputSearchFragment().setData(dataQuery,
+                    		null,
                             InputSearchFragment.MODE_TRAFFIC,
                             new InputSearchFragment.IResponsePOI(){
 
@@ -494,8 +497,26 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
     		
         mActionLog.addAction(mActionTag +  ActionLog.TrafficTrafficBtn, getQueryType(), mStart.getText(), mEnd.getText());
         trafficQuery.setup(start, end, getQueryType(), getId(), getString(R.string.doing_and_wait));
+        trafficQuery.setCityId(getCityId(start, end));
         
         mSphinx.queryStart(trafficQuery);
+	}
+	
+	/**
+	 * 根据起点或终点的位置确定在哪个城市进行查询
+	 * @param start
+	 * @param end
+	 * @return
+	 */
+	private int getCityId(POI start, POI end) {
+	    int cityId = Globals.getCurrentCityInfo(mSphinx).getId();
+        if (start != null && start.getPosition() != null) {
+            cityId = MapEngine.getCityId(start.getPosition());
+        }
+        if (end != null && end.getPosition() != null) {
+            cityId = MapEngine.getCityId(end.getPosition());
+        }
+        return cityId;
 	}
     
     public void addHistoryWord(POI poi, int type) {
@@ -914,6 +935,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 
     @Override
     public void onClick(View v) {
+        DataQuery dataQuery;
         switch (v.getId()) {
         case R.id.right_btn:
             if (!mStart.textEmpty() && !mEnd.textEmpty()) {
@@ -947,7 +969,10 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
                     public void onItemClick(AdapterView<?> adapterView, View arg1, int index, long arg3) {
 
                         if (index == 0 || index == 1) {
-                            mSphinx.getInputSearchFragment().setData(null,
+                            DataQuery dataQuery = new DataQuery(mSphinx);
+                            dataQuery.setCityId(getCityId(mStart.getPOI(), mEnd.getPOI()));
+                            mSphinx.getInputSearchFragment().setData(dataQuery,
+                            		null,
                                     InputSearchFragment.MODE_BUELINE);
                             mSphinx.showView(R.id.view_poi_input_search);
                         } else if (index == 2) {
@@ -972,7 +997,10 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
             if (!isKeyword(mEnd.getText())) {
                 e = mEnd.getText();
             }
-            mSphinx.getInputSearchFragment().setData(e,
+            dataQuery = new DataQuery(mSphinx);
+            dataQuery.setCityId(getCityId(mStart.getPOI(), mEnd.getPOI()));
+            mSphinx.getInputSearchFragment().setData(dataQuery,
+            		e,
                     InputSearchFragment.MODE_TRAFFIC,
                     new InputSearchFragment.IResponsePOI(){
 
@@ -991,7 +1019,10 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
             if (!isKeyword(mStart.getText())) {
                 s = mStart.getText();
             }
-            mSphinx.getInputSearchFragment().setData(s,
+            dataQuery = new DataQuery(mSphinx);
+            dataQuery.setCityId(getCityId(mStart.getPOI(), mEnd.getPOI()));
+            mSphinx.getInputSearchFragment().setData(dataQuery,
+            		s,
                     InputSearchFragment.MODE_TRAFFIC,
                     new InputSearchFragment.IResponsePOI(){
 

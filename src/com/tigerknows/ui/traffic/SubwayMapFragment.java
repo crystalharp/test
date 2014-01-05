@@ -323,7 +323,7 @@ public class SubwayMapFragment extends BaseFragment implements RetryView.CallBac
                     poi.setPosition(pos);
                     poi.setSourceType(POI.SOURCE_TYPE_SUBWAY);
                     poi.setFrom(POI.FROM_LOCAL);
-                    mSphinx.getPOINearbyFragment().setData(poi);
+                    mSphinx.getPOINearbyFragment().setData(mSphinx.buildDataQuery(poi));
                     mSphinx.showView(R.id.view_poi_nearby_search);
                 }
                 

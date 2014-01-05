@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.POI;
 import com.tigerknows.provider.CommonPlaceTable;
 import com.tigerknows.provider.CommonPlaceTable.CommonPlace;
@@ -104,8 +105,10 @@ public class TrafficCommonPlaceFragment extends BaseFragment{
                 if (c.poi != null) {
                     keyWord = c.poi.getName();
                 }
-                
-                mSphinx.getInputSearchFragment().setData(keyWord,
+
+                DataQuery dataQuery = new DataQuery(mSphinx);
+                mSphinx.getInputSearchFragment().setData(dataQuery,
+                		keyWord,
                         InputSearchFragment.MODE_TRAFFIC,
                         mCallback,
                         InputSearchFragment.REQUEST_COMMON_PLACE);

@@ -254,13 +254,12 @@ public class GoCommentFragment extends BaseFragment implements View.OnClickListe
         } else if (REQUEST_OTHER == request) {
             DataQuery dataQuery = mDataQuery;
             if (dataQuery == null) {
-                DataQuery poiQuery = new DataQuery(mContext);
-                POI requestPOI = mSphinx.getCenterPOI();
+                DataQuery poiQuery = mSphinx.buildDataQuery();
                 poiQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
                 poiQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_POI);
                 poiQuery.addParameter(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_POI);
                 poiQuery.addParameter(DataQuery.SERVER_PARAMETER_BIAS, DataQuery.BIAS_MY_COMMENT);
-                poiQuery.setup(getId(), getId(), null, false, false, requestPOI);
+                poiQuery.setup(getId(), getId(), null);
                 mSphinx.queryStart(poiQuery); 
             } else {
                 POIList poiList = ((POIResponse)dataQuery.getResponse()).getBPOIList(); 
@@ -280,13 +279,12 @@ public class GoCommentFragment extends BaseFragment implements View.OnClickListe
     }
     
     private void queryPOIByOnline() {
-        DataQuery poiQuery = new DataQuery(mContext);
+        DataQuery poiQuery = mSphinx.buildDataQuery();
         poiQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
         poiQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_POI);
         poiQuery.addParameter(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_POI);
         poiQuery.addParameter(DataQuery.SERVER_PARAMETER_BIAS, DataQuery.BIAS_MY_COMMENT);
-        POI requestPOI = mSphinx.getCenterPOI();
-        poiQuery.setup(getId(), getId(), null, false, false, requestPOI);
+        poiQuery.setup(getId(), getId(), null);
         mSphinx.queryStart(poiQuery); 
     }
     

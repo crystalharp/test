@@ -156,7 +156,7 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
                 poi = ((Zhanlan) object).getPOI();
             }
             
-            mSphinx.getPOINearbyFragment().setData(poi);
+            mSphinx.getPOINearbyFragment().setData(mSphinx.buildDataQuery(poi));
             mSphinx.showView(R.id.view_poi_nearby_search);
         } else if (id == R.id.traffic_btn) {
             if (mType == TYPE_MY_LOCATION) {
@@ -375,15 +375,15 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             mSphinx.setMapViewPaddingBottom(mHeight);
             
             View view = (View) mCyclePagerAdapter.viewList.get((position) % mCyclePagerAdapter.viewList.size());
-            setMyLocationToView(view, (POI) mItemizedOverlay.get(position).getAssociatedObject());
+            setMyLocationToView(view, mItemizedOverlay.get(position));
             
             if (prevPosition != -1) {
                 view = mCyclePagerAdapter.viewList.get(prevPosition % mCyclePagerAdapter.viewList.size());
-                setMyLocationToView(view, (POI) mItemizedOverlay.get(prevPosition).getAssociatedObject());
+                setMyLocationToView(view, mItemizedOverlay.get(prevPosition));
             }
             if (nextPosition != -1) {
                 view = mCyclePagerAdapter.viewList.get(nextPosition % mCyclePagerAdapter.viewList.size());
-                setMyLocationToView(view, (POI) mItemizedOverlay.get(nextPosition).getAssociatedObject());
+                setMyLocationToView(view, mItemizedOverlay.get(nextPosition));
             }
         } else if (mType == TYPE_MESSAGE) {
 
@@ -666,15 +666,15 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
         v.findViewById(R.id.bottom_view).setVisibility(View.GONE);
     }
     
-    private void setMyLocationToView(View v, POI poi) {
+    private void setMyLocationToView(View v, OverlayItem overlayItem) {
         
         TextView titleTxv = (TextView) v.findViewById(R.id.title_txv);
         titleTxv.setVisibility(View.VISIBLE);
-        titleTxv.setText(getString(R.string.my_location_with_accuracy, Utility.formatMeterString((int)poi.getPosition().getAccuracy())));
+        titleTxv.setText(getString(R.string.my_location_with_accuracy, Utility.formatMeterString((int)((POI) overlayItem.getAssociatedObject()).getPosition().getAccuracy())));
         
         TextView nameTxv=(TextView)v.findViewById(R.id.name_txv);
         nameTxv.setVisibility(View.VISIBLE);
-        nameTxv.setText(poi.getName());
+        nameTxv.setText(overlayItem.getMessage());
         
         Button detailBtn = (Button) v.findViewById(R.id.detail_btn);
         detailBtn.setVisibility(View.GONE);
