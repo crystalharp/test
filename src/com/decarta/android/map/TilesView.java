@@ -389,7 +389,7 @@ public class TilesView extends GLSurfaceView {
 	private XYFloat lastTouch = new XYFloat(0f, 0f);
 	private TouchRecord touchRecord1 = new TouchRecord(5);
 	EasingRecord easingRecord = new EasingRecord();
-	private boolean infoWindowClicked = false;
+//	private boolean infoWindowClicked = false;
 	private boolean longClicked = false;
 	private long lastTouchDownTime = 0;
 	private XYFloat lastTouchDown = new XYFloat(0f, 0f);
@@ -800,7 +800,7 @@ public class TilesView extends GLSurfaceView {
 				}
 			}
 
-			infoWindowClicked = false;
+//			infoWindowClicked = false;
 			resetLongTouchTimer();
 			longClicked = false;
 
@@ -832,25 +832,25 @@ public class TilesView extends GLSurfaceView {
 				lastTouch.x = event.getX(0);
 				lastTouch.y = event.getY(0);
 
-				if (infoWindow.isVisible() && infoWindow.getMercXY() != null) {
-					XYFloat relativeXY = new XYFloat(0, 0);
-					if (snapToInfoWindow(event.getX(0), event.getY(0),
-							relativeXY)) {
-						infoWindowClicked = true;
-						event.setLocation(relativeXY.x
-								- InfoWindow.INFO_BORDER_SIZE, relativeXY.y
-								- InfoWindow.INFO_BORDER_SIZE);
-						infoWindow.dispatchTouchEvent(event);
-						infoWindow
-								.setBackgroundColor(InfoWindow.BACKGROUND_COLOR_CLICKED);
-						refreshMap();
-					}
-
-				}
-
-				if (!infoWindowClicked) {
+//				if (infoWindow.isVisible() && infoWindow.getMercXY() != null) {
+//					XYFloat relativeXY = new XYFloat(0, 0);
+//					if (snapToInfoWindow(event.getX(0), event.getY(0),
+//							relativeXY)) {
+//						infoWindowClicked = true;
+//						event.setLocation(relativeXY.x
+//								- InfoWindow.INFO_BORDER_SIZE, relativeXY.y
+//								- InfoWindow.INFO_BORDER_SIZE);
+//						infoWindow.dispatchTouchEvent(event);
+//						infoWindow
+//								.setBackgroundColor(InfoWindow.BACKGROUND_COLOR_CLICKED);
+//						refreshMap();
+//					}
+//
+//				}
+//
+//				if (!infoWindowClicked) {
 					setupLongTouchTimer(xy0Conv);
-				}
+//				}
 			} else if (pCount > 1) {
 				multiTouch = true;
 			}
@@ -865,22 +865,22 @@ public class TilesView extends GLSurfaceView {
 					if (longClicked)
 						return true;
 				}
-				if (infoWindowClicked) {
-					if (snapToInfoWindow(event.getX(0), event.getY(0), null)) {
-						int oriColor = infoWindow.getBackgroundColor();
-						infoWindow
-								.setBackgroundColor(InfoWindow.BACKGROUND_COLOR_CLICKED);
-						if (oriColor != InfoWindow.BACKGROUND_COLOR_CLICKED)
-							refreshMap();
-					} else {
-						int oriColor = infoWindow.getBackgroundColor();
-						infoWindow
-								.setBackgroundColor(InfoWindow.BACKGROUND_COLOR_UNCLICKED);
-						if (oriColor != InfoWindow.BACKGROUND_COLOR_UNCLICKED)
-							refreshMap();
-					}
-					return true;
-				}
+//				if (infoWindowClicked) {
+//					if (snapToInfoWindow(event.getX(0), event.getY(0), null)) {
+//						int oriColor = infoWindow.getBackgroundColor();
+//						infoWindow
+//								.setBackgroundColor(InfoWindow.BACKGROUND_COLOR_CLICKED);
+//						if (oriColor != InfoWindow.BACKGROUND_COLOR_CLICKED)
+//							refreshMap();
+//					} else {
+//						int oriColor = infoWindow.getBackgroundColor();
+//						infoWindow
+//								.setBackgroundColor(InfoWindow.BACKGROUND_COLOR_UNCLICKED);
+//						if (oriColor != InfoWindow.BACKGROUND_COLOR_UNCLICKED)
+//							refreshMap();
+//					}
+//					return true;
+//				}
 
 				float moveFromTouchDownX = event.getX(0) - lastTouchDown.x;
 				float moveFromTouchDownY = event.getY(0) - lastTouchDown.y;
@@ -1115,8 +1115,7 @@ public class TilesView extends GLSurfaceView {
 
 				long touchUpTime = System.nanoTime();
 				Position position = screenXYConvToPos(xy0Conv.x, xy0Conv.y);
-				infoWindow
-						.setBackgroundColor(InfoWindow.BACKGROUND_COLOR_UNCLICKED);
+//				infoWindow.setBackgroundColor(InfoWindow.BACKGROUND_COLOR_UNCLICKED);
 
 				if (lastTouchDownTime != 0
 						&& (touchUpTime - lastTouchDownTime) < CLICK_DOWN_UP_TIME_MAX
@@ -1137,24 +1136,24 @@ public class TilesView extends GLSurfaceView {
 					}
 				}
 
-				if (infoWindowClicked) {
-					XYFloat relativeXY = new XYFloat(0, 0);
-					if (snapToInfoWindow(event.getX(0), event.getY(0),
-							relativeXY)) {
-						event.setLocation(relativeXY.x
-								- InfoWindow.INFO_BORDER_SIZE, relativeXY.y
-								- InfoWindow.INFO_BORDER_SIZE);
-						infoWindow.executeTouchListeners(event);
-						infoWindowClicked = false;
-					}
-					refreshMap();
-					synchronized (touchingLock) {
-						touching = false;
-						touchingLock.notifyAll();
-					}
-
-					return true;
-				}
+//				if (infoWindowClicked) {
+//					XYFloat relativeXY = new XYFloat(0, 0);
+//					if (snapToInfoWindow(event.getX(0), event.getY(0),
+//							relativeXY)) {
+//						event.setLocation(relativeXY.x
+//								- InfoWindow.INFO_BORDER_SIZE, relativeXY.y
+//								- InfoWindow.INFO_BORDER_SIZE);
+//						infoWindow.executeTouchListeners(event);
+//						infoWindowClicked = false;
+//					}
+//					refreshMap();
+//					synchronized (touchingLock) {
+//						touching = false;
+//						touchingLock.notifyAll();
+//					}
+//
+//					return true;
+//				}
 
 				if (lastTouchDownTime != 0
 						&& (touchUpTime - lastTouchDownTime) < CLICK_DOWN_UP_TIME_MAX
@@ -1218,7 +1217,7 @@ public class TilesView extends GLSurfaceView {
 						}
 
 					} else {
-                        infoWindow.setVisible(false);
+//                        infoWindow.setVisible(false);
 
                         // 判断是否点击在地图上的POI上
                         shownLabels.clear();
