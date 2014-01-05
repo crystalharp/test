@@ -228,8 +228,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         }else{
         	mTitleBtn.setText(R.string.more);
         }
-<<<<<<< HEAD
-        if(mFrom == NORMAL_POI){
+        if(mPOI.getSourceType() != POI.SOURCE_TYPE_MAP_CENTER && mPOI.getSourceType() != POI.SOURCE_TYPE_MY_LOCATION){
             mTitleBtn.setVisibility(View.GONE);
             mKeywordEdt.setVisibility(View.VISIBLE);
             
@@ -248,15 +247,13 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         	mRightBtn.setVisibility(View.VISIBLE);
         	mRightBtn.setOnClickListener(this);
         	mRightBtn.setText(R.string.cancel);
-
+        	
         }else{
-=======
-        if(mPOI.getSourceType() != POI.SOURCE_TYPE_MAP_CENTER && mPOI.getSourceType() != POI.SOURCE_TYPE_MY_LOCATION){
->>>>>>> dfbc8cd1a8e26853ddc3cf39e6ca938cd5c468f9
         	mRightBtn.setVisibility(View.VISIBLE);
         	mRightBtn.setBackgroundResource(R.drawable.btn_nearby_search);
         	mRightBtn.setOnClickListener(this);
         	mRightBtn.setPadding(0, 0, 0, 0);
+        	
         }
         String name = mPOI.getName();
         String title = getString(R.string.at_where_search, name);
