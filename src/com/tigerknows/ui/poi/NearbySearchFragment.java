@@ -219,7 +219,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     @Override
     public void onResume() {
         super.onResume();
-        mIsFold = TKConfig.getPref(mContext, TKConfig.PREFS_CUSTOM_FOLD, "Yes");
+        mIsFold = TKConfig.getPref(mContext, TKConfig.PREFS_CUSTOM_FOLD, "No");
         refreshHotView(TKConfig.getPref(mContext, TKConfig.PREFS_CUSTOM_CATEGORY, "111100110001000"));
         doFold();
         mLeftBtn.setOnClickListener(this);
@@ -249,6 +249,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         	mRightBtn.setVisibility(View.VISIBLE);
         	mRightBtn.setOnClickListener(this);
         	mRightBtn.setText(R.string.cancel);
+        	mRightBtn.setTextColor(mSphinx.getResources().getColor(R.color.black_dark));
         	mRightBtn.setBackgroundResource(R.drawable.btn_cancel);
         	
         }else{
