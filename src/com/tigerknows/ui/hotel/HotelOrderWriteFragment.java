@@ -37,6 +37,7 @@ import android.widget.Toast;
 
 import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
+import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
@@ -159,6 +160,9 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         super.onResume();
         mTitleBtn.setText(getString(R.string.hotel_room_title));
         final HotelVendor hotelVendor = HotelVendor.getHotelVendorById(mRoomType.getVendorID(), mSphinx, null);
+        if(hotelVendor != null){
+        	LogWrapper.d("Trap", "~" + hotelVendor.getServiceName() + hotelVendor.getServiceTel());
+        }
         if(hotelVendor == null || TextUtils.isEmpty(hotelVendor.getReserveTel())){
             mRightBtn.setVisibility(View.GONE);
         }else{
