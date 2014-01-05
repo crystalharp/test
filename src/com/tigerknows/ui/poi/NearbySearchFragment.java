@@ -15,8 +15,10 @@ import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnTouchListener;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -48,6 +50,7 @@ import com.tigerknows.model.DataQuery.FilterResponse;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.ui.HomeFragment;
+import com.tigerknows.util.Utility;
 import com.tigerknows.widget.FilterListView;
 
 /**
@@ -231,12 +234,30 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         	mTitleBtn.setText(R.string.more);
         }
         if(mFrom == NORMAL_POI){
+            mTitleBtn.setVisibility(View.GONE);
+            mKeywordEdt.setVisibility(View.VISIBLE);
+            
+            mKeywordEdt.mActionTag = mActionTag;
+            mKeywordEdt.setOnTouchListener(new OnTouchListener() {
+                
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    	mSphinx.getInputSearchFragment().setData();
+                        mSphinx.showView(R.id.view_poi_input_search);
+                    }
+                    return false;
+                }
+            });
+        	mRightBtn.setVisibility(View.VISIBLE);
+        	mRightBtn.setOnClickListener(this);
+        	mRightBtn.setText(R.string.cancel);
+
+        }else{
         	mRightBtn.setVisibility(View.VISIBLE);
         	mRightBtn.setBackgroundResource(R.drawable.btn_nearby_search);
         	mRightBtn.setOnClickListener(this);
         	mRightBtn.setPadding(0, 0, 0, 0);
-        }else{
-        	mRightBtn.setVisibility(View.GONE);
         }
         String name = mPOI.getName();
         if (mFrom == LOCATION) {
