@@ -565,7 +565,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     }
     
     private void setFilterOrder() {
-		mTitleBtn.setText(R.string.merchant_type);
+		mTitleBtn.setText(R.string.more);
 		List<Filter> categoryFilterList = mFilterList.get(0).getChidrenFilterList();
 		Filter currentFilter = null;
 		for(int i = 0; i < categoryFilterList.size(); i++){
