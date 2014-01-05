@@ -233,6 +233,8 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
             mKeywordEdt.setVisibility(View.VISIBLE);
             
             mKeywordEdt.mActionTag = mActionTag;
+            mKeywordEdt.setText("");
+            mSphinx.hideSoftInput();
             mKeywordEdt.setOnTouchListener(new OnTouchListener() {
                 
                 @Override
@@ -247,6 +249,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         	mRightBtn.setVisibility(View.VISIBLE);
         	mRightBtn.setOnClickListener(this);
         	mRightBtn.setText(R.string.cancel);
+        	mRightBtn.setBackgroundResource(R.drawable.btn_cancel);
         	
         }else{
         	mRightBtn.setVisibility(View.VISIBLE);
