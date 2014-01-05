@@ -442,10 +442,18 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         	}
         	break;
         case R.id.right_btn:
-        	mSphinx.getInputSearchFragment().setData(mSphinx.buildDataQuery(null),
-        			null,
-                    InputSearchFragment.MODE_POI);
-            mSphinx.showView(R.id.view_poi_input_search);
+        	if(mPOI.getSourceType() != POI.SOURCE_TYPE_MAP_CENTER && mPOI.getSourceType() != POI.SOURCE_TYPE_MY_LOCATION){
+                synchronized (mSphinx.mUILock) {
+            	    // TODO: mActionLog;
+                	dismiss();
+                }        		
+        	}else{
+        		mSphinx.getInputSearchFragment().setData(mSphinx.buildDataQuery(null),
+        				null,
+        				InputSearchFragment.MODE_POI);
+        		mSphinx.showView(R.id.view_poi_input_search);
+        	}
+            
             break;
         case R.id.category_btn:
         case R.id.sub_0_btn:
