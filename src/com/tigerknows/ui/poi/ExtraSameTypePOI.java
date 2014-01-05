@@ -141,6 +141,9 @@ public class ExtraSameTypePOI extends DynamicPOIViewTemplate {
                     poiResponse.getBPOIList().getList().size() > 0) {
             mList.addAll(poiResponse.getBPOIList().getList());
         }
+        for(int i = mList.size() - 1; i >= 0; i--) {
+            mList.get(i).setToCenterDistance(null);
+        }
         this.dataQuery= dataQuery;
         refresh();
     }

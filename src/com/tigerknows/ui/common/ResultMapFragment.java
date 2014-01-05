@@ -9,6 +9,7 @@ import com.decarta.android.map.OverlayItem;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
+import com.tigerknows.Sphinx.TouchMode;
 import com.tigerknows.android.location.Position;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
@@ -352,6 +353,7 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
         super.dismiss();
 
         View view = mSphinx.getCenterTokenView();
+        mSphinx.setTouchMode(TouchMode.NORMAL);
         if (view.getVisibility() == View.VISIBLE) {
             view.setVisibility(View.INVISIBLE);
             mSphinx.replaceBottomUI(null);
