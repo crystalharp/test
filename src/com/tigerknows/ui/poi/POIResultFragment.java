@@ -1009,11 +1009,8 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             Position centerPosition = poiList.getPosition();
             if (centerPosition != null) {
                 POI poi = dataQuery.getPOI();
-                if (poi == null || !centerPosition.equals(poi.getPosition())) {
-                    POI centerPOI = new POI();
-                    centerPOI.setPosition(centerPosition);
-                    centerPOI.setName(mSphinx.getString(R.string.map_center));
-                    dataQuery.setPOI(centerPOI);
+                if (poi != null && !centerPosition.equals(poi.getPosition())) {
+                    dataQuery.setPOI(null);
                 }
             } else {
                 dataQuery.setPOI(null);
