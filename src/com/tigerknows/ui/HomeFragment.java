@@ -4,6 +4,8 @@
 
 package com.tigerknows.ui;
 
+import com.decarta.android.map.ItemizedOverlay;
+import com.decarta.android.map.OverlayItem;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
@@ -36,6 +38,10 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
     private int mTitleBtnPaddingLeft;
     
     private int mTitleBtnPaddingRight;
+    
+    private ItemizedOverlay mItemizedOverlay;
+    
+    private OverlayItem mOverlayItem;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -103,6 +109,33 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         mSphinx.getMapToolsView().setVisibility(View.VISIBLE);
         mSphinx.getMapCleanBtn().setVisibility(View.INVISIBLE);
         mSphinx.getLocationView().setVisibility(View.VISIBLE);
+        
+        try {
+            mSphinx.showInfoWindow(getId(), mOverlayItem);
+            if (mItemizedOverlay != null) {
+                mSphinx.getMapView().addOverlay(mItemizedOverlay);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    @Override
+    public void onPause() {
+        super.onPause();
+        mItemizedOverlay = mSphinx.getMapView().getCurrentOverlay();
+        InfoWindowFragment infoWindowFragment = mSphinx.getInfoWindowFragment();
+        ItemizedOverlay itemizedOverlay = infoWindowFragment.getItemizedOverlay();
+        if (infoWindowFragment.getOwerFragmentId() == getId() && itemizedOverlay != null) {
+            mOverlayItem = itemizedOverlay.getItemByFocused();
+        } else {
+            mOverlayItem = null;
+        }
+    }
+    
+    public void reset() {
+        mItemizedOverlay = null;
+        mOverlayItem = null;
     }
 
     @Override

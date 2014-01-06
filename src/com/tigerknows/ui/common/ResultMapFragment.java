@@ -100,6 +100,7 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
     @Override
     public void onResume() {
         super.onResume();
+        mSphinx.getHomeFragment().reset();
         mSphinx.getMapView().setStopRefreshMyLocation(false);
         mTitleBtn.setText(mTitle);
         setOnTouchListener(null);

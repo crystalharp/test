@@ -273,21 +273,25 @@ public class SubwayMapFragment extends BaseFragment implements RetryView.CallBac
     }
     
     public void setData(CityInfo cityinfo) {
-        needRefresh = true;
-        mWebWbv.stopLoading();
-        mWebWbv.clearView();
-        mTitle = getString(R.string.subway_map);
-        mCityInfo = cityinfo;
-        if (mCityInfo == null) {
-            mCityInfo = new CityInfo();
+        if (cityinfo == null) {
+            cityinfo = new CityInfo();
         }
         CityInfo locateCityInfo = Globals.g_My_Location_City_Info;
         if (locateCityInfo != null
-                && locateCityInfo.getId() == mCityInfo.getId()) {
+                && locateCityInfo.getId() == cityinfo.getId()) {
             mPos = locateCityInfo.getPosition();
         } else {
             mPos = null;
         }
+        
+        if (mCityInfo != null && mCityInfo.getId() == cityinfo.getId()) {
+            return;
+        }
+        mCityInfo = cityinfo;
+        needRefresh = true;
+        mWebWbv.stopLoading();
+        mWebWbv.clearView();
+        mTitle = getString(R.string.subway_map);
     }
     
     public class StationHandler {

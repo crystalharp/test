@@ -1139,12 +1139,17 @@ public class MapView extends RelativeLayout implements
         }
         return mapScene;
     }
+    
+
+    public void restoreScene(MapScene mapScene) {
+        restoreScene(mapScene, R.id.view_result_map);
+    }
 
     /**
      * 还原地图状态（中心点、Shape、OverlayItem）
      * @param mapScene
      */
-    public void restoreScene(MapScene mapScene) {
+    public void restoreScene(MapScene mapScene, int fragmentId) {
         try {
             if (mapScene == null) {
                 return;
@@ -1162,7 +1167,7 @@ public class MapView extends RelativeLayout implements
             if (mapScene.position != null) {
                 centerOnPosition(mapScene.position, mapScene.zoomLevel);
             }
-            sphinx.showInfoWindow(R.id.view_result_map, mapScene.overlayItem, false);
+            sphinx.showInfoWindow(fragmentId, mapScene.overlayItem, false);
         } catch (APIException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
