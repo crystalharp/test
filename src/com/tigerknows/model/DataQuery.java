@@ -347,14 +347,11 @@ public final class DataQuery extends BaseQuery {
                     cityId = Globals.getCurrentCityInfo(context).getId();
                 }
                 FilterArea filterDataArea = null;
+                FilterArea quangouFilterDataArea = Quanguo_Filter_Area;
                 FilterCategoryOrder filterDataCategoryOrder = null;
                 String filterFileKey = dataType;
                 if (DATA_TYPE_POI.equals(dataType)) {
-                	if (cityId == MapEngine.SW_ID_QUANGUO) {
-                		filterDataArea = Quanguo_Filter_Area;
-                	} else {
-                        filterDataArea = Filter_Area;
-                	}
+                	filterDataArea = Filter_Area;
                     if (SUB_DATA_TYPE_POI.equals(subDataType)) {
                         filterDataCategoryOrder = Filter_Category_Order_POI;
                     } else if (SUB_DATA_TYPE_HOTEL.equals(subDataType)) {
@@ -422,34 +419,26 @@ public final class DataQuery extends BaseQuery {
                     }
                 }
                 
-                if (filterDataArea == null || filterDataArea.cityId != cityId){
-                    filterDataArea = null;
-                    // 区域筛选项数据在v5.8.0之后使用新的文件名存储，以避免地图中心点筛选项在之前的客户端显示的问题
-                    String path = MapEngine.cityId2Floder(cityId) + String.format("v5.8.0." + TKConfig.FILTER_FILE, DATA_TYPE_POI, cityId);
-                    File file = new File(path);
+                if (quangouFilterDataArea == null){
 
                     // 硬编码部分区域筛选项（全部区域、我的当前位置、指定位置）
-                    if (file.exists() == false) {
-                        String quanguo = String.format(TKConfig.FILTER_FILE, "0", MapEngine.SW_ID_QUANGUO);
-                        path = MapEngine.cityId2Floder(MapEngine.SW_ID_QUANGUO) + quanguo;
-                        file = new File(path);
-                        if (context != null && file.exists() == false) {
-                            AssetManager am = context.getAssets();
-                            String mapPath = TKConfig.getDataPath(true);
-                            Utility.unZipFile(am, "tigermap.zip", mapPath, quanguo);
-                        }
+                    String quanguo = String.format(TKConfig.FILTER_FILE, "0", MapEngine.SW_ID_QUANGUO);
+                    String path = MapEngine.cityId2Floder(MapEngine.SW_ID_QUANGUO) + quanguo;
+                    File file = new File(path);
+                    if (context != null && file.exists() == false) {
+                        AssetManager am = context.getAssets();
+                        String mapPath = TKConfig.getDataPath(true);
+                        Utility.unZipFile(am, "tigermap.zip", mapPath, quanguo);
                     }
                     
                     if (file.exists()) {
                         FileInputStream fis = new FileInputStream(file);
                         try {
                             XMap xmap = (XMap)XMap.readFrom(new ByteReader(fis, TKConfig.getEncoding()));
-                            filterDataArea = new FilterArea(xmap);
-                            if (filterDataArea.getVersion() == null ||
-                                    filterDataArea.getAreaFilterOption().isEmpty()) {
-                                filterDataArea = null;
-                            } else {
-                                filterDataArea.cityId = cityId;
+                            quangouFilterDataArea = new FilterArea(xmap);
+                            if (quangouFilterDataArea.getVersion() == null ||
+                                    quangouFilterDataArea.getAreaFilterOption().isEmpty()) {
+                                quangouFilterDataArea = null;
                             }
                             // 生成客户端预置的区域筛选项数据文件
 //                            String resetPath = MapEngine.cityId2Floder(9999) + String.format(TKConfig.FILTER_FILE, "0", 9999);
@@ -474,28 +463,51 @@ public final class DataQuery extends BaseQuery {
                     }
                 }
                 
+                if (filterDataArea == null || filterDataArea.cityId != cityId){
+                    filterDataArea = null;
+                    // 区域筛选项数据在v5.8.0之后使用新的文件名存储，以避免地图中心点筛选项在之前的客户端显示的问题
+                    String path = MapEngine.cityId2Floder(cityId) + String.format("v5.8.0." + TKConfig.FILTER_FILE, DATA_TYPE_POI, cityId);
+                    File file = new File(path);
+                    
+                    if (file.exists()) {
+                        FileInputStream fis = new FileInputStream(file);
+                        try {
+                            XMap xmap = (XMap)XMap.readFrom(new ByteReader(fis, TKConfig.getEncoding()));
+                            filterDataArea = new FilterArea(xmap);
+                            if (filterDataArea.getVersion() == null ||
+                                    filterDataArea.getAreaFilterOption().isEmpty()) {
+                                filterDataArea = null;
+                            } else {
+                                filterDataArea.cityId = cityId;
+                            }
+                        } finally {
+                            if (null != fis) {
+                                try {
+                                    fis.close();
+                                } catch (IOException e) {
+                                    // Ignore
+                                    LogWrapper.e("POIQuery", "setup() IOException caught while closing stream");
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                Filter_Area = filterDataArea;
+                Quanguo_Filter_Area = quangouFilterDataArea;
                 if (DATA_TYPE_POI.equals(dataType)) {
-                	if (cityId == MapEngine.SW_ID_QUANGUO) {
-                        Quanguo_Filter_Area = filterDataArea;
-                	} else {
-                		Filter_Area = filterDataArea;
-                	}
                     if (SUB_DATA_TYPE_POI.equals(subDataType)) {
                         Filter_Category_Order_POI = filterDataCategoryOrder;
                     } else if (SUB_DATA_TYPE_HOTEL.equals(subDataType)) {
                         Filter_Category_Order_Hotel = filterDataCategoryOrder;   
                     }
                 } else if (DATA_TYPE_TUANGOU.equals(dataType)) {
-                    Filter_Area = filterDataArea;
                     Filter_Category_Order_Tuangou = filterDataCategoryOrder;
                 } else if (DATA_TYPE_DIANYING.equals(dataType)) {
-                    Filter_Area = filterDataArea;
                     Filter_Category_Order_Dianying = filterDataCategoryOrder;
                 } else if (DATA_TYPE_YANCHU.equals(dataType)) {
-                    Filter_Area = filterDataArea;
                     Filter_Category_Order_Yanchu = filterDataCategoryOrder;
                 } else if (DATA_TYPE_ZHANLAN.equals(dataType)) {
-                    Filter_Area = filterDataArea;
                     Filter_Category_Order_Zhanlan = filterDataCategoryOrder;
                 }
             }
@@ -548,7 +560,7 @@ public final class DataQuery extends BaseQuery {
     protected void checkRequestParameters() throws APIException {
         
         String[] ekeys = new String[]{SERVER_PARAMETER_DATA_TYPE, SERVER_PARAMETER_SIZE};
-        String[] okeys = new String[]{SERVER_PARAMETER_TIME_STAMP, SERVER_PARAMETER_EXT};
+        String[] okeys = new String[]{SERVER_PARAMETER_TIME_STAMP, SERVER_PARAMETER_EXT, SERVER_PARAMETER_POI_ID};
         String[] discoverOptinalKeys = new String[]{SERVER_PARAMETER_DISCOVER_POI_VERSION, SERVER_PARAMETER_DISCOVER_BASEINDEX_VERSION};
         String[] filterOptionalKeys = new String[]{SERVER_PARAMETER_CITY_FILTER_VERSION, SERVER_PARAMETER_NATION_FILTER_VERSION, 
                 SERVER_PARAMETER_FILTER, SERVER_PARAMETER_FILTER_STRING};
