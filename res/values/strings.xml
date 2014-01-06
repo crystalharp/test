@@ -100,7 +100,7 @@
     <string name="are_your_change_to_location_city">定位显示您在%1$s，您是否需要</string> 
     <string name="are_your_change_to_map_center_city">你的地图已经切换到%1$s，是否切换？</string> 
     <string name="current_location">我的位置：%1$s附近</string> 
-    <string name="find_poi">输入地点&#160;&#160;线路</string>
+    <string name="find_poi">搜索地点&#160;&#160;线路</string>
     <string name="find_poi_merchant">输入地点、商户名</string>
     <string name="no_comment">目前暂无评论</string> 
     
