@@ -211,11 +211,6 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             overlayItem = itemizedOverlay.getItemByFocused();
         }
         
-        boolean refresh = true;
-        if (mItemizedOverlay == overlayItem.getOwnerOverlay()) {
-            refresh = false;
-        }
-        
         mItemizedOverlay = itemizedOverlay;
         mPosition = mItemizedOverlay.getPositionByFocused();
         
@@ -259,9 +254,7 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
         mCyclePagerAdapter.notifyDataSetChanged();
         mCycleOnPageChangeListener.count = mCyclePagerAdapter.count;
         layoutInfoWindowView();
-        if (refresh) {
-            refreshViews(mPosition);
-        }
+        refreshViews(mPosition);
         mViewPager.setCurrentItem(mPosition, false);
 
     }
@@ -736,7 +729,11 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
         TextView titleTxv = (TextView) v.findViewById(R.id.title_txv);
         titleTxv.setVisibility(View.VISIBLE);
         titleTxv.setText(tuangou.getShortDesc());
-        priceTxv.setText(price);
+        if (price != null) {
+            priceTxv.setText(price+getString(R.string.rmb_text));
+        } else {
+            priceTxv.setText("");
+        }
         Button detailBtn = (Button) v.findViewById(R.id.detail_btn);
         detailBtn.setText(R.string.detail);
         detailBtn.setVisibility(View.VISIBLE);
@@ -921,7 +918,7 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
                             poi.init(list.get(0).getData(), true);
                             poi.setPosition(position);
                             poi.setFrom(POI.FROM_ONLINE);
-                            mCyclePagerAdapter.notifyDataSetChanged();
+                            refreshViews(mPosition);
                         } catch (APIException e) {
                             e.printStackTrace();
                         }
