@@ -141,14 +141,18 @@ public class BaseDetailFragment extends DiscoverBaseFragment implements View.OnC
         mViewPager.setCurrentItem(position);
     }
 
+    @Override
     protected void findViews() {
+        super.findViews();
         mViewPager = (ViewPager) mRootView.findViewById(R.id.view_pager);
         mViewPager.setAdapter(mCyclePagerAdapter);
         mNextImageView = mRootView.findViewById(R.id.next_imv);
         mPrevImageView = mRootView.findViewById(R.id.prev_imv);
     }
 
+    @Override
     protected void setListener() {
+        super.setListener();
         mCycleOnPageChangeListener = new CycleOnPageChangeListener(mContext, this, this, mActionTag);
         mViewPager.setOnPageChangeListener(mCycleOnPageChangeListener);
     }
