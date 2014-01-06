@@ -2081,8 +2081,11 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             if (size > 0 && uiStackPeek() == id) {
                 mUIStack.remove(size-1);
                 if (uiStackPeek() == R.id.view_result_map) {
-                    if (id == R.id.view_poi_detail ||
-                            id == R.id.view_discover_tuangou_detail ||
+                    if (id == R.id.view_poi_detail) {
+                        if (uiStackContains(R.id.view_poi_result)) {
+                            uiStackRemove(R.id.view_result_map);
+                        }
+                    } else if (id == R.id.view_discover_tuangou_detail ||
                             id == R.id.view_discover_dianying_detail ||
                             id == R.id.view_discover_yanchu_detail ||
                             id == R.id.view_discover_zhanlan_detail ||
