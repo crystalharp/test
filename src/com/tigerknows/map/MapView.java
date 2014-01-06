@@ -810,7 +810,7 @@ public class MapView extends RelativeLayout implements
 	}
 
     public ItemizedOverlay getCurrentOverlay(){
-        for(int i=0;i<tilesView.getOverlays().size();i++){
+        for(int i=tilesView.getOverlays().size()-1;i>=0;i--){
             ItemizedOverlay overlay=tilesView.getOverlays().get(i);
             if(!overlay.getName().equals(ItemizedOverlay.MY_LOCATION_OVERLAY)){
                 return overlay;
