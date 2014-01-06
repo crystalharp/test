@@ -546,6 +546,12 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             
             View view = (View) mCyclePagerAdapter.viewList.get((position) % mCyclePagerAdapter.viewList.size());
             Plan plan = (Plan) mItemizedOverlay.get(position).getAssociatedObject();
+            if (plan.getType() == Step.TYPE_TRANSFER) {
+                TrafficDetailFragment f = mSphinx.getTrafficDetailFragment();
+                if (f.getResult(Step.TYPE_TRANSFER).size() != 0) {
+                    f.refreshResult(Step.TYPE_TRANSFER, f.getResult(Step.TYPE_TRANSFER).indexOf(plan));
+                }
+            }
             setPlanListToView(view, plan);
             
             TrafficOverlayHelper.drawOverlay(mSphinx, plan);
