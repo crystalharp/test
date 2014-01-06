@@ -229,7 +229,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     private View mMapOverView;
     private View mCenterTokenView;
 	private CityInfo mInitCityInfo;
-    private TextView mDownloadView;
     private View mCompassView;
 	private LinearLayout mZoomView;
     private View mLocationView=null;
@@ -251,8 +250,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     public static int MAP_MOVEEND = 0x02;
 	public static int MAP_ZOOMEND = 0x03;
 
-    public static int DOWNLOAD_SHOW = 0x12;
-    public static int DOWNLOAD_HIDE = 0x13;
     public static int DOWNLOAD_ERROR = 0x14;
 
     public static int SHOW_MAPVIEW = 0x15;
@@ -361,10 +358,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 
                 } else if (msg.what == MAP_ZOOMEND) {
                     mMapView.setZoomControlsState(msg.arg1);
-                } else if (msg.what == DOWNLOAD_SHOW) {
-                    mDownloadView.setVisibility(View.VISIBLE);
-                } else if (msg.what == DOWNLOAD_HIDE) {
-                    mDownloadView.setVisibility(View.GONE);
                 } else if (msg.what == DOWNLOAD_ERROR) {
                     int id = Sphinx.this.uiStackPeek();
                     if (id == R.id.view_traffic_home ||
@@ -597,22 +590,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 }
             });
 
-            final Runnable downloadViewHideRun = new Runnable() {
-
-                @Override
-                public void run() {
-                    mHandler.sendEmptyMessage(DOWNLOAD_HIDE);
-                }
-            };
             EventRegistry.addEventListener(mMapView, MapView.EventType.DOWNLOAD, new MapView.DownloadEventListener(){
                 @Override
                 public void onDownloadEvent(final int state) {
-                    if (state == DownloadEventListener.STATE_DOWNLOADING) {
-                        mHandler.removeCallbacks(downloadViewHideRun);
-                        mHandler.sendEmptyMessage(DOWNLOAD_SHOW);
-                    } else if (state == DownloadEventListener.STATE_DOWNLOADED) {
-                        mHandler.postDelayed(downloadViewHideRun, 3000);
-                    } else {
+                    if (state == DownloadEventListener.STATE_DOWNLOAD_ERROR) {
                         mHandler.sendEmptyMessage(DOWNLOAD_ERROR);
                     }
                 }
@@ -1209,7 +1190,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         mLocationView=(findViewById(R.id.location_view));
         mLocationBtn=(ImageButton)(findViewById(R.id.location_btn));
         mLocationTxv=(TextView)(findViewById(R.id.location_txv));
-        mDownloadView = (TextView)findViewById(R.id.download_txv);
         mCompassView = findViewById(R.id.compass_imv);
 
         mMapToolsView = findViewById(R.id.map_tools_view);
