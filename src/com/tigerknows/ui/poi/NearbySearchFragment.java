@@ -241,7 +241,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
                 public boolean onTouch(View v, MotionEvent event) {
                     if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     	mSphinx.getHandler().sendEmptyMessage(Sphinx.UI_STACK_ADJUST_READY);
-                    	mSphinx.getInputSearchFragment().setData();
+                    	mSphinx.getInputSearchFragment().setData(mDataQuery, null, InputSearchFragment.MODE_POI);
                         mSphinx.showView(R.id.view_poi_input_search);
                     }
                     return false;
@@ -453,7 +453,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
                 	dismiss();
                 }        		
         	}else{
-        		mSphinx.getInputSearchFragment().setData(mSphinx.buildDataQuery(null),
+        		mSphinx.getInputSearchFragment().setData(mDataQuery,
         				null,
         				InputSearchFragment.MODE_POI);
         		mSphinx.showView(R.id.view_poi_input_search);
