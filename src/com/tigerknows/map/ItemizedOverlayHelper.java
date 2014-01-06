@@ -82,7 +82,7 @@ public class ItemizedOverlayHelper {
                 overlay = new ItemizedOverlay(overlayName);
                 RotationTilt rt = new RotationTilt(RotateReference.SCREEN,TiltReference.SCREEN);
                 overlayItem = new OverlayItem(poi.getPosition(), Icon.getIcon(sphinx.getResources(), R.drawable.btn_bubble_b_normal, Icon.OFFSET_LOCATION_CENTER_BOTTOM), 
-                        Icon.getIcon(sphinx.getResources(), R.drawable.btn_bubble_b_normal, Icon.OFFSET_LOCATION_CENTER_BOTTOM),
+                        Icon.getIcon(sphinx.getResources(), R.drawable.btn_bubble_b_focused, Icon.OFFSET_LOCATION_CENTER_BOTTOM),
                         poi.getName(), rt);
                 
                 overlayItem.addEventListener(EventType.TOUCH, new OverlayItem.TouchEventListener() {
