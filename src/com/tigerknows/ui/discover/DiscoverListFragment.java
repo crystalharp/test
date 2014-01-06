@@ -984,7 +984,6 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             mList = discoverResult;
             
             if (dataQuery.isTurnPage() == false) {
-                dealWithCenterPosition(discoverResult, dataQuery);
                 getList().clear();
                 mSphinx.getHandler().post(new Runnable() {
                     
@@ -994,6 +993,15 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                     }
                 });
                 mAPOI = dataQuery.getPOI();
+                Position centerPosition = discoverResult.getCenterPosition();
+                if (centerPosition != null) {
+                    if (mAPOI != null && !centerPosition.equals(mAPOI.getPosition())) {
+                        mAPOI = null;
+                    }
+                } else {
+                    mAPOI = null;
+                }
+                
                 if (mAPOI != null) {
                     mAPOI.setOnlyAPOI(true);
                 }
@@ -1036,18 +1044,6 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 return;
             }
             mState = STATE_EMPTY;
-        }
-    }
-    
-    private void dealWithCenterPosition(DiscoverResult discoverResult, DataQuery dataQuery) {
-        Position centerPosition = discoverResult.getCenterPosition();
-        if (centerPosition != null) {
-            POI poi = dataQuery.getPOI();
-            if (poi != null && !centerPosition.equals(poi.getPosition())) {
-                dataQuery.setPOI(null);
-            }
-        } else {
-            dataQuery.setPOI(null);
         }
     }
     

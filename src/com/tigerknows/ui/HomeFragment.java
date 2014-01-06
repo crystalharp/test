@@ -33,9 +33,9 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
     
     private Drawable mSearchDrawable;
     
-    public int mTitleBtnPaddingLeft;
+    private int mTitleBtnPaddingLeft;
     
-    public int mTitleBtnPaddingRight;
+    private int mTitleBtnPaddingRight;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -87,7 +87,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         mTitleBtn.setCompoundDrawables(mSearchDrawable, null, null, null);
         mTitleBtn.setCompoundDrawablePadding(mTitleBtnPaddingRight);
         mTitleBtn.setPadding(mTitleBtnPaddingLeft, mTitleBtnPaddingRight, mTitleBtnPaddingLeft, mTitleBtnPaddingRight);
-        layoutParams.height = Utility.dip2px(mSphinx, 40);
+        layoutParams.height = Utility.dip2px(mSphinx, 48);
 
         mLeftBtn.setVisibility(View.GONE);
         

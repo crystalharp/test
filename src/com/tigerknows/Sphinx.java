@@ -3804,7 +3804,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, String.valueOf(0));
         if (poi == null) {
             poi = addCeterPositionParameter(dataQuery);
-        } else {
+        } else if (poi.getSourceType() != POI.SOURCE_TYPE_MY_LOCATION){
             if (poi.getUUID() != null) {
                 dataQuery.addParameter(DataQuery.SERVER_PARAMETER_POI_ID, poi.getUUID());
             }

@@ -1005,16 +1005,6 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         if (poiList != null && 
                 poiList.getList() != null && 
                 poiList.getList().size() > 0) {
-
-            Position centerPosition = poiList.getPosition();
-            if (centerPosition != null) {
-                POI poi = dataQuery.getPOI();
-                if (poi != null && !centerPosition.equals(poi.getPosition())) {
-                    dataQuery.setPOI(null);
-                }
-            } else {
-                dataQuery.setPOI(null);
-            }
             
             mDataQuery = dataQuery;
             mState = STATE_LIST;
@@ -1037,6 +1027,15 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                     }
                 });
                 mAPOI = dataQuery.getPOI();
+                Position centerPosition = poiList.getPosition();
+                if (centerPosition != null) {
+                    if (mAPOI != null && !centerPosition.equals(mAPOI.getPosition())) {
+                        mAPOI = null;
+                    }
+                } else {
+                    mAPOI = null;
+                }
+                
                 if (mAPOI != null) {
                     mAPOI.setOnlyAPOI(true);
                 }
