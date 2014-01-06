@@ -227,6 +227,7 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
         case R.id.right_btn:
             mActionLog.addAction(mActionTag + ActionLog.TitleRightButton);
             String[] list = mSphinx.getResources().getStringArray(R.array.drvie_search_option);
+            final int[] driveTypeList = {1,2,3};
             final ArrayAdapter<String> adapter = new StringArrayAdapter(mSphinx, list);
             
             View alterListView = mSphinx.getLayoutInflater().inflate(R.layout.alert_listview, null, false);
@@ -249,18 +250,11 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View arg1, int index, long arg3) {
 
-                    TrafficDetailFragment trafficDetailFragment = mSphinx.getTrafficDetailFragment();
-                    TrafficQuery trafficQuery = trafficDetailFragment.getTrafficQuery();
-                    List<Plan> list = trafficDetailFragment.getResult(Step.TYPE_DRIVE);
+                    TrafficDetailFragment f = mSphinx.getTrafficDetailFragment();
+                    TrafficQuery trafficQuery = f.getTrafficQuery();
+                    Plan plan = f.findDriveType(driveTypeList[index]);
 
-                    int position = -1;
-                    for(int i = list.size()-1; i >= 0; i--) {
-                        if (list.get(i).drivePreference == index) {
-                            position = i;
-                        }
-                    }
-                    
-                    if (position == -1) {
+                    if (plan == null) {
                         TrafficQuery newTrafficQuery = new TrafficQuery(mContext);
                         newTrafficQuery.setup(trafficQuery.getStart(),
                                 trafficQuery.getEnd(),
@@ -268,12 +262,12 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
                                 ResultMapFragment.this.getId(),
                                 getString(R.string.doing_and_wait));
                         newTrafficQuery.setCityId(trafficQuery.getCityId());
-                        newTrafficQuery.addParameter(TrafficQuery.SERVER_PARAMETER_BAIS, String.valueOf(index));
+                        newTrafficQuery.addParameter(TrafficQuery.SERVER_PARAMETER_BAIS, String.valueOf(driveTypeList[index]));
                         mSphinx.queryStart(newTrafficQuery);
                     } else {
-                        trafficDetailFragment.addResult(trafficQuery, Step.TYPE_DRIVE, list);
-                        trafficDetailFragment.refreshResult(Step.TYPE_DRIVE, position);
-                        trafficDetailFragment.viewMap();
+                        f.refreshDrive(plan);
+                        TrafficOverlayHelper.drawOverlay(mSphinx, plan);
+                        TrafficOverlayHelper.panToViewWholeOverlay(plan, mSphinx.getMapView(), mSphinx);
                     }
                     
                     dialog.setOnDismissListener(new OnDismissListener() {

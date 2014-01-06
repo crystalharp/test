@@ -231,11 +231,27 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
             if (list == null) {
                 list = new ArrayList<Plan>();
             }
-            list.clear();
+            if (type != DRIVE) {
+                list.clear();
+            }
             list.addAll(plans);
         }
         
-        public void setQuery(TrafficQuery q) {
+        public Plan findDriveType(int type) {
+            List<Plan> list = planLists.get(DRIVE);
+            for(int i = list.size()-1; i >= 0; i--) {
+                if (list.get(i).getDrivePreference() == type) {
+                    return list.get(i);
+                }
+            }
+            return null;
+        }
+        
+        public final int getTransferPlanIndex(Plan plan) {
+            return planLists.get(TRANSTER).indexOf(plan);
+        }
+        
+        public final void setQuery(TrafficQuery q) {
             query = q;
         }
         
@@ -274,6 +290,14 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         }
     }
     
+    public void refreshDrive(Plan plan) {
+        if (plan != null) {
+            mType = Step.TYPE_DRIVE;
+            mIndex = -1;
+            updateResult(plan);
+        }
+    }
+    
     public void refreshResult(int type) {
         if (hasResult(type)) {
             if (mType != type) {
@@ -285,12 +309,16 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         }
     }
     
-    public List<Plan> getResult(int type) {
+    public final List<Plan> getResult(int type) {
         return mResult.getResult(type);
     }
     
-    public boolean hasResult(int type) {
+    public final boolean hasResult(int type) {
         return mResult.getResult(type).size() != 0;
+    }
+    
+    public final Plan findDriveType(int type) {
+        return mResult.findDriveType(type);
     }
     
     public void resetResult() {
@@ -542,6 +570,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
 
     private static class PlanViewHolder {
         public TextView title;
+        public TextView tagTitle;
         public TextView txv1;
         public TextView txv4;
         public TextView txv3;
@@ -572,6 +601,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         public static void refresh(Sphinx sphinx, Plan plan, View v, boolean titleSingleLine) {
             try {
                 planHolder.title = (TextView)v.findViewById(R.id.title_txv);
+                planHolder.tagTitle = (TextView) v.findViewById(R.id.tagtitle_txv);
                 planHolder.txv1 = (TextView)v.findViewById(R.id.txv1);
                 planHolder.txv2 = (TextView) v.findViewById(R.id.txv2);
                 planHolder.txv3 = (TextView) v.findViewById(R.id.txv3);
@@ -587,48 +617,55 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
             } else {
                 planHolder.title.setEllipsize(null);
             }
+            planHolder.tagTitle.setVisibility(View.GONE);
+            planHolder.tags.removeAllViews();
+            List<PlanTag> tagList = plan.getPlanTagList();
             if (plan.getType() == TrafficQuery.QUERY_TYPE_TRANSFER) {
                 setTxvText(planHolder.title, plan.getTitle(sphinx));
                 setTxvText(planHolder.txv1, plan.getExpectedBusTime());
                 setTxvText(planHolder.txv2, plan.getLengthStr(sphinx));
                 setTxvText(planHolder.txv3, plan.getWalkDistance4Transfer());
                 setTxvText(planHolder.txv4, plan.getBusstopNum());
+                if (tagList != null) {
+                    int tagNum = Math.min(MAX_TAG_NUM, plan.getPlanTagList().size());
+                    for (int i = 0; i < tagNum; i++) {
+                        PlanTag tag = tagList.get(i);
+                        if (tag.getBackgroundtype() < 1 || tag.getBackgroundtype() > 5) {
+                            continue;
+                        }
+                        TextView txv = new TextView(sphinx);
+                        txv.setText(tag.getDescription());
+                        int dpPadding2 = Utility.dip2px(sphinx, 2);
+                        txv.setPadding(dpPadding2, 0, dpPadding2, 0);
+                        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1);  
+                        int dpMargin = Utility.dip2px(sphinx, 4);
+                        lp.setMargins(dpMargin, 0, dpMargin, 0); 
+                        txv.setLayoutParams(lp); 
+                        txv.setBackgroundResource(tagResList[tag.getBackgroundtype()]);
+                        txv.setTextSize(11f);
+                        txv.setTextColor(Color.WHITE);
+                        planHolder.tags.addView(txv);
+                    }
+                }
             } else if (plan.getType() == TrafficQuery.QUERY_TYPE_DRIVE) {
                 setTxvText(planHolder.title, sphinx.getString(R.string.title_type_drive));
                 setTxvText(planHolder.txv1, plan.getDriveDistance());
                 setTxvText(planHolder.txv2, plan.getExpectedDriveTime());
                 setTxvText(planHolder.txv3, plan.getTrafficLightNum());
                 setTxvText(planHolder.txv4, plan.getTaxiCost4Drive());
+                if (tagList != null && tagList.size() > 0) {
+                    planHolder.tagTitle.setVisibility(View.VISIBLE);
+                    PlanTag tag = tagList.get(0);
+                    planHolder.tagTitle.setText(tag.getDescription());
+                    planHolder.tagTitle.setBackgroundResource(tagResList[tag.getBackgroundtype()]);
+                }
             } else if (plan.getType() == TrafficQuery.QUERY_TYPE_WALK) {
                 setTxvText(planHolder.title, sphinx.getString(R.string.title_type_walk));
                 setTxvText(planHolder.txv1, plan.getWalkDistance4Walk());
                 setTxvText(planHolder.txv2, plan.getExpectedWalkTime());
                 setTxvText(planHolder.txv3, plan.getTaxiCost4Walk());
                 setTxvText(planHolder.txv4, null);
-            }
-            planHolder.tags.removeAllViews();
-            List<PlanTag> list = plan.getPlanTagList();
-            if (list != null) {
-                int tagNum = Math.min(MAX_TAG_NUM, plan.getPlanTagList().size());
-                for (int i = 0; i < tagNum; i++) {
-                    PlanTag tag = list.get(i);
-                    if (tag.getBackgroundtype() < 1 || tag.getBackgroundtype() > 5) {
-                        continue;
-                    }
-                    TextView txv = new TextView(sphinx);
-                    txv.setText(tag.getDescription());
-                    int dpPadding2 = Utility.dip2px(sphinx, 2);
-                    txv.setPadding(dpPadding2, 0, dpPadding2, 0);
-                    LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                            LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1);  
-                    int dpMargin = Utility.dip2px(sphinx, 4);
-                    lp.setMargins(dpMargin, 0, dpMargin, 0); 
-                    txv.setLayoutParams(lp); 
-                    txv.setBackgroundResource(tagResList[tag.getBackgroundtype()]);
-                    txv.setTextSize(11f);
-                    txv.setTextColor(Color.WHITE);
-                    planHolder.tags.addView(txv);
-                }
             }
         }
         

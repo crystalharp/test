@@ -95,6 +95,8 @@ public class TrafficModel extends XMapData {
         private static final byte FIELD_TRAFFIC_LIGHT_NUM = 0x13;
         // 0x14    x_string    打车费用(驾车类)
         private static final byte FIELD_TAXI_COST_D = 0x14;
+        // 0x15    x_int   偏好类型(驾车类)，1:最少时间; 2:最短距离; 3:避免高速
+        private static final byte FIELD_DRIVE_PREFERENCE = 0x15;
         // 0x17    x_string    预计时间(步行类)
         private static final byte FIELD_EXPECTED_WALK_TIME = 0x17;
         // 0x18    x_string    全程距离(步行类)
@@ -779,7 +781,7 @@ public class TrafficModel extends XMapData {
             };
         }
         
-        public int drivePreference;
+        private int drivePreference;
         
         private String description;
         
@@ -892,6 +894,8 @@ public class TrafficModel extends XMapData {
         
         public String getTaxiCost4Drive() {  return taxiCost_drive;}
         
+        public int getDrivePreference() { return drivePreference; }
+        
         public String getExpectedBusTime() {  return expectedBusTime;}
         
         public String getBusDistance() {  return busDistance;}
@@ -943,6 +947,7 @@ public class TrafficModel extends XMapData {
             busstopNum = getStringFromData(FIELD_BUSSTOP_NUM, reset ? null : busstopNum);
             expectedWalkTime = getStringFromData(FIELD_EXPECTED_WALK_TIME, reset ? null : expectedWalkTime);
             walkDistance_walk = getStringFromData(FIELD_WALK_DISTANCE_W, reset ? null : walkDistance_walk);
+            drivePreference = (int) getLongFromData(FIELD_DRIVE_PREFERENCE, reset ? 0 : drivePreference);
             taxiCost_walk = getStringFromData(FIELD_TAXI_COST_W, reset ? null : taxiCost_walk);
 
             if (stepList != null) {
