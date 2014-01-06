@@ -82,6 +82,8 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	
 	public String MY_LOCATION;
 	
+	public String MAP_LOCATION;
+	
 	private int mSettedRadioBtn = 0;
 	
 	boolean showStartMyLocation = true;
@@ -135,10 +137,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
     List<String> keywordList;
 	
 	private boolean isKeyword(String input) {
-	    if (keywordList.contains(input)) {
-	        return true;
-	    }
-	    return false;
+	    return keywordList.contains(input);
 	}
 
 	public static final String TAG = "TrafficQueryFragment";
@@ -225,13 +224,14 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 
         findViews();
         MY_LOCATION = getString(R.string.my_location);
+        MAP_LOCATION = getString(R.string.map_point);
         
         mStart.setHint(getString(R.string.start_));
         mEnd.setHint(getString(R.string.end_));
         
         String[] KEYWORDS = new String[]{
-                getString(R.string.my_location),
-                getString(R.string.map_point),
+                MY_LOCATION,
+                MAP_LOCATION,
         };
         keywordList = Arrays.asList(KEYWORDS);
 		
@@ -606,8 +606,8 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	    POI start, end;
 	    start = mStart.getPOI();
 	    end = mEnd.getPOI();
-		if (isKeyword(mStart.getText())
-				&& isKeyword(mEnd.getText())) {
+		if (MAP_LOCATION.equals(mStart.getText())
+				&& MAP_LOCATION.equals(mEnd.getText())) {
 			if (POI.isPositionEqual(start, end)) {
 				mSphinx.showTip(R.string.start_equal_to_end, Toast.LENGTH_SHORT);
 				return true;
