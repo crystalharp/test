@@ -234,6 +234,8 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
                 MAP_LOCATION,
         };
         keywordList = Arrays.asList(KEYWORDS);
+        
+        initHistory();
 		
         return mRootView;
     }
@@ -387,7 +389,6 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
         
         mTitleView.removeAllViews();
         mTitleView.addView(mTitleBar);
-        initHistory();
         updateCommonPlace();
         refreshRightBtn();
         mScrollView.scrollTo(0, 0);
@@ -534,6 +535,10 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
         if (!mQueryHistorys.contains(sh)) {
             mHistoryTable.add(sh);
             mQueryHistorys.add(0, sh);
+            while (mQueryHistorys.size() > MAX_QUERY_HISTORY) {
+                mQueryHistorys.remove(MAX_QUERY_HISTORY);
+            }
+            
             if (mQueryHistorys.size() == 1) {
                 mQueryHistory.setVisibility(View.VISIBLE);
                 mQueryHistoryLst.setVisibility(View.VISIBLE);
