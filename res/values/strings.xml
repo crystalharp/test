@@ -1371,4 +1371,7 @@
     <string name="this_city_not_support_dianying">本城市暂无影片信息</string>
     <string name="this_city_not_support_yanchu">本城市暂无演出信息</string>
     <string name="this_city_not_support_zhanlan">本城市暂无展览信息</string>
+    <string name="press_to_modify">点击修改</string>
+    <string name="custom_category">自定义分类</string>
+    <string name="custom">自定义</string>
 </resources>
