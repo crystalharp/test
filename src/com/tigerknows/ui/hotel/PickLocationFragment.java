@@ -337,6 +337,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
             poiQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_ALTERNATIVE);
             poiQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
             poiQuery.addParameter(DataQuery.SERVER_PARAMETER_KEYWORD, word);
+            poiQuery.addParameter(DataQuery.SERVER_PARAMETER_EXT, DataQuery.EXT_FILTER);
             poiQuery.setup(getId(), getId(), getString(R.string.doing_and_wait), false, false, null);
             poiQuery.setCityId(mCityInfo.getId());
             

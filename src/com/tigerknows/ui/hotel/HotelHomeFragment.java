@@ -91,6 +91,8 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     
     private Filter mAreaFilter;
     
+    private int mAreaFilterCityId;
+    
     private DateListView mDateListView = null;
     
     private ViewGroup mPopupWindowContain = null;
@@ -365,6 +367,11 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         refreshFilterCategory();
         
         mResponse = null;
+        if (cityInfo.getId() != mAreaFilterCityId) {
+            mAreaFilter=null;
+            mAreaFilterCityId = CityInfo.CITY_ID_INVALID;
+            deleteFilter(mFilterList, FilterArea.FIELD_LIST);
+        }
         mSelectedLocation = false;
         mRefreshFilterArea = true;
         refreshFilterArea(true);
@@ -590,6 +597,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                 filter = getFilter(filterList, FilterArea.FIELD_LIST);
                 if (filter != null) {
                     mAreaFilter = filter;
+                    mAreaFilterCityId = baseQuery.getCityId();
                 	Filter presetFilter = getFilter(mFilterList, FilterArea.FIELD_LIST);
                 	if (presetFilter != null) {
 	                	if (presetFilter.getVersion().equals(filter.getVersion())) {

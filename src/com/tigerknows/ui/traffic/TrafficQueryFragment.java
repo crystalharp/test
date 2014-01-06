@@ -739,8 +739,9 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
             	
             } else if (trafficModel.getType() == TrafficModel.TYPE_PROJECT) {
                 List<Plan> planList = trafficModel.getPlanList();
-//                if (reset) {
-//                }
+                if (reset) {
+                    sphinx.getTrafficDetailFragment().resetResult();
+                }
                 
                 actionLog.addAction(actionTag + ActionLog.TrafficResultTraffic, planList.size());
             	

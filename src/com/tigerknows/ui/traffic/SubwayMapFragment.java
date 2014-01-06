@@ -103,10 +103,6 @@ public class SubwayMapFragment extends BaseFragment implements RetryView.CallBac
         
         mTitleBtn.setText(mTitle);
         
-        if (!mDismissed) {
-            return;
-        }
-        
         // 若指定的城市为非地铁城市，则显示所有地铁城市列表
         if (MapEngine.checkSupportSubway(mCityInfo.getId()) == false
                 || mCityInfo.getCName() == null) {
@@ -131,6 +127,10 @@ public class SubwayMapFragment extends BaseFragment implements RetryView.CallBac
             
             mCityLsv.setSelectionFromTop(0, 0);
             mCityListView.setVisibility(View.VISIBLE);
+            return;
+        }
+        
+        if (!mDismissed) {
             return;
         }
         
@@ -167,7 +167,9 @@ public class SubwayMapFragment extends BaseFragment implements RetryView.CallBac
         super(sphinx);
     }
 
+    @Override
     protected void findViews() {
+        super.findViews();
         mWebWbv = (WebView)mRootView.findViewById(R.id.web_wbv);
         mRetryView = (RetryView) mRootView.findViewById(R.id.retry_view);
         mQueryingView = (QueryingView)mRootView.findViewById(R.id.querying_view);
@@ -233,7 +235,9 @@ public class SubwayMapFragment extends BaseFragment implements RetryView.CallBac
         mTitleBtn.setText(mTitle);
     }
     
+    @Override
     protected void setListener() {
+        super.setListener();
         mWebWbv.addJavascriptInterface(new StationHandler(), "station");
         mWebWbv.getSettings().setJavaScriptEnabled(true);
         mWebWbv.setWebViewClient(new WebViewClient() {

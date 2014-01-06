@@ -261,13 +261,6 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
     }
     
     public final void addResult(TrafficQuery query, int type, List<Plan>resultList) {
-        TrafficQuery oldQuery = mResult.getQuery();
-        if (oldQuery != null) {
-            if (!oldQuery.getStart().equals(query.getStart()) || 
-                    !oldQuery.getEnd().equals(query.getEnd())) {
-                mResult.reset();
-            }
-        }
         mResult.setQuery(query);
         mResult.setResult(type, resultList);
     }
@@ -298,6 +291,10 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
     
     public boolean hasResult(int type) {
         return mResult.getResult(type).size() != 0;
+    }
+    
+    public void resetResult() {
+        mResult.reset();
     }
     
     private void updateResult(Plan plan) {
@@ -636,4 +633,5 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         }
         
     }
+
 }
