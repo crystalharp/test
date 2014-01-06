@@ -426,6 +426,10 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         }
         
         if (mCurMode == MODE_TRAFFIC) {
+            TKWord tkWord = new TKWord(TKWord.ATTRIBUTE_HISTORY, poi.getName());
+            tkWord.position = poi.getPosition();
+            HistoryWordTable.addHistoryWord(mSphinx, tkWord, HistoryWordTable.TYPE_TRAFFIC);
+
             if (mRequest == REQUEST_TRAFFIC_START || mRequest == REQUEST_TRAFFIC_END) {
                 mIResponsePOI.responsePOI(poi);
                 dismiss();
