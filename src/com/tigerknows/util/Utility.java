@@ -904,7 +904,7 @@ public class Utility {
     
     /**
      * 设置收藏按钮的状态
-     * 1."未收藏"状态, 图标为'中空五角星', 文字为"添加收藏"
+     * 1."未收藏"状态, 图标为'中空五角星', 文字为"收藏"
      * 2."收藏"状态, 图标为"实心五角星", 文字为"取消收藏"
      * 
      * @param button
@@ -916,8 +916,10 @@ public class Utility {
         Drawable drawable;
         if (hasFavorite) {
             drawable = context.getResources().getDrawable(R.drawable.ic_cancel_favorite);
+            textView.setText(R.string.cancel_favorite);
         } else {
             drawable = context.getResources().getDrawable(R.drawable.ic_add_favorite);
+            textView.setText(R.string.add_favorite);
         }
         drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
         textView.setCompoundDrawables(drawable, null, null, null);
