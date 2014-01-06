@@ -308,7 +308,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         refreshUserEntrance();
         refreshBootStrapData(true);
         refreshMoreData();
-        refreshCity(Globals.getCurrentCityInfo(mSphinx).getCName());
+        refreshCity(Globals.getCurrentCityInfo(mSphinx, false).getCName());
         refreshGoCommentData();
         refreshAllNoticeDrawable();
     	refreshMapDownloadData();
