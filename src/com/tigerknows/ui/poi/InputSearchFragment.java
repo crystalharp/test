@@ -704,45 +704,39 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         
         // POI结果列表
         POIList bPOIList = poiResponse.getBPOIList();
-        if (bPOIList != null) {
-            List<POI> poiList = bPOIList.getList();
-            String subDataType = dataQuery.getParameter(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE);
-            if (DataQuery.SUB_DATA_TYPE_HOTEL.equals(subDataType)) {
-                if (poiList == null || poiList.isEmpty()) {
-                    Toast.makeText(sphinx, sphinx.getString(R.string.no_result), Toast.LENGTH_LONG).show();
-                    return 2;
-                }
+        String subDataType = dataQuery.getParameter(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE);
+        if (DataQuery.SUB_DATA_TYPE_HOTEL.equals(subDataType)) {
+            if (bPOIList == null || bPOIList.getList() == null || bPOIList.getList().isEmpty()) {
+                Toast.makeText(sphinx, sphinx.getString(R.string.no_result), Toast.LENGTH_LONG).show();
+                return 2;
             }
-            POIResultFragment poiResultFragment = sphinx.getPOIResultFragment();
-            // 跳转到POI结果列表界面
-            if (bPOIList.getShowType() == 0) {
-                sphinx.uiStackRemove(R.id.view_poi_result);
+        }
+        POIResultFragment poiResultFragment = sphinx.getPOIResultFragment();
+        // 跳转到POI结果列表界面
+        if (bPOIList.getShowType() == 0) {
+            sphinx.uiStackRemove(R.id.view_poi_result);
+            poiResultFragment.setData(dataQuery);
+            sphinx.showView(R.id.view_poi_result);
+        
+        // 跳转到POI结果地图界面
+        } else if (bPOIList.getShowType() == 1) {
+            if (bPOIList == null || bPOIList.getList() == null || bPOIList.getList().isEmpty()) {
+                Toast.makeText(sphinx, sphinx.getString(R.string.no_result), Toast.LENGTH_LONG).show();
+                return 2;
+            } else {
                 poiResultFragment.setData(dataQuery);
-                sphinx.showView(R.id.view_poi_result);
-            
-            // 跳转到POI结果地图界面
-            } else if (bPOIList.getShowType() == 1) {
-                if (poiList == null || poiList.isEmpty()) {
-                    Toast.makeText(sphinx, sphinx.getString(R.string.no_result), Toast.LENGTH_LONG).show();
-                    return 2;
-                } else {
-                    poiResultFragment.setData(dataQuery);
-                    
-                    sphinx.uiStackPush(R.id.view_poi_result);
-                    ItemizedOverlayHelper.drawPOIOverlay(sphinx, poiList, 0, poiResultFragment.getAPOI());
-                    sphinx.getResultMapFragment().setData(sphinx.getString(R.string.result_map), ActionLog.POIListMap);
-                    sphinx.showView(R.id.view_result_map);
-                }
+
+                sphinx.uiStackRemove(R.id.view_poi_input_search);
+                ItemizedOverlayHelper.drawPOIOverlay(sphinx, bPOIList.getList(), 0, poiResultFragment.getAPOI());
+                sphinx.getResultMapFragment().setData(sphinx.getString(R.string.result_map), ActionLog.POIListMap);
+                sphinx.showView(R.id.view_result_map);
             }
-            
-            // 若从公交线路结果列表界面跳转过来，则将其从UI堆栈中移除
-            sphinx.uiStackRemove(R.id.view_traffic_busline_line_result);
-            
-            result = 3;
-            return result;
         }
         
-        Toast.makeText(sphinx, sphinx.getString(R.string.no_result), Toast.LENGTH_LONG).show();
+        // 若从公交线路结果列表界面跳转过来，则将其从UI堆栈中移除
+        sphinx.uiStackRemove(R.id.view_traffic_busline_line_result);
+        
+        result = 3;
         return result;
     }
     
