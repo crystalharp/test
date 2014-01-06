@@ -793,9 +793,9 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
             if (position != null) {
                 dataQuery.addParameter(DataQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
                 dataQuery.addParameter(DataQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
+            } else {
+                poi = null;
             }
-        } else {
-            poi = new POI();
         }
         
         byte key = Byte.MIN_VALUE;
@@ -813,6 +813,12 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                 dataQuery.addParameter(DataQuery.SERVER_PARAMETER_LOCATION_CITY, String.valueOf(locationCityInfo.getId()));
                 dataQuery.addParameter(DataQuery.SERVER_PARAMETER_LOCATION_LONGITUDE, String.valueOf(locationCityInfo.getPosition().getLon()));
                 dataQuery.addParameter(DataQuery.SERVER_PARAMETER_LOCATION_LATITUDE, String.valueOf(locationCityInfo.getPosition().getLat()));
+                dataQuery.addParameter(DataQuery.SERVER_PARAMETER_LOCATION_TYPE, String.valueOf(locationCityInfo.getPosition().getType()));
+                if (poi == null) {
+                    poi = new POI();
+                    poi.setName(getString(R.string.my_location));
+                    poi.setPosition(locationCityInfo.getPosition());
+                }
             }
         }
         

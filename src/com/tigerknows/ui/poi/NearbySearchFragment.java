@@ -546,16 +546,25 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
                 Toast.makeText(mSphinx, R.string.this_city_not_support_tuangou, Toast.LENGTH_LONG).show();
                 return;
             }
+            mSphinx.queryStart(getDataQuery(String.valueOf(operationCode)));
+            mSphinx.uiStackAdjust();
+            break;
         case CategoryProperty.OP_DIANYING:
             if (DataQuery.checkDiscoveryCity(cityId, Long.parseLong(BaseQuery.DATA_TYPE_DIANYING)) == false) {
                 Toast.makeText(mSphinx, R.string.this_city_not_support_dianying, Toast.LENGTH_LONG).show();
                 return;
             }
+            mSphinx.queryStart(getDataQuery(String.valueOf(operationCode)));
+            mSphinx.uiStackAdjust();
+            break;
         case CategoryProperty.OP_YANCHU:
             if (DataQuery.checkDiscoveryCity(cityId, Long.parseLong(BaseQuery.DATA_TYPE_YANCHU)) == false) {
                 Toast.makeText(mSphinx, R.string.this_city_not_support_yanchu, Toast.LENGTH_LONG).show();
                 return;
             }
+            mSphinx.queryStart(getDataQuery(String.valueOf(operationCode)));
+            mSphinx.uiStackAdjust();
+            break;
         case CategoryProperty.OP_ZHANLAN:
             if (DataQuery.checkDiscoveryCity(cityId, Long.parseLong(BaseQuery.DATA_TYPE_ZHANLAN)) == false) {
                 Toast.makeText(mSphinx, R.string.this_city_not_support_zhanlan, Toast.LENGTH_LONG).show();

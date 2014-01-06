@@ -220,6 +220,13 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         mCurrentFootView = mLoadingView;
         mAddMerchantFootView = mLayoutInflater.inflate(R.layout.poi_list_item_add_merchant, null);
         mAddMerchantView = mRootView.findViewById(R.id.add_merchant_view);
+        mAddMerchantView.setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                showAddMerchant();
+            }
+        });
         mQueryingView = (QueryingView)mRootView.findViewById(R.id.querying_view);
         mEmptyView = mRootView.findViewById(R.id.empty_view);
         mEmptyTxv = (TextView) mEmptyView.findViewById(R.id.empty_txv);
@@ -1002,11 +1009,8 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             Position centerPosition = poiList.getPosition();
             if (centerPosition != null) {
                 POI poi = dataQuery.getPOI();
-                if (poi == null || !centerPosition.equals(poi.getPosition())) {
-                    POI centerPOI = new POI();
-                    centerPOI.setPosition(centerPosition);
-                    centerPOI.setName(mSphinx.getString(R.string.map_center));
-                    dataQuery.setPOI(centerPOI);
+                if (poi != null && !centerPosition.equals(poi.getPosition())) {
+                    dataQuery.setPOI(null);
                 }
             } else {
                 dataQuery.setPOI(null);

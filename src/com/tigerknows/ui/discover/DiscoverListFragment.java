@@ -330,7 +330,6 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             }
         });
         mDingdanBtn.setOnClickListener(this);
-        mLocationTxv.setOnClickListener(this);
     }
     
     private static String getSelectFilterName(Filter filter) {
@@ -632,18 +631,6 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 mActionLog.addAction(mActionTag +  ActionLog.TuangouListDingdan);
                 mSphinx.getMyOrderFragment().setData(true);
                 mSphinx.showView(R.id.view_more_my_order);
-                break;
-                
-            case R.id.location_txv:
-                if (mAPOI != null) {
-                    mActionLog.addAction(mActionTag + ActionLog.ListViewItem, 0, mAPOI.getUUID(), mAPOI.getName());
-                    if (mAPOI.getSourceType() == POI.SOURCE_TYPE_SUBWAY &&
-                            mAPOI.getFrom() == POI.FROM_LOCAL) {
-                        mSphinx.getPOIDetailFragment().needForceReload();
-                    }
-                    mSphinx.showView(R.id.view_poi_detail);
-                    mSphinx.getPOIDetailFragment().setData(mAPOI, 0);
-                }
                 break;
                 
             default:
@@ -1056,11 +1043,8 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         Position centerPosition = discoverResult.getCenterPosition();
         if (centerPosition != null) {
             POI poi = dataQuery.getPOI();
-            if (poi == null || !centerPosition.equals(poi.getPosition())) {
-                POI centerPOI = new POI();
-                centerPOI.setPosition(centerPosition);
-                centerPOI.setName(mSphinx.getString(R.string.map_center));
-                dataQuery.setPOI(centerPOI);
+            if (poi != null && !centerPosition.equals(poi.getPosition())) {
+                dataQuery.setPOI(null);
             }
         } else {
             dataQuery.setPOI(null);
