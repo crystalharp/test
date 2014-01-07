@@ -9,12 +9,14 @@ import java.util.List;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
@@ -72,21 +74,30 @@ public class TrafficResultFragment extends BaseFragment {
     private View mTrafficTitieView;
     
     private RadioGroup mTrafficTitleRadioGroup;
+    private RadioButton mTrafficDriveRbt;
+    private RadioButton mTrafficWalkRbt;
+
+    
     
     int focusedIndex = Integer.MAX_VALUE;
     
-    RadioGroup.OnCheckedChangeListener mTitleListener = new RadioGroup.OnCheckedChangeListener() {
+    View.OnTouchListener onTouchListener = new OnTouchListener() {
 
         @Override
-        public void onCheckedChanged(RadioGroup group, int checkedId) {
-            if (R.id.traffic_drive_rbt == checkedId) {
-                changeTrafficType(Plan.Step.TYPE_DRIVE);
-            } else if (R.id.traffic_walk_rbt == checkedId) {
-                changeTrafficType(Plan.Step.TYPE_WALK);
+        public boolean onTouch(View v, MotionEvent event) {
+            int id = v.getId();
+            int action = event.getAction() & MotionEvent.ACTION_MASK;
+            if (action == MotionEvent.ACTION_UP) {
+                if (R.id.traffic_drive_rbt == id) {
+                    return !changeTrafficType(Plan.Step.TYPE_DRIVE);
+                } else if (R.id.traffic_walk_rbt == id) {
+                    return !changeTrafficType(Plan.Step.TYPE_WALK);
+                }
             }
+            return false;
         }
-        
     };
+
     
     private static final String TAG = "TrafficResultFragment";
     
@@ -128,8 +139,14 @@ public class TrafficResultFragment extends BaseFragment {
         mTitleView.removeAllViews();
         mTrafficTitieView = mSphinx.getTrafficQueryFragment().getTitleView();
         mTitleView.addView(mTrafficTitieView);
+        
         mTrafficTitleRadioGroup = (RadioGroup) mTrafficTitieView.findViewById(R.id.traffic_rgp);
-        mTrafficTitleRadioGroup.setOnCheckedChangeListener(mTitleListener);
+        mTrafficDriveRbt = (RadioButton) mTrafficTitieView.findViewById(R.id.traffic_drive_rbt);
+        mTrafficWalkRbt = (RadioButton) mTrafficTitieView.findViewById(R.id.traffic_walk_rbt);
+        mTrafficTitleRadioGroup.check(R.id.traffic_transfer_rbt);
+        mTrafficDriveRbt.setOnTouchListener(onTouchListener);
+        mTrafficWalkRbt.setOnTouchListener(onTouchListener);
+        
         mRightBtn.setBackgroundResource(R.drawable.btn_back);
         mRightBtn.setVisibility(View.INVISIBLE);
         
@@ -151,7 +168,8 @@ public class TrafficResultFragment extends BaseFragment {
     public void onPause() {
         if (this.isShowing()) {
             mTitleView.removeView(mSphinx.getTrafficQueryFragment().getTitleView());
-            mTrafficTitleRadioGroup.setOnCheckedChangeListener(null);
+            mTrafficDriveRbt.setOnTouchListener(null);
+            mTrafficWalkRbt.setOnTouchListener(null);
         }
         super.onPause();
     }

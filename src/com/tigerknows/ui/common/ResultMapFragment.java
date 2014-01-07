@@ -36,12 +36,14 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -59,19 +61,32 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
     private Button mConfirmBtn;
     private View mTrafficTitieView;
     private RadioGroup mTrafficTitleRadioGroup;
-    RadioGroup.OnCheckedChangeListener mTitleListener = new RadioGroup.OnCheckedChangeListener() {
-        
+    private RadioButton mTrafficTransferRbt;
+    private RadioButton mTrafficDriveRbt;
+    private RadioButton mTrafficWalkRbt;
+    
+    View.OnTouchListener onTouchListener = new OnTouchListener() {
+
         @Override
-        public void onCheckedChanged(RadioGroup group, int checkedId) {
-            if (R.id.traffic_transfer_rbt == checkedId) {
-                changeTrafficType(Plan.Step.TYPE_TRANSFER);
-            } else if (R.id.traffic_drive_rbt == checkedId) {
-                changeTrafficType(Plan.Step.TYPE_DRIVE);
-            } else if (R.id.traffic_walk_rbt == checkedId) {
-                changeTrafficType(Plan.Step.TYPE_WALK);
+        public boolean onTouch(View v, MotionEvent event) {
+            int id = v.getId();
+            if (mTrafficTitleRadioGroup.getCheckedRadioButtonId() == id) {
+                return true;
             }
+            int action = event.getAction() & MotionEvent.ACTION_MASK;
+            if (action == MotionEvent.ACTION_UP) {
+                if (R.id.traffic_transfer_rbt == id) {
+                    return !changeTrafficType(Plan.Step.TYPE_TRANSFER);
+                } else if (R.id.traffic_drive_rbt == id) {
+                    return !changeTrafficType(Plan.Step.TYPE_DRIVE);
+                } else if (R.id.traffic_walk_rbt == id) {
+                    return !changeTrafficType(Plan.Step.TYPE_WALK);
+                }
+            }
+            return false;
         }
     };
+
     
     public ResultMapFragment(Sphinx sphinx) {
         super(sphinx);
@@ -128,8 +143,21 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
             mTitleView.removeAllViews();
             mTrafficTitieView = mSphinx.getTrafficQueryFragment().getTitleView();
             mTrafficTitleRadioGroup = (RadioGroup) mTrafficTitieView.findViewById(R.id.traffic_rgp);
-            mTrafficTitleRadioGroup.setOnCheckedChangeListener(mTitleListener);
+//            mTrafficTitleRadioGroup.setOnCheckedChangeListener(mTitleListener);
             mTitleView.addView(mTrafficTitieView);
+            
+            mTrafficTransferRbt = (RadioButton) mTrafficTitieView.findViewById(R.id.traffic_transfer_rbt);
+            mTrafficDriveRbt = (RadioButton) mTrafficTitieView.findViewById(R.id.traffic_drive_rbt);
+            mTrafficWalkRbt = (RadioButton) mTrafficTitieView.findViewById(R.id.traffic_walk_rbt);
+            mTrafficTransferRbt.setOnTouchListener(onTouchListener);
+            mTrafficDriveRbt.setOnTouchListener(onTouchListener);
+            mTrafficWalkRbt.setOnTouchListener(onTouchListener);
+            if (ActionLog.TrafficDriveListMap.equals(mActionTag)) {
+                mTrafficDriveRbt.setChecked(true);
+            } else {
+                mTrafficWalkRbt.setChecked(true);
+            }
+            
             mRightBtn.setVisibility(View.INVISIBLE);
             changeTrafficType(type, false);
         } else if (ActionLog.TrafficDriveMap.equals(mActionTag)) {
@@ -149,7 +177,9 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
         if (this.isShowing()) {
             mTitleView.removeView(mTrafficTitieView);
             if (mTrafficTitleRadioGroup != null) {
-                mTrafficTitleRadioGroup.setOnCheckedChangeListener(null);
+                mTrafficTransferRbt.setOnTouchListener(null);
+                mTrafficDriveRbt.setOnTouchListener(null);
+                mTrafficWalkRbt.setOnTouchListener(null);
             }
         }
         super.onPause();
@@ -372,10 +402,16 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
     @Override
     public void onPostExecute(TKAsyncTask tkAsyncTask) {
         super.onPostExecute(tkAsyncTask);
-        TrafficQueryFragment.dealWithTrafficResponse(mSphinx,
+        if (TrafficQueryFragment.dealWithTrafficResponse(mSphinx,
                 mActionTag,
                 (TrafficQuery) tkAsyncTask.getBaseQuery(),
-                false);
+                false)) {
+            if (ActionLog.TrafficDriveListMap.equals(mActionTag)) {
+                mTrafficDriveRbt.setChecked(true);
+            } else if (ActionLog.TrafficWalkListMap.equals(mActionTag)){
+                mTrafficWalkRbt.setChecked(true);
+            }
+        }
     }
     
     // 在进入到交通选点界面和交通结果地图界面时，保存之前的地图相关信息
