@@ -407,7 +407,7 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
         if (TrafficQueryFragment.dealWithTrafficResponse(mSphinx,
                 mActionTag,
                 (TrafficQuery) tkAsyncTask.getBaseQuery(),
-                false)) {
+                false) && this.isShowing()) {
             if (ActionLog.TrafficDriveListMap.equals(mActionTag)) {
                 mTrafficDriveRbt.setChecked(true);
             } else if (ActionLog.TrafficWalkListMap.equals(mActionTag)){
