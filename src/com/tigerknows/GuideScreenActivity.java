@@ -5,12 +5,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -42,7 +46,15 @@ public class GuideScreenActivity extends TKActivity {
     
     private AbsoluteLayout animContainer;
     
-    boolean mOnResume = false;
+    private boolean mStartSphinx = false;
+    
+    private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+        
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            finish();
+        }
+    };
     
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,19 +68,27 @@ public class GuideScreenActivity extends TKActivity {
         
         mViewPager.setAdapter(new MyAdapter());
 		pageChangeListener.onPageScrolled(0, 0, 0);
-		
+        
+        registerReceiver(mBroadcastReceiver, new IntentFilter(Sphinx.ACTION_ONRESUME));
+    }
+    
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_SEARCH:
+                return true;
+            case KeyEvent.KEYCODE_BACK:
+                startSphinx();
+                return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     @Override
-    protected void onResume() {
-        mOnResume = true;
-        super.onResume();
-    }
-
-    @Override
-    protected void onPause() {
-        mOnResume = false;
-        super.onPause();
+    protected void onDestroy() {
+        super.onDestroy();
+        
+        unregisterReceiver(mBroadcastReceiver);
     }
 
     // 动画的配置，只要抓住几个关键帧就能够计算出各个参数。
@@ -242,7 +262,7 @@ public class GuideScreenActivity extends TKActivity {
 			
 			@Override
 			public void onClick(View v) {
-				finish();
+			    startSphinx();
 			}
 		});
         
@@ -280,9 +300,9 @@ public class GuideScreenActivity extends TKActivity {
         }
     }
     
-    @Override
-    public void finish() {
-        if (mOnResume) {
+    private void startSphinx() {
+        if (mStartSphinx == false) {
+            mStartSphinx = true;
             Intent intent = getIntent();
             Intent newIntent = new Intent();
             newIntent.setData(intent.getData());
@@ -290,7 +310,6 @@ public class GuideScreenActivity extends TKActivity {
             newIntent.setClass(getBaseContext(), Sphinx.class);
             startActivity(newIntent);
         }
-        super.finish();
     }
     
      public class MyAdapter extends PagerAdapter {

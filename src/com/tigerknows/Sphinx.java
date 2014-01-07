@@ -197,6 +197,8 @@ import com.tigerknows.widget.ZoomControls;
  *
  */
 public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
+    
+    public static final String ACTION_ONRESUME = "com.tigerknows.Sphinx.onResume";
 
 	/**
 	 * 是否来自微信
@@ -841,7 +843,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         showView(R.id.view_home);
 
         Sphinx.this.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        Sphinx.this.getWindow().setBackgroundDrawableResource(R.drawable.startup);
 
         checkFromThirdParty(false);
     }
@@ -997,6 +998,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             mFirstStartup = false;
             OnSetup();
         }
+        
+        sendBroadcast(new Intent(ACTION_ONRESUME));
         LogWrapper.e("Fake","onResume heap size:"+android.os.Debug.getNativeHeapAllocatedSize());
 	}
 

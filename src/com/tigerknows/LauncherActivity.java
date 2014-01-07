@@ -15,7 +15,10 @@ import com.tigerknows.util.ByteUtil;
 import com.tigerknows.util.Utility;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -54,6 +57,14 @@ public class LauncherActivity extends TKActivity {
     boolean mOnResume = false;
     
     Animation mAnimation = new AlphaAnimation(0.3f, 1.0f);
+    
+    private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+        
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            finish();
+        }
+    };
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -111,7 +122,8 @@ public class LauncherActivity extends TKActivity {
                 launch(fristUse, upgrade);
             }
         }, AD_ANIMATION_TIME);
-        
+
+        registerReceiver(mBroadcastReceiver, new IntentFilter(Sphinx.ACTION_ONRESUME));
     }
     
     void launch(boolean fristUse, boolean upgrade) {
@@ -141,8 +153,6 @@ public class LauncherActivity extends TKActivity {
                 }
             }
         }
-        
-        finish();
     }
     
     @Override
@@ -171,6 +181,13 @@ public class LauncherActivity extends TKActivity {
     protected void onPause() {
         mOnResume = false;
         super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        
+        unregisterReceiver(mBroadcastReceiver);
     }
     
     public static TKDrawable getStartupDisplayDrawable(Activity activity, List<StartupDisplay> startupDisplayList) {
