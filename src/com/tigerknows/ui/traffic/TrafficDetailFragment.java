@@ -163,8 +163,10 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
     public void onPause() {
         super.onPause();
     }
-   
+
+    @Override
     protected void findViews() {
+        super.findViews();
         mResultLsv = (ListView)mRootView.findViewById(R.id.result_lsv);
         mBottomButtonsView = (LinearLayout) mRootView.findViewById(R.id.bottom_buttons_view);
         mErrorRecoveryBtn = (ViewGroup) mRootView.findViewById(R.id.error_recovery_btn);
@@ -174,7 +176,9 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         mSummaryLayout = mLayoutInflater.inflate(R.layout.traffic_group_traffic, null);
     }
 
+    @Override
     protected void setListener() {
+        super.setListener();
         mResultLsv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override

@@ -208,8 +208,10 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 
         return mRootView;
     }
-    
+
+    @Override
     protected void findViews() {
+        super.findViews();
     	mNoticeRly = (RelativeLayout) mRootView.findViewById(R.id.notice_rly);
         mCurrentCityTxv = (TextView) mRootView.findViewById(R.id.current_city_txv);
         mUserNameTxv = (TextView) mRootView.findViewById(R.id.user_name_txv);
@@ -239,8 +241,10 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         mViewPager = (ViewPager) mRootView.findViewById(R.id.view_pager);
         mPageIndicatorView = (ViewGroup) mRootView.findViewById(R.id.page_indicator_view);
     }
-    
+
+    @Override
     protected void setListener() {
+        super.setListener();
         mUserBtn.setOnClickListener(this);
         mMyOrderBtn.setOnClickListener(this);
         mChangeCityBtn.setOnClickListener(this);

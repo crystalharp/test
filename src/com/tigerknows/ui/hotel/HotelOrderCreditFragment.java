@@ -96,7 +96,9 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         super.onPause();
     }
     
+    @Override
     protected void findViews() {
+        super.findViews();
         mCreditAssureScv = (ScrollView) mRootView.findViewById(R.id.credit_assure_scv);
         mCreditBankBtn = (Button) mRootView.findViewById(R.id.credit_bank_btn);
         mCreditCodeEdt = (EditText) mRootView.findViewById(R.id.credit_code_edt);
@@ -110,7 +112,9 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         mCreditNoteTxv = (TextView) mRootView.findViewById(R.id.credit_note_txv);
     }
 
+    @Override
     protected void setListener() {
+        super.setListener();
         mCreditAssureScv.setOnClickListener(this);
         mCreditBankBtn.setOnClickListener(this);
         mCreditValidityBtn.setOnClickListener(this);

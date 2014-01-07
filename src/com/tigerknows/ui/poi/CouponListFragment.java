@@ -110,16 +110,19 @@ public class CouponListFragment extends BaseFragment implements RetryView.CallBa
         return mRootView;
     }
 
+    @Override
     protected void findViews() {
+        super.findViews();
         mResultLsv = (ListView)mRootView.findViewById(R.id.result_lsv);
         mQueryingView = (QueryingView)mRootView.findViewById(R.id.querying_view);
         mEmptyView = mRootView.findViewById(R.id.empty_view);
         mEmptyTxv = (TextView) mEmptyView.findViewById(R.id.empty_txv);
         mRetryView = (RetryView) mRootView.findViewById(R.id.retry_view);
     }
-    
-    protected void setListener() {
 
+    @Override
+    protected void setListener() {
+        super.setListener();
         mResultLsv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override

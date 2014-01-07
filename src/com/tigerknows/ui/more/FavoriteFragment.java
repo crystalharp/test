@@ -276,7 +276,9 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
         mViewPager.setCurrentItem(0);
     }
 
+    @Override
     protected void findViews() {
+        super.findViews();
         mPOIBtn = (Button) mRootView.findViewById(R.id.poi_btn);
         mTrafficBtn = (Button) mRootView.findViewById(R.id.traffic_btn);
         mViewPager = (ViewPager) mRootView.findViewById(R.id.view_pager);
@@ -308,7 +310,9 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
         mEmptyTxv = (TextView)mRootView.findViewById(R.id.empty_txv);
     }
 
+    @Override
     protected void setListener() {
+        super.setListener();
         mPOIBtn.setOnClickListener(this);
         mTrafficBtn.setOnClickListener(this);
         

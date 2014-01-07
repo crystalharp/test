@@ -126,7 +126,9 @@ public class MyCommentListFragment extends BaseFragment {
         return mRootView;
     }
 
+    @Override
     protected void findViews() {
+        super.findViews();
         mCommentLsv = (SpringbackListView)mRootView.findViewById(R.id.comment_lsv);
         mEmptyTxv = (TextView)mRootView.findViewById(R.id.empty_txv);
         View v = mLayoutInflater.inflate(R.layout.loading, null);
@@ -134,8 +136,10 @@ public class MyCommentListFragment extends BaseFragment {
 //        v = mLayoutInflater.inflate(R.layout.loading, null);
         mCommentLsv.addFooterView(v);
     }
-    
+
+    @Override
     protected void setListener() {
+        super.setListener();
 
         mCommentLsv.setOnRefreshListener(new OnRefreshListener() {
             

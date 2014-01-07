@@ -194,7 +194,9 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
         mBaseList = null;
     }
     
+    @Override
     protected void findViews() {
+        super.findViews();
         mResultTxv = (TextView) mRootView.findViewById(R.id.result_txv);
         mResultLsv = (SpringbackListView)mRootView.findViewById(R.id.result_lsv);
         mEmptyView = mRootView.findViewById(R.id.empty_view);
@@ -203,7 +205,9 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
         mResultLsv.addFooterView(v);
     }
 
+    @Override
     protected void setListener() {
+        super.setListener();
         mResultLsv.setOnRefreshListener(new OnRefreshListener() {
             
             @Override

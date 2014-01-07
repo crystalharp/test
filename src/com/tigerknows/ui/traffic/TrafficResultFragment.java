@@ -173,15 +173,19 @@ public class TrafficResultFragment extends BaseFragment {
         }
         super.onPause();
     }
-   
+
+    @Override
     protected void findViews() {
+        super.findViews();
         mResultLsv = (ListView)mRootView.findViewById(R.id.result_lsv);
         mFootLayout = (LinearLayout)mRootView.findViewById(R.id.bottom_buttons_view);
         mSearchReturnView = mFooterView.findViewById(R.id.search_return_view);
         mDescriptionTxv = (TextView) mFooterView.findViewById(R.id.description_txv);
     }
 
+    @Override
     protected void setListener() {
+        super.setListener();
         
         mResultLsv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 

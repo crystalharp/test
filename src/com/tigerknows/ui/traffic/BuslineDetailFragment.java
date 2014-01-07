@@ -149,8 +149,10 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
     public void onPause() {
         super.onPause();
     }
-   
+
+    @Override
     protected void findViews() {
+        super.findViews();
         mNameTxv = (TextView)mRootView.findViewById(R.id.name_txv);
         mLengthTxv = (TextView)mRootView.findViewById(R.id.length_txv);
         mTimeTxv = (TextView)mRootView.findViewById(R.id.time_txv);
@@ -163,7 +165,9 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
         mBottomButtonsView.setWeightSum(2);
     }
 
+    @Override
     protected void setListener() {
+        super.setListener();
         mResultLsv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
         	@Override

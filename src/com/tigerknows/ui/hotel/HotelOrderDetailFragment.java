@@ -141,8 +141,9 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
         super.dismiss();
     }
     
+    @Override
     protected void findViews() {
-
+        super.findViews();
 		mHotelNameTxv = (TextView) mRootView.findViewById(R.id.name_txv);
 		mDistanceTxv = (TextView) mRootView.findViewById(R.id.distance_txv);
 		mHotelAddressTxv = (TextView) mRootView.findViewById(R.id.address_txv);
@@ -173,8 +174,9 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
 		mNameView = mRootView.findViewById(R.id.name_view);
     }
 
+    @Override
     protected void setListener() {
-    	
+    	super.setListener();
     	mBtnCancel.setOnClickListener(mCancelOnClickListener);
     	mBtnIssueComment.setOnClickListener(mIssueCommentOnClickListener);
     	mBtnOrderAgain.setOnClickListener(mJumpToPOIClickListener);
