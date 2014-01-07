@@ -209,7 +209,6 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         TrafficQuery query;
         List<ArrayList<Plan>> planLists;
 
-        int mType;
         final static int TRANSTER = Step.TYPE_TRANSFER;
         final static int DRIVE = Step.TYPE_DRIVE;
         final static int WALK = Step.TYPE_WALK;
@@ -226,7 +225,6 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
             if (plans == null || (type != TRANSTER && type != DRIVE && type !=WALK)) {
                 return;
             }
-            mType = type;
             List<Plan> list = planLists.get(type);
             if (list == null) {
                 list = new ArrayList<Plan>();
@@ -265,10 +263,6 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
             planLists.get(TRANSTER).clear();
             planLists.get(WALK).clear();
             mType = 0;
-        }
-        
-        public List<Plan> getResult() {
-            return planLists.get(mType);
         }
         
         public List<Plan> getResult(int type) {
@@ -522,10 +516,6 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         ShareAPI.share(mSphinx, plan, position, mapScene, mActionTag);
     }
     
-    public void viewMap() {
-        viewMap(false);
-    }
-    
     private void viewMap(boolean showList) {
         
         if (plan != null) {
@@ -541,10 +531,10 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
                     }
                     break;
                 case Plan.Step.TYPE_DRIVE:
-                    actionTag = ActionLog.TrafficDriveMap;
+                    actionTag = showList ? ActionLog.TrafficDriveListMap : ActionLog.TrafficDriveMap;
                     break;
                 case Plan.Step.TYPE_WALK:
-                    actionTag = ActionLog.TrafficWalkMap;
+                    actionTag = showList ? ActionLog.TrafficWalkListMap : ActionLog.TrafficWalkMap;
                     break;
                 default:
 
@@ -554,8 +544,8 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
             resultMapFragment.setData(title, actionTag);
             mSphinx.showView(R.id.view_result_map);
             
-            if (ActionLog.TrafficTransferListMap.equals(actionTag)) {
-                TrafficOverlayHelper.drawTrafficPlanListOverlay(mSphinx, mResult.getResult(), mIndex);
+            if (showList) {
+                TrafficOverlayHelper.drawTrafficPlanListOverlay(mSphinx, mResult.getResult(mType), mIndex);
             } else {
                 TrafficOverlayHelper.drawOverlay(mSphinx, plan);
                 TrafficOverlayHelper.panToViewWholeOverlay(plan, mSphinx.getMapView(), mSphinx);

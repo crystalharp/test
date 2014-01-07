@@ -176,9 +176,11 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
     public void onPause() {
         if (this.isShowing()) {
             mTitleView.removeView(mTrafficTitieView);
-            mTrafficTransferRbt.setOnTouchListener(null);
-            mTrafficDriveRbt.setOnTouchListener(null);
-            mTrafficWalkRbt.setOnTouchListener(null);
+            if (mTrafficTitleRadioGroup != null) {
+                mTrafficTransferRbt.setOnTouchListener(null);
+                mTrafficDriveRbt.setOnTouchListener(null);
+                mTrafficWalkRbt.setOnTouchListener(null);
+            }
         }
         super.onPause();
     }
