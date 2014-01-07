@@ -528,6 +528,9 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         if (BaseQuery.DATA_TYPE_DIANYING.equals(mDataType) && dianyingSize > 0) {
             dataQuery.setParameter(DataQuery.SERVER_PARAMETER_DIANYING_UUID, mDianyingList.get(dianyingSize-1).getUid());
         }
+        if (dataQuery.hasParameter(DataQuery.SERVER_PARAMETER_FILTER)) {
+            dataQuery.addParameter(DataQuery.SERVER_PARAMETER_FILTER, DataQuery.makeFilterRequest(mFilterList));
+        }
         dataQuery.setup(getId(), getId(), tip, true, false, lastDataQuery.getPOI());
         mSphinx.queryStart(dataQuery);
         }
@@ -998,6 +1001,17 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                     if (mAPOI != null && !centerPosition.equals(mAPOI.getPosition())) {
                         mAPOI = null;
                     }
+                    if (mAPOI == null &&
+                            dataQuery.hasParameter(DataQuery.SERVER_PARAMETER_LOCATION_LATITUDE) &&
+                            dataQuery.hasParameter(DataQuery.SERVER_PARAMETER_LOCATION_LONGITUDE)) {
+                        Position position = new Position(Double.valueOf(dataQuery.getParameter(DataQuery.SERVER_PARAMETER_LOCATION_LATITUDE)), 
+                                Double.valueOf(dataQuery.getParameter(DataQuery.SERVER_PARAMETER_LOCATION_LONGITUDE)));
+                        if (!centerPosition.equals(position)) {
+                            mAPOI = new POI();
+                            mAPOI.setName(getString(R.string.my_location));
+                            mAPOI.setPosition(position);
+                        }
+                    }
                 } else {
                     mAPOI = null;
                 }
@@ -1049,7 +1063,6 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     
     private void makeFilterArea(DataQuery dataQuery) {
         if (dataQuery.isTurnPage() == false) {
-            dataQuery.setParameter(DataQuery.SERVER_PARAMETER_FILTER, DataQuery.makeFilterRequest(mFilterList));
             if (mFilterList.size() > 0) {
                 mFilterArea = FilterListView.getFilterTitle(mSphinx, mFilterList.get(0));
             }
@@ -1162,4 +1175,8 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             showQuering((DataQuery) mBaseQuerying.get(0));
         }
     } 
+    
+    public List<Filter> getFilterList() {
+        return mFilterList;
+    }
 }

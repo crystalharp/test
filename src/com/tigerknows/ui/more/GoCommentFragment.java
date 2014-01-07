@@ -132,7 +132,9 @@ public class GoCommentFragment extends BaseFragment implements View.OnClickListe
         mEmptyView.setVisibility(View.GONE);
     }
 
+    @Override
     protected void findViews() {
+        super.findViews();
         mInputBtn = (Button) mRootView.findViewById(R.id.input_btn);
         mPOILsv = (SpringbackListView) mRootView.findViewById(R.id.poi_lsv);
         mEmptyView = mRootView.findViewById(R.id.empty_view);
@@ -140,7 +142,9 @@ public class GoCommentFragment extends BaseFragment implements View.OnClickListe
         mPOILsv.addFooterView(v);
     }
 
+    @Override
     protected void setListener() {
+        super.setListener();
         mInputBtn.setOnClickListener(this);
         
         mPOILsv.setOnItemClickListener(new OnItemClickListener() {

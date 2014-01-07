@@ -132,7 +132,9 @@ public class BrowserFragment extends BaseFragment implements View.OnClickListene
         mURL = null;
     }
 
+    @Override
     protected void findViews() {
+        super.findViews();
         mWebWbv = (WebView)mRootView.findViewById(R.id.web_wbv);
         mProgressBar = (ProgressBar) mRootView.findViewById(R.id.progress_prb);
         mBackBtn = (Button)mRootView.findViewById(R.id.back_btn);
@@ -142,7 +144,9 @@ public class BrowserFragment extends BaseFragment implements View.OnClickListene
         mRootView.findViewById(R.id.title_view).setVisibility(View.GONE);
     }
     
+    @Override
     protected void setListener() {
+        super.setListener();
         mBackBtn.setOnClickListener(this);
         mForwardtn.setOnClickListener(this);
         mRefreshBtn.setOnClickListener(this);

@@ -186,7 +186,9 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         TKConfig.setPref(mContext, TKConfig.PREFS_HOTEL_LAST_MOBILE, mRoomMobileNumberEdt.getText().toString());
     }
 
+    @Override
     protected void findViews() {
+        super.findViews();
         mHotelOrderWriteScv = (ScrollView) mRootView.findViewById(R.id.hotel_order_write_scv);
         mHotelOrderWriteLly = (LinearLayout)  mRootView.findViewById(R.id.hotel_order_write_lly);
         mPersonNameLly = (LinearLayout) mRootView.findViewById(R.id.person_name_lly);
@@ -205,7 +207,9 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         mBookUsernameEdt = (EditText) mRootView.findViewById(idArray[0]);
     }
 
+    @Override
     protected void setListener() {
+        super.setListener();
         mHotelOrderWriteLly.setOnTouchListener(new OnTouchListener(){
         
             @Override

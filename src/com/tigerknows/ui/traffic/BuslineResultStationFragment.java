@@ -118,14 +118,18 @@ public class BuslineResultStationFragment extends BaseFragment {
     /**
      * 找出布局中将要使用的控件
      */
+    @Override
     protected void findViews() {
+        super.findViews();
         mResultLsv = (SpringbackListView)mRootView.findViewById(R.id.result_lsv);
         View v =  mLayoutInflater.inflate(R.layout.loading, null);
         mResultLsv.addFooterView(v);
         mCommentTxv = (TextView)mRootView.findViewById(R.id.comment_txv);
     }
-    
+
+    @Override
     protected void setListener() {
+        super.setListener();
         mResultLsv.setOnRefreshListener(new OnRefreshListener() {
             
             @Override

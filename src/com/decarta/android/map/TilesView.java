@@ -1252,7 +1252,7 @@ public class TilesView extends GLSurfaceView {
                                     && xy0Conv.y <= label.rect.bottom) {
 
                                 Position pos = getSingleLabelPostion(label);
-                                mParentMapView.executeClickPOIEventListener(pos, label.name);
+                                mParentMapView.executeClickPOIEventListener(pos, label.name, position);
                                 touchLabel = label;
                                 lableTouched = true;
                                 break;

@@ -191,7 +191,9 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
         mActionTag = actionTag;
     }
     
+    @Override
     protected void findViews() {
+        super.findViews();
         mSnapView = mRootView.findViewById(R.id.snap_view);
         mCancelBtn = (Button) mRootView.findViewById(R.id.cancel_btn);
         mConfirmBtn = (Button) mRootView.findViewById(R.id.confirm_btn);

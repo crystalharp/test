@@ -146,7 +146,9 @@ public class HotelOrderListFragment extends BaseFragment{
         }
     }
     
+    @Override
     protected void findViews() {
+        super.findViews();
         mResultLsv = (SpringbackListView)mRootView.findViewById(R.id.result_lsv);
         mEmptyView = mRootView.findViewById(R.id.empty_view);
         mEmptyTxv = (TextView) mEmptyView.findViewById(R.id.empty_txv);
@@ -156,7 +158,9 @@ public class HotelOrderListFragment extends BaseFragment{
         mResultLsv.addFooterView(v);
     }
 
+    @Override
     protected void setListener() {
+        super.setListener();
         mResultLsv.setOnRefreshListener(new OnRefreshListener() {
             
             @Override

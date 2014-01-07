@@ -902,7 +902,9 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         }
     }
 
+    @Override
     protected void findViews() {
+        super.findViews();
         mDoingView = mRootView.findViewById(R.id.doing_view);
         mBodyScv = (ScrollView) mRootView.findViewById(R.id.body_scv);
         mNameTxt = (TextView)mRootView.findViewById(R.id.name_txv);
@@ -946,7 +948,9 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         mNavigationWidget = mRootView.findViewById(R.id.navigation_widget);
     }
 
+    @Override
     protected void setListener() {
+        super.setListener();
         mShareBtn.setOnClickListener(this);
         mFavoriteBtn.setOnClickListener(this);
         mTelephoneView.setOnClickListener(this);

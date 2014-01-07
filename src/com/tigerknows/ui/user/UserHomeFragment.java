@@ -61,6 +61,7 @@ public class UserHomeFragment extends UserBaseFragment {
         return mRootView;
     }
 
+	@Override
 	protected void findViews() {
 		super.findViews();
 
@@ -70,8 +71,10 @@ public class UserHomeFragment extends UserBaseFragment {
 		updatePasswordBtn = (Button)mRootView.findViewById(R.id.update_password_btn);
 		logoutBtn = (Button)mRootView.findViewById(R.id.logout_btn);
 	}
-	
-	protected void setListener() {
+
+    @Override
+    protected void setListener() {
+        super.setListener();
 		updatePhoneBtn.setOnClickListener(new android.view.View.OnClickListener(){
 
 			@Override

@@ -67,15 +67,19 @@ public class MyOrderFragment extends BaseFragment{
         setListener();
         return mRootView;
     }
-    
+
+    @Override
     protected void findViews() {
+        super.findViews();
     	mTuangouTitleLly = (LinearLayout)mRootView.findViewById(R.id.tuangou_title_lly);
     	mTuangouDingdanLly = (LinearLayout)mRootView.findViewById(R.id.tuangou_dingdan_lly);
     	mHotelOrderBtn = (Button)mRootView.findViewById(R.id.hotel_order_btn);
     	
     }
 
-	protected void setListener() {
+    @Override
+    protected void setListener() {
+        super.setListener();
 		mHotelOrderBtn.setOnClickListener(new OnClickListener() {
 			
 			@Override
