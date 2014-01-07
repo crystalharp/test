@@ -216,7 +216,7 @@ public class BuslineOverlayHelper {
 	public static void panToPosition(Sphinx sphinx, OverlayItem overlayItem, MapView mapview) {
 //		mapview.zoomTo(DEFAULT_SHOW_STEP_ZOOMLEVEL, position);
 		
-		mapview.getOverlaysByName(ItemizedOverlay.BUSLINE_OVERLAY).isShowInPreferZoom = true;
+//		mapview.getOverlaysByName(ItemizedOverlay.BUSLINE_OVERLAY).isShowInPreferZoom = true;
 		
 		// 将地图平移到某一坐标点
 		mapview.getCurrentOverlay().focuseOverlayItem(overlayItem);
