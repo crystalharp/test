@@ -120,7 +120,11 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         
         @Override
         public boolean onEditorAction(TextView arg0, int actionId, KeyEvent event) {
-            if (actionId == EditorInfo.IME_ACTION_SEARCH || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
+            if (event == null) {
+                return false;
+            }
+            if (event.getAction() == KeyEvent.ACTION_DOWN && 
+                    (actionId == EditorInfo.IME_ACTION_SEARCH || event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
                 String keyword = mKeywordEdt.getText().toString().trim();
                 if (mTKWord != null && keyword.equals(mTKWord.word)) {
                     submit(mTKWord);
