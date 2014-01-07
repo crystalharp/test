@@ -259,7 +259,7 @@ public class MapView extends RelativeLayout implements
 	}
 
     public interface ClickPOIEventListener extends EventListener{
-        public void onClickPOIEvent(EventSource eventSource, Position pos, String name);
+        public void onClickPOIEvent(EventSource eventSource, Position pos, String name, Position touPosition);
     }
 
     public interface UpdatePoiPositionListener extends EventListener{
