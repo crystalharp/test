@@ -534,7 +534,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         		Toast.makeText(mSphinx, R.string.this_city_not_support_dish, Toast.LENGTH_LONG).show();
         		return;
         	}
-            dataQuery = getDataQuery(BaseQuery.DATA_TYPE_POI);
+            dataQuery = getDiscoverDataQuery(BaseQuery.DATA_TYPE_POI);
             dataQuery.addParameter(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_POI);
             dataQuery.addParameter(DataQuery.SERVER_PARAMETER_KEYWORD, getString(R.string.cate));
             dataQuery.addParameter(DataQuery.SERVER_PARAMETER_BIAS, DataQuery.BIAS_DISH);
@@ -546,7 +546,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
                 Toast.makeText(mSphinx, R.string.this_city_not_support_tuangou, Toast.LENGTH_LONG).show();
                 return;
             }
-            mSphinx.queryStart(getDataQuery(String.valueOf(operationCode)));
+            mSphinx.queryStart(getDiscoverDataQuery(String.valueOf(operationCode)));
             mSphinx.uiStackAdjust();
             break;
         case CategoryProperty.OP_DIANYING:
@@ -554,7 +554,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
                 Toast.makeText(mSphinx, R.string.this_city_not_support_dianying, Toast.LENGTH_LONG).show();
                 return;
             }
-            mSphinx.queryStart(getDataQuery(String.valueOf(operationCode)));
+            mSphinx.queryStart(getDiscoverDataQuery(String.valueOf(operationCode)));
             mSphinx.uiStackAdjust();
             break;
         case CategoryProperty.OP_YANCHU:
@@ -562,7 +562,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
                 Toast.makeText(mSphinx, R.string.this_city_not_support_yanchu, Toast.LENGTH_LONG).show();
                 return;
             }
-            mSphinx.queryStart(getDataQuery(String.valueOf(operationCode)));
+            mSphinx.queryStart(getDiscoverDataQuery(String.valueOf(operationCode)));
             mSphinx.uiStackAdjust();
             break;
         case CategoryProperty.OP_ZHANLAN:
@@ -570,7 +570,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
                 Toast.makeText(mSphinx, R.string.this_city_not_support_zhanlan, Toast.LENGTH_LONG).show();
                 return;
             }
-            mSphinx.queryStart(getDataQuery(String.valueOf(operationCode)));
+            mSphinx.queryStart(getDiscoverDataQuery(String.valueOf(operationCode)));
             mSphinx.uiStackAdjust();
             break;
     	case CategoryProperty.OP_MORE:
@@ -626,10 +626,11 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     	TKConfig.setPref(mContext, TKConfig.PREFS_CUSTOM_FOLD, mIsFold);
     }
     
-    private DataQuery getDataQuery(String dataType) {
+    private DataQuery getDiscoverDataQuery(String dataType) {
         DataQuery dataQuery = new DataQuery(mDataQuery);
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, dataType);
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
+        dataQuery.delParameter(DataQuery.SERVER_PARAMETER_POI_ID);
         dataQuery.setup(getId(), getId(), getString(R.string.doing_and_wait));
         return dataQuery;
     }
