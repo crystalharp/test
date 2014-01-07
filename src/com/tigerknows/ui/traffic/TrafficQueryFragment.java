@@ -504,19 +504,19 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	}
 	
 	/**
-	 * 根据起点或终点的位置确定在哪个城市进行查询
+	 * 目前确定本页面的请求都在地图城市进行查询
 	 * @param start
 	 * @param end
 	 * @return
 	 */
 	private int getCityId(POI start, POI end) {
 	    int cityId = Globals.getCurrentCityInfo(mSphinx).getId();
-        if (start != null && start.getPosition() != null) {
-            cityId = MapEngine.getCityId(start.getPosition());
-        }
-        if (end != null && end.getPosition() != null) {
-            cityId = MapEngine.getCityId(end.getPosition());
-        }
+//        if (start != null && start.getPosition() != null) {
+//            cityId = MapEngine.getCityId(start.getPosition());
+//        }
+//        if (end != null && end.getPosition() != null) {
+//            cityId = MapEngine.getCityId(end.getPosition());
+//        }
         return cityId;
 	}
     
