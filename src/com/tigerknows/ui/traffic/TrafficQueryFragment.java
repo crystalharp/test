@@ -90,7 +90,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	
 	private boolean autoStartQuery = false;
 	
-	private boolean useEndCityId = false;
+//	private boolean useEndCityId = false;
 
 	FrameLayout mTitle;
 	
@@ -361,7 +361,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
     	super.dismiss();
     	clearAllText();
     	showStartMyLocation = true; 
-    	useEndCityId = false;
+//    	useEndCityId = false;
     	
     }
     
@@ -412,9 +412,9 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
         }
 	}
 	
-	public void useEndCityId(boolean b) {
-	    useEndCityId = b;
-	}
+//	public void useEndCityId(boolean b) {
+//	    useEndCityId = b;
+//	}
 	
 	public void setShowStartMyLocation(boolean showMyLocation) {
 	    this.showStartMyLocation = showMyLocation;
@@ -518,11 +518,11 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	 */
 	private int getCityId(POI start, POI end) {
 	    int cityId = Globals.getCurrentCityInfo(mSphinx).getId();
-	    if (useEndCityId) {
-	        if (end != null && end.getPosition() != null) {
-	            cityId = MapEngine.getCityId(end.getPosition());
-	        }
-	    }
+//	    if (useEndCityId) {
+//	        if (end != null && end.getPosition() != null) {
+//	            cityId = MapEngine.getCityId(end.getPosition());
+//	        }
+//	    }
 //        if (start != null && start.getPosition() != null) {
 //            cityId = MapEngine.getCityId(start.getPosition());
 //        }
