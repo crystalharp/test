@@ -74,7 +74,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
     @Override
     public void onResume() {
         super.onResume();
-        
+        reset();
         mTitleBtn.setBackgroundResource(R.drawable.edt_home);
         mTitleBtn.setOnClickListener(this);
         mTitleBtn.setHint(R.string.find_poi);
