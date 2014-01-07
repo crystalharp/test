@@ -145,6 +145,8 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         
         if (mDismissed) {
             setSelectionFromTop();
+            //FIXME:basefragment的mDismissed没有被修改，先修改这里把。
+            mDismissed = false;
         }
     }
     
@@ -336,6 +338,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         mStrList.add(plan.getEnd().getName());
         mTypes.add(TYPE_RESULT_LIST_END);
         mResultAdapter.notifyDataSetChanged();
+        mDismissed = true;
         
         PlanItemRefresher.refresh(mSphinx, plan, mSummaryLayout);
         plan.updateHistory(mContext);
