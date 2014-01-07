@@ -356,7 +356,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     POI poi = getPOI(position, getString(R.string.select_point));
                     poi.setSourceType(POI.SOURCE_TYPE_LONG_CLICKED_SELECT_POINT);
 
-                    ItemizedOverlayHelper.drawPOIOverlay(ItemizedOverlay.LONG_CLICKED_OVERLAY, Sphinx.this, poi);
+                    //ItemizedOverlayHelper.drawPOIOverlay(ItemizedOverlay.LONG_CLICKED_OVERLAY, Sphinx.this, poi);
+                    ItemizedOverlayHelper.drawFallingPOI(Sphinx.this, poi);//TODO 文越 review
 
                 } else if (msg.what == MAP_ZOOMEND) {
                     mMapView.setZoomControlsState(msg.arg1);
@@ -578,7 +579,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     poi.setFrom(POI.FROM_LOCAL);
                     poi.setSourceType(POI.SOURCE_TYPE_MAP_POI);
 
-                    ItemizedOverlayHelper.drawPOIOverlay(ItemizedOverlay.MAP_POI_OVERLAY, Sphinx.this, poi);
+                    //ItemizedOverlayHelper.drawPOIOverlay(ItemizedOverlay.MAP_POI_OVERLAY, Sphinx.this, poi);
+                    ItemizedOverlayHelper.drawPopupPOI(Sphinx.this, poi); //TODO 文越 review
                 }
             });
 

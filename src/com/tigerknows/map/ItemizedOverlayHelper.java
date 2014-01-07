@@ -28,14 +28,16 @@ import android.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
+import com.decarta.android.map.PopupOverlayItem;
+import com.decarta.android.map.FallingOverlayItem;
 
 public class ItemizedOverlayHelper {
 
     public static void drawClickSelectPointOverlay(Sphinx sphinx, String title) {
-        
+
         try {
             sphinx.clearMap();
-            
+
             MapView mapView = sphinx.getMapView();
             Position position = mapView.getCenterPosition();
             POI poi = new POI();
@@ -46,45 +48,82 @@ public class ItemizedOverlayHelper {
             }
             poi.setName(name);
             poi.setSourceType(POI.SOURCE_TYPE_CLICKED_SELECT_POINT);
-            
+
             OverlayItem overlayItem = new OverlayItem(poi.getPosition(), null, null, title, null);
             overlayItem.setAssociatedObject(poi);
-            
+
             ItemizedOverlay itemizedOverlay = new ItemizedOverlay(ItemizedOverlay.CLICKED_OVERLAY);
             itemizedOverlay.addOverlayItem(overlayItem);
-            
+
             sphinx.showInfoWindow(overlayItem);
-            
+
             sphinx.getCenterTokenView().setVisibility(View.VISIBLE);
             sphinx.getMapCleanBtn().setVisibility(View.INVISIBLE);
             sphinx.getMapToolsView().setVisibility(View.INVISIBLE);
             sphinx.getLocationView().setVisibility(View.INVISIBLE);
-            
+
             sphinx.setTouchMode(TouchMode.CLICK_SELECT_POINT);
-            
+
         } catch(APIException e) {
             e.printStackTrace();
         }
-        
+
     }
-    
-    public static ItemizedOverlay drawPOIOverlay(String overlayName, final Sphinx sphinx, POI poi) {
-        
+
+    public static ItemizedOverlay drawPopupPOI(final Sphinx sphinx, POI poi) {
+    	return drawPOIOverlay(ItemizedOverlay.MAP_POI_OVERLAY, sphinx, poi, POPUP_ITEM);
+    }
+
+    public static ItemizedOverlay drawFallingPOI(final Sphinx sphinx, POI poi) {
+    	return drawPOIOverlay(ItemizedOverlay.LONG_CLICKED_OVERLAY, sphinx, poi, FALLING_ITEM);
+    }
+
+    public static ItemizedOverlay drawPOIOverlay(String overlayName, final Sphinx sphinx, POI poi)
+    {
+    	return drawPOIOverlay(overlayName, sphinx, poi, COMMON_ITEM);
+    }
+
+    private static final String COMMON_ITEM = "COMMON_ITEM";
+    private static final String POPUP_ITEM = "POPUP_ITEM";
+    private static final String FALLING_ITEM = "FALLING_ITEM";
+
+    public static OverlayItem getNewOverlayItemByType(String type, final Sphinx sphinx, POI poi) throws APIException {
+    	if (type.equals(COMMON_ITEM)) {
+            RotationTilt rt = new RotationTilt(RotateReference.SCREEN,TiltReference.SCREEN);
+            OverlayItem overlayItem = new OverlayItem(poi.getPosition(), Icon.getIcon(sphinx.getResources(), R.drawable.btn_bubble_b_normal, Icon.OFFSET_LOCATION_CENTER_BOTTOM),
+                    Icon.getIcon(sphinx.getResources(), R.drawable.btn_bubble_b_focused, Icon.OFFSET_LOCATION_CENTER_BOTTOM),
+                    poi.getName(), rt);
+    		return overlayItem;
+    	} else if (type.equals(POPUP_ITEM)) {
+            RotationTilt rt = new RotationTilt(RotateReference.SCREEN,TiltReference.SCREEN);
+            OverlayItem overlayItem = new PopupOverlayItem(poi.getPosition(), Icon.getIcon(sphinx.getResources(), R.drawable.btn_bubble_b_normal, Icon.OFFSET_LOCATION_CENTER_BOTTOM),
+                    Icon.getIcon(sphinx.getResources(), R.drawable.btn_bubble_b_focused, Icon.OFFSET_LOCATION_CENTER_BOTTOM),
+                    poi.getName(), rt);
+    		return overlayItem;
+    	} else if (type.equals(FALLING_ITEM)) {
+            RotationTilt rt = new RotationTilt(RotateReference.SCREEN,TiltReference.SCREEN);
+            FallingOverlayItem overlayItem = new FallingOverlayItem(poi.getPosition(), Icon.getIcon(sphinx.getResources(), R.drawable.btn_bubble_b_normal, Icon.OFFSET_LOCATION_CENTER_BOTTOM),
+                    Icon.getIcon(sphinx.getResources(), R.drawable.btn_bubble_b_focused, Icon.OFFSET_LOCATION_CENTER_BOTTOM),
+                    poi.getName(), rt);
+    		return overlayItem;
+    	}
+    	return null;
+    }
+
+    public static ItemizedOverlay drawPOIOverlay(String overlayName, final Sphinx sphinx, POI poi, String itemType) {
+
         ItemizedOverlay itemizedOverlay = null;
         final MapView mapView = sphinx.getMapView();
-        
+
         try {
-            
+
             ItemizedOverlay overlay = mapView.getOverlaysByName(overlayName);
             OverlayItem overlayItem;
-            
+
             if (overlay == null) {
                 overlay = new ItemizedOverlay(overlayName);
-                RotationTilt rt = new RotationTilt(RotateReference.SCREEN,TiltReference.SCREEN);
-                overlayItem = new OverlayItem(poi.getPosition(), Icon.getIcon(sphinx.getResources(), R.drawable.btn_bubble_b_normal, Icon.OFFSET_LOCATION_CENTER_BOTTOM), 
-                        Icon.getIcon(sphinx.getResources(), R.drawable.btn_bubble_b_focused, Icon.OFFSET_LOCATION_CENTER_BOTTOM),
-                        poi.getName(), rt);
-                
+                overlayItem = getNewOverlayItemByType(itemType, sphinx, poi);
+
                 overlayItem.addEventListener(EventType.TOUCH, new OverlayItem.TouchEventListener() {
                     @Override
                     public void onTouchEvent(EventSource eventSource) {

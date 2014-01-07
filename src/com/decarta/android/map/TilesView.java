@@ -820,7 +820,7 @@ public class TilesView extends GLSurfaceView {
 
             Position pos = screenXYConvToPos(xy0Conv.x, xy0Conv.y);
             mParentMapView.executeTouchDownListeners(pos);
-            
+
 			if (pCount == 1) {
 				lastTouchDownTime = System.nanoTime();
 				lastTouchDown.x = event.getX(0);
@@ -3020,6 +3020,7 @@ public class TilesView extends GLSurfaceView {
 			boolean rotatingXJustDoneL = false;
 			boolean rotatingZ = false;
 			boolean rotatingZJustDoneL = false;
+			boolean pinAnimating = false;
 			// Tigerknows begin
 			isMyLocation = false;
 			// Tigerknows end
@@ -3642,48 +3643,69 @@ public class TilesView extends GLSurfaceView {
 								continue;
 
 							OverlayItem pin = visiblePins.get(0);
-
-							float x = (float) (pin.getMercXY().x
-									* overlayZoomScale - topLeftXf);
-							float y = (float) (-pin.getMercXY().y
-									* overlayZoomScale + topLeftYf);
-
-							RotationTilt rt = pin.getRotationTilt();
-							float zRot = rt.getRotation();
-							if (rt.getRotateRelativeTo().equals(
-									RotateReference.MAP)) {
-								zRot += mapMode.getzRotation();
-							}
-							if (pin instanceof MyLocation) {
-								isMyLocation = true;
-								zRot -= tkZRotation;
-								MyLocation myLocation = (MyLocation) pin;
-								long time = System.nanoTime();
-								if (isMyLocation
-										&& (time - myLocation.refreshTime) > MyLocation.REFRESH_TIME) {
-									myLocation.refreshTime = time;
-									pin.isFoucsed = !pin.isFoucsed;
+							if (pin instanceof PopupOverlayItem) {
+								gl.glPushMatrix();
+								((PopupOverlayItem) pin).drawPin(overlayZoomScale, topLeftXf, topLeftYf, mapMode, gl);
+								drawOverlayItemOpenGL(gl, pin, 0, 0);
+								if (overlay.isClustering() && cluster.size() > 1) {
+									drawClusterTextOpenGL(gl, pin,
+											"" + cluster.size(), 0, 0);
 								}
-							} else if (pin.isFoucsed) {
-								focusedPin = pin;
+								gl.glPopMatrix();
+								pinAnimating = ((PopupOverlayItem) pin).isAnimating();
+							} else if (pin instanceof FallingOverlayItem) {
+								gl.glPushMatrix();
+								((FallingOverlayItem) pin).drawPin(overlayZoomScale, topLeftXf, topLeftYf, mapMode, gl);
+								drawOverlayItemOpenGL(gl, pin, 0, 0);
+								if (overlay.isClustering() && cluster.size() > 1) {
+									drawClusterTextOpenGL(gl, pin,
+											"" + cluster.size(), 0, 0);
+								}
+								gl.glPopMatrix();
+								pinAnimating = ((FallingOverlayItem) pin).isAnimating();
+							} else {
+								float x = (float) (pin.getMercXY().x
+										* overlayZoomScale - topLeftXf);
+								float y = (float) (-pin.getMercXY().y
+										* overlayZoomScale + topLeftYf);
+
+								RotationTilt rt = pin.getRotationTilt();
+								float zRot = rt.getRotation();
+								if (rt.getRotateRelativeTo().equals(
+										RotateReference.MAP)) {
+									zRot += mapMode.getzRotation();
+								}
+								if (pin instanceof MyLocation) {
+									isMyLocation = true;
+									zRot -= tkZRotation;
+									MyLocation myLocation = (MyLocation) pin;
+									long time = System.nanoTime();
+									if (isMyLocation
+											&& (time - myLocation.refreshTime) > MyLocation.REFRESH_TIME) {
+										myLocation.refreshTime = time;
+										pin.isFoucsed = !pin.isFoucsed;
+									}
+								} else if (pin.isFoucsed) {
+									focusedPin = pin;
+								}
+								float xRot = rt.getTilt();
+								if (rt.getTiltRelativeTo().equals(
+										TiltReference.SCREEN)) {
+									xRot -= mapMode.getxRotation();
+								}
+								gl.glPushMatrix();
+								gl.glTranslatef(x, y, 0);
+								gl.glRotatef(-mapMode.getzRotation(), 0, 0, 1);
+								gl.glRotatef(xRot, 1, 0, 0);
+								gl.glRotatef(zRot, 0, 0, 1);
+								gl.glScalef(scaleToM, scaleToM, 1);
+								drawOverlayItemOpenGL(gl, pin, 0, 0);
+								if (overlay.isClustering() && cluster.size() > 1) {
+									drawClusterTextOpenGL(gl, pin,
+											"" + cluster.size(), 0, 0);
+								}
+								gl.glPopMatrix();
 							}
-							float xRot = rt.getTilt();
-							if (rt.getTiltRelativeTo().equals(
-									TiltReference.SCREEN)) {
-								xRot -= mapMode.getxRotation();
-							}
-							gl.glPushMatrix();
-							gl.glTranslatef(x, y, 0);
-							gl.glRotatef(-mapMode.getzRotation(), 0, 0, 1);
-							gl.glRotatef(xRot, 1, 0, 0);
-							gl.glRotatef(zRot, 0, 0, 1);
-							gl.glScalef(scaleToM, scaleToM, 1);
-							drawOverlayItemOpenGL(gl, pin, 0, 0);
-							if (overlay.isClustering() && cluster.size() > 1) {
-								drawClusterTextOpenGL(gl, pin,
-										"" + cluster.size(), 0, 0);
-							}
-							gl.glPopMatrix();
 
 						}
 						// 将焦点的Pin绘制在上面
@@ -3832,7 +3854,7 @@ public class TilesView extends GLSurfaceView {
                     }
 
 					if (zoomingL || isLastLabelFading || (touching && !refreshText)
-							|| isLabelFading || fading || movingL || rotatingX
+							|| isLabelFading || fading || movingL || rotatingX || pinAnimating
 							|| rotatingZ) {
 						requestRender();
 					}
