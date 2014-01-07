@@ -189,12 +189,13 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
                 f.refreshResult(plan.getType());
                 mSphinx.showView(R.id.view_traffic_result_detail);
             } else if (plan.getType() == Step.TYPE_TRANSFER) {
-                int index = f.getResult(Step.TYPE_TRANSFER).indexOf(plan);
-                if (index == -1) {
-                    return;
-                }
-                f.refreshResult(plan.getType(), index);
-                mSphinx.showView(R.id.view_traffic_result_detail);
+//                int index = f.getResult(Step.TYPE_TRANSFER).indexOf(plan);
+//                if (index == -1) {
+//                    return;
+//                }
+//                f.refreshResult(plan.getType(), index);
+//                mSphinx.showView(R.id.view_traffic_result_detail);
+                mSphinx.getFragment(this.getOwerFragmentId()).dismiss();
             }
         }
         
