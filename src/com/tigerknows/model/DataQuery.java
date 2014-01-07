@@ -562,7 +562,7 @@ public final class DataQuery extends BaseQuery {
     protected void checkRequestParameters() throws APIException {
         
         String[] ekeys = new String[]{SERVER_PARAMETER_DATA_TYPE, SERVER_PARAMETER_SIZE};
-        String[] okeys = new String[]{SERVER_PARAMETER_TIME_STAMP, SERVER_PARAMETER_EXT, SERVER_PARAMETER_POI_ID};
+        String[] okeys = new String[]{SERVER_PARAMETER_TIME_STAMP, SERVER_PARAMETER_EXT};
         String[] discoverOptinalKeys = new String[]{SERVER_PARAMETER_DISCOVER_POI_VERSION, SERVER_PARAMETER_DISCOVER_BASEINDEX_VERSION};
         String[] filterOptionalKeys = new String[]{SERVER_PARAMETER_CITY_FILTER_VERSION, SERVER_PARAMETER_NATION_FILTER_VERSION, 
                 SERVER_PARAMETER_FILTER, SERVER_PARAMETER_FILTER_STRING};

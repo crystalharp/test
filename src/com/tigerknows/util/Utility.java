@@ -1227,6 +1227,7 @@ public class Utility {
                     trafficQueryFragment.setEnd(poiForTraffic);
                 }
                 trafficQueryFragment.setQueryType(queryType);
+//                trafficQueryFragment.useEndCityId(true);
                 if (queryType != -1) {
                     trafficQueryFragment.autoStartQuery(true);
                 } else {

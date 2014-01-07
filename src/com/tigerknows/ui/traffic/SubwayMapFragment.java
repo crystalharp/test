@@ -284,6 +284,7 @@ public class SubwayMapFragment extends BaseFragment implements RetryView.CallBac
             mPos = null;
         }
         
+        mTitle = getString(R.string.subway_map);
         if (mCityInfo != null && mCityInfo.getId() == cityinfo.getId()) {
             return;
         }
@@ -291,7 +292,6 @@ public class SubwayMapFragment extends BaseFragment implements RetryView.CallBac
         needRefresh = true;
         mWebWbv.stopLoading();
         mWebWbv.clearView();
-        mTitle = getString(R.string.subway_map);
     }
     
     public class StationHandler {
