@@ -122,7 +122,6 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
     
     @Override
     public void onPause() {
-        super.onPause();
         mItemizedOverlay = mSphinx.getMapView().getCurrentOverlay();
         InfoWindowFragment infoWindowFragment = mSphinx.getInfoWindowFragment();
         ItemizedOverlay itemizedOverlay = infoWindowFragment.getItemizedOverlay();
@@ -131,6 +130,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         } else {
             mOverlayItem = null;
         }
+        super.onPause();
     }
     
     public void reset() {
