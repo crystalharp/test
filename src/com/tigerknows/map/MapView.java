@@ -406,12 +406,12 @@ public class MapView extends RelativeLayout implements
 		}
 	}
 
-    public void executeClickPOIEventListener(Position position, String name) {
+    public void executeClickPOIEventListener(Position position, String name, Position touchPosition) {
         if (eventListeners.containsKey(MapView.EventType.CLICKPOI)) {
             ArrayList<EventListener> listeners = eventListeners
                     .get(MapView.EventType.CLICKPOI);
             for (int i = 0; i < listeners.size(); i++) {
-                ((ClickPOIEventListener) (listeners.get(i))).onClickPOIEvent(this, position, name);
+                ((ClickPOIEventListener) (listeners.get(i))).onClickPOIEvent(this, position, name, touchPosition);
             }
         }
     }

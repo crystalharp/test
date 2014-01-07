@@ -494,7 +494,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         DataQuery poiQuery = new DataQuery(lastDataQuery);
         POI requestPOI = lastDataQuery.getPOI();
         poiQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, String.valueOf(mPOIList.size()));
-        if (poiQuery.hasParameter(DataQuery.SERVER_PARAMETER_FILTER) == false) {
+        if (poiQuery.hasParameter(DataQuery.SERVER_PARAMETER_FILTER)) {
             poiQuery.addParameter(DataQuery.SERVER_PARAMETER_FILTER, DataQuery.makeFilterRequest(mFilterList));
         }
         poiQuery.setup(getId(), getId(), null, true, false, requestPOI);
@@ -1015,7 +1015,6 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 bPOIList = poiList.getList();
             }
             
-            poiList = poiResponse.getAPOIList();
             if (!dataQuery.isTurnPage()) {
                 mInputText = dataQuery.getParameter(BaseQuery.SERVER_PARAMETER_KEYWORD);
                 mPOIList.clear();
@@ -1031,6 +1030,17 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 if (centerPosition != null) {
                     if (mAPOI != null && !centerPosition.equals(mAPOI.getPosition())) {
                         mAPOI = null;
+                    }
+                    if (mAPOI == null &&
+                            dataQuery.hasParameter(DataQuery.SERVER_PARAMETER_LOCATION_LATITUDE) &&
+                            dataQuery.hasParameter(DataQuery.SERVER_PARAMETER_LOCATION_LONGITUDE)) {
+                        Position position = new Position(Double.valueOf(dataQuery.getParameter(DataQuery.SERVER_PARAMETER_LOCATION_LATITUDE)), 
+                                Double.valueOf(dataQuery.getParameter(DataQuery.SERVER_PARAMETER_LOCATION_LONGITUDE)));
+                        if (!centerPosition.equals(position)) {
+                            mAPOI = new POI();
+                            mAPOI.setName(getString(R.string.my_location));
+                            mAPOI.setPosition(position);
+                        }
                     }
                 } else {
                     mAPOI = null;

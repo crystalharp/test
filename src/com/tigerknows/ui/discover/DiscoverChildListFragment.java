@@ -152,6 +152,7 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
         
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, String.valueOf(0));
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, mDataType);
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_FILTER, DataQuery.makeFilterRequest(mSphinx.getDiscoverListFragment().getFilterList()));
         dataQuery.copyLocationParameter(mSphinx.getDiscoverListFragment().getLastQuery());
         dataQuery.setup(getId(), getId(), null, false, true, null);
         

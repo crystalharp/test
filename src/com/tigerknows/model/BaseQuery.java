@@ -953,10 +953,12 @@ public abstract class BaseQuery {
         }
         if (query.hasParameter(DataQuery.SERVER_PARAMETER_LOCATION_CITY)
                 && query.hasParameter(DataQuery.SERVER_PARAMETER_LOCATION_LONGITUDE)
-                && query.hasParameter(DataQuery.SERVER_PARAMETER_LOCATION_LATITUDE)) {
+                && query.hasParameter(DataQuery.SERVER_PARAMETER_LOCATION_LATITUDE)
+                && query.hasParameter(DataQuery.SERVER_PARAMETER_LOCATION_TYPE)) {
             addParameter(DataQuery.SERVER_PARAMETER_LOCATION_CITY, query.getParameter(SERVER_PARAMETER_LOCATION_CITY));
             addParameter(DataQuery.SERVER_PARAMETER_LOCATION_LONGITUDE, query.getParameter(SERVER_PARAMETER_LOCATION_LONGITUDE));
             addParameter(DataQuery.SERVER_PARAMETER_LOCATION_LATITUDE, query.getParameter(SERVER_PARAMETER_LOCATION_LATITUDE));
+            addParameter(DataQuery.SERVER_PARAMETER_LOCATION_TYPE, query.getParameter(SERVER_PARAMETER_LOCATION_TYPE));
         }
         if (query.hasParameter(DataQuery.SERVER_PARAMETER_CITY)) {
             addParameter(DataQuery.SERVER_PARAMETER_CITY, query.getParameter(SERVER_PARAMETER_CITY));
