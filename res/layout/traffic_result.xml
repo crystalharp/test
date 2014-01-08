@@ -5,7 +5,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" 
     android:gravity="left|bottom"
-    android:background="@color/gray_light">
+    android:background="@color/normal_background">
 
     <include android:id="@+id/bottom_buttons_view"
         android:layout_width="fill_parent" 

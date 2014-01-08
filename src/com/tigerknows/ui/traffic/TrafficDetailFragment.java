@@ -176,6 +176,8 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         mShareBtn = (ViewGroup) mRootView.findViewById(R.id.share_btn);
         mBottomButtonsView.findViewById(R.id.nearby_search_btn).setVisibility(View.GONE);
         mSummaryLayout = mLayoutInflater.inflate(R.layout.traffic_group_traffic, null);
+        mSummaryLayout.setBackgroundResource(R.drawable.btn_filter2_normal);
+        mSummaryLayout.setPadding(Utility.dip2px(mSphinx, 12), 0, Utility.dip2px(mSphinx, 12), Utility.dip2px(mSphinx, 16));
     }
 
     @Override

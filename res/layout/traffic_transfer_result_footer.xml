@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical|left"
-        android:padding="8dp"
+        android:padding="16dp"
         android:background="@drawable/list_selector_background_gray_light"
         android:orientation="horizontal" >
         
@@ -27,19 +27,13 @@
             android:text="@string/find_return" />
         
     </LinearLayout>
-    
-    <ImageView
-        android:id="@+id/imageView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/bg_line_split" />
-    
+        
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical|left"
-        android:padding="8dp"
-        android:background="@drawable/list_selector_background_gray_light"
+        android:padding="16dp"
+        android:background="@color/normal_background"
         android:orientation="horizontal" >
 
         <ImageView

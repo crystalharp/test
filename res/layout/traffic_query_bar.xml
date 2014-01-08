@@ -20,6 +20,7 @@
 	            android:id="@+id/traffic_transfer_rbt"
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
+	            android:layout_marginRight="8dp"
 	            android:button="@drawable/rdb_bus"
 	            android:checked="true" />
 	
@@ -27,11 +28,14 @@
 		        android:button="@drawable/rdb_drive"
 		        android:layout_width="wrap_content" 
 		        android:layout_height="wrap_content"
+	            android:layout_marginRight="8dp"
+	            android:layout_marginLeft="8dp"
 		        android:id="@+id/traffic_drive_rbt" />
 		    <RadioButton
 		        android:button="@drawable/rdb_walk"
 		        android:layout_width="wrap_content" 
 		        android:layout_height="wrap_content"
+	            android:layout_marginLeft="8dp"
 		        android:id="@+id/traffic_walk_rbt"/>
 			
 	   	</RadioGroup>
