@@ -236,8 +236,6 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
                 MAP_LOCATION,
         };
         keywordList = Arrays.asList(KEYWORDS);
-        
-        initHistory();
 		
         return mRootView;
     }
@@ -393,6 +391,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
         mTitleView.removeAllViews();
         mTitleView.addView(mTitleBar);
         updateCommonPlace();
+        initHistory();
         refreshRightBtn();
         mScrollView.scrollTo(0, 0);
         if (autoStartQuery && !mStart.textEmpty() && !mEnd.textEmpty()) {
