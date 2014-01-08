@@ -304,6 +304,11 @@ public class ItemizedOverlayHelper {
                                 
                                 OverlayItem overlayItem = (OverlayItem) eventSource;
                                 overlayItem.getOwnerOverlay().focuseOverlayItem(overlayItem);
+                                
+                                MapView mapView = sphinx.getMapView();
+                                mapView.deleteOverlaysByName(ItemizedOverlay.LONG_CLICKED_OVERLAY);
+                                mapView.deleteOverlaysByName(ItemizedOverlay.MAP_POI_OVERLAY);
+                                
                                 sphinx.showInfoWindow(overlayItem);
                             }
                         });
