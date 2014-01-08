@@ -984,7 +984,9 @@ public final class DataQuery extends BaseQuery {
         } else if (DATA_TYPE_GEOCODER.equals(dataType)) {
             GeoCoderResponse response = new GeoCoderResponse(responseXMap);
             this.response = response;
-        }
+        } else if (DATA_TYPE_HOTELVENDOR.equals(dataType)) {
+            HotelVendorResponse response = new HotelVendorResponse(responseXMap);
+            this.response = response;        }
     }
     
     private void translateFilter(FilterResponse baseResponse, String dataType, String subDataType, List<Filter> filterList) throws APIException {

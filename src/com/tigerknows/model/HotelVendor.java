@@ -125,8 +125,9 @@ public class HotelVendor extends BaseData implements Parcelable {
     
     private HotelVendor(Parcel in) {
         id = in.readLong();
-        serviceTel = in.readString();
         name = in.readString();
+        serviceName = in.readString();
+        serviceTel = in.readString();
         reserveTel = in.readString();
     }
     
@@ -139,6 +140,7 @@ public class HotelVendor extends BaseData implements Parcelable {
     public void writeToParcel(Parcel out, int flags) {
         out.writeLong(id);
         out.writeString(name);
+        out.writeString(serviceName);
         out.writeString(serviceTel);
         out.writeString(reserveTel);
     }
@@ -229,6 +231,7 @@ public class HotelVendor extends BaseData implements Parcelable {
         
         boolean writeHotelVendorList = false;
         Response response = dataQuery.getResponse();
+
         if (response != null) {
         	HotelVendorResponse hotelvendorResponse = (HotelVendorResponse)response;
             HotelVendorList hotelVendorList = hotelvendorResponse.getList();

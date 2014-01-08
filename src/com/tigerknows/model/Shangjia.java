@@ -306,6 +306,7 @@ public class Shangjia extends BaseData implements Parcelable {
         
         boolean writeShangjiaList = false;
         Response response = dataQuery.getResponse();
+
         if (response != null) {
             ShangjiaResponse shangjiaResponse = (ShangjiaResponse)response;
             ShangjiaList shangjiaList = shangjiaResponse.getList();

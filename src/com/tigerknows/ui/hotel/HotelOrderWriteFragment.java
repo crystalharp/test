@@ -161,7 +161,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         mTitleBtn.setText(getString(R.string.hotel_room_title));
         final HotelVendor hotelVendor = HotelVendor.getHotelVendorById(mRoomType.getVendorID(), mSphinx, null);
         if(hotelVendor != null){
-        	LogWrapper.d("Trap", "~" + hotelVendor.getServiceName() + hotelVendor.getServiceTel());
+        	LogWrapper.d("Trap", "~" + hotelVendor.getReserveTel());
         }
         if(hotelVendor == null || TextUtils.isEmpty(hotelVendor.getReserveTel())){
             mRightBtn.setVisibility(View.GONE);
