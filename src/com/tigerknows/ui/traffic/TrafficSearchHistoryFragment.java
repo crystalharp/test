@@ -23,6 +23,8 @@ public class TrafficSearchHistoryFragment extends BaseFragment {
     
     ListView mHistoryLsv;
     
+    TextView mEmptyTxv;
+    
     List<SearchHistory> mList = new LinkedList<SearchHistory>();
     
     TrafficSearchHistoryTable table = new TrafficSearchHistoryTable(mSphinx);
@@ -56,6 +58,7 @@ public class TrafficSearchHistoryFragment extends BaseFragment {
         super.onResume();
         mTitleBtn.setText(R.string.title_traffic_search_history);
         initData();
+        refresh();
         mRightBtn.setVisibility(View.VISIBLE);
         mRightBtn.setText(R.string.clear);
         mRightBtn.setOnClickListener(new View.OnClickListener() {
@@ -63,6 +66,7 @@ public class TrafficSearchHistoryFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
                 clearHistory();
+                refresh();
             }
         });
     }
@@ -73,6 +77,8 @@ public class TrafficSearchHistoryFragment extends BaseFragment {
 
     private void findView() {
         mHistoryLsv = (ListView) mRootView.findViewById(R.id.traffic_history_lsv);
+        
+        mEmptyTxv = (TextView) mRootView.findViewById(R.id.empty_txv);
         
         mHistoryLsv.setAdapter(mAdapter);
         mHistoryLsv.setOnItemClickListener(new OnItemClickListener(){
@@ -88,6 +94,14 @@ public class TrafficSearchHistoryFragment extends BaseFragment {
                 dismiss();
             }
         });
+    }
+    
+    private void refresh() {
+        if (mList.isEmpty()) {
+            mEmptyTxv.setVisibility(View.VISIBLE);
+        } else {
+            mEmptyTxv.setVisibility(View.GONE);
+        }
     }
     
     private void initData() {
