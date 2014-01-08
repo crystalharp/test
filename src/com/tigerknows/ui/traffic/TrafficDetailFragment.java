@@ -235,9 +235,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
             if (list == null) {
                 list = new ArrayList<Plan>();
             }
-            if (type != DRIVE) {
-                list.clear();
-            }
+            list.clear();
             list.addAll(plans);
         }
         
