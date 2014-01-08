@@ -420,7 +420,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
                     long id = filterOptionList.get(i).getId();
                     indexList.add(id);
                 }
-                Filter categoryFilter = DataQuery.makeFilterResponse(mContext, indexList, filterCategory.getVersion(), filterOptionList, FilterCategoryOrder.FIELD_LIST_CATEGORY, false);
+                Filter categoryFilter = DataQuery.makeFilterResponse(mContext, indexList, filterCategory.getVersion(), filterOptionList, FilterCategoryOrder.FIELD_LIST_CATEGORY, true);
                 categoryFilter.getChidrenFilterList().remove(0);
                 
                 mFilterList = new ArrayList<Filter>();
@@ -687,9 +687,13 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
             }
             List<Filter> chidrenList = filter.getChidrenFilterList();
             for(int j = 0, count = chidrenList.size(); j < count; j++) {
-                Filter chidren = chidrenList.get(j);
-                if (chidren.isSelected()) {
-                	submitQuery(chidren.getFilterOption().getName());
+                Filter children = chidrenList.get(j);
+                if (children.isSelected()) {
+                	if(children.getFilterOption().getName().contains(mSphinx.getString(R.string.all))){
+                		submitQuery(filter.getFilterOption().getName());
+                	}else{
+                		submitQuery(children.getFilterOption().getName());
+                	}
                     return;
                 }
             }
