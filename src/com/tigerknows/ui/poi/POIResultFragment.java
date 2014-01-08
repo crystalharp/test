@@ -1068,6 +1068,8 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         } else {
             if (dataQuery.isTurnPage()) {
                 return;
+            }else{
+            	mInputText = dataQuery.getParameter(BaseQuery.SERVER_PARAMETER_KEYWORD);
             }
             mState = STATE_EMPTY;
         }
