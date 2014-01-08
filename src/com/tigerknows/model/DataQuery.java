@@ -897,8 +897,10 @@ public final class DataQuery extends BaseQuery {
         }
 
         // 在v5.8.0之后增加提交cf值，以避免地图中心点筛选项在之前的客户端显示的问题
-        if (hasParameter(SERVER_PARAMETER_EXT)) {
-            addParameter(SERVER_PARAMETER_EXT, getParameter(SERVER_PARAMETER_EXT) + ";" + EXT_FILTER);
+        if (hasParameter(SERVER_PARAMETER_EXT)){
+        	if( !getParameter(SERVER_PARAMETER_EXT).equalsIgnoreCase(EXT_FILTER) &&!getParameter(SERVER_PARAMETER_EXT).contains(";" + EXT_FILTER)) {
+        		addParameter(SERVER_PARAMETER_EXT, getParameter(SERVER_PARAMETER_EXT) + ";" + EXT_FILTER);
+        	}
         } else {
             addParameter(SERVER_PARAMETER_EXT, EXT_FILTER);
         }
