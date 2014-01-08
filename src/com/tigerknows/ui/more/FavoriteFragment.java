@@ -19,6 +19,7 @@ import com.tigerknows.model.TrafficQuery;
 import com.tigerknows.model.BuslineModel.Line;
 import com.tigerknows.provider.Tigerknows;
 import com.tigerknows.ui.BaseFragment;
+import com.tigerknows.ui.traffic.TrafficDetailFragment;
 import com.tigerknows.util.Utility;
 import com.tigerknows.util.SqliteWrapper;
 import com.tigerknows.widget.SpringbackListView;
@@ -512,6 +513,7 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
     
     private void showTrafficDetail(Favorite traffic) {
         int type = traffic.getFavoriteType();
+        TrafficDetailFragment tf = mSphinx.getTrafficDetailFragment();
         switch (type) {
             case Tigerknows.Favorite.FAVORITE_BUSLINE:
             	mSphinx.getBuslineDetailFragment().setData(traffic.getBuslineQuery().getBuslineModel().getLineList().get(0));
@@ -519,19 +521,22 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
                 break;
                 
             case Tigerknows.Favorite.FAVORITE_TRANSFER:
-                mSphinx.getTrafficDetailFragment().addResult(traffic.getTrafficQuery(), Step.TYPE_TRANSFER, traffic.getTrafficQuery().getTrafficModel().getPlanList());
-                mSphinx.getTrafficDetailFragment().refreshResult(Step.TYPE_TRANSFER);
+                tf.resetResult();
+                tf.addResult(traffic.getTrafficQuery(), Step.TYPE_TRANSFER, traffic.getTrafficQuery().getTrafficModel().getPlanList());
+                tf.refreshResult(Step.TYPE_TRANSFER);
                 mSphinx.showView(R.id.view_traffic_result_detail);
                 break;
             case Tigerknows.Favorite.FAVORITE_DRIVE:
-                mSphinx.getTrafficDetailFragment().addResult(traffic.getTrafficQuery(), Step.TYPE_DRIVE, traffic.getTrafficQuery().getTrafficModel().getPlanList());
-                mSphinx.getTrafficDetailFragment().refreshResult(Step.TYPE_DRIVE);
-                mSphinx.showView(mSphinx.getTrafficDetailFragment().getId());
+                tf.resetResult();
+                tf.addResult(traffic.getTrafficQuery(), Step.TYPE_DRIVE, traffic.getTrafficQuery().getTrafficModel().getPlanList());
+                tf.refreshResult(Step.TYPE_DRIVE);
+                mSphinx.showView(tf.getId());
                 break;
             case Tigerknows.Favorite.FAVORITE_WALK:
-                mSphinx.getTrafficDetailFragment().addResult(traffic.getTrafficQuery(), Step.TYPE_WALK, traffic.getTrafficQuery().getTrafficModel().getPlanList());
-                mSphinx.getTrafficDetailFragment().refreshResult(Step.TYPE_WALK);
-                mSphinx.showView(mSphinx.getTrafficDetailFragment().getId());
+                tf.resetResult();
+                tf.addResult(traffic.getTrafficQuery(), Step.TYPE_WALK, traffic.getTrafficQuery().getTrafficModel().getPlanList());
+                tf.refreshResult(Step.TYPE_WALK);
+                mSphinx.showView(tf.getId());
                 break;
 
             default:
