@@ -18,6 +18,7 @@ import com.tigerknows.Sphinx;
 import com.tigerknows.provider.TrafficSearchHistoryTable;
 import com.tigerknows.provider.TrafficSearchHistoryTable.SearchHistory;
 import com.tigerknows.ui.BaseFragment;
+import com.tigerknows.util.Utility;
 
 public class TrafficSearchHistoryFragment extends BaseFragment {
     
@@ -60,7 +61,7 @@ public class TrafficSearchHistoryFragment extends BaseFragment {
         initData();
         refresh();
         mRightBtn.setVisibility(View.VISIBLE);
-        mRightBtn.setText(R.string.clear);
+        Utility.refreshButton(mSphinx, mRightBtn, null, getString(R.string.clear), false);
         mRightBtn.setOnClickListener(new View.OnClickListener() {
             
             @Override

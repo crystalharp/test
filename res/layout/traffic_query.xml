@@ -3,7 +3,7 @@
     android:id="@+id/root_view"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="#f9f9f9" >
+    android:background="@color/normal_background" >
     
     <FrameLayout android:id="@+id/content_frl" 
     	android:layout_width="fill_parent"
@@ -55,7 +55,7 @@
 		        android:layout_height="wrap_content"
 		        android:layout_marginTop="16dp"
 		        android:background="@drawable/list_header"
-		        android:paddingLeft="8dp"
+		        android:paddingLeft="12dp"
 		        android:paddingRight="8dp" >
 
 		        <TextView

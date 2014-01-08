@@ -270,7 +270,7 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
             final Dialog dialog = Utility.getChoiceDialog(mSphinx, alterListView, R.style.AlterChoiceDialog);
             
             TextView titleTxv = (TextView)alterListView.findViewById(R.id.title_txv);
-            titleTxv.setText(R.string.share);
+            titleTxv.setText(R.string.preference);
             
             Button button = (Button)alterListView.findViewById(R.id.confirm_btn);
             button.setVisibility(View.GONE);

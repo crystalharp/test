@@ -292,7 +292,13 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	            SearchHistory h = (SearchHistory)data;
 	            TextView t = (TextView) child.findViewById(R.id.his_txv);
 	            child.setTag(data);
-	            child.setBackgroundResource(R.drawable.list_middle);
+	            LogWrapper.d("conan", "size:" + getSize() + " pos:" + pos);
+	            if (pos == mQueryHistorys.size() - 1) {
+	                child.setBackgroundResource(R.drawable.list_footer);
+	            } else {
+	                child.setBackgroundResource(R.drawable.list_middle);
+	            }
+	            child.setPadding(Utility.dip2px(mSphinx, 12), 0, 0, 0);
 	            t.setText(h.genDescription());
 	            child.setOnClickListener(historyItemListener);
 	            return null;
