@@ -104,6 +104,10 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     private static final int HOTEL = 1;
     private static final int ENTERTAINMENT = 2;
     private static final int TRAFFIC = 3;
+    
+    private static final int STATUS_HOME = 0;
+    private static final int STATUS_NEARBY = 1;
+    private static final int STATUS_MORE = 2;
 
     public void launchCategoryPropertyList(){
         final int[][] SPECIAL_OP = {
@@ -223,12 +227,33 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         refreshHotView(TKConfig.getPref(mContext, TKConfig.PREFS_CUSTOM_CATEGORY, "111100110001000"));
         doFold();
         mLeftBtn.setOnClickListener(this);
-        if(mFilterListView.getVisibility() == View.GONE){
-        	mTitleBtn.setText(R.string.nearby_search);
+        if(mFilterListView.getVisibility() == View.VISIBLE){
+        	refreshTitleView(STATUS_MORE);
+        }else if(mPOI.getSourceType() != POI.SOURCE_TYPE_MAP_CENTER && mPOI.getSourceType() != POI.SOURCE_TYPE_MY_LOCATION){
+        	refreshTitleView(STATUS_NEARBY);
         }else{
-        	mTitleBtn.setText(R.string.more);
+        	refreshTitleView(STATUS_HOME);
         }
-        if(mPOI.getSourceType() != POI.SOURCE_TYPE_MAP_CENTER && mPOI.getSourceType() != POI.SOURCE_TYPE_MY_LOCATION){
+        String name = mPOI.getName();
+        String title = getString(R.string.at_where_search, name);
+        SpannableStringBuilder style = new SpannableStringBuilder(title);
+        int focusedColor = mSphinx.getResources().getColor(R.color.black_dark);
+        style.setSpan(new ForegroundColorSpan(focusedColor), 0, 2, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+        style.setSpan(new ForegroundColorSpan(focusedColor), 2+name.length(), title.length(), Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+        mLocationTxv.setText(style);
+    }
+    
+    private void refreshTitleView(int status){
+    	//状态HOME不可能跳转到NEARBY，反之亦然，但其他4种可能的跳转均会发生
+    	switch(status){
+    	case STATUS_HOME:
+    		mTitleBtn.setText(R.string.nearby_search);
+        	mRightBtn.setVisibility(View.VISIBLE);
+        	mRightBtn.setBackgroundResource(R.drawable.btn_nearby_search);
+        	mRightBtn.setOnClickListener(this);
+        	mRightBtn.setPadding(0, 0, 0, 0);
+        	break;
+    	case STATUS_NEARBY:
             mTitleBtn.setVisibility(View.GONE);
             mKeywordEdt.setVisibility(View.VISIBLE);
             
@@ -252,21 +277,13 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         	mRightBtn.setText(R.string.cancel);
         	mRightBtn.setTextColor(mSphinx.getResources().getColor(R.color.black_dark));
         	mRightBtn.setBackgroundResource(R.drawable.btn_cancel);
-        	
-        }else{
-        	mRightBtn.setVisibility(View.VISIBLE);
-        	mRightBtn.setBackgroundResource(R.drawable.btn_nearby_search);
-        	mRightBtn.setOnClickListener(this);
-        	mRightBtn.setPadding(0, 0, 0, 0);
-        	
-        }
-        String name = mPOI.getName();
-        String title = getString(R.string.at_where_search, name);
-        SpannableStringBuilder style = new SpannableStringBuilder(title);
-        int focusedColor = mSphinx.getResources().getColor(R.color.black_dark);
-        style.setSpan(new ForegroundColorSpan(focusedColor), 0, 2, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
-        style.setSpan(new ForegroundColorSpan(focusedColor), 2+name.length(), title.length(), Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
-        mLocationTxv.setText(style);
+        	break;
+    	case STATUS_MORE:
+    		mTitleBtn.setVisibility(View.VISIBLE);
+    		mTitleBtn.setText(R.string.more);
+    		mKeywordEdt.setVisibility(View.GONE);
+    		mRightBtn.setVisibility(View.GONE);
+    	}
     }
 
     @Override
@@ -604,6 +621,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
 		}
 		mFilterListView.setData(mFilterList, FilterResponse.FIELD_FILTER_CATEGORY_INDEX, this, false, false, mActionTag);
 		mFilterListView.setVisibility(View.VISIBLE);
+		refreshTitleView(STATUS_MORE);
 	}
 
 	private void doFold(){
@@ -708,7 +726,11 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     
 	protected void backHome() {
         mFilterListView.setVisibility(View.GONE);
-        mTitleBtn.setText(R.string.nearby_search);
+        if(mPOI.getSourceType() != POI.SOURCE_TYPE_MAP_CENTER && mPOI.getSourceType() != POI.SOURCE_TYPE_MY_LOCATION){
+        	refreshTitleView(STATUS_NEARBY);
+        }else{
+        	refreshTitleView(STATUS_HOME);
+        }
     }
 
     @Override
