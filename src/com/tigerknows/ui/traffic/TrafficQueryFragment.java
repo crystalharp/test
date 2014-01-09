@@ -495,6 +495,9 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	}
 
 	public void submitTrafficQuery(POI start, POI end) {
+        
+        addHistoryWord(start, HistoryWordTable.TYPE_TRAFFIC);
+        addHistoryWord(end, HistoryWordTable.TYPE_TRAFFIC);
 
         if (!processMyLocation(start)) {
             return;
@@ -504,9 +507,6 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
         }
         
         TrafficQuery trafficQuery = new TrafficQuery(mContext);
-        
-        addHistoryWord(start, HistoryWordTable.TYPE_TRAFFIC);
-        addHistoryWord(end, HistoryWordTable.TYPE_TRAFFIC);
     		
         mActionLog.addAction(mActionTag +  ActionLog.TrafficTrafficBtn, getQueryType(), mStart.getText(), mEnd.getText());
         trafficQuery.setup(start, end, getQueryType(), getId(), getString(R.string.doing_and_wait));
@@ -542,7 +542,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
             return;
         }
         String name = poi.getName();
-        if (name != null && name.trim().equals(MY_LOCATION) == false) {
+        if (name != null && !isKeyword(name.trim())) {
             Position position = poi.getPosition();
             HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, name, position), type);
         }
