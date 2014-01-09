@@ -426,6 +426,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
      */
     public void responsePOI(POI poi) {
         if (poi == null || TextUtils.isEmpty(poi.getName())) {
+            mSphinx.showTip(R.string.search_input_keyword, Toast.LENGTH_SHORT);
             return;
         }
         
@@ -475,7 +476,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
      */
     private void submitBuslineQuery(String keyword) {
         if (TextUtils.isEmpty(keyword)){
-            mSphinx.showTip(R.string.busline_name_, Toast.LENGTH_SHORT);
+            mSphinx.showTip(R.string.search_input_keyword, Toast.LENGTH_SHORT);
             return;
         }
 
