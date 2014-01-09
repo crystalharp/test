@@ -7,6 +7,7 @@ import java.util.List;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -167,6 +168,9 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	            btn.setText(p.getName());
 	        } else {
 	            btn.setText(null);
+	        }
+	        if (MY_LOCATION.equals(p.getName())) {
+	            btn.setTextColor(getResources().getColor(R.color.blue));
 	        }
 	        poi = p;
 	        refreshRightBtn();

@@ -351,7 +351,7 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
                     mSphinx.showView(R.id.view_traffic_result_transfer);
                 } else {
                     mActionTag = ActionLog.TrafficTransferListMap;
-                    mRightBtn.setVisibility(View.GONE);
+                    mRightBtn.setVisibility(View.INVISIBLE);
                 }
                 result = true;
             } else if (type == Plan.Step.TYPE_DRIVE) {
@@ -365,7 +365,7 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
                 result = true;
             } else if (type == Plan.Step.TYPE_WALK) {
                 mActionTag = ActionLog.TrafficWalkListMap;
-                mRightBtn.setVisibility(View.GONE);
+                mRightBtn.setVisibility(View.INVISIBLE);
 
                 TrafficOverlayHelper.drawTrafficPlanListOverlay(mSphinx, list, 0);
                 TrafficOverlayHelper.panToViewWholeOverlay(list.get(0), mSphinx.getMapView(), mSphinx);
