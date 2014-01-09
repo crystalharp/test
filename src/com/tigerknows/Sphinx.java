@@ -375,7 +375,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 	mUIStackAdjustReady = true;
                 } else if (msg.what == UI_STACK_ADJUST_EXECUTE){
                 	if(mUIStackAdjustReady){
-                		uiStackAdjust();
+                		uiStackAdjust(R.id.view_poi_nearby_search);
                 	}
                 	mUIStackAdjustReady = false;
                 } else if (msg.what == UI_STACK_ADJUST_CANCEL){
@@ -2298,24 +2298,24 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 		}
     }
 
-    public void uiStackAdjust() {
+    public void uiStackAdjust(int upperID) {
     	LogWrapper.d(TAG, "uiStackAdjust");
     	synchronized (mUILock) {
 	        if (uiStackContains(R.id.view_more_favorite)) {
-	            uiStackClearBetween(R.id.view_more_favorite, R.id.view_poi_nearby_search);
+	            uiStackClearBetween(R.id.view_more_favorite, upperID);
 	        } else if (uiStackContains(R.id.view_more_history)) {
-	            uiStackClearBetween(R.id.view_more_history, R.id.view_poi_nearby_search);
+	            uiStackClearBetween(R.id.view_more_history, upperID);
 	        } else if (uiStackContains(R.id.view_more_go_comment)) {
-	            uiStackClearBetween(R.id.view_more_go_comment, R.id.view_poi_nearby_search);
+	            uiStackClearBetween(R.id.view_more_go_comment, upperID);
 	        } else if (uiStackContains(R.id.view_user_my_comment_list)) {
-	            uiStackClearBetween(R.id.view_user_my_comment_list, R.id.view_poi_nearby_search);
+	            uiStackClearBetween(R.id.view_user_my_comment_list, upperID);
 	        } else if (uiStackContains(R.id.view_more_my_order)) {
-	            uiStackClearBetween(R.id.view_more_my_order, R.id.view_poi_nearby_search);
+	            uiStackClearBetween(R.id.view_more_my_order, upperID);
 	        } else {
 	            if (uiStackContains(R.id.view_home) == false) {
 	                uiStackInsert(R.id.view_home, 0);
 	            }
-	            uiStackClearBetween(R.id.view_home, R.id.view_poi_nearby_search);
+	            uiStackClearBetween(R.id.view_home, upperID);
 	        }
     	}
     }    

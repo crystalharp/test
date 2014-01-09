@@ -539,12 +539,12 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     		mSphinx.getHotelHomeFragment().resetDate();
     		mSphinx.getHotelHomeFragment().setCityInfo(Globals.getCurrentCityInfo(mContext));
     		mSphinx.showView(R.id.view_hotel_home);
-    		mSphinx.uiStackAdjust();
+    		mSphinx.uiStackAdjust(R.id.view_poi_nearby_search);
     		break;
     	case CategoryProperty.OP_SUBWAY:
     		mSphinx.getSubwayMapFragment().setData(Globals.getCurrentCityInfo(mContext, false));
     		mSphinx.showView(R.id.view_subway_map);
-    		mSphinx.uiStackAdjust();
+    		mSphinx.uiStackAdjust(R.id.view_poi_nearby_search);
     		break;
         case CategoryProperty.OP_DISH:
         	if (cityId != CityInfo.CITY_ID_BEIJING) {
@@ -564,7 +564,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
                 return;
             }
             mSphinx.queryStart(getDiscoverDataQuery(String.valueOf(operationCode)));
-            mSphinx.uiStackAdjust();
+            mSphinx.uiStackAdjust(R.id.view_poi_nearby_search);
             break;
         case CategoryProperty.OP_DIANYING:
             if (DataQuery.checkDiscoveryCity(cityId, Long.parseLong(BaseQuery.DATA_TYPE_DIANYING)) == false) {
@@ -572,7 +572,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
                 return;
             }
             mSphinx.queryStart(getDiscoverDataQuery(String.valueOf(operationCode)));
-            mSphinx.uiStackAdjust();
+            mSphinx.uiStackAdjust(R.id.view_poi_nearby_search);
             break;
         case CategoryProperty.OP_YANCHU:
             if (DataQuery.checkDiscoveryCity(cityId, Long.parseLong(BaseQuery.DATA_TYPE_YANCHU)) == false) {
@@ -580,7 +580,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
                 return;
             }
             mSphinx.queryStart(getDiscoverDataQuery(String.valueOf(operationCode)));
-            mSphinx.uiStackAdjust();
+            mSphinx.uiStackAdjust(R.id.view_poi_nearby_search);
             break;
         case CategoryProperty.OP_ZHANLAN:
             if (DataQuery.checkDiscoveryCity(cityId, Long.parseLong(BaseQuery.DATA_TYPE_ZHANLAN)) == false) {
@@ -588,7 +588,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
                 return;
             }
             mSphinx.queryStart(getDiscoverDataQuery(String.valueOf(operationCode)));
-            mSphinx.uiStackAdjust();
+            mSphinx.uiStackAdjust(R.id.view_poi_nearby_search);
             break;
     	case CategoryProperty.OP_MORE:
     		mCurrentMoreCategory = str[0];
@@ -744,7 +744,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
             if (BaseQuery.DATA_TYPE_POI.equals(dataType)) {
                 int result = InputSearchFragment.dealWithPOIResponse((DataQuery) baseQuery, mSphinx, this);
                 if(mPOI.getSourceType() != POI.SOURCE_TYPE_MAP_CENTER && mPOI.getSourceType() != POI.SOURCE_TYPE_MY_LOCATION && result > 0){
-                	mSphinx.uiStackAdjust();
+                	mSphinx.uiStackAdjust(R.id.view_poi_nearby_search);
                 }
             } else if (BaseQuery.DATA_TYPE_TUANGOU.equals(dataType) ||
                     BaseQuery.DATA_TYPE_DIANYING.equals(dataType) ||
