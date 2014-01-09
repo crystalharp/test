@@ -34,6 +34,15 @@ public class TrafficSearchHistoryFragment extends BaseFragment {
     
     int clickedPos;
     
+    View.OnClickListener mRightListener = new View.OnClickListener() {
+        
+        @Override
+        public void onClick(View v) {
+            clearHistory();
+            refresh();
+        }
+    };
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,14 +71,7 @@ public class TrafficSearchHistoryFragment extends BaseFragment {
         refresh();
         mRightBtn.setVisibility(View.VISIBLE);
         Utility.refreshButton(mSphinx, mRightBtn, null, getString(R.string.clear), false);
-        mRightBtn.setOnClickListener(new View.OnClickListener() {
-            
-            @Override
-            public void onClick(View v) {
-                clearHistory();
-                refresh();
-            }
-        });
+        mRightBtn.setOnClickListener(mRightListener);
     }
 
     public TrafficSearchHistoryFragment(Sphinx sphinx) {
@@ -99,8 +101,10 @@ public class TrafficSearchHistoryFragment extends BaseFragment {
     
     private void refresh() {
         if (mList.isEmpty()) {
+            mHistoryLsv.setVisibility(View.GONE);
             mEmptyTxv.setVisibility(View.VISIBLE);
         } else {
+            mHistoryLsv.setVisibility(View.VISIBLE);
             mEmptyTxv.setVisibility(View.GONE);
         }
     }
