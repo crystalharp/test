@@ -273,6 +273,9 @@ public class SubwayMapFragment extends BaseFragment implements RetryView.CallBac
     }
     
     public void setData(CityInfo cityinfo) {
+    	if (mSphinx.uiStackContains(getId())){
+    		mSphinx.uiStackRemove(getId());
+    	}
         if (cityinfo == null) {
             cityinfo = new CityInfo();
         }
@@ -306,6 +309,7 @@ public class SubwayMapFragment extends BaseFragment implements RetryView.CallBac
                     poi.ciytId =  mCityInfo.getId();
                     mSphinx.getPOIDetailFragment().setData(poi);
                     mSphinx.showView(R.id.view_poi_detail);
+                    mSphinx.uiStackAdjust(getId());
                 }
             };
             mSphinx.runOnUiThread(run);
