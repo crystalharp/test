@@ -171,6 +171,8 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	        }
 	        if (MY_LOCATION.equals(p.getName())) {
 	            btn.setTextColor(getResources().getColor(R.color.blue));
+	        } else {
+	            btn.setTextColor(Color.BLACK);
 	        }
 	        poi = p;
 	        refreshRightBtn();
