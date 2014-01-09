@@ -282,7 +282,7 @@
 
     <string name="are_you_sure_download_this_software">确定下载此软件？</string>
     <string name="my_location">我的位置</string>
-    <string name="my_location_with_accuracy">我的位置（精确到%1$s）</string>
+    <string name="my_location_with_accuracy">我的位置（定位精度%1$s）</string>
     <string name="pop_categories">热门搜索</string>
     <string name="pop_location">热门地点</string>
     <string name="search_location_me_failure_and_select">暂时无法获取当前位置，请选择具体位置或在地图上指定位置！</string>
