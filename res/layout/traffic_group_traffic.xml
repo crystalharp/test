@@ -48,6 +48,7 @@
 	  	    android:layout_width="wrap_content"
 	  	    android:layout_height="wrap_content"
 	      	android:paddingRight="8dp"
+	  	    android:lineSpacingMultiplier="1.1"
 	  	    android:ellipsize="end"
 	  	    android:singleLine="true"
 	  	    android:textColor="@color/black_light"
@@ -62,6 +63,7 @@
 	  	    android:paddingRight="8dp"
 	  	    android:drawableLeft="@drawable/ic_vertical_split"
 	  	    android:drawablePadding="8dp"
+	  	    android:lineSpacingMultiplier="1.1"
 	  	    android:singleLine="true"
 	  	    android:textColor="@color/black_light"
 	  	    android:text="distance"
@@ -77,6 +79,7 @@
 	  	    android:drawableLeft="@drawable/ic_vertical_split"
 	  	    android:textColor="@color/black_light"
 	  	    android:drawablePadding="8dp"
+	  	    android:lineSpacingMultiplier="1.1"
 	  	    android:text="walk_distance"
 	  	    android:textSize="12sp" />
 	  	
@@ -88,6 +91,7 @@
 	  	    android:singleLine="true"
 	  	    android:drawableLeft="@drawable/ic_vertical_split"
 	  	    android:drawablePadding="8dp"
+	  	    android:lineSpacingMultiplier="1.1"
 	  	    android:textColor="@color/black_light"
 	  	    android:text="busstop_num"
 	  	    android:textSize="12sp" />
