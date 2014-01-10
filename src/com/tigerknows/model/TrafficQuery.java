@@ -44,7 +44,7 @@ public final class TrafficQuery extends BaseQuery {
     public static final int DRIVE_NO_HIGHWAY = 3;
 
     // bais 整数   false,只在驾车导航时提交     1:最少时间; 2:最短距离; 3:避免高速
-    public static final String SERVER_PARAMETER_BAIS = "bais";
+    public static final String SERVER_PARAMETER_BIAS = "bias";
     
     /*
      * 每次默认的最大方案请求数目.

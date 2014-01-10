@@ -295,7 +295,7 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
                                 ResultMapFragment.this.getId(),
                                 getString(R.string.doing_and_wait));
                         newTrafficQuery.setCityId(trafficQuery.getCityId());
-                        newTrafficQuery.addParameter(TrafficQuery.SERVER_PARAMETER_BAIS, String.valueOf(driveTypeList[index]));
+                        newTrafficQuery.addParameter(TrafficQuery.SERVER_PARAMETER_BIAS, String.valueOf(driveTypeList[index]));
                         mSphinx.queryStart(newTrafficQuery);
                     } else {
                         f.refreshDrive(plan);
