@@ -724,13 +724,13 @@ public class MapDownloadActivity extends BaseActivity implements View.OnClickLis
         
     @Override
     public void onPause() {
-        super.onPause();
         saveDownloadCityList();
         
         unregisterReceiver(mStatsDownloadCityListBroadcastReceiver);
         unregisterReceiver(mMapDownloadReceiver);
         unregisterReceiver(mStatsDownloadCityReceiver);
         unregisterReceiver(mStatsDownloadCityListForExistBroadcastReceiver);
+        super.onPause();
     }
     
     /*

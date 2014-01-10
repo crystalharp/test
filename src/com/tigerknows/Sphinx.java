@@ -1723,7 +1723,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 
     @Override
     protected void onStop() {
-        super.onStop();
         BaseQuery.sClentStatus = BaseQuery.CLIENT_STATUS_STOP;
         LogWrapper.i(TAG, "onStop");
 
@@ -1734,6 +1733,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 
         mActionLog.onStop();
         unregisterReceiver(mRemoveCityMapDataBroadcastReceiver);
+        super.onStop();
     }
 
     public void snapMapView(SnapMap snapMap, Position position, MapScene mapScene) {

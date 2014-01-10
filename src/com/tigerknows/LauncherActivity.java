@@ -185,9 +185,9 @@ public class LauncherActivity extends TKActivity {
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         
         unregisterReceiver(mBroadcastReceiver);
+        super.onDestroy();
     }
     
     public static TKDrawable getStartupDisplayDrawable(Activity activity, List<StartupDisplay> startupDisplayList) {
