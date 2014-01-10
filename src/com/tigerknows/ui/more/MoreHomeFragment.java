@@ -334,6 +334,17 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     }
     
     @Override
+    public void correctUIStack(){
+    	if(R.id.view_more_home == mSphinx.uiStackPeek()){
+    		if(!mSphinx.uiStackContains(R.id.view_home)){
+    			mSphinx.uiStackInsert(R.id.view_home, 0);
+    		}
+    		mSphinx.uiStackClearBetween(R.id.view_home, R.id.view_more_home);
+
+    	}
+    }
+    
+    @Override
     public void onClick(View view) {
         switch (view.getId()) {
 

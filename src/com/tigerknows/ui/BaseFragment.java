@@ -305,6 +305,11 @@ public class BaseFragment extends LinearLayout {
             AsyncImageLoader.getInstance().setViewToken(toString());
         	mSphinx.getMapView().setStopRefreshMyLocation(true);
         }
+        correctUIStack();
+    }
+    
+    public void correctUIStack(){
+    	// DO NOT DELETE virtual method
     }
     
     public void onSaveInstanceState(Bundle outState) {
