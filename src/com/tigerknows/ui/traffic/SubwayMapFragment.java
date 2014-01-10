@@ -273,7 +273,8 @@ public class SubwayMapFragment extends BaseFragment implements RetryView.CallBac
     }
     
     public void setData(CityInfo cityinfo) {
-    	if (mSphinx.uiStackContains(getId())){
+    	if (mSphinx.uiStackContains(getId()) && 
+    	        !(mSphinx.uiStackPeek() == getId())){
     		mSphinx.uiStackRemove(getId());
     	}
         if (cityinfo == null) {

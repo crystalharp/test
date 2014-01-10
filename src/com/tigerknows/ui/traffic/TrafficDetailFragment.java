@@ -340,7 +340,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         mResultAdapter.notifyDataSetChanged();
         mDismissed = true;
         
-        PlanItemRefresher.refresh(mSphinx, plan, mSummaryLayout);
+        PlanItemRefresher.refresh(mSphinx, plan, mSummaryLayout, false, false);
         plan.updateHistory(mContext);
     }
 
@@ -591,11 +591,11 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
             R.drawable.bg_transfer_tag7
             }; 
         
-        public static void refresh(Sphinx sphinx, Plan plan, View v) {
-            refresh(sphinx, plan, v, false);
+        public static void refresh(Sphinx sphinx, Plan plan, View v, boolean titleSingleLine) {
+            refresh(sphinx, plan, v, false, true);
         }
         
-        public static void refresh(Sphinx sphinx, Plan plan, View v, boolean titleSingleLine) {
+        public static void refresh(Sphinx sphinx, Plan plan, View v, boolean titleSingleLine, boolean showTags) {
             try {
                 planHolder.title = (TextView)v.findViewById(R.id.title_txv);
                 planHolder.tagTitle = (TextView) v.findViewById(R.id.tagtitle_txv);
@@ -623,7 +623,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
                 setTxvText(planHolder.txv2, plan.getLengthStr(sphinx));
                 setTxvText(planHolder.txv3, plan.getWalkDistance4Transfer());
                 setTxvText(planHolder.txv4, plan.getBusstopNum());
-                if (tagList != null) {
+                if (tagList != null && showTags) {
                     int tagNum = Math.min(MAX_TAG_NUM, plan.getPlanTagList().size());
                     for (int i = 0; i < tagNum; i++) {
                         PlanTag tag = tagList.get(i);
@@ -651,7 +651,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
                 setTxvText(planHolder.txv2, plan.getExpectedDriveTime());
                 setTxvText(planHolder.txv3, plan.getTrafficLightNum());
                 setTxvText(planHolder.txv4, plan.getTaxiCost4Drive());
-                if (tagList != null && tagList.size() > 0) {
+                if (tagList != null && tagList.size() > 0 && showTags) {
                     planHolder.tagTitle.setVisibility(View.VISIBLE);
                     PlanTag tag = tagList.get(0);
                     planHolder.tagTitle.setText(tag.getDescription());
