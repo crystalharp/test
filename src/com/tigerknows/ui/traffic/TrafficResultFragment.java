@@ -152,12 +152,8 @@ public class TrafficResultFragment extends BaseFragment {
         
         mFootLayout.setVisibility(View.GONE);
         AddtionalInfo info = mTrafficModel.getAddtionalInfo();
-        if (info != null) {
-            mDescriptionTxv.setText(info.getDescription());
-            mDescriptionTxv.setVisibility(View.VISIBLE);
-        } else {
-            mDescriptionTxv.setVisibility(View.GONE);
-        }
+        String desc = (info == null) ? null : info.getDescription();
+        setTxvText(mDescriptionTxv, desc);
         
         if (mDismissed) {
             mResultLsv.setSelectionFromTop(0, 0);
