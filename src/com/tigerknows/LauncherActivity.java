@@ -56,6 +56,8 @@ public class LauncherActivity extends TKActivity {
     
     boolean mOnResume = false;
     
+    boolean hasRegistedReceiver = false;
+    
     Animation mAnimation = new AlphaAnimation(0.3f, 1.0f);
     
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
@@ -124,6 +126,7 @@ public class LauncherActivity extends TKActivity {
         }, AD_ANIMATION_TIME);
 
         registerReceiver(mBroadcastReceiver, new IntentFilter(Sphinx.ACTION_ONRESUME));
+        hasRegistedReceiver = true;
     }
     
     void launch(boolean fristUse, boolean upgrade) {
@@ -185,9 +188,11 @@ public class LauncherActivity extends TKActivity {
 
     @Override
     protected void onDestroy() {
+        if(hasRegistedReceiver){
+        	unregisterReceiver(mBroadcastReceiver);
+        	hasRegistedReceiver = false;
+        }
         super.onDestroy();
-        
-        unregisterReceiver(mBroadcastReceiver);
     }
     
     public static TKDrawable getStartupDisplayDrawable(Activity activity, List<StartupDisplay> startupDisplayList) {

@@ -546,8 +546,8 @@ public class TKActivity extends Activity implements TKAsyncTask.EventListener {
     
     @Override
     public void finish() {
+    	LogWrapper.d(TAG, "finish()");
         super.finish();
-        LogWrapper.d(TAG, "finish()");
     }
 
     @Override

@@ -1723,7 +1723,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 
     @Override
     protected void onStop() {
-        super.onStop();
         BaseQuery.sClentStatus = BaseQuery.CLIENT_STATUS_STOP;
         LogWrapper.i(TAG, "onStop");
 
@@ -1734,6 +1733,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 
         mActionLog.onStop();
         unregisterReceiver(mRemoveCityMapDataBroadcastReceiver);
+        super.onStop();
     }
 
     public void snapMapView(SnapMap snapMap, Position position, MapScene mapScene) {
@@ -2088,7 +2088,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 mUIStack.remove(size-1);
                 if (uiStackPeek() == R.id.view_result_map) {
                     if (id == R.id.view_poi_detail) {
-                        if (uiStackContains(R.id.view_poi_result)) {
+                        if (uiStackContains(R.id.view_poi_result) || uiStackContains(R.id.view_discover_list)) {
                             uiStackRemove(R.id.view_result_map);
                         }
                     } else if (id == R.id.view_discover_tuangou_detail ||
@@ -2155,8 +2155,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     showView(R.id.view_home);
                 }
             }
+            LogWrapper.d("UIStack", "Dismiss:" + mUIStack);
             mUIProcessing = false;
-            LogWrapper.d("UIStack", "Dismiss: " + mUIStack);
             return result;
         }
     }
@@ -2190,7 +2190,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     result = true;
                 }
             }
-            LogWrapper.d("UIStack", "Back:" + mUIStack);
             return result;
         }
     }
@@ -2225,7 +2224,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     public boolean uiStackClearTop(int preferTop) {
     	LogWrapper.d(TAG, "uiStackClearTop");
     	synchronized (mUILock) {
-            LogWrapper.d(TAG, "mUIStack: " + mUIStack);
             boolean result = false;
             if (uiStackContains(preferTop) == false) {
                 return result;
@@ -2250,7 +2248,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 mUIStack.remove(i);
             }
 
-            LogWrapper.d(TAG, "mUIStack after cleartop: " + mUIStack);
             return result;
         }
     }
@@ -2258,8 +2255,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     public boolean uiStackClearBetween(int preferLower, int preferUpper){
     	LogWrapper.d(TAG, "uiStackClearBetween");
     	synchronized (mUILock) {
-            LogWrapper.d("UIStack", "ClearBefore:" + mUIStack);
-            LogWrapper.d("UIStack", "Upp:" + preferUpper);
 			int[] filterIds = null;
 			int lowIndex = mUIStack.indexOf(preferLower);
 			if(lowIndex < 0){
@@ -2286,14 +2281,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 				filterIds[p] = mUIStack.get(i);
 				p++;
 			}
-			LogWrapper.d("UIStack", "filterID:" + filterIds);
-			LogWrapper.d("UIStack", "size: " + mUIStack.size());
 			uiStackClose(filterIds);
-			LogWrapper.d("UIStack", "size: " + mUIStack.size());
 			for(int i = uppIndex - (size-mUIStack.size()) - 1; i>lowIndex; i--){
 				mUIStack.remove(i);
 			}
-            LogWrapper.d("UIStack", "ClearAfter:" + mUIStack);
 			return true;
 		}
     }
@@ -2490,8 +2481,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 }
             }
 
+            if(show){
+            	LogWrapper.d("UIStack", "Show:" + mUIStack);
+            }
             mUIProcessing = false;
-        	LogWrapper.d("UIStack", "Show:" + mUIStack);
             return show;
         }
     }
@@ -3851,7 +3844,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 
         poi.setName(getString(R.string.map_center));
         poi.setPosition(position);
-        poi.setSourceType(POI.SOURCE_TYPE_MY_LOCATION);
+        poi.setSourceType(POI.SOURCE_TYPE_MAP_CENTER);
 
         return poi;
     }
