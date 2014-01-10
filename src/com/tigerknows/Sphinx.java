@@ -2156,7 +2156,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 }
             }
             mUIProcessing = false;
-            LogWrapper.d("UIStack", "Dismiss: " + mUIStack);
             return result;
         }
     }
@@ -2190,7 +2189,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     result = true;
                 }
             }
-            LogWrapper.d("UIStack", "Back:" + mUIStack);
             return result;
         }
     }
@@ -2225,7 +2223,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     public boolean uiStackClearTop(int preferTop) {
     	LogWrapper.d(TAG, "uiStackClearTop");
     	synchronized (mUILock) {
-            LogWrapper.d(TAG, "mUIStack: " + mUIStack);
             boolean result = false;
             if (uiStackContains(preferTop) == false) {
                 return result;
@@ -2250,7 +2247,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 mUIStack.remove(i);
             }
 
-            LogWrapper.d(TAG, "mUIStack after cleartop: " + mUIStack);
             return result;
         }
     }
@@ -2258,7 +2254,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     public boolean uiStackClearBetween(int preferLower, int preferUpper){
     	LogWrapper.d(TAG, "uiStackClearBetween");
     	synchronized (mUILock) {
-            LogWrapper.d("UIStack", "ClearBefore:" + mUIStack);
             LogWrapper.d("UIStack", "Upp:" + preferUpper);
 			int[] filterIds = null;
 			int lowIndex = mUIStack.indexOf(preferLower);
@@ -2287,13 +2282,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 				p++;
 			}
 			LogWrapper.d("UIStack", "filterID:" + filterIds);
-			LogWrapper.d("UIStack", "size: " + mUIStack.size());
 			uiStackClose(filterIds);
-			LogWrapper.d("UIStack", "size: " + mUIStack.size());
 			for(int i = uppIndex - (size-mUIStack.size()) - 1; i>lowIndex; i--){
 				mUIStack.remove(i);
 			}
-            LogWrapper.d("UIStack", "ClearAfter:" + mUIStack);
 			return true;
 		}
     }
@@ -2491,7 +2483,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             }
 
             mUIProcessing = false;
-        	LogWrapper.d("UIStack", "Show:" + mUIStack);
             return show;
         }
     }
