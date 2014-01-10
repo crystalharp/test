@@ -235,6 +235,8 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                 mKeywordEdt.setHint(getString(R.string.end_));
             } else if (mRequest == REQUEST_TRAFFIC_START) {
                 mKeywordEdt.setHint(getString(R.string.start_));
+            } else if (mRequest == REQUEST_COMMON_PLACE) {
+                mKeywordEdt.setHint(getString(R.string.traffic_search_hint));
             }
             break;
         case MODE_POI:
