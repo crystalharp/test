@@ -490,29 +490,30 @@ public class ActionLog extends LogUpload {
     public static final String TrafficTransferTab = "AA";
     public static final String TrafficDriveTab = "AB";
     public static final String TrafficWalkTab = "AC";
-    public static final String TrafficBusLineTab = "AD";
-    public static final String TrafficTrafficBtn = "AE";
-    public static final String TrafficBuslineBtn = "AF";
-    public static final String TrafficStartEdt = "AG";
-    public static final String TrafficEndEdt = "AH";
+    public static final String TrafficTrafficSearch = "AD";
     public static final String TrafficBusLineEdt = "AI";
-    public static final String TrafficStartBtn = "AJ";
-    public static final String TrafficEndBtn = "AK";
     public static final String TrafficResultTraffic = "AN";
     public static final String TrafficResultBusline = "AO";
 
     // 交通查询首页
     public static final String TrafficHomeNormal = "BA";
+    public static final String TrafficStartEdt = "BA";
+    public static final String TrafficEndEdt = "BB";
+    public static final String TrafficSwitchStartEnd = "BC";
+    public static final String TrafficHomeClickCommonPlace = "BD";
+    public static final String TrafficHomeHistoryTitle = "BE";
+    public static final String TrafficHomeHistoryItem = "BF";
+    public static final String TrafficHomeClickMoreBtn = "BG";
+    public static final String TrafficHomeClickMoreAlert = "BH";
+    public static final String TrafficHomeClickSearchBtn = "BI";
     
-    // 交通查询地图页
-    public static final String TrafficHomeMap = "BB";
     
-    // 交通查询输入页
-    public static final String TrafficHomeInput = "BC";
+    // 交通输入页
+    public static final String TrafficInput = "BB";
     
-    // 交通查询单击选点
-    public static final String TrafficHomeSelectPoint = "BD";
-    
+    // 交通查询历史页
+    public static final String TrafficSearchHistory = "BC";
+        
     // 收藏的POI列表页
     public static final String TrafficFetchFavorite = "BE";
     
