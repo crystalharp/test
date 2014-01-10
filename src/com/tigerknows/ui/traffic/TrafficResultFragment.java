@@ -125,7 +125,7 @@ public class TrafficResultFragment extends BaseFragment {
         setListener();
         
         mResultAdapter = new TransferProjectListAdapter();
-        mResultLsv.addFooterView(mFooterView);
+        mResultLsv.addFooterView(mFooterView, null, false);
         mResultLsv.setAdapter(mResultAdapter);
         
         return mRootView;
