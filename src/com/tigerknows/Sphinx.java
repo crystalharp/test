@@ -3851,7 +3851,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 
         poi.setName(getString(R.string.map_center));
         poi.setPosition(position);
-        poi.setSourceType(POI.SOURCE_TYPE_MY_LOCATION);
+        poi.setSourceType(POI.SOURCE_TYPE_MAP_CENTER);
 
         return poi;
     }
