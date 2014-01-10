@@ -178,19 +178,7 @@ public final class TrafficQuery extends BaseQuery {
         		}
         	}
         }
-        
-        /*
-         * 过滤公交换乘步骤中"小于50米的步行步骤"
-         */
-        if (trafficModel != null && trafficModel.getType() == TrafficModel.TYPE_PROJECT &&
-        		trafficModel.getPlanList() != null && trafficModel.getPlanList().size() > 0) {
-        	for (Plan plan : trafficModel.getPlanList()) {
-        		if (filterTooSmallLengthStepFromProjectPlan(plan) > 0) {
-        		    plan.resetData();
-        		}
-        	}
-        }
-        
+                
         /*
          * 若服务端返回了起终点POI名称, 则将返回的POI名称赋给客户端.
          * 但是注意服务端并不一定会返回起终点POI名称.
@@ -225,38 +213,7 @@ public final class TrafficQuery extends BaseQuery {
         	trafficModel.setType(TrafficModel.TYPE_EMPTY);
         }
     }
-    
-    /**
-	 * 过滤公交换乘Step中"小于50米的步行Step"
-	 * 服务端可能返回"从**步行0米到**"
-	 * 
-	 * Notice: 若最后一个Step是步行Step, 不进行过滤
-	 * 
-	 * @param plan
-	 */
-    public static int filterTooSmallLengthStepFromProjectPlan(Plan plan) {
-        int filter = 0;
-		if(plan.getType() == TrafficQuery.QUERY_TYPE_TRANSFER) {
-            List<Step> skipSteps = new ArrayList<Step>();
-
-            Step step = null;
-            for(int i = 1; i < plan.getStepList().size()-1; i++) {
-            	step = plan.getStepList().get(i);
-            	if(step.getType() == Step.TYPE_WALK && step.getDistance() <= Plan.TRANSFER_WALK_MIN_DISTANCE)
-            		skipSteps.add(step);
-            }
-            
-            filter = skipSteps.size();
-            if (filter > 0) {
-                for(Step s : skipSteps){
-                    if(plan.getStepList().contains(s))
-                        plan.getStepList().remove(s);
-                }
-            }
-        }
-		return filter;
-	}
-    
+        
     //用来给方案序号转换数字和汉字
     public static String numToStr(Context mContext, int num) {
         String[] numTransTable = mContext.getResources().getStringArray(R.array.num_to_str);
