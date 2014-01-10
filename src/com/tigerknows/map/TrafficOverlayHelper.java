@@ -188,8 +188,7 @@ public class TrafficOverlayHelper {
                         return;
                     }
                     String tag = sphinx.getResultMapFragment().mActionTag;
-                    if (ActionLog.TrafficTransferListMap.equals(tag) ||
-                            ActionLog.TrafficDriveListMap.equals(tag) ||
+                    if (ActionLog.TrafficDriveListMap.equals(tag) ||
                             ActionLog.TrafficWalkListMap.equals(tag)) {
                         return;
                     }
