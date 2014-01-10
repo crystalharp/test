@@ -317,7 +317,6 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	            SearchHistory h = (SearchHistory)data;
 	            TextView t = (TextView) child.findViewById(R.id.his_txv);
 	            child.setTag(data);
-	            LogWrapper.d("conan", "size:" + getSize() + " pos:" + pos);
 	            if (pos == mQueryHistorys.size() - 1) {
 	                child.setBackgroundResource(R.drawable.list_footer);
 	            } else {
@@ -798,13 +797,13 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
             	int type = planList.get(0).getType();
             	TrafficDetailFragment f = sphinx.getTrafficDetailFragment();
             	f.addResult(trafficQuery, type, planList);
-            	f.refreshResult(type);
             	if (type == Plan.Step.TYPE_TRANSFER) {
             	    // 换乘方式
             	    sphinx.getTrafficResultFragment().setData(trafficQuery);
             	    sphinx.showView(R.id.view_traffic_result_transfer);
             	} else if (type == Plan.Step.TYPE_DRIVE) {
             	    // 驾车
+            	    f.refreshResult(type);
             		if (sphinx.uiStackPeek() == R.id.view_result_map) {
                         sphinx.getResultMapFragment().changeTrafficType(type);
                     } else {
@@ -815,6 +814,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
                     }
             	} else if (type == Plan.Step.TYPE_WALK) {
                     // 步行方式
+            	    f.refreshResult(type);
                     if (sphinx.uiStackPeek() == R.id.view_result_map) {
                         sphinx.getResultMapFragment().changeTrafficType(type);
                     } else {
