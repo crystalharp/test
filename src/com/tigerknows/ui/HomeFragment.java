@@ -140,6 +140,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
+    	mActionLog.addAction(mActionTag + ActionLog.TitleCenterButton);
         mBottomFrament = mSphinx.getHomeBottomFragment();
         mSphinx.getInputSearchFragment().setData(mSphinx.buildDataQuery(),
         		null,
