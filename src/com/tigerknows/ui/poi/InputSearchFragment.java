@@ -226,10 +226,12 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         switch (mCurMode) {
         //TODO:add actiontag
         case MODE_BUELINE:
+            mActionTag = ActionLog.TrafficInput;
             mTrafficBtnGroup.setVisibility(View.GONE);
             mKeywordEdt.setHint(getString(R.string.busline_search_hint));
             break;
         case MODE_TRAFFIC:
+            mActionTag = ActionLog.TrafficInput;
             mTrafficBtnGroup.setVisibility(View.VISIBLE);
             if (mRequest == REQUEST_TRAFFIC_END) {
                 mKeywordEdt.setHint(getString(R.string.end_));
@@ -313,6 +315,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         switch (view.getId()) {
             
             case R.id.btn_map_position:
+                mActionLog.addAction(mActionTag + ActionLog.TrafficInputMapPosition);
                 
                 String title;
                 if (mRequest == REQUEST_TRAFFIC_START) {
@@ -332,6 +335,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                 break;
                 
             case R.id.right_btn:
+                mActionLog.addAction(mActionTag + ActionLog.TitleRightButton);
                 String keyword = mKeywordEdt.getText().toString().trim();
                 if (keyword.length() > 0) {
                     if (mTKWord != null && keyword.equals(mTKWord.word)) {
@@ -345,6 +349,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                 break;
                 
             case R.id.btn_my_position:
+                mActionLog.addAction(mActionTag + ActionLog.TrafficInputMyPosition);
                 CityInfo c = Globals.g_My_Location_City_Info;
                 if (c != null && c.getPosition() != null) {
                     POI p = new POI();
@@ -362,6 +367,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                 break;
                 
             case R.id.btn_fav_position:
+                mActionLog.addAction(mActionTag + ActionLog.TrafficInputFavPosition);
                 mSphinx.showView(mSphinx.getFetchFavoriteFragment().getId());
                 break;
             default:
