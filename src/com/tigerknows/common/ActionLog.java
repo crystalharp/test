@@ -522,6 +522,9 @@ public class ActionLog extends LogUpload {
     
     // 交通输入页
     public static final String TrafficInput = "BB";
+    public static final String TrafficInputMyPosition = "BA";
+    public static final String TrafficInputFavPosition = "BB";
+    public static final String TrafficInputMapPosition = "BC";
     
     // 交通查询历史页
     public static final String TrafficSearchHistory = "BC";
