@@ -142,13 +142,13 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
         public void onCheckedChanged(RadioGroup group, int checkedId) {
             switch (checkedId) {
             case R.id.traffic_transfer_rbt:
-                mActionLog.addAction(mActionTag, ActionLog.TrafficTransferTab);
+                mActionLog.addAction(mActionTag + ActionLog.TrafficTransferTab);
                 break;
             case R.id.traffic_drive_rbt:
-                mActionLog.addAction(mActionTag, ActionLog.TrafficDriveTab);
+                mActionLog.addAction(mActionTag + ActionLog.TrafficDriveTab);
                 break;
             case R.id.traffic_walk_rbt:
-                mActionLog.addAction(mActionTag, ActionLog.TrafficWalkTab);
+                mActionLog.addAction(mActionTag + ActionLog.TrafficWalkTab);
                 break;
             }
         }
@@ -303,7 +303,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	        @Override
 	        public void onClick(View v) {
 	            SearchHistory h = (SearchHistory) v.getTag();
-	            mActionLog.addAction(mActionTag, ActionLog.TrafficHomeHistoryItem, mQueryHistorys.indexOf(h));
+	            mActionLog.addAction(mActionTag + ActionLog.TrafficHomeHistoryItem, mQueryHistorys.indexOf(h));
 	            mStart.setPOI(h.start);
 	            mEnd.setPOI(h.end);
 	            updateSearchHistory(h);
@@ -336,7 +336,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
             @Override
             public void onClick(View v) {
                 CommonPlace c = (CommonPlace) v.getTag();
-                mActionLog.addAction(mActionTag, ActionLog.TrafficHomeClickCommonPlace);
+                mActionLog.addAction(mActionTag + ActionLog.TrafficHomeClickCommonPlace);
                 if (c.isEmptyFixedPlace()) {
                     DataQuery dataQuery = new DataQuery(mSphinx);
                     dataQuery.setCityId(getCityId(mStart.getPOI(), mEnd.getPOI()));
@@ -990,10 +990,10 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
         switch (v.getId()) {
         case R.id.right_btn:
             if (!mStart.textEmpty() && !mEnd.textEmpty()) {
-                mActionLog.addAction(mActionTag, ActionLog.TrafficHomeClickSearchBtn);
+                mActionLog.addAction(mActionTag + ActionLog.TrafficHomeClickSearchBtn);
                 query();
             } else {
-                mActionLog.addAction(mActionTag, ActionLog.TrafficHomeClickMoreBtn);
+                mActionLog.addAction(mActionTag + ActionLog.TrafficHomeClickMoreBtn);
                 String[] list = mSphinx.getResources().getStringArray(R.array.traffic_search_option);
                 int[] leftCompoundIconList = new int[3];
                 leftCompoundIconList[0] = R.drawable.ic_search_busline;
@@ -1021,7 +1021,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View arg1, int index, long arg3) {
 
-                        mActionLog.addAction(mActionTag, ActionLog.TrafficHomeClickMoreAlert, index);
+                        mActionLog.addAction(mActionTag + ActionLog.TrafficHomeClickMoreAlert, index);
                         if (index == 0 || index == 1) {
                             DataQuery dataQuery = new DataQuery(mSphinx);
                             dataQuery.setCityId(getCityId(mStart.getPOI(), mEnd.getPOI()));
@@ -1047,7 +1047,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
             
             //TODO
         case R.id.end_btn:
-            mActionLog.addAction(mActionTag, ActionLog.TrafficEndEdt);
+            mActionLog.addAction(mActionTag + ActionLog.TrafficEndEdt);
             String e = null;
             if (!isKeyword(mEnd.getText())) {
                 e = mEnd.getText();
@@ -1070,7 +1070,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
             break;
             
         case R.id.start_btn:
-            mActionLog.addAction(mActionTag, ActionLog.TrafficStartEdt);
+            mActionLog.addAction(mActionTag + ActionLog.TrafficStartEdt);
             String s = null;
             if (!isKeyword(mStart.getText())) {
                 s = mStart.getText();
@@ -1098,12 +1098,12 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
             break;
         
         case R.id.query_history_title:
-            mActionLog.addAction(mActionTag, ActionLog.TrafficHomeHistoryTitle);
+            mActionLog.addAction(mActionTag + ActionLog.TrafficHomeHistoryTitle);
             mSphinx.showView(R.id.view_traffic_search_history);
             break;
             
         case R.id.traffic_switch_btn:
-            mActionLog.addAction(mActionTag, ActionLog.TrafficSwitchStartEnd);
+            mActionLog.addAction(mActionTag + ActionLog.TrafficSwitchStartEnd);
             switchStartEnd();
             break;
             

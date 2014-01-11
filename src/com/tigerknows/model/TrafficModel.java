@@ -770,6 +770,11 @@ public class TrafficModel extends XMapData {
                 description = data.getString(FIELD_DESCRIPTION);
             }
             
+            @Override
+            public String toString() {
+                return description;
+            }
+            
             public static XMapInitializer<PlanTag> Initializer = new XMapInitializer<PlanTag>() {
 
                 @Override

@@ -105,6 +105,10 @@ public class CycleViewPager {
             this.actionTag = actionTag;
         }
         
+        public void setActionTag(String s){
+            this.actionTag = s;
+        }
+        
         // 当滑动状态改变时调用
         @Override
         public void onPageScrollStateChanged(int position) {

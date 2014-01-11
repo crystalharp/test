@@ -513,9 +513,12 @@ public class ActionLog extends LogUpload {
     
     // 交通查询历史页
     public static final String TrafficSearchHistory = "BC";
+    public static final String TrafficSearchHistoryClear = "BA";
+    public static final String TrafficSearchHistoryClick = "BB";
         
     // 收藏的POI列表页
     public static final String TrafficFetchFavorite = "BE";
+    
     
     // 交通备选站点页显示 
     public static final String TrafficAlternative = "BF";
@@ -524,6 +527,7 @@ public class ActionLog extends LogUpload {
 
     // 交通方案列表页显示
     public static final String TrafficResult = "BG";
+    public static final String TrafficResultSearchReturn = "BA";
 
     // 交通方案详情页显示
     public static final String TrafficDetail = "BH";
@@ -541,12 +545,25 @@ public class ActionLog extends LogUpload {
     // 交通换乘纠错页
     public static final String TransferErrorRecovery = "BL";
     
+    // 交通线路地图
     public static final String TrafficBuslineMap = "BM";
+    
+    // 交通换乘详情地图
     public static final String TrafficTransferMap = "BN";
+    
+    // 交通驾车详情地图页
     public static final String TrafficDriveMap = "BO";
+    
+    // 交通步行详情地图页
     public static final String TrafficWalkMap = "BP";
+    
+    // 交通换乘概要地图页
     public static final String TrafficTransferListMap = "BS";
+    
+    // 交通驾车概要地图页
     public static final String TrafficDriveListMap = "BT";
+    
+    // 交通步行概要地图页
     public static final String TrafficWalkListMap = "BV";
     
     // 交通指南针页

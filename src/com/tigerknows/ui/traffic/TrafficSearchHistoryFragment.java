@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.common.ActionLog;
 import com.tigerknows.provider.TrafficSearchHistoryTable;
 import com.tigerknows.provider.TrafficSearchHistoryTable.SearchHistory;
 import com.tigerknows.ui.BaseFragment;
@@ -40,12 +41,14 @@ public class TrafficSearchHistoryFragment extends BaseFragment {
         public void onClick(View v) {
             clearHistory();
             refresh();
+            mActionLog.addAction(mActionTag + ActionLog.TrafficSearchHistoryClear);
         }
     };
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mActionTag = ActionLog.TrafficSearchHistory;
     }
 
     @Override
@@ -89,6 +92,7 @@ public class TrafficSearchHistoryFragment extends BaseFragment {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
                     long arg3) {
+                mActionLog.addAction(mActionTag + ActionLog.ListViewItem, arg2);
                 TrafficQueryFragment f = mSphinx.getTrafficQueryFragment();
                 f.setStart(mList.get(arg2).start);
                 f.setEnd(mList.get(arg2).end);
