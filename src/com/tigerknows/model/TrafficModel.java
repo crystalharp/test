@@ -1089,9 +1089,6 @@ public class TrafficModel extends XMapData {
                     plan.start = start;
                     plan.end = end;
 
-                    if (TrafficQuery.filterTooSmallLengthStepFromProjectPlan(plan) > 0) {
-                        plan.resetData();
-                    }
                 }
             }
             return plan;
