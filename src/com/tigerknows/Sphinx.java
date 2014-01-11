@@ -2110,7 +2110,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     	}
                     }
                 } else if (uiStackPeek() == R.id.view_hotel_order_list) {
-                    if (id == R.id.view_hotel_order_detail && !uiStackContains(R.id.view_hotel_order_write)) {
+                    if (id == R.id.view_hotel_order_detail) {
                         uiStackClearTop(R.id.view_hotel_order_list);
                     }
                 }
@@ -2640,6 +2640,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     private HotelOrderCreditFragment mHotelOrderCreditFragment;
 
     private HotelOrderDetailFragment mHotelOrderDetailFragment;
+    private HotelOrderDetailFragment mHotelOrderDetailFragment2;
     private HotelOrderListFragment mHotelOrderListFragment;
 
     private CouponListFragment mCouponListFragment;
@@ -2798,6 +2799,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 
             case R.id.view_hotel_order_detail:
             	baseFragment = getHotelOrderDetailFragment();
+            	break;
+            	
+            case R.id.view_hotel_order_detail_2:
+            	baseFragment = getHotelOrderDetailFragmentTwo();
             	break;
 
             case R.id.view_coupon_list:
@@ -3296,6 +3301,19 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 mHotelOrderDetailFragment = fragment;
             }
             return mHotelOrderDetailFragment;
+        }
+    }
+    
+    public HotelOrderDetailFragment getHotelOrderDetailFragmentTwo(){
+
+        synchronized (mUILock) {
+            if (mHotelOrderDetailFragment2 == null) {
+            	HotelOrderDetailFragment fragment = new HotelOrderDetailFragment(Sphinx.this);
+                fragment.setId(R.id.view_hotel_order_detail_2);
+                fragment.onCreate(null);
+                mHotelOrderDetailFragment2 = fragment;
+            }
+            return mHotelOrderDetailFragment2;
         }
     }
 

@@ -347,8 +347,8 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
                     Utility.telephone(mSphinx, mHotelVendor.getServiceTel());
 				}
 			});
-        }        
-        if(mSphinx.uiStackContains(R.id.view_hotel_order_write)){
+        }
+        if(getId() == R.id.view_hotel_order_detail_2){
             icOrderAgainDisabled.setBounds(0, 0, icOrderAgainDisabled.getIntrinsicWidth(), icOrderAgainDisabled.getIntrinsicHeight());
         	mBtnOrderAgain.setCompoundDrawables(null, icOrderAgainDisabled, null, null);
         	mBtnOrderAgain.setEnabled(false);
