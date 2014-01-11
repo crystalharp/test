@@ -76,17 +76,19 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
             int action = event.getAction() & MotionEvent.ACTION_MASK;
             if (action == MotionEvent.ACTION_UP) {
                 if (R.id.traffic_transfer_rbt == id) {
+                    mActionLog.addAction(mActionTag, ActionLog.TrafficTransferTab);
                     return !changeTrafficType(Plan.Step.TYPE_TRANSFER);
                 } else if (R.id.traffic_drive_rbt == id) {
+                    mActionLog.addAction(mActionTag, ActionLog.TrafficDriveTab);
                     return !changeTrafficType(Plan.Step.TYPE_DRIVE);
                 } else if (R.id.traffic_walk_rbt == id) {
+                    mActionLog.addAction(mActionTag, ActionLog.TrafficWalkTab);
                     return !changeTrafficType(Plan.Step.TYPE_WALK);
                 }
             }
             return false;
         }
     };
-
     
     public ResultMapFragment(Sphinx sphinx) {
         super(sphinx);
@@ -143,7 +145,6 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
             mTitleView.removeAllViews();
             mTrafficTitieView = mSphinx.getTrafficQueryFragment().getTitleView();
             mTrafficTitleRadioGroup = (RadioGroup) mTrafficTitieView.findViewById(R.id.traffic_rgp);
-//            mTrafficTitleRadioGroup.setOnCheckedChangeListener(mTitleListener);
             mTitleView.addView(mTrafficTitieView);
             
             mTrafficTransferRbt = (RadioButton) mTrafficTitieView.findViewById(R.id.traffic_transfer_rbt);
@@ -294,7 +295,7 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
                                 ResultMapFragment.this.getId(),
                                 getString(R.string.doing_and_wait));
                         newTrafficQuery.setCityId(trafficQuery.getCityId());
-                        newTrafficQuery.addParameter(TrafficQuery.SERVER_PARAMETER_BAIS, String.valueOf(driveTypeList[index]));
+                        newTrafficQuery.addParameter(TrafficQuery.SERVER_PARAMETER_BIAS, String.valueOf(driveTypeList[index]));
                         mSphinx.queryStart(newTrafficQuery);
                     } else {
                         f.refreshDrive(plan);

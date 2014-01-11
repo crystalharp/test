@@ -289,9 +289,6 @@ public class SubwayMapFragment extends BaseFragment implements RetryView.CallBac
         }
         
         mTitle = getString(R.string.subway_map);
-        if (mCityInfo != null && mCityInfo.getId() == cityinfo.getId()) {
-            return;
-        }
         mCityInfo = cityinfo;
         needRefresh = true;
         mWebWbv.stopLoading();

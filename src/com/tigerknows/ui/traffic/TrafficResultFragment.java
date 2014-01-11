@@ -89,8 +89,10 @@ public class TrafficResultFragment extends BaseFragment {
             int action = event.getAction() & MotionEvent.ACTION_MASK;
             if (action == MotionEvent.ACTION_UP) {
                 if (R.id.traffic_drive_rbt == id) {
+                    mActionLog.addAction(mActionTag, ActionLog.TrafficDriveTab);
                     return !changeTrafficType(Plan.Step.TYPE_DRIVE);
                 } else if (R.id.traffic_walk_rbt == id) {
+                    mActionLog.addAction(mActionTag, ActionLog.TrafficWalkTab);
                     return !changeTrafficType(Plan.Step.TYPE_WALK);
                 }
             }
@@ -270,6 +272,9 @@ public class TrafficResultFragment extends BaseFragment {
         mPlanList.clear();
         mPlanList.addAll(mTrafficModel.getPlanList());
         mResultAdapter.notifyDataSetChanged();
+        if (mSphinx.uiStackPeek() == R.id.view_result_map) {
+            mSphinx.uiStackClearTop(R.id.view_traffic_home);
+        }
     }
     
     class TransferProjectListAdapter extends BaseAdapter{

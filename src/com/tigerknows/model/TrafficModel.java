@@ -113,8 +113,6 @@ public class TrafficModel extends XMapData {
         private static final byte FIELD_BUSSTOP_NUM = 0x24;
         // 0x30    x_array<x_map>  array<方案标签>(公交类)
         private static final byte FIELD_PLAN_TAG = 0x30;
-        
-        public static final int TRANSFER_WALK_MIN_DISTANCE = 50;
 
         public static class Step extends XMapData {
 
@@ -1091,9 +1089,6 @@ public class TrafficModel extends XMapData {
                     plan.start = start;
                     plan.end = end;
 
-                    if (TrafficQuery.filterTooSmallLengthStepFromProjectPlan(plan) > 0) {
-                        plan.resetData();
-                    }
                 }
             }
             return plan;
