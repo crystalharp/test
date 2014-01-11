@@ -493,8 +493,10 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         	break;
         case R.id.hot_fold_btn:
         	if(TextUtils.equals("No", mIsFold)){
+        		mActionLog.addAction(mActionTag + ActionLog.POINearbySearchFold, "false");
         		mIsFold = "Yes";
         	}else{
+        		mActionLog.addAction(mActionTag + ActionLog.POINearbySearchFold, "true");
         		mIsFold = "No";
         	}
         	doFold();

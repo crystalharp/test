@@ -11,6 +11,7 @@ import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
+import com.tigerknows.common.ActionLog;
 import com.tigerknows.ui.BaseFragment;
 
 public class CustomCategoryFragment extends BaseFragment {
@@ -44,7 +45,7 @@ public class CustomCategoryFragment extends BaseFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		//TODO: mActionTag = 
+		mActionTag = ActionLog.POICustomCategory;
 	}
 	
 	@Override
@@ -73,7 +74,7 @@ public class CustomCategoryFragment extends BaseFragment {
 		super.setListener();
 		for(int i=0; i<NearbySearchFragment.NUM_OF_HOT; i++){
 			final int j = i;
-			Button btn = (Button) mCustomBtns[j].findViewById(R.id.custom_btn);
+			final Button btn = (Button) mCustomBtns[j].findViewById(R.id.custom_btn);
 			if(j < 2){
 				btn.setEnabled(false);
 				ImageView imv = (ImageView) mCustomBtns[j].findViewById(R.id.icon_imv);
@@ -88,10 +89,12 @@ public class CustomCategoryFragment extends BaseFragment {
 						StringBuilder sb = new StringBuilder(mCurrentState);
 						if(mCurrentState.charAt(j) == '1'){
 							sb.setCharAt(j, '0');
+							mActionLog.addAction(mActionTag + ActionLog.POICustomCategorySelect, btn.getText(), "false");
 							mCurrentState = sb.toString();
 							imv.setImageResource(R.drawable.ic_custom_category_default);
 						}else{
 							sb.setCharAt(j, '1');
+							mActionLog.addAction(mActionTag + ActionLog.POICustomCategorySelect, btn.getText(), "true");
 							mCurrentState = sb.toString();
 							imv.setImageResource(R.drawable.ic_custom_category_checked);
 						}
@@ -105,13 +108,14 @@ public class CustomCategoryFragment extends BaseFragment {
 	@Override
 	public void onPause(){
 		TKConfig.setPref(mContext, TKConfig.PREFS_CUSTOM_CATEGORY, mCurrentState);
+		mActionLog.addAction(mActionTag + ActionLog.POICustomCategoryResult, mCurrentState);
 		super.onPause();
 	}
 	
 	@Override
 	public void onResume(){
 		super.onResume();
-		mTitleBtn.setText("自定义分类");
+		mTitleBtn.setText(R.string.custom_category);
 		mCurrentState = TKConfig.getPref(mContext, TKConfig.PREFS_CUSTOM_CATEGORY, "111100110001000");
 		refreshViewByCurrentState();
 	}

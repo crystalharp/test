@@ -314,6 +314,12 @@ public class ActionLog extends LogUpload {
     public static final String POINearbySearchSub = "BB";
     public static final String POINearbySearchMore = "BC";
     public static final String POINearbySearchCustom = "BD";
+    public static final String POINearbySearchFold = "BE";
+    
+    // 自定义分类页
+    public static final String POICustomCategory = "PB";
+    public static final String POICustomCategorySelect = "BA";
+    public static final String POICustomCategoryResult = "BB";
 
     // 更多频道
     public static final String More = "CA";
