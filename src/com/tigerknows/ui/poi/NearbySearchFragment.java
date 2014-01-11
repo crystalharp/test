@@ -265,6 +265,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
                     if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    	mActionLog.addAction(mActionTag + ActionLog.TitleCenterButton);
                     	mSphinx.getHandler().sendEmptyMessage(Sphinx.UI_STACK_ADJUST_READY);
                     	mSphinx.getInputSearchFragment().setData(mDataQuery, null, InputSearchFragment.MODE_POI);
                         mSphinx.showView(R.id.view_poi_input_search);
@@ -458,7 +459,6 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         		backHome();
         	}else{
                 synchronized (mSphinx.mUILock) {
-            	    mActionLog.addAction(mActionTag + ActionLog.TitleLeftButton);
                 	dismiss();
                 }
         	}
@@ -466,7 +466,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         case R.id.right_btn:
         	if(mPOI.getSourceType() != POI.SOURCE_TYPE_MAP_CENTER && mPOI.getSourceType() != POI.SOURCE_TYPE_MY_LOCATION){
                 synchronized (mSphinx.mUILock) {
-            	    // TODO: mActionLog;
+                	mActionLog.addAction(mActionTag + ActionLog.TitleRightButton);
                 	dismiss();
                 }        		
         	}else{
@@ -486,9 +486,10 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         case R.id.sub_5_btn:
         case R.id.sub_6_btn:
         case R.id.sub_7_btn:
+        	btnClickProcess(view, ActionLog.POINearbySearchSub);
+        	break;
         case R.id.sub_more_btn:
-        	//TODO: mActionLog
-        	btnClickProcess(view);
+        	btnClickProcess(view, ActionLog.POINearbySearchMore);
         	break;
         case R.id.hot_fold_btn:
         	if(TextUtils.equals("No", mIsFold)){
@@ -501,7 +502,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         default:
         	for(int i = 0; i < HOT_BTN_ID.length; i++){
         		if(HOT_BTN_ID[i] == view.getId()){
-        			btnClickProcess(view);
+        			btnClickProcess(view, ActionLog.POINearbySearchHot);
         			break;
         		}
         	}
@@ -515,14 +516,13 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     		backHome();
     	}else{
             synchronized (mSphinx.mUILock) {
-        	    mActionLog.addAction(mActionTag + ActionLog.TitleLeftButton);
             	dismiss();
             }
     	}
     	return true;
     }
     
-    private void btnClickProcess(View btn){
+    private void btnClickProcess(View btn, String actionLogInfo){
 		String[] str = btn.getContentDescription().toString().split(";");
 		if(str.length < 2){
 			return;
@@ -533,20 +533,24 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
 		int cityId = mDataQuery.getCityId();
     	switch(operationCode){
     	case CategoryProperty.OP_SEARCH:
+    		mActionLog.addAction(mActionTag + actionLogInfo, str[0]);
     		submitQuery(str[0]);
     		break;
     	case CategoryProperty.OP_HOTEL:
+    		mActionLog.addAction(mActionTag + actionLogInfo, str[0]);
     		mSphinx.getHotelHomeFragment().resetDate();
     		mSphinx.getHotelHomeFragment().setCityInfo(Globals.getCurrentCityInfo(mContext));
     		mSphinx.showView(R.id.view_hotel_home);
     		mSphinx.uiStackAdjust(R.id.view_poi_nearby_search);
     		break;
     	case CategoryProperty.OP_SUBWAY:
+    		mActionLog.addAction(mActionTag + actionLogInfo, str[0]);
     		mSphinx.getSubwayMapFragment().setData(Globals.getCurrentCityInfo(mContext, false));
     		mSphinx.showView(R.id.view_subway_map);
     		mSphinx.uiStackAdjust(R.id.view_poi_nearby_search);
     		break;
         case CategoryProperty.OP_DISH:
+        	mActionLog.addAction(mActionTag + actionLogInfo, str[0]);
         	if (cityId != CityInfo.CITY_ID_BEIJING) {
         		Toast.makeText(mSphinx, R.string.this_city_not_support_dish, Toast.LENGTH_LONG).show();
         		return;
@@ -559,6 +563,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
             mSphinx.queryStart(dataQuery);
             break;
         case CategoryProperty.OP_TUANGOU:
+        	mActionLog.addAction(mActionTag + actionLogInfo, str[0]);
             if (DataQuery.checkDiscoveryCity(cityId, Long.parseLong(BaseQuery.DATA_TYPE_TUANGOU)) == false) {
                 Toast.makeText(mSphinx, R.string.this_city_not_support_tuangou, Toast.LENGTH_LONG).show();
                 return;
@@ -567,6 +572,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
             mSphinx.uiStackAdjust(R.id.view_poi_nearby_search);
             break;
         case CategoryProperty.OP_DIANYING:
+        	mActionLog.addAction(mActionTag + actionLogInfo, str[0]);
             if (DataQuery.checkDiscoveryCity(cityId, Long.parseLong(BaseQuery.DATA_TYPE_DIANYING)) == false) {
                 Toast.makeText(mSphinx, R.string.this_city_not_support_dianying, Toast.LENGTH_LONG).show();
                 return;
@@ -575,6 +581,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
             mSphinx.uiStackAdjust(R.id.view_poi_nearby_search);
             break;
         case CategoryProperty.OP_YANCHU:
+        	mActionLog.addAction(mActionTag + actionLogInfo, str[0]);
             if (DataQuery.checkDiscoveryCity(cityId, Long.parseLong(BaseQuery.DATA_TYPE_YANCHU)) == false) {
                 Toast.makeText(mSphinx, R.string.this_city_not_support_yanchu, Toast.LENGTH_LONG).show();
                 return;
@@ -583,6 +590,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
             mSphinx.uiStackAdjust(R.id.view_poi_nearby_search);
             break;
         case CategoryProperty.OP_ZHANLAN:
+        	mActionLog.addAction(mActionTag + actionLogInfo, str[0]);
             if (DataQuery.checkDiscoveryCity(cityId, Long.parseLong(BaseQuery.DATA_TYPE_ZHANLAN)) == false) {
                 Toast.makeText(mSphinx, R.string.this_city_not_support_zhanlan, Toast.LENGTH_LONG).show();
                 return;
@@ -591,6 +599,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
             mSphinx.uiStackAdjust(R.id.view_poi_nearby_search);
             break;
     	case CategoryProperty.OP_MORE:
+    		mActionLog.addAction(mActionTag + actionLogInfo);
     		mCurrentMoreCategory = str[0];
     		if(setFilterListView()){
     			setFilterOrder();
@@ -599,6 +608,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     		}
             break;
     	case CategoryProperty.OP_CUSTOM:
+    		mActionLog.addAction(mActionTag + ActionLog.POINearbySearchCustom);
     		mSphinx.showView(R.id.view_poi_custom_category);
     		break;
     	default:
