@@ -272,6 +272,9 @@ public class TrafficResultFragment extends BaseFragment {
         mPlanList.clear();
         mPlanList.addAll(mTrafficModel.getPlanList());
         mResultAdapter.notifyDataSetChanged();
+        if (mSphinx.uiStackPeek() == R.id.view_result_map) {
+            mSphinx.uiStackClearTop(R.id.view_traffic_home);
+        }
     }
     
     class TransferProjectListAdapter extends BaseAdapter{
