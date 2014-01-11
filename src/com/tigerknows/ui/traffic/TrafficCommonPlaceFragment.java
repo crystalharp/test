@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.POI;
 import com.tigerknows.provider.CommonPlaceTable;
@@ -49,6 +50,7 @@ public class TrafficCommonPlaceFragment extends BaseFragment{
         @Override
         public void onClick(View v) {
             int pos = (Integer) v.getTag();
+            mActionLog.addAction(mActionTag + ActionLog.TrafficCommonPlaceDel);
             mList.remove(pos);
             mAdapter.notifyDataSetChanged();
         }
@@ -57,6 +59,7 @@ public class TrafficCommonPlaceFragment extends BaseFragment{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mActionTag = ActionLog.TrafficCommonPlace;
     }
 
     @Override
@@ -100,6 +103,7 @@ public class TrafficCommonPlaceFragment extends BaseFragment{
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
                 mClickedPos = position;
                 CommonPlace c = mList.get(position);
+                mActionLog.addAction(mActionTag + ActionLog.TrafficCommonPlaceClick);
 
                 String keyWord = null;
                 if (c.poi != null) {

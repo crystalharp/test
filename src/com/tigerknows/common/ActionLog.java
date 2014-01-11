@@ -520,7 +520,6 @@ public class ActionLog extends LogUpload {
     public static final String TrafficHomeClickMoreAlert = "BH";
     public static final String TrafficHomeClickSearchBtn = "BI";
     
-    
     // 交通输入页
     public static final String TrafficInput = "BB";
     
@@ -528,6 +527,11 @@ public class ActionLog extends LogUpload {
     public static final String TrafficSearchHistory = "BC";
     public static final String TrafficSearchHistoryClear = "BA";
     public static final String TrafficSearchHistoryClick = "BB";
+    
+    // 交通常用地址页
+    public static final String TrafficCommonPlace = "BD";
+    public static final String TrafficCommonPlaceClick = "BA";
+    public static final String TrafficCommonPlaceDel = "BB";
         
     // 收藏的POI列表页
     public static final String TrafficFetchFavorite = "BE";
@@ -575,9 +579,10 @@ public class ActionLog extends LogUpload {
     
     // 交通驾车概要地图页
     public static final String TrafficDriveListMap = "BT";
+    public static final String TrafficDriveListMapPreference = "BA";
     
     // 交通步行概要地图页
-    public static final String TrafficWalkListMap = "BV";
+    public static final String TrafficWalkListMap = "BU";
     
     // 交通指南针页
     public static final String TrafficCompass = "BQ";

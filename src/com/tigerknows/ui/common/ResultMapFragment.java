@@ -283,6 +283,7 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View arg1, int index, long arg3) {
 
+                    mActionLog.addAction(mActionTag + ActionLog.TrafficDriveListMapPreference, index);
                     TrafficDetailFragment f = mSphinx.getTrafficDetailFragment();
                     TrafficQuery trafficQuery = f.getTrafficQuery();
                     Plan plan = f.findDriveType(driveTypeList[index]);
