@@ -213,8 +213,10 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         mRightBtn.setVisibility(View.VISIBLE);
         mRightBtn.setOnClickListener(this);
         
-        mSphinx.promptShowSoftInput(mKeywordEdt.getInput());
-        mKeywordEdt.getInput().requestFocus();
+        if (mDismissed) {
+            mSphinx.promptShowSoftInput(mKeywordEdt.getInput());
+            mKeywordEdt.getInput().requestFocus();
+        }
         Utility.refreshButton(mSphinx,
                 mRightBtn,
                 (mRequest == REQUEST_TRAFFIC_END || mRequest == REQUEST_TRAFFIC_START) ? getString(R.string.confirm) : getString(R.string.search),
