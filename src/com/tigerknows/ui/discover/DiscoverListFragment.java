@@ -398,7 +398,6 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             adapter.notifyDataSetChanged();
         }
 
-
         if (BaseQuery.DATA_TYPE_TUANGOU.equals(mDataType)) {
             mDingdanBtn.setVisibility(View.VISIBLE);
         } else {
@@ -421,26 +420,34 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             mRetryView.setVisibility(View.GONE);
             mEmptyView.setVisibility(View.GONE);
             mResultLsv.setVisibility(View.GONE);
-            mRightBtn.setVisibility(View.INVISIBLE);
+            if (isShowing()) {
+                mRightBtn.setVisibility(View.INVISIBLE);
+            }
         } else if (mState == STATE_ERROR) {
             mQueryingView.setVisibility(View.GONE);
             mRetryView.setVisibility(View.VISIBLE);
             mEmptyView.setVisibility(View.GONE);
             mResultLsv.setVisibility(View.GONE);
-            mRightBtn.setVisibility(View.INVISIBLE);
+            if (isShowing()) {
+                mRightBtn.setVisibility(View.INVISIBLE);
+            }
         } else if (mState == STATE_EMPTY){
             mQueryingView.setVisibility(View.GONE);
             mRetryView.setVisibility(View.GONE);
             mEmptyView.setVisibility(View.VISIBLE);
             mResultLsv.setVisibility(View.GONE);
-            mRightBtn.setVisibility(View.INVISIBLE);
+            if (isShowing()) {
+                mRightBtn.setVisibility(View.INVISIBLE);
+            }
         } else {
             mQueryingView.setVisibility(View.GONE);
             mRetryView.setVisibility(View.GONE);
             mEmptyView.setVisibility(View.GONE);
             mResultLsv.setVisibility(View.VISIBLE);
             if (getList().size() > 0) {
-                mRightBtn.setVisibility(View.VISIBLE);
+                if (isShowing()) {
+                    mRightBtn.setVisibility(View.VISIBLE);
+                }
                 if (mSphinx.getFromThirdParty() == 0) {
                     if (BaseQuery.DATA_TYPE_TUANGOU.equals(mDataType)) {
                         if (TKConfig.getPref(mSphinx, TKConfig.PREFS_HINT_DISCOVER_TUANGOU_DINGDAN) == null) {
@@ -449,7 +456,9 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                     }
                 }
             } else {
-                mRightBtn.setVisibility(View.INVISIBLE);
+                if (isShowing()) {
+                    mRightBtn.setVisibility(View.INVISIBLE);
+                }
             }
             
             if (mAPOI != null) {
@@ -490,7 +499,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             }
         }
         
-        if (getId() == mSphinx.uiStackPeek()) {
+        if (isShowing()) {
             mTitleBtn.setHint(mTitleText);
         }
 

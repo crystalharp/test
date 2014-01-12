@@ -304,25 +304,29 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             }
         }
         
-        if (getId() == mSphinx.uiStackPeek()) {
+        if (isShowing()) {
             mTitleBtn.setHint(mTitleText);
         }
 
         if (BaseQuery.SUB_DATA_TYPE_HOTEL.equals(mResultAdapter.getSubDataType())) {
             mEmptyTxv.setText(R.string.can_not_found_result_and_retry);
 
-            mTitleBtn.setOnClickListener(null);
-            mTitleBtn.setBackgroundDrawable(null);
-            mTitleBtn.setPadding(0, 0, 0, 0);
-            mTitleBtn.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+            if (isShowing()) {
+                mTitleBtn.setOnClickListener(null);
+                mTitleBtn.setBackgroundDrawable(null);
+                mTitleBtn.setPadding(0, 0, 0, 0);
+                mTitleBtn.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+            }
             
         } else {
             mEmptyTxv.setText(str);
             
-            mTitleBtn.setOnClickListener(this);
-            mTitleBtn.setBackgroundResource(R.drawable.textfield);
-            mTitleBtn.setPadding(mTitleBtnPaddingLeft, mTitleBtnPaddingTop, mTitleBtnPaddingLeft, mTitleBtnPaddingTop);
-            mTitleBtn.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+            if (isShowing()) {
+                mTitleBtn.setOnClickListener(this);
+                mTitleBtn.setBackgroundResource(R.drawable.textfield);
+                mTitleBtn.setPadding(mTitleBtnPaddingLeft, mTitleBtnPaddingTop, mTitleBtnPaddingLeft, mTitleBtnPaddingTop);
+                mTitleBtn.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+            }
         }
     }
     
@@ -382,21 +386,27 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             mEmptyView.setVisibility(View.GONE);
             mResultLsv.setVisibility(View.GONE);
             mNavigationWidget.setVisibility(View.GONE);
-            mRightBtn.setVisibility(View.INVISIBLE);
+            if (isShowing()) {
+                mRightBtn.setVisibility(View.INVISIBLE);
+            }
             mAddMerchantView.setVisibility(View.GONE);
         } else if (mState == STATE_ERROR) {
             mQueryingView.setVisibility(View.GONE);
             mRetryView.setVisibility(View.VISIBLE);
             mEmptyView.setVisibility(View.GONE);
             mResultLsv.setVisibility(View.GONE);
-            mRightBtn.setVisibility(View.INVISIBLE);
+            if (isShowing()) {
+                mRightBtn.setVisibility(View.INVISIBLE);
+            }
             mAddMerchantView.setVisibility(View.GONE);
         } else if (mState == STATE_EMPTY){
             mQueryingView.setVisibility(View.GONE);
             mRetryView.setVisibility(View.GONE);
             mEmptyView.setVisibility(View.VISIBLE);
             mResultLsv.setVisibility(View.GONE);
-            mRightBtn.setVisibility(View.INVISIBLE);
+            if (isShowing()) {
+                mRightBtn.setVisibility(View.INVISIBLE);
+            }
             
             if (BaseQuery.SUB_DATA_TYPE_POI.equals(mResultAdapter.getSubDataType())) {
                 mAddMerchantView.setVisibility(View.VISIBLE);
@@ -419,7 +429,9 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             mRetryView.setVisibility(View.GONE);
             mEmptyView.setVisibility(View.GONE);
             mResultLsv.setVisibility(View.VISIBLE);
-            mRightBtn.setVisibility(mPOIList.size() > 0 ? View.VISIBLE : View.INVISIBLE);
+            if (isShowing()) {
+                mRightBtn.setVisibility(mPOIList.size() > 0 ? View.VISIBLE : View.INVISIBLE);
+            }
             
             boolean footerSpringback = mResultLsv.isFooterSpringback();
             View v = mCurrentFootView;
@@ -916,10 +928,10 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     @Override
     public void onPostExecute(TKAsyncTask tkAsyncTask) {
         super.onPostExecute(tkAsyncTask);
-        setData((DataQuery) (tkAsyncTask.getBaseQuery()));
+        setData((DataQuery) (tkAsyncTask.getBaseQuery()), false);
     }
     
-    public void setData(DataQuery dataQuery) {
+    public void setData(DataQuery dataQuery, boolean resetFilter) {
         String subDataType = dataQuery.getParameter(BaseQuery.SERVER_PARAMETER_SUB_DATA_TYPE);
         mResultAdapter.setSubDataType(subDataType);
         if (BaseQuery.SUB_DATA_TYPE_HOTEL.equals(subDataType)) {
@@ -978,6 +990,11 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 updateView();
                 return;
             }
+        }
+        
+        if (dataQuery.isTurnPage() == false && resetFilter) {
+            List<Filter> filterList = dataQuery.getFilterList();
+            refreshFilter(filterList);
         }
 
         POIResponse poiResponse = (POIResponse)dataQuery.getResponse();
@@ -1043,10 +1060,6 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             }
             
             mResultLsv.setFooterSpringback(canTurnPage());
-            List<Filter> filterList = mDataQuery.getFilterList();
-            if (filterList != null && filterList.size() > 0) {
-                refreshFilter(filterList);
-            }
         } else {
             if (dataQuery.isTurnPage()) {
                 return;

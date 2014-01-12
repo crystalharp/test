@@ -16,5 +16,7 @@
         android:background="@color/white"
         android:text="@string/app_name"
         android:textColor="@color/blue_title"
-        android:visibility="visible"/>
+        android:visibility="visible"
+        android:singleLine="true"
+        android:ellipsize="end"/>
 </LinearLayout>

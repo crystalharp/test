@@ -471,6 +471,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, keyword), HistoryWordTable.TYPE_POI);
 
         DataQuery dataQuery = new DataQuery(mDataQuery);
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_KEYWORD, keyword);
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_POI);
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, DataQuery.SUB_DATA_TYPE_POI);
@@ -732,7 +733,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         // 跳转到POI结果列表界面
         if (bPOIList.getShowType() == 0) {
             sphinx.uiStackRemove(R.id.view_poi_result);
-            poiResultFragment.setData(dataQuery);
+            poiResultFragment.setData(dataQuery, true);
             sphinx.showView(R.id.view_poi_result);
         
         // 跳转到POI结果地图界面
@@ -741,7 +742,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                 Toast.makeText(sphinx, sphinx.getString(R.string.no_result), Toast.LENGTH_LONG).show();
                 return 2;
             } else {
-                poiResultFragment.setData(dataQuery);
+                poiResultFragment.setData(dataQuery, true);
 
                 sphinx.uiStackRemove(R.id.view_poi_input_search);
                 ItemizedOverlayHelper.drawPOIOverlay(sphinx, bPOIList.getList(), 0, poiResultFragment.getAPOI());
