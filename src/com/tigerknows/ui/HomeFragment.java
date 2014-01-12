@@ -127,7 +127,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         if (mSphinx.getBottomFragment() == infoWindowFragment &&
                 infoWindowFragment.getOwerFragmentId() == getId() &&
                 itemizedOverlay != null) {
-            mOverlayItem = itemizedOverlay.getItemByFocused();
+            mOverlayItem = itemizedOverlay.get(0);
         } else {
             mOverlayItem = null;
         }
