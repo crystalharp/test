@@ -14,6 +14,8 @@ public class CityInfo implements Parcelable {
     public static final int CITY_ID_INVALID = -1;
     public static final int CITY_ID_QUANGUO = -3;
     public static final int CITY_ID_BEIJING = 1;
+    public static final int CITY_ID_HONGKONG = 432;
+    public static final int CITY_ID_MACAO = 433;
     
     // "城市中文名字, City english name, latitude, longitude, level, 省份中文名字, city
     // Province english name" such as
@@ -122,7 +124,7 @@ public class CityInfo implements Parcelable {
     }
     
     public boolean isAvailably() {
-        return id != CITY_ID_INVALID && !TextUtils.isEmpty(cName);
+        return id != CITY_ID_INVALID && id != CITY_ID_HONGKONG && id != CITY_ID_MACAO && !TextUtils.isEmpty(cName);
     }
     
     public boolean equals(Object object) {

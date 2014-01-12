@@ -58,6 +58,7 @@ public class TrafficSearchHistoryFragment extends BaseFragment {
         mRootView = mLayoutInflater.inflate(R.layout.traffic_transfer_history, container, false);
         
         findView();
+        setListener();
         return mRootView;
     }
 
