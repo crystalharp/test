@@ -3679,7 +3679,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 
     private void refreshZoomView() {
         if (TKConfig.isPref(mThis, TKConfig.PREFS_SHOW_ZOOM_BUTTON)) {
-            mZoomView.setVisibility(View.INVISIBLE);
+            mZoomView.setVisibility(View.GONE);
         } else {
             mZoomView.setVisibility(View.VISIBLE);
         }

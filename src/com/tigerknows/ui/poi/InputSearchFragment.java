@@ -614,8 +614,10 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         if (buslineModel != null) {
             if (buslineModel.getType() == BuslineModel.TYPE_BUSLINE) {
                 sphinx.getBuslineResultLineFragment().setData(null, dataQuery);
-                sphinx.showView(R.id.view_traffic_busline_line_result);
-                sphinx.uiStackRemove(R.id.view_poi_input_search);
+                if (dataQuery.isTurnPage() == false) {
+                    sphinx.showView(R.id.view_traffic_busline_line_result);
+                    sphinx.uiStackRemove(R.id.view_poi_input_search);
+                }
                 result = POIResponse.FIELD_EXT_BUSLINE;
                 return result;
             }
@@ -805,11 +807,15 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                 if (buslineModel.getType() == BuslineModel.TYPE_BUSLINE) {
                     actionLog.addAction(actionTag + ActionLog.TrafficResultBusline, buslineQuery.getBuslineModel().getLineList().size());
                     sphinx.getBuslineResultLineFragment().setData(buslineQuery);
-                    sphinx.showView(R.id.view_traffic_busline_line_result);
+                    if (buslineQuery.isTurnPage() == false) {
+                        sphinx.showView(R.id.view_traffic_busline_line_result);
+                    }
                 } else if (buslineModel.getType() == BuslineModel.TYPE_STATION) {
                     actionLog.addAction(actionTag + ActionLog.TrafficResultBusline, buslineQuery.getBuslineModel().getStationList().size());
                     sphinx.getBuslineResultStationFragment().setData(buslineQuery);
-                    sphinx.showView(R.id.view_traffic_busline_station_result);
+                    if (buslineQuery.isTurnPage() == false) {
+                        sphinx.showView(R.id.view_traffic_busline_station_result);
+                    }
                 }               
             }
         }

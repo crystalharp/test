@@ -19,8 +19,8 @@
 	        >
 		    <ImageView
 		        android:id="@+id/icon_imv"
-		        android:layout_width="62dp"
-		        android:layout_height="62dp"
+		        android:layout_width="70dp"
+		        android:layout_height="70dp"
 		        android:layout_alignParentLeft="true"
 		        android:layout_alignParentTop="true"
 		        android:layout_centerHorizontal="true"
@@ -29,7 +29,7 @@
 		    
 		    <TextView 
 		        android:id="@+id/image_num_txv"
-		        android:layout_width="60dp"
+		        android:layout_width="68dp"
 		        android:layout_height="wrap_content"
 		        android:layout_centerHorizontal="true"
 		        android:layout_alignBottom="@id/icon_imv"
