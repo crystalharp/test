@@ -553,9 +553,6 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     public void onClick(final View view) {
         switch (view.getId()) {
             case R.id.title_btn:
-                if (mPOIList.isEmpty() || mState != STATE_LIST) {
-                    return;
-                }
                 mActionLog.addAction(mActionTag + ActionLog.TitleCenterButton);
                 DataQuery dataQuery = new DataQuery(mDataQuery);
                 dataQuery.removeParameter(DataQuery.SERVER_PARAMETER_INFO);
