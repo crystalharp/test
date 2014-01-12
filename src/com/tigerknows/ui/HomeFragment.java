@@ -74,7 +74,6 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
     @Override
     public void onResume() {
         super.onResume();
-        reset();
         mTitleBtn.setBackgroundResource(R.drawable.edt_home);
         mTitleBtn.setOnClickListener(this);
         mTitleBtn.setHint(R.string.find_poi);
@@ -125,7 +124,9 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         mItemizedOverlay = mSphinx.getMapView().getCurrentOverlay();
         InfoWindowFragment infoWindowFragment = mSphinx.getInfoWindowFragment();
         ItemizedOverlay itemizedOverlay = infoWindowFragment.getItemizedOverlay();
-        if (infoWindowFragment.getOwerFragmentId() == getId() && itemizedOverlay != null) {
+        if (mSphinx.getBottomFragment() == infoWindowFragment &&
+                infoWindowFragment.getOwerFragmentId() == getId() &&
+                itemizedOverlay != null) {
             mOverlayItem = itemizedOverlay.getItemByFocused();
         } else {
             mOverlayItem = null;

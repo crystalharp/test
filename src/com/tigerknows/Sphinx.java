@@ -2536,6 +2536,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             }
         }
     }
+    
+    public BaseFragment getBottomFragment() {
+        return mBottomFragment;
+    }
     // TODO: ui stack end
 
     // TODO: get dialog begin

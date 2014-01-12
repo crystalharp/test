@@ -44,7 +44,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.TypedValue;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -282,22 +281,6 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         mSphinx.showView(R.id.activity_more_add_merchant, intent);
     }
     
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            DataQuery lastDataQuery = mDataQuery;
-            if (mState != STATE_QUERYING && mState != STATE_LIST && lastDataQuery != null) {
-                mActionLog.addAction(ActionLog.KeyCodeBack);
-                mState = STATE_LIST;
-                refreshResultTitleText(lastDataQuery);
-                updateView();
-                refreshFilter(lastDataQuery.getFilterList());
-                return true;
-            }
-        }
-        return false;
-    }
-    
     /**
      * 刷新标题栏文字
      * @param dataQuery
@@ -368,7 +351,6 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         // 5.8.0 2.2.2 2)从搜索结果列表页返回时，不应再返回搜索输入页，应跨过搜索输入页直接跳回搜索输入页的上一页
         mSphinx.uiStackRemove(R.id.view_poi_input_search);
 
-        mRightBtn.setVisibility(View.VISIBLE);
         mRightBtn.setText(R.string.map);
         mRightBtn.setOnClickListener(this);
         
@@ -400,21 +382,21 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             mEmptyView.setVisibility(View.GONE);
             mResultLsv.setVisibility(View.GONE);
             mNavigationWidget.setVisibility(View.GONE);
-            mRightBtn.setVisibility(View.GONE);
+            mRightBtn.setVisibility(View.INVISIBLE);
             mAddMerchantView.setVisibility(View.GONE);
         } else if (mState == STATE_ERROR) {
             mQueryingView.setVisibility(View.GONE);
             mRetryView.setVisibility(View.VISIBLE);
             mEmptyView.setVisibility(View.GONE);
             mResultLsv.setVisibility(View.GONE);
-            mRightBtn.setVisibility(View.GONE);
+            mRightBtn.setVisibility(View.INVISIBLE);
             mAddMerchantView.setVisibility(View.GONE);
         } else if (mState == STATE_EMPTY){
             mQueryingView.setVisibility(View.GONE);
             mRetryView.setVisibility(View.GONE);
             mEmptyView.setVisibility(View.VISIBLE);
             mResultLsv.setVisibility(View.GONE);
-            mRightBtn.setVisibility(View.GONE);
+            mRightBtn.setVisibility(View.INVISIBLE);
             
             if (BaseQuery.SUB_DATA_TYPE_POI.equals(mResultAdapter.getSubDataType())) {
                 mAddMerchantView.setVisibility(View.VISIBLE);
@@ -437,7 +419,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             mRetryView.setVisibility(View.GONE);
             mEmptyView.setVisibility(View.GONE);
             mResultLsv.setVisibility(View.VISIBLE);
-            mRightBtn.setVisibility(mPOIList.size() > 0 ? View.VISIBLE : View.GONE);
+            mRightBtn.setVisibility(mPOIList.size() > 0 ? View.VISIBLE : View.INVISIBLE);
             
             boolean footerSpringback = mResultLsv.isFooterSpringback();
             View v = mCurrentFootView;
@@ -744,23 +726,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             
             nameTxv.setText(poi.getName());
             
-            String distance = poi.getToCenterDistance();
-            if (!TextUtils.isEmpty(distance)) {
-                if (distance.startsWith(distanceA)) {
-                    icAPOI.setBounds(0, 0, icAPOI.getIntrinsicWidth(), icAPOI.getIntrinsicHeight());
-                    distanceFromTxv.setCompoundDrawables(null, null, icAPOI, null);
-                    distanceFromTxv.setText(activity.getString(R.string.distance));
-                    distanceTxv.setText(distance.replace(distanceA, ""));
-                } else {
-                    distanceFromTxv.setText("");
-                    distanceFromTxv.setCompoundDrawables(null, null, null, null);
-                    distanceTxv.setText(distance);
-                }
-            } else {
-                distanceFromTxv.setText("");
-                distanceFromTxv.setCompoundDrawables(null, null, null, null);
-                distanceTxv.setText("");
-            }
+            showDistance(activity, distanceFromTxv, distanceTxv, poi.getToCenterDistance(), distanceA, icAPOI);
             
             boolean dish = false;
             List<DynamicPOI> list = poi.getDynamicPOIList();
@@ -875,6 +841,25 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             }
             
             return view;
+        }
+        
+        public static void showDistance(Activity activity, TextView distanceFromTxv, TextView distanceTxv, String distance, String distanceA, Drawable icAPOI) {
+            if (!TextUtils.isEmpty(distance)) {
+                if (distance.startsWith(distanceA)) {
+                    icAPOI.setBounds(0, 0, icAPOI.getIntrinsicWidth(), icAPOI.getIntrinsicHeight());
+                    distanceFromTxv.setCompoundDrawables(null, null, icAPOI, null);
+                    distanceFromTxv.setText(activity.getString(R.string.distance));
+                    distanceTxv.setText(distance.replace(distanceA, ""));
+                } else {
+                    distanceFromTxv.setText("");
+                    distanceFromTxv.setCompoundDrawables(null, null, null, null);
+                    distanceTxv.setText(distance);
+                }
+            } else {
+                distanceFromTxv.setText("");
+                distanceFromTxv.setCompoundDrawables(null, null, null, null);
+                distanceTxv.setText("");
+            }
         }
         
         int refresDynamicPOI(List<DynamicPOI> list, ViewGroup listView) {

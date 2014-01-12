@@ -142,4 +142,18 @@
         android:singleLine="true"
         android:focusable="false"
         />
+    
+    <TextView 
+        android:id="@+id/distance_from_txv" 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" 
+        android:layout_toLeftOf="@id/distance_txv" 
+        android:layout_below="@id/price_txv" 
+        android:layout_marginTop="4dp"
+        android:drawableRight="@drawable/ic_location_nearby"
+        android:textColor="@color/black_light"
+        android:textSize="14sp"
+        android:text="@string/distance"
+        android:singleLine="true"
+        android:focusable="false" />   
 </RelativeLayout>

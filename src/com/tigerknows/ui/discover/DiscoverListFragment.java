@@ -28,6 +28,7 @@ import com.tigerknows.model.DataQuery.Filter;
 import com.tigerknows.model.DataQuery.FilterCategoryOrder;
 import com.tigerknows.model.Yingxun.Changci;
 import com.tigerknows.ui.BaseActivity;
+import com.tigerknows.ui.poi.POIResultFragment.POIAdapter;
 import com.tigerknows.util.Utility;
 import com.tigerknows.widget.FilterListView;
 import com.tigerknows.widget.QueryingView;
@@ -43,7 +44,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -196,6 +196,9 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     
     SpringbackListView.IPagerListCallBack mIPagerListCallBack = null;
     
+    private Drawable icAPOI;
+    private String distanceA;
+    
     /**
      * 显示查询状态
      * @param dataQuery
@@ -223,6 +226,8 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {  
         mRootView = mLayoutInflater.inflate(R.layout.poi_result, container, false);
+        icAPOI = mSphinx.getResources().getDrawable(R.drawable.ic_location_nearby);
+        distanceA = getString(R.string.distanceA);
 
         findViews();
         setListener();
@@ -361,22 +366,6 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         return title;
     }
     
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            DataQuery lastDataQuery = mDataQuery;
-            if (mState != STATE_QUERYING && mState != STATE_LIST && lastDataQuery != null) {
-                mActionLog.addAction(ActionLog.KeyCodeBack);
-                mState = STATE_LIST;
-                refreshResultTitleText(lastDataQuery);
-                updateView();
-                refreshFilter(lastDataQuery.getFilterList());
-                return true;
-            }
-        }
-        return false;
-    }
-    
     private void refreshFilter(List<Filter> filterList) {
         synchronized (mFilterList) {
             if (mFilterList != filterList) {
@@ -396,25 +385,6 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     public void onResume() {
         super.onResume();
         mIPagerListCallBack = null;
-        if (BaseQuery.DATA_TYPE_TUANGOU.equals(mDataType)) {
-            mRightBtn.setText(R.string.map);
-            mRightBtn.setOnClickListener(this);
-            mRightBtn.setVisibility(View.VISIBLE);
-            mDingdanBtn.setVisibility(View.VISIBLE);
-        } else if (BaseQuery.DATA_TYPE_DIANYING.equals(mDataType)) {
-            mRightBtn.setVisibility(View.INVISIBLE);
-            mDingdanBtn.setVisibility(View.GONE);
-        } else if (BaseQuery.DATA_TYPE_YANCHU.equals(mDataType)) {
-            mRightBtn.setText(R.string.map);
-            mRightBtn.setOnClickListener(this);
-            mRightBtn.setVisibility(View.VISIBLE);
-            mDingdanBtn.setVisibility(View.GONE);
-        } else if (BaseQuery.DATA_TYPE_ZHANLAN.equals(mDataType)) {
-            mRightBtn.setText(R.string.map);
-            mRightBtn.setOnClickListener(this);
-            mRightBtn.setVisibility(View.VISIBLE);
-            mDingdanBtn.setVisibility(View.GONE);
-        }
         
         if (isReLogin()) {
             return;
@@ -427,6 +397,15 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         if (adapter != null) {
             adapter.notifyDataSetChanged();
         }
+
+
+        if (BaseQuery.DATA_TYPE_TUANGOU.equals(mDataType)) {
+            mDingdanBtn.setVisibility(View.VISIBLE);
+        } else {
+            mDingdanBtn.setVisibility(View.GONE);
+        }
+        mRightBtn.setText(R.string.map);
+        mRightBtn.setOnClickListener(this);
         
         updateView();
     }
@@ -442,22 +421,26 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             mRetryView.setVisibility(View.GONE);
             mEmptyView.setVisibility(View.GONE);
             mResultLsv.setVisibility(View.GONE);
+            mRightBtn.setVisibility(View.INVISIBLE);
         } else if (mState == STATE_ERROR) {
             mQueryingView.setVisibility(View.GONE);
             mRetryView.setVisibility(View.VISIBLE);
             mEmptyView.setVisibility(View.GONE);
             mResultLsv.setVisibility(View.GONE);
+            mRightBtn.setVisibility(View.INVISIBLE);
         } else if (mState == STATE_EMPTY){
             mQueryingView.setVisibility(View.GONE);
             mRetryView.setVisibility(View.GONE);
             mEmptyView.setVisibility(View.VISIBLE);
             mResultLsv.setVisibility(View.GONE);
+            mRightBtn.setVisibility(View.INVISIBLE);
         } else {
             mQueryingView.setVisibility(View.GONE);
             mRetryView.setVisibility(View.GONE);
             mEmptyView.setVisibility(View.GONE);
             mResultLsv.setVisibility(View.VISIBLE);
             if (getList().size() > 0) {
+                mRightBtn.setVisibility(View.VISIBLE);
                 if (mSphinx.getFromThirdParty() == 0) {
                     if (BaseQuery.DATA_TYPE_TUANGOU.equals(mDataType)) {
                         if (TKConfig.getPref(mSphinx, TKConfig.PREFS_HINT_DISCOVER_TUANGOU_DINGDAN) == null) {
@@ -465,6 +448,8 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                         }
                     }
                 }
+            } else {
+                mRightBtn.setVisibility(View.INVISIBLE);
             }
             
             if (mAPOI != null) {
@@ -680,6 +665,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             TextView priceTxv = (TextView) view.findViewById(R.id.price_txv);
             TextView orgPriceTxv = (TextView) view.findViewById(R.id.org_price_txv);
             TextView distanceTxv = (TextView) view.findViewById(R.id.distance_txv);
+            TextView distanceFromTxv = (TextView) view.findViewById(R.id.distance_from_txv);
             TextView buyerNumTxv = (TextView) view.findViewById(R.id.buyer_num_txv);
             TextView fastPurchaseTxv = (TextView) view.findViewById(R.id.fast_purchase_txv);
             TextView appointmentTxv = (TextView) view.findViewById(R.id.appointment_txv);
@@ -708,13 +694,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             priceTxv.setText(tuangou.getPrice());
             orgPriceTxv.setText(tuangou.getOrgPrice()+rmb);
             orgPriceTxv.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
-            String distance = tuangou.getFendian().getDistance();
-            if (TextUtils.isEmpty(distance)) {
-                distanceTxv.setVisibility(View.GONE);
-            } else {
-                distanceTxv.setText(distance);
-                distanceTxv.setVisibility(View.VISIBLE);
-            }
+            POIAdapter.showDistance(mSphinx, distanceFromTxv, distanceTxv, tuangou.getFendian().getDistance(), distanceA, icAPOI);
             buyerNumTxv.setText(String.valueOf(tuangou.getBuyerNum())+getString(R.string.people));
             
             if (tuangou.getAppointment() == 1) {
@@ -753,7 +733,9 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             ImageView pictureImv = (ImageView) view.findViewById(R.id.picture_imv);
             TextView nameTxv = (TextView) view.findViewById(R.id.name_txv);
             RatingBar starsRtb = (RatingBar) view.findViewById(R.id.stars_rtb);
+            TextView nearestDistanceTxv = (TextView) view.findViewById(R.id.nearest_distance_txv);
             TextView distanceTxv = (TextView) view.findViewById(R.id.distance_txv);
+            TextView distanceFromTxv = (TextView) view.findViewById(R.id.distance_from_txv);
             TextView addressTxv = (TextView) view.findViewById(R.id.category_txv);
             TextView dateTxv = (TextView) view.findViewById(R.id.date_txv);
 
@@ -771,14 +753,11 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             starsRtb.setProgress((int) dianying.getRank());
             String distance = dianying.getYingxun().getDistance();
             if (TextUtils.isEmpty(distance)) {
-                distanceTxv.setVisibility(View.GONE);
+                nearestDistanceTxv.setVisibility(View.GONE);
             } else {
-                //distanceTxv.setText(getString(R.string.dianying_detail_nearest, String.valueOf(dianying.getYingxun().getDistance())));
-            	  String distanceStr = getString(R.string.dianying_detail_nearest, String.valueOf(dianying.getYingxun().getDistance()));
-
-                Utility.formatText(distanceTxv, distanceStr, getString(R.string.dianying_detail_nearest, ""), R.color.black_dark);
-                distanceTxv.setVisibility(View.VISIBLE);
+                nearestDistanceTxv.setVisibility(View.VISIBLE);
             }
+            POIAdapter.showDistance(mSphinx, distanceFromTxv, distanceTxv, distance, distanceA, icAPOI);
             
             addressTxv.setText(dianying.getTag());
             if (TextUtils.isEmpty(dianying.getLength())) {
@@ -811,6 +790,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             TextView nameTxv = (TextView) view.findViewById(R.id.name_txv);
             RatingBar starsRtb = (RatingBar) view.findViewById(R.id.stars_rtb);
             TextView distanceTxv = (TextView) view.findViewById(R.id.distance_txv);
+            TextView distanceFromTxv = (TextView) view.findViewById(R.id.distance_from_txv);
             TextView addressTxv = (TextView) view.findViewById(R.id.address_txv);
             TextView dateTxv = (TextView) view.findViewById(R.id.date_txv);
 
@@ -831,7 +811,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             nameTxv.setText(yanchu.getName());
             starsRtb.setProgress((int) yanchu.getHot());
             addressTxv.setText(yanchu.getAddress());
-            distanceTxv.setText(yanchu.getDistance());
+            POIAdapter.showDistance(mSphinx, distanceFromTxv, distanceTxv, yanchu.getDistance(), distanceA, icAPOI);
             dateTxv.setText(yanchu.getTimeDesc());
             
             return view;
@@ -859,6 +839,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             TextView nameTxv = (TextView) view.findViewById(R.id.name_txv);
             RatingBar starsRtb = (RatingBar) view.findViewById(R.id.stars_rtb);
             TextView distanceTxv = (TextView) view.findViewById(R.id.distance_txv);
+            TextView distanceFromTxv = (TextView) view.findViewById(R.id.distance_from_txv);
             TextView addressTxv = (TextView) view.findViewById(R.id.address_txv);
             TextView dateTxv = (TextView) view.findViewById(R.id.date_txv);
 
@@ -879,7 +860,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             nameTxv.setText(yanchu.getName());
             starsRtb.setProgress((int) yanchu.getHot());
             addressTxv.setText(yanchu.getAddress());
-            distanceTxv.setText(yanchu.getDistance());
+            POIAdapter.showDistance(mSphinx, distanceFromTxv, distanceTxv, yanchu.getDistance(), distanceA, icAPOI);
             dateTxv.setText(yanchu.getTimeDesc());
             
             return view;
