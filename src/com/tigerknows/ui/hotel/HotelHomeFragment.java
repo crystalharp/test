@@ -159,8 +159,6 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
             queryFilter();
         }
         
-        if (TKConfig.getPref(mSphinx, TKConfig.PREFS_HINT_POI_HOME_HOTEL_RESERVE) == null) {
-        }
         if (isReLogin()) {
             return;
         }

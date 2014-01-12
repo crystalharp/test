@@ -452,13 +452,6 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                         mRightBtn.setVisibility(View.INVISIBLE);
                     }
                 }
-                if (mSphinx.getFromThirdParty() == 0) {
-                    if (BaseQuery.DATA_TYPE_TUANGOU.equals(mDataType)) {
-                        if (TKConfig.getPref(mSphinx, TKConfig.PREFS_HINT_DISCOVER_TUANGOU_DINGDAN) == null) {
-                            mSphinx.showHint(TKConfig.PREFS_HINT_DISCOVER_TUANGOU_DINGDAN, R.layout.hint_discover_tuangou_dingdan);
-                        }
-                    }
-                }
             } else {
                 if (isShowing()) {
                     mRightBtn.setVisibility(View.INVISIBLE);

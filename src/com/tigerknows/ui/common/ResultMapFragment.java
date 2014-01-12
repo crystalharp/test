@@ -169,8 +169,6 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
                 ActionLog.TrafficTransferListMap.equals(mActionTag)) {
             mTitleBtn.setText(getString(R.string.title_transfer_result_map));
         }
-        
-        mSphinx.showHint(TKConfig.PREFS_HINT_LOCATION, R.layout.hint_location_map);
     }
 
     @Override
