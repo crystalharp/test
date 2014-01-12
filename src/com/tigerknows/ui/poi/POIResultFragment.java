@@ -219,7 +219,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         mCurrentFootView = mLoadingView;
         mAddMerchantFootView = mLayoutInflater.inflate(R.layout.poi_list_item_add_merchant, null);
         mAddMerchantView = mRootView.findViewById(R.id.add_merchant_view);
-        mAddMerchantView.setOnClickListener(new OnClickListener() {
+        mAddMerchantView.findViewById(R.id.add_merchant_item_view).setOnClickListener(new OnClickListener() {
             
             @Override
             public void onClick(View v) {
