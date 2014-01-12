@@ -105,7 +105,8 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
         mBaseList = null;
         mActionTag = actionTag;
         
-        DataQuery dataQuery = new DataQuery(mContext);
+        String filter = DataQuery.makeFilterRequest(mSphinx.getDiscoverListFragment().getFilterList());
+        DataQuery dataQuery = new DataQuery(mSphinx.getDiscoverListFragment().getLastQuery());
         
         if (object instanceof Tuangou) {
             mTuangou = (Tuangou) object;
@@ -120,7 +121,7 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
             mFendianAdapter.notifyDataSetChanged();
 
             DataQuery fendianQuery = mTuangou.getFendianQuery();
-            if (fendianQuery != null && mSphinx.getDiscoverListFragment().getLastQuery().getParameter(DataQuery.SERVER_PARAMETER_FILTER).equals(fendianQuery.getParameter(DataQuery.SERVER_PARAMETER_FILTER))) {
+            if (fendianQuery != null && filter.equals(fendianQuery.getParameter(DataQuery.SERVER_PARAMETER_FILTER))) {
                 setDataQuery(fendianQuery, true);
                 return;
             }
@@ -141,7 +142,7 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
             mYingxunAdapter.notifyDataSetChanged();
             
             DataQuery yingxunQuery = mDianying.getYingxunQuery();
-            if (yingxunQuery != null && mSphinx.getDiscoverListFragment().getLastQuery().getParameter(DataQuery.SERVER_PARAMETER_FILTER).equals(yingxunQuery.getParameter(DataQuery.SERVER_PARAMETER_FILTER))) {
+            if (yingxunQuery != null && filter.equals(yingxunQuery.getParameter(DataQuery.SERVER_PARAMETER_FILTER))) {
                 setDataQuery(yingxunQuery, true);
                 return;
             }
@@ -152,8 +153,8 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
         
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, String.valueOf(0));
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, mDataType);
-        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_FILTER, DataQuery.makeFilterRequest(mSphinx.getDiscoverListFragment().getFilterList()));
-        dataQuery.copyLocationParameter(mSphinx.getDiscoverListFragment().getLastQuery());
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_FILTER, filter);
+        dataQuery.delParameter(DataQuery.SERVER_PARAMETER_PICTURE);
         dataQuery.setup(getId(), getId(), null, false, true, null);
         
         mSphinx.queryStart(dataQuery);
