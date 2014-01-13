@@ -10,7 +10,6 @@
         android:layout_height="wrap_content" >
     	<include android:id="@+id/content_lnl" layout="@layout/traffic_query_input_block" />
     </FrameLayout>
-       	
     <ScrollView
         android:id="@+id/traffic_scroll"
         android:layout_width="fill_parent"
@@ -22,7 +21,10 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="8dp"
+            android:paddingLeft="8dp"
+            android:paddingTop="12dp"
+            android:paddingRight="8dp"
+            android:paddingBottom="8dp"
             android:orientation="vertical" >
 	            
 		    <LinearLayout 
@@ -85,5 +87,12 @@
 		   	</LinearLayout>
         </LinearLayout>
     </ScrollView>
+       	
+    <ImageView 
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/content_frl"
+        android:background="@drawable/bg_sawtooth"
+        />
    
 </RelativeLayout>
