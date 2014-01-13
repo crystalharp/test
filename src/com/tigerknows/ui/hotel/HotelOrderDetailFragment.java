@@ -485,8 +485,14 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
 
 	@Override
 	public void onPause() {
+		if(getId() == R.id.view_hotel_order_detail_2){
+			Message msg = new Message();
+			msg.what = Sphinx.HOTEL_ORDER_OLD_SYNC;
+			msg.arg1 = mOrder.getState();
+			msg.obj = mOrder.getId();
+			mSphinx.getHandler().sendMessage(msg);
+		}
 		super.onPause();
-		
 	}
 
     @Override
@@ -680,6 +686,13 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
 	@Override
 	public String getLogTag() throws Exception {
 		return TAG;
+	}
+	
+	public void handleMessage(Message msg){
+		String id = msg.obj.toString();
+		if(TextUtils.equals(id, mOrder.getId())){
+			mOrder.setState(msg.arg1);
+		}
 	}
     
 }

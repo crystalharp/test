@@ -27,7 +27,7 @@
 	        android:layout_height="wrap_content"
 	        android:layout_weight="1"
 	        android:contentDescription="@string/app_name"
-	        android:src="@drawable/bg_line_split" 
+	        android:src="@drawable/bg_category_divide" 
 	        android:layout_gravity="center_vertical"
 	        />        
     </LinearLayout>
