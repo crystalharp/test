@@ -1133,23 +1133,19 @@ public class MapView extends RelativeLayout implements
         if (itemizedOverlay != null &&
                 currentOverlay != null &&
                 itemizedOverlay.getName().equals(currentOverlay.getName())) {
+            mapScene.fragmentId = infoWindowFragment.getOwerFragmentId();
             mapScene.overlayItem = itemizedOverlay.getItemByFocused();
         } else {
             mapScene.overlayItem = null;
         }
         return mapScene;
     }
-    
-
-    public void restoreScene(MapScene mapScene) {
-        restoreScene(mapScene, R.id.view_result_map);
-    }
 
     /**
      * 还原地图状态（中心点、Shape、OverlayItem）
      * @param mapScene
      */
-    public void restoreScene(MapScene mapScene, int fragmentId) {
+    public void restoreScene(MapScene mapScene) {
         try {
             if (mapScene == null) {
                 return;
@@ -1167,7 +1163,7 @@ public class MapView extends RelativeLayout implements
             if (mapScene.position != null) {
                 centerOnPosition(mapScene.position, mapScene.zoomLevel);
             }
-            sphinx.showInfoWindow(fragmentId, mapScene.overlayItem, false);
+            sphinx.showInfoWindow(mapScene.fragmentId, mapScene.overlayItem, false);
         } catch (APIException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -1181,6 +1177,7 @@ public class MapView extends RelativeLayout implements
         public List<ItemizedOverlay> itemizedOverlayList;
         public List<Shape> shapeList;
         public OverlayItem overlayItem;
+        public int fragmentId;
     }
 
     public boolean ensureThreadRunning() {
