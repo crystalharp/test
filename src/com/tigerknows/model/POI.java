@@ -1628,6 +1628,7 @@ public class POI extends BaseData {
     	POI newPOI = new POI();
     	newPOI.setName(this.name);
     	newPOI.setPosition(this.position);
+    	newPOI.setSourceType(this.sourceType);
     	
     	return newPOI;
     }

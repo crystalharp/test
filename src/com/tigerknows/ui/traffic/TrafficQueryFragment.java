@@ -688,6 +688,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	
 	private boolean processMyLocation(POI p) {
 	    if (p.getName().equals(MY_LOCATION)) {
+	        p.setSourceType(POI.SOURCE_TYPE_MY_LOCATION);
             if (p.getPosition() != null) {
                 p.setName(getMyLocationName(mSphinx, p.getPosition()));
                 return true;
