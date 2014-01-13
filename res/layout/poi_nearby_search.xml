@@ -23,10 +23,6 @@
 		        android:orientation="vertical"
 		        android:background="@drawable/bg_white"
 		        android:layout_marginBottom="8dp"
-                android:shadowDx="0"
-                android:shadowDy="1"
-                android:shadowColor="#a77a00"
-                android:shadowRadius="1"		        
 		        >
 		        <LinearLayout android:id="@+id/hot_0_lly"
 		            android:layout_width="fill_parent"
@@ -155,6 +151,12 @@
 		                />		            		                
 		        </LinearLayout>		        	        		        		        
 		    </LinearLayout>    
+		    <ImageView 
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+	            android:layout_marginTop="-9dp"
+		        android:background="@drawable/bg_sawtooth"
+		        />
 		    <Button android:id="@+id/hot_fold_btn"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"

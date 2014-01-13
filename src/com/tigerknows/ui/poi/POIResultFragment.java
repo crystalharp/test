@@ -736,7 +736,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             
             nameTxv.setText(poi.getName());
             
-            showDistance(activity, distanceFromTxv, distanceTxv, poi.getToCenterDistance(), distanceA, icAPOI);
+            showDistance(activity, distanceFromTxv, distanceTxv, showStamp ? poi.getToCenterDistance() : null, distanceA, icAPOI);
             
             boolean dish = false;
             List<DynamicPOI> list = poi.getDynamicPOIList();

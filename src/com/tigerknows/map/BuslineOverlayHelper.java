@@ -71,7 +71,9 @@ public class BuslineOverlayHelper {
 		        Icon busStartIc = Icon.getIcon(sphinx.getResources(), R.drawable.icon_start_pin, Icon.OFFSET_LOCATION_CENTER_BOTTOM);
                 Icon busEndIc = Icon.getIcon(sphinx.getResources(), R.drawable.icon_end_pin, Icon.OFFSET_LOCATION_CENTER_BOTTOM);
 		        Icon busStationIc = Icon.getIcon(sphinx.getResources(), R.drawable.icon_map_bus);
+                Icon busStationIcFocused = Icon.getIcon(sphinx.getResources(), R.drawable.icon_map_bus_focused);
 		        Icon busIc = null;
+		        Icon busIcFocused = null;
 		        int i = 0;
 		        final int startIndex = 0;
 		        final int endIndex = poiList.size() - 1;
@@ -79,14 +81,17 @@ public class BuslineOverlayHelper {
 				for (POI poi : poiList) {
 					if (i == startIndex) {
 						busIc = busStartIc;
+                        busIcFocused = busStartIc;
 					} else if (i == endIndex) {
 						busIc = busEndIc;
+                        busIcFocused = busEndIc;
 					} else {
 						busIc = busStationIc;
+						busIcFocused = busStationIcFocused;
 					}
 					i++;
 					
-					OverlayItem overlayItem = new OverlayItem(poi.getPosition(), busIc, busIc, sphinx.getString(R.string.busline_map_bubble_content, i, poi.getName()), rt);
+					OverlayItem overlayItem = new OverlayItem(poi.getPosition(), busIc, busIcFocused, sphinx.getString(R.string.busline_map_bubble_content, i, poi.getName()), rt);
 					
 					overlayItem.setPreferZoomLevel(DEFAULT_SHOW_STEP_ZOOMLEVEL);
 	                
