@@ -305,7 +305,13 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         }
         
         if (isShowing()) {
-            mTitleBtn.setHint(mTitleText);
+            if (BaseQuery.SUB_DATA_TYPE_HOTEL.equals(mResultAdapter.getSubDataType())) {
+                mTitleBtn.setText(mTitleText);
+                mTitleBtn.setHint(null);
+            } else {
+                mTitleBtn.setText(null);
+                mTitleBtn.setHint(mTitleText);
+            }
         }
 
         if (BaseQuery.SUB_DATA_TYPE_HOTEL.equals(mResultAdapter.getSubDataType())) {
@@ -993,7 +999,8 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             }
         }
         
-        if (dataQuery.isTurnPage() == false && resetFilter) {
+        if ((dataQuery.getFilterList() != null && dataQuery.getFilterList().size() > 0)
+                || resetFilter) {
             List<Filter> filterList = dataQuery.getFilterList();
             refreshFilter(filterList);
         }
