@@ -29,6 +29,7 @@ import com.tigerknows.map.TrafficOverlayHelper;
 import com.tigerknows.model.TrafficModel;
 import com.tigerknows.model.TrafficModel.AddtionalInfo;
 import com.tigerknows.model.TrafficModel.Plan;
+import com.tigerknows.model.TrafficModel.Plan.PlanTag;
 import com.tigerknows.model.TrafficQuery;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.ui.traffic.TrafficDetailFragment.PlanItemRefresher;
@@ -194,7 +195,14 @@ public class TrafficResultFragment extends BaseFragment {
                 if (position >= mPlanList.size()) {
                     return;
                 }
-                mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position, mPlanList.get(position).getPlanTagList().toString());
+                List<PlanTag> list = mPlanList.get(position).getPlanTagList();
+                String tags;
+                if (list != null) {
+                    tags = mPlanList.get(position).getPlanTagList().toString();
+                } else {
+                    tags = "";
+                }
+                mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position, tags);
                 focusedIndex = position;
                 mSphinx.getTrafficDetailFragment().addResult(mTrafficQuery, mPlanList.get(0).getType(), mPlanList);
                 mSphinx.getTrafficDetailFragment().refreshResult(mPlanList.get(0).getType(), position);
