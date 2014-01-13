@@ -572,7 +572,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                     }
                 }
                 
-                Toast.makeText(mSphinx, getString(R.string.no_result), Toast.LENGTH_LONG).show();
+                Toast.makeText(mSphinx, getString(R.string.can_not_found_target_location), Toast.LENGTH_LONG).show();
                 
             } else if (BaseQuery.DATA_TYPE_POI.equals(dataType)) {
                 int result = dealWithPOIResponse((DataQuery) baseQuery, mSphinx, this);
