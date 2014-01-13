@@ -1027,7 +1027,7 @@ public class POI extends BaseData {
                 data.put(FIELD_PRICE, this.price);
             }
             if (hotelService != null) {
-                data.put(FIELD_HOTEL_SERVICE, service);
+                data.put(FIELD_HOTEL_SERVICE, hotelService);
             }
             if (roomDescription != null) {
                 data.put(FIELD_ROOM_DESCRIPTION, roomDescription);
