@@ -595,10 +595,19 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
     
     public void updateSearchHistory(SearchHistory sh) {
         int index = mQueryHistorys.indexOf(sh);
-        sh = mQueryHistorys.get(index);
-        mQueryHistorys.remove(sh);
-        mQueryHistorys.add(0, sh);
-        mHistoryTable.update(sh);
+        SearchHistory oldsh = mQueryHistorys.get(index);
+        if (sh.start.equals(oldsh.start) && sh.end.equals(oldsh.end)) {
+            //update老对象是因为新对象并没有在数据库里
+            mQueryHistorys.remove(oldsh);
+            mQueryHistorys.add(0, oldsh);
+            mHistoryTable.update(oldsh);
+        } else {
+            //searchhistory相等只判定了名字，如果poi位置不相同需要删掉老的添加新的
+            mQueryHistorys.remove(oldsh);
+            mQueryHistorys.add(0, sh);
+            mHistoryTable.delete(oldsh);
+            mHistoryTable.add(sh);
+        }
         mQueryHistoryAdapter.refreshList(mQueryHistorys);
     }
     
