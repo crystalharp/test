@@ -908,8 +908,8 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
             }
             TextView name = (TextView) convertView.findViewById(R.id.name_txv);
             TextView address = (TextView) convertView.findViewById(R.id.address_txv);
-            name.setText(mList.get(position).getName());
-            address.setText(mList.get(position).getAddress());
+            setTxvText(name, mList.get(position).getName());
+            setTxvText(address, mList.get(position).getAddress());
             return convertView;
         }
 	    

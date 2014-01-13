@@ -3,18 +3,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/list_middle"
+    android:padding="16dp"
     android:orientation="vertical" >
 
     <TextView
         android:id="@+id/name_txv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="@color/black_dark"
+        android:textSize="16sp"
         android:text="TextView" />
 
     <TextView
         android:id="@+id/address_txv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="@color/black_light"
+        android:textSize="14sp"
         android:text="TextView" />
 
 </LinearLayout>
