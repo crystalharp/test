@@ -277,6 +277,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     private static final int EXIT_APP_TIME = 2000;
 
     private long mLastBackKeyDown = -1;
+    private boolean mResetLocatoinBtnWhenTouch = false;
 
     /**
      * 来自第三方的调用
@@ -552,6 +553,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 
                 @Override
                 public void onClickPOIEvent(EventSource eventSource, Position position, String name, Position touchPosition) {
+                    if (mResetLocatoinBtnWhenTouch) {
+                        return;
+                    }
 
                     if(touchMode.equals(TouchMode.CLICK_SELECT_POINT)) {
                         return;
@@ -679,6 +683,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 @Override
                 public void onTouchEvent(EventSource eventSource, Position position) {
 
+                    if (mMyLocation.mode == MyLocation.MODE_ROTATION) {
+                        mResetLocatoinBtnWhenTouch = true;
+                    }
                     resetLoactionButtonState();
 
                     if (infoWindowBackInHome(ItemizedOverlay.MY_LOCATION_OVERLAY)) {
@@ -691,6 +698,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             EventRegistry.addEventListener(mMapView, MapView.EventType.TOUCHUP, new MapView.TouchEventListener(){
                 @Override
                 public void onTouchEvent(EventSource eventSource, Position position) {
+                    
+                    mResetLocatoinBtnWhenTouch = false;
 
                     if(touchMode.equals(TouchMode.CLICK_SELECT_POINT)) {
                         return;
@@ -737,6 +746,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             EventRegistry.addEventListener(mMapView, MapView.EventType.LONGCLICK, new MapView.LongClickEventListener(){
                 @Override
                 public void onLongClickEvent(MapView mapView, Position position) {
+                    if (mResetLocatoinBtnWhenTouch) {
+                        return;
+                    }
                     Message message = Message.obtain();
                     message.what = MAP_LONG_CLICKED;
                     message.obj = position;
