@@ -1215,6 +1215,7 @@ public class TilesView extends GLSurfaceView {
 								}
 							}
 						}
+						mParentMapView.executeClickListeners(position);
 
 					} else {
 //                        infoWindow.setVisible(false);
