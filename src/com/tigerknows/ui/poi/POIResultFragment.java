@@ -404,6 +404,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             mRetryView.setVisibility(View.GONE);
             mEmptyView.setVisibility(View.VISIBLE);
             mResultLsv.setVisibility(View.GONE);
+            mNavigationWidget.setVisibility(View.GONE);
             if (isShowing()) {
                 mRightBtn.setVisibility(View.INVISIBLE);
             }
