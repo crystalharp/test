@@ -18,7 +18,6 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.View.OnTouchListener;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -30,7 +29,6 @@ import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
-import com.tigerknows.android.location.Position;
 import com.tigerknows.android.os.TKAsyncTask;
 
 import android.widget.Toast;
@@ -49,8 +47,6 @@ import com.tigerknows.model.DataQuery.FilterOption;
 import com.tigerknows.model.DataQuery.FilterResponse;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
-import com.tigerknows.ui.HomeFragment;
-import com.tigerknows.util.Utility;
 import com.tigerknows.widget.FilterListView;
 
 /**
@@ -786,7 +782,18 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         
         int responseCode = response.getResponseCode();
         if (responseCode == Response.RESPONSE_CODE_DISCOVER_NO_SUPPORT){
-            Toast.makeText(mSphinx, "本城市没有所请求的发现类型"+dataQuery.getParameter(BaseQuery.SERVER_PARAMETER_DATA_TYPE), Toast.LENGTH_LONG).show();
+            int resId = R.string.no_result;
+            String dataType = dataQuery.getParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE);
+            if (DataQuery.DATA_TYPE_TUANGOU.equals(dataType)) {
+                resId = R.string.this_city_not_support_tuangou;
+            } else if (DataQuery.DATA_TYPE_DIANYING.equals(dataType)) {
+                resId = R.string.this_city_not_support_dianying;
+            } else if (DataQuery.DATA_TYPE_YANCHU.equals(dataType)) {
+                resId = R.string.this_city_not_support_yanchu;
+            } else if (DataQuery.DATA_TYPE_ZHANLAN.equals(dataType)) {
+                resId = R.string.this_city_not_support_zhanlan;
+            }
+            Toast.makeText(mSphinx, resId, Toast.LENGTH_LONG).show();
             return;
         }
          

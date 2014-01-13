@@ -736,6 +736,7 @@ public class POI extends BaseData {
     
     public void setToCenterDistance(String toCenterDistance) {
         this.toCenterDistance = toCenterDistance;
+        getData().put(FIELD_TO_CENTER_DISTANCE, this.toCenterDistance);
     }
     
     public long getGrade() {

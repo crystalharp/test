@@ -71,6 +71,7 @@ import com.tigerknows.share.ShareAPI;
 import com.tigerknows.share.TKWeixin;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
+import com.tigerknows.ui.poi.POIResultFragment.POIAdapter;
 import com.tigerknows.util.Utility;
 
 /**
@@ -146,8 +147,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     private TextView mDistanceFromTxv;
     
     private Drawable mIcAPOI;
-    
-    private String mDistance;
     
     private String mDistanceA;
 
@@ -578,7 +577,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
 
         Resources resources = mSphinx.getResources();
         mIcAPOI = resources.getDrawable(R.drawable.ic_location_nearby);
-        mDistance = getString(R.string.distance);
         mDistanceA = getString(R.string.distanceA);
         
         mDynamicNormalPOI = new DynamicNormalPOI(this, mLayoutInflater);
@@ -722,22 +720,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         }
         
         String distance = poi.getToCenterDistance();
-        if (!TextUtils.isEmpty(distance)) {
-            if (distance.startsWith(mDistanceA)) {
-                mIcAPOI.setBounds(0, 0, mIcAPOI.getIntrinsicWidth(), mIcAPOI.getIntrinsicHeight());
-                mDistanceFromTxv.setCompoundDrawables(null, null, mIcAPOI, null);
-                mDistanceFromTxv.setText(mDistance);
-                mDistanceTxv.setText(distance.replace(mDistanceA, ""));
-            } else {
-                mDistanceFromTxv.setText("");
-                mDistanceFromTxv.setCompoundDrawables(null, null, null, null);
-                mDistanceTxv.setText(distance);
-            }
-        } else {
-            mDistanceFromTxv.setText("");
-            mDistanceFromTxv.setCompoundDrawables(null, null, null, null);
-            mDistanceTxv.setText("");
-        }
+        POIAdapter.showDistance(mSphinx, mDistanceFromTxv, mDistanceTxv, distance, mDistanceA, mIcAPOI);
         
         RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams)mMoneyTxv.getLayoutParams();
         SpannableStringBuilder description = getDescription();
