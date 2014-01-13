@@ -185,7 +185,10 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
                 return;
             }
             TrafficDetailFragment f = mSphinx.getTrafficDetailFragment();
-            if (plan.getType() == Step.TYPE_DRIVE || plan.getType() == Step.TYPE_WALK) {
+            if (plan.getType() == Step.TYPE_DRIVE ) {
+                f.refreshDrive(plan);
+                mSphinx.showView(R.id.view_traffic_result_detail);
+            } else if (plan.getType() == Step.TYPE_WALK) {
                 f.refreshResult(plan.getType());
                 mSphinx.showView(R.id.view_traffic_result_detail);
             } else if (plan.getType() == Step.TYPE_TRANSFER) {
