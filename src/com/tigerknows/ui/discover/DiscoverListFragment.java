@@ -6,7 +6,6 @@ package com.tigerknows.ui.discover;
 
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
-import com.tigerknows.TKConfig;
 import com.tigerknows.android.location.Position;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
@@ -739,7 +738,6 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             ImageView pictureImv = (ImageView) view.findViewById(R.id.picture_imv);
             TextView nameTxv = (TextView) view.findViewById(R.id.name_txv);
             RatingBar starsRtb = (RatingBar) view.findViewById(R.id.stars_rtb);
-            TextView nearestDistanceTxv = (TextView) view.findViewById(R.id.nearest_distance_txv);
             TextView distanceTxv = (TextView) view.findViewById(R.id.distance_txv);
             TextView distanceFromTxv = (TextView) view.findViewById(R.id.distance_from_txv);
             TextView addressTxv = (TextView) view.findViewById(R.id.category_txv);
@@ -757,13 +755,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             
             nameTxv.setText(dianying.getName());
             starsRtb.setProgress((int) dianying.getRank());
-            String distance = dianying.getYingxun().getDistance();
-            if (TextUtils.isEmpty(distance)) {
-                nearestDistanceTxv.setVisibility(View.GONE);
-            } else {
-                nearestDistanceTxv.setVisibility(View.VISIBLE);
-            }
-            POIAdapter.showDistance(mSphinx, distanceFromTxv, distanceTxv, distance, distanceA, icAPOI);
+            POIAdapter.showDistance(mSphinx, distanceFromTxv, distanceTxv, dianying.getYingxun().getDistance(), distanceA, icAPOI);
             
             addressTxv.setText(dianying.getTag());
             if (TextUtils.isEmpty(dianying.getLength())) {

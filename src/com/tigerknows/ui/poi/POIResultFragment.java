@@ -1001,11 +1001,10 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         
         POIList poiList = poiResponse.getBPOIList();
         
+        mDataQuery = dataQuery;
         if (poiList != null && 
                 poiList.getList() != null && 
                 poiList.getList().size() > 0) {
-            
-            mDataQuery = dataQuery;
             mState = STATE_LIST;
 
             List<POI> bPOIList = null;

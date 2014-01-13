@@ -124,6 +124,9 @@
                 android:id="@+id/location_txv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:lineSpacingExtra="0dp"
+                android:includeFontPadding="false"
                 android:text="@string/location_text"
                 android:textSize="8sp"/>
         </LinearLayout>
