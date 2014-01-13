@@ -413,12 +413,6 @@ public class POI extends BaseData {
 
     public static final int SOURCE_TYPE_MAP_CENTER = 2;
 
-    public static final int SOURCE_TYPE_SELECT_POINT = 3;
-
-    public static final int SOURCE_TYPE_CITY_CENTER = 4;
-
-    public static final int SOURCE_TYPE_OTHER = 5;
-
     public static final int SOURCE_TYPE_TUANGOU = 6;
 
     public static final int SOURCE_TYPE_FENDIAN = 7;
