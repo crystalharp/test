@@ -141,8 +141,9 @@
             android:layout_height="wrap_content"
             android:gravity="left|center_vertical"
             android:text="1\n1\n1"
-            android:textSize="16sp"
-            android:lines="3"
+            android:textSize="14sp"
+	        android:lineSpacingExtra="4dp"
+            android:lines="4"
              >
         </TextView>
         
