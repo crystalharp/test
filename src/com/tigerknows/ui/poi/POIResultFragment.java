@@ -1017,13 +1017,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             if (!dataQuery.isTurnPage()) {
                 mInputText = dataQuery.getParameter(BaseQuery.SERVER_PARAMETER_KEYWORD);
                 mPOIList.clear();
-                mSphinx.getHandler().post(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        mResultLsv.setSelectionFromTop(0, 0);
-                    }
-                });
+                mResultLsv.setAdapter(mResultAdapter);
                 mAPOI = dataQuery.getPOI();
                 Position centerPosition = poiList.getPosition();
                 if (centerPosition != null) {

@@ -975,13 +975,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             
             if (dataQuery.isTurnPage() == false) {
                 getList().clear();
-                mSphinx.getHandler().post(new Runnable() {
-                    
-                    @Override
-                    public void run() {
-                        mResultLsv.setSelectionFromTop(0, 0);
-                    }
-                });
+                mResultLsv.setAdapter(getAdapter());
                 mAPOI = dataQuery.getPOI();
                 Position centerPosition = discoverResult.getCenterPosition();
                 if (centerPosition != null) {

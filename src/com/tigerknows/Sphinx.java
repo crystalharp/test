@@ -801,7 +801,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         queryStart(list);
 	}
 
-	void resetShowInPreferZoom() {
+	private void resetShowInPreferZoom() {
         ItemizedOverlay overlay = mMapView.getCurrentOverlay();
         if (overlay != null) {
             overlay.isShowInPreferZoom = false;
@@ -1463,8 +1463,14 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             }
             uiStackClose(new int[]{R.id.view_home});
             showView(R.id.view_home);
-            POI poi = getMyLocationPOI();
-            if (poi.getPosition() != null) {
+
+            POI poi = null;
+            if (mMyLocation.getPosition() != null) {
+                poi = ((POI) mMyLocation.getAssociatedObject()).clone();
+                poi.setName(getString(R.string.my_location)+":"+mMyLocation.getMessage());
+                poi.setSourceType(POI.SOURCE_TYPE_MY_LOCATION);
+            }
+            if (poi != null && poi.getPosition() != null) {
                 getResultMapFragment().setData(getString(R.string.result_map), ActionLog.POIDetailMap);
                 showView(R.id.view_result_map);
                 List<POI> list = new ArrayList<POI>();
@@ -3370,6 +3376,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     private boolean mFirstStartup = false;
     private boolean mUpgrade = false;
     private MyLocation mMyLocation;
+    private Position mMyPosition;
+    private String mMyName;
     private ItemizedOverlay mMyLocationOverlay;
     private Circle mMyLocationCircle;
     private Runnable mLocationChangedRun = new Runnable() {
@@ -3389,28 +3397,28 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             }
 
             if (myPosition != null && name != null) {
-                if (myPosition.equals(mMyLocation.getPosition()) && name.equals(mMyLocation.getMessage())) {
+                if (myPosition.equals(mMyPosition) && name.equals(mMyName)) {
                     return;
                 }
             } else if (myPosition != null && name == null) {
-                if (myPosition.equals(mMyLocation.getPosition()) && mMyLocation.getMessage() == null) {
+                if (myPosition.equals(mMyPosition) && mMyName == null) {
                     return;
                 }
             } else if (myPosition == null) {
-                if (mMyLocation.getPosition() == null) {
+                if (mMyPosition == null) {
                     return;
                 }
             }
 
-            if (mMapView.isStopRefreshMyLocation()) {
-                return;
-            }
-
-            try {
-                mMyLocation.setPosition(myPosition);
-                mMyLocation.setMessage(name);
-            } catch (APIException e) {
-                e.printStackTrace();
+            mMyPosition = myPosition;
+            mMyName = name;
+            if (mMyPosition != null && mMyName != null) {
+                try {
+                    mMyLocation.setPosition(mMyPosition);
+                    mMyLocation.setMessage(mMyName);
+                } catch (APIException e) {
+                    e.printStackTrace();
+                }
             }
 
             updateMyLocation();
@@ -3418,9 +3426,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     };
 
     public void updateMyLocation() {
-        final Position myPosition = mMyLocation.getPosition();
         updateMyLocationOverlay();
 
+        Position myPosition = mMyPosition;
         if (myPosition != null) {
             if (MyLocation.MODE_NONE == mMyLocation.mode) {
                 updateLoactionButtonState(MyLocation.MODE_NAVIGATION);
@@ -3473,7 +3481,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 
     private boolean updateMyLocationOverlay(){
         try {
-            Position myLocation = mMyLocation.getPosition();
+            Position myLocation = mMyPosition;
             if(myLocation==null) {
                 mMapView.deleteOverlaysByName(ItemizedOverlay.MY_LOCATION_OVERLAY);
                 mMapView.deleteShapeByName(Shape.MY_LOCATION);
@@ -3526,7 +3534,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     }
 
     public void requestLocation() {
-        Position position = mMyLocation.getPosition();
+        Position position = mMyPosition;
         if (position == null) {
             updateLoactionButtonState(MyLocation.MODE_NONE);
             showTip(R.string.location_waiting, 3000);
@@ -3761,16 +3769,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         return mCenterTokenView;
     }
 
-    public POI getMyLocationPOI() {
-        POI poi = null;
-        if (mMyLocation.getPosition() != null) {
-            poi = ((POI) mMyLocation.getAssociatedObject()).clone();
-            poi.setName(getString(R.string.my_location));
-            poi.setSourceType(POI.SOURCE_TYPE_MY_LOCATION);
-        }
-        return poi;
-    }
-
     public POI getPOI(Position position, String defaultName) {
 
         POI poi = new POI();
@@ -3829,7 +3827,11 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, String.valueOf(0));
         if (poi == null) {
             poi = addCeterPositionParameter(dataQuery);
-        } else if (poi.getSourceType() != POI.SOURCE_TYPE_MY_LOCATION){
+        } else if (poi.getSourceType() == POI.SOURCE_TYPE_MY_LOCATION){
+            poi = poi.clone();
+            poi.setSourceType(POI.SOURCE_TYPE_MY_LOCATION);
+            addMyLocationParameter(dataQuery, poi.getPosition());
+        } else {
             if (poi.getUUID() != null) {
                 dataQuery.addParameter(DataQuery.SERVER_PARAMETER_POI_ID, poi.getUUID());
             }
