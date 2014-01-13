@@ -814,22 +814,22 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
             	} else if (type == Plan.Step.TYPE_DRIVE) {
             	    // 驾车
             	    f.refreshResult(type);
-            		if (sphinx.uiStackPeek() == R.id.view_result_map) {
-                        sphinx.getResultMapFragment().changeTrafficType(type);
+            		if (sphinx.uiStackPeek() == R.id.view_traffic_result_list_map) {
+                        sphinx.getTrafficResultListMapFragment().changeTrafficType(type);
                     } else {
-                        sphinx.getResultMapFragment().setData(null, ActionLog.TrafficDriveListMap);
-                        sphinx.showView(R.id.view_result_map);
+                        sphinx.getTrafficResultListMapFragment().setData(null, ActionLog.TrafficDriveListMap);
+                        sphinx.showView(R.id.view_traffic_result_list_map);
                         TrafficOverlayHelper.drawTrafficPlanListOverlay(sphinx, planList, 0);
                         TrafficOverlayHelper.panToViewWholeOverlay(planList.get(0), sphinx.getMapView(), sphinx);
                     }
             	} else if (type == Plan.Step.TYPE_WALK) {
                     // 步行方式
             	    f.refreshResult(type);
-                    if (sphinx.uiStackPeek() == R.id.view_result_map) {
-                        sphinx.getResultMapFragment().changeTrafficType(type);
+                    if (sphinx.uiStackPeek() == R.id.view_traffic_result_list_map) {
+                        sphinx.getTrafficResultListMapFragment().changeTrafficType(type);
                     } else {
-                        sphinx.getResultMapFragment().setData(null, ActionLog.TrafficWalkListMap);
-                        sphinx.showView(R.id.view_result_map);
+                        sphinx.getTrafficResultListMapFragment().setData(null, ActionLog.TrafficWalkListMap);
+                        sphinx.showView(R.id.view_traffic_result_list_map);
                         TrafficOverlayHelper.drawTrafficPlanListOverlay(sphinx, planList, 0);
                         TrafficOverlayHelper.panToViewWholeOverlay(planList.get(0), sphinx.getMapView(), sphinx);
                     }
