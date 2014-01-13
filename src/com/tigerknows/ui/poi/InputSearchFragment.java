@@ -751,7 +751,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
             } else {
                 poiResultFragment.setData(dataQuery, true);
 
-                sphinx.uiStackRemove(R.id.view_poi_input_search);
+                sphinx.uiStackClearTop(R.id.view_home);
                 ItemizedOverlayHelper.drawPOIOverlay(sphinx, bPOIList.getList(), 0, poiResultFragment.getAPOI());
                 sphinx.getResultMapFragment().setData(sphinx.getString(R.string.result_map), ActionLog.POIListMap);
                 sphinx.showView(R.id.view_result_map);
