@@ -48,13 +48,12 @@
             <TextView
                 android:layout_width="wrap_content" 
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:paddingTop="4dp"
                 android:background="@color/transparent"
                 android:drawableLeft="@drawable/ic_home_search_nearby"
                 android:drawablePadding="4dp"
                 android:text="@string/perimeter"
                 android:textSize="16sp"
-                android:gravity="center"
                 android:layout_centerInParent="true"/>
         </RelativeLayout>
                
@@ -67,13 +66,12 @@
             <TextView
                 android:layout_width="wrap_content" 
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:paddingTop="4dp"
                 android:background="@color/transparent"
                 android:drawableLeft="@drawable/ic_home_traffic"
                 android:drawablePadding="4dp"
                 android:text="@string/route"
                 android:textSize="16sp"
-                android:gravity="center"
                 android:layout_centerInParent="true"/>
         </RelativeLayout>
     </LinearLayout>

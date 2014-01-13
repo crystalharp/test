@@ -375,6 +375,14 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 } else if (msg.what == SHOW_MAPVIEW) {
                     checkLocation(true);
                     mMapOverView.setBackgroundDrawable(null);
+                    mHandler.postDelayed(new Runnable() {
+                        
+                        @Override
+                        public void run() {
+                            mCanAddCircle = true;
+                            updateMyLocationOverlay();
+                        }
+                    }, 3000);
                 } else if (msg.what == UI_STACK_ADJUST_READY){
                 	mUIStackAdjustReady = true;
                 } else if (msg.what == UI_STACK_ADJUST_EXECUTE){
@@ -2855,11 +2863,18 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         return baseFragment;
     }
 
+    public ViewGroup getTitleView() {
+        synchronized (mUILock) {
+            return mTitleView;
+        }
+    }
+
     public TitleFragment getTitleFragment() {
         synchronized (mUILock) {
             if (mTitleFragment == null) {
                 TitleFragment fragment = new TitleFragment(Sphinx.this);
                 fragment.onCreate(null);
+                fragment.setVisibility(View.GONE);
                 mTitleView.addView(fragment);
                 mTitleFragment = fragment;
             }
@@ -3411,6 +3426,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     private String mMyName;
     private ItemizedOverlay mMyLocationOverlay;
     private Circle mMyLocationCircle;
+    private boolean mCanAddCircle = false;
     private Runnable mLocationChangedRun = new Runnable() {
 
         @Override
@@ -3531,7 +3547,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 mMyLocationCircle=(Circle)mMapView.getShapesByName(Shape.MY_LOCATION);
                 if(mMyLocationCircle==null){
                     mMyLocationCircle = new Circle(myLocation, new Length(myLocation.getAccuracy(),UOM.M), Shape.MY_LOCATION);
-                    mMapView.addShape(mMyLocationCircle);
+                    if (mCanAddCircle) {
+                        mMapView.addShape(mMyLocationCircle);
+                    }
                 }else{
                     mMyLocationCircle.setPosition(myLocation);
                     mMyLocationCircle.setRadius(new Length(myLocation.getAccuracy(),UOM.M));

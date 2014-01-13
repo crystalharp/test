@@ -297,6 +297,13 @@ public class BaseFragment extends LinearLayout {
                 mActionLog.addAction(mActionTag);
             }
             
+            if (R.id.view_home == getId()) {
+                mSphinx.getTitleView().getChildAt(0).setVisibility(View.VISIBLE);
+                mSphinx.getTitleView().getChildAt(1).setVisibility(View.GONE);
+            } else {
+                mSphinx.getTitleView().getChildAt(0).setVisibility(View.GONE);
+                mSphinx.getTitleView().getChildAt(1).setVisibility(View.VISIBLE);
+            }
             mSphinx.replaceBodyUI(this);
             mSphinx.replaceBottomUI(this);
             mTitleFragment.reset();

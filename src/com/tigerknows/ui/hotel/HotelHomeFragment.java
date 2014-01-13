@@ -7,7 +7,6 @@ package com.tigerknows.ui.hotel;
 import com.decarta.Globals;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
-import com.tigerknows.TKConfig;
 import com.tigerknows.android.location.Position;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
@@ -169,6 +168,8 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     private void refreshTitleRightBtn() {
         HotelVendor hotelVendor = HotelVendor.getHotelVendorById(HotelVendor.SOURCE_DEFAULT, mSphinx, null);
         if (hotelVendor != null && hotelVendor.getReserveTel() != null) {
+            mRightBtn.setBackgroundResource(R.drawable.btn_cancel);
+            mRightBtn.setTextColor(mSphinx.getResources().getColor(R.color.black_dark));
             mRightBtn.setText(R.string.tel_reserve);
             mRightBtn.setTag(hotelVendor.getReserveTel());
             mRightBtn.setOnClickListener(this);

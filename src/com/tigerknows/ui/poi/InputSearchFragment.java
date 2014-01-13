@@ -656,6 +656,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
             
             if (mapCenter != null) {
                 mapView.centerOnPosition(mapCenter, zoomLevel);
+                sphinx.getHomeFragment().reset();
                 sphinx.uiStackClearTop(R.id.view_home);
                 result = POIResponse.FIELD_MAP_CENTER_AND_BORDER_RANGE;
                 return result;

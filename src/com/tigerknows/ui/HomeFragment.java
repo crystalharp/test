@@ -12,15 +12,11 @@ import com.tigerknows.Sphinx;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.MapView;
 import com.tigerknows.ui.poi.InputSearchFragment;
-import com.tigerknows.util.Utility;
 
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 
 /**
  * @author Peng Wenyue
@@ -32,12 +28,6 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
     }
 
     static final String TAG = "HomeFragment";
-    
-    private Drawable mSearchDrawable;
-    
-    private int mTitleBtnPaddingLeft;
-    
-    private int mTitleBtnPaddingRight;
     
     private ItemizedOverlay mItemizedOverlay;
     
@@ -60,43 +50,20 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         findViews();
         setListener();
         
-        mTitleBtnPaddingLeft = Utility.dip2px(mSphinx, 16);
-        mTitleBtnPaddingRight = Utility.dip2px(mSphinx, 8);
-
         return mRootView;
     }
 
     @Override
     protected void setListener() {
         // 不拦截触摸事件
+        mSphinx.getTitleView().getChildAt(0).findViewById(R.id.title_btn).setOnClickListener(this);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        mTitleBtn.setBackgroundResource(R.drawable.edt_home);
-        mTitleBtn.setOnClickListener(this);
-        mTitleBtn.setHint(R.string.find_poi);
-        mTitleBtn.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
-        RelativeLayout.LayoutParams layoutParams = (android.widget.RelativeLayout.LayoutParams) mTitleBtn.getLayoutParams();
-        layoutParams.leftMargin = mTitleBtnPaddingRight;
-        layoutParams.topMargin = mTitleBtnPaddingLeft;
-        layoutParams.rightMargin = mTitleBtnPaddingRight;
-        layoutParams.bottomMargin = mTitleBtnPaddingLeft;
-        
-        if (mSearchDrawable == null) {
-            mSearchDrawable = mSphinx.getResources().getDrawable(R.drawable.ic_home_search);
-        }
-        
-        mSearchDrawable.setBounds(0, 0, mSearchDrawable.getIntrinsicWidth(), mSearchDrawable.getIntrinsicHeight());
-        mTitleBtn.setCompoundDrawables(mSearchDrawable, null, null, null);
-        mTitleBtn.setCompoundDrawablePadding(mTitleBtnPaddingRight);
-        mTitleBtn.setPadding(mTitleBtnPaddingLeft, mTitleBtnPaddingRight, mTitleBtnPaddingLeft, mTitleBtnPaddingRight);
-        layoutParams.height = Utility.dip2px(mSphinx, 48);
 
         mLeftBtn.setVisibility(View.GONE);
-        
-        mTitleFragment.mRootView.setBackgroundDrawable(null);
         
         mSphinx.clearMap();
         mBottomFragment = mSphinx.getHomeBottomFragment();
@@ -135,6 +102,9 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
     }
     
     public void reset() {
+        if (mItemizedOverlay != null) {
+            mSphinx.getMapView().deleteOverlaysByName(mItemizedOverlay.getName());
+        }
         mItemizedOverlay = null;
         mOverlayItem = null;
     }

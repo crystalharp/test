@@ -35,6 +35,29 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         >
+        <RelativeLayout 
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp">
+            <Button 
+                android:id="@+id/title_btn"
+                android:layout_width="fill_parent"
+                android:layout_height="48dp"
+                android:paddingLeft="16dp"
+                android:paddingTop="8dp"
+                android:paddingRight="16dp"
+                android:paddingBottom="8dp"
+                android:background="@drawable/edt_home"
+                android:drawableLeft="@drawable/ic_home_search"
+                android:drawablePadding="8dp"
+                android:hint="@string/find_poi"
+                android:textSize="14sp"
+                android:singleLine="true"
+                android:ellipsize="end"
+                android:gravity="left|center_vertical"
+                >
+             </Button>
+        </RelativeLayout>
     </FrameLayout>
     
     <FrameLayout

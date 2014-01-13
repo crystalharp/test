@@ -324,7 +324,7 @@ public class MapEngine {
     }
 
     // 得到所有省的中英文名字，去掉香港、澳门
-    public static HashMap<String, String> getEprovincelist(Context context) {
+    private static HashMap<String, String> getEprovincelist(Context context) {
         HashMap<String, String> infoMap = new HashMap<String, String>();
         String allProvincesInfoStr = Ca.tk_get_eprovincelist();
         if(allProvincesInfoStr == null || allProvincesInfoStr.length() == 0)
