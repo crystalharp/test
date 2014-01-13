@@ -63,6 +63,7 @@ import com.tigerknows.model.DataQuery.POIResponse;
 import com.tigerknows.provider.HistoryWordTable;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
+import com.tigerknows.ui.traffic.BuslineResultLineFragment;
 import com.tigerknows.util.Utility;
 import com.tigerknows.widget.SpringbackListView;
 import com.tigerknows.widget.StringArrayAdapter;
@@ -601,7 +602,11 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
             return result;
         }
         
-        if (BaseActivity.checkResponseCode(dataQuery, sphinx, null, true, baseFragment, false)) {
+        boolean isBuslineTurnPage = dataQuery.hasLocalParameter(BuslineResultLineFragment.BUSLINE_TURNPAGE);
+        if (BaseActivity.checkResponseCode(dataQuery, sphinx, null, !isBuslineTurnPage, baseFragment, false)) {
+            if (isBuslineTurnPage) {
+                sphinx.getBuslineResultLineFragment().setData(null, dataQuery);
+            }
             result = -1;
             return result;
         }

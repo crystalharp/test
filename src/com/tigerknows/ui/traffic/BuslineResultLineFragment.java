@@ -32,12 +32,15 @@ import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.BuslineModel.Line;
 import com.tigerknows.model.DataQuery.POIResponse;
 import com.tigerknows.model.BuslineQuery;
+import com.tigerknows.model.Response;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.ui.poi.InputSearchFragment;
 import com.tigerknows.widget.SpringbackListView;
 import com.tigerknows.widget.SpringbackListView.OnRefreshListener;
 
 public class BuslineResultLineFragment extends BaseFragment {
+    
+    public static final String BUSLINE_TURNPAGE = "BUSLINE_TURNPAGE";
 
     public BuslineResultLineFragment(Sphinx sphinx) {
         super(sphinx);
@@ -113,8 +116,6 @@ public class BuslineResultLineFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
 
-        mCommentTxv.setText(getString(R.string.busline_result_title, mBuslineQuery.getKeyword(), 
-        		mBuslineModel.getTotal()));
         mTitleBtn.setText(getString(R.string.title_busline_result));
     	
         if (mResultLsv.isFooterSpringback()) {
@@ -211,6 +212,7 @@ public class BuslineResultLineFragment extends BaseFragment {
         if (mDataQuery != null) {
             DataQuery dataQuery = new DataQuery(mDataQuery);
             dataQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, String.valueOf(mLineList.size()));
+            dataQuery.addLocalParameter(BUSLINE_TURNPAGE, BUSLINE_TURNPAGE);
             dataQuery.setup(getId(), getId(), null, true, false, mDataQuery.getPOI());
             mSphinx.queryStart(dataQuery);
         } else {
@@ -237,16 +239,26 @@ public class BuslineResultLineFragment extends BaseFragment {
         if (mDataQuery != null) {
             buslineQuery = new BuslineQuery(mSphinx);
             buslineQuery.setup(dataQuery.getParameter(BaseQuery.SERVER_PARAMETER_KEYWORD), 0, false, R.id.view_traffic_busline_line_result, null);
-            buslineQuery.setBuslineModel(((POIResponse) mDataQuery.getResponse()).getBuslineModel());
+            Response response = mDataQuery.getResponse();
+            if (response != null && response instanceof POIResponse) {
+                buslineQuery.setBuslineModel(((POIResponse) response).getBuslineModel());
+            }
             buslineQuery.setTurnPage(mDataQuery.isTurnPage());
         }
         mResultLsv.onRefreshComplete(false);
         mResultLsv.setFooterSpringback(false);
         mBuslineQuery = buslineQuery;
-        mBuslineModel = mBuslineQuery.getBuslineModel();
+        BuslineModel buslineModel = mBuslineQuery.getBuslineModel();
+        
+        if (buslineModel != null) {
+            mBuslineModel = buslineModel;
+        }
+
+        mCommentTxv.setText(getString(R.string.busline_result_title, mBuslineQuery.getKeyword(), 
+                mBuslineModel.getTotal()));
         
         if (mBuslineQuery.isTurnPage()) {
-            if (mBuslineQuery.getBuslineModel() == null) {
+            if (buslineModel == null) {
                 mResultLsv.setFooterLoadFailed(true);
                 return;
             }
