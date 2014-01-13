@@ -133,6 +133,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
     CommonPlaceList mCommonPlaces = new CommonPlaceList(mSphinx);
 
     List<SearchHistory> mQueryHistorys = new LinkedList<SearchHistory>();
+    List<SearchHistory> mShowingQueryHistorys = new LinkedList<SearchHistory>();
     
     TrafficSearchHistoryTable mHistoryTable = new TrafficSearchHistoryTable(mSphinx);
     
@@ -575,43 +576,36 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
         }
     }
     
-    public void addSearchHistory(SearchHistory sh) {
-        if (!mQueryHistorys.contains(sh)) {
-            mHistoryTable.add(sh);
-            mQueryHistorys.add(0, sh);
-            while (mQueryHistorys.size() > MAX_QUERY_HISTORY) {
-                mQueryHistorys.remove(MAX_QUERY_HISTORY);
-            }
-            
-            if (mQueryHistorys.size() == 1) {
-                mQueryHistory.setVisibility(View.VISIBLE);
-                mQueryHistoryLst.setVisibility(View.VISIBLE);
-            }
-            mQueryHistoryAdapter.refreshList(mQueryHistorys);
-        } else {
-            updateSearchHistory(sh);
-        }
-    }
-    
-    public void updateSearchHistory(SearchHistory sh) {
-        int index = mQueryHistorys.indexOf(sh);
-        SearchHistory oldsh = mQueryHistorys.get(index);
-        if (sh.start.equals(oldsh.start) && sh.end.equals(oldsh.end)) {
-            //update老对象是因为新对象并没有在数据库里
+    //用来处理新生成的历史
+    private void addSearchHistory(SearchHistory sh) {
+        if (mQueryHistorys.contains(sh)) {
+            //各种各样看起来名字一样的历史需要先删除掉
+            int index = mQueryHistorys.indexOf(sh);
+            SearchHistory oldsh = mQueryHistorys.get(index);
             mQueryHistorys.remove(oldsh);
-            mQueryHistorys.add(0, oldsh);
-            mHistoryTable.update(oldsh);
-        } else {
-            //searchhistory相等只判定了名字，如果poi位置不相同需要删掉老的添加新的
-            mQueryHistorys.remove(oldsh);
-            mQueryHistorys.add(0, sh);
             mHistoryTable.delete(oldsh);
-            mHistoryTable.add(sh);
         }
-        mQueryHistoryAdapter.refreshList(mQueryHistorys);
+        mQueryHistorys.add(0, sh);
+        mHistoryTable.add(sh);
+        mShowingQueryHistorys = mQueryHistorys.subList(0, Math.min(mQueryHistorys.size(), MAX_QUERY_HISTORY));
+
+        if (mShowingQueryHistorys.size() == 1) {
+            mQueryHistory.setVisibility(View.VISIBLE);
+            mQueryHistoryLst.setVisibility(View.VISIBLE);
+        }
+        mQueryHistoryAdapter.refreshList(mShowingQueryHistorys);
     }
     
-    public void delSearchHistory(SearchHistory sh) {
+    //只用来处理有id的搜索历史
+    private void updateSearchHistory(SearchHistory sh) {
+        mQueryHistorys.remove(sh);
+        mQueryHistorys.add(0, sh);
+        mHistoryTable.update(sh);
+        mShowingQueryHistorys = mQueryHistorys.subList(0, Math.min(mQueryHistorys.size(), MAX_QUERY_HISTORY));
+        mQueryHistoryAdapter.refreshList(mShowingQueryHistorys);
+    }
+    
+    private void delSearchHistory(SearchHistory sh) {
         mQueryHistorys.remove(sh);
         mHistoryTable.delete(sh);
         mQueryHistoryAdapter.refreshList(mQueryHistorys);
@@ -625,13 +619,9 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
         if (mQueryHistorys.size() == 0) {
             mQueryHistory.setVisibility(View.GONE);
             mQueryHistoryLst.setVisibility(View.GONE);
-        } else if (mQueryHistorys.size() > MAX_QUERY_HISTORY) {
-            int size = mQueryHistorys.size();
-            for (int i = size - 1; i >= MAX_QUERY_HISTORY; i--) {
-                mQueryHistorys.remove(i);
-            }
         }
-        mQueryHistoryAdapter.refreshList(mQueryHistorys);
+        mShowingQueryHistorys = mQueryHistorys.subList(0, Math.min(mQueryHistorys.size(), MAX_QUERY_HISTORY));
+        mQueryHistoryAdapter.refreshList(mShowingQueryHistorys);
     }
     
 	public static String getMyLocationName(Sphinx mSphinx, Position position) {
