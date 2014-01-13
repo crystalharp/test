@@ -23,7 +23,6 @@
         <Button android:id="@+id/left_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
             android:background="@drawable/btn_back"
             android:textSize="14sp"
             android:textColor="@color/btn_title"

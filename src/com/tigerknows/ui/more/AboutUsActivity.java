@@ -32,7 +32,7 @@ public class AboutUsActivity extends BaseActivity implements View.OnClickListene
 
     private TextView mWebTxv;
     private TextView mWeiboTxv;
-    private TextView mBBSTxv;
+//    private TextView mBBSTxv;
 //    private TextView mWapTxv;
 //    private TextView mTelephoneTxv;
     private Button mPhoneButton;
@@ -88,7 +88,7 @@ public class AboutUsActivity extends BaseActivity implements View.OnClickListene
 //        mCitySuggestVersionImv = (ImageView) findViewById(R.id.city_suggest_version_imv);
         mWebTxv = (TextView) findViewById(R.id.web_txv);
         mWeiboTxv = (TextView) findViewById(R.id.weibo_txv);
-        mBBSTxv = (TextView) findViewById(R.id.bbs_txv);
+//        mBBSTxv = (TextView) findViewById(R.id.bbs_txv);
 //        mWapTxv = (TextView) findViewById(R.id.wap_txv);
         mPhoneButton = (Button) findViewById(R.id.telephone_btn);
     }
@@ -97,7 +97,7 @@ public class AboutUsActivity extends BaseActivity implements View.OnClickListene
         super.setListener();
         mWebTxv.setOnClickListener(this);
         mWeiboTxv.setOnClickListener(this);
-        mBBSTxv.setOnClickListener(this);
+//        mBBSTxv.setOnClickListener(this);
 //        mWapTxv.setOnClickListener(this);
         mPhoneButton.setOnClickListener(this);
     }
@@ -111,9 +111,9 @@ public class AboutUsActivity extends BaseActivity implements View.OnClickListene
             case R.id.weibo_txv:
                 mActionLog.addAction(mActionTag +  ActionLog.AboutUsWeibo);
                 break;
-            case R.id.bbs_txv:
-                mActionLog.addAction(mActionTag +  ActionLog.AboutUsBBS);
-                break;
+//            case R.id.bbs_txv:
+//                mActionLog.addAction(mActionTag +  ActionLog.AboutUsBBS);
+//                break;
 //            case R.id.wap_txv:
 //                mActionLog.addAction(ActionLog.AboutUsWap);
 //                break;

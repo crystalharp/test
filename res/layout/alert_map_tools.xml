@@ -140,6 +140,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
+                android:padding="8dp"
                 />
             <TextView 
                 android:layout_width="fill_parent"
@@ -147,7 +148,7 @@
                 android:layout_toLeftOf="@id/show_zoom_button_chb"
                 android:layout_centerVertical="true"
                 android:text="@string/show_zoom_button"
-                android:textColor="@color/black_light"
+                android:textColor="@color/black_dark"
                 />
          </RelativeLayout>
     </LinearLayout>

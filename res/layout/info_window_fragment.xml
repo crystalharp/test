@@ -20,6 +20,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_gravity="center_vertical"
+            android:layout_marginTop="8dp"
             android:textColor="@color/white"
             android:background="@drawable/btn_confirm"
             android:text="@string/detail" />
@@ -31,11 +32,12 @@
             android:layout_toLeftOf="@id/detail_btn"
             android:layout_alignParentTop="true"
             android:paddingTop="8dp"
+            android:paddingLeft="8dp"
             android:ellipsize="end"
             android:singleLine="true"
             android:text="@string/app_name"
             android:textColor="@color/black_dark"
-            android:textSize="16sp" >
+            android:textSize="18sp" >
         </TextView>
 
         <TextView
@@ -45,6 +47,7 @@
             android:layout_toLeftOf="@id/detail_btn"
             android:layout_below="@id/title_txv"
             android:paddingBottom="8dp"
+            android:paddingLeft="8dp"
             android:ellipsize="end"
             android:singleLine="true"
             android:text="@string/app_name"
@@ -57,8 +60,9 @@
         android:id="@+id/hotel_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:paddingLeft="8dp"
         android:orientation="vertical"
-        android:layout_marginTop="-16dp" >
+        android:layout_marginTop="-24dp" >
 
         <TextView
             android:id="@+id/hotel_price_txv"
@@ -80,7 +84,8 @@
         android:id="@+id/poi_view"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="-16dp" >
+        android:paddingLeft="8dp"
+        android:layout_marginTop="-24dp" >
 
         <RatingBar
             android:id="@+id/poi_stars_rtb"
@@ -147,7 +152,8 @@
         android:id="@+id/tuangou_view"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="-16dp" >
+        android:paddingLeft="8dp"
+        android:layout_marginTop="-24dp" >
 
         <TextView
             android:id="@+id/tuangou_price_txv"
@@ -169,6 +175,7 @@
         android:id="@+id/bottom_view"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:paddingTop="8dp"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
         android:paddingBottom="8dp"

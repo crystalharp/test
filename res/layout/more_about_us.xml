@@ -122,18 +122,6 @@
                     android:autoLink="web"
                     android:gravity="left|center_vertical"
                     />
-                 <TextView
-                    android:id="@+id/bbs_txv"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginTop="12dp"
-                    android:textColor="@color/black_dark"
-                    android:textSize="16sp"
-                    android:text="@string/about_bbs"
-                    android:autoLink="web"
-                    android:gravity="left|center_vertical"
-                    />
                 <TextView
                     android:id="@+id/qq_txv"
                     android:layout_width="fill_parent"
