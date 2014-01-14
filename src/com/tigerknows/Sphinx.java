@@ -2571,8 +2571,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 if (mBottomFragment != null &&
                         (fragment != null &&
                         (fragment.getId() == R.id.view_home ||
-                            fragment.getId() == R.id.view_result_map ||
-                            fragment.getId() == R.id.view_traffic_result_list_map))) {
+                            fragment.getId() == R.id.view_result_map))) {
                     mBottomView.addView(mBottomFragment);
                 }
             }
