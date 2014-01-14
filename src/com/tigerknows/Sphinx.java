@@ -651,9 +651,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 //                }
 //            });
 
-            EventRegistry.addEventListener(mMapView, MapView.EventType.CLICK, new MapView.ClickEventListener(){
+            EventRegistry.addEventListener(mMapView, MapView.EventType.TOUCHPIN, new MapView.TouchEventListener(){
                 @Override
-                public void onClickEvent(EventSource eventSource, Position position) {
+                public void onTouchEvent(EventSource eventSource, Position position) {
 
                     if(touchMode.equals(TouchMode.MEASURE_DISTANCE)) {
                         getMeasureDistanceFragment().addPoint(position);

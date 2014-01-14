@@ -251,10 +251,6 @@ public class MapView extends RelativeLayout implements
 	public interface SurfaceCreatedEventListener extends EventListener{
 		public void onSurfaceCreatedEvent();
 	}
-	
-    public interface ClickEventListener extends EventListener{
-        public void onClickEvent(EventSource eventSource, Position pos);
-    }
 
 	/**
 	 * listener for touch event
