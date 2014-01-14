@@ -107,6 +107,8 @@ public class HttpUtils {
         
         private String apiType;
         
+        private boolean isReTry = false;
+        
         private IRequestParameters parameters;
         
         private ProgressUpdate progressUpdate;
@@ -146,8 +148,9 @@ public class HttpUtils {
             this.url = url;
         }
         
-        public void setApiType(String apiType) {
+        public void setApiType(String apiType, boolean isReTry) {
             this.apiType = apiType;
+            this.isReTry = isReTry;
         }
         
         public void setParameters(IRequestParameters parameters) {
@@ -391,7 +394,7 @@ public class HttpUtils {
                         networkInfoDetail = networkInfo.getDetailedState().toString();
                     }
                     String uuid = this.parameters.getValue(BaseQuery.SERVER_PARAMETER_UUID);
-                    ActionLog.getInstance(context).addNetworkAction(apiType, reqTime, revTime, resTime, fail, networkInfoDetail, TKConfig.getSignalStrength(), TKConfig.getConnectivityType(context), isStop, uuid, reqSize, revSize);
+                    ActionLog.getInstance(context).addNetworkAction(apiType, reqTime, revTime, resTime, fail, networkInfoDetail, TKConfig.getSignalStrength(), TKConfig.getConnectivityType(context), isStop, uuid, reqSize, revSize, this.isReTry);
                 }
                 if (!keepAlive) {
                     close();
