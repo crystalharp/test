@@ -73,6 +73,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
 
     private TextView mHotelNameTxv;
     private TextView mDistanceTxv;
+    private TextView mDistanceFromTxv = null;
     private TextView mHotelAddressTxv;
     private TextView mHotelTelTxv;
     private TextView mOrderIdTxv;
@@ -146,6 +147,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
         super.findViews();
 		mHotelNameTxv = (TextView) mRootView.findViewById(R.id.name_txv);
 		mDistanceTxv = (TextView) mRootView.findViewById(R.id.distance_txv);
+        mDistanceFromTxv = (TextView) mRootView.findViewById(R.id.distance_from_txv);
 		mHotelAddressTxv = (TextView) mRootView.findViewById(R.id.address_txv);
 		mHotelTelTxv = (TextView) mRootView.findViewById(R.id.telephone_txv);
 		mOrderIdTxv = (TextView) mRootView.findViewById(R.id.order_id_txv);
@@ -420,7 +422,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
     		return;
     	}
     	
-    	DiscoverChildListFragment.showPOI(mContext, order.getHotelName(), null, order.getHotelAddress(), mOrder.getHotelTel(), mHotelNameTxv, mDistanceTxv, 
+    	DiscoverChildListFragment.showPOI(mContext, order.getHotelName(), null, order.getHotelAddress(), mOrder.getHotelTel(), mHotelNameTxv, mDistanceFromTxv, mDistanceTxv, 
     			mRootView.findViewById(R.id.address_view), mRootView.findViewById(R.id.telephone_view)
     			, mHotelAddressTxv, mHotelTelTxv, R.drawable.list_middle, R.drawable.list_footer, R.drawable.list_footer);
     	mOrderIdTxv.setText(order.getId().split("\\$")[0]);

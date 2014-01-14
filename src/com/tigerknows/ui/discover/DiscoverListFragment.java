@@ -195,9 +195,6 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     
     SpringbackListView.IPagerListCallBack mIPagerListCallBack = null;
     
-    private Drawable icAPOI;
-    private String distanceA;
-    
     /**
      * 显示查询状态
      * @param dataQuery
@@ -225,8 +222,6 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {  
         mRootView = mLayoutInflater.inflate(R.layout.poi_result, container, false);
-        icAPOI = mSphinx.getResources().getDrawable(R.drawable.ic_location_nearby);
-        distanceA = getString(R.string.distanceA);
 
         findViews();
         setListener();
@@ -699,7 +694,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             priceTxv.setText(tuangou.getPrice());
             orgPriceTxv.setText(tuangou.getOrgPrice()+rmb);
             orgPriceTxv.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
-            POIAdapter.showDistance(mSphinx, distanceFromTxv, distanceTxv, tuangou.getFendian().getDistance(), distanceA, icAPOI);
+            POIAdapter.showDistance(mSphinx, distanceFromTxv, distanceTxv, tuangou.getFendian().getDistance());
             buyerNumTxv.setText(String.valueOf(tuangou.getBuyerNum())+getString(R.string.people));
             
             if (tuangou.getAppointment() == 1) {
@@ -755,7 +750,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             
             nameTxv.setText(dianying.getName());
             starsRtb.setProgress((int) dianying.getRank());
-            POIAdapter.showDistance(mSphinx, distanceFromTxv, distanceTxv, dianying.getYingxun().getDistance(), distanceA, icAPOI);
+            POIAdapter.showDistance(mSphinx, distanceFromTxv, distanceTxv, dianying.getYingxun().getDistance());
             
             addressTxv.setText(dianying.getTag());
             if (TextUtils.isEmpty(dianying.getLength())) {
@@ -809,7 +804,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             nameTxv.setText(yanchu.getName());
             starsRtb.setProgress((int) yanchu.getHot());
             addressTxv.setText(yanchu.getAddress());
-            POIAdapter.showDistance(mSphinx, distanceFromTxv, distanceTxv, yanchu.getDistance(), distanceA, icAPOI);
+            POIAdapter.showDistance(mSphinx, distanceFromTxv, distanceTxv, yanchu.getDistance());
             dateTxv.setText(yanchu.getTimeDesc());
             
             return view;
@@ -858,7 +853,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             nameTxv.setText(yanchu.getName());
             starsRtb.setProgress((int) yanchu.getHot());
             addressTxv.setText(yanchu.getAddress());
-            POIAdapter.showDistance(mSphinx, distanceFromTxv, distanceTxv, yanchu.getDistance(), distanceA, icAPOI);
+            POIAdapter.showDistance(mSphinx, distanceFromTxv, distanceTxv, yanchu.getDistance());
             dateTxv.setText(yanchu.getTimeDesc());
             
             return view;

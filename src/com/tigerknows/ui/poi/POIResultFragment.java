@@ -618,9 +618,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     public static class POIAdapter extends ArrayAdapter<POI>{
         private static final int RESOURCE_ID = R.layout.poi_list_item;
         
-        private Drawable icAPOI;
         private Drawable icDish;
-        private String distanceA;
         private String commentTitle;
         private String addressTitle;
         private int aColor;
@@ -653,13 +651,11 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             this.viewToken = viewToken;
             layoutInflater = (LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             Resources resources = activity.getResources();
-            icAPOI = resources.getDrawable(R.drawable.ic_location_nearby);
             icDish = resources.getDrawable(R.drawable.ic_dynamicpoi_dish);
             commentTitle = resources.getString(R.string.comment) + " : ";
             addressTitle = resources.getString(R.string.address) + " : ";
             aColor = resources.getColor(R.color.blue);
             bColor = resources.getColor(R.color.black_dark);
-            distanceA = activity.getString(R.string.distanceA);
             hotelPicWidth = Util.dip2px(Globals.g_metrics.density, 68);
             padding = Util.dip2px(Globals.g_metrics.density, 4);
         }
@@ -730,19 +726,9 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 canReserveTxv.setVisibility(View.VISIBLE);
             }
             
-            if (position == 0 && poi.getResultType() == POIResponse.FIELD_A_POI_LIST && aTotal == 1) {
-                nameTxv.setTextColor(aColor);
-                icAPOI.setBounds(0, 0, icAPOI.getIntrinsicWidth(), icAPOI.getIntrinsicHeight());
-                nameTxv.setCompoundDrawables(icAPOI, null, null, null);
-                nameTxv.setCompoundDrawablePadding(padding);
-            } else {
-                nameTxv.setCompoundDrawables(null, null, null, null);
-                nameTxv.setTextColor(bColor);
-            }
-            
             nameTxv.setText(poi.getName());
             
-            showDistance(activity, distanceFromTxv, distanceTxv, showStamp ? poi.getToCenterDistance() : null, distanceA, icAPOI);
+            showDistance(activity, distanceFromTxv, distanceTxv, showStamp ? poi.getToCenterDistance() : null);
             
             boolean dish = false;
             List<DynamicPOI> list = poi.getDynamicPOIList();
@@ -859,12 +845,14 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             return view;
         }
         
-        public static void showDistance(Activity activity, TextView distanceFromTxv, TextView distanceTxv, String distance, String distanceA, Drawable icAPOI) {
+        public static void showDistance(Context context, TextView distanceFromTxv, TextView distanceTxv, String distance) {
             if (!TextUtils.isEmpty(distance)) {
+                String distanceA = context.getString(R.string.distanceA);
+                Drawable icAPOI = context.getResources().getDrawable(R.drawable.ic_location_nearby);
                 if (distance.startsWith(distanceA)) {
                     icAPOI.setBounds(0, 0, icAPOI.getIntrinsicWidth(), icAPOI.getIntrinsicHeight());
                     distanceFromTxv.setCompoundDrawables(null, null, icAPOI, null);
-                    distanceFromTxv.setText(activity.getString(R.string.distance));
+                    distanceFromTxv.setText(context.getString(R.string.distance));
                     distanceTxv.setText(distance.replace(distanceA, ""));
                 } else {
                     distanceFromTxv.setText("");

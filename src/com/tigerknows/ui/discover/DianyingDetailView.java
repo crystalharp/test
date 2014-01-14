@@ -79,6 +79,8 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
     
     private TextView mDistanceTxv = null;
     
+    private TextView mDistanceFromTxv = null;
+    
     private TextView mAddressTxv = null;
     
     private TextView mTelephoneTxv = null;
@@ -231,7 +233,7 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
         
         mYingxun = mData.getYingxun();
         DiscoverChildListFragment.showPOI(mSphinx, mYingxun.getName(), mYingxun.getDistance(), mYingxun.getAddress(), mYingxun.getPhone(), 
-                mFendianNameTxv, mDistanceTxv, mAddressView, mTelephoneView, mAddressTxv, mTelephoneTxv, 
+                mFendianNameTxv, mDistanceFromTxv, mDistanceTxv, mAddressView, mTelephoneView, mAddressTxv, mTelephoneTxv, 
                 R.drawable.list_middle, R.drawable.list_middle, R.drawable.list_middle);
         
         mNotimeView.setVisibility(View.GONE);
@@ -326,6 +328,7 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
         view.findViewById(R.id.tuangou_fendian_list_item).setPadding(0, 0, 0, 0);
         mFendianNameTxv = (TextView) view.findViewById(R.id.name_txv);
         mDistanceTxv = (TextView)view.findViewById(R.id.distance_txv);
+        mDistanceFromTxv = (TextView)view.findViewById(R.id.distance_from_txv);
         mAddressTxv = (TextView)view.findViewById(R.id.address_txv);
         mTelephoneTxv = (TextView)view.findViewById(R.id.telephone_txv);
         

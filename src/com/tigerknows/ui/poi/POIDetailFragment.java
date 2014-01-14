@@ -146,10 +146,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     
     private TextView mDistanceFromTxv;
     
-    private Drawable mIcAPOI;
-    
-    private String mDistanceA;
-
     private RatingBar mStartsRtb;
 
     private LinearLayout mFeatureView;
@@ -575,10 +571,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             }
         });
 
-        Resources resources = mSphinx.getResources();
-        mIcAPOI = resources.getDrawable(R.drawable.ic_location_nearby);
-        mDistanceA = getString(R.string.distanceA);
-        
         mDynamicNormalPOI = new DynamicNormalPOI(this, mLayoutInflater);
         
         mDynamicTuangouPOI = new DynamicTuangouPOI(this, mLayoutInflater);
@@ -720,7 +712,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         }
         
         String distance = poi.getToCenterDistance();
-        POIAdapter.showDistance(mSphinx, mDistanceFromTxv, mDistanceTxv, distance, mDistanceA, mIcAPOI);
+        POIAdapter.showDistance(mSphinx, mDistanceFromTxv, mDistanceTxv, distance);
         
         RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams)mMoneyTxv.getLayoutParams();
         SpannableStringBuilder description = getDescription();
