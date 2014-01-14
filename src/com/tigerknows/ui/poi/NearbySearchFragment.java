@@ -193,7 +193,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
 
     private FilterListView mFilterListView;
     private List<Filter> mFilterList;
-    
+    private boolean mRefreshDiscover = false;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -760,11 +760,14 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     }
 	
 	private void refreshDiscover(){
-        DataQuery dataQuery = new DataQuery(mSphinx);
-        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_DISCOVER);
-        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
-        dataQuery.setup(-1, -1, null, true);
-        mSphinx.queryStart(dataQuery);
+	    if (mRefreshDiscover == false) {
+	        mRefreshDiscover = true;
+            DataQuery dataQuery = new DataQuery(mSphinx);
+            dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_DISCOVER);
+            dataQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
+            dataQuery.setup(-1, -1, null, true);
+            mSphinx.queryStart(dataQuery);
+	    }
 	}
 
     @Override
