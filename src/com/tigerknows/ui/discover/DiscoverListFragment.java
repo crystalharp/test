@@ -521,10 +521,16 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         }
     }
 
-    private void viewMap(int firstVisiblePosition, int lastVisiblePosition) {
+    private void viewMap(int firstVisiblePosition) {
         if (mList == null) {
             return;            
         }
+
+        // 此处判断减1，是因为第0个是A类POI
+        if (firstVisiblePosition > 0) {
+            firstVisiblePosition--;
+        }
+        
         int size = getList().size();
         int[] page = Utility.makePagedIndex(mResultLsv, size, firstVisiblePosition);
         List<BaseData> dataList = new ArrayList<BaseData>();
@@ -612,7 +618,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                     return;
                 }
                 mActionLog.addAction(mActionTag + ActionLog.TitleRightButton);
-                viewMap(mResultLsv.getFirstVisiblePosition(), mResultLsv.getLastVisiblePosition());
+                viewMap(mResultLsv.getFirstVisiblePosition());
                 break;
                 
             case R.id.dingdan_btn:
