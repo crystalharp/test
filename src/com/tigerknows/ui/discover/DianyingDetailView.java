@@ -27,6 +27,7 @@ import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
+import com.tigerknows.android.app.TKActivity;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BaseData;
@@ -413,11 +414,11 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
                 return true;
             } else {
                 if (isPulledDynamicPOIRequest) {
-                    if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, BaseActivity.SHOW_ERROR_MSG_TOAST, mParentFragment, true)) {
+                    if (BaseActivity.hasAbnormalResponseCode(baseQuery, mSphinx, BaseActivity.SHOW_ERROR_MSG_TOAST, mParentFragment, true)) {
                         return true;
                     }
                 } else {
-                    if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, false, mParentFragment, false)) {
+                    if (BaseActivity.hasAbnormalResponseCode(baseQuery, mSphinx, BaseActivity.SHOW_ERROR_MSG_NO, mParentFragment, false)) {
                         return true;
                     }
                 }

@@ -843,7 +843,7 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
         final Response response = dataOperation.getResponse();
         String dataType = dataOperation.getParameter(BaseQuery.SERVER_PARAMETER_DATA_TYPE);
         if (BaseQuery.DATA_TYPE_DINGDAN.equals(dataType)) {
-            if (BaseActivity.checkResponseCode(dataOperation, mSphinx, null, true, mParentFragment, false)) {
+            if (BaseActivity.hasAbnormalResponseCode(dataOperation, mSphinx, BaseActivity.SHOW_ERROR_MSG_DIALOG, mParentFragment, false)) {
                 return true;
             }
             DingdanCreateResponse dingdanCreateResponse = (DingdanCreateResponse) response;
@@ -875,7 +875,7 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
                 mParentFragment.mSphinx.getBrowserFragment().setData(getString(R.string.buy), url, null);
             }
         } else if (BaseQuery.DATA_TYPE_TUANGOU.equals(dataType)) {
-            if (BaseActivity.checkResponseCode(dataOperation, mSphinx, null, false, mParentFragment, false)) {
+            if (BaseActivity.hasAbnormalResponseCode(dataOperation, mSphinx, BaseActivity.SHOW_ERROR_MSG_NO, mParentFragment, false)) {
                 return true;
             }
             TuangouQueryResponse targetResponse = (TuangouQueryResponse) response;

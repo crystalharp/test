@@ -553,7 +553,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                 
                 if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), getId(), getId(), getId(), mCancelLoginListener)) {
                     isReLogin = true;
-                } else if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, true, this, false)) {
+                } else if (BaseActivity.hasAbnormalResponseCode(baseQuery, mSphinx, BaseActivity.SHOW_ERROR_MSG_DIALOG, this, false)) {
                     return;
                 }
                 
@@ -601,7 +601,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         }
         
         boolean isBuslineTurnPage = dataQuery.hasLocalParameter(BuslineResultLineFragment.BUSLINE_TURNPAGE);
-        if (BaseActivity.checkResponseCode(dataQuery, sphinx, null, !isBuslineTurnPage, baseFragment, false)) {
+        if (BaseActivity.hasAbnormalResponseCode(dataQuery, sphinx, isBuslineTurnPage ? BaseActivity.SHOW_ERROR_MSG_NO : BaseActivity.SHOW_ERROR_MSG_DIALOG, baseFragment, false)) {
             if (isBuslineTurnPage) {
                 sphinx.getBuslineResultLineFragment().setData(null, dataQuery);
             }

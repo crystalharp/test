@@ -277,11 +277,11 @@ public class YanchuDetailView extends BaseDetailView implements View.OnClickList
             return true;
         } else {
             if (isPulledDynamicPOIRequest) {
-                if (BaseActivity.checkResponseCode(dataOperation, mSphinx, null, BaseActivity.SHOW_ERROR_MSG_TOAST, mParentFragment, true)) {
+                if (BaseActivity.hasAbnormalResponseCode(dataOperation, mSphinx, BaseActivity.SHOW_ERROR_MSG_TOAST, mParentFragment, true)) {
                     return true;
                 }
             } else {
-                if (BaseActivity.checkResponseCode(dataOperation, mSphinx, null, false, mParentFragment, false)) {
+                if (BaseActivity.hasAbnormalResponseCode(dataOperation, mSphinx, BaseActivity.SHOW_ERROR_MSG_NO, mParentFragment, false)) {
                     return true;
                 }
             }

@@ -725,8 +725,8 @@ public class TKActivity extends Activity implements TKAsyncTask.EventListener {
         return false;
     }
     
-    public static boolean checkResponseCode(final BaseQuery baseQuery, final Activity activity, final Object sourceView) {
-        return checkResponseCode(baseQuery, activity, null, true, sourceView, true);
+    public static boolean hasAbnormalResponseCode(final BaseQuery baseQuery, final Activity activity, int showErrorType, final Object sourceView, boolean exit) {
+    	return hasAbnormalResponseCode(baseQuery, activity, showErrorType, sourceView, false, null);
     }
     
     public static final int SHOW_ERROR_MSG_NO = 0;
@@ -737,34 +737,16 @@ public class TKActivity extends Activity implements TKAsyncTask.EventListener {
      * Check the response code and show a error msg if an error happens
      * @param baseQuery
      * @param activity
-     * @param filterResponseCodes
-     * @param showErrorDialog whether to shou a dialog when an error happens
-     * @param sourceView
-     * @param exit
-     * @return
-     */
-    public static boolean checkResponseCode(final BaseQuery baseQuery, final Activity activity, int[] filterResponseCodes, boolean showErrorDialog, final Object sourceView, boolean exit) {
-    	if(showErrorDialog){
-    		return checkResponseCode(baseQuery, activity, filterResponseCodes, SHOW_ERROR_MSG_DIALOG, sourceView, exit);
-    	}else{
-    		return checkResponseCode(baseQuery, activity, filterResponseCodes, SHOW_ERROR_MSG_NO, sourceView, exit);
-    	}
-    }
-    
-    /**
-     * Check the response code and show a error msg if an error happens
-     * @param baseQuery
-     * @param activity
-     * @param filterResponseCodes
      * @param showErrorType	the type of presentation of error msg
      * @param sourceView
      * @param exit
+     * @param filterResponseCodes
      * @return
      */
-    public static boolean checkResponseCode(final BaseQuery baseQuery, final Activity activity, int[] filterResponseCodes, int showErrorType, final Object sourceView, boolean exit) {
-        boolean result = true;
+    public static boolean hasAbnormalResponseCode(final BaseQuery baseQuery, final Activity activity, int showErrorType, final Object sourceView, boolean exit, int[] filterResponseCodes) {
+        boolean hasAbnormal = true;
         if (baseQuery == null || activity == null || sourceView == null) {
-            return result;
+            return hasAbnormal;
         }
         final Response response = baseQuery.getResponse();
         boolean filter = false;
@@ -787,15 +769,15 @@ public class TKActivity extends Activity implements TKAsyncTask.EventListener {
             }
         }
         
-        result = (resId != R.string.response_code_200);
-        if (result && (filter == false)) {
+        hasAbnormal = (resId != R.string.response_code_200);
+        if (hasAbnormal && (filter == false)) {
         	if(showErrorType == SHOW_ERROR_MSG_DIALOG){
         		showErrorDialog(activity, activity.getString(resId), sourceView, exit);
         	}else if(showErrorType == SHOW_ERROR_MSG_TOAST){
         		showErrorToast(activity, activity.getString(resId), sourceView, exit);
         	}
         }
-        return result && !filter;
+        return hasAbnormal && !filter;
     }
     
     public static int getResponseResId(BaseQuery baseQuery) {

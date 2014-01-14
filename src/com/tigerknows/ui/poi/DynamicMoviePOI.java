@@ -233,7 +233,7 @@ public class DynamicMoviePOI extends DynamicPOIViewTemplate {
             String dataType = baseQuery.getParameter(DataOperation.SERVER_PARAMETER_DATA_TYPE);
             Response response = baseQuery.getResponse();
             if (baseQuery instanceof DataQuery) {
-                if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, false, this, false)) {
+                if (BaseActivity.hasAbnormalResponseCode(baseQuery, mSphinx, BaseActivity.SHOW_ERROR_MSG_NO, this, false)) {
                     return;
                 }
                 DianyingResponse dianyingResponse = (DianyingResponse) response;
@@ -243,7 +243,7 @@ public class DynamicMoviePOI extends DynamicPOIViewTemplate {
                     refresh();
                 }
             } else if (baseQuery instanceof DataOperation) {
-                if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, true, this, false)) {
+                if (BaseActivity.hasAbnormalResponseCode(baseQuery, mSphinx, BaseActivity.SHOW_ERROR_MSG_DIALOG, this, false)) {
                     return;
                 }
                 if (BaseQuery.DATA_TYPE_DIANYING.equals(dataType)) {

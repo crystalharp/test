@@ -47,6 +47,7 @@ import android.widget.TextView;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
+import com.tigerknows.android.app.TKActivity;
 import com.tigerknows.android.os.TKAsyncTask;
 import android.widget.Toast;
 
@@ -1471,7 +1472,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             
             // 查询点评的结果
             if (baseQuery instanceof DataQuery) {
-                if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, false, this, false) == false) {
+                if (BaseActivity.hasAbnormalResponseCode(baseQuery, mSphinx, BaseActivity.SHOW_ERROR_MSG_NO, this, false) == false) {
                     DataQuery dataQuery = (DataQuery) baseQuery;
                     POI requestPOI = dataQuery.getPOI();
                     if (response instanceof CommentResponse) {
@@ -1488,7 +1489,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                 // 查询POI的结果
                 } else if (BaseQuery.DATA_TYPE_POI.equals(dataType)) {
                     if (poi.getName() == null && poi.getUUID() != null) {
-                        if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, BaseActivity.SHOW_ERROR_MSG_TOAST, POIDetailFragment.this, true)) {
+                        if (BaseActivity.hasAbnormalResponseCode(baseQuery, mSphinx, BaseActivity.SHOW_ERROR_MSG_TOAST, POIDetailFragment.this, true)) {
                             mActionLog.addAction(mActionTag+ActionLog.POIDetailPullFailed);
                         } else {
                             POI onlinePOI = ((POIQueryResponse)response).getPOI();
@@ -1497,7 +1498,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                             }
                         }
                     } else {
-                        if (BaseActivity.checkResponseCode(baseQuery, mSphinx, new int[]{603}, false, this, false)) {
+                        if (BaseActivity.hasAbnormalResponseCode(baseQuery, mSphinx, TKActivity.SHOW_ERROR_MSG_NO, this, false, new int[]{603})) {
                         	return;
                         }
                     	int responseCode = response.getResponseCode();
