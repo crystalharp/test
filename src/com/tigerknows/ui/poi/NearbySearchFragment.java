@@ -691,6 +691,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     
     public void setData(DataQuery dataQuery) {
         reset();
+        refreshDiscover();
         mDataQuery = dataQuery;
         mPOI = mDataQuery.getPOI();
         if(mPOI.getSourceType() != POI.SOURCE_TYPE_MAP_CENTER && mPOI.getSourceType() != POI.SOURCE_TYPE_MY_LOCATION){
@@ -756,6 +757,14 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         	refreshTitleView(STATUS_HOME);
         }
     }
+	
+	private void refreshDiscover(){
+        DataQuery dataQuery = new DataQuery(mSphinx);
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_DISCOVER);
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
+        dataQuery.setup(-1, -1, null, true);
+        mSphinx.queryStart(dataQuery);
+	}
 
     @Override
     public void onPostExecute(TKAsyncTask tkAsyncTask) {
