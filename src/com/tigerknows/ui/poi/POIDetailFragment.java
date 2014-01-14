@@ -1498,15 +1498,14 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                         }
                     } else {
                         if (BaseActivity.checkResponseCode(baseQuery, mSphinx, new int[]{603}, false, this, false)) {
-                            if (response != null) {
-                                int responseCode = response.getResponseCode();
-                                if (responseCode == 603) {
-                                    poi.setStatus(POI.STATUS_INVALID);
-                                    BaseActivity.showErrorDialog(mSphinx, getString(R.string.response_code_603), this, true);
-                                }
-                            }
-                            return;
+                        	return;
                         }
+                    	int responseCode = response.getResponseCode();
+                    	if (responseCode == 603) {
+                    		poi.setStatus(POI.STATUS_INVALID);
+                    		BaseActivity.showErrorDialog(mSphinx, getString(R.string.response_code_603), this, true);
+                    		return;
+                    	}
                         POI onlinePOI = ((POIQueryResponse)response).getPOI();
                         if (onlinePOI != null && onlinePOI.getUUID() != null && onlinePOI.getUUID().equals(poi.getUUID())) {
                             //收藏夹和历史记录进入的时候刷新POI,发现有动态信息则刷新整个POI的动态信息

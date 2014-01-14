@@ -1090,49 +1090,51 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
             isReLogin = true;
             return;
         } else if (BaseActivity.checkResponseCode(commentOperation, mThis, new int[] {201, 601, 602, 603}, true, mThis, false)) {
-            if (response != null) {
-                if (response.getResponseCode() == 201) {
-                    BaseActivity.showErrorDialog(mThis, mThis.getString(R.string.response_code_201), mThis, true);
-                } else if (response.getResponseCode() == 601 && response instanceof CommentCreateResponse) {
-                    mComment = mComment.clone();
-                    mPOI.setMyComment(mComment);
-                    mPOI.setAttribute(Globals.g_User != null ? POI.ATTRIBUTE_COMMENT_USER : POI.ATTRIBUTE_COMMENT_ANONYMOUS);
-                    mStatus = STATUS_MODIFY;
-                    mTitleBtn.setText(R.string.modify_comment);
-                    CommentCreateResponse commentCreateResponse = (CommentCreateResponse)response;
-                    mComment.setUid(commentCreateResponse.getUid());
-                    mComment.setLikes(commentCreateResponse.getLikes());
-                    mComment.setCommend(commentCreateResponse.isCommend());
-                    Utility.showNormalDialog(mThis, 
-                            mThis.getString(R.string.prompt), 
-                            mThis.getString(R.string.response_code_601), 
-                            mThis.getString(R.string.confirm),
-                            null,
-                            new DialogInterface.OnClickListener() {
-                        
-                        @Override
-                        public void onClick(DialogInterface arg0, int arg1) {
-                            DataOperation dataOperation = new DataOperation(commentOperation);
-                            dataOperation.addParameter(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_UPDATE);
-                            dataOperation.addParameter(DataOperation.SERVER_PARAMETER_DATA_UID, mComment.getUid());
-                            dataOperation.setup(-1, mFromViewId, mThis.getString(R.string.doing_and_wait));
-                            queryStart(dataOperation);
-                        }
-                    });
-                } else if (response.getResponseCode() == 602) {
-                    mComment = mComment.clone();
-                    mStatus = STATUS_NEW;
-                    mTitleBtn.setText(R.string.publish_comment);
-                    DataOperation dataOperation = new DataOperation(commentOperation);
-                    dataOperation.addParameter(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_CREATE);
-                    dataOperation.setup(-1, mFromViewId, mThis.getString(R.string.doing_and_wait));
-                    queryStart(dataOperation);
-                } else if (response.getResponseCode() == 603) {
-                    BaseActivity.showErrorDialog(mThis, mThis.getString(R.string.response_code_603), mThis, true);
-                }
-            }
-            return;
+        	return;
         }
+    	if (response.getResponseCode() == 201) {
+    		BaseActivity.showErrorDialog(mThis, mThis.getString(R.string.response_code_201), mThis, true);
+    		return;
+    	} else if (response.getResponseCode() == 601 && response instanceof CommentCreateResponse) {
+    		mComment = mComment.clone();
+    		mPOI.setMyComment(mComment);
+    		mPOI.setAttribute(Globals.g_User != null ? POI.ATTRIBUTE_COMMENT_USER : POI.ATTRIBUTE_COMMENT_ANONYMOUS);
+    		mStatus = STATUS_MODIFY;
+    		mTitleBtn.setText(R.string.modify_comment);
+    		CommentCreateResponse commentCreateResponse = (CommentCreateResponse)response;
+    		mComment.setUid(commentCreateResponse.getUid());
+    		mComment.setLikes(commentCreateResponse.getLikes());
+    		mComment.setCommend(commentCreateResponse.isCommend());
+    		Utility.showNormalDialog(mThis, 
+    				mThis.getString(R.string.prompt), 
+    				mThis.getString(R.string.response_code_601), 
+    				mThis.getString(R.string.confirm),
+    				null,
+    				new DialogInterface.OnClickListener() {
+    			
+    			@Override
+    			public void onClick(DialogInterface arg0, int arg1) {
+    				DataOperation dataOperation = new DataOperation(commentOperation);
+    				dataOperation.addParameter(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_UPDATE);
+    				dataOperation.addParameter(DataOperation.SERVER_PARAMETER_DATA_UID, mComment.getUid());
+    				dataOperation.setup(-1, mFromViewId, mThis.getString(R.string.doing_and_wait));
+    				queryStart(dataOperation);
+    			}
+    		});
+    		return;
+    	} else if (response.getResponseCode() == 602) {
+    		mComment = mComment.clone();
+    		mStatus = STATUS_NEW;
+    		mTitleBtn.setText(R.string.publish_comment);
+    		DataOperation dataOperation = new DataOperation(commentOperation);
+    		dataOperation.addParameter(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_CREATE);
+    		dataOperation.setup(-1, mFromViewId, mThis.getString(R.string.doing_and_wait));
+    		queryStart(dataOperation);
+    		return;
+    	} else if (response.getResponseCode() == 603) {
+    		BaseActivity.showErrorDialog(mThis, mThis.getString(R.string.response_code_603), mThis, true);
+    		return;
+    	}
 
         save();
         if (response instanceof CommentCreateResponse) {

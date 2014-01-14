@@ -655,16 +655,15 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
 
             if (baseQuery instanceof ProxyQuery) {
                 if (BaseActivity.checkResponseCode(baseQuery, mSphinx, new int[]{824}, true, this, false)) {
-                    if (response != null) {
-                        if (response.getResponseCode() == 824) {
-                            mClickedRoomType.setCanReserve(0);
-                            refreshBookBtn(mClickedBookBtn, 0);
-                            mClickedChild.setClickable(false);
-                            Utility.showNormalDialog(mSphinx, getString(R.string.hotel_no_room_left));
-                        }
-                    }
-                    return;
+                	return;
                 }
+            	if (response.getResponseCode() == 824) {
+            		mClickedRoomType.setCanReserve(0);
+            		refreshBookBtn(mClickedBookBtn, 0);
+            		mClickedChild.setClickable(false);
+            		Utility.showNormalDialog(mSphinx, getString(R.string.hotel_no_room_left));
+            		return;
+            	}
                 RoomTypeDynamic roomInfo = ((RoomTypeDynamic)response);
                 if (roomInfo.getNum() > 0){
                     //如果有房，跳转
