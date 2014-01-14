@@ -15,10 +15,7 @@ import com.tigerknows.util.ByteUtil;
 import com.tigerknows.util.Utility;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -57,8 +54,6 @@ public class LauncherActivity extends TKActivity {
     boolean mOnResume = false;
     
     Animation mAnimation = new AlphaAnimation(0.3f, 1.0f);
-    
-    private BroadcastReceiver mBroadcastReceiver = null;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -117,14 +112,6 @@ public class LauncherActivity extends TKActivity {
             }
         }, AD_ANIMATION_TIME);
 
-        mBroadcastReceiver = new BroadcastReceiver() {
-            
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                finish();
-            }
-        };
-        registerReceiver(mBroadcastReceiver, new IntentFilter(Sphinx.ACTION_ONRESUME));
     }
     
     void launch(boolean fristUse, boolean upgrade) {
@@ -153,6 +140,8 @@ public class LauncherActivity extends TKActivity {
                     startActivity(newIntent);
                 }
             }
+        } else {
+            finish();
         }
     }
     
@@ -182,14 +171,6 @@ public class LauncherActivity extends TKActivity {
     protected void onPause() {
         mOnResume = false;
         super.onPause();
-    }
-
-    @Override
-    protected void onDestroy() {
-        if(mBroadcastReceiver != null){
-        	unregisterReceiver(mBroadcastReceiver);
-        }
-        super.onDestroy();
     }
     
     public static TKDrawable getStartupDisplayDrawable(Activity activity, List<StartupDisplay> startupDisplayList) {
