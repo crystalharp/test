@@ -375,14 +375,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 } else if (msg.what == SHOW_MAPVIEW) {
                     checkLocation(true);
                     mMapOverView.setBackgroundDrawable(null);
-                    mHandler.postDelayed(new Runnable() {
-                        
-                        @Override
-                        public void run() {
-                            mCanAddCircle = true;
-                            updateMyLocationOverlay();
-                        }
-                    }, 3000);
                 } else if (msg.what == UI_STACK_ADJUST_READY){
                 	mUIStackAdjustReady = msg.arg1;
                 } else if (msg.what == UI_STACK_ADJUST_EXECUTE){
@@ -3442,7 +3434,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     private String mMyName;
     private ItemizedOverlay mMyLocationOverlay;
     private Circle mMyLocationCircle;
-    private boolean mCanAddCircle = false;
     private Runnable mLocationChangedRun = new Runnable() {
 
         @Override
@@ -3563,9 +3554,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 mMyLocationCircle=(Circle)mMapView.getShapesByName(Shape.MY_LOCATION);
                 if(mMyLocationCircle==null){
                     mMyLocationCircle = new Circle(myLocation, new Length(myLocation.getAccuracy(),UOM.M), Shape.MY_LOCATION);
-                    if (mCanAddCircle) {
-                        mMapView.addShape(mMyLocationCircle);
-                    }
+                    mMapView.addShape(mMyLocationCircle);
                 }else{
                     mMyLocationCircle.setPosition(myLocation);
                     mMyLocationCircle.setRadius(new Length(myLocation.getAccuracy(),UOM.M));

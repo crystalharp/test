@@ -102,7 +102,7 @@
        android:layout_height="wrap_content"
        android:layout_alignLeft="@id/stars_rtb"
        android:layout_below="@id/date_txv"
-       android:layout_toLeftOf="@id/distance_txv"
+       android:layout_toLeftOf="@id/distance_from_txv"
        android:paddingRight="10dp"
        android:drawableLeft="@drawable/ic_discover_address"
        android:drawablePadding="4dp"
