@@ -142,10 +142,9 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
         if (ActionLog.TrafficDriveListMap.equals(mActionTag) ||
                 ActionLog.TrafficWalkListMap.equals(mActionTag)) {
             mTitleBtn.setVisibility(View.GONE);
-            mTitleView.removeAllViews();
             mTrafficTitieView = mSphinx.getTrafficQueryFragment().getTitleView();
+            ((ViewGroup)mSphinx.getTitleFragment().mRootView).addView(mTrafficTitieView, TrafficQueryFragment.sLayoutParams);
             mTrafficTitleRadioGroup = (RadioGroup) mTrafficTitieView.findViewById(R.id.traffic_rgp);
-            mTitleView.addView(mTrafficTitieView);
             
             mTrafficTransferRbt = (RadioButton) mTrafficTitieView.findViewById(R.id.traffic_transfer_rbt);
             mTrafficDriveRbt = (RadioButton) mTrafficTitieView.findViewById(R.id.traffic_drive_rbt);
@@ -174,7 +173,6 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
     @Override
     public void onPause() {
         if (this.isShowing()) {
-            mTitleView.removeView(mTrafficTitieView);
             if (mTrafficTitleRadioGroup != null) {
                 mTrafficTransferRbt.setOnTouchListener(null);
                 mTrafficDriveRbt.setOnTouchListener(null);

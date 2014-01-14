@@ -61,11 +61,6 @@ public class BaseFragment extends LinearLayout {
     
     public BaseFragment mBottomFrament = null;
     
-    /**
-     * 此是标题栏中间的ViewGroup，可以用自定义的View替换此ViewGroup的内容
-     */
-    public ViewGroup mTitleView;
-    
     public TKEditText mKeywordEdt;
     
     public Button mTitleBtn;
@@ -147,7 +142,6 @@ public class BaseFragment extends LinearLayout {
         int id = getId();
         if (id != R.id.view_invalid) {
             mTitleFragment = mSphinx.getTitleFragment();            
-            mTitleView = mTitleFragment.mTitleView;
             mTitleBtn = mTitleFragment.mTitleBtn;
             mKeywordEdt = mTitleFragment.mKeywordEdt;
             mLeftBtn = mTitleFragment.mLeftBtn;

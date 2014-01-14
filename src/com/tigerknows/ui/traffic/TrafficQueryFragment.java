@@ -127,6 +127,8 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	
 	View mTitleBar;
 	
+	public static ViewGroup.LayoutParams sLayoutParams = new LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+	
 	LinearListAdapter mQueryHistoryAdapter;
 	LinearListAdapter mCommonPlaceAdapter;
             
@@ -397,7 +399,6 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
     
     public void onPause() {
         if (this.isShowing()) {
-            mTitleView.removeView(mTitleBar);
             mRadioGroup.setOnCheckedChangeListener(null);
         }
     	mSettedRadioBtn = 0;
@@ -421,8 +422,8 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
             initStartContent();
         }
         
-        mTitleView.removeAllViews();
-        mTitleView.addView(mTitleBar);
+        mTitleBtn.setVisibility(View.GONE);
+        ((ViewGroup)mSphinx.getTitleFragment().mRootView).addView(mTitleBar, sLayoutParams);
     	mRadioGroup.setOnCheckedChangeListener(mRadioCheckedChangedListener);
         updateCommonPlace();
         initHistory();

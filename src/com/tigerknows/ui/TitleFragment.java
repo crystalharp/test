@@ -52,7 +52,6 @@ public class TitleFragment extends BaseFragment {
     @Override
     protected void findViews() {
         super.findViews();
-        mTitleView = (ViewGroup) mRootView.findViewById(R.id.center_view);
         mTitleBtn = (Button) mRootView.findViewById(R.id.title_btn);
         mKeywordEdt = (TKEditText) mRootView.findViewById(R.id.keyword_edt);
         mLeftBtn = (Button) mRootView.findViewById(R.id.left_btn);
@@ -64,10 +63,9 @@ public class TitleFragment extends BaseFragment {
         
         mRootView.setBackgroundResource(R.drawable.bg_title);
         
-        if (mTitleView.getChildAt(0) != mTitleBtn || mTitleView.getChildAt(1) != mKeywordEdt) {
-            mTitleView.removeAllViews();
-            mTitleView.addView(mTitleBtn);
-            mTitleView.addView(mKeywordEdt);
+        
+        if (((ViewGroup)mRootView).getChildCount() > 4) {
+            ((ViewGroup)mRootView).removeViewAt(4);
         }
         
         mTitleBtn.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
