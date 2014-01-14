@@ -969,6 +969,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             if (dataQuery.isTurnPage() == false) {
                 getList().clear();
                 mResultLsv.setAdapter(getAdapter());
+                getAdapter().notifyDataSetInvalidated();
                 mAPOI = dataQuery.getPOI();
                 Position centerPosition = discoverResult.getCenterPosition();
                 if (centerPosition != null) {

@@ -1013,6 +1013,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 mInputText = dataQuery.getParameter(BaseQuery.SERVER_PARAMETER_KEYWORD);
                 mPOIList.clear();
                 mResultLsv.setAdapter(mResultAdapter);
+                mResultAdapter.notifyDataSetInvalidated();
                 mAPOI = dataQuery.getPOI();
                 Position centerPosition = poiList.getPosition();
                 if (centerPosition != null) {
