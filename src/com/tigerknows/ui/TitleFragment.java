@@ -85,7 +85,7 @@ public class TitleFragment extends BaseFragment {
         layoutParams.rightMargin = 0;
         
         mKeywordEdt.setVisibility(View.GONE);
-        mKeywordEdt.getInput().setHint(R.string.find_poi);
+        mKeywordEdt.getInput().setHint(R.string.input_place_line);
         
         mLeftBtn.setText(null);
         mLeftBtn.setBackgroundResource(R.drawable.btn_back);
