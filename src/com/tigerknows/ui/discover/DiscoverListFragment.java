@@ -491,7 +491,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         }
         
         if (isShowing()) {
-            mTitleBtn.setHint(mTitleText);
+            mTitleBtn.setText(mTitleText);
         }
 
         mEmptyTxv.setText(str);
