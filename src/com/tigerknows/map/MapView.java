@@ -238,7 +238,7 @@ public class MapView extends RelativeLayout implements
         public static int CLICKPOI = 13;
         public static int UPDATEPOIPOSITION = 14; //地图上选中的poi修正了位置
         public static int TOUCHDOWN = 15;
-        public static int CLICK = 16;
+        public static int TOUCHPIN = 16;
 	}
 
     public interface DrawFrameEventListener extends EventListener{
@@ -382,8 +382,8 @@ public class MapView extends RelativeLayout implements
                 && (listener instanceof UpdatePoiPositionListener)
                 || eventType == EventType.TOUCHDOWN
                 && (listener instanceof TouchEventListener)
-                || eventType == EventType.CLICK
-                && (listener instanceof ClickEventListener)
+                || eventType == EventType.TOUCHPIN
+                && (listener instanceof TouchEventListener)
 				)
 			return true;
 		else
@@ -510,11 +510,11 @@ public class MapView extends RelativeLayout implements
 		}
 	}
 
-    public void executeClickListeners(Position position) {
-        if (eventListeners.containsKey(MapView.EventType.CLICK)) {
-            ArrayList<EventListener> listeners = eventListeners.get(MapView.EventType.CLICK);
+    public void executeTouchPinListeners(Position position) {
+        if (eventListeners.containsKey(MapView.EventType.TOUCHPIN)) {
+            ArrayList<EventListener> listeners = eventListeners.get(MapView.EventType.TOUCHPIN);
             for (int i = 0; i < listeners.size(); i++) {
-                ((ClickEventListener) (listeners.get(i))).onClickEvent(this,
+                ((TouchEventListener) (listeners.get(i))).onTouchEvent(this,
                         position);
             }
         }
