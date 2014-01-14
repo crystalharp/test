@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Message;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -274,7 +275,7 @@ public class SubwayMapFragment extends BaseFragment implements RetryView.CallBac
     
     public void setData(CityInfo cityinfo) {
     	if (mSphinx.uiStackContains(getId()) && 
-    	        !(mSphinx.uiStackPeek() == getId())){
+    	        mSphinx.uiStackPeek() != getId()){
     		mSphinx.uiStackRemove(getId());
     	}
         if (cityinfo == null) {
@@ -307,7 +308,11 @@ public class SubwayMapFragment extends BaseFragment implements RetryView.CallBac
                     poi.ciytId =  mCityInfo.getId();
                     mSphinx.getPOIDetailFragment().setData(poi);
                     mSphinx.showView(R.id.view_poi_detail);
-                    mSphinx.uiStackAdjust(getId());
+                    Message msg = new Message();
+                    msg.what = Sphinx.UI_STACK_ADJUST_READY;
+                    msg.arg1 = getId();
+                    mSphinx.getHandler().sendMessage(msg);
+                    mSphinx.getHandler().sendEmptyMessage(Sphinx.UI_STACK_ADJUST_EXECUTE);
                 }
             };
             mSphinx.runOnUiThread(run);

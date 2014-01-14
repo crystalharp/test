@@ -9,6 +9,7 @@ import java.util.List;
 
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Message;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
@@ -84,6 +85,8 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     private LinearLayout mHotBaseLly;
     private LinearLayout[] mHotLlys;
     private View[] mHotBtnViews;
+    
+    private int mSourceFragment;
     
     private DataQuery mDataQuery;
     
@@ -262,8 +265,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
                 public boolean onTouch(View v, MotionEvent event) {
                     if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     	mActionLog.addAction(mActionTag + ActionLog.TitleCenterButton);
-                    	mSphinx.getHandler().sendEmptyMessage(Sphinx.UI_STACK_ADJUST_READY);
-                    	mSphinx.getInputSearchFragment().setData(mDataQuery, null, InputSearchFragment.MODE_POI);
+                    	mSphinx.getInputSearchFragment().setData(mDataQuery, null, InputSearchFragment.MODE_POI);        	
                         mSphinx.showView(R.id.view_poi_input_search);
                     }
                     return false;
@@ -455,6 +457,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         		backHome();
         	}else{
                 synchronized (mSphinx.mUILock) {
+                	mSphinx.getHandler().sendEmptyMessage(Sphinx.UI_STACK_ADJUST_CANCEL);
                 	dismiss();
                 }
         	}
@@ -539,13 +542,18 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     		mSphinx.getHotelHomeFragment().resetDate();
     		mSphinx.getHotelHomeFragment().setCityInfo(Globals.getCurrentCityInfo(mContext));
     		mSphinx.showView(R.id.view_hotel_home);
-    		mSphinx.uiStackAdjust(R.id.view_poi_nearby_search);
+    		mSphinx.getHandler().sendEmptyMessage(Sphinx.UI_STACK_ADJUST_EXECUTE);
     		break;
     	case CategoryProperty.OP_SUBWAY:
     		mActionLog.addAction(mActionTag + actionLogInfo, str[0]);
     		mSphinx.getSubwayMapFragment().setData(Globals.getCurrentCityInfo(mContext, false));
     		mSphinx.showView(R.id.view_subway_map);
-    		mSphinx.uiStackAdjust(R.id.view_poi_nearby_search);
+    		// 再次进地铁图时，调整的堆栈与其他情况不同
+            Message msg = new Message();
+            msg.what = Sphinx.UI_STACK_ADJUST_READY;
+            msg.arg1 = getId();
+            mSphinx.getHandler().sendMessage(msg);    		
+    		mSphinx.getHandler().sendEmptyMessage(Sphinx.UI_STACK_ADJUST_EXECUTE);
     		break;
         case CategoryProperty.OP_DISH:
         	mActionLog.addAction(mActionTag + actionLogInfo, str[0]);
@@ -567,7 +575,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
                 return;
             }
             mSphinx.queryStart(getDiscoverDataQuery(String.valueOf(operationCode)));
-            mSphinx.uiStackAdjust(R.id.view_poi_nearby_search);
+            mSphinx.getHandler().sendEmptyMessage(Sphinx.UI_STACK_ADJUST_EXECUTE);
             break;
         case CategoryProperty.OP_DIANYING:
         	mActionLog.addAction(mActionTag + actionLogInfo, str[0]);
@@ -576,7 +584,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
                 return;
             }
             mSphinx.queryStart(getDiscoverDataQuery(String.valueOf(operationCode)));
-            mSphinx.uiStackAdjust(R.id.view_poi_nearby_search);
+            mSphinx.getHandler().sendEmptyMessage(Sphinx.UI_STACK_ADJUST_EXECUTE);
             break;
         case CategoryProperty.OP_YANCHU:
         	mActionLog.addAction(mActionTag + actionLogInfo, str[0]);
@@ -585,7 +593,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
                 return;
             }
             mSphinx.queryStart(getDiscoverDataQuery(String.valueOf(operationCode)));
-            mSphinx.uiStackAdjust(R.id.view_poi_nearby_search);
+            mSphinx.getHandler().sendEmptyMessage(Sphinx.UI_STACK_ADJUST_EXECUTE);
             break;
         case CategoryProperty.OP_ZHANLAN:
         	mActionLog.addAction(mActionTag + actionLogInfo, str[0]);
@@ -594,7 +602,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
                 return;
             }
             mSphinx.queryStart(getDiscoverDataQuery(String.valueOf(operationCode)));
-            mSphinx.uiStackAdjust(R.id.view_poi_nearby_search);
+            mSphinx.getHandler().sendEmptyMessage(Sphinx.UI_STACK_ADJUST_EXECUTE);
             break;
     	case CategoryProperty.OP_MORE:
     		mActionLog.addAction(mActionTag + actionLogInfo);
@@ -685,8 +693,16 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         reset();
         mDataQuery = dataQuery;
         mPOI = mDataQuery.getPOI();
-        if(mPOI.getSourceType() != POI.SOURCE_TYPE_MAP_CENTER && mPOI.getSourceType() != POI.SOURCE_TYPE_MY_LOCATION && mSphinx.uiStackContains(R.id.view_poi_nearby_search)){
-        	mSphinx.uiStackRemove(R.id.view_poi_nearby_search);
+        if(mPOI.getSourceType() != POI.SOURCE_TYPE_MAP_CENTER && mPOI.getSourceType() != POI.SOURCE_TYPE_MY_LOCATION){
+        	if(mSphinx.uiStackContains(R.id.view_poi_nearby_search)){
+        		mSphinx.uiStackRemove(R.id.view_poi_nearby_search);
+        	}
+        	Message msg = new Message();
+        	msg.what = Sphinx.UI_STACK_ADJUST_READY;
+        	msg.arg1 = (mSphinx.uiStackPeek() == R.id.view_subway_map) ? mSphinx.uiStackPeek() : getId();
+        	mSphinx.getHandler().sendMessage(msg);
+        }else{
+        	mSphinx.getHandler().sendEmptyMessage(Sphinx.UI_STACK_ADJUST_CANCEL);
         }
         mBodyScv.scrollTo(0, 0);
         setFilterListView();
@@ -750,10 +766,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         if (BaseQuery.API_TYPE_DATA_QUERY.equals(apiType)) {
             String dataType = baseQuery.getParameter(BaseQuery.SERVER_PARAMETER_DATA_TYPE);
             if (BaseQuery.DATA_TYPE_POI.equals(dataType)) {
-                int result = InputSearchFragment.dealWithPOIResponse((DataQuery) baseQuery, mSphinx, this);
-                if(mPOI.getSourceType() != POI.SOURCE_TYPE_MAP_CENTER && mPOI.getSourceType() != POI.SOURCE_TYPE_MY_LOCATION && result > 0){
-                	mSphinx.uiStackAdjust(R.id.view_poi_nearby_search);
-                }
+                InputSearchFragment.dealWithPOIResponse((DataQuery) baseQuery, mSphinx, this);
             } else if (BaseQuery.DATA_TYPE_TUANGOU.equals(dataType) ||
                     BaseQuery.DATA_TYPE_DIANYING.equals(dataType) ||
                     BaseQuery.DATA_TYPE_YANCHU.equals(dataType) ||

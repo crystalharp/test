@@ -577,9 +577,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                 
             } else if (BaseQuery.DATA_TYPE_POI.equals(dataType)) {
                 int result = dealWithPOIResponse((DataQuery) baseQuery, mSphinx, this);
-                if(result > 0){
-                	mSphinx.getHandler().sendEmptyMessage(Sphinx.UI_STACK_ADJUST_EXECUTE);
-                }
+
             }
         }
     }
@@ -761,6 +759,9 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         
         // 若从公交线路结果列表界面跳转过来，则将其从UI堆栈中移除
         sphinx.uiStackRemove(R.id.view_traffic_busline_line_result);
+        
+        // 若是在周边搜索页或者从周边搜索页过来，则需要处理UI堆栈信息
+        sphinx.getHandler().sendEmptyMessage(Sphinx.UI_STACK_ADJUST_EXECUTE);
         
         result = 3;
         return result;

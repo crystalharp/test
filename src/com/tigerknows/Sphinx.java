@@ -273,7 +273,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     private BaseFragment mBodyFragment;
     private BaseFragment mBottomFragment;
     
-    private boolean mUIStackAdjustReady = false;
+    private int mUIStackAdjustReady = R.id.view_invalid;
 
     private static final int EXIT_APP_TIME = 2000;
 
@@ -376,14 +376,14 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     checkLocation(true);
                     mMapOverView.setBackgroundDrawable(null);
                 } else if (msg.what == UI_STACK_ADJUST_READY){
-                	mUIStackAdjustReady = true;
+                	mUIStackAdjustReady = msg.arg1;
                 } else if (msg.what == UI_STACK_ADJUST_EXECUTE){
-                	if(mUIStackAdjustReady){
-                		uiStackAdjust(R.id.view_poi_nearby_search);
+                	if(mUIStackAdjustReady != R.id.view_invalid){
+                		uiStackAdjust(mUIStackAdjustReady);
                 	}
-                	mUIStackAdjustReady = false;
+                	mUIStackAdjustReady = R.id.view_invalid;
                 } else if (msg.what == UI_STACK_ADJUST_CANCEL){
-                	mUIStackAdjustReady = false;
+                	mUIStackAdjustReady = R.id.view_invalid;
                 } else if (msg.what == HOTEL_ORDER_OLD_SYNC){
                 	getHotelOrderDetailFragment().handleMessage(msg);
                 }
@@ -2147,6 +2147,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     if (id == R.id.view_hotel_order_detail) {
                         uiStackClearTop(R.id.view_hotel_order_list);
                     }
+                } else if (uiStackPeek() == R.id.view_poi_nearby_search) {
+                	if (id == R.id.view_poi_input_search) {
+                		mHandler.sendEmptyMessage(UI_STACK_ADJUST_CANCEL);
+                	}
                 }
 
                 id = uiStackPeek();
@@ -2323,7 +2327,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 		}
     }
 
-    public void uiStackAdjust(int upperID) {
+    private void uiStackAdjust(int upperID) {
     	LogWrapper.d(TAG, "uiStackAdjust");
     	synchronized (mUILock) {
 	        if (uiStackContains(R.id.view_more_favorite)) {
@@ -2342,6 +2346,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 	            }
 	            uiStackClearBetween(R.id.view_home, upperID);
 	        }
+	        LogWrapper.d("UIStack", "Adjust:" + mUIStack);
     	}
     }    
     
