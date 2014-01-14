@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -107,6 +108,10 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	
 	Button mSelectEndBtn = null;
 
+    private RadioButton mTrafficTransferRbt;
+    private RadioButton mTrafficDriveRbt;
+    private RadioButton mTrafficWalkRbt;
+    
 	/**
 	 * 注：因为起终点对应的poi直接setTag给了按钮，所以不要直接给这两个按钮直接赋值，
 	 * 而是要使用setPOI，getPOI，getStartEndText函数
@@ -425,6 +430,12 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
         mTitleBtn.setVisibility(View.GONE);
         ((ViewGroup)mSphinx.getTitleFragment().mRootView).addView(mTitleBar, sLayoutParams);
     	mRadioGroup.setOnCheckedChangeListener(mRadioCheckedChangedListener);
+    	mTrafficTransferRbt = (RadioButton) mRadioGroup.findViewById(R.id.traffic_transfer_rbt);
+    	mTrafficDriveRbt = (RadioButton) mRadioGroup.findViewById(R.id.traffic_drive_rbt);
+    	mTrafficWalkRbt = (RadioButton) mRadioGroup.findViewById(R.id.traffic_walk_rbt);
+    	mTrafficTransferRbt.setOnTouchListener(null);
+    	mTrafficDriveRbt.setOnTouchListener(null);
+    	mTrafficWalkRbt.setOnTouchListener(null);
         updateCommonPlace();
         initHistory();
         refreshRightBtn();

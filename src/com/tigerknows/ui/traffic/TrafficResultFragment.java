@@ -75,6 +75,7 @@ public class TrafficResultFragment extends BaseFragment {
     private View mTrafficTitieView;
     
     private RadioGroup mTrafficTitleRadioGroup;
+    private RadioButton mTrafficTransferRbt;
     private RadioButton mTrafficDriveRbt;
     private RadioButton mTrafficWalkRbt;
 
@@ -143,9 +144,11 @@ public class TrafficResultFragment extends BaseFragment {
         ((ViewGroup)mSphinx.getTitleFragment().mRootView).addView(mTrafficTitieView, TrafficQueryFragment.sLayoutParams);
         
         mTrafficTitleRadioGroup = (RadioGroup) mTrafficTitieView.findViewById(R.id.traffic_rgp);
+        mTrafficTransferRbt = (RadioButton) mTrafficTitieView.findViewById(R.id.traffic_transfer_rbt);
         mTrafficDriveRbt = (RadioButton) mTrafficTitieView.findViewById(R.id.traffic_drive_rbt);
         mTrafficWalkRbt = (RadioButton) mTrafficTitieView.findViewById(R.id.traffic_walk_rbt);
         mTrafficTitleRadioGroup.check(R.id.traffic_transfer_rbt);
+        mTrafficTransferRbt.setOnTouchListener(null);
         mTrafficDriveRbt.setOnTouchListener(onTouchListener);
         mTrafficWalkRbt.setOnTouchListener(onTouchListener);
         
@@ -164,10 +167,6 @@ public class TrafficResultFragment extends BaseFragment {
 
     @Override
     public void onPause() {
-        if (this.isShowing()) {
-            mTrafficDriveRbt.setOnTouchListener(null);
-            mTrafficWalkRbt.setOnTouchListener(null);
-        }
         super.onPause();
     }
 
