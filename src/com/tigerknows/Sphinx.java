@@ -886,7 +886,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     protected void onPrepareDialog(int id, Dialog dialog) {
 	    super.onPrepareDialog(id, dialog);
 	    if (id == R.id.dialog_prompt_setting_location) {
-	        mPromptSettingLocationShowed = true;
             mActionLog.addAction(ActionLog.Dialog, getString(R.string.location_failed_and_jump_settings));
         }
     }
@@ -988,6 +987,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 	protected void onResume() {
 		super.onResume();
 		mOnPause = false;
+        sendBroadcast(new Intent(ACTION_ONRESUME));
 		LogWrapper.i(TAG,"onResume()");
         refreshZoomView();
 		mActionLog.onResume();
@@ -1028,8 +1028,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             mFirstStartup = false;
             OnSetup();
         }
-        
-        sendBroadcast(new Intent(ACTION_ONRESUME));
         LogWrapper.e("Fake","onResume heap size:"+android.os.Debug.getNativeHeapAllocatedSize());
 	}
 
@@ -1987,18 +1985,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         showSettingLocationDialog();
     }
 
-    boolean mWaitingPromptSettingLocation = false;
-    boolean mPromptSettingLocationShowed = false;
     public boolean showSettingLocationDialog() {
-
-        if ((uiStackSize() != 1 && uiStackPeek() != R.id.view_home)) {
-        	mWaitingPromptSettingLocation = true;
-        	return false;
-        }
-
-        if (mPromptSettingLocationShowed) {
-            return false;
-        }
 
         Dialog dialog;
 
@@ -2628,6 +2615,13 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     @Override
                     public void onCheckedChanged(CompoundButton arg0, boolean checked) {
                         TKConfig.setPref(Sphinx.this, TKConfig.PREFS_SHOW_LOCATION_SETTINGS_TIP, checked ? "1" : "");
+                    }
+                });
+                dialog.setOnDismissListener(new OnDismissListener() {
+
+                    @Override
+                    public void onDismiss(DialogInterface arg0) {
+                        showHint(TKConfig.PREFS_HINT_HOME, R.layout.hint_home);
                     }
                 });
                 break;

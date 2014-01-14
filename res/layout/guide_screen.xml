@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
@@ -7,8 +7,35 @@
     >
         
     <RelativeLayout
+        android:id="@+id/bottom_view"
+        android:layout_width="fill_parent"
+        android:layout_height="160dp"
+        android:layout_alignParentBottom="true"
+        android:background="#fff9d9"
+        >
+        <Button  
+            android:id="@+id/start_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:background="@drawable/btn_start_now"
+            />
+    </RelativeLayout>
+    
+    <LinearLayout
+        android:id="@+id/split_view"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/bottom_view"
+        android:background="@drawable/bg_guide_screen_split"
+        >
+    </LinearLayout>
+        
+    <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
+        android:layout_above="@id/split_view"
+        android:background="#c72123"
         >
         <android.support.v4.view.ViewPager  
             android:id="@+id/view_pager"
@@ -16,10 +43,15 @@
             android:layout_height="fill_parent"
             android:focusable="true"
             />
-        <AbsoluteLayout
-            android:id="@+id/anim_container" 
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            />
+    
+	    <LinearLayout
+	        android:id="@+id/indicator_view"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentBottom="true"
+	        android:layout_marginBottom="8dp"
+	        android:gravity="center_horizontal"
+	        >
+	    </LinearLayout>
     </RelativeLayout>
-</LinearLayout>
+</RelativeLayout>

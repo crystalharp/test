@@ -499,12 +499,12 @@ public class TKConfig {
     /**
      * 是否为升级后使用本软件
      */
-    public static final String PREFS_UPGRADE = "prefs_learn_5.10";    
+    public static final String PREFS_UPGRADE = "prefs_learn_5.8.0";    
     
     /**
      * 是否为第一次安装使用本软件
      */
-    public static final String PREFS_FIRST_USE = "prefs_learn_3.10";    
+    public static final String PREFS_FIRST_USE = "prefs_learn_5.8.0";    
     
     /**
      * 是否已创建快捷方式
@@ -750,6 +750,12 @@ public class TKConfig {
      * 地图上是否显示放大缩小按钮
      */
     public static final String PREFS_SHOW_ZOOM_BUTTON = "prefs_show_zoom_button";
+    
+
+    public static final String PREFS_HINT_HOME = "PREFS_HINT_HOME";
+    public static final String PREFS_HINT_NEARBY_SEARCH = "PREFS_HINT_NEARBY_SEARCH";
+    public static final String PREFS_HINT_RESULT_MAP = "PREFS_HINT_RESULT_MAP";
+    public static final String PREFS_HINT_TRAFFIC_PREFERENCE = "PREFS_HINT_TRAFFIC_PREFERENCE";
     
     /**
      * 发现分类图片尺寸的Key

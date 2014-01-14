@@ -17,11 +17,9 @@ import com.tigerknows.map.MapView.MapScene;
 import com.tigerknows.map.MapView.SnapMap;
 import com.tigerknows.map.TrafficOverlayHelper;
 import com.tigerknows.model.POI;
-import com.tigerknows.model.TrafficModel.Plan.Step;
 import com.tigerknows.model.TrafficQuery;
 import com.tigerknows.model.TrafficModel.Plan;
 import com.tigerknows.ui.BaseFragment;
-import com.tigerknows.ui.InfoWindowFragment;
 import com.tigerknows.ui.traffic.TrafficDetailFragment;
 import com.tigerknows.ui.traffic.TrafficQueryFragment;
 import com.tigerknows.util.Utility;
@@ -137,6 +135,12 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
             type = Plan.Step.TYPE_DRIVE;
         } else if (ActionLog.TrafficWalkListMap.equals(mActionTag)) {
             type = Plan.Step.TYPE_WALK;
+        }
+        
+        if (ActionLog.TrafficDriveListMap.equals(mActionTag)) {
+            mSphinx.showHint(TKConfig.PREFS_HINT_TRAFFIC_PREFERENCE, R.layout.hint_traffic_preference);
+        } else {
+            mSphinx.showHint(TKConfig.PREFS_HINT_RESULT_MAP, R.layout.hint_result_map);
         }
         
         if (ActionLog.TrafficDriveListMap.equals(mActionTag) ||

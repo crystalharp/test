@@ -4,11 +4,13 @@
 
 package com.tigerknows.ui;
 
+import com.decarta.Globals;
 import com.decarta.android.map.ItemizedOverlay;
 import com.decarta.android.map.OverlayItem;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.TKConfig;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.MapView;
 import com.tigerknows.ui.poi.InputSearchFragment;
@@ -63,6 +65,9 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
     public void onResume() {
         super.onResume();
 
+        if (Globals.g_My_Location_City_Info != null) {
+            mSphinx.showHint(TKConfig.PREFS_HINT_HOME, R.layout.hint_home);
+        }
         mLeftBtn.setVisibility(View.GONE);
         
         mSphinx.clearMap();

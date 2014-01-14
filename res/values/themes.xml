@@ -46,6 +46,7 @@
     </style>
     
     <style name="Hit" parent="Theme.NoTitleBar">       
+        <item name="android:windowAnimationStyle">@style/noAnimation</item>
         <item name="android:windowBackground">@color/black_transparent_half</item>
     </style>
     

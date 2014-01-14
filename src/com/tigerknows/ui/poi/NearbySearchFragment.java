@@ -222,6 +222,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     @Override
     public void onResume() {
         super.onResume();
+        mSphinx.showHint(TKConfig.PREFS_HINT_NEARBY_SEARCH, R.layout.hint_nearby_search);
         mIsFold = TKConfig.getPref(mContext, TKConfig.PREFS_CUSTOM_FOLD, "No");
         refreshHotView(TKConfig.getPref(mContext, TKConfig.PREFS_CUSTOM_CATEGORY, "111100110001000"));
         doFold();
