@@ -178,7 +178,6 @@ import com.tigerknows.ui.traffic.TrafficDetailFragment;
 import com.tigerknows.ui.traffic.TrafficQueryFragment;
 import com.tigerknows.ui.traffic.TrafficReportErrorActivity;
 import com.tigerknows.ui.traffic.TrafficResultFragment;
-import com.tigerknows.ui.traffic.TrafficResultListMapFragment;
 import com.tigerknows.ui.traffic.TrafficSearchHistoryFragment;
 import com.tigerknows.ui.user.MyCommentListFragment;
 import com.tigerknows.ui.user.UserBaseActivity;
@@ -1929,7 +1928,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         InfoWindowFragment infoWindowFragment = getInfoWindowFragment();
         if (fragment != null && infoWindowFragment != null) {
             infoWindowFragment.setData(fragmentId, overlayItem.getOwnerOverlay(), fragment.mActionTag);
-            fragment.mBottomFragment = infoWindowFragment;
+            fragment.mBottomFrament = infoWindowFragment;
             if (replaceBottomUI) {
                 replaceBottomUI(fragment);
             }
@@ -2556,7 +2555,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     public void replaceBottomUI(BaseFragment fragment) {
         synchronized (mUILock) {
             if (fragment != null) {
-                mBottomFragment = fragment.mBottomFragment;
+                mBottomFragment = fragment.mBottomFrament;
             } else {
                 mBottomFragment = null;
             }
@@ -2658,8 +2657,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     private NearbySearchFragment mPOINearbyFragment;
     private CustomCategoryFragment mCustomCategoryFragment;
     private TrafficDetailFragment mTrafficDetailFragment = null;
-    private TrafficResultFragment mTrafficResultFragment = null; 
-    private TrafficResultListMapFragment mTrafficResultListMapFragment = null;
+    private TrafficResultFragment mTrafficResultFragment = null;
     private TrafficCommonPlaceFragment mTrafficCommonAddressFragment = null;
     private TrafficSearchHistoryFragment mTrafficSearchHistoryFragment = null;
     private BuslineResultLineFragment mBuslineResultLineFragment = null;
@@ -2859,10 +2857,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 
             case R.id.view_measure_distance:
                 baseFragment = getMeasureDistanceFragment();
-                break;
-                
-            case R.id.view_traffic_result_list_map:
-                baseFragment = getTrafficResultListMapFragment();
                 break;
 
             default:
@@ -3078,19 +3072,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 mTrafficResultFragment = trafficResultFragment;
             }
             return mTrafficResultFragment;
-        }
-    }
-    
-    public TrafficResultListMapFragment getTrafficResultListMapFragment(){
-
-        synchronized (mUILock) {
-            if (mTrafficResultListMapFragment == null) {
-                TrafficResultListMapFragment fragment = new TrafficResultListMapFragment(Sphinx.this);
-                fragment.setId(R.id.view_traffic_result_list_map);
-                fragment.onCreate(null);
-                mTrafficResultListMapFragment = fragment;
-            }
-            return mTrafficResultListMapFragment;
         }
     }
 
@@ -3786,7 +3767,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 && overlayName.equals(infoWindowFragment.getItemizedOverlay().getName())) {
 
             result = true;
-            homeFragment.mBottomFragment = getHomeBottomFragment();
+            homeFragment.mBottomFrament = getHomeBottomFragment();
             replaceBottomUI(homeFragment);
 
             if (ItemizedOverlay.MY_LOCATION_OVERLAY.equals(overlayName) == false) {

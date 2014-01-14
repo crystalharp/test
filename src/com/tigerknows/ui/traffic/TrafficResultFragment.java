@@ -248,18 +248,18 @@ public class TrafficResultFragment extends BaseFragment {
             trafficDetailFragment.refreshResult(type);
             mSphinx.uiStackRemove(this.getId());
             if (type == Plan.Step.TYPE_DRIVE) {
-                TrafficResultListMapFragment resultMapFragment = mSphinx.getTrafficResultListMapFragment();
+                ResultMapFragment resultMapFragment = mSphinx.getResultMapFragment();
                 resultMapFragment.setData(null, ActionLog.TrafficDriveListMap);
-                mSphinx.showView(R.id.view_traffic_result_list_map);
+                mSphinx.showView(R.id.view_result_map);
                 
                 TrafficOverlayHelper.drawTrafficPlanListOverlay(mSphinx, list, 0);
                 TrafficOverlayHelper.panToViewWholeOverlay(list.get(0), mSphinx.getMapView(), mSphinx);
                 
                 result = true;
             } else if (type == Plan.Step.TYPE_WALK) {
-                TrafficResultListMapFragment resultMapFragment = mSphinx.getTrafficResultListMapFragment();
+                ResultMapFragment resultMapFragment = mSphinx.getResultMapFragment();
                 resultMapFragment.setData(null, ActionLog.TrafficWalkListMap);
-                mSphinx.showView(R.id.view_traffic_result_list_map);
+                mSphinx.showView(R.id.view_result_map);
                 
                 TrafficOverlayHelper.drawTrafficPlanListOverlay(mSphinx, list, 0);
                 TrafficOverlayHelper.panToViewWholeOverlay(list.get(0), mSphinx.getMapView(), mSphinx);
@@ -281,7 +281,7 @@ public class TrafficResultFragment extends BaseFragment {
         mPlanList.clear();
         mPlanList.addAll(mTrafficModel.getPlanList());
         mResultAdapter.notifyDataSetChanged();
-        if (mSphinx.uiStackPeek() == R.id.view_traffic_result_list_map) {
+        if (mSphinx.uiStackPeek() == R.id.view_result_map) {
             mSphinx.uiStackClearTop(R.id.view_traffic_home);
         }
     }
