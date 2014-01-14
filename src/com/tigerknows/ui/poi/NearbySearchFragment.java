@@ -82,11 +82,8 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     private String mCurrentMoreCategory;
 
     private ScrollView mBodyScv;
-    private LinearLayout mHotBaseLly;
     private LinearLayout[] mHotLlys;
     private View[] mHotBtnViews;
-    
-    private int mSourceFragment;
     
     private DataQuery mDataQuery;
     
@@ -100,7 +97,8 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     private static final int NUM_OF_HOT_LLY = 4;
     
     private static final int FOOD = 0;
-    private static final int HOTEL = 1;
+    @SuppressWarnings("unused")
+	private static final int HOTEL = 1;
     private static final int ENTERTAINMENT = 2;
     private static final int TRAFFIC = 3;
     
@@ -296,7 +294,6 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         super.findViews();
         mBodyScv = (ScrollView) mRootView.findViewById(R.id.body_scv);
         mLocationTxv = (TextView) mRootView.findViewById(R.id.location_txv);
-        mHotBaseLly = (LinearLayout) mRootView.findViewById(R.id.hot_lly);
         mHotLlys = new LinearLayout[NUM_OF_HOT_LLY];
         mHotBtnViews = new View[NUM_OF_HOT + 1];
         for(int i = 0; i < NUM_OF_HOT_LLY; i++){
