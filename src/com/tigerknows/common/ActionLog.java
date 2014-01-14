@@ -890,8 +890,12 @@ public class ActionLog extends LogUpload {
      * @param revSize
      */
     public void addNetworkAction(String apiType, long reqTime, long revTime, long resTime, String fail, String detail, int signal, String radioType, boolean isStop, String uuid, long reqSize, long revSize) {
+        addNetworkAction(apiType, reqTime, revTime, resTime, fail, detail, signal, radioType, isStop, uuid, reqSize, revSize, false);
+    }
+    
+    public void addNetworkAction(String apiType, long reqTime, long revTime, long resTime, String fail, String detail, int signal, String radioType, boolean isStop, String uuid, long reqSize, long revSize, boolean isReTry) {
         try {
-            addAction(NetworkAction, apiType, String.valueOf(reqTime - mStartMillis), String.valueOf(revTime - mStartMillis), String.valueOf(resTime-mStartMillis), fail, detail, signal, radioType, isStop, uuid, reqSize, revSize);
+            addAction(NetworkAction, apiType, String.valueOf(reqTime - mStartMillis), String.valueOf(revTime - mStartMillis), String.valueOf(resTime-mStartMillis), fail, detail, signal, radioType, isStop, uuid, reqSize, revSize, isReTry);
         } catch (Exception e) {
             LogWrapper.e(TAG, e.getMessage());
             e.printStackTrace();

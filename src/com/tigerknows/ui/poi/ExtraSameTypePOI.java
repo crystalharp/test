@@ -173,6 +173,7 @@ public class ExtraSameTypePOI extends DynamicPOIViewTemplate {
         poiQuery.addParameter(DataQuery.SERVER_PARAMETER_SIZE, "3");
         poiQuery.addParameter(DataQuery.SERVER_PARAMETER_KEYWORD, mPOI.getCategory().split(" ")[0]);
         poiQuery.addParameter(DataQuery.SERVER_PARAMETER_POI_ID, mPOI.getUUID());
+        poiQuery.addParameter(DataQuery.SERVER_PARAMETER_REQUSET_SOURCE_TYPE, "poidetail");
         Position position = mPOI.getPosition();
         if (position != null) {
             poiQuery.addParameter(DataQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));

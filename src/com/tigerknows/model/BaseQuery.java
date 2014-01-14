@@ -657,7 +657,7 @@ public abstract class BaseQuery {
 
         while ((isFirstConnection || needReconntection) && !isStop) {
             try {
-                httpClient.setApiType(getActionTag());
+                httpClient.setApiType(getActionTag(), (isFirstConnection == false));
                 if (TKConfig.LaunchTest == 1) {
                     if (apiType.equals(API_TYPE_DATA_QUERY)
                             || apiType.equals(API_TYPE_DATA_OPERATION)
