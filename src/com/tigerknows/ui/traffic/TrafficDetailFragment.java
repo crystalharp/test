@@ -592,7 +592,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
             }; 
         
         public static void refresh(Sphinx sphinx, Plan plan, View v, boolean titleSingleLine) {
-            refresh(sphinx, plan, v, false, true);
+            refresh(sphinx, plan, v, titleSingleLine, true);
         }
         
         public static void refresh(Sphinx sphinx, Plan plan, View v, boolean titleSingleLine, boolean showTags) {
