@@ -692,7 +692,6 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	    if (p.getName().equals(MY_LOCATION)) {
 	        p.setSourceType(POI.SOURCE_TYPE_MY_LOCATION);
             if (p.getPosition() != null) {
-                p.setName(getMyLocationName(mSphinx, p.getPosition()));
                 return true;
             } else {
                 //是“我的位置”且没有定位点则定位
@@ -701,7 +700,6 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
                 if (cityInfo != null) {
                     Position position = cityInfo.getPosition();
                     p.setPosition(position);
-                    p.setName(getMyLocationName(mSphinx, p.getPosition()));
                     return true;
                 } else {
                     //定位失败

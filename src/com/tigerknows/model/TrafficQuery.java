@@ -188,21 +188,23 @@ public final class TrafficQuery extends BaseQuery {
         /*
          * 若服务端返回了起终点POI名称, 则将返回的POI名称赋给客户端.
          * 但是注意服务端并不一定会返回起终点POI名称.
-         */
-        /*
-         * 与服务器约定我的位置地图选点两种方式不提交起终点名字，
-         * 这种情况下服务器会返回名字“起点”，与上述逻辑冲突。
-         * 重新和服务器讨论后，客户端忽略服务器修改起终点的逻辑
+         * 三种获取起终点的方式中不修改为起终点的名字
          */
         
-//        if (!TextUtils.isEmpty(trafficModel.getStartName())) {
-//        	startPOI.setName(trafficModel.getStartName());
-//        	isPOIModified = true;
-//        }
-//        if (!TextUtils.isEmpty(trafficModel.getEndName())) {
-//        	endPOI.setName(trafficModel.getEndName());
-//            isPOIModified = true;
-//        }
+        if (!TextUtils.isEmpty(trafficModel.getStartName()) && 
+                (startPOI.getSourceType() != POI.SOURCE_TYPE_CLICKED_SELECT_POINT) &&
+                (startPOI.getSourceType() != POI.SOURCE_TYPE_MY_LOCATION) &&
+                (startPOI.getSourceType() != POI.SOURCE_TYPE_LONG_CLICKED_SELECT_POINT)) {
+        	startPOI.setName(trafficModel.getStartName());
+        	isPOIModified = true;
+        }
+        if (!TextUtils.isEmpty(trafficModel.getEndName()) && 
+                (endPOI.getSourceType() != POI.SOURCE_TYPE_CLICKED_SELECT_POINT) &&
+                (endPOI.getSourceType() != POI.SOURCE_TYPE_MY_LOCATION) &&
+                (endPOI.getSourceType() != POI.SOURCE_TYPE_LONG_CLICKED_SELECT_POINT)) {
+        	endPOI.setName(trafficModel.getEndName());
+            isPOIModified = true;
+        }
         
         trafficModel.setStart(startPOI);
         trafficModel.setEnd(endPOI);
