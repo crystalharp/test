@@ -752,9 +752,11 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                 poiResultFragment.setData(dataQuery, true);
 
                 sphinx.uiStackClearTop(R.id.view_home);
-                ItemizedOverlayHelper.drawPOIOverlay(sphinx, bPOIList.getList(), 0, poiResultFragment.getAPOI());
                 sphinx.getResultMapFragment().setData(sphinx.getString(R.string.result_map), ActionLog.POIListMap);
                 sphinx.showView(R.id.view_result_map);
+                // 下面这行代码本来是应该在sphinx.getResultMapFragment().setData（）之前执行，
+                // 由于sphinx.uiStackClearTop(R.id.view_home)的特殊逻辑将其移到此处
+                ItemizedOverlayHelper.drawPOIOverlay(sphinx, bPOIList.getList(), 0, poiResultFragment.getAPOI());
             }
         }
         
