@@ -168,8 +168,6 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     private void refreshTitleRightBtn() {
         HotelVendor hotelVendor = HotelVendor.getHotelVendorById(HotelVendor.SOURCE_DEFAULT, mSphinx, null);
         if (hotelVendor != null && hotelVendor.getReserveTel() != null) {
-            mRightBtn.setBackgroundResource(R.drawable.btn_cancel);
-            mRightBtn.setTextColor(mSphinx.getResources().getColor(R.color.black_dark));
             mRightBtn.setText(R.string.tel_reserve);
             mRightBtn.setTag(hotelVendor.getReserveTel());
             mRightBtn.setOnClickListener(this);
