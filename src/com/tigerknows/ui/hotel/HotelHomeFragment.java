@@ -562,6 +562,8 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                 return;
             } else if (isSupportHotelQuery() == false) {
                 return;
+            } else if (baseQuery.getCityId() != mCityInfo.getId()) {
+                return;
             }
             List<Filter> filterList = ((DataQuery) baseQuery).getFilterList();
             if (filterList != null) {
