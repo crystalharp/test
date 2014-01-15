@@ -838,6 +838,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         } else {
             mSphinx.getDiscoverListFragment().setData(dataQuery);
             mSphinx.showView(R.id.view_discover_list);
+            mSphinx.getDiscoverListFragment().setSelectionFromTop();
         }
     }
     

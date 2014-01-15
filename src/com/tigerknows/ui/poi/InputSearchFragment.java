@@ -741,6 +741,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
             sphinx.uiStackRemove(R.id.view_poi_result);
             poiResultFragment.setData(dataQuery, true);
             sphinx.showView(R.id.view_poi_result);
+            poiResultFragment.setSelectionFromTop();
         
         // 跳转到POI结果地图界面
         } else if (bPOIList.getShowType() == 1) {

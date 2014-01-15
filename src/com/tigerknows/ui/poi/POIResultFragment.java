@@ -848,8 +848,8 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         public static void showDistance(Context context, TextView distanceFromTxv, TextView distanceTxv, String distance) {
             if (!TextUtils.isEmpty(distance)) {
                 String distanceA = context.getString(R.string.distanceA);
-                Drawable icAPOI = context.getResources().getDrawable(R.drawable.ic_location_nearby);
                 if (distance.startsWith(distanceA)) {
+                    Drawable icAPOI = context.getResources().getDrawable(R.drawable.ic_location_nearby);
                     icAPOI.setBounds(0, 0, icAPOI.getIntrinsicWidth(), icAPOI.getIntrinsicHeight());
                     distanceFromTxv.setCompoundDrawables(null, null, icAPOI, null);
                     distanceFromTxv.setText(context.getString(R.string.distance));
@@ -924,6 +924,10 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     public void onPostExecute(TKAsyncTask tkAsyncTask) {
         super.onPostExecute(tkAsyncTask);
         setData((DataQuery) (tkAsyncTask.getBaseQuery()), false);
+    }
+    
+    public void setSelectionFromTop() {
+        mResultLsv.setSelectionFromTop(0, 0);
     }
     
     public void setData(DataQuery dataQuery, boolean resetFilter) {
@@ -1011,9 +1015,14 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             
             if (!dataQuery.isTurnPage()) {
                 mInputText = dataQuery.getParameter(BaseQuery.SERVER_PARAMETER_KEYWORD);
+                mSphinx.getHandler().post(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        mResultLsv.setSelectionFromTop(0, 0);
+                    }
+                });
                 mPOIList.clear();
-                mResultLsv.setAdapter(mResultAdapter);
-                mResultAdapter.notifyDataSetInvalidated();
                 mAPOI = dataQuery.getPOI();
                 Position centerPosition = poiList.getPosition();
                 if (centerPosition != null) {
