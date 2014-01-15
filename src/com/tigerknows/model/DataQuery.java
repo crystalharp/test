@@ -1203,9 +1203,17 @@ public final class DataQuery extends BaseQuery {
             if (allArea != null) {
             	List<Filter> list = allArea.getChidrenFilterList();
             	List<Filter> chidrenFilterList = filter.getChidrenFilterList();
+            	// 名称包含00的筛选项不能添加到全部区域下面
+            	String excludeName = "00";
                 for(Filter chidrenFilter : chidrenFilterList) {
                     if (chidrenFilter.getChidrenFilterList().size() > 0 && chidrenFilter.getFilterOption().id > 10) {
-                    	list.addAll(chidrenFilter.getChidrenFilterList());
+                        List<Filter> list1 = chidrenFilter.getChidrenFilterList();
+                        for(Filter chidrenFilter1 : list1) {
+                            if (chidrenFilter1.getFilterOption().name != null &&
+                                    chidrenFilter1.getFilterOption().name.contains(excludeName) == false) {
+                        	    list.add(chidrenFilter1);
+                            }
+                        }
                     }
                 }
                 for (int i = 0; i < list.size(); i++) {
