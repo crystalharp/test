@@ -138,7 +138,9 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
         }
         
         if (ActionLog.TrafficDriveListMap.equals(mActionTag)) {
-            mSphinx.showHint(TKConfig.PREFS_HINT_TRAFFIC_PREFERENCE, R.layout.hint_traffic_preference);
+            if (mSphinx.showHint(TKConfig.PREFS_HINT_TRAFFIC_PREFERENCE, R.layout.hint_traffic_preference) == false) {
+                mSphinx.showHint(TKConfig.PREFS_HINT_RESULT_MAP, R.layout.hint_result_map);
+            }
         } else if (ActionLog.ResultMapSelectPoint.equals(mActionTag) == false){
             mSphinx.showHint(TKConfig.PREFS_HINT_RESULT_MAP, R.layout.hint_result_map);
         }
