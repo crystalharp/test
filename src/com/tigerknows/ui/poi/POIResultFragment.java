@@ -927,7 +927,13 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     }
     
     public void setSelectionFromTop() {
-        mResultLsv.setSelectionFromTop(0, 0);
+        mSphinx.getHandler().post(new Runnable() {
+
+            @Override
+            public void run() {
+                mResultLsv.setSelectionFromTop(0, 0);
+            }
+        });
     }
     
     public void setData(DataQuery dataQuery, boolean resetFilter) {

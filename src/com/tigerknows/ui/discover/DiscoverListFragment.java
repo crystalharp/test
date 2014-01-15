@@ -943,7 +943,13 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     }
     
     public void setSelectionFromTop() {
-        mResultLsv.setSelectionFromTop(0, 0);
+        mSphinx.getHandler().post(new Runnable() {
+
+            @Override
+            public void run() {
+                mResultLsv.setSelectionFromTop(0, 0);
+            }
+        });
     }
     
     private void dealWithList(DataQuery dataQuery, DiscoverCategoreResponse discoverCategoreResponse) {
