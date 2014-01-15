@@ -331,7 +331,9 @@ public class TrafficResultFragment extends BaseFragment {
                 mActionTag,
                 (TrafficQuery) tkAsyncTask.getBaseQuery(),
                 false)) {
-            mSphinx.uiStackRemove(this.getId());
+            if (mSphinx.uiStackPeek() != this.getId()) {
+                mSphinx.uiStackRemove(this.getId());
+            }
         }
     }
 }
