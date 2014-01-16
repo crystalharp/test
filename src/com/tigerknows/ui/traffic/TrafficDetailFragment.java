@@ -326,6 +326,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
     }
     
     private void updateResult(Plan plan) {
+        this.plan = plan;
         mStrList.clear();
         mTypes.clear();
         
