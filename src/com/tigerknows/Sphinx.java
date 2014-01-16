@@ -1055,7 +1055,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 
 	@Override
 	protected void onDestroy() {
-	    LauncherActivity.LastActivityClassName = null;
         ImageCache.getInstance().stopWritingAndRemoveOldTiles();
         AsyncImageLoader.getInstance().onDestory();
         mTKLocationManager.onDestroy();
@@ -1754,6 +1753,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 
     @Override
     protected void onStop() {
+        LauncherActivity.LastActivityClassName = null;
         BaseQuery.sClentStatus = BaseQuery.CLIENT_STATUS_STOP;
         LogWrapper.i(TAG, "onStop");
 
