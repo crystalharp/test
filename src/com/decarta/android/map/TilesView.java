@@ -2807,12 +2807,10 @@ public class TilesView extends GLSurfaceView {
 
 		public void onSurfaceCreated(GL10 gl, EGLConfig config) {
 			LogWrapper.i("Sequence", "MapRender.onSurfaceCreated begin");
-			gl.glClearColor(1f, 1f, 1f, 1);
-			gl.glEnable(GL_DITHER);
-            gl.glEnable(GLES10.GL_POLYGON_SMOOTH_HINT);
-			gl.glHint(GL_PERSPECTIVE_CORRECTION_HINT, GLES10.GL_NICEST);
-            gl.glHint(GL_POINT_SMOOTH_HINT, GLES10.GL_NICEST);
-            gl.glHint(GLES10.GL_POLYGON_SMOOTH_HINT, GLES10.GL_NICEST);
+            gl.glClearColor(1f, 1f, 1f, 1);
+            gl.glDisable(GL_DITHER);
+            gl.glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
+            gl.glHint(GL_POINT_SMOOTH_HINT, GL_FASTEST);
 
 			LogWrapper.i("Sequence", "tile size: " + CONFIG.TILE_SIZE);
 			Util.init();

@@ -303,10 +303,13 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     public Bundle getBundle() {
     	return mBundle;
     }
+    
+    private long mOnCreateTimeMillis;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mOnCreateTimeMillis = System.currentTimeMillis();
         BaseQuery.sClentStatus = BaseQuery.CLIENT_STATUS_START;
 //        Debug.startMethodTracing("spinxTracing");
 
@@ -433,6 +436,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 
             mMyLocationOverlay=new ItemizedOverlay(ItemizedOverlay.MY_LOCATION_OVERLAY);
             mMyLocationOverlay.addOverlayItem(mMyLocation);
+            
+            mMyLocationCircle = new Circle(cityInfo.getPosition(), new Length(0,UOM.M), Shape.MY_LOCATION);
+            mMyLocationCircle.setVisible(false);
+            mMapView.addShape(mMyLocationCircle);
 
             mMapView.addOverlay(mMyLocationOverlay);
 
@@ -3412,6 +3419,13 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     private String mMyName;
     private ItemizedOverlay mMyLocationOverlay;
     private Circle mMyLocationCircle;
+    private Runnable mUpdateRunnable = new Runnable() {
+        
+        @Override
+        public void run() {
+            updateMyLocationOverlay();
+        }
+    };
     private Runnable mLocationChangedRun = new Runnable() {
 
         @Override
@@ -3516,7 +3530,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             Position myLocation = mMyPosition;
             if(myLocation==null) {
                 mMapView.deleteOverlaysByName(ItemizedOverlay.MY_LOCATION_OVERLAY);
-                mMapView.deleteShapeByName(Shape.MY_LOCATION);
+                mMyLocationCircle.setVisible(false);
                 mMapView.refreshMap();
 
                 InfoWindowFragment fragment = getInfoWindowFragment();
@@ -3529,13 +3543,12 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     mMapView.addOverlay(mMyLocationOverlay);
                 }
 
-                mMyLocationCircle=(Circle)mMapView.getShapesByName(Shape.MY_LOCATION);
-                if(mMyLocationCircle==null){
-                    mMyLocationCircle = new Circle(myLocation, new Length(myLocation.getAccuracy(),UOM.M), Shape.MY_LOCATION);
-                    mMapView.addShape(mMyLocationCircle);
-                }else{
-                    mMyLocationCircle.setPosition(myLocation);
-                    mMyLocationCircle.setRadius(new Length(myLocation.getAccuracy(),UOM.M));
+                boolean isVisible = mMyLocationCircle.isVisible() && (System.currentTimeMillis() - mOnCreateTimeMillis > 3000);
+                mMyLocationCircle.setPosition(myLocation);
+                mMyLocationCircle.setRadius(new Length(isVisible ? myLocation.accuracy : 0, UOM.M));
+                mMyLocationCircle.setVisible(true);
+                if (isVisible == false) {
+                    mHandler.postDelayed(mUpdateRunnable, 3000);
                 }
 
                 POI poi = (POI) mMyLocation.getAssociatedObject();
