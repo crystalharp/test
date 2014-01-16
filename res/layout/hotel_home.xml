@@ -40,8 +40,11 @@
                 android:textSize="14sp"
                 android:text="@string/hotel_ordered"
                 android:gravity="center"
-                android:padding="8dp"
-                android:drawablePadding="4dp"
+                android:paddingLeft="18dp"
+                android:paddingTop="8dp"
+                android:paddingRight="8dp"
+                android:paddingBottom="8dp"
+                android:drawablePadding="12dp"
                 android:drawableLeft="@drawable/ic_order_hotel"
                 />
         </LinearLayout>
