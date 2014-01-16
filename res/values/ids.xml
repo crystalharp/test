@@ -62,6 +62,7 @@
     <item type="id" name="view_traffic_busline_detail" />
     <item type="id" name="view_traffic_common_places" />
     <item type="id" name="view_traffic_search_history" />
+    <item type="id" name="view_traffic_result_list_map" />
     <item type="id" name="activity_traffic_report_error" />
     <item type="id" name="activity_traffic_compass"/>
     <item type="id" name="view_subway_map"/>
