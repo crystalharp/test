@@ -134,6 +134,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
         @Override
         public boolean onEditorAction(TextView arg0, int actionId, KeyEvent event) {
             if (actionId == EditorInfo.IME_ACTION_SEARCH || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
+                mSphinx.hideSoftInput();
                 submit();
                 return true;
             }

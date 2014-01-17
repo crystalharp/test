@@ -126,6 +126,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
             }
             if (event.getAction() == KeyEvent.ACTION_DOWN && 
                     (actionId == EditorInfo.IME_ACTION_SEARCH || event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
+                mSphinx.hideSoftInput();
                 String keyword = mKeywordEdt.getText().toString().trim();
                 if (mTKWord != null && keyword.equals(mTKWord.word)) {
                     submit(mTKWord);
