@@ -75,7 +75,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
     //TODO:把mtype和mindex也重构到结果中
     private int mType = -1;
 
-    private Plan plan = null;
+    private Plan mPlan = null;
     
     private LinearLayout mBottomButtonsView;
     
@@ -141,7 +141,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
             default:
         }
         
-        Utility.setFavoriteBtn(mSphinx, mFavorateBtn, plan.checkFavorite(mContext));
+        Utility.setFavoriteBtn(mSphinx, mFavorateBtn, mPlan.checkFavorite(mContext));
         
         if (mDismissed) {
             setSelectionFromTop();
@@ -285,8 +285,8 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         if (hasResult(type)) {
             mType = type;
             mIndex = index;
-            plan = mResult.getResult(type).get(mIndex);
-            updateResult(plan);
+            mPlan = mResult.getResult(type).get(mIndex);
+            updateResult(mPlan);
         }
     }
     
@@ -303,8 +303,8 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
             if (mType != type) {
                 mType = type;
                 mIndex = 0;
-                plan = mResult.getResult(type).get(mIndex);
-                updateResult(plan);
+                mPlan = mResult.getResult(type).get(mIndex);
+                updateResult(mPlan);
             }
         }
     }
@@ -326,7 +326,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
     }
     
     private void updateResult(Plan plan) {
-        this.plan = plan;
+        this.mPlan = plan;
         mStrList.clear();
         mTypes.clear();
         
@@ -473,12 +473,12 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
             if (v.getId() == R.id.share_btn) {
                 //弹出分享对话框
                 mActionLog.addAction(mActionTag +  ActionLog.CommonShare);
-                share(plan);
+                share(mPlan);
             } else if (v.getId() == R.id.favorite_btn) {
-                favorite(plan, v);
+                favorite(mPlan, v);
             } else if (v.getId() == R.id.error_recovery_btn) {
                 mActionLog.addAction(mActionTag +  ActionLog.CommonErrorRecovery);
-                TrafficReportErrorActivity.addTarget(plan);
+                TrafficReportErrorActivity.addTarget(mPlan);
                 mSphinx.showView(R.id.activity_traffic_report_error);
             }
         }
@@ -526,7 +526,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
     
     private void viewMap(boolean showList) {
         
-        if (plan != null) {
+        if (mPlan != null) {
             String title = null;
             String actionTag = "";
             switch (mType) {
@@ -555,8 +555,8 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
             if (showList) {
                 TrafficOverlayHelper.drawTrafficPlanListOverlay(mSphinx, mResult.getResult(mType), mIndex);
             } else {
-                TrafficOverlayHelper.drawOverlay(mSphinx, plan);
-                TrafficOverlayHelper.panToViewWholeOverlay(plan, mSphinx.getMapView(), mSphinx);
+                TrafficOverlayHelper.drawOverlay(mSphinx, mPlan);
+                TrafficOverlayHelper.panToViewWholeOverlay(mPlan, mSphinx.getMapView(), mSphinx);
             }
             
         }
