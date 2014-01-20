@@ -174,6 +174,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mActionTag = ActionLog.InputQuery;
     }
 
     @Override
@@ -230,12 +231,10 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         switch (mCurMode) {
         //TODO:add actiontag
         case MODE_BUELINE:
-            mActionTag = ActionLog.TrafficInput;
             mTrafficBtnGroup.setVisibility(View.GONE);
             mKeywordEdt.setHint(getString(R.string.busline_search_hint));
             break;
         case MODE_TRAFFIC:
-            mActionTag = ActionLog.TrafficInput;
             mTrafficBtnGroup.setVisibility(View.VISIBLE);
             if (mRequest == REQUEST_TRAFFIC_END) {
                 mKeywordEdt.setHint(getString(R.string.end_));
@@ -247,7 +246,6 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
             break;
         case MODE_POI:
             mTrafficBtnGroup.setVisibility(View.GONE);
-            mActionTag = ActionLog.POIHomeInputQuery;
             break;
         }
     }
@@ -319,7 +317,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         switch (view.getId()) {
             
             case R.id.btn_map_position:
-                mActionLog.addAction(mActionTag + ActionLog.TrafficInputMapPosition);
+                mActionLog.addAction(ActionLog.InputQueryMapPosition);
                 
                 String title;
                 if (mRequest == REQUEST_TRAFFIC_START) {
@@ -331,7 +329,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                 }
                 
                 Toast.makeText(mSphinx, R.string.move_map_select_point, Toast.LENGTH_LONG).show();
-                mSphinx.getResultMapFragment().setData(getString(R.string.map_select_point), ActionLog.ResultMapSelectPoint);
+                mSphinx.getResultMapFragment().setData(getString(R.string.map_select_point), ActionLog.TrafficSelectPoint);
                 mSphinx.showView(R.id.view_result_map);
                 
                 ItemizedOverlayHelper.drawClickSelectPointOverlay(mSphinx, title);
@@ -339,8 +337,8 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                 break;
                 
             case R.id.right_btn:
-                mActionLog.addAction(mActionTag + ActionLog.TitleRightButton);
                 String keyword = mKeywordEdt.getText().toString().trim();
+                mActionLog.addAction(mActionTag + ActionLog.TitleRightButton, keyword.length() > 0, keyword);
                 if (keyword.length() > 0) {
                     if (mTKWord != null && keyword.equals(mTKWord.word)) {
                         submit(mTKWord);
@@ -353,7 +351,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                 break;
                 
             case R.id.btn_my_position:
-                mActionLog.addAction(mActionTag + ActionLog.TrafficInputMyPosition);
+                mActionLog.addAction(ActionLog.InputQueryMyPosition);
                 CityInfo c = Globals.g_My_Location_City_Info;
                 if (c != null && c.getPosition() != null) {
                     POI p = new POI();
@@ -371,7 +369,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                 break;
                 
             case R.id.btn_fav_position:
-                mActionLog.addAction(mActionTag + ActionLog.TrafficInputFavPosition);
+                mActionLog.addAction(ActionLog.InputQueryFavPosition);
                 mSphinx.showView(mSphinx.getFetchFavoriteFragment().getId());
                 break;
             default:
