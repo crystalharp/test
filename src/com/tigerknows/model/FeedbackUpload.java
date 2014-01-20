@@ -171,7 +171,7 @@ public class FeedbackUpload extends BaseQuery {
      */
     public static void logEnterPOIDetailUI(Context context, String dataType, String subDataType, String actionTag, int rank, String uuid, int cityId) {
         final FeedbackUpload feedbackUpload = new FeedbackUpload(context);
-        feedbackUpload.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_POI);
+        feedbackUpload.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, dataType);
         if (subDataType != null) {
             feedbackUpload.addParameter(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, subDataType);
         }

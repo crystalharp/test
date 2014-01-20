@@ -111,7 +111,7 @@ public class YanchuDetailFragment extends BaseDetailFragment
         YanchuDetailView view;
 
         FeedbackUpload.logEnterPOIDetailUI(mSphinx,
-            DataQuery.DATA_TYPE_TUANGOU,
+            DataQuery.DATA_TYPE_YANCHU,
             null,
             mActionTag,
             position,

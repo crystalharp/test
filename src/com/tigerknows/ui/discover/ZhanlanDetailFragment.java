@@ -112,7 +112,7 @@ public class ZhanlanDetailFragment extends BaseDetailFragment
         ZhanlanDetailView view;
 
         FeedbackUpload.logEnterPOIDetailUI(mSphinx,
-            DataQuery.DATA_TYPE_TUANGOU,
+            DataQuery.DATA_TYPE_ZHANLAN,
             null,
             mActionTag,
             position,
