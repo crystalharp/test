@@ -155,10 +155,11 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             } else if (object instanceof Zhanlan) {
                 poi = ((Zhanlan) object).getPOI();
             }
-            
+            mActionLog.addAction(mActionTag + ActionLog.InfoWindowPOI);
             mSphinx.getPOINearbyFragment().setData(mSphinx.buildDataQuery(poi));
             mSphinx.showView(R.id.view_poi_nearby_search);
         } else if (id == R.id.traffic_btn) {
+            mActionLog.addAction(mActionTag + ActionLog.InfoWindowTraffic);
             if (mType == TYPE_MY_LOCATION) {
                 mSphinx.showView(R.id.view_traffic_home);
             } else {
@@ -178,8 +179,10 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
                 Utility.queryTraffic(mSphinx, poi , mActionTag);
             }
         } else if (id == R.id.detail_btn) {
+            mActionLog.addAction(mActionTag + ActionLog.InfoWindowDetail);
             infoWindowClicked();
         } else if (id == R.id.traffic_plan_item) {
+            mActionLog.addAction(mActionTag + ActionLog.InfoWindowDetail);
             Plan plan = (Plan) v.getTag();
             if (plan == null) {
                 return;
@@ -330,12 +333,12 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
     public void refreshViews(int position) {
         MapView mapView = mSphinx.getMapView();
         if (position < mPosition) {
-            mActionLog.addAction(ActionLog.MapStepUp);
+            mActionLog.addAction(mActionTag, ActionLog.InfoWindowFlingLeft);
             mItemizedOverlay.switchItem(false);
             ItemizedOverlayHelper.centerShowCurrentOverlayFocusedItem(mSphinx);
             mapView.showOverlay(ItemizedOverlay.MY_LOCATION_OVERLAY, false);
         } else if (position > mPosition) {
-            mActionLog.addAction(ActionLog.MapStepDown);
+            mActionLog.addAction(mActionTag, ActionLog.InfoWindowFlingRight);
             mItemizedOverlay.switchItem(true);
             ItemizedOverlayHelper.centerShowCurrentOverlayFocusedItem(mSphinx);
             mapView.showOverlay(ItemizedOverlay.MY_LOCATION_OVERLAY, false);
@@ -559,11 +562,11 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             
             if (prevPosition != -1) {
                 view = mCyclePagerAdapter.viewList.get(prevPosition % mCyclePagerAdapter.viewList.size());
-                setStepToView(view, position-1);
+                setStepToView(view, prevPosition);
             }
             if (nextPosition != -1) {
                 view = mCyclePagerAdapter.viewList.get(nextPosition % mCyclePagerAdapter.viewList.size());
-                setStepToView(view, position+1);
+                setStepToView(view, nextPosition);
             }
         }
         if (mSphinx.getBottomFragment() == this) {
@@ -765,8 +768,6 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
     }
     
     private void infoWindowClicked() {
-        mActionLog.addAction(ActionLog.MapInfoWindowBody);
-        
         if (mItemizedOverlay == null) {
             return;
         }

@@ -135,30 +135,22 @@ public class ActionLog extends LogUpload {
     public static final String CameraPhoto = "YF";
     public static final String FilterAreaChar = "YG";
     public static final String StatsCurrentCityMap = "YH";
+    public static final String InfoWindowPOI = "YJ";
+    public static final String InfoWindowTraffic = "YK";
+    public static final String InfoWindowDetail = "YL";
+    public static final String InfoWindowFlingLeft = "YM";
+    public static final String InfoWindowFlingRight = "YN";
     
     public static final String Launcher = "FI";
     
     // POI主页 
     public static final String Home = "AA";
-    public static final String POIHomeChangeCityBtn = "BA";
-    public static final String POIHomeInputEdt = "BB";
-    public static final String POIHomeCategory = "BC";    
-    public static final String POIHomeSubcategoryPressed = "BD";
-    public static final String POIHomeSubcategoryOpenedOnFling = "BE";
-    public static final String POIHomeSubcategoryOpenedOnClick = "BF";
-    public static final String POIHomeSubcategoryClosedOnFling = "BG";
-    public static final String POIHomeSubcategoryClosedOnClick = "BH";
-    public static final String POIHomeSubcategoryClosedOnBack = "BI";
-    // BG_{dataType}
-    public static final String POIHomeDynamicButtonClick = "BJ";
-    public static final String POIHomeMyLocation = "BK";
-    public static final String POIHomeAppointedArea = "BL";
-    public static final String POIHomeSubwayMap = "BM";
-    public static final String POIHomeDish = "BN";
     
     // POI输入查询页
-    public static final String POIHomeInputQuery = "AB";
-    public static final String POIHomeInputQueryBtn = "BA";
+    public static final String InputQuery = "AB";
+    public static final String InputQueryMyPosition = "BB";
+    public static final String InputQueryFavPosition = "BC";
+    public static final String InputQueryMapPosition = "BD";
 
     // POI结果列表页
     public static final String POIList = "AC";
@@ -220,11 +212,13 @@ public class ActionLog extends LogUpload {
     public static final String POICommentSina = "BI";
     public static final String POICommentQZone = "BJ";
 
-    // (旧)周边搜索页
-    // public static final String POINearbySearch = "AG";
-    // public static final String POINearbySearchCategory = "BA";
-    // public static final String POINearbySearchSubmit = "BB";
-    // public static final String POINearbySearchInput = "BC";
+    // 周边搜索页
+    public static final String POINearbySearch = "AG";
+    public static final String POINearbySearchHot = "BD";
+    public static final String POINearbySearchSub = "BE";
+    public static final String POINearbySearchMore = "BF";
+    public static final String POINearbySearchCustom = "BG";
+    public static final String POINearbySearchFold = "BH";
     
     // POI纠错页
     public static final String POIReportError = "AH";
@@ -308,16 +302,8 @@ public class ActionLog extends LogUpload {
     // POI纠错-其他错误页
     public static final String POIOtherError = "AT";
     
-    // 周边搜索页
-    public static final String POINearbySearch = "PA";
-    public static final String POINearbySearchHot = "BA";
-    public static final String POINearbySearchSub = "BB";
-    public static final String POINearbySearchMore = "BC";
-    public static final String POINearbySearchCustom = "BD";
-    public static final String POINearbySearchFold = "BE";
-    
     // 自定义分类页
-    public static final String POICustomCategory = "PB";
+    public static final String POICustomCategory = "AY";
     public static final String POICustomCategorySelect = "BA";
     public static final String POICustomCategoryResult = "BB";
 
@@ -462,14 +448,8 @@ public class ActionLog extends LogUpload {
     public static final String MapDoubleClick = Map + "BB";
     public static final String MapLongClick = Map + "BC";
     public static final String MapMove = Map + "BD";
-    public static final String MapStepUp = Map + "BE";
-    public static final String MapStepDown = Map + "BF";
     public static final String MapZoomIn = Map + "BG";
     public static final String MapZoomOut = Map + "BH";
-    public static final String MapInfoWindowBody = Map + "BI";
-    public static final String MapInfoWindowTraffic = Map + "BJ";
-    public static final String MapInfoWindowStart = Map + "BK";
-    public static final String MapInfoWindowEnd = Map + "BL";
     public static final String MapMultiTouchZoom = Map + "BM";
     public static final String MapMore = Map + "BN";
     public static final String MapTakeScreenshot = Map + "BO";
@@ -477,6 +457,7 @@ public class ActionLog extends LogUpload {
     public static final String MapCompass = Map + "BQ";
     public static final String MapSubway = Map + "BR";
     public static final String MapCleanMap = Map + "BS";
+    public static final String MapShowZoomBtn = Map + "BT";
     
     // 微博发送界面    
     public static final String WeiboSend = "FC";
@@ -504,7 +485,6 @@ public class ActionLog extends LogUpload {
     public static final String TrafficDriveTab = "AB";
     public static final String TrafficWalkTab = "AC";
     public static final String TrafficTrafficSearch = "AD";
-    public static final String TrafficBusLineEdt = "AI";
     public static final String TrafficResultTraffic = "AN";
     public static final String TrafficResultBusline = "AO";
 
@@ -519,12 +499,6 @@ public class ActionLog extends LogUpload {
     public static final String TrafficHomeClickMoreBtn = "BG";
     public static final String TrafficHomeClickMoreAlert = "BH";
     public static final String TrafficHomeClickSearchBtn = "BI";
-    
-    // 交通输入页
-    public static final String TrafficInput = "BB";
-    public static final String TrafficInputMyPosition = "BA";
-    public static final String TrafficInputFavPosition = "BB";
-    public static final String TrafficInputMapPosition = "BC";
     
     // 交通查询历史页
     public static final String TrafficSearchHistory = "BC";
@@ -586,6 +560,7 @@ public class ActionLog extends LogUpload {
     
     // 交通步行概要地图页
     public static final String TrafficWalkListMap = "BU";
+    public static final String TrafficSelectPoint = "BV";
     
     // 交通指南针页
     public static final String TrafficCompass = "BQ";
@@ -721,7 +696,6 @@ public class ActionLog extends LogUpload {
     
     // 影院列表地图页
     public static final String ResultMapDianyingBranchList = "DV";
-    public static final String ResultMapSelectPoint = "DW";
     
     public static final String HotelQuery = "GA";
     public static final String HotelQueryCity = "BA";

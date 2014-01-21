@@ -365,6 +365,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     //ItemizedOverlayHelper.drawPOIOverlay(ItemizedOverlay.LONG_CLICKED_OVERLAY, Sphinx.this, poi);
                     ItemizedOverlayHelper.drawFallingPOI(Sphinx.this, poi);//TODO 文越 review
 
+                    mActionLog.addAction(ActionLog.MapLongClick);
                 } else if (msg.what == MAP_ZOOMEND) {
                     mMapView.setZoomControlsState(msg.arg1);
                 } else if (msg.what == DOWNLOAD_ERROR) {
@@ -743,6 +744,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             EventRegistry.addEventListener(mMapView, MapView.EventType.DOUBLECLICK, new MapView.DoubleClickEventListener(){
                 @Override
                 public void onDoubleClickEvent(final MapView mapView, final Position position) {
+                    mActionLog.addAction(ActionLog.MapDoubleClick);
                 	mMapView.zoomInAtPosition(position);
                 }
             });
@@ -1310,6 +1312,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                                 showView(R.id.activity_traffic_compass);
                                 mPopupWindowTools.dismiss();
                             } else if (id == R.id.show_zoom_button_view || id == R.id.show_zoom_button_chb) {
+                                mActionLog.addAction(ActionLog.MapShowZoomBtn, String.valueOf(showZoonChb.isChecked()));
                                 TKConfig.reversePref(mThis, TKConfig.PREFS_SHOW_ZOOM_BUTTON);
                                 showZoonChb.setChecked(!TKConfig.isPref(mThis, TKConfig.PREFS_SHOW_ZOOM_BUTTON));
                                 refreshZoomView();

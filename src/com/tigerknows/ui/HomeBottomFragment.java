@@ -6,6 +6,7 @@ package com.tigerknows.ui;
 
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.common.ActionLog;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -59,11 +60,14 @@ public class HomeBottomFragment extends BaseFragment implements View.OnClickList
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.poi_view) {
+            mActionLog.addAction(ActionLog.MenuPOI);
             mSphinx.getPOINearbyFragment().setData(mSphinx.buildDataQuery());
             mSphinx.showView(R.id.view_poi_nearby_search);
         } else if (id == R.id.traffic_view) {
             mSphinx.showView(R.id.view_traffic_home);
+            mActionLog.addAction(ActionLog.MenuTraffic);
         } else if (id == R.id.more_view) {
+            mActionLog.addAction(ActionLog.MenuMore);
             mMoreImv.setVisibility(View.GONE);
             mSphinx.showView(R.id.view_more_home);
         }

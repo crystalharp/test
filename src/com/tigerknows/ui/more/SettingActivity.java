@@ -103,10 +103,9 @@ public class SettingActivity extends BaseActivity {
             
             @Override
             public void onClick(View view) {
-                CheckBox checkBox = (CheckBox) view;
+                mActionLog.addAction(mActionTag + ActionLog.SettingMapZoom, String.valueOf(mapZoomBean.checked));
                 mapZoomBean.checked = !mapZoomBean.checked;
                 switchMapZoom();
-                mActionLog.addAction(mActionTag + ActionLog.ListViewItem, ActionLog.SettingMapZoom, checkBox.isChecked());
             }
         };
         mapZoomBean.showIcon = false;
@@ -123,9 +122,9 @@ public class SettingActivity extends BaseActivity {
                 if (mWakeLock.isHeld() == checkBox.isChecked()) {
                     return;
                 }
+                mActionLog.addAction(mActionTag + ActionLog.SettingWakeLock, String.valueOf(wakeLockBean.checked));
                 wakeLockBean.checked = !wakeLockBean.checked;
                 switchWakeLock();
-                mActionLog.addAction(mActionTag + ActionLog.ListViewItem, ActionLog.SettingWakeLock, checkBox.isChecked());
             }
         };
         wakeLockBean.showIcon = false;
@@ -142,9 +141,9 @@ public class SettingActivity extends BaseActivity {
                 if (radarOn(mThis) == checkBox.isChecked()) {
                     return;
                 }
+                mActionLog.addAction(mActionTag + ActionLog.SettingRadar, String.valueOf(radarPushBean.checked));
                 radarPushBean.checked = !radarPushBean.checked; 
                 switchRadarPush();
-                mActionLog.addAction(mActionTag + ActionLog.ListViewItem, ActionLog.SettingRadar, checkBox.isChecked());
             }
         };
         radarPushBean.showIcon = false;
@@ -301,14 +300,14 @@ public class SettingActivity extends BaseActivity {
 	                        startActivityForResult(intent, R.id.activity_setting_location);
 	                        break;
 	                    case DataBean.TYPE_WAKELOCK:
-	                        dataBean.checked = !dataBean.checked;
 	                        mActionLog.addAction(mActionTag + ActionLog.SettingWakeLock, String.valueOf(dataBean.checked));
+	                        dataBean.checked = !dataBean.checked;
 	                        refreshDataSetChanged(type-1);
 	                        switchWakeLock();
 	                        break;
 	                    case DataBean.TYPE_RADARPUSH:
-	                        dataBean.checked = !dataBean.checked;
 	                        mActionLog.addAction(mActionTag + ActionLog.SettingRadar, String.valueOf(dataBean.checked));
+	                        dataBean.checked = !dataBean.checked;
 	                        refreshDataSetChanged(type-1);
 	                        switchRadarPush();
 	                        break;

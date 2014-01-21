@@ -140,9 +140,8 @@ public class LauncherActivity extends TKActivity {
                     startActivity(newIntent);
                 }
             }
-        } else {
-            finish();
         }
+        finish();
     }
     
     @Override

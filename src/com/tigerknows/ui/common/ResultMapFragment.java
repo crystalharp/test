@@ -420,7 +420,7 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
     
     private void saveResultData(String actionTag) {
 
-        if (ActionLog.ResultMapSelectPoint.equals(actionTag) ||
+        if (ActionLog.TrafficSelectPoint.equals(actionTag) ||
                 ActionLog.TrafficTransferMap.equals(actionTag) ||
                 ActionLog.TrafficDriveMap.equals(actionTag) ||
                 ActionLog.TrafficWalkMap.equals(actionTag) ||
@@ -428,7 +428,7 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
                 ActionLog.TrafficWalkListMap.equals(actionTag) ||
                 ActionLog.TrafficTransferListMap.equals(actionTag)) {
             
-            if (ActionLog.ResultMapSelectPoint.equals(mActionTag) == false &&
+            if (ActionLog.TrafficSelectPoint.equals(mActionTag) == false &&
                     ActionLog.TrafficTransferMap.equals(mActionTag) == false &&
                     ActionLog.TrafficDriveMap.equals(mActionTag) == false &&
                     ActionLog.TrafficWalkMap.equals(mActionTag) == false &&
@@ -445,7 +445,7 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
     }
     
     private void restoreDataBean() {
-        if (ActionLog.ResultMapSelectPoint.equals(mActionTag) ||
+        if (ActionLog.TrafficSelectPoint.equals(mActionTag) ||
                 ActionLog.TrafficTransferMap.equals(mActionTag) ||
                 ActionLog.TrafficDriveMap.equals(mActionTag) ||
                 ActionLog.TrafficWalkMap.equals(mActionTag) ||
@@ -454,7 +454,7 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
                 ActionLog.TrafficTransferListMap.equals(mActionTag)) {
             
             if (mResultData != null) {
-                if (ActionLog.ResultMapSelectPoint.equals(mResultData.actionTag) == false &&
+                if (ActionLog.TrafficSelectPoint.equals(mResultData.actionTag) == false &&
                         ActionLog.TrafficTransferMap.equals(mResultData.actionTag) == false &&
                         ActionLog.TrafficDriveMap.equals(mResultData.actionTag) == false &&
                         ActionLog.TrafficWalkMap.equals(mResultData.actionTag) == false &&
