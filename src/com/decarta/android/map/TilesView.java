@@ -3003,6 +3003,8 @@ public class TilesView extends GLSurfaceView {
 			LogWrapper.i("Sequence", "clearTileTextures end");
 		}
 
+		private PopupOverlayItem popupItem = null;
+		private OverlayItem lastFocusedPin = null;
 		/**
 		 * the main method to draw all the map elements
 		 */
@@ -3622,12 +3624,11 @@ public class TilesView extends GLSurfaceView {
 							- ItemizedOverlay.ZOOM_LEVEL);
 					gl.glEnable(GL10.GL_BLEND);
 					gl.glBlendFunc(GL10.GL_ONE, GL10.GL_ONE_MINUS_SRC_ALPHA);
+					OverlayItem focusedPin = null;//假设所有的层只有一个focusedPin
 					for (int i = 0; i < overlays.size(); i++) {
 						ItemizedOverlay overlay = overlays.get(i);
-
 						ArrayList<ArrayList<OverlayItem>> clusters = overlay
 								.getVisiblePins(centerXYZ.z, drawingTiles);
-						OverlayItem focusedPin = null;
 						// Log.i("TilesView","onDraw pins length,visible length,zoomLevel:"+overlay.size()+","+pins.size()+","+centerXYZ.z);
 						for (int j = clusters.size() - 1; j >= 0; j--) {
 							ArrayList<OverlayItem> cluster = clusters.get(j);
@@ -3644,6 +3645,7 @@ public class TilesView extends GLSurfaceView {
 								continue;
 
 							OverlayItem pin = visiblePins.get(0);
+
 							if (pin instanceof PopupOverlayItem) {
 								gl.glPushMatrix();
 								((PopupOverlayItem) pin).drawPin(overlayZoomScale, topLeftXf, topLeftYf, mapMode, gl);
@@ -3663,7 +3665,7 @@ public class TilesView extends GLSurfaceView {
 											"" + cluster.size(), 0, 0);
 								}
 								gl.glPopMatrix();
-								pinAnimating = ((FallingOverlayItem) pin).isAnimating();
+
 							} else {
 								float x = (float) (pin.getMercXY().x
 										* overlayZoomScale - topLeftXf);
@@ -3689,55 +3691,45 @@ public class TilesView extends GLSurfaceView {
 								} else if (pin.isFoucsed) {
 									focusedPin = pin;
 								}
-								float xRot = rt.getTilt();
-								if (rt.getTiltRelativeTo().equals(
-										TiltReference.SCREEN)) {
-									xRot -= mapMode.getxRotation();
+
+								if (focusedPin != pin) { //处于焦点的会在下面最后单独绘制
+									float xRot = rt.getTilt();
+									if (rt.getTiltRelativeTo().equals(
+											TiltReference.SCREEN)) {
+										xRot -= mapMode.getxRotation();
+									}
+									gl.glPushMatrix();
+									gl.glTranslatef(x, y, 0);
+									gl.glRotatef(-mapMode.getzRotation(), 0, 0, 1);
+									gl.glRotatef(xRot, 1, 0, 0);
+									gl.glRotatef(zRot, 0, 0, 1);
+									gl.glScalef(scaleToM, scaleToM, 1);
+
+
+									drawOverlayItemOpenGL(gl, pin, 0, 0);
+									if (overlay.isClustering() && cluster.size() > 1) {
+										drawClusterTextOpenGL(gl, pin,
+												"" + cluster.size(), 0, 0);
+									}
+									gl.glPopMatrix();
 								}
-								gl.glPushMatrix();
-								gl.glTranslatef(x, y, 0);
-								gl.glRotatef(-mapMode.getzRotation(), 0, 0, 1);
-								gl.glRotatef(xRot, 1, 0, 0);
-								gl.glRotatef(zRot, 0, 0, 1);
-								gl.glScalef(scaleToM, scaleToM, 1);
-								drawOverlayItemOpenGL(gl, pin, 0, 0);
-								if (overlay.isClustering() && cluster.size() > 1) {
-									drawClusterTextOpenGL(gl, pin,
-											"" + cluster.size(), 0, 0);
-								}
-								gl.glPopMatrix();
 							}
 
 						}
 						// 将焦点的Pin绘制在上面
 						if (focusedPin != null) {
-							float x = (float) (focusedPin.getMercXY().x
-									* overlayZoomScale - topLeftXf);
-							float y = (float) (-focusedPin.getMercXY().y
-									* overlayZoomScale + topLeftYf);
+								if (focusedPin != lastFocusedPin) {
+									popupItem = new PopupOverlayItem(focusedPin);
+									popupItem.isFoucsed = true;
+									lastFocusedPin = focusedPin;
+								}
 
-							RotationTilt rt = focusedPin.getRotationTilt();
-							float zRot = rt.getRotation();
-							if (rt.getRotateRelativeTo().equals(
-									RotateReference.MAP)) {
-								zRot += mapMode.getzRotation();
-							}
-
-							float xRot = rt.getTilt();
-							if (rt.getTiltRelativeTo().equals(
-									TiltReference.SCREEN)) {
-								xRot -= mapMode.getxRotation();
-							}
-							gl.glPushMatrix();
-							gl.glTranslatef(x, y, 0);
-							gl.glRotatef(-mapMode.getzRotation(), 0, 0, 1);
-							gl.glRotatef(xRot, 1, 0, 0);
-							gl.glRotatef(zRot, 0, 0, 1);
-							gl.glScalef(scaleToM, scaleToM, 1);
-							drawOverlayItemOpenGL(gl, focusedPin, 0, 0);
-							gl.glPopMatrix();
+								gl.glPushMatrix();
+								popupItem.drawPin(overlayZoomScale, topLeftXf, topLeftYf, mapMode, gl);
+								drawOverlayItemOpenGL(gl, popupItem, 0, 0);
+								gl.glPopMatrix();
+								pinAnimating = ((PopupOverlayItem) popupItem).isAnimating() | pinAnimating;
 						}
-
 					}
 					gl.glDisable(GL10.GL_BLEND);
 					gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
