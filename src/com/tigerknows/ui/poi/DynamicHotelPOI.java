@@ -28,6 +28,7 @@ import com.decarta.android.exception.APIException;
 import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.tigerknows.R;
+import com.tigerknows.android.app.TKActivity;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.MapEngine;
@@ -634,7 +635,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             Response response = baseQuery.getResponse();
 
             if (baseQuery instanceof DataOperation) {
-                if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, false, this, false)) {
+                if (BaseActivity.hasAbnormalResponseCode(baseQuery, mSphinx, BaseActivity.SHOW_ERROR_MSG_NO, this, false)) {
                     Toast.makeText(mSphinx, getString(R.string.network_failed), Toast.LENGTH_SHORT).show();
                     loadSucceed(false);
                     refresh();
@@ -654,17 +655,16 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             }
 
             if (baseQuery instanceof ProxyQuery) {
-                if (BaseActivity.checkResponseCode(baseQuery, mSphinx, new int[]{824}, true, this, false)) {
-                    if (response != null) {
-                        if (response.getResponseCode() == 824) {
-                            mClickedRoomType.setCanReserve(0);
-                            refreshBookBtn(mClickedBookBtn, 0);
-                            mClickedChild.setClickable(false);
-                            Utility.showNormalDialog(mSphinx, getString(R.string.hotel_no_room_left));
-                        }
-                    }
-                    return;
+                if (BaseActivity.hasAbnormalResponseCode(baseQuery, mSphinx, TKActivity.SHOW_ERROR_MSG_DIALOG, this, false, new int[]{824})) {
+                	return;
                 }
+            	if (response.getResponseCode() == 824) {
+            		mClickedRoomType.setCanReserve(0);
+            		refreshBookBtn(mClickedBookBtn, 0);
+            		mClickedChild.setClickable(false);
+            		Utility.showNormalDialog(mSphinx, getString(R.string.hotel_no_room_left));
+            		return;
+            	}
                 RoomTypeDynamic roomInfo = ((RoomTypeDynamic)response);
                 if (roomInfo.getNum() > 0){
                     //如果有房，跳转

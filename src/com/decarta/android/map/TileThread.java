@@ -5,26 +5,20 @@
  */
 package com.decarta.android.map;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.util.LinkedList;
 
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 
 import com.decarta.CONFIG;
-import com.decarta.Profile;
 import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.XYZ;
 import com.tigerknows.map.Ca;
 import com.tigerknows.map.MapEngine;
 import com.tigerknows.map.TileDownload;
-import com.tigerknows.map.TileResponse;
 import com.tigerknows.map.MapView.DownloadEventListener;
 import com.tigerknows.map.label.Label;
 import com.tigerknows.map.TileInfo;
-import com.tigerknows.map.Ca;
 
 /**
  * Thread class for loading tiles

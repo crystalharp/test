@@ -524,7 +524,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
 	        		msgType = TKActivity.SHOW_ERROR_MSG_NO;					// 状态查询不需要提示。
 	        	}
 	        	
-	            if(BaseActivity.checkResponseCode(baseQuery, mSphinx, null, msgType, this, false)) {
+	            if(BaseActivity.hasAbnormalResponseCode(baseQuery, mSphinx, msgType, this, false)) {
 	                return;
 	            }
 	        }

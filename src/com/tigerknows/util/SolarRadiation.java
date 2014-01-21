@@ -3,7 +3,6 @@ package com.tigerknows.util;
 import java.util.Calendar;
 
 import com.decarta.android.exception.APIException;
-import com.decarta.android.util.LogWrapper;
 
 public class SolarRadiation {
 

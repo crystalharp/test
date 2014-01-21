@@ -40,7 +40,6 @@ import com.tigerknows.ui.more.SettingActivity;
 import com.tigerknows.util.CalendarUtil;
 import com.tigerknows.util.SolarRadiation;
 import com.tigerknows.util.Utility;
-import com.tigerknows.widget.RotateImageView;
 
 public class TrafficCompassActivity extends BaseActivity implements SensorEventListener{
 	

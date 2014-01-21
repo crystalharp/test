@@ -649,7 +649,7 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
         if (BaseActivity.checkReLogin(dataQuery, mThis, mSourceUserHome, mId, mId, mId, mCancelLoginListener)) {
             isReLogin = true;
             return;
-        } else if (BaseActivity.checkResponseCode(dataQuery, mThis, null, false, mThis, false)) {
+        } else if (BaseActivity.hasAbnormalResponseCode(dataQuery, mThis, BaseActivity.SHOW_ERROR_MSG_NO, mThis, false)) {
             
             mEmptyView.setVisibility(View.GONE);
             mRetryView.setVisibility(View.VISIBLE);

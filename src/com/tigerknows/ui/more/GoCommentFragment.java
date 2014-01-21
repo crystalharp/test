@@ -410,7 +410,7 @@ public class GoCommentFragment extends BaseFragment implements View.OnClickListe
         if (BaseActivity.checkReLogin(dataQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), getId(), getId(), getId(), mCancelLoginListener)) {
             isReLogin = true;
             return;
-        } else if (BaseActivity.checkResponseCode(dataQuery, mSphinx, null, mPOIList.isEmpty(), this, exit)) {
+        } else if (BaseActivity.hasAbnormalResponseCode(dataQuery, mSphinx, mPOIList.isEmpty() ? BaseActivity.SHOW_ERROR_MSG_DIALOG : BaseActivity.SHOW_ERROR_MSG_NO, this, exit)) {
             if (dataQuery.isTurnPage() && dataQuery.getResponse() == null) {
                 mPOILsv.setFooterLoadFailed(true);
             }

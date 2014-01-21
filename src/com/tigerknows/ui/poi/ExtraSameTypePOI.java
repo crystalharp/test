@@ -128,7 +128,7 @@ public class ExtraSameTypePOI extends DynamicPOIViewTemplate {
             mPOIDetailFragment.isReLogin = true;
             return;
         }
-        if (BaseActivity.checkResponseCode(dataQuery, mSphinx, null, false, this, false)) {
+        if (BaseActivity.hasAbnormalResponseCode(dataQuery, mSphinx, BaseActivity.SHOW_ERROR_MSG_NO, this, false)) {
             return;
         }
         POIResponse poiResponse = (POIResponse) dataQuery.getResponse();

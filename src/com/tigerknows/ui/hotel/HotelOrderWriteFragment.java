@@ -669,7 +669,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), getId(), getId(), getId(), mCancelLoginListener)) {
             isReLogin = true;
             return;
-        } else if (BaseActivity.checkResponseCode(baseQuery, mSphinx, new int[] {825, 826}, BaseActivity.SHOW_ERROR_MSG_DIALOG, HotelOrderWriteFragment.this, false, true)) {
+        } else if (BaseActivity.hasAbnormalResponseCode(baseQuery, mSphinx, BaseActivity.SHOW_ERROR_MSG_DIALOG, HotelOrderWriteFragment.this, false, new int[] {825, 826})) {
             return;
         }
         Response response = baseQuery.getResponse();

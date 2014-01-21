@@ -195,7 +195,7 @@ public class AddPictureActivity extends BaseActivity implements View.OnClickList
         if (BaseActivity.checkReLogin(baseQuery, mThis, mSourceUserHome, mId, mId, mId, mCancelLoginListener)) {
             isReLogin = true;
             return;
-        } else if (BaseActivity.checkResponseCode(baseQuery, mThis, null, true, this, false)) {
+        } else if (BaseActivity.hasAbnormalResponseCode(baseQuery, mThis, BaseActivity.SHOW_ERROR_MSG_DIALOG, this, false)) {
             return;
         }
         

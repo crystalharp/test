@@ -100,6 +100,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     private static final int NUM_OF_HOT_LLY = 4;
     
     private static final int FOOD = 0;
+    @SuppressWarnings("unused")
     private static final int HOTEL = 1;
     private static final int ENTERTAINMENT = 2;
     private static final int TRAFFIC = 3;
@@ -802,24 +803,24 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
             return;
         }
         
-        if (BaseActivity.checkResponseCode(dataQuery, mSphinx, new int[]{Response.RESPONSE_CODE_DISCOVER_NO_SUPPORT}, true, this, false)) {
-            if (response != null) {
-                int responseCode = response.getResponseCode();
-                if (responseCode == Response.RESPONSE_CODE_DISCOVER_NO_SUPPORT){
-                    int resId = R.string.no_result;
-                    String dataType = dataQuery.getParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE);
-                    if (DataQuery.DATA_TYPE_TUANGOU.equals(dataType)) {
+        if (BaseActivity.hasAbnormalResponseCode(dataQuery, mSphinx, BaseActivity.SHOW_ERROR_MSG_DIALOG, this, false, new int[]{Response.RESPONSE_CODE_DISCOVER_NO_SUPPORT})) {
+            return;
+        }
+        
+        int responseCode = response.getResponseCode();
+        if (responseCode == Response.RESPONSE_CODE_DISCOVER_NO_SUPPORT){
+            int resId = R.string.no_result;
+            String dataType = dataQuery.getParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE);
+            if (DataQuery.DATA_TYPE_TUANGOU.equals(dataType)) {
                         resId = R.string.this_city_not_support_tuangou;
                     } else if (DataQuery.DATA_TYPE_DIANYING.equals(dataType)) {
                         resId = R.string.this_city_not_support_dianying;
-                    } else if (DataQuery.DATA_TYPE_YANCHU.equals(dataType)) {
-                        resId = R.string.this_city_not_support_yanchu;
-                    } else if (DataQuery.DATA_TYPE_ZHANLAN.equals(dataType)) {
-                        resId = R.string.this_city_not_support_zhanlan;
-                    }
-                    Toast.makeText(mSphinx, resId, Toast.LENGTH_LONG).show();
-                }
+            } else if (DataQuery.DATA_TYPE_YANCHU.equals(dataType)) {
+                resId = R.string.this_city_not_support_yanchu;
+            } else if (DataQuery.DATA_TYPE_ZHANLAN.equals(dataType)) {
+                resId = R.string.this_city_not_support_zhanlan;
             }
+            Toast.makeText(mSphinx, resId, Toast.LENGTH_LONG).show();
             return;
         }
          

@@ -166,7 +166,7 @@ public class FeedbackActivity extends BaseActivity implements View.OnClickListen
         if (BaseActivity.checkReLogin(baseQuery, mThis, mSourceUserHome, mId, mId, mId, mCancelLoginListener)) {
             isReLogin = true;
             return;
-        } else if (BaseActivity.checkResponseCode(baseQuery, mThis, null, true, this, false)) {
+        } else if (BaseActivity.hasAbnormalResponseCode(baseQuery, mThis, BaseActivity.SHOW_ERROR_MSG_DIALOG, this, false)) {
             return;
         }
         Toast.makeText(mThis, R.string.feedback_success, Toast.LENGTH_LONG).show();

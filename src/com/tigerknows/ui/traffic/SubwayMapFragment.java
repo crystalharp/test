@@ -31,7 +31,6 @@ import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
-import com.tigerknows.android.app.TKActivity;
 import com.tigerknows.android.location.Position;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
@@ -354,18 +353,17 @@ public class SubwayMapFragment extends BaseFragment implements RetryView.CallBac
         FileDownload fileDownload = (FileDownload) tkAsyncTask.getBaseQuery();
         int stat = STAT_QUERY_FAILED;
         Response response = fileDownload.getResponse();
-        if (response != null) {
-            if (BaseActivity.checkResponseCode(fileDownload, mSphinx, new int[]{953}, TKActivity.SHOW_ERROR_MSG_NO, this, false, true) == false) {
-                if (response.getResponseCode() != 953) {
-                    subwayPath = MapEngine.getSubwayDataPath(mSphinx, mCityInfo.getId());
-                    if (subwayPath != null) {
-                        stat = STAT_MAP;
-                        mURL = Uri.fromFile(new File(subwayPath)).toString();
-                        loadSubwayMap(mURL);
-                    }
-                } else {
-                    stat = STAT_NODATA;
-                }
+        if (response != null && 
+        	BaseActivity.hasAbnormalResponseCode(fileDownload, mSphinx, BaseActivity.SHOW_ERROR_MSG_NO, this, false, new int[]{953}) == false) {
+            if (response.getResponseCode() != 953) {
+            	subwayPath = MapEngine.getSubwayDataPath(mSphinx, mCityInfo.getId());
+            	if (subwayPath != null) {
+            		stat = STAT_MAP;
+            		mURL = Uri.fromFile(new File(subwayPath)).toString();
+            		loadSubwayMap(mURL);
+            	}
+            } else {
+            	stat = STAT_NODATA;
             }
         }
         if (mOriginStat != STAT_MAP) {

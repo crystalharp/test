@@ -9,7 +9,6 @@
 package com.tigerknows.model;
 
 import com.decarta.android.exception.APIException;
-import com.decarta.android.util.LogWrapper;
 import com.tigerknows.TKConfig;
 import com.tigerknows.model.test.BaseQueryTest;
 import com.tigerknows.model.test.HotelOrderOperationTest;
