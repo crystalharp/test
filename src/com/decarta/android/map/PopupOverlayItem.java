@@ -26,6 +26,10 @@ public class PopupOverlayItem extends OverlayItem {
 
 	}
 
+	public PopupOverlayItem(OverlayItem item) throws APIException {
+		super(item.getPosition(), item.getIcon(), item.getIconFocused(), item.getMessage(), item.getRotationTilt());
+	}
+
 	public void drawPin(double scale, double topLeftXf, double topleftYf, MapMode mapMode, GL10 gl) {
 		if (firstTimeDraw) {
 			animating = true;
