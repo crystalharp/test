@@ -255,7 +255,7 @@ public class HistoryWordTable {
         list.remove(tkWord);
         list.add(0, tkWord);
         if (list.size() > MAX_COUNT) {
-            for(int i = MAX_COUNT, size = list.size(); i < size; i++) {
+            for(int i = list.size()-1; i >= MAX_COUNT; i--) {
                 list.remove(i);
             }
         }
