@@ -126,7 +126,7 @@ public class DynamicDishPOI extends DynamicPOIViewTemplate implements View.OnCli
             return;
         }
         if (baseQuery instanceof DataQuery) {
-            if (BaseActivity.hasAbnormalResponseCode(baseQuery, mSphinx, BaseActivity.SHOW_ERROR_MSG_NO, this, false)) {
+            if (BaseActivity.hasAbnormalResponseCode(baseQuery, mSphinx, BaseActivity.SHOW_NOTHING, this, false)) {
                 refresh();
                 return;
             }

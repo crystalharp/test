@@ -235,7 +235,7 @@ public class DynamicTuangouPOI extends DynamicPOIViewTemplate{
                 mPOIDetailFragment.isReLogin = true;
                 return;
             }
-            if (BaseActivity.hasAbnormalResponseCode(baseQuery, mSphinx, BaseActivity.SHOW_ERROR_MSG_DIALOG, this, false)) {
+            if (BaseActivity.hasAbnormalResponseCode(baseQuery, mSphinx, BaseActivity.SHOW_DIALOG, this, false)) {
                 return;
             }
             Response response = baseQuery.getResponse();

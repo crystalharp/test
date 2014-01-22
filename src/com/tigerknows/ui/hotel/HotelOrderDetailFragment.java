@@ -518,10 +518,10 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
 	            return;
 	        } else {
 	        	
-	        	int msgType = TKActivity.SHOW_ERROR_MSG_TOAST;
+	        	int msgType = TKActivity.SHOW_TOAST;
 	        	if(BaseQuery.API_TYPE_HOTEL_ORDER.equals(tkAsyncTask.getBaseQuery().getAPIType()) &&
 	        			HotelOrderOperation.OPERATION_CODE_QUERY.equals(tkAsyncTask.getBaseQuery().getParameter(HotelOrderOperation.SERVER_PARAMETER_OPERATION_CODE))){
-	        		msgType = TKActivity.SHOW_ERROR_MSG_NO;					// 状态查询不需要提示。
+	        		msgType = TKActivity.SHOW_NOTHING;					// 状态查询不需要提示。
 	        	}
 	        	
 	            if(BaseActivity.hasAbnormalResponseCode(baseQuery, mSphinx, msgType, this, false)) {

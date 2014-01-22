@@ -635,7 +635,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             Response response = baseQuery.getResponse();
 
             if (baseQuery instanceof DataOperation) {
-                if (BaseActivity.hasAbnormalResponseCode(baseQuery, mSphinx, BaseActivity.SHOW_ERROR_MSG_NO, this, false)) {
+                if (BaseActivity.hasAbnormalResponseCode(baseQuery, mSphinx, BaseActivity.SHOW_NOTHING, this, false)) {
                     Toast.makeText(mSphinx, getString(R.string.network_failed), Toast.LENGTH_SHORT).show();
                     loadSucceed(false);
                     refresh();
@@ -655,7 +655,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             }
 
             if (baseQuery instanceof ProxyQuery) {
-                if (BaseActivity.hasAbnormalResponseCode(baseQuery, mSphinx, TKActivity.SHOW_ERROR_MSG_DIALOG, this, false, new int[]{824})) {
+                if (BaseActivity.hasAbnormalResponseCode(baseQuery, mSphinx, TKActivity.SHOW_DIALOG, this, false, new int[]{824})) {
                 	return;
                 }
             	if (response.getResponseCode() == 824) {

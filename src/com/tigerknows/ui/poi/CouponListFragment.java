@@ -241,7 +241,7 @@ public class CouponListFragment extends BaseFragment implements RetryView.CallBa
             Response response = baseQuery.getResponse();
             if (response == null) {
                 resId = R.string.touch_screen_and_retry;
-            } else if (BaseActivity.hasAbnormalResponseCode(baseQuery, mSphinx, BaseActivity.SHOW_ERROR_MSG_NO, this, false)) {
+            } else if (BaseActivity.hasAbnormalResponseCode(baseQuery, mSphinx, BaseActivity.SHOW_NOTHING, this, false)) {
                 resId = BaseActivity.getResponseResId(baseQuery);
             }
             

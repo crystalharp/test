@@ -803,7 +803,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
             return;
         }
         
-        if (BaseActivity.hasAbnormalResponseCode(dataQuery, mSphinx, BaseActivity.SHOW_ERROR_MSG_DIALOG, this, false, new int[]{Response.RESPONSE_CODE_DISCOVER_NO_SUPPORT})) {
+        if (BaseActivity.hasAbnormalResponseCode(dataQuery, mSphinx, BaseActivity.SHOW_DIALOG, this, false, new int[]{Response.RESPONSE_CODE_DISCOVER_NO_SUPPORT})) {
             return;
         }
         

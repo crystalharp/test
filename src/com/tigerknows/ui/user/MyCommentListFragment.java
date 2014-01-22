@@ -311,7 +311,7 @@ public class MyCommentListFragment extends BaseFragment {
         }
         
         if (baseQuery instanceof DataOperation) {
-            if (BaseActivity.hasAbnormalResponseCode(baseQuery, mSphinx, BaseActivity.SHOW_ERROR_MSG_DIALOG, this, false)) {
+            if (BaseActivity.hasAbnormalResponseCode(baseQuery, mSphinx, BaseActivity.SHOW_DIALOG, this, false)) {
                 return;
             }
             POIQueryResponse poiQueryResponse = (POIQueryResponse) baseQuery.getResponse();
@@ -343,7 +343,7 @@ public class MyCommentListFragment extends BaseFragment {
                 mCommentLsv.setFooterSpringback(true);
                 exit = false;
             }    
-            if (BaseActivity.hasAbnormalResponseCode(baseQuery, mSphinx, exit ? BaseActivity.SHOW_ERROR_MSG_DIALOG : BaseActivity.SHOW_ERROR_MSG_NO, this, exit)) {
+            if (BaseActivity.hasAbnormalResponseCode(baseQuery, mSphinx, exit ? BaseActivity.SHOW_DIALOG : BaseActivity.SHOW_NOTHING, this, exit)) {
                 if (dataQuery.isTurnPage() && dataQuery.getResponse() == null) {
                     mCommentLsv.setFooterLoadFailed(true);
                 }

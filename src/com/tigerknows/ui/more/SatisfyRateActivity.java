@@ -192,7 +192,7 @@ public class SatisfyRateActivity extends BaseActivity implements View.OnClickLis
         if (BaseActivity.checkReLogin(baseQuery, mThis, mSourceUserHome, mId, mId, mId, mCancelLoginListener)) {
             isReLogin = true;
             return;
-        } else if (BaseActivity.hasAbnormalResponseCode(baseQuery, mThis, BaseActivity.SHOW_ERROR_MSG_DIALOG, this, false)) {
+        } else if (BaseActivity.hasAbnormalResponseCode(baseQuery, mThis, BaseActivity.SHOW_DIALOG, this, false)) {
             return;
         }
         Toast.makeText(mThis, R.string.satisfy_success, Toast.LENGTH_LONG).show();

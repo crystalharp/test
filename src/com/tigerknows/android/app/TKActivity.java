@@ -729,9 +729,9 @@ public class TKActivity extends Activity implements TKAsyncTask.EventListener {
     	return hasAbnormalResponseCode(baseQuery, activity, showErrorType, sourceView, false, null);
     }
     
-    public static final int SHOW_ERROR_MSG_NO = 0;
-    public static final int SHOW_ERROR_MSG_DIALOG = 1;
-    public static final int SHOW_ERROR_MSG_TOAST = 2;
+    public static final int SHOW_NOTHING = 0;
+    public static final int SHOW_DIALOG = 1;
+    public static final int SHOW_TOAST = 2;
     
     /**
      * Check the response code and show a error msg if an error happens
@@ -771,9 +771,9 @@ public class TKActivity extends Activity implements TKAsyncTask.EventListener {
         
         hasAbnormal = (resId != R.string.response_code_200);
         if (hasAbnormal && (filter == false)) {
-        	if(showErrorType == SHOW_ERROR_MSG_DIALOG){
+        	if(showErrorType == SHOW_DIALOG){
         		showErrorDialog(activity, activity.getString(resId), sourceView, exit);
-        	}else if(showErrorType == SHOW_ERROR_MSG_TOAST){
+        	}else if(showErrorType == SHOW_TOAST){
         		showErrorToast(activity, activity.getString(resId), sourceView, exit);
         	}
         }

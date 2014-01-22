@@ -770,7 +770,7 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
         }
         
         if(! baseQuery.hasLocalParameter(FeedbackUpload.LOCAL_PARAMETER_POIERROR_IGNORE)){
-        	if (BaseActivity.hasAbnormalResponseCode(baseQuery, mThis, BaseActivity.SHOW_ERROR_MSG_DIALOG, this, false)) {
+        	if (BaseActivity.hasAbnormalResponseCode(baseQuery, mThis, BaseActivity.SHOW_DIALOG, this, false)) {
         		return;
         	}
         	Toast.makeText(mThis, R.string.error_recovery_success, Toast.LENGTH_LONG).show();

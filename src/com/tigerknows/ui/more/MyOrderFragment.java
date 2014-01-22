@@ -269,7 +269,7 @@ public class MyOrderFragment extends BaseFragment{
         if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), getId(), getId(), getId(), mCancelLoginListener)){
         	isReLogin = true;
         	return;
-        } else if(BaseActivity.hasAbnormalResponseCode(baseQuery, mSphinx, BaseActivity.SHOW_ERROR_MSG_NO, MyOrderFragment.this, false)){
+        } else if(BaseActivity.hasAbnormalResponseCode(baseQuery, mSphinx, BaseActivity.SHOW_NOTHING, MyOrderFragment.this, false)){
         	return;
         }
         Response response = baseQuery.getResponse();

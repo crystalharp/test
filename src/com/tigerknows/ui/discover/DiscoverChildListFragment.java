@@ -897,7 +897,7 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
         if (BaseActivity.checkReLogin(dataQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), getId(), getId(), getId(), mCancelLoginListener)) {
             isReLogin = true;
             return;
-        } else if (BaseActivity.hasAbnormalResponseCode(dataQuery, mSphinx, BaseActivity.SHOW_ERROR_MSG_DIALOG, this, exit)) {
+        } else if (BaseActivity.hasAbnormalResponseCode(dataQuery, mSphinx, BaseActivity.SHOW_DIALOG, this, exit)) {
             if (dataQuery.isTurnPage() && dataQuery.getResponse() == null) {
                 mResultLsv.setFooterLoadFailed(true);
             }

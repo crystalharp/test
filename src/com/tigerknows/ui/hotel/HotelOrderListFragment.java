@@ -619,7 +619,7 @@ public class HotelOrderListFragment extends BaseFragment{
         
         BaseQuery baseQuery = tkAsyncTask.getBaseQuery();
         
-        if (BaseActivity.hasAbnormalResponseCode(baseQuery, mSphinx, BaseActivity.SHOW_ERROR_MSG_TOAST, this, false)) {
+        if (BaseActivity.hasAbnormalResponseCode(baseQuery, mSphinx, BaseActivity.SHOW_TOAST, this, false)) {
             return;
         }
         

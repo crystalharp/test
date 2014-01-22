@@ -416,11 +416,11 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
                 return true;
             } else {
                 if (isPulledDynamicPOIRequest) {
-                    if (BaseActivity.hasAbnormalResponseCode(baseQuery, mSphinx, BaseActivity.SHOW_ERROR_MSG_TOAST, mParentFragment, true)) {
+                    if (BaseActivity.hasAbnormalResponseCode(baseQuery, mSphinx, BaseActivity.SHOW_TOAST, mParentFragment, true)) {
                         return true;
                     }
                 } else {
-                    if (BaseActivity.hasAbnormalResponseCode(baseQuery, mSphinx, BaseActivity.SHOW_ERROR_MSG_NO, mParentFragment, false)) {
+                    if (BaseActivity.hasAbnormalResponseCode(baseQuery, mSphinx, BaseActivity.SHOW_NOTHING, mParentFragment, false)) {
                         return true;
                     }
                 }

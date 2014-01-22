@@ -419,7 +419,7 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
         final Response response = dataOperation.getResponse();
         String dataType = dataOperation.getParameter(BaseQuery.SERVER_PARAMETER_DATA_TYPE);
         if (BaseQuery.DATA_TYPE_DINGDAN.equals(dataType)) {
-            if (BaseActivity.hasAbnormalResponseCode(dataOperation, mThis, BaseActivity.SHOW_ERROR_MSG_DIALOG, this, false)) {
+            if (BaseActivity.hasAbnormalResponseCode(dataOperation, mThis, BaseActivity.SHOW_DIALOG, this, false)) {
                 return;
             }
             DingdanCreateResponse dingdanCreateResponse = (DingdanCreateResponse) response;

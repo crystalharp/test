@@ -676,7 +676,7 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
         if (BaseActivity.checkReLogin(dataQuery, mThis, mSourceUserHome, mId, mId, mId, mCancelLoginListener)) {
             isReLogin = true;
             return;
-        } else if (BaseActivity.hasAbnormalResponseCode(dataQuery, mThis, BaseActivity.SHOW_ERROR_MSG_NO, mThis, false)) {
+        } else if (BaseActivity.hasAbnormalResponseCode(dataQuery, mThis, BaseActivity.SHOW_NOTHING, mThis, false)) {
             if (dataQuery.getResponse() == null) {
                 if (isHeader) {
                     

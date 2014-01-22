@@ -1089,7 +1089,7 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
             mTitleBtn.setText(R.string.publish_comment);
             isReLogin = true;
             return;
-        } else if (BaseActivity.hasAbnormalResponseCode(commentOperation, mThis, BaseActivity.SHOW_ERROR_MSG_DIALOG, mThis, false, new int[] {201, 601, 602, 603})) {
+        } else if (BaseActivity.hasAbnormalResponseCode(commentOperation, mThis, BaseActivity.SHOW_DIALOG, mThis, false, new int[] {201, 601, 602, 603})) {
         	return;
         }
     	if (response.getResponseCode() == 201) {
