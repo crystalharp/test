@@ -225,19 +225,21 @@ public class HistoryWordTable {
             key = TKConfig.PREFS_HISTORY_WORD_BUSLINE;
             list = History_Word_Busline;
         }
-        list.clear();
-        HistoryWordTable historyWordTable = new HistoryWordTable(context);
-        List<String> listAtPrefTable = readHistoryWordV4(context, type);
-        if (listAtPrefTable.size() > 0) {
-            for(int i = 0, size = listAtPrefTable.size(); i < size; i++) {
-                historyWordTable.write(new TKWord(TKWord.ATTRIBUTE_HISTORY, listAtPrefTable.get(i)), type);
+        synchronized (list) {
+            list.clear();
+            HistoryWordTable historyWordTable = new HistoryWordTable(context);
+            List<String> listAtPrefTable = readHistoryWordV4(context, type);
+            if (listAtPrefTable.size() > 0) {
+                for(int i = 0, size = listAtPrefTable.size(); i < size; i++) {
+                    historyWordTable.write(new TKWord(TKWord.ATTRIBUTE_HISTORY, listAtPrefTable.get(i)), type);
+                }
+                listAtPrefTable.clear();
+                clearHistoryWord(context, key);
             }
-            listAtPrefTable.clear();
-            clearHistoryWord(context, key);
+            
+            historyWordTable.read(list, type);
+            historyWordTable.close();
         }
-        
-        historyWordTable.read(list, type);
-        historyWordTable.close();
     }
     
     public static void addHistoryWord(Context context, TKWord tkWord, int type) {
@@ -252,11 +254,13 @@ public class HistoryWordTable {
         } else {
             list = History_Word_Busline;
         }
-        list.remove(tkWord);
-        list.add(0, tkWord);
-        if (list.size() > MAX_COUNT) {
-            for(int i = list.size()-1; i >= MAX_COUNT; i--) {
-                list.remove(i);
+        synchronized (list) {
+            list.remove(tkWord);
+            list.add(0, tkWord);
+            if (list.size() > MAX_COUNT) {
+                for(int i = list.size()-1; i >= MAX_COUNT; i--) {
+                    list.remove(i);
+                }
             }
         }
         HistoryWordTable historyWordTable = new HistoryWordTable(context);
@@ -274,7 +278,9 @@ public class HistoryWordTable {
         } else {
             list = History_Word_Busline;
         }
-        list.clear();
+        synchronized (list) {
+            list.clear();
+        }
         HistoryWordTable historyWordTable = new HistoryWordTable(context);
         historyWordTable.clear(type);
         historyWordTable.close();
@@ -307,25 +313,27 @@ public class HistoryWordTable {
         default:
             return suggestList;
         }
-        
-        if (TextUtils.isEmpty(key) && historyWordList.size() > 0){
-            suggestList.addAll(historyWordList);
-            suggestList.add(TKWord.getCleanupTKWord(sphinx));
-            return suggestList;
-        }
-        
-        int historyIndex = 0;
-        for (int i = 0, size = historyWordList.size(); i < size; i++) {
-            if (historyIndex >= HISTORY_WORD_LIST_SIZE) {
-                 break;
+
+        synchronized (historyWordList) {
+            if (TextUtils.isEmpty(key) && historyWordList.size() > 0){
+                suggestList.addAll(historyWordList);
+                suggestList.add(TKWord.getCleanupTKWord(sphinx));
+                return suggestList;
             }
-            TKWord historyWord = historyWordList.get(i);
-            //xupeng:确认key与建议词完全匹配的时候保留建议词
-//            if (historyWord.word.startsWith(searchword) && !historyWord.word.equals(searchword)) {
-            if (historyWord.word.startsWith(key)) {
-                suggestList.add(historyWord);
-                associationalList.remove(historyWord);
-                historyIndex++;
+            
+            int historyIndex = 0;
+            for (int i = 0, size = historyWordList.size(); i < size; i++) {
+                if (historyIndex >= HISTORY_WORD_LIST_SIZE) {
+                     break;
+                }
+                TKWord historyWord = historyWordList.get(i);
+                //xupeng:确认key与建议词完全匹配的时候保留建议词
+    //            if (historyWord.word.startsWith(searchword) && !historyWord.word.equals(searchword)) {
+                if (historyWord.word.startsWith(key)) {
+                    suggestList.add(historyWord);
+                    associationalList.remove(historyWord);
+                    historyIndex++;
+                }
             }
         }
         
@@ -343,15 +351,18 @@ public class HistoryWordTable {
         } else {
             historyWordList = History_Word_Busline;
         }
-        int historyIndex = 0;
-        for (int i = 0, size = historyWordList.size(); i < size; i++) {
-            if (historyIndex >= HISTORY_WORD_FIRST_SIZE) {
-                break;
-            }
-            TKWord tkWord = historyWordList.get(i);
-            if (searchword == null || (!tkWord.word.equals(searchword) && !list.contains(tkWord.word))) {
-                list.add(tkWord);
-                historyIndex++;
+
+        synchronized (historyWordList) {
+            int historyIndex = 0;
+            for (int i = 0, size = historyWordList.size(); i < size; i++) {
+                if (historyIndex >= HISTORY_WORD_FIRST_SIZE) {
+                    break;
+                }
+                TKWord tkWord = historyWordList.get(i);
+                if (searchword == null || (!tkWord.word.equals(searchword) && !list.contains(tkWord.word))) {
+                    list.add(tkWord);
+                    historyIndex++;
+                }
             }
         }
         return list;
@@ -412,8 +423,14 @@ public class HistoryWordTable {
     }
     
     public static void onDestroy() {
-        History_Word_POI.clear();
-        History_Word_Traffic.clear();
-        History_Word_Busline.clear();
+        synchronized (History_Word_POI) {
+            History_Word_POI.clear();
+        }
+        synchronized (History_Word_Traffic) {
+            History_Word_Traffic.clear();
+        }
+        synchronized (History_Word_Busline) {
+            History_Word_Busline.clear();
+        }
     }
 }
