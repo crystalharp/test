@@ -3665,7 +3665,7 @@ public class TilesView extends GLSurfaceView {
 											"" + cluster.size(), 0, 0);
 								}
 								gl.glPopMatrix();
-
+								pinAnimating = ((FallingOverlayItem) pin).isAnimating();
 							} else {
 								float x = (float) (pin.getMercXY().x
 										* overlayZoomScale - topLeftXf);
