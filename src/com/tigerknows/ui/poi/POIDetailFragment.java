@@ -799,7 +799,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         mCommentListView.setVisibility(View.GONE);
         
         POI poi = mPOI;
-        if (poi.getUUID() == null) {
+        if (poi == null || poi.getUUID() == null) {
             mStampImv.setVisibility(View.GONE);
             return result;
         }
