@@ -76,7 +76,7 @@
             android:layout_height="wrap_content"
             android:layout_toLeftOf="@id/query_btn"
             android:layout_centerVertical="true"
-            tkandroid:hint="@string/find_poi"
+            tkandroid:hint="@string/input_place_line"
             tkandroid:maxLength="50"
             tkandroid:imeOptions="actionSearch"
             >
