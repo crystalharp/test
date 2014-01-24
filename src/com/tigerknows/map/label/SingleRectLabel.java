@@ -673,4 +673,46 @@ public class SingleRectLabel extends Label {
     public SingleRectLabel clone() {
         return new SingleRectLabel(name, color, style, iconId, iconId, STYLE_NO_ICON_WITH_BACKGROUND, STYLE_NO_ICON_WITHOUT_BACKGROUND, point, x, y, z);
     }
+
+    /*
+     * 获取label point 的墨卡托坐标
+     */
+    public XYInteger getMerPix() {
+    	int mercX = x * CONFIG.TILE_SIZE + point.x;
+    	int mercY = (y + 1) * CONFIG.TILE_SIZE - (point.y + 1);
+    	XYInteger mercPix = new XYInteger(mercX, mercY);
+    	return mercPix;
+    }
+    /*
+     * 判断是否是同一个Label（可以是不同级别）
+     */
+    public boolean isSameLabel(SingleRectLabel label) {
+    	if (label == this) return true;
+    	if (!(name.equals(label.name) && type == label.type)) return false;
+
+	//以下判断两个label是否在同一个点上
+	//由于在不同的级别下可能有偏差，下面就把级别小的放大，然后根据是否在偏差范围内来判断出是否是同一个label
+    	SingleRectLabel label1 = null;
+    	SingleRectLabel label2 = null;
+
+    	if (z > label.z) {
+    		label1 = label;
+    		label2 = this;
+    	} else {
+    		label1 = this;
+    		label2 = label;
+    	}
+    	//label2的z大于等于label1的z
+
+    	int zOffset = label2.z - label1.z;
+    	XYInteger label1MercPix = label1.getMerPix();
+    	label1MercPix.x = label1MercPix.x << zOffset; //放大后的x
+    	label1MercPix.y = label1MercPix.y << zOffset; //放大后的y
+    	XYInteger label2MercPix = label2.getMerPix();
+    	int maxOffset = (1 << zOffset) - 1; //判断是否是同一个点的最大偏差
+    	boolean xCondition = Math.abs(label1MercPix.x - label2MercPix.x) <= maxOffset;
+    	boolean yCondition = Math.abs(label1MercPix.y - label2MercPix.y) <= maxOffset;
+    	return (xCondition && yCondition);
+    }
+
 }

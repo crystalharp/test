@@ -2745,11 +2745,14 @@ public class TilesView extends GLSurfaceView {
 								if (overlay == null) { //如果MAP_POI_OVERLAY没有了，就把touchLabel置为null，下次就不用再检查
 									touchLabel = null;
 								} else {
-									if (label.name.equals(touchLabel.name) && label.type == touchLabel.type) {
+									boolean isLevelChanged = (label.z != touchLabel.z);
+									if (isLevelChanged) {
 										if (label instanceof SingleRectLabel) {
-											touchLabel = (SingleRectLabel)label;
-											Position position = getSingleLabelPostion((SingleRectLabel)label);
-											mParentMapView.executeUpdateMapPOIPostionEventListener(position, label.name);
+											if ( ((SingleRectLabel) label).isSameLabel(touchLabel) ) {
+												touchLabel = (SingleRectLabel)label;
+												Position position = getSingleLabelPostion((SingleRectLabel)label);
+												mParentMapView.executeUpdateMapPOIPostionEventListener(position, label.name);
+											}
 										}
 									}
 								}
