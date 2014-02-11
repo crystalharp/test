@@ -53,6 +53,7 @@ import com.tigerknows.provider.TrafficSearchHistoryTable.SearchHistory;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.ui.poi.InputSearchFragment;
 import com.tigerknows.ui.traffic.TrafficCommonPlaceFragment.CommonPlaceList;
+import com.tigerknows.ui.traffic.TrafficSearchHistoryFragment.SearchHistoryList;
 import com.tigerknows.util.Utility;
 import com.tigerknows.widget.LinearListAdapter;
 import com.tigerknows.widget.StringArrayAdapter;
@@ -138,12 +139,8 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	LinearListAdapter mCommonPlaceAdapter;
             
     CommonPlaceList mCommonPlaces = new CommonPlaceList(mSphinx);
+    SearchHistoryList mSearchHistorys = new SearchHistoryList(mSphinx, MAX_QUERY_HISTORY);
 
-    List<SearchHistory> mQueryHistorys = new LinkedList<SearchHistory>();
-    List<SearchHistory> mShowingQueryHistorys = new LinkedList<SearchHistory>();
-    
-    TrafficSearchHistoryTable mHistoryTable = new TrafficSearchHistoryTable(mSphinx);
-    
     RadioGroup.OnCheckedChangeListener mRadioCheckedChangedListener = new RadioGroup.OnCheckedChangeListener() {
         
         @Override
@@ -311,7 +308,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	        @Override
 	        public void onClick(View v) {
 	            SearchHistory h = (SearchHistory) v.getTag();
-	            mActionLog.addAction(mActionTag + ActionLog.TrafficHomeHistoryItem, mQueryHistorys.indexOf(h));
+	            mActionLog.addAction(mActionTag + ActionLog.TrafficHomeHistoryItem, mSearchHistorys.indexOf(h));
 	            mStart.setPOI(h.start);
 	            mEnd.setPOI(h.end);
 	            updateSearchHistory(h);
@@ -325,7 +322,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	            SearchHistory h = (SearchHistory)data;
 	            TextView t = (TextView) child.findViewById(R.id.his_txv);
 	            child.setTag(data);
-	            if (pos == mQueryHistorys.size() - 1) {
+	            if (pos == mSearchHistorys.size() - 1) {
 	                child.setBackgroundResource(R.drawable.list_footer);
 	            } else {
 	                child.setBackgroundResource(R.drawable.list_middle);
@@ -590,50 +587,34 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
     
     //用来处理新生成的历史
     private void addSearchHistory(SearchHistory sh) {
-        if (mQueryHistorys.contains(sh)) {
-            //各种各样看起来名字一样的历史需要先删除掉
-            int index = mQueryHistorys.indexOf(sh);
-            SearchHistory oldsh = mQueryHistorys.get(index);
-            mQueryHistorys.remove(oldsh);
-            mHistoryTable.delete(oldsh);
-        }
-        mQueryHistorys.add(0, sh);
-        mHistoryTable.add(sh);
-        mShowingQueryHistorys = mQueryHistorys.subList(0, Math.min(mQueryHistorys.size(), MAX_QUERY_HISTORY));
-
-        if (mShowingQueryHistorys.size() == 1) {
+        mSearchHistorys.addHistory(sh);
+        if (mSearchHistorys.size() == 1) {
             mQueryHistory.setVisibility(View.VISIBLE);
             mQueryHistoryLst.setVisibility(View.VISIBLE);
         }
-        mQueryHistoryAdapter.refreshList(mShowingQueryHistorys);
+        mQueryHistoryAdapter.refreshList(mSearchHistorys.getList());
     }
     
     //只用来处理有id的搜索历史
-    private void updateSearchHistory(SearchHistory sh) {
-        mQueryHistorys.remove(sh);
-        mQueryHistorys.add(0, sh);
-        mHistoryTable.update(sh);
-        mShowingQueryHistorys = mQueryHistorys.subList(0, Math.min(mQueryHistorys.size(), MAX_QUERY_HISTORY));
-        mQueryHistoryAdapter.refreshList(mShowingQueryHistorys);
+    private final void updateSearchHistory(SearchHistory sh) {
+        mSearchHistorys.updateHistory(sh);
+        mQueryHistoryAdapter.refreshList(mSearchHistorys.getList());
     }
     
-    private void delSearchHistory(SearchHistory sh) {
-        mQueryHistorys.remove(sh);
-        mHistoryTable.delete(sh);
-        mQueryHistoryAdapter.refreshList(mQueryHistorys);
+    private final void delSearchHistory(SearchHistory sh) {
+        mSearchHistorys.delHistory(sh);
+        mQueryHistoryAdapter.refreshList(mSearchHistorys.getList());
     }
     
-    public void initHistory() {
-        mQueryHistorys.clear();
-        mHistoryTable.readTrafficSearchHistory(mQueryHistorys);
+    private void initHistory() {
+        mSearchHistorys.initData();
         mQueryHistory.setVisibility(View.VISIBLE);
         mQueryHistoryLst.setVisibility(View.VISIBLE);
-        if (mQueryHistorys.size() == 0) {
+        if (mSearchHistorys.size() == 0) {
             mQueryHistory.setVisibility(View.GONE);
             mQueryHistoryLst.setVisibility(View.GONE);
         }
-        mShowingQueryHistorys = mQueryHistorys.subList(0, Math.min(mQueryHistorys.size(), MAX_QUERY_HISTORY));
-        mQueryHistoryAdapter.refreshList(mShowingQueryHistorys);
+        mQueryHistoryAdapter.refreshList(mSearchHistorys.getList());
     }
     
 	public static String getMyLocationName(Sphinx mSphinx, Position position) {
@@ -949,7 +930,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
             public void onItemClick(AdapterView<?> arg0, View arg1, int which, long arg3) {
             	Station station = null;
             	//如果点到这里来，第一条肯定是刚才搜索的。
-            	SearchHistory sh_old = mQueryHistorys.get(0);
+            	SearchHistory sh_old = mSearchHistorys.get(0);
             	delSearchHistory(sh_old);
             	if (start) {
             	    station = startStationList.get(which);

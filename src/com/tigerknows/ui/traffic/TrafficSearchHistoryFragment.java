@@ -3,6 +3,7 @@ package com.tigerknows.ui.traffic;
 import java.util.LinkedList;
 import java.util.List;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,9 +28,7 @@ public class TrafficSearchHistoryFragment extends BaseFragment {
     
     TextView mEmptyTxv;
     
-    List<SearchHistory> mList = new LinkedList<SearchHistory>();
-    
-    TrafficSearchHistoryTable table = new TrafficSearchHistoryTable(mSphinx);
+    SearchHistoryList mList = new SearchHistoryList(mSphinx);
     
     HistoryAdapter mAdapter = new HistoryAdapter();
     
@@ -39,7 +38,8 @@ public class TrafficSearchHistoryFragment extends BaseFragment {
         
         @Override
         public void onClick(View v) {
-            clearHistory();
+            mList.clearHistory();
+            mAdapter.notifyDataSetChanged();
             refresh();
             mActionLog.addAction(mActionTag + ActionLog.TrafficSearchHistoryClear);
         }
@@ -71,7 +71,8 @@ public class TrafficSearchHistoryFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
         mTitleBtn.setText(R.string.title_traffic_search_history);
-        initData();
+        mList.initData();
+        mAdapter.notifyDataSetChanged();
         refresh();
         mRightBtn.setVisibility(View.VISIBLE);
         Utility.refreshButton(mSphinx, mRightBtn, null, getString(R.string.clear), false);
@@ -98,14 +99,15 @@ public class TrafficSearchHistoryFragment extends BaseFragment {
                 f.setStart(mList.get(arg2).start);
                 f.setEnd(mList.get(arg2).end);
                 f.autoStartQuery(true);
-                updateHistory(mList.get(arg2));
+                mList.updateHistory(mList.get(arg2));
+                mAdapter.notifyDataSetChanged();
                 dismiss();
             }
         });
     }
     
     private void refresh() {
-        if (mList.isEmpty()) {
+        if (mList.size() == 0) {
             mHistoryLsv.setVisibility(View.GONE);
             mEmptyTxv.setVisibility(View.VISIBLE);
         } else {
@@ -114,23 +116,78 @@ public class TrafficSearchHistoryFragment extends BaseFragment {
         }
     }
     
-    private void initData() {
-        mList.clear();
-        table.readTrafficSearchHistory(mList);
-        mAdapter.notifyDataSetChanged();
-    }
+    public static class SearchHistoryList {
+        
+        Context mCtx;
+        int mShowNum;
+        private List<SearchHistory> mList = new LinkedList<SearchHistory>();
+        private TrafficSearchHistoryTable table;
+        
+        public SearchHistoryList(Context ctx) {
+            this(ctx, TrafficSearchHistoryTable.MAX_COUNT);
+        }
+        
+        public SearchHistoryList(Context ctx, int showNum) {
+            mShowNum = showNum;
+            mCtx = ctx;
+            table = new TrafficSearchHistoryTable(ctx);
+        }
+        
+        public void initData() {
+            mList.clear();
+            table.readTrafficSearchHistory(mList);
+        }
+        
+        public void addHistory(SearchHistory sh) {
+            if (mList.contains(sh)) {
+                //各种各样看起来名字一样的历史需要先删除掉
+                int index = mList.indexOf(sh);
+                SearchHistory oldsh = mList.get(index);
+                mList.remove(oldsh);
+                table.delete(oldsh);
+            }
+            mList.add(0, sh);
+            table.add(sh);
+        }
+        
+        public void delHistory(SearchHistory sh) {
+            mList.remove(sh);
+            table.delete(sh);
+        }
+        
+        public void clearHistory() {
+            table.clear();
+            mList.clear();
+        }
+        
+        public void updateHistory(SearchHistory sh) {
+            if (sh.getId() != -1) {
+                mList.remove(sh);
+                mList.add(0, sh);
+                table.update(sh);
+            }
+        }
+        
+        public final int indexOf(SearchHistory sh) {
+            return mList.indexOf(sh);
+        }
+        
+        public final SearchHistory get(int index) {
+            return mList.get(index);
+        }
+        
+        public final int size() {
+            return mList.size();
+        }
+        
+        public final List<SearchHistory> getList() {
+            if (mList.size() > mShowNum) {
+                return mList.subList(0, mShowNum);
+            } else {
+                return mList;
+            }
+        }
     
-    private void clearHistory() {
-        table.clear();
-        mList.clear();
-        mAdapter.notifyDataSetChanged();
-    }
-    
-    private void updateHistory(SearchHistory sh) {
-        mList.remove(sh);
-        mList.add(0, sh);
-        mAdapter.notifyDataSetChanged();
-        table.update(sh);
     }
     
     class HistoryAdapter extends BaseAdapter {

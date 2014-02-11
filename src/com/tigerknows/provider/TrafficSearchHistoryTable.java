@@ -236,10 +236,15 @@ public class TrafficSearchHistoryTable {
         public SearchHistory(POI s, POI e) {
             start = s;
             end = e;
+            id = -1;
         }
         
         public String genDescription() {
             return start.getName() + arrow + end.getName();
+        }
+        
+        public final long getId() {
+            return id;
         }
         
         public boolean equals(Object o) {
