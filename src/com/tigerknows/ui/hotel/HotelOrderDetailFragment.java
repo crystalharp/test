@@ -301,6 +301,12 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
 			HotelOrderTable table = new HotelOrderTable(mContext);
 			table.delete(mOrder.getId());
 			table.close();
+			if(getId() == R.id.view_hotel_order_detail_2 && mSphinx.uiStackContains(R.id.view_hotel_order_detail)){
+				Message msg = new Message();
+				msg.what = Sphinx.HOTEL_ORDER_DELETE_SYNC;
+				msg.obj = mOrder.getId();
+				mSphinx.getHandler().sendMessage(msg);
+			}
 			mSphinx.getHotelOrderListFragment().removeOrder(mOrder);
 			dismiss();
 			Toast.makeText(mSphinx, R.string.hotel_order_delete_success, Toast.LENGTH_LONG).show();
@@ -691,9 +697,16 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
 	}
 	
 	public void handleMessage(Message msg){
-		String id = msg.obj.toString();
-		if(TextUtils.equals(id, mOrder.getId())){
-			mOrder.setState(msg.arg1);
+		if(msg.what == Sphinx.HOTEL_ORDER_OLD_SYNC){
+			String id = msg.obj.toString();
+			if(TextUtils.equals(id, mOrder.getId())){
+				mOrder.setState(msg.arg1);
+			}
+		}else if(msg.what == Sphinx.HOTEL_ORDER_DELETE_SYNC){
+			String id = msg.obj.toString();
+			if(TextUtils.equals(id, mOrder.getId())){
+				mSphinx.uiStackRemove(getId());
+			}
 		}
 	}
     

@@ -260,6 +260,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     public static int UI_STACK_ADJUST_EXECUTE = 0x1b;
     public static int UI_STACK_ADJUST_CANCEL = 0x1c;
     
+    public static int HOTEL_ORDER_DELETE_SYNC = 0x1e;
     public static int HOTEL_ORDER_OLD_SYNC = 0x1f;
 
     private static final String TAG = "Sphinx";
@@ -387,7 +388,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 	mUIStackAdjustReady = R.id.view_invalid;
                 } else if (msg.what == UI_STACK_ADJUST_CANCEL){
                 	mUIStackAdjustReady = R.id.view_invalid;
-                } else if (msg.what == HOTEL_ORDER_OLD_SYNC){
+                } else if (msg.what == HOTEL_ORDER_OLD_SYNC || msg.what == HOTEL_ORDER_DELETE_SYNC){
                 	getHotelOrderDetailFragment().handleMessage(msg);
                 }
 
