@@ -86,8 +86,6 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     private LinearLayout[] mHotLlys;
     private View[] mHotBtnViews;
     
-    private int mSourceFragment;
-    
     private DataQuery mDataQuery;
     
     private String mIsFold;
@@ -240,7 +238,16 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         SpannableStringBuilder style = new SpannableStringBuilder(title);
         int focusedColor = mSphinx.getResources().getColor(R.color.black_dark);
         style.setSpan(new ForegroundColorSpan(focusedColor), 0, 2, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
-        style.setSpan(new ForegroundColorSpan(focusedColor), 2+name.length(), title.length(), Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+        TextView nearbyTxv = (TextView)mRootView.findViewById(R.id.nearby_txv);
+        nearbyTxv.setVisibility(View.VISIBLE);
+        LinearLayout nearbyLly = (LinearLayout)mRootView.findViewById(R.id.nearby_bar_lly);
+        mLocationTxv.setMaxWidth(
+        		(int) (
+        				mContext.getResources().getDisplayMetrics().widthPixels
+        				- nearbyLly.getPaddingLeft()
+        				- nearbyLly.getPaddingRight()
+        				- nearbyTxv.getPaint().measureText(nearbyTxv.getText().toString())
+        				));
         mLocationTxv.setText(style);
     }
     
