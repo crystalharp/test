@@ -54,6 +54,11 @@ public class CycleViewPager {
         public Object instantiateItem(View arg0, int position) {
             // TODO Auto-generated method stub
             try {
+                ((ViewPager)arg0).removeView(viewList.get(position % viewList.size()));
+            } catch (Exception e) {
+                // TODO: handle exception
+            }
+            try {
                 ((ViewPager)arg0).addView(viewList.get(position % viewList.size()));
             } catch (Exception e) {
                 // TODO: handle exception

@@ -23,6 +23,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -133,7 +134,11 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	
 	View mTitleBar;
 	
-	public static ViewGroup.LayoutParams sLayoutParams = new LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+	public static RelativeLayout.LayoutParams sLayoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+	
+	static {
+	    sLayoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, 1);
+	}
 	
 	LinearListAdapter mQueryHistoryAdapter;
 	LinearListAdapter mCommonPlaceAdapter;
