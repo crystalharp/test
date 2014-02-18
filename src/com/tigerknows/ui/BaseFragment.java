@@ -59,7 +59,7 @@ public class BaseFragment extends LinearLayout {
     
     public TitleFragment mTitleFragment = null;
     
-    public BaseFragment mBottomFrament = null;
+    public BaseFragment mBottomFragment = null;
     
     public TKEditText mKeywordEdt;
     

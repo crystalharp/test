@@ -47,7 +47,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
 
         mRootView = mLayoutInflater.inflate(R.layout.home, container, false);
         
-        mBottomFrament = mSphinx.getHomeBottomFragment();
+        mBottomFragment = mSphinx.getHomeBottomFragment();
 
         findViews();
         setListener();
@@ -71,7 +71,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         mLeftBtn.setVisibility(View.GONE);
         
         mSphinx.clearMap();
-        mBottomFrament = mSphinx.getHomeBottomFragment();
+        mBottomFragment = mSphinx.getHomeBottomFragment();
         mSphinx.replaceBottomUI(this);
         MapView mapView = mSphinx.getMapView();
         mapView.setStopRefreshMyLocation(false);
@@ -117,7 +117,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
     	mActionLog.addAction(mActionTag + ActionLog.TitleCenterButton);
-        mBottomFrament = mSphinx.getHomeBottomFragment();
+        mBottomFragment = mSphinx.getHomeBottomFragment();
         mSphinx.getInputSearchFragment().setData(mSphinx.buildDataQuery(),
         		null,
                 InputSearchFragment.MODE_POI);
