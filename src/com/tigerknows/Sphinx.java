@@ -946,7 +946,12 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 }
             }
         } else if (R.id.activity_more_map_download == requestCode) {
-
+            if (data != null && RESULT_OK == resultCode) {
+                CityInfo cityInfo = data.getParcelableExtra(MapDownloadActivity.EXTRA_CITYINFO);
+                if (cityInfo != null) {
+                    changeCity(cityInfo);
+                }
+            }
         } else if (R.id.activity_user_login_regist == requestCode) {
             if (data != null) {
                 loginBack(data);

@@ -353,6 +353,7 @@ public class ActionLog extends LogUpload {
     public static final String MapDownloadSuggest = "BM";
     public static final String MapDownloadAddListCity = "BN";
     public static final String MapDownloadAddListProvince = "BO";
+    public static final String MapDownloadOpertorView = "BP";
 
     // 收藏夹页
     public static final String Favorite = "CD";

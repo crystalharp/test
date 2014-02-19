@@ -21,6 +21,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -74,6 +75,8 @@ import com.tigerknows.widget.StringArrayAdapter;
  * @author pengwenyue
  */
 public class MapDownloadActivity extends BaseActivity implements View.OnClickListener {
+    
+    public static final String EXTRA_CITYINFO = "cityinfo";
     
     /*
      * 浏览过的城市Id列表
@@ -981,6 +984,7 @@ public class MapDownloadActivity extends BaseActivity implements View.OnClickLis
         final String cityName = cityInfo.getCName();
         final List<String> list = new ArrayList<String>();
         int state = downloadCity.state;
+        list.add(mThis.getString(R.string.view_map));
         if (state == DownloadCity.STATE_DOWNLOADING ||
                 state == DownloadCity.STATE_WAITING) {
             list.add(mThis.getString(R.string.pause_download));
@@ -1015,7 +1019,14 @@ public class MapDownloadActivity extends BaseActivity implements View.OnClickLis
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int which, long arg3) {
                 String str = list.get(which);
-                if (str.equals(mThis.getString(R.string.download_map))) {
+                if (str.equals(mThis.getString(R.string.view_map))) {
+                    mActionLog.addAction(mActionTag +  ActionLog.MapDownloadOpertorView);
+                    Intent intent = new Intent();
+                    CityInfo city = cityInfo.clone();
+                    intent.putExtra(EXTRA_CITYINFO, city);
+                    setResult(RESULT_OK, intent);
+                    finish();
+                } else if (str.equals(mThis.getString(R.string.download_map))) {
                     mActionLog.addAction(mActionTag +  ActionLog.MapDownloadOpertorDownload);
                     if (mMapEngine.isExternalStorage()) {
                         downloadCity.state = DownloadCity.STATE_WAITING;
@@ -1211,30 +1222,35 @@ public class MapDownloadActivity extends BaseActivity implements View.OnClickLis
             ImageView iconImv = (ImageView) provinceView.findViewById(R.id.icon_imv);
             Button startBtn = (Button)provinceView.findViewById(R.id.start_btn);
             Button pauseBtn = (Button)provinceView.findViewById(R.id.pause_btn);
+            TextView textTxv = (TextView) provinceView.findViewById(R.id.text_txv);
             if (cityInfo.getId() == ORDER_ID_TITLE_ONE) {
                 provinceView.setBackgroundResource(R.drawable.bg_expandablelistview_group);
                 provinceView.setVisibility(View.VISIBLE);
                 cityView.setVisibility(View.GONE);
-                TextView textTxv = (TextView) provinceView.findViewById(R.id.text_txv);
                 titleTxv.setText(cityInfo.getCName());
                 textTxv.setVisibility(View.GONE);
                 titleTxv.setVisibility(View.VISIBLE);
                 iconImv.setVisibility(View.GONE);
                 startBtn.setVisibility(View.GONE);
                 pauseBtn.setVisibility(View.VISIBLE);
-                pauseBtn.setBackgroundResource(R.drawable.ic_map_upgrade);
+                pauseBtn.setText(R.string.upgrade_all);
+                pauseBtn.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+                pauseBtn.setBackgroundResource(R.drawable.btn_update_default);
+                int padding = Utility.dip2px(mThis, 4);
+                pauseBtn.setPadding(padding, padding, padding, padding);
                 pauseBtn.setOnClickListener(mUpdateBtnOnClickListener);
             } else if (cityInfo.getId() == ORDER_ID_TITLE_TWO) {
                 provinceView.setBackgroundResource(R.drawable.bg_expandablelistview_group);
                 provinceView.setVisibility(View.VISIBLE);
                 cityView.setVisibility(View.GONE);
-                TextView textTxv = (TextView) provinceView.findViewById(R.id.text_txv);
                 titleTxv.setText(cityInfo.getCName());
                 textTxv.setVisibility(View.GONE);
                 titleTxv.setVisibility(View.VISIBLE);
                 iconImv.setVisibility(View.GONE);
                 startBtn.setVisibility(View.VISIBLE);
                 pauseBtn.setVisibility(View.VISIBLE);
+                pauseBtn.setText(null);
+                pauseBtn.setTextSize(TypedValue.COMPLEX_UNIT_SP, 4);
                 
                 boolean start = false;
                 boolean pasue = false;
@@ -1272,7 +1288,6 @@ public class MapDownloadActivity extends BaseActivity implements View.OnClickLis
                 provinceView.setBackgroundResource(R.drawable.bg_expandablelistview_group);
                 provinceView.setVisibility(View.VISIBLE);
                 cityView.setVisibility(View.GONE);
-                TextView textTxv = (TextView) provinceView.findViewById(R.id.text_txv);
                 titleTxv.setText(cityInfo.getCName());
                 textTxv.setVisibility(View.GONE);
                 titleTxv.setVisibility(View.VISIBLE);
@@ -1283,7 +1298,6 @@ public class MapDownloadActivity extends BaseActivity implements View.OnClickLis
                 provinceView.setBackgroundResource(R.drawable.list_selector_background_gray_light);
                 provinceView.setVisibility(View.VISIBLE);
                 cityView.setVisibility(View.GONE);
-                TextView textTxv = (TextView) provinceView.findViewById(R.id.text_txv);
                 textTxv.setText(cityInfo.getCName());
                 textTxv.setVisibility(View.VISIBLE);
                 titleTxv.setVisibility(View.GONE);
@@ -1312,32 +1326,23 @@ public class MapDownloadActivity extends BaseActivity implements View.OnClickLis
             }
             CityInfo cityInfo = downloadCity.cityInfo;
             TextView nameTxv = (TextView) cityView.findViewById(R.id.text_txv);
+            TextView sizeTxv = (TextView) cityView.findViewById(R.id.size_txv);
             TextView percentTxv = (TextView) cityView.findViewById(R.id.percent_txv);
             ProgressBar progressBar = (ProgressBar) cityView.findViewById(R.id.progress_prb);
-            String size = (downloadCity.totalSize > 0 ? mThis.getString(R.string.brackets, mThis.getString(R.string._m, downloadCity.getTotalSizeTip())) : "");
+            String size = (downloadCity.totalSize > 0 ? downloadCity.getTotalSizeTip() + "M" : null);
             String name = cityInfo.getCName();
             if (cityInfo.getId() == CityInfo.CITY_ID_QUANGUO) {
                 name = getString(R.string.quanguo_map);
             }
-            nameTxv.setText(name+size);
+            nameTxv.setText(name);
+            sizeTxv.setText(size);
             
             if (downloadCity.isStatsed == false) {
-                percentTxv.setText(mThis.getString(R.string.counting_tip));
                 progressBar.setProgress(0);
             } else {
-                if (downloadCity.state == DownloadCity.STATE_CAN_BE_UPGRADE) {
-                    percentTxv.setText(mThis.getString(R.string.may_upgrade));
-                } else if (downloadCity.state == DownloadCity.STATE_DOWNLOADING) {
-                    percentTxv.setText(mThis.getString(R.string.downloading_, String.valueOf(downloadCity.getDownloadPercent())));
-                } else if (downloadCity.state == DownloadCity.STATE_WAITING) {
-                    percentTxv.setText(mThis.getString(R.string.waiting_download_, String.valueOf(downloadCity.getDownloadPercent())));
-                } else if (downloadCity.state == DownloadCity.STATE_COMPLETED) {
-                    percentTxv.setText(mThis.getString(R.string.completed));
-                } else {
-                	percentTxv.setText(mThis.getString(R.string.downloaded_, String.valueOf(downloadCity.getDownloadPercent())));
-                }
                 progressBar.setProgress((int)Float.parseFloat(downloadCity.getDownloadPercent()));
             }
+            percentTxv.setText(getStateText(downloadCity));
         }
 
         @Override
@@ -1348,6 +1353,24 @@ public class MapDownloadActivity extends BaseActivity implements View.OnClickLis
         @Override
         public boolean isChildSelectable(int arg0, int arg1) {
             return true;
+        }
+    }
+    
+    private String getStateText(DownloadCity downloadCity) {
+        if (downloadCity.isStatsed == false) {
+            return mThis.getString(R.string.counting_tip);
+        } else {
+            if (downloadCity.state == DownloadCity.STATE_CAN_BE_UPGRADE) {
+                return mThis.getString(R.string.may_upgrade);
+            } else if (downloadCity.state == DownloadCity.STATE_DOWNLOADING) {
+                return mThis.getString(R.string.downloading_, String.valueOf(downloadCity.getDownloadPercent()));
+            } else if (downloadCity.state == DownloadCity.STATE_WAITING) {
+                return mThis.getString(R.string.waiting_download_, String.valueOf(downloadCity.getDownloadPercent()));
+            } else if (downloadCity.state == DownloadCity.STATE_COMPLETED) {
+                return mThis.getString(R.string.completed);
+            } else {
+                return mThis.getString(R.string.downloaded_, String.valueOf(downloadCity.getDownloadPercent()));
+            }
         }
     }
     
@@ -1665,9 +1688,15 @@ public class MapDownloadActivity extends BaseActivity implements View.OnClickLis
             textTxv.setText((appendSpace ? "    " : "")+(cityInfo.getId() == CityInfo.CITY_ID_QUANGUO ? getString(R.string.quanguo_map) : cname));
             DownloadCity downloadCity = getDownloadCity(mDownloadCityList, cityInfo);
             if (downloadCity != null) {
+                if (downloadCity.isStatsed == false) {
+                    Intent intent = new Intent(MapStatsService.ACTION_STATS_DOWNLOAD_CITY);
+                    intent.setClass(mThis, MapStatsService.class);
+                    intent.putExtra(MapStatsService.EXTRA_DOWNLOAD_CITY, downloadCity);
+                    startService(intent);
+                }
                 textTxv.setTextColor(mColorBlackLight);
                 view.setBackgroundResource(R.color.gray_light);
-                statusTxv.setText(R.string.added);
+                statusTxv.setText(getStateText(downloadCity));
                 statusTxv.setVisibility(View.VISIBLE);
             } else {
                 if (mNotFindCity.equals(cityInfo.getCName())) {
@@ -1691,15 +1720,13 @@ public class MapDownloadActivity extends BaseActivity implements View.OnClickLis
                 }
             }
             
+            statusTxv.setVisibility(View.GONE);
             if (isAllExist) {
                 textTxv.setTextColor(mColorBlackLight);
                 view.setBackgroundResource(R.color.gray_light);
-                statusTxv.setVisibility(View.VISIBLE);
-                statusTxv.setText(R.string.added);
             } else {
                 textTxv.setTextColor(mColorBlackDark);
                 view.setBackgroundResource(R.drawable.list_selector_background_gray_light);
-                statusTxv.setVisibility(View.GONE);
             }
         }            
     }
