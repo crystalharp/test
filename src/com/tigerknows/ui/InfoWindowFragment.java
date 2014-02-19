@@ -37,8 +37,10 @@ import com.tigerknows.ui.traffic.TrafficDetailFragment;
 import com.tigerknows.ui.traffic.TrafficDetailFragment.PlanItemRefresher;
 import com.tigerknows.util.Utility;
 
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -587,6 +589,15 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             v.findViewById(R.id.detail_btn).setVisibility(View.VISIBLE);
             v.findViewById(R.id.bottom_view).setVisibility(View.VISIBLE);
             v.findViewById(R.id.message_view).setVisibility(View.VISIBLE);
+            TextView titleTxv = (TextView)v.findViewById(R.id.title_txv);
+            TextView nameTxv = (TextView)v.findViewById(R.id.name_txv);
+            Resources resources = mSphinx.getResources();
+            int blackDark = resources.getColor(R.color.black_dark);
+            int blackLight = resources.getColor(R.color.black_light);
+            titleTxv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
+            titleTxv.setTextColor(blackDark);
+            nameTxv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+            nameTxv.setTextColor(blackLight);
             if (mType == TYPE_POI || mType == TYPE_DYNAMIC_POI) {
                 v.findViewById(R.id.poi_view).setVisibility(View.VISIBLE);
             } else if (mType == TYPE_HOTEL) {
@@ -599,6 +610,11 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             } else if (mType == TYPE_STEP) {
                 v.findViewById(R.id.traffic_step_item).setVisibility(View.VISIBLE);
                 v.findViewById(R.id.message_view).setVisibility(View.GONE);
+            } else if (mType == TYPE_CLICKED_SELECT_POINT) {
+                titleTxv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+                titleTxv.setTextColor(blackLight);
+                nameTxv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
+                nameTxv.setTextColor(blackDark);
             }
         }
     }
