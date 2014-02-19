@@ -526,9 +526,9 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
         if (checkIsInputEmpty())
             return;
 
-        if (checkIsInputEqual()) {
-            return;
-        }
+//        if (checkIsInputEqual()) {
+//            return;
+//        }
         
         addSearchHistory(new SearchHistory(start.clone(), end.clone()));
         
