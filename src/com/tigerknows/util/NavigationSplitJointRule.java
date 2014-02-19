@@ -82,28 +82,20 @@ public class NavigationSplitJointRule {
     		return "";
     	}
     	
-    	final int DONOTSHOWLENGTHLIMIT = 10;
-    	
         String str = null;
         
         if (Step.TYPE_WALK == step.getType()) {
             if (flag != FLAG_END) {
                 if (previousStep != null && previousStep.getType() == Step.TYPE_TRANSFER && nextStep != null && nextStep.getType() == Step.TYPE_TRANSFER) {
-//                    if (step.getDistance() > Plan.TRANSFER_WALK_MIN_DISTANCE) {
-                        str = context.getString(R.string.traffic_at_where_walk_how_to_where, previousStep.getTransferDownStopName(), step.getDistance(), nextStep.getTransferUpStopName());                                   
-//                    }
+                    str = context.getString(R.string.traffic_at_where_walk_how_to_where, previousStep.getTransferDownStopName(), step.getDistance(), nextStep.getTransferUpStopName());                                   
                 } else if (nextStep != null && nextStep.getType() == Step.TYPE_TRANSFER) {
-//                    if (step.getDistance() > Plan.TRANSFER_WALK_MIN_DISTANCE) {
-                        if (flag == FLAG_START) {
-                            str = context.getString(R.string.traffic_at_where_walk_how_to_where, context.getString(R.string.start), step.getDistance(), nextStep.getTransferUpStopName());
-                        } else {
-                            str = context.getString(R.string.traffic_walk_how_to_where, step.getDistance(), nextStep.getTransferUpStopName());
-                        }
-//                    }
+                    if (flag == FLAG_START) {
+                        str = context.getString(R.string.traffic_at_where_walk_how_to_where, context.getString(R.string.start), step.getDistance(), nextStep.getTransferUpStopName());
+                    } else {
+                        str = context.getString(R.string.traffic_walk_how_to_where, step.getDistance(), nextStep.getTransferUpStopName());
+                    }
                 } else if (previousStep != null && previousStep.getType() == Step.TYPE_TRANSFER) {
-//                    if (step.getDistance() > Plan.TRANSFER_WALK_MIN_DISTANCE) {
-                        str = context.getString(R.string.traffic_at_where_walk_how, previousStep.getTransferDownStopName(), step.getDistance());
-//                    }
+                    str = context.getString(R.string.traffic_at_where_walk_how, previousStep.getTransferDownStopName(), step.getDistance());
                 }
                 
                 if (flag == FLAG_START && TextUtils.isEmpty(str)) {
@@ -116,19 +108,9 @@ public class NavigationSplitJointRule {
             } else {
                 
                 if (previousStep != null && previousStep.getType() == Step.TYPE_TRANSFER) {
-//                    if (step.getDistance() > Plan.TRANSFER_WALK_MIN_DISTANCE) {
-                	if (step.getDistance() > DONOTSHOWLENGTHLIMIT) {
-                        str = context.getString(R.string.traffic_at_where_walk_how_to_where, previousStep.getTransferDownStopName(), step.getDistance(), context.getString(R.string.end));
-                    } else {
-                        str = context.getString(R.string.traffic_at_where_walk_to_where, previousStep.getTransferDownStopName(), context.getString(R.string.end));
-                    }
+                    str = context.getString(R.string.traffic_at_where_walk_how_to_where, previousStep.getTransferDownStopName(), step.getDistance(), context.getString(R.string.end));
                 } else {
-//                    if (step.getDistance() > Plan.TRANSFER_WALK_MIN_DISTANCE) {
-                	if (step.getDistance() > DONOTSHOWLENGTHLIMIT) {
-                        str = context.getString(R.string.traffic_walk_how_to_where, step.getDistance(), context.getString(R.string.end));
-                    } else {
-                        str = context.getString(R.string.traffic_walk_to_where, context.getString(R.string.end));
-                    }
+                    str = context.getString(R.string.traffic_walk_how_to_where, step.getDistance(), context.getString(R.string.end));
                 }
             }
             
