@@ -98,7 +98,6 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     private static final int NUM_OF_HOT_LLY = 4;
     
     private static final int FOOD = 0;
-    @SuppressWarnings("unused")
     private static final int HOTEL = 1;
     private static final int ENTERTAINMENT = 2;
     private static final int TRAFFIC = 3;
@@ -110,6 +109,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     public void launchCategoryPropertyList(){
         final int[][] SPECIAL_OP = {
         	{FOOD, 0, CategoryProperty.OP_DISH},
+        	{HOTEL, 3, CategoryProperty.OP_HOTEL},
         	{ENTERTAINMENT, 0, CategoryProperty.OP_DIANYING},
         	{ENTERTAINMENT, 6, CategoryProperty.OP_YANCHU},
         	{ENTERTAINMENT, 7, CategoryProperty.OP_ZHANLAN},
@@ -117,7 +117,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         };
     	mCategoryList = new CategoryProperty[]{
         	new CategoryProperty(R.id.food_category, 7),
-        	new CategoryProperty(R.id.hotel_category, 6),
+        	new CategoryProperty(R.id.hotel_category, 3),
         	new CategoryProperty(R.id.entertainment_category, 7),
         	new CategoryProperty(R.id.traffic_category, 3),
         	new CategoryProperty(R.id.shopping_category, 3),
