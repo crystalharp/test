@@ -8,7 +8,6 @@ package com.tigerknows.android.location;
 
 import com.tigerknows.service.TigerknowsLocationManager;
 
-import android.location.Location;
 import android.location.LocationManager;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -169,7 +168,7 @@ public class Position implements Serializable, Parcelable{
             return Integer.MAX_VALUE;
         }
         float[] results = new float[1];
-        Location.distanceBetween(position1.getLat(), position1.getLon(), position2.getLat(), position2.getLon(), results);
+        TKLocation.distanceBetween(position1.getLat(), position1.getLon(), position2.getLat(), position2.getLon(), results);
         return (int)results[0];
     }
     
@@ -202,8 +201,5 @@ public class Position implements Serializable, Parcelable{
 		dest.writeFloat(this.accuracy);
 		dest.writeInt(this.type);
 	}
-	
-	
-	
 	
 }
