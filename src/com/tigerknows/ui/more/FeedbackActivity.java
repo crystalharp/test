@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.View.OnFocusChangeListener;
 import android.view.View.OnTouchListener;
 import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -36,6 +37,7 @@ public class FeedbackActivity extends BaseActivity implements View.OnClickListen
     private ScrollView mBodyScv;
     private EditText mFeedbackEdt = null;
     private EditText mTelephoneEdt = null;    
+    private Button mIatBtn;
 //    private TextView mWeibtoTxv;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,6 +71,8 @@ public class FeedbackActivity extends BaseActivity implements View.OnClickListen
 //
 //        //这条语句不可少，否则点击链接不会打开Activity窗口
 //        mWeibtoTxv.setMovementMethod(LinkMovementMethod.getInstance()); 
+        
+        initIat();
     }
 
     protected void findViews() {
@@ -76,6 +80,7 @@ public class FeedbackActivity extends BaseActivity implements View.OnClickListen
         mBodyScv = (ScrollView) findViewById(R.id.body_scv);
         mFeedbackEdt = (EditText)findViewById(R.id.feedback_edt);
         mTelephoneEdt = (EditText)findViewById(R.id.telephone_edt);
+        mIatBtn = (Button)findViewById(R.id.iat_btn);
 //        mWeibtoTxv = (TextView)findViewById(R.id.weibo_txv);
     }
 
@@ -125,6 +130,7 @@ public class FeedbackActivity extends BaseActivity implements View.OnClickListen
                 return false;
             }
         });
+        mIatBtn.setOnClickListener(this);
     }
 
     @Override
@@ -137,6 +143,9 @@ public class FeedbackActivity extends BaseActivity implements View.OnClickListen
             case R.id.weibo_txv:
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://weibo.com/tigermap"));
                 mThis.startActivity(intent);
+                break;
+            case R.id.iat_btn:
+                showIatDialog(mFeedbackEdt);
                 break;
             default:
                 break;

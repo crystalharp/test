@@ -1372,4 +1372,6 @@
     <string name="custom_category">自定义类别</string>
     <string name="custom">自定义</string>
     <string name="route">路线</string>
+    
+    <string name="text_iat_begin">请开始说话...</string>
 </resources>

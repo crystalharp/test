@@ -146,6 +146,8 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
     
     private EditText mBuyAvgEdt;
     
+    private Button mIatBtn;
+    
     private Comment mComment = new Comment();
     
     private static List<POI> sPOIList = new ArrayList<POI>();
@@ -318,6 +320,8 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
         } else {
             mExpandView.setVisibility(View.GONE);
         }
+        
+        initIat();
     }
     
     protected boolean isReLogin() {
@@ -454,6 +458,7 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
         
         mExpandBuyView = (ViewGroup) findViewById(R.id.buy_view);
         mBuyAvgEdt = (EditText) mExpandBuyView.findViewById(R.id.avg_edt);
+        mIatBtn = (Button)findViewById(R.id.iat_btn);
     }
 
     @Override
@@ -671,6 +676,7 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
                 }
             }
         });
+        mIatBtn.setOnClickListener(this);
     }
     
     public static void setPOI(POI poi, int fromViewId, int status) {
@@ -839,6 +845,8 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
             } else {
                 mSyncSinaChb.setChecked(false);
             }
+        } else if (viewId == R.id.iat_btn) {
+            showIatDialog(mContentEdt);
         }
     }
     

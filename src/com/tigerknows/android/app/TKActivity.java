@@ -9,6 +9,14 @@ import java.util.List;
 
 import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
+import com.iflytek.cloud.speech.RecognizerResult;
+import com.iflytek.cloud.speech.SpeechConstant;
+import com.iflytek.cloud.speech.SpeechError;
+import com.iflytek.cloud.speech.SpeechListener;
+import com.iflytek.cloud.speech.SpeechUser;
+import com.iflytek.cloud.ui.RecognizerDialog;
+import com.iflytek.cloud.ui.RecognizerDialogListener;
+import com.iflytek.mscdemo.util.JsonParser;
 import com.tencent.tauth.TAuthView;
 import com.tendcloud.tenddata.TCAgent;
 import com.tigerknows.LauncherActivity;
@@ -20,6 +28,8 @@ import com.tigerknows.android.location.TKLocationManager;
 import com.tigerknows.android.location.TKLocationListener;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.android.view.inputmethod.TKInputMethodManager;
+
+import android.widget.EditText;
 import android.widget.Toast;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.common.AsyncImageLoader;
@@ -425,6 +435,8 @@ public class TKActivity extends Activity implements TKAsyncTask.EventListener {
         
         mActionLog = ActionLog.getInstance(mThis);
         mActionLog.onCreate();
+        
+        mToast = Toast.makeText(this, "", Toast.LENGTH_LONG);
     }
 
     @Override
@@ -510,6 +522,10 @@ public class TKActivity extends Activity implements TKAsyncTask.EventListener {
     
     @Override
 	protected void onStop() {
+        mToast.cancel();
+        if (null != mIatDialog) {
+            mIatDialog.cancel();
+        }
 		super.onStop();
 	}
 
@@ -964,5 +980,126 @@ public class TKActivity extends Activity implements TKAsyncTask.EventListener {
     
     public void setShowingDialog(Dialog dialog) {
         mShowingDialog = dialog;
+    }
+    
+    // Tip
+    private Toast mToast;
+    //识别窗口
+    private RecognizerDialog mIatDialog;
+    protected EditText mIatEdt;
+    private static String IatAppId = "53041763";
+    protected static boolean sLoginIat = false;
+    
+    /**
+     * 识别回调监听器
+     */
+    RecognizerDialogListener mIatRecognizerDialogListener = null;
+    
+    /**
+     * 初始化语音识别组件
+     */
+    protected void initIat() {        
+        loginIat();
+        
+        if (mIatRecognizerDialogListener == null) {
+            mIatRecognizerDialogListener = new RecognizerDialogListener()
+            {
+                @Override
+                public void onResult(RecognizerResult results, boolean isLast) {
+                    String text = JsonParser.parseIatResult(results.getResultString());
+                    mIatEdt.append(text);
+                    mIatEdt.setSelection(mIatEdt.length());
+                }
+    
+                /**
+                 * 识别回调错误.
+                 */
+                public void onError(SpeechError error) {
+                    
+                }
+                
+            };
+        }
+    }
+    
+    /**
+     * Iat登录
+     */
+    protected void loginIat() {
+        if (sLoginIat == false) {
+            new Thread(new Runnable() {
+                
+                @Override
+                public void run() {
+                    SpeechUser.getUser().login(mThis, null, null
+                            , "appid="+IatAppId, new SpeechListener()
+                    {
+                        
+                        @Override
+                        public void onData(byte[] arg0) {
+                        }
+                        
+                        @Override
+                        public void onCompleted(SpeechError error) {
+                            if(error != null) {
+                                sLoginIat = false;
+                            } else {
+                                sLoginIat = true;
+                            }
+                        }
+                        
+                        @Override
+                        public void onEvent(int arg0, Bundle arg1) {
+                        }       
+                    });
+                    
+                }
+            }).start();
+        }
+    }
+
+    /**
+     * 显示听写对话框.
+     * @param
+     */
+    public void showIatDialog(EditText editText)
+    {
+        loginIat();
+        
+        //初始化听写Dialog   
+        mIatDialog =new RecognizerDialog(this);
+
+        //获取引擎参数
+        String engine = "iat";
+                
+        //清空Grammar_ID，防止识别后进行听写时Grammar_ID的干扰
+        mIatDialog.setParameter(SpeechConstant.CLOUD_GRAMMAR, null);
+        //设置听写Dialog的引擎
+        mIatDialog.setParameter(SpeechConstant.DOMAIN, engine);
+        //设置采样率参数，支持8K和16K 
+        String rate = "rate16k";
+        if(rate.equals("rate8k"))
+        {
+            mIatDialog.setParameter(SpeechConstant.SAMPLE_RATE, "8000");
+        }
+        else 
+        {
+            mIatDialog.setParameter(SpeechConstant.SAMPLE_RATE, "16000");
+        }
+
+        mIatEdt = editText;
+        //显示听写对话框
+        mIatDialog.setListener(mIatRecognizerDialogListener);
+        mIatDialog.show();
+        showTip(getString(R.string.text_iat_begin));
+    }
+
+    public void showTip(String str)
+    {
+        if(!TextUtils.isEmpty(str))
+        {
+            mToast.setText(str);
+            mToast.show();
+        }
     }
 }
