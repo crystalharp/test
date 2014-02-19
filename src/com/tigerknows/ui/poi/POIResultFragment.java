@@ -499,7 +499,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             poiQuery.addParameter(DataQuery.SERVER_PARAMETER_FILTER, DataQuery.makeFilterRequest(mFilterList));
         }
         poiQuery.setup(getId(), getId(), null, true, false, requestPOI);
-        mSphinx.queryStart(poiQuery);
+        mTkAsyncTasking = mSphinx.queryStart(poiQuery);
         }
     }
 
@@ -545,6 +545,15 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             dismissPopupWindow();
             return;
         }
+        
+        TKAsyncTask tkAsyncTask = mTkAsyncTasking;
+        if (tkAsyncTask != null) {
+            BaseQuery baseQuery = tkAsyncTask.getBaseQuery();
+            if (baseQuery != null) {
+                baseQuery.stop();
+            }
+            tkAsyncTask.stop();
+        }
 
         DataQuery poiQuery = new DataQuery(lastDataQuery);
 
@@ -563,9 +572,6 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     @Override
     public void cancelFilter() {
         dismissPopupWindow();
-        if (mResultLsv.isFooterSpringback() && mFilterListView.isTurnPaging()) {
-            turnPage();
-        }
     }
 
     @Override
@@ -598,15 +604,10 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                     return;
                 }
                 
-                if (mTkAsyncTasking != null) {
-                    mTkAsyncTasking.stop();
-                }
-                mResultLsv.onRefreshComplete(false);
-                
                 showFilterListView(mTitleFragment);
 
                 byte key = (Byte)view.getTag();
-                mFilterListView.setData(mFilterList, key, POIResultFragment.this, turnPageing, mActionTag);
+                mFilterListView.setData(mFilterList, key, POIResultFragment.this, mActionTag);
         }
     }
     
@@ -621,8 +622,6 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         private Drawable icDish;
         private String commentTitle;
         private String addressTitle;
-        private int aColor;
-        private int bColor;
         private Activity activity;
         private LayoutInflater layoutInflater;
         private boolean showStamp = true;
@@ -654,8 +653,6 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             icDish = resources.getDrawable(R.drawable.ic_dynamicpoi_dish);
             commentTitle = resources.getString(R.string.comment) + " : ";
             addressTitle = resources.getString(R.string.address) + " : ";
-            aColor = resources.getColor(R.color.blue);
-            bColor = resources.getColor(R.color.black_dark);
             hotelPicWidth = Util.dip2px(Globals.g_metrics.density, 68);
             padding = Util.dip2px(Globals.g_metrics.density, 4);
         }
@@ -997,8 +994,9 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             }
         }
         
-        if ((dataQuery.getFilterList() != null && dataQuery.getFilterList().size() > 0)
-                || resetFilter) {
+        if (dataQuery.isTurnPage() == false &&
+                ((dataQuery.getFilterList() != null && dataQuery.getFilterList().size() > 0)
+                    || resetFilter)) {
             List<Filter> filterList = dataQuery.getFilterList();
             refreshFilter(filterList);
         }

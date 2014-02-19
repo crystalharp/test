@@ -358,7 +358,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
         mViewPager.requestFocus();
         mSuggestLsv.setVisibility(View.VISIBLE);
         mAlternativeLsv.setVisibility(View.GONE);
-        mFilterListView.setData(mInvoker.getFilterList(), FilterResponse.FIELD_FILTER_AREA_INDEX, this, false, false, mActionTag);
+        mFilterListView.setData(mInvoker.getFilterList(), FilterResponse.FIELD_FILTER_AREA_INDEX, this, false, mActionTag);
     }
     
     class MyAdapter extends PagerAdapter {
@@ -413,7 +413,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
     }
     
     public void setData(List<Filter> filterList) {
-        mFilterListView.setData(filterList, FilterResponse.FIELD_FILTER_AREA_INDEX, this, false, false, mActionTag);
+        mFilterListView.setData(filterList, FilterResponse.FIELD_FILTER_AREA_INDEX, this, false, mActionTag);
     }
 
     @Override

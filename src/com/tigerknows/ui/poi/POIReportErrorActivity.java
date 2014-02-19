@@ -266,7 +266,7 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
                 mFilterList = new ArrayList<Filter>();
                 mFilterList.add(categoryFilter);
             }
-            mFilterListView.setData(mFilterList, FilterResponse.FIELD_FILTER_CATEGORY_INDEX, this, false, false, mActionTag);
+            mFilterListView.setData(mFilterList, FilterResponse.FIELD_FILTER_CATEGORY_INDEX, this, false, mActionTag);
         }
     }
 
@@ -686,7 +686,7 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
         case R.id.type_btn:
             mActionLog.addAction(mActionTag + ActionLog.POINameErrorType);
             mTitleBtn.setText(R.string.merchant_type);
-            mFilterListView.setData(mFilterList, FilterResponse.FIELD_FILTER_CATEGORY_INDEX, this, false, false, mActionTag);
+            mFilterListView.setData(mFilterList, FilterResponse.FIELD_FILTER_CATEGORY_INDEX, this, false, mActionTag);
             mFilterListView.setVisibility(View.VISIBLE);
             postHideSoftInput();
             break;

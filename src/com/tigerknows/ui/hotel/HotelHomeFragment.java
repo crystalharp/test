@@ -397,7 +397,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
             }  
         }
     	FilterListView.selectedFilter(getFilter(mFilterList, FilterCategoryOrder.FIELD_LIST_CATEGORY), 0);
-        getFilterCategoryListView().setData(mFilterList, FilterCategoryOrder.FIELD_LIST_CATEGORY, this, false, false, mActionTag);
+        getFilterCategoryListView().setData(mFilterList, FilterCategoryOrder.FIELD_LIST_CATEGORY, this, false, mActionTag);
         refreshFilterCategoryView();
     }
     
@@ -588,7 +588,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                 }
                 
                 if (refresh) {
-                	getFilterCategoryListView().setData(mFilterList, FilterCategoryOrder.FIELD_LIST_CATEGORY, this, false, false, mActionTag);
+                	getFilterCategoryListView().setData(mFilterList, FilterCategoryOrder.FIELD_LIST_CATEGORY, this, false, mActionTag);
                 	refreshFilterCategoryView();
                 }
                 
@@ -734,7 +734,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         mPopupWindowContain.addView(getFilterCategoryListView());
         mPopupWindow.showAsDropDown(parent, 0, 0);
 
-        mFilterCategoryListView.setData(mFilterList, FilterCategoryOrder.FIELD_LIST_CATEGORY, this, false, false, mActionTag);
+        mFilterCategoryListView.setData(mFilterList, FilterCategoryOrder.FIELD_LIST_CATEGORY, this, false, mActionTag);
     }
     
     private FilterListView getFilterCategoryListView() {

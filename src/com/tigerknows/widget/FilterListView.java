@@ -21,7 +21,6 @@ import java.util.List;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.text.TextUtils.TruncateAt;
@@ -78,8 +77,6 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
     
     private MyAdapter parentAdapter;
     
-    private boolean isTurnPaging = false;
-    
     private byte key = -1;
     
     String actionTag;
@@ -88,15 +85,13 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
     boolean isAreaFilter = false;
     boolean isLastAreaFilter = true;
     
-    public boolean isTurnPaging() {
-        return isTurnPaging;
+    private boolean notChildList = false;
+
+    public void setData(List<Filter> filterList, byte key, CallBack callBack, String actionTag) {
+        setData(filterList, key, callBack, true, actionTag);
     }
 
-    public void setData(List<Filter> filterList, byte key, CallBack callBack, boolean isTurnPaging, String actionTag) {
-        setData(filterList, key, callBack, isTurnPaging, true, actionTag);
-    }
-
-    public void setData(List<Filter> filterList, byte key, CallBack callBack, boolean isTurnPaging, boolean showFilterButton, String actionTag) {
+    public void setData(List<Filter> filterList, byte key, CallBack callBack, boolean showFilterButton, String actionTag) {
         if (filterList == null) {
             return;
         }
@@ -104,6 +99,7 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
         bladeView.setActionTag(this.actionTag);
         isLastAreaFilter = isAreaFilter;
         isAreaFilter = false;
+        notChildList = true;
         this.key = key;
         if (key == POIResponse.FIELD_FILTER_AREA_INDEX) {
             ActionLog.getInstance(getContext()).addAction(this.actionTag+ActionLog.FilterArea);
@@ -118,7 +114,6 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
         }
         this.filterList = filterList;
         this.callBack = callBack;
-        this.isTurnPaging = isTurnPaging;
         this.selectedParentPosition = -1;
         this.parentFilterList.clear();
         this.childFilterList.clear();
@@ -137,6 +132,9 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
             for(int i = parentFilterList2.size()-1; i >= 0; i--) {
                 Filter tempParentFilter = parentFilterList2.get(i);
                 List<Filter> childFilterList2 = tempParentFilter.getChidrenFilterList();
+                if (childFilterList2.size() > 0) {
+                    notChildList = false;
+                }
                 if (tempParentFilter.isSelected()) {
                     selectedParentPosition = i;
                     
@@ -201,6 +199,15 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
             
             // 如果是区域筛选，并且当前选择的父筛选项位置是全部区域，即第0个， 则列表设置为pinnedMode。
             childLsv.setData(childFilterList, pinnedMode, pinnedMode, selectedChildPosition);
+        }
+        
+        LinearLayout.LayoutParams layoutParams = ((LinearLayout.LayoutParams) findViewById(R.id.parent_view).getLayoutParams());
+        if (notChildList) {
+            layoutParams.weight = 2;
+            childLsv.setVisibility(View.GONE);
+        } else {
+            layoutParams.weight = 1;
+            childLsv.setVisibility(View.VISIBLE);
         }
     }
     
@@ -582,7 +589,7 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
             cancel();
             return;
         }
-        setData(filterList, key, callBack, isTurnPaging, this.actionTag);
+        setData(filterList, key, callBack, this.actionTag);
     }
     
     public static boolean selectedFilter(Filter filter, Filter selected) {

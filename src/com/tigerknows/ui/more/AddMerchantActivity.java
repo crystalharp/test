@@ -221,7 +221,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
                 
                 mFilterList = new ArrayList<Filter>();
                 mFilterList.add(categoryFitler);
-                mFilterListView.setData(mFilterList, FilterResponse.FIELD_FILTER_CATEGORY_INDEX, this, false, false, mActionTag);
+                mFilterListView.setData(mFilterList, FilterResponse.FIELD_FILTER_CATEGORY_INDEX, this, false, mActionTag);
                 
                 result = true;
             }
@@ -598,7 +598,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
     void showFilterListView() {
         mTitleBtn.setText(R.string.merchant_type);
         mRightBtn.setVisibility(View.GONE);
-        mFilterListView.setData(mFilterList, FilterResponse.FIELD_FILTER_CATEGORY_INDEX, this, false, false, mActionTag);
+        mFilterListView.setData(mFilterList, FilterResponse.FIELD_FILTER_CATEGORY_INDEX, this, false, mActionTag);
         mFilterListView.setVisibility(View.VISIBLE);
     }
     

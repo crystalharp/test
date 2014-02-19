@@ -451,7 +451,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
                 mFilterList = new ArrayList<Filter>();
                 mFilterList.add(categoryFilter);
 
-                mFilterListView.setData(mFilterList, FilterResponse.FIELD_FILTER_CATEGORY_INDEX, this, false, false, mActionTag);
+                mFilterListView.setData(mFilterList, FilterResponse.FIELD_FILTER_CATEGORY_INDEX, this, false, mActionTag);
                 result = true;
             }
         }
@@ -644,7 +644,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
 		if(currentFilter != null){
 			FilterListView.selectedFilter(mFilterList.get(0), currentFilter);
 		}
-		mFilterListView.setData(mFilterList, FilterResponse.FIELD_FILTER_CATEGORY_INDEX, this, false, false, mActionTag);
+		mFilterListView.setData(mFilterList, FilterResponse.FIELD_FILTER_CATEGORY_INDEX, this, false, mActionTag);
 		mFilterListView.setVisibility(View.VISIBLE);
 		refreshTitleView(STATUS_MORE);
 	}
@@ -846,7 +846,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         if (noResult) {
             Toast.makeText(mSphinx, R.string.no_result, Toast.LENGTH_LONG).show();
         } else {
-            mSphinx.getDiscoverListFragment().setData(dataQuery);
+            mSphinx.getDiscoverListFragment().setData(dataQuery, true);
             mSphinx.showView(R.id.view_discover_list);
             mSphinx.getDiscoverListFragment().setSelectionFromTop();
         }

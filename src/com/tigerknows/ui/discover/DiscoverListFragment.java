@@ -241,7 +241,6 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 adapter.notifyDataSetChanged();
             }
         }
-        mDataQuery = null;
     }
     
     @Override
@@ -517,7 +516,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             dataQuery.addParameter(DataQuery.SERVER_PARAMETER_FILTER, DataQuery.makeFilterRequest(mFilterList));
         }
         dataQuery.setup(getId(), getId(), tip, true, false, lastDataQuery.getPOI());
-        mSphinx.queryStart(dataQuery);
+        mTkAsyncTasking = mSphinx.queryStart(dataQuery);
         }
     }
 
@@ -584,6 +583,15 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             dismissPopupWindow();
             return;
         }
+        
+        TKAsyncTask tkAsyncTask = mTkAsyncTasking;
+        if (tkAsyncTask != null) {
+            BaseQuery baseQuery = tkAsyncTask.getBaseQuery();
+            if (baseQuery != null) {
+                baseQuery.stop();
+            }
+            tkAsyncTask.stop();
+        }
 
         DataQuery dataQuery = new DataQuery(lastDataQuery);
 
@@ -604,9 +612,6 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     
     public void cancelFilter() {
         dismissPopupWindow();
-        if (mResultLsv.isFooterSpringback() && mFilterListView.isTurnPaging()) {
-            turnPage(null);
-        }
     }
 
     @Override
@@ -634,15 +639,10 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                     return;
                 }
                 
-                if (mTkAsyncTasking != null) {
-                    mTkAsyncTasking.stop();
-                }
-                mResultLsv.onRefreshComplete(false);
-                
                 showFilterListView(mTitleFragment);
 
                 byte key = (Byte)view.getTag();
-                mFilterListView.setData(mFilterList, key, DiscoverListFragment.this, turnPageing, mActionTag);
+                mFilterListView.setData(mFilterList, key, DiscoverListFragment.this, mActionTag);
         }
     }
     
@@ -924,14 +924,14 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         }
 
         mResultLsv.setFooterSpringback(false);
-        setData(dataQuery);
+        setData(dataQuery, false);
         invokeIPagerListCallBack();
     }
     
-    public void setData(DataQuery dataQuery) {
+    public void setData(DataQuery dataQuery, boolean resetFilter) {
         Response response = dataQuery.getResponse();
 
-        dealWithList(dataQuery, (DiscoverCategoreResponse) response);
+        dealWithList(dataQuery, (DiscoverCategoreResponse) response, resetFilter);
         
         refreshResultTitleText(dataQuery);
         updateView();
@@ -952,7 +952,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         });
     }
     
-    private void dealWithList(DataQuery dataQuery, DiscoverCategoreResponse discoverCategoreResponse) {
+    private void dealWithList(DataQuery dataQuery, DiscoverCategoreResponse discoverCategoreResponse, boolean resetFilter) {
         String dataType = dataQuery.getParameter(BaseQuery.SERVER_PARAMETER_DATA_TYPE);
         mDataType = dataType;
 
@@ -966,6 +966,14 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             mActionTag = ActionLog.ZhanlanList;
         }
 
+        mDataQuery = dataQuery;
+        if (dataQuery.isTurnPage() == false &&
+                ((dataQuery.getFilterList() != null && dataQuery.getFilterList().size() > 0)
+                        || resetFilter)) {
+            refreshFilter(dataQuery.getFilterList());
+            makeFilterArea(dataQuery);
+        }
+        
         DiscoverResult discoverResult = discoverCategoreResponse.getDiscoverResult();
         
         if (discoverCategoreResponse.getDiscoverResult() != null 
@@ -973,7 +981,6 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 && discoverCategoreResponse.getDiscoverResult().getList().size() > 0) {
             
             mState = STATE_LIST;
-            mDataQuery = dataQuery;
             mList = discoverResult;
             
             if (dataQuery.isTurnPage() == false) {
@@ -1010,9 +1017,6 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                     mAPOI.setOnlyAPOI(true);
                 }
             }
-            
-            refreshFilter(mDataQuery.getFilterList());
-            makeFilterArea(dataQuery);
             
             List discoverResultList = discoverResult.getList();
             
