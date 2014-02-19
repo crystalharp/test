@@ -19,6 +19,7 @@ import android.text.Selection;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -159,6 +160,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     public void onResume(){
         super.onResume();
         mTitleBtn.setText(getString(R.string.hotel_room_title));
+        mLeftBtn.setOnClickListener(this);
         final HotelVendor hotelVendor = HotelVendor.getHotelVendorById(mRoomType.getVendorID(), mSphinx, null);
         if(hotelVendor != null){
         	LogWrapper.d("Trap", "~" + hotelVendor.getReserveTel());
@@ -288,7 +290,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         int id = view.getId();
         switch (id) {
         case R.id.left_btn:
-            exit();
+            showDiscardDialog(mActionTag + ActionLog.TitleLeftButton);
             break;
         case R.id.room_howmany_btn:
             mActionLog.addAction(mActionTag + ActionLog.HotelOrderWriteHowmany);
@@ -400,12 +402,40 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         mHotelOrderWriteScv.smoothScrollTo(0, 0);
     }
 
-    private void exit() {
-        // Auto-generated method stub
-        
+    private void exit(String actionLogInfo) {
+        synchronized (mSphinx.mUILock) {
+    	    mActionLog.addAction(mActionTag + ActionLog.TitleLeftButton);
+        	dismiss();
+        }
     }
     
-    protected View createPerson(int id){
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+        	showDiscardDialog(ActionLog.KeyCodeBack);
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+    
+    private void showDiscardDialog(final String actionLogInfo) {
+    	Utility.showNormalDialog(mSphinx,
+    			mSphinx.getString(R.string.prompt),
+    			"您的订单尚未填写完成",
+    			"继续预订",
+    			"稍后再订",
+    			new DialogInterface.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						if(which == DialogInterface.BUTTON_NEGATIVE){
+							exit(actionLogInfo);
+						}
+					}
+				});
+	}
+
+	protected View createPerson(int id){
         LinearLayout person2 = new LinearLayout(mContext);
         person2.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
         person2.setOrientation(LinearLayout.HORIZONTAL);
