@@ -4150,9 +4150,9 @@ public class TilesView extends GLSurfaceView {
 							size.x, size.y), null);
 
 					gl.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-							GL_NEAREST);
+							GLES10.GL_LINEAR);
 					gl.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
-							GL_NEAREST);
+					        GLES10.GL_LINEAR);
 					gl.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,
 							GL_CLAMP_TO_EDGE);
 					gl.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,
