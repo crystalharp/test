@@ -16,13 +16,13 @@
 //define the feature type
 enum _tk_geo_type
 {
-	TKGEO_ENMFTYPE_POINT = 0,			//
-	TKGEO_ENMFTYPE_LINE,			//
+	TKGEO_ENMFTYPE_POINT = 0,		//
+	TKGEO_ENMFTYPE_POLY,			//
 	TKGEO_ENMFTYPE_RAIL,			//
 	TKGEO_ENMFTYPE_ROAD,			//
-	TKGEO_ENMFTYPE_POLY,			//
-    //TKGEO_ENMFTYPE_SUBWAY,
-	TKGEO_ENMFTYPE_MAX
+    TKGEO_ENMFTYPE_SUBWAY,
+    TKGEO_ENMFTYPE_BUILDING,
+	TKGEO_ENMFTYPE_MAX,
 };
 
 struct _tk_feature_data {
@@ -39,13 +39,23 @@ struct _tk_feature_data {
    	unsigned short type;
     unsigned char can_be_linked;
     unsigned char has_name;
+
+    unsigned char sub_type;
+    unsigned char zlevel;
+    unsigned char has_direction;
+    unsigned char alias_num;
+    int alias_length[2];
+    int height;
+    char *alias_names[2];
+    unsigned char level_diff16;
 };
 
 tk_status_t tk_read_features(tk_context_t *context,
                              tk_region_t *region,
                              tk_base_tile_data_t *base_tile,
-                             tk_buf_info_t tile_data_buf,
+                             tk_buf_info_t *tile_data_buf,
+                             tk_buf_info_t *addition_buf,
                              int feature_num,
-                             int max_point_num);
+                             int max_point_num, tk_bool_t is_new);
 
 #endif

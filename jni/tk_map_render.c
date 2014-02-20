@@ -16,6 +16,7 @@
 #include "tk_map_render.h"
 #include "tk_log.h"
 #include "tk_label.h"
+#include "tk_building.h"
 
 #define TK_COLOR_GREY   0xe4e4e4
 #define WHITE_DASH_LEN 15
@@ -108,7 +109,7 @@ static tk_status_t _tk_get_points_from_line_feature(tk_context_t *context, tk_fe
             }
         }
         points_num = feature_data->points_num;
-        for (i = 1; i < points_num; i++) {//中间的feature的两个边界点要去掉一个，但不能两个都去掉，否则会出现错位）
+        for (i = 1; i < points_num; i++) {//中间的feature的两个边界点要去掉一个，但不能两个都去掉，否则会出现错位
             point = cur_feature->feature->points + i;
             if(tk_point_buf_add_one(point_buf, (point->x - ref_x) * context->scale, (point->y - ref_y) * context->scale, 0) == TK_STATUS_NO_MEMORY) {//不需要feature的level_code
                 return TK_STATUS_NO_MEMORY;
@@ -320,7 +321,10 @@ static tk_status_t _tk_draw_subways(tk_context_t *context, tk_layer_t *subway_la
         if (context->zoom >= context->style->label_min &&
             context->zoom <= context->style->label_max &&
             gdi->label_priority != 0) {
-            tk_add_line_feature_to_labels(context, subway_feature->feature);
+            char a[256] = {0};
+            strncpy(a, subway_feature->feature->name, subway_feature->feature->name_length);
+            LOG_INFO(a);
+            tk_add_line_feature_to_labels(context, subway_feature->feature, relation == TK_RECT_COVER);
         }
         
         //create line path
@@ -349,6 +353,7 @@ static tk_status_t _tk_draw_subways(tk_context_t *context, tk_layer_t *subway_la
                              (double)(GET_GREEN(gdi->color))/(double)256,
                              (double)(GET_BLUE(gdi->color))/(double)256);
         cairo_stroke(cr);//每条不同的地铁线路都要独立绘制
+        LOG_DBG("to draw subway_layer with cairo success");
     NEXT:
         subway_feature = subway_feature->layer_next;
     }
@@ -377,7 +382,7 @@ static tk_status_t _tk_draw_railway(tk_context_t *context, tk_layer_t *rail_laye
         if (context->zoom >= context->style->label_min &&
             context->zoom <= context->style->label_max &&
             gdi->label_priority != 0) {
-            tk_add_line_feature_to_labels(context, railway_feature->feature);
+            tk_add_line_feature_to_labels(context, railway_feature->feature, relation == TK_RECT_COVER);
         }
         
         // to draw black line first
@@ -424,13 +429,15 @@ static tk_status_t _tk_draw_railway(tk_context_t *context, tk_layer_t *rail_laye
 
 }
 
-static tk_status_t _tk_draw_road(tk_context_t *context, tk_layer_t *road_layer) {
+static tk_status_t _tk_draw_road_foreground(tk_context_t *context, tk_layer_t *road_layer) {
     tk_feature_t *road_feature = road_layer->features;
     tk_rect_relation_t relation;
     tk_point_buf_t *points_buf_to_draw = NULL;
     cairo_t *cr = context->cr;
     tk_gdi_t *gdi = &context->gdi;
-    
+//    if(road_layer->features->feature->type == 2 && context->zoom == 14) {
+//        return TK_STATUS_SUCCESS;
+//    }
     while (road_feature) {
         relation = _tk_get_line_feature_point(context, road_feature);
         if (relation == TK_RECT_DISJOINT) {
@@ -444,7 +451,7 @@ static tk_status_t _tk_draw_road(tk_context_t *context, tk_layer_t *road_layer) 
         if (context->zoom >= context->style->label_min &&
             context->zoom <= context->style->label_max &&
             gdi->label_priority != 0) {
-            tk_add_line_feature_to_labels(context, road_feature->feature);
+            tk_add_line_feature_to_labels(context, road_feature->feature, relation == TK_RECT_COVER);
         }
         
         //create line path
@@ -464,20 +471,129 @@ static tk_status_t _tk_draw_road(tk_context_t *context, tk_layer_t *road_layer) 
         road_feature = road_feature->layer_next;
     }
     LOG_DBG("to draw road_layer with cairo");
+    // draw foreground
+    if (gdi->pen_size > 4) {
+        cairo_set_line_width(cr, gdi->pen_size - 3);
+    }
+    else if (gdi->pen_size == 4){
+        cairo_set_line_width(cr, gdi->pen_size - 2);
+    }
+    if((road_layer->features->feature->type == 5 && (context->zoom == 10))) {
+        cairo_set_line_width(cr, gdi->pen_size);
+    }
+    cairo_set_source_rgb(cr, (double)(GET_RED(gdi->color ))/(double)256,
+                         (double)(GET_GREEN(gdi->color))/(double)256,
+                         (double)(GET_BLUE(gdi->color))/(double)256);
+    cairo_stroke(cr);
+    LOG_DBG("render road_layer success");
+    return TK_STATUS_SUCCESS;
+}
+
+static tk_status_t _tk_draw_road_background(tk_context_t *context, tk_layer_t *road_layer) {
+    tk_feature_t *road_feature = road_layer->features;
+    tk_rect_relation_t relation;
+    tk_point_buf_t *points_buf_to_draw = NULL;
+    cairo_t *cr = context->cr;
+    tk_gdi_t *gdi = &context->gdi;
+
+    while (road_feature) {
+        relation = _tk_get_line_feature_point(context, road_feature);
+        if (relation == TK_RECT_DISJOINT) {
+            if (tk_get_last_result() == TK_STATUS_NO_MEMORY) {//考虑不做检查
+                return TK_STATUS_NO_MEMORY;
+            }
+            goto NEXT;
+        }
+
+        // add label
+        if (context->zoom >= context->style->label_min &&
+            context->zoom <= context->style->label_max &&
+            gdi->label_priority != 0) {
+            tk_add_line_feature_to_labels(context, road_feature->feature, relation == TK_RECT_COVER);
+        }
+
+        //create line path
+//        if (relation == TK_RECT_COVER) {
+            points_buf_to_draw = &context->feature_point_buf;
+            if (points_buf_to_draw->point_num >= 2) {
+                _tk_draw_normal_line(context, points_buf_to_draw->points, points_buf_to_draw->point_num);
+            }
+//        }
+//        else {
+//            points_buf_to_draw = &context->clipped_point_buf;
+//            if (points_buf_to_draw->point_num >= 2) {
+//                _tk_draw_line_with_boudary(context, points_buf_to_draw->points, points_buf_to_draw->point_num);
+//            }
+//        }
+    NEXT:
+        road_feature = road_feature->layer_next;
+    }
+    LOG_DBG("to draw road_layer with cairo");
     // draw background
-    cairo_set_line_width(cr, gdi->pen_size);
+    cairo_set_line_width(cr, gdi->pen_size);//CAIRO_LINE_CAP_BUTT
     cairo_set_line_cap(cr, CAIRO_LINE_CAP_ROUND);
     cairo_set_source_rgb(cr, (double)(GET_RED(gdi->background_color ))/(double)256,
                          (double)(GET_GREEN(gdi->background_color))/(double)256,
                          (double)(GET_BLUE(gdi->background_color))/(double)256);
-    if (!((road_layer->features->feature->type == 2 && (context->zoom >= 14 && context->zoom <=15))
-    		|| (road_layer->features->feature->type == 3 && (context->zoom >= 10 && context->zoom <=13)))) {
+    cairo_stroke(cr);
+    LOG_DBG("render road_layer success");
+    return TK_STATUS_SUCCESS;
+}
+
+static tk_status_t _tk_draw_road(tk_context_t *context, tk_layer_t *road_layer) {
+    tk_feature_t *road_feature = road_layer->features;
+    tk_rect_relation_t relation;
+    tk_point_buf_t *points_buf_to_draw = NULL;
+    cairo_t *cr = context->cr;
+    tk_gdi_t *gdi = &context->gdi;
+
+    while (road_feature) {
+        relation = _tk_get_line_feature_point(context, road_feature);
+        if (relation == TK_RECT_DISJOINT) {
+            if (tk_get_last_result() == TK_STATUS_NO_MEMORY) {//考虑不做检查
+                return TK_STATUS_NO_MEMORY;
+            }
+            goto NEXT;
+        }
+
+        // add label
+        if (context->zoom >= context->style->label_min &&
+            context->zoom <= context->style->label_max &&
+            gdi->label_priority != 0) {
+            tk_add_line_feature_to_labels(context, road_feature->feature, relation == TK_RECT_COVER);
+        }
+
+        //create line path
+//        if (relation == TK_RECT_COVER) {
+            points_buf_to_draw = &context->feature_point_buf;
+            if (points_buf_to_draw->point_num >= 2) {
+                _tk_draw_normal_line(context, points_buf_to_draw->points, points_buf_to_draw->point_num);
+            }
+//        }
+//        else {
+//            points_buf_to_draw = &context->clipped_point_buf;
+//            if (points_buf_to_draw->point_num >= 2) {
+//                _tk_draw_line_with_boudary(context, points_buf_to_draw->points, points_buf_to_draw->point_num);
+//            }
+//        }
+    NEXT:
+        road_feature = road_feature->layer_next;
+    }
+    LOG_DBG("to draw road_layer with cairo");
+    // draw background
+    cairo_set_line_width(cr, gdi->pen_size);//CAIRO_LINE_CAP_BUTT
+    cairo_set_line_cap(cr, CAIRO_LINE_CAP_ROUND);
+    cairo_set_source_rgb(cr, (double)(GET_RED(gdi->background_color ))/(double)256,
+                         (double)(GET_GREEN(gdi->background_color))/(double)256,
+                         (double)(GET_BLUE(gdi->background_color))/(double)256);
+    if (!((road_layer->features->feature->type == 2 && (context->zoom >= 12 && context->zoom <=15))
+          || (road_layer->features->feature->type == 3 && (context->zoom >= 10 && context->zoom <=13)))) {
         cairo_stroke_preserve(cr);
         // draw foreground
         if (gdi->pen_size > 4) {
             cairo_set_line_width(cr, gdi->pen_size - 3);
         }
-        else if (gdi->pen_size == 4){
+        else if (gdi->pen_size == 4) {
             cairo_set_line_width(cr, gdi->pen_size - 2);
         }
         else {
@@ -488,40 +604,40 @@ static tk_status_t _tk_draw_road(tk_context_t *context, tk_layer_t *road_layer) 
                              (double)(GET_BLUE(gdi->color))/(double)256);
     }
     if((road_layer->features->feature->type == 5 && (context->zoom == 10))) {
-    	cairo_set_source_rgb(cr, (double)(GET_RED(gdi->color ))/(double)256,
-    	                             (double)(GET_GREEN(gdi->color))/(double)256,
-    	                             (double)(GET_BLUE(gdi->color))/(double)256);
+        cairo_set_source_rgb(cr, (double)(GET_RED(gdi->color ))/(double)256,
+                             (double)(GET_GREEN(gdi->color))/(double)256,
+                             (double)(GET_BLUE(gdi->color))/(double)256);
     }
     cairo_stroke(cr);
     LOG_DBG("render road_layer success");
     return TK_STATUS_SUCCESS;
 }
 
-static tk_status_t _tk_draw_line_layer(tk_context_t *context, tk_layer_t *layer) {
-    if (!layer || !layer->features) {
-        return TK_STATUS_SUCCESS;
-    }
-    tk_feature_t *layer_feature = layer->features;
-    int feature_type = layer_feature->feature->type;
-    if (context->zoom > TK_NATIONAL_LEVEL_A) {
-        switch (feature_type) {
-            case 8://铁路
-                return _tk_draw_railway(context, layer);
-            case 9://地铁
-                return _tk_draw_subways(context, layer);
-            default://其他线路
-                return _tk_draw_road(context, layer);
-        }
-    }
-    else {
-        switch (feature_type) {
-            case 5://铁路
-                return _tk_draw_railway(context, layer);
-            default://其他线路
-                return _tk_draw_road(context, layer);
-        }
-    }
-}
+//static tk_status_t _tk_draw_line_layer(tk_context_t *context, tk_layer_t *layer) {
+//    if (!layer || !layer->features) {
+//        return TK_STATUS_SUCCESS;
+//    }
+//    tk_feature_t *layer_feature = layer->features;
+//    int feature_type = layer_feature->feature->type;
+//    if (context->zoom > TK_NATIONAL_LEVEL_A) {
+//        switch (feature_type) {
+//            case 8://铁路
+//                return _tk_draw_railway(context, layer);
+//            case 9://地铁
+//                return _tk_draw_subways(context, layer);
+//            default://其他线路
+//                return _tk_draw_road(context, layer);
+//        }
+//    }
+//    else {
+//        switch (feature_type) {
+//            case 5://铁路
+//                return _tk_draw_railway(context, layer);
+//            default://其他线路
+//                return _tk_draw_road(context, layer);
+//        }
+//    }
+//}
 
 static tk_status_t _tk_draw_polygon_layer(tk_context_t *context, tk_layer_t *layer) {
     cairo_t *cr = context->cr;
@@ -531,7 +647,7 @@ static tk_status_t _tk_draw_polygon_layer(tk_context_t *context, tk_layer_t *lay
     tk_rect_relation_t relation;
     
     while (poly_feature) {
-        LOG_DBG("to create path of polygon_layer");
+//        LOG_DBG("to create path of polygon_layer");
         relation = _tk_get_relation_of_feature_and_filter(context, poly_feature, TK_NO);
         if(relation == TK_RECT_DISJOINT) {
             goto NEXT;
@@ -593,6 +709,103 @@ static void _tk_clean_tile_with_color(tk_context_t *context, unsigned int color)
     cairo_set_antialias(cr, CAIRO_ANTIALIAS_FAST);
 }
 
+static tk_status_t _tk_draw_point_geo_layer(tk_context_t *context, tk_layer_t *geo_layer) {
+    while (geo_layer) {
+        context->style = context->cur_style_buf->styles + geo_layer->features->feature->type;
+        if (_tk_check_layer_and_set_gdi(context, geo_layer, TK_NO) == TK_STATUS_SUCCESS) {
+            if (context->gdi.label_priority != 0) {
+                tk_add_poi_labels(context, geo_layer);
+            }
+        }
+        geo_layer = geo_layer->next_layer;
+    }
+    return TK_STATUS_SUCCESS;
+}
+
+static tk_status_t _tk_draw_polygon_geo_layer(tk_context_t *context, tk_layer_t *geo_layer) {
+    while (geo_layer) {
+        context->style = context->cur_style_buf->styles + geo_layer->features->feature->type;
+        if (_tk_check_layer_and_set_gdi(context, geo_layer, TK_NO) == TK_STATUS_SUCCESS) {
+            _tk_draw_polygon_layer(context, geo_layer);
+        }
+        geo_layer = geo_layer->next_layer;
+    }
+    return TK_STATUS_SUCCESS;
+}
+
+static tk_status_t _tk_draw_railway_geo_layer(tk_context_t *context, tk_layer_t *geo_layer) {
+    while (geo_layer) {
+        context->style = context->cur_style_buf->styles + geo_layer->features->feature->type;
+        if (_tk_check_layer_and_set_gdi(context, geo_layer, TK_YES) == TK_STATUS_SUCCESS) {
+            _tk_draw_railway(context, geo_layer);
+        }
+        geo_layer = geo_layer->next_layer;
+    }
+    return TK_STATUS_SUCCESS;
+}
+
+static tk_status_t _tk_draw_road_geo_layer(tk_context_t *context, tk_layer_t *geo_layer) {
+    if (context->zoom > 16) {
+        tk_layer_t *head_geo_layer = geo_layer;
+        while (geo_layer) {
+            context->style = context->cur_style_buf->styles + geo_layer->features->feature->type;
+            if (_tk_check_layer_and_set_gdi(context, geo_layer, TK_YES) == TK_STATUS_SUCCESS) {
+            	if(!(geo_layer->features->feature->type == 5 && (context->zoom == 10))) {
+            		LOG_DBG("to draw road background");
+            		_tk_draw_road_background(context, geo_layer);
+            	}
+            }
+            geo_layer = geo_layer->next_layer;
+        }
+        geo_layer = head_geo_layer;
+        while (geo_layer) {
+            context->style = context->cur_style_buf->styles + geo_layer->features->feature->type;
+            if (_tk_check_layer_and_set_gdi(context, geo_layer, TK_YES) == TK_STATUS_SUCCESS) {
+            	if (!((geo_layer->features->feature->type == 2 && (context->zoom >= 12 && context->zoom <=15))
+            	          || (geo_layer->features->feature->type == 3 && (context->zoom >= 10 && context->zoom <=13)))) {
+                	LOG_DBG("to draw road foreground");
+            		_tk_draw_road_foreground(context, geo_layer);
+            	}
+            }
+            geo_layer = geo_layer->next_layer;
+        }
+    }
+    else {
+        while (geo_layer) {
+            context->style = context->cur_style_buf->styles + geo_layer->features->feature->type;
+            if (_tk_check_layer_and_set_gdi(context, geo_layer, TK_YES) == TK_STATUS_SUCCESS) {
+            	LOG_DBG("to draw road with background");
+                _tk_draw_road(context, geo_layer);
+            }
+            geo_layer = geo_layer->next_layer;
+        }
+    }
+    return TK_STATUS_SUCCESS;
+}
+
+static tk_status_t _tk_draw_subway_geo_layer(tk_context_t *context, tk_layer_t *geo_layer) {
+    while (geo_layer) {
+        context->style = context->cur_style_buf->styles + geo_layer->features->feature->type;
+        if (_tk_check_layer_and_set_gdi(context, geo_layer, TK_YES) == TK_STATUS_SUCCESS) {
+            _tk_draw_subways(context, geo_layer);
+        }
+        geo_layer = geo_layer->next_layer;
+    }
+    return TK_STATUS_SUCCESS;
+}
+
+static tk_status_t _tk_draw_building_geo_layer(tk_context_t *context, tk_layer_t *geo_layer) {
+	tk_context_clear_building_buf(context);
+    while (geo_layer) {
+        context->style = context->cur_style_buf->styles + geo_layer->features->feature->type;
+        if (_tk_check_layer_and_set_gdi(context, geo_layer, TK_NO) == TK_STATUS_SUCCESS) {
+            tk_add_buildings(context, geo_layer);
+        }
+        geo_layer = geo_layer->next_layer;
+    }
+    return TK_STATUS_SUCCESS;
+}
+
 tk_status_t tk_render_tile_default (int tile_x, int tile_y, int zoom) {
     tk_status_t result = TK_STATUS_SUCCESS;
     tk_context_t *context = tk_get_context();
@@ -606,43 +819,37 @@ tk_status_t tk_render_tile_default (int tile_x, int tile_y, int zoom) {
     else {
         _tk_clean_tile_with_color(context, TK_GDI_COLOR_WATER);
     }
-    for(i = 0; i < context->cur_style_buf->layer_num; ++ i){
+    int size = TKGEO_ENMFTYPE_MAX;
+    tk_layer_t **geo_layer_list = malloc(sizeof(tk_layer_t *) * size);
+    for (i = 0; i < size; ++i) {
+        geo_layer_list[i] = NULL;
+    }
+    for(i = context->cur_style_buf->layer_num - 1; i >= 0; -- i){
         layer_idx = context->cur_style_buf->draw_order[i];
-        if (layer_idx < 0) {
-            continue;
-        }
         layer = context->layer_list + layer_idx;
-        context->style = context->cur_style_buf->styles + layer_idx;
-        if (layer == NULL || layer->features == NULL)
+//        context->style = context->cur_style_buf->styles + layer_idx;
+        if (layer == NULL || layer->features == NULL || tk_global_info.layer_ctl[layer_idx] != 1)
             continue;
         obj_type = context->cur_style_buf->obj_type[layer_idx];
-        
-        if (tk_global_info.layer_ctl[layer_idx] == 1) {
-            switch (obj_type) {
-                case TKGEO_ENMFTYPE_POINT:
-                    if (_tk_check_layer_and_set_gdi(context, layer, TK_NO) == TK_STATUS_SUCCESS) {
-                        if (context->gdi.label_priority != 0) {
-                            tk_add_poi_labels(context, layer);
-                        }
-                    }
-                    break;
-                case TKGEO_ENMFTYPE_LINE:
-                case TKGEO_ENMFTYPE_RAIL:
-                case TKGEO_ENMFTYPE_ROAD:
-                    if (_tk_check_layer_and_set_gdi(context, layer, TK_YES) == TK_STATUS_SUCCESS) {
-                        _tk_draw_line_layer(context, layer);
-                    }
-                    break;
-                case TKGEO_ENMFTYPE_POLY:
-                    if (_tk_check_layer_and_set_gdi(context, layer, TK_NO) == TK_STATUS_SUCCESS) {
-                        _tk_draw_polygon_layer(context, layer);
-                    }
-                    break;
-                default:
-                    break;
-            }
+        if (obj_type < TKGEO_ENMFTYPE_MAX) {
+            layer->next_layer = geo_layer_list[obj_type];
+            geo_layer_list[obj_type] = layer;
         }
     }
+    if (geo_layer_list[TKGEO_ENMFTYPE_POINT])
+        _tk_draw_point_geo_layer(context, geo_layer_list[TKGEO_ENMFTYPE_POINT]);
+    if (geo_layer_list[TKGEO_ENMFTYPE_POLY])
+        _tk_draw_polygon_geo_layer(context, geo_layer_list[TKGEO_ENMFTYPE_POLY]);
+    if (geo_layer_list[TKGEO_ENMFTYPE_RAIL])
+        _tk_draw_railway_geo_layer(context, geo_layer_list[TKGEO_ENMFTYPE_RAIL]);
+    if (geo_layer_list[TKGEO_ENMFTYPE_ROAD])
+        _tk_draw_road_geo_layer(context, geo_layer_list[TKGEO_ENMFTYPE_ROAD]);
+    if (geo_layer_list[TKGEO_ENMFTYPE_SUBWAY])
+        _tk_draw_subway_geo_layer(context, geo_layer_list[TKGEO_ENMFTYPE_SUBWAY]);
+    if (geo_layer_list[TKGEO_ENMFTYPE_BUILDING]) {
+        _tk_draw_building_geo_layer(context, geo_layer_list[TKGEO_ENMFTYPE_BUILDING]);
+    }
+    free(geo_layer_list);
     LOG_DBG("tk_render_tile_default success: total point_num: %i", context->point_num);
     return result;
 }

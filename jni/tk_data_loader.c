@@ -155,12 +155,27 @@ static tk_status_t _tk_link_tiles(tk_context_t *context, tk_bool_t is_need_name_
 
 static void _tk_add_tile_to_layer_context(tk_context_t *context) {
     tk_layer_t *cur_layer;
-    tk_feature_t *cur_feature;
+    tk_feature_t *cur_feature, *prev_feature;
     tk_tile_t* current_tile = context->tiles_head;
-    int i, type, feature_num = 0;
+    int i, type, obj_type, feature_num = 0;
     memset(context->layer_list, 0, sizeof(tk_layer_t) * tk_global_info.max_layer_num);
     while(current_tile) {
         feature_num = current_tile->feature_num;
+        for (i = 0; i < feature_num; ++i) {
+            cur_feature = current_tile->features + i;
+            type = cur_feature->feature->type;
+            obj_type = context->cur_style_buf->obj_type[type];
+            prev_feature = cur_feature->prev;
+            while (prev_feature && prev_feature != cur_feature) {
+                prev_feature = prev_feature->prev;
+            }
+            //检测到环
+            if (prev_feature == cur_feature) {
+                prev_feature = cur_feature->prev;
+                cur_feature->prev = NULL;
+                prev_feature->next = NULL;
+            }
+        }
         for (i = 0; i < feature_num; ++i) {
             cur_feature = current_tile->features + i;
             type = cur_feature->feature->type;
@@ -168,6 +183,10 @@ static void _tk_add_tile_to_layer_context(tk_context_t *context) {
             if ((cur_feature->prev != NULL) || (type >= context->cur_style_buf->layer_num)) {//防止type越界
 //                || ((context->cur_style_buf->obj_type[type] != 0)
 //                    && (context->cur_style_buf->obj_type[type] != 4) && !cur_feature->feature->can_be_linked)) {
+                continue;
+            }
+            if (context->base_level == 16 && cur_feature->feature->level_diff16 > 0 && (-context->base_level_diff) < cur_feature->feature->level_diff16) {
+//            	LOG_INFO("skip feature of level diff : %i", cur_feature->feature->level_diff16);
                 continue;
             }
             cur_layer = context->layer_list + type;

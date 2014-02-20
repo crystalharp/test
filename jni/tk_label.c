@@ -161,9 +161,9 @@ CATCH:
 }
 
 /* add labels */
-tk_status_t tk_add_line_feature_to_labels(tk_context_t *context, tk_feature_data_t *feature_data) {
+tk_status_t tk_add_line_feature_to_labels(tk_context_t *context, tk_feature_data_t *feature_data, tk_bool_t use_clip) {
     tk_label_t *label = NULL;
-    if (feature_data && feature_data->has_name) {
+    if (feature_data && feature_data->has_name && feature_data->name_length > 0) {
         label = tk_label_buf_get_free_label(&context->label_buf);
         if (label) {
             label->point_start_idx = context->label_point_pool.point_num;
@@ -176,7 +176,12 @@ tk_status_t tk_add_line_feature_to_labels(tk_context_t *context, tk_feature_data
             label->point_num = context->feature_point_buf.point_num;
             label->priority = context->gdi.label_priority;
             label->type = feature_data->type;
-            return tk_point_buf_add_points(&context->label_point_pool, context->feature_point_buf.points, label->point_num);
+            if(use_clip) {
+            	return tk_point_buf_add_points(&context->label_point_pool, context->clipped_point_buf.points, label->point_num);
+            }
+            else {
+            	return tk_point_buf_add_points(&context->label_point_pool, context->feature_point_buf.points, label->point_num);
+            }
         }
     }
     return TK_STATUS_SUCCESS;
@@ -387,7 +392,7 @@ static tk_status_t _tk_add_line_labels(tk_context_t *context, tk_layer_t *line_l
             _tk_set_subway_gdi(&context->gdi, line_feature->feature->tile->region_id, line_feature);
         }
         // add label
-        result = tk_add_line_feature_to_labels(context, line_feature->feature);
+        result = tk_add_line_feature_to_labels(context, line_feature->feature, relation == TK_RECT_COVER);
         if (result != TK_STATUS_SUCCESS) {
             return result;
         }
@@ -470,7 +475,7 @@ tk_status_t tk_get_tile_labels (int tile_x, int tile_y, int zoom) {
                         tk_add_poi_labels(context, layer);
                     }
                     break;
-                case TKGEO_ENMFTYPE_LINE:
+                case TKGEO_ENMFTYPE_SUBWAY:
                 case TKGEO_ENMFTYPE_RAIL:
                 case TKGEO_ENMFTYPE_ROAD:
                     if (_tk_check_layer_and_set_gdi(context, layer, TK_YES) == TK_STATUS_SUCCESS) {

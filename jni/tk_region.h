@@ -34,8 +34,9 @@ struct _tk_region {
     char version[6];
     
     //region文件内容
-    unsigned char *region_data;
+    FILE *region_fp;
     unsigned int region_data_length;
+    unsigned char *meta_data;
     //huffman索引块
     unsigned int hf_index_count;
     unsigned char *hf_indexes;
@@ -48,8 +49,9 @@ struct _tk_region {
     
     //tile数据区
     int tile_data_bias;
-    unsigned char *tile_data;
     
+    int tile_meta_length;
+
     struct _tile_index_bound {
         int high;
         int low;

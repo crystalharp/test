@@ -223,3 +223,6 @@ void tk_contxt_clear_point_buf(tk_context_t *context) {
     tk_point_buf_clean(&context->clipped_point_buf);
 }
 
+void tk_context_clear_building_buf(tk_context_t *context) {
+    tk_building_buf_clean(&context->building_buf);
+}
