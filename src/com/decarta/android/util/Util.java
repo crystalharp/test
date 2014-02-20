@@ -163,14 +163,9 @@ public class Util {
 				break;
 			}
 		}
-		
-        if (fitZoom == CONFIG.ZOOM_JUMP) {
-            fitZoom = CONFIG.ZOOM_JUMP - 1;
-        }
 
 		return fitZoom;
 	}
-
 
 	public static TileGridResponse handlePortrayMapRequest(XYDouble centerXY, int gxZoom) throws APIException{
 		TileGridResponse resp = new TileGridResponse();

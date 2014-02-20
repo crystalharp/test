@@ -191,18 +191,6 @@ public class TilesView extends GLSurfaceView {
 		refreshMap();
 	}
 
-	private float tkJumpZoomLevel(float newZoomLevel) {
-		if (newZoomLevel < CONFIG.ZOOM_JUMP + 1
-				&& newZoomLevel >= CONFIG.ZOOM_JUMP) {
-			if (zoomLevel > CONFIG.ZOOM_JUMP) {
-				newZoomLevel -= 1;
-			} else if (zoomLevel < CONFIG.ZOOM_JUMP) {
-				newZoomLevel += 1;
-			}
-		}
-		return newZoomLevel;
-	}
-
 	public LinkedList<TileDownload> getTilesWaitForDownloading() {
 		return tilesWaitForDownloading;
 	}
@@ -1014,15 +1002,7 @@ public class TilesView extends GLSurfaceView {
 							lastDistConv = distConv;
 							synchronized (drawingLock) {
 								try {
-									if (Math.round(newZoomLevel) == 9) {
-		                                if (newZoomLevel > zoomLevel) {
-		                                	setZoomLevel(10);
-		                                } else {
-		                                	setZoomLevel(8);
-		                                }
-		                            } else {
-										zoomView(newZoomLevel, lastCenterConv);
-		                            }
+									zoomView(newZoomLevel, lastCenterConv);
 									mParentMapView.executeMultiTouchZoomListeners(newZoomLevel);
 								} catch (Exception e) {
 									e.printStackTrace();
@@ -1613,7 +1593,6 @@ public class TilesView extends GLSurfaceView {
 	 * @param newLevel
 	 */
 	public void setZoomLevel(float newLevel) throws APIException {
-		newLevel = tkJumpZoomLevel(newLevel);
 		if (newLevel < CONFIG.ZOOM_LOWER_BOUND
 				&& newLevel > CONFIG.ZOOM_UPPER_BOUND) {
 			throw new APIException("invalid zoom level: " + newLevel
@@ -1636,13 +1615,6 @@ public class TilesView extends GLSurfaceView {
 	public void zoomTo(int newZoomLevel, final Position zoomCenter,
 			long duration, final MapView.ZoomEndEventListener listener)
 			throws APIException {
-		newZoomLevel = (int) tkJumpZoomLevel(newZoomLevel);
-//		if (newZoomLevel < CONFIG.ZOOM_LOWER_BOUND
-//				|| newZoomLevel > CONFIG.ZOOM_UPPER_BOUND) {
-//			throw new APIException("invalid zoom level: " + newZoomLevel
-//					+ " must be between " + CONFIG.ZOOM_LOWER_BOUND + " - "
-//					+ CONFIG.ZOOM_UPPER_BOUND);
-//		}
 		if(newZoomLevel < CONFIG.ZOOM_LOWER_BOUND) {
 			newZoomLevel = CONFIG.ZOOM_LOWER_BOUND;
 		}
@@ -1652,14 +1624,6 @@ public class TilesView extends GLSurfaceView {
 		if (zoomCenter != null) {
 			XYFloat screenXY = positionToScreenXYConv(zoomCenter);
 			zoomTo(newZoomLevel, screenXY, duration, listener);
-		} else if ((zoomLevel > CONFIG.ZOOM_JUMP && newZoomLevel == CONFIG.ZOOM_JUMP - 1)
-				|| (zoomLevel < CONFIG.ZOOM_JUMP && newZoomLevel == CONFIG.ZOOM_JUMP + 1)) {
-			setZoomLevel(newZoomLevel);
-			refreshMap();
-			if (listener != null) {
-				listener.onZoomEndEvent(this.mParentMapView, newZoomLevel);
-			}
-			mParentMapView.executeZoomEndListeners(newZoomLevel);
 		} else {
 			final XYFloat zc = new XYFloat(displaySize.x / 2, displaySize.y / 2);
 			if (duration == -1) {
@@ -1708,19 +1672,6 @@ public class TilesView extends GLSurfaceView {
 			panDirection.y = numY >= 0 ? 1 : -1;
 		}
 //		LogWrapper.i("center", centerXYZ.toString() + "......" + centerXY.toString() + "......" + centerDelta.toString());
-	}
-	private int getTKZoomLevelByDecartaLevel(int decartaZoomLevel) {
-	    int ret;
-	    if (decartaZoomLevel == 9) {
-	        if (decartaZoomLevel < zoomLevel) {
-	            ret = 8;
-	        } else {
-	            ret = 10;
-	        }
-	    } else {
-	        ret = decartaZoomLevel;
-	    }
-	    return ret;
 	}
 
 	public void zoomView(float newZoomLevel, XYFloat zoomCenterXY)
@@ -1777,7 +1728,7 @@ public class TilesView extends GLSurfaceView {
 			}
 			zoomLevel = newZoomLevel;
 			if (zoomLevel > centerXYZ.z + 0.5 || zoomLevel < centerXYZ.z - 0.5) {
-				int roundLevel = getTKZoomLevelByDecartaLevel(Math.round(zoomLevel));
+				int roundLevel = Math.round(zoomLevel);
 				if (roundLevel > CONFIG.ZOOM_UPPER_BOUND
 						|| roundLevel < CONFIG.ZOOM_LOWER_BOUND)
 					return;
@@ -2357,7 +2308,7 @@ public class TilesView extends GLSurfaceView {
 			zoomingRecord.digitalZooming = true;
 			zoomingRecord.digitalZoomEndTime = System.nanoTime() + duration;
 			zoomingRecord.speed = (duration == 0) ? 0 : zDif / duration;
-			zoomingRecord.zoomToLevel = getTKZoomLevelByDecartaLevel(newZoomLevel);
+			zoomingRecord.zoomToLevel = newZoomLevel;
 			zoomingRecord.zoomCenterXY = zoomCenterXYConv;
 
 			zoomingRecord.listener = listener;
