@@ -61,6 +61,24 @@ public class TrafficModel extends XMapData {
     // 2表示备选站点
     public static final int TYPE_ALTERNATIVES = 2;
     
+    // 0x90返回的状态
+    // 1: 找不到'起点名称'
+    public static final int STAT_NO_START = 1;
+    // 2: 找不到'终点名称'
+    public static final int STAT_NO_END = 2;
+    // 10: 找不到您要的公交换乘方案
+    public static final int STAT_NO_TRANSFER = 10;
+    // 11: 找不到您要的跨城市公交换乘方案
+    public static final int STAT_NO_DIFF_CITY_TRANSFER = 11;
+    // 20: 找不到您要的自驾方案
+    public static final int STAT_NO_DRIVE = 20;
+    // 21: 找不到您要的跨城市驾车方案
+    public static final int STAT_NO_DIFF_CITY_DRIVE = 21;
+    // 30: 找不到您要的步行方案
+    public static final int STAT_NO_WALK = 30;
+    // 31: 找不到您要的跨城市步行方案 
+    public static final int STAT_NO_DIFF_CITY_WALK = 31;
+    
     // 0x00 x_int 结果类型，0表示空结果，1表示交通方案，2表示备选站点
     private static final byte FIELD_TYPE = 0x00;
 
@@ -72,6 +90,154 @@ public class TrafficModel extends XMapData {
 
     // 0x10 x_array<x_map> array<交通方案>
     private static final byte FIELD_PROJECT_LIST = 0x10;
+    
+    // 0x11    x_map   附加信息
+    private static final byte FIELD_ADDTIONAL_INFO = 0x11;
+    
+    // 0x20 x_array<x_map> array<起点备选站点>
+    private static final byte FIELD_START_ALTERNATIVES_LIST = 0x20;
+    
+    // 0x21 x_array<x_map> array<终点备选站点>
+    private static final byte FIELD_END_ALTERNATIVES_LIST = 0x21;
+    
+    // 0x90 x_int 结果状态
+    private static final byte FIELD_RESULT_STATUS = (byte) 0x90;
+    
+    // 0x91 x_string 结果状态字符串
+    private static final byte FIELD_RESULT_TIP = (byte) 0x91;
+    
+    private int type = TYPE_EMPTY;
+    private String startName;
+    private String endName;
+    private List<Plan> planList;
+    private AddtionalInfo addtionalInfo;
+    private List<Station> startAlternativesList;
+    private List<Station> endAlternativesList;
+    private int resultStat;
+    private String resultTip;
+    
+    private POI start;
+    private POI end;
+    
+    public POI getStart() {
+        return start;
+    }
+    
+    public void setStart(POI start) {
+        this.start = start;
+        if (planList != null) {
+            for(Plan plan : planList) {
+                plan.setStart(start);
+            }
+        }
+    }
+    
+    public POI getEnd() {
+        return end;
+    }
+    
+    public void setEnd(POI end) {
+        this.end = end;
+        if (planList != null) {
+            for(Plan plan : planList) {
+                plan.setEnd(end);
+            }
+        }
+    }
+
+    public int getType() {
+        return type;
+    }
+    
+    public void setType(int type) {
+        this.type = type;
+    }
+    
+    public void setPlanList(List<Plan> planList) {
+        this.planList = planList;
+    }
+
+    public List<Plan> getPlanList() {
+        return planList;
+    }
+    
+    public AddtionalInfo getAddtionalInfo() {
+        return addtionalInfo;
+    }
+
+    public List<Station> getStartAlternativesList() {
+        return startAlternativesList;
+    }
+
+    public List<Station> getEndAlternativesList() {
+        return endAlternativesList;
+    }
+
+    public String getStartName() {
+        return startName;
+    }
+
+    public void setStartName(String startName) {
+        this.startName = startName;
+    }
+
+    public String getEndName() {
+        return endName;
+    }
+
+    public void setEndName(String endName) {
+        this.endName = endName;
+    }
+
+    public int getResultStat() {
+        return resultStat;
+    }
+
+    public void setStat(int stat) {
+        this.resultStat = stat;
+    }
+
+    public String getResultTip() {
+        return resultTip;
+    }
+
+    public void setResultTip(String resultTip) {
+        this.resultTip = resultTip;
+    }
+
+    public TrafficModel() {
+    }
+    
+    public TrafficModel(XMap data, int queryType) throws APIException {
+        super(data);
+        
+        this.type = (int)getLongFromData(FIELD_TYPE);
+        this.startName = getStringFromData(FIELD_START_NAME);
+        this.endName = getStringFromData(FIELD_END_NAME);
+        this.resultStat = (int) getLongFromData(FIELD_RESULT_STATUS);
+        this.resultTip = getStringFromData(FIELD_RESULT_TIP);
+        this.addtionalInfo = getObjectFromData(FIELD_ADDTIONAL_INFO, AddtionalInfo.Initializer);
+        if (TYPE_PROJECT == this.type) {
+            this.planList = getListFromData(FIELD_PROJECT_LIST, Plan.Initializer);
+            if (this.planList != null) {
+                for(int i = 0, size = this.planList.size(); i < size; i++) {
+                    Plan plan = this.planList.get(i);
+                    plan.setType(queryType);
+                    POI poi = plan.getStart();
+                    if (poi != null) {
+                        poi.setName(this.startName);
+                    }
+                    poi = plan.getEnd();
+                    if (poi != null) {
+                        poi.setName(this.endName);
+                    }
+                }
+            }
+        } else {
+            this.startAlternativesList = getListFromData(FIELD_START_ALTERNATIVES_LIST, Station.Initializer);
+            this.endAlternativesList = getListFromData(FIELD_END_ALTERNATIVES_LIST, Station.Initializer);
+        }
+    }
     
     public static class Plan extends BaseData {     
 
@@ -514,22 +680,22 @@ public class TrafficModel extends XMapData {
             }
 
             public int getLineType() {
-				return lineType;
-			}
+                return lineType;
+            }
 
-			public void setLineType(int lineType) {
-				this.lineType = lineType;
-			}
-			
-			public String getSubwayEntrance() {
-			    return subwayEntrance;
-			}
-			
-			public void setSubwayEntrance(String s) {
-			    this.subwayEntrance = s;
-			}
+            public void setLineType(int lineType) {
+                this.lineType = lineType;
+            }
+            
+            public String getSubwayEntrance() {
+                return subwayEntrance;
+            }
+            
+            public void setSubwayEntrance(String s) {
+                this.subwayEntrance = s;
+            }
 
-			@SuppressWarnings("unchecked")
+            @SuppressWarnings("unchecked")
             public Step(XMap data) throws APIException {
                 super(data);
 
@@ -963,10 +1129,10 @@ public class TrafficModel extends XMapData {
         }
         
         public void resetData() {
-        	/*
+            /*
              * 将服务端返回的"长度为0米"的步骤去除
              */
-        	this.data = null;
+            this.data = null;
             this.data = getData();
         }
         
@@ -1213,7 +1379,7 @@ public class TrafficModel extends XMapData {
                 }
             }else if(TrafficQuery.QUERY_TYPE_DRIVE == type) {
                 for(Step step : steps){
-                    if (context.getString(R.string.traffic_forward).equals(step.driveTurnTo)) {                   	
+                    if (context.getString(R.string.traffic_forward).equals(step.driveTurnTo)) {                     
                         stepTypeList.add(Step.TYPE_FORWARD);
                     } else if (context.getString(R.string.traffic_back).equals(step.driveTurnTo)) {
                         stepTypeList.add(Step.TYPE_BACK);
@@ -1234,7 +1400,7 @@ public class TrafficModel extends XMapData {
                 }
             }else if(TrafficQuery.QUERY_TYPE_WALK == type) {
                 for(Step step : steps){
-                    if (context.getString(R.string.traffic_forward).equals(step.walkTurnTo)) {                   	
+                    if (context.getString(R.string.traffic_forward).equals(step.walkTurnTo)) {                      
                         stepTypeList.add(Step.TYPE_FORWARD);
                     } else if (context.getString(R.string.traffic_back).equals(step.walkTurnTo)) {
                         stepTypeList.add(Step.TYPE_BACK);
@@ -1306,7 +1472,7 @@ public class TrafficModel extends XMapData {
                 this.title = title;
                 //没有在换乘类型取到title并且有步行的信息，则说明步行可达。
                 if (title == null && stepList.size() != 0 && stepList.get(0).getType() == Step.TYPE_WALK) {
-                	this.title = context.getString(R.string.traffic_noneed_transfer);
+                    this.title = context.getString(R.string.traffic_noneed_transfer);
                 }
             }
             return title;
@@ -1328,8 +1494,6 @@ public class TrafficModel extends XMapData {
             }
         };
     }
-    // 0x11    x_map   附加信息
-    private static final byte FIELD_ADDTIONAL_INFO = 0x11;
     
     public static class AddtionalInfo extends XMapData {
         //0x01    x_string    打车路线耗时
@@ -1376,9 +1540,6 @@ public class TrafficModel extends XMapData {
         };
     }
     
-    // 0x20 x_array<x_map> array<起点备选站点>
-    private static final byte FIELD_START_ALTERNATIVES_LIST = 0x20;
-    
     public static class Station extends XMapData {
         // 0x01 x_string 名称
         private static final byte FIELD_NAME = 0x01;
@@ -1404,22 +1565,22 @@ public class TrafficModel extends XMapData {
         }
 
         public Position getPosition() {
-			return position;
-		}
+            return position;
+        }
         
         public String getAddress() {
             return address;
         }
 
-		public void setName(String name) {
+        public void setName(String name) {
             this.name = name;
         }
-		
-		public void setAddress(String address) {
-		    this.address = address;
-		}
+        
+        public void setAddress(String address) {
+            this.address = address;
+        }
 
-		public void setPosition(Position position) {
+        public void setPosition(Position position) {
             if (!Util.inChina(position)) {
                 return;
             }
@@ -1436,14 +1597,14 @@ public class TrafficModel extends XMapData {
         }
         
         public Station(String name, Position position) {
-        	this.name = name;
-        	this.position = position;
+            this.name = name;
+            this.position = position;
         }
         
         public Station(String name, Position position, String address) {
-        	this.name = name;
-        	this.position = position;
-        	this.address = address;
+            this.name = name;
+            this.position = position;
+            this.address = address;
         }
         
         public POI toPOI() {
@@ -1463,119 +1624,4 @@ public class TrafficModel extends XMapData {
         
     }
 
-    // 0x21 x_array<x_map> array<终点备选站点>
-    private static final byte FIELD_END_ALTERNATIVES_LIST = 0x21;
-    
-    private int type = TYPE_EMPTY;
-    private String startName;
-    private String endName;
-    private List<Plan> planList;
-    private AddtionalInfo addtionalInfo;
-    private List<Station> startAlternativesList;
-    private List<Station> endAlternativesList;
-    
-    private POI start;
-    private POI end;
-    
-    public POI getStart() {
-        return start;
-    }
-    
-    public void setStart(POI start) {
-        this.start = start;
-        if (planList != null) {
-            for(Plan plan : planList) {
-                plan.setStart(start);
-            }
-        }
-    }
-    
-    public POI getEnd() {
-        return end;
-    }
-    
-    public void setEnd(POI end) {
-        this.end = end;
-        if (planList != null) {
-            for(Plan plan : planList) {
-                plan.setEnd(end);
-            }
-        }
-    }
-
-    public int getType() {
-        return type;
-    }
-    
-    public void setType(int type) {
-        this.type = type;
-    }
-    
-    public void setPlanList(List<Plan> planList) {
-        this.planList = planList;
-    }
-
-    public List<Plan> getPlanList() {
-        return planList;
-    }
-    
-    public AddtionalInfo getAddtionalInfo() {
-        return addtionalInfo;
-    }
-
-    public List<Station> getStartAlternativesList() {
-        return startAlternativesList;
-    }
-
-    public List<Station> getEndAlternativesList() {
-        return endAlternativesList;
-    }
-
-    public String getStartName() {
-        return startName;
-    }
-
-    public void setStartName(String startName) {
-        this.startName = startName;
-    }
-
-    public String getEndName() {
-        return endName;
-    }
-
-    public void setEndName(String endName) {
-        this.endName = endName;
-    }
-
-    public TrafficModel() {
-    }
-    
-    public TrafficModel(XMap data, int queryType) throws APIException {
-        super(data);
-        
-        this.type = (int)getLongFromData(FIELD_TYPE);
-        this.startName = getStringFromData(FIELD_START_NAME);
-        this.endName = getStringFromData(FIELD_END_NAME);
-        this.addtionalInfo = getObjectFromData(FIELD_ADDTIONAL_INFO, AddtionalInfo.Initializer);
-        if (TYPE_PROJECT == this.type) {
-            this.planList = getListFromData(FIELD_PROJECT_LIST, Plan.Initializer);
-            if (this.planList != null) {
-                for(int i = 0, size = this.planList.size(); i < size; i++) {
-                    Plan plan = this.planList.get(i);
-                    plan.setType(queryType);
-                    POI poi = plan.getStart();
-                    if (poi != null) {
-                        poi.setName(this.startName);
-                    }
-                    poi = plan.getEnd();
-                    if (poi != null) {
-                        poi.setName(this.endName);
-                    }
-                }
-            }
-        } else {
-            this.startAlternativesList = getListFromData(FIELD_START_ALTERNATIVES_LIST, Station.Initializer);
-            this.endAlternativesList = getListFromData(FIELD_END_ALTERNATIVES_LIST, Station.Initializer);
-        }
-    }
 }

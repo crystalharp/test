@@ -239,6 +239,26 @@ unsigned int tk_read_data_from_buf(tk_buf_info_t *data_buf, unsigned char bits) 
     }
 }
 
+void tk_align_buf(tk_buf_info_t *data_buf) {
+    if (data_buf->remain_bits > 0) {
+        ++data_buf->buf_pos;
+        data_buf->remain_bits = 0;
+        data_buf->remain_value = 0;
+    }
+}
+
+unsigned int tk_buf_info_read_xint(tk_buf_info_t *data_buf) {
+    int i = 0;
+    unsigned int addition_length_part = tk_read_data_from_buf(data_buf, 8);
+    unsigned int addition_length = addition_length_part & 0x7f;
+    while ((addition_length_part & 0x80) != 0) {
+        ++i;
+        addition_length_part = tk_read_data_from_buf(data_buf, 8);
+        addition_length = (addition_length << 7) + (addition_length_part & 0x7f);
+    }
+    return addition_length;
+}
+
 tk_status_t tk_skip_buf_bits(tk_buf_info_t *data_buf, unsigned int bits) {
     int byte_num, remain_bit;
     if (bits == 0) {

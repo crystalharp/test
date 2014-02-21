@@ -57,6 +57,7 @@ typedef struct _tk_style tk_style_t;
 typedef struct _tk_region tk_region_t;
 typedef struct _tk_feature_data tk_feature_data_t;
 typedef struct _tk_layer tk_layer_t;
+typedef struct _tk_geo_layer tk_geo_layer_t;
 typedef struct _tk_base_tile_data tk_base_tile_data_t;
 
 /**

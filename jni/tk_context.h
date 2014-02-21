@@ -15,6 +15,7 @@
 #include "tk_tile_data.h"
 #include "tk_types.h"
 #include "tk_label.h"
+#include "tk_building.h"
 
 #define TK_LOST_DATA_MAX_COUNT 100
 #define TK_TILE_BOUND_SIZE 1
@@ -49,6 +50,13 @@ struct _tk_layer {
     /* the tail pointer of this layer's feature list */
     tk_feature_t *ftail;
 	short int fnum;
+    struct _tk_layer *next_layer;
+};
+
+struct _tk_geo_layer {
+    int geo_type;
+    tk_layer_t *sub_layer_list;
+    int sub_layer_num;
 };
 
 //定义gdi相关信息
@@ -103,6 +111,7 @@ struct _tk_context {
     tk_styles_buffer_t *cur_style_buf;
     tk_style_t *style;
     tk_gdi_t gdi;
+    tk_geo_layer_t *geo_layer_list;
     
     tk_lost_data_t lost_data[TK_LOST_DATA_MAX_COUNT];
     int lost_data_count;
@@ -113,6 +122,7 @@ struct _tk_context {
     tk_label_buf_t label_buf;
     tk_str_pool_t label_name_pool;
     tk_point_buf_t label_point_pool;
+    tk_building_buf_t building_buf;
     
     int point_num;
     unsigned char *region_data_buf;
@@ -140,6 +150,8 @@ void tk_context_set_xyz(tk_context_t *context, int tile_x, int tile_y, int zoom)
 void tk_context_set_center_tile(tk_context_t *context, int tile_x, int tile_y);
 
 void tk_contxt_clear_point_buf(tk_context_t *context);
+
+void tk_context_clear_building_buf(tk_context_t *context);
 
 #endif
 

@@ -49,7 +49,7 @@ tk_label_t *tk_label_buf_get_free_label(tk_label_buf_t *label_buf);
 
 tk_status_t tk_get_tile_labels (int tile_x, int tile_y, int zoom);
 tk_status_t tk_add_poi_labels(tk_context_t *context, tk_layer_t *poi_layer);
-tk_status_t tk_add_line_feature_to_labels(tk_context_t *context, tk_feature_data_t *feature_data);
+tk_status_t tk_add_line_feature_to_labels(tk_context_t *context, tk_feature_data_t *feature_data, tk_bool_t use_clip);
 tk_status_t tk_add_polygon_feature_to_labels(tk_context_t *context, tk_feature_data_t *poly_data);
 
 #endif

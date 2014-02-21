@@ -1,7 +1,6 @@
 package com.tigerknows.ui.traffic;
 
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
 import android.app.Dialog;
@@ -29,7 +28,6 @@ import android.widget.TextView;
 
 import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
-import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.android.location.Position;
@@ -37,7 +35,6 @@ import com.tigerknows.android.os.TKAsyncTask;
 import android.widget.Toast;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.CityInfo;
-import com.tigerknows.map.MapEngine;
 import com.tigerknows.map.TrafficOverlayHelper;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataQuery;
@@ -49,7 +46,6 @@ import com.tigerknows.model.TrafficModel.Station;
 import com.tigerknows.model.TrafficQuery;
 import com.tigerknows.provider.CommonPlaceTable.CommonPlace;
 import com.tigerknows.provider.HistoryWordTable;
-import com.tigerknows.provider.TrafficSearchHistoryTable;
 import com.tigerknows.provider.TrafficSearchHistoryTable.SearchHistory;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.ui.poi.InputSearchFragment;
@@ -832,37 +828,10 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
             if (trafficModel == null && trafficQuery.getStatusCode() == BaseQuery.STATUS_CODE_NONE) {
                 sphinx.showTip(R.string.network_failed, Toast.LENGTH_SHORT);
                 return;
+            } else if (trafficModel.getResultStat() > 0){
+                sphinx.showTip(trafficModel.getResultTip(), Toast.LENGTH_SHORT);
             }
             
-            POI startPOI = trafficQuery.getStart();
-            POI endPOI = trafficQuery.getEnd();
-            Position start = startPOI.getPosition();
-            Position end = endPOI.getPosition();
-            
-            boolean isSameCity = true;
-            if (Util.inChina(start) && Util.inChina(end)) {
-                int cityId = MapEngine.getCityId(start);
-                isSameCity &= (cityId == MapEngine.getCityId(end));
-            }
-            if (!isSameCity) {
-                if (trafficQuery.getQueryType() == TrafficQuery.QUERY_TYPE_TRANSFER) {
-                    sphinx.showTip(R.string.transfer_non_support_city_tip, Toast.LENGTH_SHORT);
-                } else if (trafficQuery.getQueryType() == TrafficQuery.QUERY_TYPE_DRIVE) {
-                    sphinx.showTip(R.string.drive_non_support_city_tip, Toast.LENGTH_SHORT);
-                } else if (trafficQuery.getQueryType() == TrafficQuery.QUERY_TYPE_WALK) {
-                    sphinx.showTip(R.string.walk_non_support_city_tip, Toast.LENGTH_SHORT);
-                }
-            } else if (trafficQuery.getResponseXMap() == null) {
-                sphinx.showTip(R.string.no_result, Toast.LENGTH_SHORT);
-            } else {
-                if (trafficQuery.getQueryType() == TrafficQuery.QUERY_TYPE_TRANSFER) {
-                    sphinx.showTip(R.string.transfer_non_tip, Toast.LENGTH_SHORT);
-                } else if (trafficQuery.getQueryType() == TrafficQuery.QUERY_TYPE_DRIVE) {
-                    sphinx.showTip(R.string.drive_non_tip, Toast.LENGTH_SHORT);
-                } else if (trafficQuery.getQueryType() == TrafficQuery.QUERY_TYPE_WALK) {
-                    sphinx.showTip(R.string.walk_non_tip, Toast.LENGTH_SHORT);
-                }
-            }
         }
     }
 

@@ -34,6 +34,19 @@ struct _tk_label {
 
 typedef struct _tk_label tk_label_t;
 
+struct _tk_building {
+    int point_start_idx;
+    tk_point_t *points;
+    int point_num;
+    int height;
+    int has_point_out_of_tile;
+    tk_color_t side_color1;
+    tk_color_t side_color2;
+    tk_color_t top_color;
+};
+
+typedef struct _tk_building tk_building_t;
+
 typedef enum _tk_lost_type {
     TK_LOST_TYPE_DATA_LOST,
     TK_LOST_TYPE_DATA_ERROR,
@@ -47,6 +60,12 @@ struct _tk_lostdata {
 };
 
 typedef struct _tk_lostdata tk_lost_data_t;
+
+enum {
+    POINT_TYPE_NORMAL,
+    POINT_TYPE_SRC_DIVIDE,
+    
+};
 
 /* ============================================
  *  Initialize and destroy the engine
@@ -79,6 +98,8 @@ void tk_fini_context(void);
 int tk_get_matrix_size(int tile_size);
 
 tk_label_t *tk_render_tile(int tile_x, int tile_y, int zoom, int *label_num);
+
+tk_building_t *tk_get_buildings(int *building_num);
 
 tk_label_t *tk_get_labels(int tile_x, int tile_y, int zoom, int *label_num);
 

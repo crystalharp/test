@@ -17,9 +17,13 @@
 
 typedef struct _tk_tile_mem_pool {
     char *names_buf;
-    tk_point_t *points_buf;
+    int name_buf_size;
     int cur_name_index;
+
+    tk_point_t *points_buf;
+    int point_buf_size;
     int cur_point;
+
 } tk_tile_mem_pool_t;
 
 struct _tk_tile_key {

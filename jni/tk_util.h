@@ -88,6 +88,8 @@ unsigned int tk_read_data_from_buf(tk_buf_info_t *data_buf, unsigned char bits);
 tk_status_t tk_skip_buf_bits(tk_buf_info_t *data_buf, unsigned int bits);
 tk_status_t tk_skip_buf_bytes(tk_buf_info_t *data_buf, unsigned int length);
 tk_status_t tk_read_string_from_buf(tk_buf_info_t *data_buf, char *res, unsigned int length);
+void tk_align_buf(tk_buf_info_t *data_buf);
+unsigned int tk_buf_info_read_xint(tk_buf_info_t *data_buf);
 
 /*============================================
  * point buf used internal
