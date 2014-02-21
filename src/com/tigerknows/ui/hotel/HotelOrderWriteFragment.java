@@ -743,8 +743,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
                 }
                 mSphinx.uiStackRemove(R.id.view_hotel_credit_assure);
             }
-            mSphinx.getHotelOrderDetailFragment().setData(mHotelOrder, -1, null);
-            mSphinx.getHotelOrderDetailFragment().setStageIndicatorVisible(true);
+            mSphinx.getHotelOrderSuccessFragment().setData(mHotelOrder);
             HotelOrderTable hotelOrderTable = new HotelOrderTable(mSphinx);
             try {
                 hotelOrderTable.write(mHotelOrder);
@@ -760,7 +759,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
             mSphinx.getHotelOrderListFragment().syncOrder();
             dismiss();
             mSphinx.uiStackRemove(R.id.view_hotel_order_write);
-            mSphinx.showView(R.id.view_hotel_order_detail);
+            mSphinx.showView(R.id.view_hotel_order_success);
             break;
         case Response.RESPONSE_CODE_HOTEL_NEED_CREDIT_ASSURE:
             mSphinx.getHotelOrderCreditFragment().setData(response.getDescription(),

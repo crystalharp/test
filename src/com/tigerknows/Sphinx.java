@@ -141,6 +141,7 @@ import com.tigerknows.ui.hotel.HotelIntroActivity;
 import com.tigerknows.ui.hotel.HotelOrderCreditFragment;
 import com.tigerknows.ui.hotel.HotelOrderDetailFragment;
 import com.tigerknows.ui.hotel.HotelOrderListFragment;
+import com.tigerknows.ui.hotel.HotelOrderSuccessFragment;
 import com.tigerknows.ui.hotel.HotelOrderWriteFragment;
 import com.tigerknows.ui.hotel.PickLocationFragment;
 import com.tigerknows.ui.more.AboutUsActivity;
@@ -2696,6 +2697,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     private HotelOrderWriteFragment mHotelOrderWriteFragment;
     private HotelOrderCreditFragment mHotelOrderCreditFragment;
 
+    private HotelOrderSuccessFragment mHotelOrderSuccessFragment;
     private HotelOrderDetailFragment mHotelOrderDetailFragment;
     private HotelOrderDetailFragment mHotelOrderDetailFragment2;
     private HotelOrderListFragment mHotelOrderListFragment;
@@ -2852,6 +2854,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 
             case R.id.view_hotel_order_list:
             	baseFragment = getHotelOrderListFragment();
+            	break;
+            	
+            case R.id.view_hotel_order_success:
+            	baseFragment = getHotelOrderSuccessFragment();
             	break;
 
             case R.id.view_hotel_order_detail:
@@ -3371,6 +3377,19 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             return mHotelOrderListFragment;
         }
     }
+    
+    public HotelOrderSuccessFragment getHotelOrderSuccessFragment(){
+
+        synchronized (mUILock) {
+            if (mHotelOrderSuccessFragment == null) {
+            	HotelOrderSuccessFragment fragment = new HotelOrderSuccessFragment(Sphinx.this);
+                fragment.setId(R.id.view_hotel_order_success);
+                fragment.onCreate(null);
+                mHotelOrderSuccessFragment = fragment;
+            }
+            return mHotelOrderSuccessFragment;
+        }
+    }    
 
     public HotelOrderDetailFragment getHotelOrderDetailFragment(){
 

@@ -421,7 +421,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
      * Before showing the view, {@code setData()} first. 
      * @param order
      */
-    public void setData(HotelOrder order, int position, Handler handler){
+    public void setData(HotelOrder order, int position){
     	mOrder = order;
     	mPosition = position;
     	if(mOrder==null){
