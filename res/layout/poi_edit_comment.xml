@@ -52,7 +52,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignBottom="@id/content_edt"
                     android:layout_alignRight="@id/content_edt"
-                    android:background="@drawable/btn_settings"/>
+                    android:background="@drawable/btn_microphone"/>
                     
                 <TextView
                     android:id="@+id/text_limit_txv"

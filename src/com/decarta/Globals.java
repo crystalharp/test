@@ -202,6 +202,15 @@ public class Globals {
         if (context instanceof Sphinx) {
             sSphinx = (Sphinx) context;
         }
+
+        // 读取屏幕参数，如高宽、密度
+        WindowManager winMan=(WindowManager)context.getSystemService(Context.WINDOW_SERVICE);
+        Display display=winMan.getDefaultDisplay();
+        display.getMetrics(Globals.g_metrics);
+        
+        if(Globals.g_metrics.density >= 1.5f) {
+        	CONFIG.TILE_SIZE = 512;
+        }
         
         initDataPath(context);
         
@@ -219,10 +228,6 @@ public class Globals {
         Globals.readSessionAndUser(context);
         Globals.setConnectionFast(Utility.isConnectionFast(context));
 
-        // 读取屏幕参数，如高宽、密度
-        WindowManager winMan=(WindowManager)context.getSystemService(Context.WINDOW_SERVICE);
-        Display display=winMan.getDefaultDisplay();
-        display.getMetrics(Globals.g_metrics);
         
         initOptimalAdaptiveScreenSize();
     }

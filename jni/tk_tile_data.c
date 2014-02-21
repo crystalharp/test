@@ -8,6 +8,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <assert.h>
 #include "tk_lru_cache.h"
 #include "tk_tile_data.h"
 #include "tk_global_info.h"
@@ -17,8 +18,8 @@
 #include "tk_context.h"
 #include "tk_log.h"
 
-#define TILE_POOL_MAX_SIZE 16
-#define BASE_TILE_POOL_MAX_SIZE 256
+#define TILE_POOL_MAX_SIZE 64
+#define BASE_TILE_POOL_MAX_SIZE 1024
 
 static tk_lru_cache_t _tk_tile_data_pool;
 static tk_lru_cache_t _tk_base_tile_data_pool;
@@ -220,7 +221,7 @@ static int _tk_search_tile_by_morton_code(tk_region_t *region, int base_level_id
     int lowbound;
     int morton_code, cur_code, cur_level, cur_tile_number;
     unsigned char *region_index, *pointer;
-    
+    LOG_DBG("_tk_search_tile_by_morton_code");
     region_index = region->tile_index;
     upbound = region->tile_index_bound[base_level_idx].high;
     lowbound = region->tile_index_bound[base_level_idx].low;
@@ -249,6 +250,7 @@ static int _tk_search_tile_by_morton_code(tk_region_t *region, int base_level_id
         }
     }
     *merged_level = cur_level;
+    LOG_DBG("_tk_search_tile_by_morton_code success");
     return cur_tile_number;
 }
 
@@ -261,15 +263,13 @@ static unsigned char *_tk_get_tile_buf(tk_region_t *region, tk_context_t *contex
     unsigned char *cur_pointer = NULL, *region_index = NULL;
     unsigned char *verifycode = NULL;
     unsigned char i, j, k;
-    
-    int map_data_bias = region->tile_data - region->region_data;
     region_index = region->tile_index;
     index_count = region->tile_index_count;
     verifycode = region->verifycode;
-    
     cur_pointer = region_index + 6 * cur_tile_number + 3;
-    pos = map_data_bias + GETNUM3B(cur_pointer);
-    
+    pos = region->tile_data_bias + GETNUM3B(cur_pointer);
+
+    LOG_DBG("to _tk_get_tile_buf1");
     //获取下一个tile的偏移量，如果没有下一个tile则取region数据长度
     if (cur_tile_number < index_count - 1) {
         //如果是当前级别最后一个tile，则下一个tile为下一级别第一个tile，需要额外加上下一级别两个特殊tile索引占位(12字节)
@@ -278,15 +278,28 @@ static unsigned char *_tk_get_tile_buf(tk_region_t *region, tk_context_t *contex
         } else {
             cur_pointer += 6;
         }
-        next_tile_pos = map_data_bias + GETNUM3B(cur_pointer);
+        next_tile_pos = region->tile_data_bias + GETNUM3B(cur_pointer);
     } else {
         next_tile_pos = region->region_data_length;
     }
+
+    LOG_DBG("to _tk_get_tile_buf2");
     *buf_offset = pos;
     *buf_length = next_tile_pos - *buf_offset;
+    pthread_mutex_lock(&region->region_lock);
+
     //校验，看tile是否已下载
     if (NULL != verifycode) {
-        i = region->region_data[next_tile_pos - 1];
+    	LOG_DBG("to _tk_get_tile_buf3");
+        fseek(region->region_fp, next_tile_pos - 1, SEEK_SET);
+        LOG_DBG("to _tk_get_tile_buf4");
+        if(fread(&i, 1, 1, region->region_fp) != 1) {
+        	LOG_DBG("to _tk_get_tile_buf5");
+            tk_set_result(TK_STATUS_FILE_READ_ERROR);
+            LOG_INFO("_tk_get_tile_buf failed: file read error");
+            goto CATCH;
+        }
+        LOG_DBG("to _tk_get_tile_buf6");
         j = verifycode[cur_tile_number/8];
         k = cur_tile_number % 8;
         if (((0x01L)&(i ^ (j >> k))) == 0) {
@@ -296,8 +309,20 @@ static unsigned char *_tk_get_tile_buf(tk_region_t *region, tk_context_t *contex
             goto CATCH;
         }
     }
-    tile_buf = region->region_data + *buf_offset;
+    LOG_DBG("to _tk_get_tile_buf7");
+    fseek(region->region_fp, pos, SEEK_SET);
+    LOG_DBG("to _tk_get_tile_buf8 : %i", *buf_length);
+    tile_buf = malloc(*buf_length);
+    if ( fread(tile_buf, 1, *buf_length, region->region_fp) != *buf_length) {
+        free(tile_buf);
+        tile_buf = NULL;
+        tk_set_result(TK_STATUS_FILE_READ_ERROR);
+        LOG_INFO("_tk_get_tile_buf failed: file read error");
+        goto CATCH;
+    };
+    LOG_INFO("_tk_get_tile_buf success");
 CATCH:
+    pthread_mutex_unlock(&region->region_lock);
     return tile_buf;
 }
 
@@ -326,7 +351,7 @@ static tk_base_tile_data_t *_tk_create_base_tile(int feature_num, int point_num,
     }
 
     if (name_length > max_length) {
-    	name_length = max_length;
+        name_length = max_length;
     }
 
     base_tile = malloc(sizeof(tk_base_tile_data_t));
@@ -342,12 +367,14 @@ static tk_base_tile_data_t *_tk_create_base_tile(int feature_num, int point_num,
     }
     memset(base_tile->features, 0, (feature_num + 1) * sizeof(tk_feature_data_t));
     base_tile->mem_pool.names_buf = malloc(sizeof(char) * (name_length + 1));
+    base_tile->mem_pool.name_buf_size = name_length + 1;
     if (!base_tile->mem_pool.names_buf) {
         result = TK_STATUS_NO_MEMORY;
         goto CATCH;
     }
     memset(base_tile->mem_pool.names_buf, 0, sizeof(char) * (name_length + 1));
     base_tile->mem_pool.points_buf = malloc(sizeof(tk_point_t) * (point_num + 1));
+    base_tile->mem_pool.point_buf_size = point_num + 1;
     if (!base_tile->mem_pool.points_buf) {
         result = TK_STATUS_NO_MEMORY;
         goto CATCH;
@@ -367,8 +394,10 @@ CATCH:
 static int _tk_seek_tile(tk_context_t *context, tk_region_t *region, unsigned int base_tile_x, unsigned int base_tile_y,
                          int *ref_x, int *ref_y, int *merged_level) {
     _tk_get_tile_ref(region, context->base_level, ref_x, ref_y);
+    LOG_INFO("refx: %i, refy: %i", *ref_x, *ref_y);
     if (base_tile_x < (*ref_x) || base_tile_y < (*ref_y)) {
         tk_set_result(TK_STATUS_TILE_OUT_BOUND);
+        LOG_INFO("tile out bound");
         goto CATCH;
     }
     return _tk_search_tile_by_morton_code(region, context->base_level_idx, base_tile_x - (*ref_x), base_tile_y - (*ref_y), merged_level);
@@ -380,24 +409,123 @@ static inline int _tk_get_merged_coordinate(int coord, int ref_coord, int merged
     return coord - ((coord - ref_coord) % (1 << merged_level));
 }
 
+static tk_bool_t _tk_check_tile_data(unsigned char *tile_data, int data_len, unsigned char checksum) {
+    int size_of_int = data_len / sizeof(int32_t);
+    int32_t result_of_int = *(int32_t *)tile_data;
+    for (int i = 1; i < size_of_int; ++i) {
+        result_of_int ^= *(int32_t *)(tile_data + i * sizeof(int32_t));
+    }
+    unsigned char result = *(unsigned char *)(&result_of_int);
+    for (int i = 1; i < sizeof(int32_t); ++i) {
+        result ^= *((unsigned char *)(&result_of_int) + i);
+    }
+    for (int i = size_of_int * sizeof(int32_t); i < data_len; ++i) {
+        result ^= *(tile_data + i);
+    }
+    if ((result ^ checksum) == 0xff) {
+        return TK_YES;
+    }
+    else {
+        return TK_NO;
+    }
+}
+
+static unsigned int _tk_read_xint_from_buf(unsigned char *data_buf, int *read_byte_num) {
+    int i = 0;
+    unsigned int addition_length_part = *(data_buf + i);
+    unsigned int addition_length = addition_length_part & 0x7f;
+    *read_byte_num = 1;
+    while ((addition_length_part & 0x80) != 0) {
+        ++i;
+        addition_length_part = *(data_buf + i);
+        addition_length = (addition_length << 7) + (addition_length_part & 0x7f);
+        ++(*read_byte_num);
+    }
+    return addition_length;
+}
+
+#define TK_ADDTION_DATA_TYPE 0
+#define TK_NEW_TYPE_DATA_TYPE 1
+
+static tk_bool_t _tk_find_additional_data(tk_buf_info_t *tile_addition_buf, unsigned char *data, int len, int type) {
+    if (len <= 0) {
+        return TK_NO;
+    }
+    unsigned int addition_type = *data;
+    int read_byte_num = 0;
+    while (addition_type != type && len > 0) {
+        unsigned int addition_length = _tk_read_xint_from_buf(data + 1, &read_byte_num);
+        LOG_DBG("addition_length, byte num: %i   %i", addition_length, read_byte_num);
+        data += (addition_length + read_byte_num + 1);
+        len -= (addition_length + read_byte_num + 1);
+        if (len > 0) {
+            addition_type = *data;
+        }
+    }
+    if (len <= 0) {
+    	LOG_DBG("not found data: %i", type);
+        return TK_NO;
+    }
+
+    tile_addition_buf->buf_length = _tk_read_xint_from_buf(data + 1, &read_byte_num);
+    tile_addition_buf->buf = data + 1 + read_byte_num;
+    LOG_DBG("found data: %i   %i", type, tile_addition_buf->buf_length);
+    return TK_YES;
+}
+
 static tk_base_tile_data_t *_tk_load_tile_from_region(tk_region_t *region, tk_context_t *context, int tile_number,
                                                       int merged_x, int merged_y, int merged_level) {
     tk_status_t result = TK_STATUS_SUCCESS;
     tk_base_tile_data_t *base_tile = NULL;
-    tk_buf_info_t tile_data_buf;
+    tk_buf_info_t tile_data_buf, tile_addition_buf, new_type_data_buf;
     unsigned int tile_offset, buf_pos;
     int feature_num, name_length, point_num;
-    
+    tk_bool_t has_addition_data = TK_NO, has_new_type_data = TK_NO;
+    int tile_len = 0, addition_data_offset = 0, added_data_len = 0, common_feature_num = 0;
+
     tile_data_buf.buf_pos = 0;
     tile_data_buf.remain_bits = 0;
     tile_data_buf.remain_value = 0;
-    tile_data_buf.buf = _tk_get_tile_buf(region, context, tile_number, &tile_offset, &tile_data_buf.buf_length);
+    tile_data_buf.buf = _tk_get_tile_buf(region, context, tile_number, &tile_offset, &tile_len);
+    tile_data_buf.buf_length = tile_len;
     if (!tile_data_buf.buf) {//result可能是out_bound也可能是lost_data
         goto CATCH;
     }
+    LOG_DBG("get_tile_buf success");
+    if (region->tile_meta_length > 0) {
+		int meta_length = region->tile_meta_length;
+		unsigned char checksum = *(tile_data_buf.buf + tile_len - 1);
+		tk_bool_t is_tile_valid = _tk_check_tile_data(tile_data_buf.buf, tile_len - 1, checksum);
+		if (!is_tile_valid) {
+			tk_set_result(TK_STATUS_TILE_DATA_ERROR);
+			LOG_INFO("check failed, invalid tile");
+			return 0;
+		}
+		assert(meta_length >= 3);
+		if (meta_length >= 3) {
+			addition_data_offset = GETNUM2B(tile_data_buf.buf + tile_len - 3);
+			added_data_len = tile_len - addition_data_offset - meta_length;
+			LOG_INFO("added data: %i", added_data_len);
+			tile_data_buf.buf_length = addition_data_offset;
+		}
+	}
+	LOG_INFO("tile_offset: %i, length: %i, added: %i, added_offset: %i", tile_offset, tile_len, added_data_len, addition_data_offset);
+
+	if (added_data_len > 0) {
+		memset(&tile_addition_buf, 0, sizeof(tile_addition_buf));
+		memset(&new_type_data_buf, 0, sizeof(new_type_data_buf));
+		has_addition_data = _tk_find_additional_data(&tile_addition_buf, tile_data_buf.buf + tile_data_buf.buf_length, added_data_len, 0);
+		has_new_type_data = _tk_find_additional_data(&new_type_data_buf, tile_data_buf.buf + tile_data_buf.buf_length, added_data_len, 1);
+	}
+
     switch (context->base_level_diff) {
         case 2:
-            buf_pos = 0;
+            if (context->zoom == 9 && region->tile_meta_length == 0) {
+                buf_pos = 5;
+            }
+            else {
+                buf_pos = 0;
+            }
             break;
         case 1:
             buf_pos = 5;
@@ -407,43 +535,65 @@ static tk_base_tile_data_t *_tk_load_tile_from_region(tk_region_t *region, tk_co
             break;
     }
     feature_num = (tile_data_buf.buf[buf_pos] << 8) + tile_data_buf.buf[buf_pos + 1];
-//    if (feature_num < 0 || (feature_num == 0 && tile_data_buf.buf_length > 15) || feature_num > tile_data_buf.buf_length) {//出错
-//    	LOG_INFO("_tk_load_tile_from_region failed: TK_STATUS_TILE_DATA_ERROR, data buf length: %d", tile_data_buf.buf_length);
-//        tk_set_result(TK_STATUS_TILE_DATA_ERROR);
-//        tk_context_add_lost_data(context, region->rid, tile_offset, tile_data_buf.buf_length, TK_LOST_TYPE_DATA_ERROR);
-//        goto CATCH;
-//    }
-    if (feature_num == 0) {
-    	tk_set_result(TK_STATUS_SUCCESS);
-    	goto CATCH;
-    }
     name_length = (tile_data_buf.buf[buf_pos + 2] << 4) + ((tile_data_buf.buf[buf_pos + 3] >> 4) & 0x0f);
     point_num = ((tile_data_buf.buf[buf_pos + 3] & 0xf) << 8) + tile_data_buf.buf[buf_pos + 4];//这里数据是否已是每级需要读取节点个数，预先分配的空间是否正好？最终看来不是。如何无缝兼容？
+    common_feature_num = feature_num;
+
+	if (has_new_type_data) {
+		feature_num += (new_type_data_buf.buf[buf_pos] << 4) + ((new_type_data_buf.buf[buf_pos + 1] >> 4) & 0x0f);
+		name_length += ((new_type_data_buf.buf[buf_pos + 1] & 0xf) << 12) + (new_type_data_buf.buf[buf_pos + 2] << 8) + ((new_type_data_buf.buf[buf_pos + 3] >> 4) & 0x0f);
+		point_num += ((new_type_data_buf.buf[buf_pos + 3] & 0xf) << 8) + new_type_data_buf.buf[buf_pos + 4];
+	}
+    if (feature_num == 0) {
+		tk_set_result(TK_STATUS_SUCCESS);
+		goto CATCH;
+	}
+
     tile_data_buf.buf_pos = 15;
-    base_tile = _tk_create_base_tile(feature_num, point_num, name_length, tile_data_buf.buf_length);////todo: 考虑拆分成check和create
+    base_tile = _tk_create_base_tile(feature_num, point_num, name_length, tile_len);////todo: 考虑拆分成check和create
     if (!base_tile) {
         if (tk_get_last_result() == TK_STATUS_TILE_DATA_ERROR) {
-            LOG_INFO("_tk_load_tile_from_region %d failed: TK_STATUS_TILE_DATA_ERROR, base tile error: %d, %d, %d, %d",region->rid,
-            		feature_num, point_num, name_length, tile_data_buf.buf_length);
+            LOG_INFO("_tk_load_tile_from_region failed: TK_STATUS_TILE_DATA_ERROR");
             //todo: 将tile末尾标记为该tile未下载
             tk_context_add_lost_data(context, region->rid, tile_offset, tile_data_buf.buf_length, TK_LOST_TYPE_DATA_ERROR);//重新下载该tile，而不是删除整个region
         }
         goto CATCH;
     }
+    LOG_INFO("tile length: %i, feature num: %i, name length: %i, point num: %i", tile_data_buf.buf_length, feature_num, name_length, point_num);
     base_tile->merged_tile_x = merged_x;
     base_tile->merged_tile_y = merged_y;
     base_tile->merged_level = merged_level;
     base_tile->region_id = region->rid;
     base_tile->length = tile_data_buf.buf_length;
     base_tile->zoom = context->zoom;
-    result = tk_read_features(context, region, base_tile, tile_data_buf, feature_num, point_num);
-    if (result == TK_STATUS_TILE_DATA_ERROR) {
-        tk_set_result(result);
-        LOG_DBG("tk_read_features failed: TK_STATUS_TILE_DATA_ERROR");
-        goto CATCH;
+
+    if (has_addition_data) {
+    	result = tk_read_features(context, region, base_tile, &tile_data_buf, &tile_addition_buf, common_feature_num, point_num, TK_NO);
     }
+    else {
+    	result = tk_read_features(context, region, base_tile, &tile_data_buf, NULL, common_feature_num, point_num, TK_NO);
+    }
+    if (result == TK_STATUS_TILE_DATA_ERROR) {
+		tk_set_result(result);
+		LOG_DBG("tk_read_features failed: TK_STATUS_TILE_DATA_ERROR");
+		goto CATCH;
+	}
+    if (has_new_type_data) {
+        new_type_data_buf.buf_pos += 15;
+        result = tk_read_features(context, region, base_tile, &new_type_data_buf, NULL, feature_num, point_num, TK_YES);
+    }
+    if (result == TK_STATUS_TILE_DATA_ERROR) {
+		tk_set_result(result);
+		LOG_DBG("tk_read_features failed: TK_STATUS_TILE_DATA_ERROR");
+		goto CATCH;
+	}
+    free(tile_data_buf.buf);
     return base_tile;
 CATCH:
+	LOG_DBG("_tk_load_tile_from_region catch exception");
+	if(tile_data_buf.buf) {
+		free(tile_data_buf.buf);
+	}
     _tk_destruct_base_tile(&base_tile);
     return NULL;
 }
@@ -557,15 +707,18 @@ static int _tk_find_regions_in_bbox(const tk_envelope_t *tile_box, int zoom, int
         reg_in_bound[0] = TK_REGION_ID_NATIONAL;//National
         center_region_id = TK_REGION_ID_NATIONAL;
     }
-    return center_region_id;
+    return *regnum_in_bound;
 }
 
 static tk_status_t _tk_get_related_regions(tk_context_t *context, const tk_envelope_t *tile_mercator_box) {
     int center_id = _tk_find_regions_in_bbox(tile_mercator_box, context->zoom, context->related_region, TK_MAX_REGION_CACHE_SIZE, &context->related_region_num);
-    if (center_id == -1) {
-        return TK_STATUS_TILE_OUT_BOUND;
-    }
-    return TK_STATUS_SUCCESS;
+//    if (center_id == -1) {
+//        return TK_STATUS_TILE_OUT_BOUND;
+//    }
+    if(center_id > 0)
+    	return TK_STATUS_SUCCESS;
+    else
+    	return TK_STATUS_SUCCESS;
 }
 
 tk_status_t tk_load_tile_data(tk_context_t *context, int tile_x, int tile_y, int zoom) {
@@ -612,6 +765,7 @@ tk_status_t tk_load_tile_data(tk_context_t *context, int tile_x, int tile_y, int
         tk_bool_t is_lost_data = TK_NO;
         base_tile_data = NULL;
         rid = context->related_region[region_idx];
+        LOG_INFO("rid: %i", rid);
         region = tk_get_region(rid);
         if (!region) {
             result = tk_get_last_result();
@@ -628,13 +782,16 @@ tk_status_t tk_load_tile_data(tk_context_t *context, int tile_x, int tile_y, int
                 //先通过motorn码查找tile是否在该region中
                 int tile_number = _tk_seek_tile(context, region, base_x, base_y, &ref_x, &ref_y, &merged_level);
                 if (tile_number < 0) {
+                    LOG_INFO("tile not found");
                     continue;// 只可能out bound
                 }
+                LOG_DBG("seek tile : %i", tile_number);
                 merged_x = _tk_get_merged_coordinate(base_x, ref_x, merged_level);
                 merged_y = _tk_get_merged_coordinate(base_y, ref_y, merged_level);
                 base_tile_data = _tk_get_base_tile_from_cache(context, region, merged_x, merged_y, context->zoom, rid);
 
                 if (!base_tile_data) {
+                	LOG_DBG("base_tile_data not got from cache");
                     base_tile_data = _tk_load_tile_from_region(region, context, tile_number, merged_x, merged_y, merged_level);
                     if (!base_tile_data) {
                         result = tk_get_last_result();
@@ -643,6 +800,7 @@ tk_status_t tk_load_tile_data(tk_context_t *context, int tile_x, int tile_y, int
                         }
                         else if (result == TK_STATUS_TILE_DATA_LOST){
                             is_lost_data = TK_YES;
+                            LOG_DBG("tk_load_tile_data has lost data: %i, %i", ref_x, ref_y);
                             continue;
                         } else {
                             goto CATCH;
@@ -671,6 +829,7 @@ tk_status_t tk_load_tile_data(tk_context_t *context, int tile_x, int tile_y, int
         goto SUCCESS;
     }
 CATCH:
+	LOG_INFO("tk_load_tile_data catch exception: %i", result);
     if (region) {
         tk_return_region(rid);
     }

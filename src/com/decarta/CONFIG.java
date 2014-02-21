@@ -37,7 +37,6 @@ public class CONFIG {
 	 */
 	public static int ZOOM_LOWER_BOUND=5;
 	public static int ZOOM_UPPER_BOUND=18;
-    public static int ZOOM_JUMP=9;
 	
 	/**
 	 * enable if after pinch zooming, slide to closest integer zoom level

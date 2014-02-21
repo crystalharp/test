@@ -143,6 +143,17 @@ static void _tk_set_label_points(tk_context_t *context) {
     }
 }
 
+static void _tk_set_building_points(tk_context_t *context) {
+    tk_building_t *buildings = context->building_buf.buildings;
+    int building_num = context->building_buf.building_num;
+    tk_building_t *building = NULL;
+    tk_point_t *points_pool = context->label_point_pool.points;
+    for (int i = 0; i < building_num; ++i) {
+        building = buildings + i;
+        building->points = points_pool + building->point_start_idx;
+    }
+}
+
 static void _tk_reader_prepare()
 {
     pthread_mutex_lock(&sem_rq);
@@ -196,6 +207,7 @@ tk_label_t *tk_render_tile(int tile_x, int tile_y, int zoom, int *label_num) {
     assert(label_num != NULL);
     tk_clean_lost_data(context);
     tk_clean_labels(context);
+    tk_context_clear_building_buf(context);
     _tk_reader_prepare();
     zoom += (context->tile_size_bit - 8);
     result = tk_load_tile_data_default(tile_x, tile_y, zoom, TK_NO);
@@ -220,12 +232,20 @@ CATCH:
     return NULL;
 }
 
+tk_building_t *tk_get_buildings(int *building_num) {
+    tk_context_t *context = tk_get_context();
+    _tk_set_building_points(context);
+    *building_num = context->building_buf.building_num;
+    return context->building_buf.buildings;
+}
+
 tk_label_t *tk_get_labels(int tile_x, int tile_y, int zoom, int *label_num) {
     tk_status_t result = TK_STATUS_SUCCESS;
     tk_context_t *context = tk_get_context();
     assert(label_num != NULL);
     tk_clean_lost_data(context);
     tk_clean_labels(context);
+    tk_context_clear_building_buf(context);
     _tk_reader_prepare();
     result = tk_load_tile_data_default(tile_x, tile_y, zoom, TK_YES);
     if (result != TK_STATUS_SUCCESS) {

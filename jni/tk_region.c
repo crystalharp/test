@@ -13,7 +13,6 @@
 #include <assert.h>
 #include <pthread.h>
 #include <sys/stat.h>
-#include <errno.h>
 #include "tk_types.h"
 #include "tk_region.h"
 #include "tk_util.h"
@@ -32,18 +31,18 @@ static pthread_mutex_t _tk_region_file_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 static void destroy_region(void *key, void *data) {
     tk_region_t *region = (tk_region_t *)data;
-    if (region->region_data) {
-        free(region->region_data);
-        region->region_data = NULL;
+    if (region->meta_data) {
+        free(region->meta_data);
+        region->meta_data = NULL;
     }
     if (region->verifycode) {
         free(region->verifycode);
         region->verifycode = NULL;
     }
-//    if (region->cached_polygon) {
-//        free(region->cached_polygon);
-//        region->cached_polygon = NULL;
-//    }
+    if (region->region_fp) {
+        fclose(region->region_fp);
+        region->region_fp = NULL;
+    }
     pthread_mutex_destroy(&region->region_lock);
     free(data);
 }
@@ -111,31 +110,6 @@ static tk_status_t _tk_get_verify_code(tk_region_t *region, const char *chk_path
     return TK_STATUS_SUCCESS;
 }
 
-//static tk_status_t _tk_get_polygon_bound(tk_region_t *region) {
-//    tk_status_t result = TK_STATUS_SUCCESS;
-//    unsigned char *buf = tk_global_info.region_polygon_buf + tk_global_info.reg_bounds[region->rid].offset;
-//    int i = 0;
-//    
-//    region->point_num = *(buf++);
-//    if (region->point_num >= TK_MAX_POINT_IN_BOUND) {
-//        result = TK_STATUS_TOO_MANY_POINTS;
-//        goto CATCH;
-//    }
-//    
-//    if ((region->cached_polygon = (tk_point_t *)malloc(sizeof(tk_point_t) * region->point_num)) == NULL) {
-//        result = TK_STATUS_NO_MEMORY;
-//        goto CATCH;
-//    }
-//    for (i = 0; i < region->point_num; i++) {
-//        region->cached_polygon[i].level_code = (buf[0] >> 7) & 0x01;
-//        region->cached_polygon[i].x = ((buf[0] & 0x7f) << 24) + (buf[1] << 16) + (buf[2] << 8) + buf[3];
-//        region->cached_polygon[i].y = (buf[4] << 24) + (buf[5] << 16) + (buf[6] << 8) + buf[7];
-//        buf += 8;
-//    }
-//CATCH:
-//    return result;
-//}
-
 static void _tk_get_tile_index_bound(tk_region_t *region) {
     int i = 0;
     int cur_index_count = 0;
@@ -160,6 +134,7 @@ tk_region_t *tk_get_region(int rid) {
     char map_data_path[TK_MAX_PATH_LENGTH];
     tk_status_t result = TK_STATUS_SUCCESS;
     unsigned long key = rid;
+    unsigned char length_info[6] = {0};
     tk_lru_cache_lock(&tk_region_data_pool);
     tk_region_t *region = tk_lru_cache_fetch(&tk_region_data_pool, &key);
     if (region) {/* already been loaded */
@@ -174,7 +149,7 @@ tk_region_t *tk_get_region(int rid) {
     }
     
     if((result = tk_region_get_path(map_data_path, rid)) != TK_STATUS_SUCCESS) {
-       goto CATCH;
+        goto CATCH;
     }
     
     if (access(map_data_path, 0) != 0) {
@@ -190,44 +165,44 @@ tk_region_t *tk_get_region(int rid) {
     memset(region, 0, sizeof(tk_region_t));
     pthread_mutex_init(&region->region_lock, NULL);
     
-//    region_fp = fopen(map_data_path, "r+b");
-//    if (region_fp == NULL) {
-//        result = TK_STATUS_FILE_OPEN_FAILED;
-//        goto CATCH;
-//    }
-    region->rid = rid;
-    region->region_data = tk_read_file_content(map_data_path, &region->region_data_length);
-    if (region->region_data == NULL) {
-        result = tk_get_last_result();
+    region->region_fp = fopen(map_data_path, "r+b");
+    if (region->region_fp == NULL) {
+        result = TK_STATUS_FILE_OPEN_FAILED;
         goto CATCH;
     }
-    
-    hfcoder_length = GETNUM3B(region->region_data);
-    index_length = GETNUM3B(region->region_data + 3);
-    
-    region->tile_data = region->region_data + hfcoder_length + index_length + 6;
+    region->region_data_length = tk_get_file_size(map_data_path);
+    region->rid = rid;
+    if(fread(length_info, 1, 6, region->region_fp) != 6) {
+        result = TK_STATUS_FILE_READ_ERROR;
+        goto CATCH;
+    }
+    hfcoder_length = GETNUM3B(length_info);
+    index_length = GETNUM3B(length_info + 3);
     region->tile_data_bias = hfcoder_length + index_length + 6;
-    hfcode_block = region->region_data + 6;
+    region->meta_data = malloc(hfcoder_length + index_length);
+    if(fread(region->meta_data, 1, hfcoder_length + index_length, region->region_fp) != hfcoder_length + index_length) {
+        result = TK_STATUS_FILE_READ_ERROR;
+        goto CATCH;
+    }
+    hfcode_block = region->meta_data;
     
     /* get the version number */
     memcpy(region->version, hfcode_block, 6);
-    region->tile_index = region->region_data + hfcoder_length + 6;
+    region->tile_index = region->meta_data + hfcoder_length;
     region->tile_index_count = index_length / 6;
     region->hf_index_count = GETNUM2B(hfcode_block + TK_REGION_VERNO_LENGTH);
     region->hf_config_num = hfcode_block[TK_REGION_VERNO_LENGTH + 2];
     region->hf_configs = hfcode_block + TK_REGION_VERNO_LENGTH + 3;
     region->hf_indexes = hfcode_block + TK_REGION_VERNO_LENGTH + 3 + region->hf_config_num * TK_HUFF_CONFIG_UNIT_SIZE;
-    
+
+    //此版本暂时屏蔽新数据
+    region->tile_meta_length = 0;//*(region->tile_index + 6);
+
     /* read the checksum data */
     strcat(map_data_path, ".chk");
     if((result = _tk_get_verify_code(region, map_data_path)) != TK_STATUS_SUCCESS) {
         goto CATCH;
     }
-    
-    /* read the region polygon bound */
-//    if((result = _tk_get_polygon_bound(region)) != TK_STATUS_SUCCESS) {
-//        goto CATCH;
-//    }
     
     /* get upperbound and lowerbound of each level's tile index */
     _tk_get_tile_index_bound(region);
@@ -276,43 +251,36 @@ static int _tk_write_to_region_file(int rid, int off, int len, const char* buf) 
 
 tk_status_t tk_region_write_file(int rid, int off, int len, const char* buf) {
     unsigned long key = rid;
-    FILE *region_fp = NULL;
     tk_lru_cache_lock(&tk_region_data_pool);
+    LOG_DBG("tk_region_write_file: %i, %i, %i", rid, off, len);
     tk_region_t *region = tk_lru_cache_fetch(&tk_region_data_pool, &key);
     if (region) {/* already been loaded */
+    	LOG_DBG("region meta already been loaded");
         tk_lru_cache_unlock(&tk_region_data_pool);
-    	char map_data_path[TK_MAX_PATH_LENGTH];
-    	tk_status_t result = TK_STATUS_SUCCESS;
-        if((result = tk_region_get_path(map_data_path, rid)) != TK_STATUS_SUCCESS) {
-           return result;
-        }
-        region_fp = fopen(map_data_path, "r+b");
-        if (region_fp == NULL) {
-        	return TK_STATUS_FILE_OPEN_FAILED;
-        }
         pthread_mutex_lock(&region->region_lock);//可考虑去掉
-        memcpy(region->region_data + off, buf, len);
-        if (fseek(region_fp, off, SEEK_SET) < 0) {
+        if (fseek(region->region_fp, off, SEEK_SET) < 0) {
             perror("error");
             pthread_mutex_unlock(&region->region_lock);
             tk_return_region(rid);
             return TK_STATUS_FILE_SEEK_ERROR;
         }
-        if (fwrite(buf, 1, len, region_fp) < len) {
+        if (fwrite(buf, 1, len, region->region_fp) < len) {
             perror("error");
             pthread_mutex_unlock(&region->region_lock);
             tk_return_region(rid);
             return TK_STATUS_FILE_WRITE_ERROR;
         }
+        fflush(region->region_fp);
         pthread_mutex_unlock(&region->region_lock);
-        fflush(region_fp);
-        fclose(region_fp);
         tk_return_region(rid);
+        LOG_DBG("tk_region_write_file success  1");
         return TK_STATUS_SUCCESS;
     }
     else {
+    	LOG_DBG("write directly to file");
         tk_status_t result =  _tk_write_to_region_file(rid, off, len, buf);
         tk_lru_cache_unlock(&tk_region_data_pool);
+        LOG_DBG("tk_region_write_file success  2");
         return result;
     }
 }
@@ -322,7 +290,7 @@ tk_status_t tk_region_write_file(int rid, int off, int len, const char* buf) {
  * ============================================ */
 #define DATA_BUFF_LEN  4096//4k
 static int _tk_get_tile_num(unsigned char *tk_buffer_tile_index,
-                 int *pA_num, int *pB_num, int *pC_num, int index_count)
+                            int *pA_num, int *pB_num, int *pC_num, int index_count)
 {
     unsigned char *cur_pointer = tk_buffer_tile_index;
     int res = 0;
@@ -336,126 +304,6 @@ static int _tk_get_tile_num(unsigned char *tk_buffer_tile_index,
         *pC_num = GETNUM3B(cur_pointer + 9);
     }
 	return 0;
-}
-
-static int _tk_get_region_state_from_mem(tk_region_t *region, int *ptotal_size, int *pdownloaded_size) {
-    int filesize, total_size, downloaded_size, offset, length, pos, map_data_bias, pre_pos, tile_size;
-    int i, is_in_block, num[3];
-    char j = 0, k = 0;
-    unsigned char* verifycode;
-    unsigned char tail, *cur_pointer = NULL;
-    tk_context_t *context = tk_get_context();
-    context->lost_data_count = 0;
-    map_data_bias = region->tile_data_bias;
-    filesize = region->region_data_length;
-    if (region->verifycode == NULL) {
- /* if checksum file doesn't exist and the data file exist */
-        *ptotal_size = filesize;
-        *pdownloaded_size = filesize;
-        return TK_STATUS_SUCCESS;
-    }
-    verifycode = region->verifycode;
-    unsigned char *data_buffer = region->tile_data;
-    cur_pointer = region->tile_index + 3;
-    _tk_get_tile_num(region->tile_index, num, num+1, num+2, region->tile_index_count);
-    offset = 0;
-    length = 0;
-    downloaded_size = 0;
-    total_size = 0;
-    is_in_block = 0;
-    int is_reach_tail = 0;
-    int count = 0;
-    for (int n = 0; n < 3; ++n) {
-        cur_pointer += 6 * 2;
-        if (n == 0) {
-            pre_pos = GETNUM3B(cur_pointer);
-        }
-        count += 2;
-        for (i = 0; i < num[n]; ++i) {
-            int idx = count;
-            if (n == 0 && i == 0) {
-                ++ count;
-                continue;
-            }
-            else {
-                if (n > 0 && i == 0) {
-                    idx -= 2;
-                }
-            }
-            cur_pointer += 6;
-            if (count < region->tile_index_count) {
-                pos = GETNUM3B(cur_pointer);
-                tail = data_buffer[pos - 1];
-            }
-            else {
-                pos = filesize - map_data_bias;
-                tail = region->region_data[filesize - 1];
-                is_reach_tail = 1;
-            }
-            tile_size = pos - pre_pos;
-            total_size += tile_size;
-            j = verifycode[(idx - 1)/8]; /* the (i+2-1)th tile */
-            k = (idx - 1) % 8;
-            if (((0x01L)&(tail ^ (j >> k))) != 0) {
-                downloaded_size += tile_size;
-                if (is_in_block) {//连续的需要下载的块，遇到一个不需要下载的块
-                    tk_context_add_lost_data(tk_get_context(), region->rid, offset, length, TK_LOST_TYPE_DATA_LOST);
-                    is_in_block = 0;
-                }
-            } else {
-                if (is_in_block) {
-                    length += tile_size;
-                } else {
-                    offset = pre_pos + map_data_bias;
-                    length = tile_size;
-                    is_in_block = 1;
-                }
-            }
-            if (is_reach_tail) {
-                break;
-            }
-            ++ count;
-            pre_pos = pos;
-        }
-        if (is_reach_tail) {
-            if (is_in_block == 1) {
-                is_in_block = 0;
-                tk_context_add_lost_data(context, region->rid, offset, length, 0);
-            }
-            break;
-        }
-        if (n == 2) {
-            tail = region->region_data[filesize - 1];
-            is_reach_tail = 1;
-            pos = filesize - region->tile_data_bias;
-            tile_size = pos - pre_pos;
-            total_size += tile_size;
-            j = verifycode[(count - 1)/8]; /* the (i+2-1)th tile */
-            k = (count - 1) % 8;
-            if (((0x01L)&(tail ^ (j >> k))) != 0) {
-                downloaded_size += tile_size;
-                if (is_in_block) {//连续的需要下载的块，遇到一个不需要下载的块
-                    tk_context_add_lost_data(context, region->rid, offset, length, TK_LOST_TYPE_DATA_LOST);
-                    is_in_block = 0;
-                }
-            } else {
-                if (is_in_block) {
-                    length += tile_size;
-                } else {
-                    offset = pre_pos + map_data_bias;
-                    length = tile_size;
-                    is_in_block = 1;
-                }
-            }
-            if (is_in_block == 1) {
-                is_in_block = 0;
-                tk_context_add_lost_data(context, region->rid, offset, length, 0);
-            }
-        }
-    }
-    *ptotal_size = total_size + map_data_bias;
-    *pdownloaded_size = map_data_bias + downloaded_size;
-    return TK_STATUS_SUCCESS;
 }
 
 static int _tk_get_tile_info(FILE *map_data, unsigned char *cur_pointer, int map_data_bias,
@@ -537,7 +385,7 @@ static int _tk_get_region_state_from_file(int rid, int *ptotal_size, int *pdownl
     if((result = tk_region_get_path(map_data_path, rid)) != TK_STATUS_SUCCESS) {
         return result;
     }
-//    pthread_mutex_lock(&_tk_region_file_mutex);
+    //    pthread_mutex_lock(&_tk_region_file_mutex);
     //check
     if (access(map_data_path, 0) != 0) {
         tk_context_add_lost_data(context, rid, 0, 0, TK_LOST_TYPE_DATA_LOST);
@@ -738,28 +586,13 @@ static int _tk_get_region_state_from_file(int rid, int *ptotal_size, int *pdownl
     free(verifycode);
     result = TK_STATUS_SUCCESS;
 CATCH:
-//    pthread_mutex_unlock(&_tk_region_file_mutex);
+    //    pthread_mutex_unlock(&_tk_region_file_mutex);
     return result;
 }
 
 tk_status_t tk_region_get_state(int rid, int *ptotal_size, int *pdownloaded_size)
 {
-    tk_status_t result = TK_STATUS_SUCCESS;
-    unsigned long key = rid;
-    tk_lru_cache_lock(&tk_region_data_pool);
-    tk_region_t *region = tk_lru_cache_fetch(&tk_region_data_pool, &key);
-    if (!region) {//缓存里还没加载region，很可能是在地图下载页
-        result = _tk_get_region_state_from_file(rid, ptotal_size, pdownloaded_size);
-        tk_lru_cache_unlock(&tk_region_data_pool);
-    }
-    else {//缓存里已经加载了region，很可能是在边看边下载
-        tk_lru_cache_unlock(&tk_region_data_pool);
-        pthread_mutex_lock(&region->region_lock);//可考虑去掉
-        result = _tk_get_region_state_from_mem(region, ptotal_size, pdownloaded_size);
-        pthread_mutex_unlock(&region->region_lock);
-        tk_return_region(rid);
-    }
-    return result;
+    return _tk_get_region_state_from_file(rid, ptotal_size, pdownloaded_size);
 }
 
 #define MAX_LINE_LEN 1024
@@ -784,13 +617,7 @@ tk_status_t tk_region_init_file(const char *metafile, int rid)
     sprintf(rname,"%s/%s", tk_global_info.datapath, pname);
     if (access(rname, 0) < 0) { //judge whether the directory exists
         if (tk_mkdir(rname) < 0) {
-        	LOG_INFO("error no: %d", errno);
-        	if(access(rname, 0) < 0)
-        		return TK_STATUS_MKDIR_FAILED;
-        	else {
-        		LOG_DBG("dir: %d exist", rname);
-        		assert(0);
-        	}
+            return TK_STATUS_MKDIR_FAILED;
         }
     }
     strcat(rname, "/");
@@ -979,7 +806,6 @@ err:
     }
     if (meta_data_fp != NULL) {
         fclose(meta_data_fp);
-    	remove(metafile);
     }
     if (region_data_fp != NULL) {
         fclose(region_data_fp);
@@ -999,9 +825,7 @@ tk_status_t tk_region_get_version(int rid, unsigned char *rversion)
     tk_region_t *region = tk_lru_cache_fetch(&tk_region_data_pool, &key);
     tk_lru_cache_unlock(&tk_region_data_pool);
     if (region != NULL) {
-        pthread_mutex_lock(&region->region_lock);//可考虑去掉
-        memcpy(rversion, region->region_data + 6, 6);
-        pthread_mutex_unlock(&region->region_lock);
+        memcpy(rversion, region->meta_data, 6);
         tk_return_region(rid);
         return TK_STATUS_SUCCESS;
     }
