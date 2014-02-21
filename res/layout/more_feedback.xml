@@ -50,7 +50,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignBottom="@id/feedback_edt"
                     android:layout_alignRight="@id/feedback_edt"
-                    android:background="@drawable/btn_settings"/>
+                    android:background="@drawable/btn_microphone"/>
             </RelativeLayout>
             <LinearLayout 
                 android:layout_width="fill_parent"
