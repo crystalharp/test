@@ -717,8 +717,10 @@ public class MapDownloadActivity extends BaseActivity implements View.OnClickLis
                     // 如果已经在下载城市列表中，则不用重复添加，免得引起下载城市的状态被改变
                     if (exist == false) {
                         CityInfo cityInfo = MapEngine.getCityInfo(cityId);
-                        addDownloadCityInternal(cityInfo, false, DownloadCity.STATE_STOPPED);
-                        notifyDataSetChanged();
+                        if (cityInfo.isAvailably()) {
+                            addDownloadCityInternal(cityInfo, false, DownloadCity.STATE_STOPPED);
+                            notifyDataSetChanged();
+                        }
                     }
                 }
             }
@@ -1896,10 +1898,8 @@ public class MapDownloadActivity extends BaseActivity implements View.OnClickLis
             cityId++;
         }
 
-        String hongkong = context.getString(R.string.hongkong);
-        String macao = context.getString(R.string.macao);
         String pName = cityInfo.getCProvinceName();
-        if (macao.equals(pName) || hongkong.equals(pName)) {
+        if (cityInfo.isAvailably() == false) {
             return;
         }
         boolean exist = false;
@@ -1962,9 +1962,6 @@ public class MapDownloadActivity extends BaseActivity implements View.OnClickLis
                 List<String> cityNameList = MapEngine.getCitylist(pName);
                 if (cityNameList.size() > 0) {
                     CityInfo cityInfo2 = MapEngine.getCityInfo(MapEngine.getCityid(cityNameList.get(cityNameList.size()-1)));
-                    if(cityInfo2 == null) {
-                    	return;
-                    }
                     if (cityInfo2.isAvailably()) {
                         cityId = cityInfo2.getId();
                     }

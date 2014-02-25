@@ -642,14 +642,16 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
             if (cityIdAndResultTotalList.size() == 1) {
                 int cityId = (int) cityIdAndResultTotalList.get(0).getCityId();
                 CityInfo cityInfo = MapEngine.getCityInfo(cityId);
-                DataQuery newDataQuery = new DataQuery(dataQuery);
-                Position position = cityInfo.getPosition();
-                newDataQuery.addParameter(BaseQuery.SERVER_PARAMETER_CENTER_LONGITUDE, String.valueOf(position.getLon()));
-                newDataQuery.addParameter(BaseQuery.SERVER_PARAMETER_CENTER_LATITUDE, String.valueOf(position.getLat()));
-                newDataQuery.setCityId(cityId);
-                sphinx.queryStart(newDataQuery);
-                result = POIResponse.FIELD_CITY_ID_AND_RESULT_TOTAL;
-                return result;
+                if (cityInfo.isAvailably()) {
+                    DataQuery newDataQuery = new DataQuery(dataQuery);
+                    Position position = cityInfo.getPosition();
+                    newDataQuery.addParameter(BaseQuery.SERVER_PARAMETER_CENTER_LONGITUDE, String.valueOf(position.getLon()));
+                    newDataQuery.addParameter(BaseQuery.SERVER_PARAMETER_CENTER_LATITUDE, String.valueOf(position.getLat()));
+                    newDataQuery.setCityId(cityId);
+                    sphinx.queryStart(newDataQuery);
+                    result = POIResponse.FIELD_CITY_ID_AND_RESULT_TOTAL;
+                    return result;
+                }
                 
             // 若存在多个城市及结果时，提示城市列表，用户选择后以城市中心位置发起搜索，不移动地图
             } else {
@@ -658,8 +660,10 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                 for(int i = 0, size = cityIdAndResultTotalList.size(); i < size; i++) {
                     CityIdAndResultTotal cityIdAndResultTotal = cityIdAndResultTotalList.get(i);
                     CityInfo cityInfo = MapEngine.getCityInfo((int) cityIdAndResultTotal.getCityId());
-                    cityList.add(cityInfo);
-                    cityNameList.add(cityInfo.getCName()+"("+cityIdAndResultTotal.getResultTotal()+")");
+                    if (cityInfo.isAvailably()) {
+                        cityList.add(cityInfo);
+                        cityNameList.add(cityInfo.getCName()+"("+cityIdAndResultTotal.getResultTotal()+")");
+                    }
                 }
                 
                 StringArrayAdapter adapter = new StringArrayAdapter(sphinx, cityNameList);

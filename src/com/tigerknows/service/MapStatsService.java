@@ -340,8 +340,6 @@ public class MapStatsService extends TKService {
                     
                     if (downloadCity == null) {
                         CityInfo cityInfo = MapEngine.getCityInfo(MapEngine.getCityid(cName));
-                        if(cityInfo == null)
-                        	continue;
                         if (cityInfo.isAvailably()) {
                             downloadCity = new DownloadCity(cityInfo);
                             list.add(downloadCity);
@@ -480,8 +478,6 @@ public class MapStatsService extends TKService {
                             // 都不存在时才创建一个DownloadCity
                             if (exist == null) {
                                 CityInfo cityInfo = MapEngine.getCityInfo(MapEngine.getCityid(cName));
-                                if(cityInfo == null)
-                                	continue;
                                 if (cityInfo.isAvailably()) {
                                     exist = new DownloadCity(cityInfo);
                                     statsDownloadCity(exist, queryServerRegionDataInfoMapInternally(context));
