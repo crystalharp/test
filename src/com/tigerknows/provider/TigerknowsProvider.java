@@ -36,7 +36,7 @@ public class TigerknowsProvider extends ContentProvider {
 
     private static final String DATABASE_NAME = "tigerknows.db";
 
-    private static final int DATABASE_VERSION = 9;
+    private static final int DATABASE_VERSION = 10;
     
     private static HashMap<String, String> HISTORY_LIST_PROJECTION_MAP;
     
@@ -47,6 +47,8 @@ public class TigerknowsProvider extends ContentProvider {
     private static HashMap<String, String> BUSLINE_LIST_PROJECTION_MAP;
     
     private static HashMap<String, String> TRANSITPLAN_LIST_PROJECTION_MAP;
+    
+    private static HashMap<String, String> ALARM_PROJECTION_MAP;
     
     private static final int HISTORY = 1;
     
@@ -73,6 +75,10 @@ public class TigerknowsProvider extends ContentProvider {
     private static final int HISTORY_COUNT = 20;
     
     private static final int FAVORITE_COUNT = 21;
+    
+    private static final int ALARM = 22;
+    
+    private static final int ALARM_ID = 23;
     
     
     private static final UriMatcher URL_MATCHER;
@@ -223,6 +229,22 @@ public class TigerknowsProvider extends ContentProvider {
                         db.endTransaction();
                     }
                     break;
+                case 9:
+                    if (newVersion <= 9) {
+                        return;
+                    }
+
+                    db.beginTransaction();
+                    try {
+                        upgradeDatabaseToVersion10(db);
+                        db.setTransactionSuccessful();
+                    } catch (Throwable ex) {
+                        Log.e(TAG, ex.getMessage(), ex);
+                        break;
+                    } finally {
+                        db.endTransaction();
+                    }
+                    break;
                 default:
                     break;
             }
@@ -333,10 +355,10 @@ public class TigerknowsProvider extends ContentProvider {
         }
         
         private void upgradeDatabaseToVersion10(SQLiteDatabase db) {
-            db.execSQL("CREATE TABLE trafficsearchhistory (_id INTEGER PRIMARY KEY,"
-                    + "    _start BLOB, _end BLOB, _datetime INTEGER);");
-            db.execSQL("CREATE TABLE commonplace (_id INTEGER PRIMARY KEY,"
-                    + "    _alias TEXT, _empty INTEGER, _poi BLOB);");
+            db.execSQL("DROP TABLE IF EXISTS trafficsearchhistory");
+            db.execSQL("DROP TABLE IF EXISTS commonplace");
+            db.execSQL("CREATE TABLE alarm (_id INTEGER PRIMARY KEY,"
+                    + "    tk_name TEXT not null, tk_position TEXT not null, tk_range INTEGER, tk_ringtone TEXT, tk_ringtone_name TEXT not null, tk_status INTEGER);");
         }
         
         private void createTables(SQLiteDatabase db) {
@@ -352,10 +374,8 @@ public class TigerknowsProvider extends ContentProvider {
                     + "    store_type INTEGER, _type INTEGER, parent_id INTEGER, times INTEGER, total_length INTEGER, start INTEGER, end INTEGER, _data BLOB);");
             db.execSQL("CREATE TABLE busline (_id INTEGER PRIMARY KEY,"
                     + "    store_type INTEGER, parent_id INTEGER, busline_name TEXT, busline_num INTEGER, total_length INTEGER, _data BLOB);");
-            db.execSQL("CREATE TABLE trafficsearchhistory (_id INTEGER PRIMARY KEY,"
-                    + "    _start BLOB, _end BLOB, _datetime INTEGER);");
-            db.execSQL("CREATE TABLE commonplace (_id INTEGER PRIMARY KEY,"
-                    + "    _alias TEXT, _empty INTEGER, _poi BLOB);");
+            db.execSQL("CREATE TABLE alarm (_id INTEGER PRIMARY KEY,"
+                    + "    tk_name TEXT not null, tk_position TEXT not null, tk_range INTEGER, tk_ringtone TEXT, tk_ringtone_name TEXT not null, tk_status INTEGER);");
         }
     }
     
@@ -423,6 +443,11 @@ public class TigerknowsProvider extends ContentProvider {
             case POI_ID:
                 myWhere = "_id=" + url.getPathSegments().get(1) + (!TextUtils.isEmpty(where) ? " AND (" + where + ")" : "");    
                 count = db.delete("poi", myWhere, whereArgs);
+                break;
+                
+            case ALARM_ID:
+                myWhere = "_id=" + url.getPathSegments().get(1) + (!TextUtils.isEmpty(where) ? " AND (" + where + ")" : "");            
+                count = db.delete("alarm", myWhere, whereArgs);
                 break;
                 
             default:
@@ -678,6 +703,14 @@ public class TigerknowsProvider extends ContentProvider {
                     uri = ContentUris.withAppendedId(Tigerknows.POI.CONTENT_URI, rowID);
                 }
                 break;
+                
+            case ALARM:
+                table = "alarm";
+                rowID = db.insert(table, Tigerknows.Alarm.NAME, values);
+                if (rowID > 0) {
+                    uri = ContentUris.withAppendedId(Tigerknows.Alarm.CONTENT_URI, rowID);
+                }
+                break;
 
             default:
                 throw new IllegalArgumentException("Unknown URL " + url);
@@ -772,6 +805,18 @@ public class TigerknowsProvider extends ContentProvider {
                 qb.appendWhere("_id=" + url.getPathSegments().get(1));
                 break;
                 
+            case ALARM:
+                qb.setTables("alarm");
+                qb.setProjectionMap(ALARM_PROJECTION_MAP);
+                defaultSort = Tigerknows.Alarm.DEFAULT_SORT_ORDER;
+                break;
+
+            case ALARM_ID:
+                qb.setTables("alarm");
+                qb.setProjectionMap(ALARM_PROJECTION_MAP);
+                qb.appendWhere("_id=" + url.getPathSegments().get(1));
+                break;
+                
             default:
                 throw new IllegalArgumentException("Unknown URL " + url);
         }
@@ -814,6 +859,11 @@ public class TigerknowsProvider extends ContentProvider {
                 count = db.update("poi", values, myWhere, whereArgs);
                 break;
                 
+            case ALARM_ID:
+                myWhere = "_id=" + url.getPathSegments().get(1) + (!TextUtils.isEmpty(where) ? " AND (" + where + ")" : "");            
+                count = db.update("alarm", values, myWhere, whereArgs);
+                break;
+                
             default:
                 throw new IllegalArgumentException("Unknown URL " + url);
         }
@@ -840,6 +890,8 @@ public class TigerknowsProvider extends ContentProvider {
         URL_MATCHER.addURI(Tigerknows.AUTHORITY, "transitplan/#", TRANSITPLAN_ID);
         URL_MATCHER.addURI(Tigerknows.AUTHORITY, "busline", BUSLINE);
         URL_MATCHER.addURI(Tigerknows.AUTHORITY, "busline/#", BUSLINE_ID);
+        URL_MATCHER.addURI(Tigerknows.AUTHORITY, "alarm", ALARM);
+        URL_MATCHER.addURI(Tigerknows.AUTHORITY, "alarm/#", ALARM_ID);
         
         HISTORY_LIST_PROJECTION_MAP = new HashMap<String, String>();
         HISTORY_LIST_PROJECTION_MAP.put(Tigerknows.History._ID, "_id");
@@ -884,5 +936,14 @@ public class TigerknowsProvider extends ContentProvider {
         TRANSITPLAN_LIST_PROJECTION_MAP.put(Tigerknows.TransitPlan.STORE_TYPE, "store_type");
         TRANSITPLAN_LIST_PROJECTION_MAP.put(Tigerknows.TransitPlan.PARENT_ID, "parent_id");
         TRANSITPLAN_LIST_PROJECTION_MAP.put(Tigerknows.TransitPlan.DATA, "_data");
+        
+        ALARM_PROJECTION_MAP = new HashMap<String, String>();
+        ALARM_PROJECTION_MAP.put(Tigerknows.Alarm._ID, "_id");
+        ALARM_PROJECTION_MAP.put(Tigerknows.Alarm.NAME, "tk_name");
+        ALARM_PROJECTION_MAP.put(Tigerknows.Alarm.POSITION, "tk_position");
+        ALARM_PROJECTION_MAP.put(Tigerknows.Alarm.RANGE, "tk_range");
+        ALARM_PROJECTION_MAP.put(Tigerknows.Alarm.RINGTONE, "tk_ringtone");
+        ALARM_PROJECTION_MAP.put(Tigerknows.Alarm.RINGTONE_NAME, "tk_ringtone_name");
+        ALARM_PROJECTION_MAP.put(Tigerknows.Alarm.STATUS, "tk_status");
     }
 }

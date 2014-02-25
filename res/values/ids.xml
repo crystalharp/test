@@ -90,6 +90,10 @@
     <item type="id" name="activity_common_add_picture"/>
     <item type="id" name="activity_common_view_image"/>
     
+    <item type="id" name="view_alarm_list" />
+    <item type="id" name="view_alarm_add" />
+    <item type="id" name="activity_alarm_show" />
+    
     <item type="id" name="tag_hotel_room_child_view" />
     <item type="id" name="tag_hotel_room_type_data" />
     <item type="id" name="room_person_edt_2"/>
