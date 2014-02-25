@@ -957,6 +957,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             if (data != null && RESULT_OK == resultCode) {
                 CityInfo cityInfo = data.getParcelableExtra(MapDownloadActivity.EXTRA_CITYINFO);
                 if (cityInfo != null) {
+                    uiStackClearTop(R.id.view_home);
                     changeCity(cityInfo);
                 }
             }
