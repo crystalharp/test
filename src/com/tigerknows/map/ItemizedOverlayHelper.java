@@ -362,6 +362,9 @@ public class ItemizedOverlayHelper {
             sphinx.getLocationView().setVisibility(View.VISIBLE);
             
             itemizedOverlay = overlay;
+            
+            mapView.deleteOverlaysByName(ItemizedOverlay.LONG_CLICKED_OVERLAY);
+            mapView.deleteOverlaysByName(ItemizedOverlay.MAP_POI_OVERLAY);
         } catch (APIException e) {
             e.printStackTrace();
         }

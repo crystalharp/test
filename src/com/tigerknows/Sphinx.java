@@ -3746,6 +3746,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 text = R.string.location_text_navigation;
 
                 if (uiStackPeek() == R.id.view_home) {
+                    mMapView.deleteOverlaysByName(ItemizedOverlay.LONG_CLICKED_OVERLAY);
+                    mMapView.deleteOverlaysByName(ItemizedOverlay.MAP_POI_OVERLAY);
                     showInfoWindow(R.id.view_home, mMyLocation);
                 }
             } else if (mMyLocation.mode == MyLocation.MODE_ROTATION) {
