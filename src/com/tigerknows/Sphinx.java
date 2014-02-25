@@ -887,6 +887,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 
         mUIStack.clear();
         getTitleFragment();
+        mMapView.getPadding().top = getTitleFragment().mHeight;
         getMoreFragment().refreshMoreData();
         showView(R.id.view_home);
 
