@@ -2000,7 +2000,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         if (myPosition != null) {
             int cityId = MapEngine.getCityId(myPosition);
             CityInfo cityInfo = MapEngine.getCityInfo(cityId);
-            if(cityInfo != null) {
+            if(cityInfo.isAvailably()) {
 	            cityInfo.setPosition(myPosition);
 	            cityInfo.setLevel(TKConfig.ZOOM_LEVEL_LOCATION);
 	            changeCity(cityInfo);

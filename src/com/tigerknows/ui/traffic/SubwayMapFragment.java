@@ -116,8 +116,10 @@ public class SubwayMapFragment extends BaseFragment implements RetryView.CallBac
                     for (; k.hasNext(); ) {
                         Entry<Integer, String> e = k.next();
                         CityInfo cityInfo = MapEngine.getCityInfo(e.getKey());
-                        mCityList.add(cityInfo);
-                        cityNameList.add(cityInfo.getCName());
+                        if (cityInfo.isAvailably()) {
+                            mCityList.add(cityInfo);
+                            cityNameList.add(cityInfo.getCName());
+                        }
                     }
                 }
                 mCityAdapter = new StringArrayAdapter(mSphinx, cityNameList);

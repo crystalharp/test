@@ -365,7 +365,7 @@ public class Globals {
                         Position position = mapView.getCenterPosition();
                         int cityId = MapEngine.getCityId(position);
                         CityInfo cityInfoTmp = MapEngine.getCityInfo(cityId);
-                        if (cityInfoTmp != null && cityInfoTmp.isAvailably()) {
+                        if (cityInfoTmp.isAvailably()) {
                             cityInfo = cityInfoTmp;
                             cityInfo.setPosition(position);
                         }
@@ -380,7 +380,7 @@ public class Globals {
                     Position lastPosition = new Position(lastLat, lastLon);
                     int cityId = MapEngine.getCityId(lastPosition);
                     CityInfo cityInfoTmp = MapEngine.getCityInfo(cityId);
-                    if (cityInfoTmp != null && cityInfoTmp.isAvailably()) {
+                    if (cityInfoTmp.isAvailably()) {
                         cityInfo = cityInfoTmp;
                         cityInfo.setPosition(lastPosition);
                         cityInfo.setLevel(lastZoomLevel);

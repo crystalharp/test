@@ -302,11 +302,11 @@ public class MapEngine {
     }
 
     public static CityInfo getCityInfo(int cityId) {
+        CityInfo cityInfo = new CityInfo();
     	if(cityId == CityInfo.CITY_ID_INVALID) {
     		LogWrapper.e("MapEngine", "get city info of invalid city id");
-    		return null;
+    		return cityInfo;
     	}
-        CityInfo cityInfo = new CityInfo();
         String cityInfoStr = Ca.tk_get_city_info(cityId);
         if(cityInfoStr == null || cityInfoStr.length() == 0) {
         	return cityInfo;
@@ -384,6 +384,7 @@ public class MapEngine {
      * @return
      */
     public String getPositionName(Position position) {
+        synchronized (this) {
             String poiName = null;
             if (position == null) {
                 return poiName;
@@ -394,6 +395,7 @@ public class MapEngine {
             	return null;
             }
             return poiName;
+        }
     }
 
     private static String TAG = "MapEngine";
@@ -483,7 +485,7 @@ public class MapEngine {
             for (int i = cityNameList.size()-1; i >= 0; i--) {
                 String cityName = cityNameList.get(i);
                 CityInfo cityInfo = getCityInfo(getCityid(cityName));
-                if(cityInfo == null)
+                if(cityInfo.isAvailably() == false)
                 	continue;
                 if (i == cityNameList.size() - 1) {
                     province.setId(cityInfo.getId());
@@ -738,7 +740,7 @@ public class MapEngine {
         }
         filePath.append(mapPath);
         CityInfo cityInfo = MapEngine.getCityInfo(cityId);
-        if (null != cityInfo) {
+        if (cityInfo.isAvailably()) {
             filePath.append(cityInfo.getEProvinceName());
             // 创建文件夹
             File mapFile = new File(filePath.toString());
@@ -790,7 +792,7 @@ public class MapEngine {
         String result = null;
         
         CityInfo cityInfo = MapEngine.getCityInfo(cityId);
-        if (cityInfo == null) {
+        if (cityInfo.isAvailably() == false) {
             return result;
         }
         
@@ -810,7 +812,7 @@ public class MapEngine {
      */
     public final static String getSubwayMapPath(int cityId) {
         CityInfo cityInfo = MapEngine.getCityInfo(cityId);
-        if (cityInfo == null) {
+        if (cityInfo.isAvailably() == false) {
             return null;
         }
         return cityId2Floder(cityId)+"sw_"+cityInfo.getEName()+"/";
