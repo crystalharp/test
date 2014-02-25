@@ -131,7 +131,8 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                 if (mTKWord != null && keyword.equals(mTKWord.word)) {
                     submit(mTKWord);
                 } else {
-                    submit(keyword);
+                    TKWord tkWord = new TKWord(TKWord.ATTRIBUTE_HISTORY, keyword);
+                    submit(tkWord);
                 }
                 return true;
             }
@@ -343,7 +344,8 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                     if (mTKWord != null && keyword.equals(mTKWord.word)) {
                         submit(mTKWord);
                     } else {
-                        submit(keyword);
+                        TKWord tkWord = new TKWord(TKWord.ATTRIBUTE_HISTORY, keyword);
+                        submit(tkWord);
                     }
                 } else {
                     dismiss();
@@ -376,29 +378,6 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         }
     }
     
-    private void submit(String keyword) {
-        switch (mCurMode) {
-            case MODE_BUELINE:
-                submitBuslineQuery(keyword);
-                break;
-            case MODE_TRAFFIC:
-
-                if (mRequest == REQUEST_TRAFFIC_START || mRequest == REQUEST_TRAFFIC_END) {
-                    POI poi = new POI();
-                    poi.setName(keyword);
-                    responsePOI(poi);
-                } else if (mRequest == REQUEST_COMMON_PLACE) {
-                    submitGeoCoderQuery(keyword);
-                }
-                break;
-            case MODE_POI:
-                submitPOIQuery(keyword);
-                break;
-            default:
-                break;
-        }
-    }
-    
     private void submit(TKWord tkWord) {
         if (tkWord == null || TextUtils.isEmpty(tkWord.word)) {
             return;
@@ -406,10 +385,9 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         
         switch (mCurMode) {
             case MODE_BUELINE:
-                submitBuslineQuery(tkWord.word);
+                submitBuslineQuery(tkWord);
                 break;
             case MODE_TRAFFIC:
-
                 if (mRequest == REQUEST_TRAFFIC_START || mRequest == REQUEST_TRAFFIC_END) {
                     POI poi = tkWord.toPOI();
                     responsePOI(poi);
@@ -418,12 +396,12 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                         POI poi = tkWord.toPOI();
                         responsePOI(poi);
                     } else {
-                        submitGeoCoderQuery(tkWord.word);
+                        submitGeoCoderQuery(tkWord);
                     }
                 }
                 break;
             case MODE_POI:
-                submitPOIQuery(tkWord.word);
+                submitPOIQuery(tkWord);
                 break;
             default:
                 break;
@@ -441,7 +419,6 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         }
         
         if (mCurMode == MODE_TRAFFIC) {
-            mSphinx.getTrafficQueryFragment().addHistoryWord(poi, HistoryWordTable.TYPE_TRAFFIC);
 
             if (mRequest == REQUEST_TRAFFIC_START || mRequest == REQUEST_TRAFFIC_END) {
                 mIResponsePOI.responsePOI(poi);
@@ -452,7 +429,8 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                     mSphinx.showTip(R.string.setting_success, Toast.LENGTH_SHORT);
                     dismiss();
                 } else {
-                    submitGeoCoderQuery(poi.getName());
+                    TKWord tkWord = new TKWord(TKWord.ATTRIBUTE_CLEANUP, poi.getName(), poi.getPosition(), poi.getAddress());
+                    submitGeoCoderQuery(tkWord);
                 }
             }
         }
@@ -462,17 +440,16 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
      * POI搜索
      * @param keyword
      */
-    public void submitPOIQuery(String keyword) {
-        if (TextUtils.isEmpty(keyword)) {
+    public void submitPOIQuery(TKWord tkWord) {
+        if (tkWord == null || TextUtils.isEmpty(tkWord.word)) {
             mSphinx.showTip(R.string.search_input_keyword, Toast.LENGTH_SHORT);
             return;
         }
-        
-        HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, keyword), HistoryWordTable.TYPE_POI);
 
+        HistoryWordTable.addHistoryWord(mSphinx, tkWord, HistoryWordTable.TYPE_POI);
         DataQuery dataQuery = new DataQuery(mDataQuery);
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
-        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_KEYWORD, keyword);
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_KEYWORD, tkWord.word);
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_POI);
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, DataQuery.SUB_DATA_TYPE_POI);
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_EXT, DataQuery.EXT_BUSLINE);
@@ -485,16 +462,15 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
      * 公交线路搜索
      * @param keyword
      */
-    private void submitBuslineQuery(String keyword) {
-        if (TextUtils.isEmpty(keyword)){
+    private void submitBuslineQuery(TKWord tkWord) {
+        if (tkWord == null || TextUtils.isEmpty(tkWord.word)){
             mSphinx.showTip(R.string.search_input_keyword, Toast.LENGTH_SHORT);
             return;
         }
 
-        HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, keyword), HistoryWordTable.TYPE_BUSLINE);
-        
+        HistoryWordTable.addHistoryWord(mSphinx, tkWord, HistoryWordTable.TYPE_BUSLINE);
         BuslineQuery buslineQuery = new BuslineQuery(mContext);
-        buslineQuery.setup(keyword, 0, false, getId(), getString(R.string.doing_and_wait));
+        buslineQuery.setup(tkWord.word, 0, false, getId(), getString(R.string.doing_and_wait));
 
         mSphinx.queryStart(buslineQuery);
     }
@@ -503,16 +479,15 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
      * 反向定位POI
      * @param keyword
      */
-    private void submitGeoCoderQuery(String keyword) {
-        if (TextUtils.isEmpty(keyword)){
+    private void submitGeoCoderQuery(TKWord tkWord) {
+        if (tkWord == null || TextUtils.isEmpty(tkWord.word)) {
             mSphinx.showTip(R.string.search_input_keyword, Toast.LENGTH_SHORT);
             return;
         }
 
-        HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, keyword), HistoryWordTable.TYPE_TRAFFIC);
-
+        HistoryWordTable.addHistoryWord(mSphinx, tkWord, HistoryWordTable.TYPE_TRAFFIC);
         DataQuery dataQuery = new DataQuery(mDataQuery);
-        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_KEYWORD, keyword);
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_KEYWORD, tkWord.word);
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_GEOCODER);
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_NEED_FIELD, POI.NEED_FIELD_SIMPLE);
         dataQuery.setup(getId(), getId(), getString(R.string.doing_and_wait));

@@ -7,6 +7,7 @@ package com.tigerknows.provider;
 
 import com.decarta.Globals;
 import com.decarta.android.db.PrefTable;
+import com.decarta.android.util.LogWrapper;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
 import com.tigerknows.android.location.Position;
@@ -20,6 +21,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.text.TextUtils;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -55,13 +57,14 @@ public class HistoryWordTable {
     public static final String CITY_ID = "tk_cityId";
 	public static final String TYPE = "tk_type";
 	public static final String POSITION = "tk_position";
+    public static final String ADDRESS = "tk_address";
 
 	// DB NAME
 	protected static final String DATABASE_NAME = "historyWordDB";
 
 	// TABLES
 	protected static final String TABLE_NAME = "historyWord";
-	protected static final int DATABASE_VERSION = 1;
+	protected static final int DATABASE_VERSION = 2;
 
 	private static final String TABLE_CREATE = "create table if not exists "
 			+ TABLE_NAME
@@ -71,7 +74,8 @@ public class HistoryWordTable {
             + WORD + " TEXT not null, "
             + CITY_ID + " INTEGER, "
             + TYPE + " INTEGER, "
-            + POSITION + " TEXT )";
+            + POSITION + " TEXT,"
+            + ADDRESS + " TEXT )";
 
 	public Context mCtx;
 
@@ -96,7 +100,33 @@ public class HistoryWordTable {
 		@Override
 		public void onCreate(SQLiteDatabase db) {}
 		@Override
-		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {}
+		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+
+            assert (newVersion == DATABASE_VERSION);
+            LogWrapper.w(TAG, "Upgrading database from version " + oldVersion + " to " + newVersion + "...");
+            switch (oldVersion) {
+                case 1:
+                    if (newVersion <= 1) {
+                        return;
+                    }
+
+                    db.beginTransaction();
+                    try {
+                        upgradeDatabaseFrom2(db);
+                        db.setTransactionSuccessful();
+                    } catch (Throwable ex) {
+                        Log.e(TAG, ex.getMessage(), ex);
+                        break;
+                    } finally {
+                        db.endTransaction();
+                    }
+                    break;
+            }
+		}
+		
+		private void upgradeDatabaseFrom2(SQLiteDatabase db) {
+            db.execSQL("ALTER TABLE " + TABLE_NAME + " ADD " + ADDRESS + " TEXT;");
+        }
 	}
 
 	/**
@@ -138,16 +168,20 @@ public class HistoryWordTable {
 		if (position != null) {
             cv.put(POSITION, position.getLat()+","+position.getLon());
 		}
+        String address = tkWord.address;
+        if (address != null) {
+            cv.put(ADDRESS, address);
+        }
 
 		mDb.delete(TABLE_NAME,  "(" + TYPE + "=" + type+ ") AND (" + HASHCODE + "=" + hashCode+ ")", null);
 		mDb.insert(TABLE_NAME, null, cv);
 	}
 
-    public void read(List<TKWord> list, int type) {
+    private void read(List<TKWord> list, int type) {
         if(!mDb.isOpen())
             return;
         Cursor mCursor = mDb.query(true, TABLE_NAME,
-                new String[] { WORD, POSITION}, "(" + TYPE + "=" + type+ ")",
+                new String[] { WORD, POSITION, ADDRESS}, "(" + TYPE + "=" + type+ ")",
                 null, null, null, ID + " DESC", null);
         if (mCursor != null) {
             mCursor.moveToFirst();
@@ -170,6 +204,7 @@ public class HistoryWordTable {
                         e.printStackTrace();
                     }
                 }
+                tkWord.address = mCursor.getString(2);
                 list.add(tkWord);
                 mCursor.moveToNext();
             }

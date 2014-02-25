@@ -109,8 +109,6 @@ public class Position implements Serializable, Parcelable{
 		hash = 97 * hash + temp;
 		temp = (int)(this.lon * 10000);
 		hash = 97 * hash + temp;
-        temp = (int)(this.accuracy);
-        hash = 97 * hash + temp;
 		return hash;
 	}
 

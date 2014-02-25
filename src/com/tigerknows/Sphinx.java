@@ -110,6 +110,7 @@ import com.tigerknows.model.Shangjia;
 import com.tigerknows.model.TKDrawable;
 import com.tigerknows.model.Bootstrap;
 import com.tigerknows.model.BootstrapModel;
+import com.tigerknows.model.TKWord;
 import com.tigerknows.model.User;
 import com.tigerknows.model.BootstrapModel.StartupDisplay;
 import com.tigerknows.model.test.BaseQueryTest;
@@ -1426,7 +1427,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                             		keyword,
                                     InputSearchFragment.MODE_POI);
                             showView(R.id.view_poi_input_search);
-                            getInputSearchFragment().submitPOIQuery(keyword);
+                            TKWord tkWord = new TKWord(TKWord.ATTRIBUTE_HISTORY, keyword);
+                            getInputSearchFragment().submitPOIQuery(tkWord);
                             query = true;
                         }
                     }
@@ -1481,7 +1483,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                             		keyword,
                                     InputSearchFragment.MODE_POI);
                             showView(R.id.view_poi_input_search);
-                            getInputSearchFragment().submitPOIQuery(keyword);
+                            TKWord tkWord = new TKWord(TKWord.ATTRIBUTE_HISTORY, keyword);
+                            getInputSearchFragment().submitPOIQuery(tkWord);
                         }
                         query = true;
                     }
