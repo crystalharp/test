@@ -19,6 +19,7 @@
 
 #define TK_LOST_DATA_MAX_COUNT 100
 #define TK_TILE_BOUND_SIZE 1
+#define TK_MAX_REGION_CACHE_SIZE 32
 
 
 typedef struct _tk_tile tk_tile_t;
