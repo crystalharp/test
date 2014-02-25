@@ -99,7 +99,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
     private Button mFoodBtn;
     private Button mTuangouBtn;
     private Button mHotelBtn;
-    private Button mBunStationBtn;
+    private Button mBusStationBtn;
     private Button mMoreBtn;
     
     private SuggestWordListManager mSuggestWordListManager;
@@ -279,7 +279,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         mFoodBtn = (Button) mRootView.findViewById(R.id.btn_food);
         mTuangouBtn = (Button) mRootView.findViewById(R.id.btn_tuangou);
         mHotelBtn = (Button) mRootView.findViewById(R.id.btn_hotel);
-        mBunStationBtn = (Button) mRootView.findViewById(R.id.btn_bus_station);
+        mBusStationBtn = (Button) mRootView.findViewById(R.id.btn_bus_station);
         mMoreBtn = (Button) mRootView.findViewById(R.id.btn_more);
     }
 
@@ -321,11 +321,14 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         });
         
         mMapSelectPointBtn.setOnClickListener(this);
-        
         mMyPosBtn.setOnClickListener(this);
-        
         mFavBtn.setOnClickListener(this);
         
+        mFoodBtn.setOnClickListener(this);
+        mTuangouBtn.setOnClickListener(this);
+        mHotelBtn.setOnClickListener(this);
+        mBusStationBtn.setOnClickListener(this);
+        mMoreBtn.setOnClickListener(this);
     }
 
     @Override
@@ -389,6 +392,27 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                 mActionLog.addAction(ActionLog.InputQueryFavPosition);
                 mSphinx.showView(mSphinx.getFetchFavoriteFragment().getId());
                 break;
+            case R.id.btn_food:
+            	// TODO: actionLog
+            	submitPOIQuery(new TKWord(TKWord.ATTRIBUTE_HISTORY, mSphinx.getString(R.string.cate)));
+            	break;
+            case R.id.btn_tuangou:
+                if (DataQuery.checkDiscoveryCity(mDataQuery.getCityId(), Long.parseLong(BaseQuery.DATA_TYPE_TUANGOU)) == false) {
+                    Toast.makeText(mSphinx, R.string.this_city_not_support_tuangou, Toast.LENGTH_LONG).show();
+                    return;
+                }
+                mSphinx.queryStart(getDiscoverDataQuery(BaseQuery.DATA_TYPE_TUANGOU));
+                break;
+            case R.id.btn_hotel:
+        		mSphinx.getHotelHomeFragment().resetDate();
+        		mSphinx.getHotelHomeFragment().setCityInfo(Globals.getCurrentCityInfo(mContext));
+        		mSphinx.showView(R.id.view_hotel_home);
+        		break;
+            case R.id.btn_bus_station:
+            	submitPOIQuery(new TKWord(TKWord.ATTRIBUTE_HISTORY, mSphinx.getString(R.string.bus_station)));
+            	break;
+            case R.id.btn_more:
+            	break;
             default:
         }
     }
@@ -471,6 +495,19 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         dataQuery.setup(getId(), getId(), getString(R.string.doing_and_wait));
         
         mSphinx.queryStart(dataQuery);
+    }
+    
+    /**
+     * 发现频道(团购)搜索
+     * @param String dataType
+     */
+    private DataQuery getDiscoverDataQuery(String dataType) {
+        DataQuery dataQuery = new DataQuery(mDataQuery);
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, dataType);
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
+        dataQuery.delParameter(DataQuery.SERVER_PARAMETER_POI_ID);
+        dataQuery.setup(getId(), getId(), getString(R.string.doing_and_wait));
+        return dataQuery;
     }
     
     /**
