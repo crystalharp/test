@@ -10,7 +10,9 @@ import com.decarta.android.map.OverlayItem;
 import com.decarta.android.map.RotationTilt;
 import com.decarta.android.map.RotationTilt.RotateReference;
 import com.decarta.android.map.RotationTilt.TiltReference;
+import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
+import com.decarta.android.util.XYFloat;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
@@ -24,6 +26,7 @@ import com.tigerknows.model.Zhanlan;
 
 import android.content.res.Resources;
 import android.graphics.Rect;
+import android.util.DisplayMetrics;
 import android.view.View;
 
 import java.util.ArrayList;
@@ -147,9 +150,32 @@ public class ItemizedOverlayHelper {
             overlayItem.isFoucsed = true;
             overlayItem.setMessage(poi.getName());
             overlayItem.setAssociatedObject(poi);
+
             mapView.showOverlay(ItemizedOverlay.MY_LOCATION_OVERLAY, false);
             
             sphinx.showInfoWindow(sphinx.uiStackPeek(), overlayItem);
+            Icon icon = overlayItem.getIcon();
+            float zoomLevel = mapView.getZoomLevel();
+            XYFloat xyFloat = mapView.mercXYToScreenXYConv(Util.posToMercPix(poi.getPosition(), zoomLevel), zoomLevel);
+            Rect padding = mapView.getPadding();
+            int w = icon.getSize().x;
+            int h = icon.getSize().y;
+            DisplayMetrics displayMetrics = Globals.g_metrics;
+            
+            int left = 0;
+            int top = 0;
+            if (xyFloat.x - w < 0) {
+                left = (int) -(xyFloat.x - w);
+            } else if (xyFloat.x + w > displayMetrics.widthPixels) {
+                left = (int) (displayMetrics.widthPixels - (xyFloat.x + w));
+            }
+            
+            if (xyFloat.y - h < padding.top) {
+                top = (int) (padding.top - (xyFloat.y - h));
+            } else if (xyFloat.y + h > displayMetrics.heightPixels - padding.bottom) {
+                top = (int) ((displayMetrics.heightPixels - padding.bottom) - (xyFloat.y + h));
+            }
+            mapView.moveView(left, top);
             
             itemizedOverlay = overlay;
         } catch(APIException e) {
@@ -336,6 +362,9 @@ public class ItemizedOverlayHelper {
             sphinx.getLocationView().setVisibility(View.VISIBLE);
             
             itemizedOverlay = overlay;
+            
+            mapView.deleteOverlaysByName(ItemizedOverlay.LONG_CLICKED_OVERLAY);
+            mapView.deleteOverlaysByName(ItemizedOverlay.MAP_POI_OVERLAY);
         } catch (APIException e) {
             e.printStackTrace();
         }

@@ -5,6 +5,7 @@ import java.util.List;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -29,6 +30,7 @@ import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.Alarm;
 import com.tigerknows.service.AlarmService;
 import com.tigerknows.ui.BaseFragment;
+import com.tigerknows.ui.more.SettingActivity;
 import com.tigerknows.util.Utility;
 import com.tigerknows.widget.StringArrayAdapter;
 
@@ -206,6 +208,10 @@ public class AlarmListFragment extends BaseFragment implements View.OnClickListe
                 mAlarm.setStatus(mAlarm.getStatus() == 0 ? 1 : 0);
                 Alarm.writeAlarm(mSphinx, mAlarm);
                 mMyAdapter.notifyDataSetChanged();
+                
+                if (mAlarm.getStatus() == 0) {
+                    showSettingLocationDialog(mSphinx);
+                }
             } else if (id == R.id.range_btn) {
                 showRangeDialog();
             } else if (id == R.id.ringtone_btn) {
@@ -262,5 +268,26 @@ public class AlarmListFragment extends BaseFragment implements View.OnClickListe
                 dialog.dismiss();
             }
         });
+    }
+    
+    public static void showSettingLocationDialog(final Sphinx activity) {
+        if (SettingActivity.checkGPS(activity)) {
+            return;
+        }
+        Utility.showNormalDialog(activity,
+                                 activity.getString(R.string.prompt),
+                                 activity.getString(R.string.alarm_enable_tip),
+                                 activity.getString(R.string.settings),
+                                 activity.getString(R.string.cancel),
+                                 new DialogInterface.OnClickListener() {
+                    
+                                     @Override
+                                     public void onClick(DialogInterface arg0, int id) {
+                                         if (id == DialogInterface.BUTTON_POSITIVE) {
+                                             activity.showView(R.id.activity_setting_location);
+                                         }
+                                     }
+                                 }
+                                 );
     }
 }

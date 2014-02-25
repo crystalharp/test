@@ -769,22 +769,23 @@ public class BaseQueryTest {
             @Override
             public void onClick(View v) {
                 List<CityInfo> allCityInfoList = MapEngine.getAllProvinceCityList(activity.getApplicationContext());  
-                for(int i = allCityInfoList.size()-1; i >= 0; i--) {
-                    CityInfo cityInfo1 = allCityInfoList.get(i);
-                    List<CityInfo> childCityInfoList = cityInfo1.getCityList();
-                    if (childCityInfoList.size() > 1) {
-                        for(int ii = childCityInfoList.size()-1; ii >= 0; ii--) {
-                            CityInfo cityInfo2 = childCityInfoList.get(ii);
-                            StringBuilder s = new StringBuilder();
-                            for(int l = 0; l < 51; l++) {
-                                s.append(l);
-                                TKWord tkWord = new TKWord(TKWord.ATTRIBUTE_HISTORY, s.toString(), cityInfo2.getPosition());
-                                HistoryWordTable.addHistoryWord(activity, tkWord, HistoryWordTable.TYPE_POI);
-                                HistoryWordTable.addHistoryWord(activity, tkWord, HistoryWordTable.TYPE_TRAFFIC);
-                                HistoryWordTable.addHistoryWord(activity, tkWord, HistoryWordTable.TYPE_BUSLINE);
-                            }
-                        }
-                    } else {
+//                for(int i = allCityInfoList.size()-1; i >= 0; i--) {
+//                    CityInfo cityInfo1 = allCityInfoList.get(i);
+//                    List<CityInfo> childCityInfoList = cityInfo1.getCityList();
+//                    if (childCityInfoList.size() > 1) {
+//                        for(int ii = childCityInfoList.size()-1; ii >= 0; ii--) {
+//                            CityInfo cityInfo2 = childCityInfoList.get(ii);
+//                            StringBuilder s = new StringBuilder();
+//                            for(int l = 0; l < 51; l++) {
+//                                s.append(l);
+//                                TKWord tkWord = new TKWord(TKWord.ATTRIBUTE_HISTORY, s.toString(), cityInfo2.getPosition());
+//                                HistoryWordTable.addHistoryWord(activity, tkWord, HistoryWordTable.TYPE_POI);
+//                                HistoryWordTable.addHistoryWord(activity, tkWord, HistoryWordTable.TYPE_TRAFFIC);
+//                                HistoryWordTable.addHistoryWord(activity, tkWord, HistoryWordTable.TYPE_BUSLINE);
+//                            }
+//                        }
+//                    } else {
+                        CityInfo cityInfo1 = Globals.getCurrentCityInfo(activity, true);
                         StringBuilder s = new StringBuilder();
                         for(int l = 0; l < 51; l++) {
                             s.append(l);
@@ -793,8 +794,8 @@ public class BaseQueryTest {
                             HistoryWordTable.addHistoryWord(activity, tkWord, HistoryWordTable.TYPE_TRAFFIC);
                             HistoryWordTable.addHistoryWord(activity, tkWord, HistoryWordTable.TYPE_BUSLINE);
                         }
-                    }
-                }
+//                    }
+//                }
             }
         });
         

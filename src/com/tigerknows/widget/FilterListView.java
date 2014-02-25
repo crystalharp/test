@@ -43,7 +43,6 @@ import android.widget.TextView;
 import com.decarta.Globals;
 import com.decarta.android.util.Util;
 import com.tigerknows.R;
-import com.tigerknows.TKConfig;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.DataQuery.Filter;
@@ -252,8 +251,10 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
         setListener();
 
         handler = new Handler();
+        LinearLayout layout = new LinearLayout(context); 
+        parentLsv.addFooterView(layout);
+        
         parentAdapter = new MyAdapter(context, parentFilterList);
-        parentAdapter.isParent = true;
         
         parentLsv.setAdapter(parentAdapter);
         childLsv.setData(childFilterList, false, false, -1);
@@ -422,8 +423,6 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
         
         private LayoutInflater mLayoutInflater;
         
-        boolean isParent = false;
-
         public MyAdapter(Context context, List<Filter> list) {
             super(context, TEXTVIEW_RESOURCE_ID, list);
             mLayoutInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -443,28 +442,18 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
             
             Filter filter = getItem(position);
             
-            if (isParent) {
-                if (position == selectedParentPosition) {
-                    view.setBackgroundResource(R.drawable.list_selector_background_gray_dark);
-                } else {
-                    view.setBackgroundResource(R.drawable.list_selector_background_gray_light);
-                }
-            } else {
+            if (position == selectedParentPosition) {
                 view.setBackgroundResource(R.drawable.list_selector_background_gray_dark);
+            } else {
+                view.setBackgroundResource(R.drawable.list_selector_background_gray_light);
             }
 
-            if (filter.isSelected() && (filter.getChidrenFilterList()==null || filter.getChidrenFilterList().size()==0)) {
-                textTxv.setTextColor(TKConfig.COLOR_ORANGE);
-            } else {
-                if (isParent) {
-                    textTxv.setTextColor(TKConfig.COLOR_BLACK_DARK);
-                } else {
-                    textTxv.setTextColor(TKConfig.COLOR_BLACK_LIGHT);
-                }
-            }
             
             if (filter.getChidrenFilterList().size() > 0) {
                 iconImv.setBackgroundResource(R.drawable.icon_arrow_right);
+                iconImv.setVisibility(View.VISIBLE);
+            } else if (filter.isSelected()) {
+                iconImv.setBackgroundResource(R.drawable.icon_right);
                 iconImv.setVisibility(View.VISIBLE);
             } else {
                 iconImv.setVisibility(View.INVISIBLE);
@@ -507,17 +496,15 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
                     filterViewGroup.addView(button);
                 }
                 if (i == size -1) {
-                    if (filter.getKey() == key) {
-                        button.setBackgroundResource(R.drawable.btn_filter2_focused);
-                    } else {
-                        button.setBackgroundResource(R.drawable.btn_filter2);
-                    }
+                    button.setBackgroundResource(R.drawable.btn_filter2);
                 } else {
-                    if (filter.getKey() == key) {
-                        button.setBackgroundResource(R.drawable.btn_filter1_focused);
-                    } else {
-                        button.setBackgroundResource(R.drawable.btn_filter1);
-                    }
+                    button.setBackgroundResource(R.drawable.btn_filter1);
+                }
+                Resources resources = context.getResources();
+                if (filter.getKey() == key) {
+                    button.setTextColor(resources.getColor(R.color.orange));
+                } else {
+                    button.setTextColor(resources.getColor(R.color.black_dark));
                 }
                 button.setPadding(0, Util.dip2px(Globals.g_metrics.density, 12), 0, Util.dip2px(Globals.g_metrics.density, 12));
                 button.setTag(filter.getKey());

@@ -50,7 +50,6 @@ public class PinnedHeaderListView extends ListView {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         if (mHeaderView != null) {
-        	android.view.ViewGroup.LayoutParams params = mHeaderView.getLayoutParams();
             measureChild(mHeaderView, widthMeasureSpec, heightMeasureSpec);
             mHeaderViewWidth = mHeaderView.getMeasuredWidth();
             mHeaderViewHeight = mHeaderView.getMeasuredHeight();
