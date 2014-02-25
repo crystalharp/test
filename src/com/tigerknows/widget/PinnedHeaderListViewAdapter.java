@@ -10,12 +10,12 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
 
 import com.tigerknows.R;
-import com.tigerknows.TKConfig;
 import com.tigerknows.model.DataQuery.Filter;
 import com.tigerknows.widget.PinnedHeaderListView.PinnedHeaderAdapter;
 
@@ -65,8 +65,7 @@ public class PinnedHeaderListViewAdapter extends BaseAdapter implements SectionI
 		if (convertView == null) {
 			convertView = inflater.inflate(R.layout.pinned_header_list_view_item, null);
 		}
-		LinearLayout mHeaderParent = (LinearLayout) convertView
-				.findViewById(R.id.item_header_parent);
+		LinearLayout mHeaderParent = (LinearLayout) convertView.findViewById(R.id.item_header_parent);
 		
 		if(!mPinnedMode || (mPinnedMode && mNotPinFirst && position==0)){
 			mHeaderParent.setVisibility(View.GONE);
@@ -81,14 +80,15 @@ public class PinnedHeaderListViewAdapter extends BaseAdapter implements SectionI
 				mHeaderParent.setVisibility(View.GONE);
 			}
 		}
-		TextView textView = (TextView) convertView
-				.findViewById(R.id.text_item);
+		TextView textView = (TextView) convertView.findViewById(R.id.text_txv);
+        ImageView iconImv = (ImageView)convertView.findViewById(R.id.icon_imv);
+        
 		textView.setText(mDatas.get(position).getFilterOption().getName());
 
 		if(selectedPosition!=-1 && position == selectedPosition){
-			textView.setTextColor(TKConfig.COLOR_ORANGE);
+            iconImv.setVisibility(View.VISIBLE);
 		}else{
-			textView.setTextColor(TKConfig.COLOR_BLACK_LIGHT);
+		    iconImv.setVisibility(View.GONE);
 		}
 		
 		return convertView;
