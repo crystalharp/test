@@ -1329,6 +1329,7 @@
     <string name="take_screenshot_save_to_">截图已保存到%1$s</string>
     <string name="traffic_highLight_normal">公交站 / 加油站 / 机场</string>
     <string name="traffic_highLight_subwaymap">地铁图 / 公交站 / 加油站</string>
+    <string name="bus_station">公交站</string>
     
     <string name="like_empty_tip">Yummy~做个有态度的吃货~</string>
     <string name="recommend_cook_empty">暂无推荐菜</string>

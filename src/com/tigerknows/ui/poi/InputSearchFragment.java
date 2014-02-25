@@ -77,7 +77,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
     
     final public static int MODE_POI = HistoryWordTable.TYPE_POI;
     final public static int MODE_TRAFFIC = HistoryWordTable.TYPE_TRAFFIC;
-    final public static int MODE_BUELINE = HistoryWordTable.TYPE_BUSLINE;
+    final public static int MODE_BUSLINE = HistoryWordTable.TYPE_BUSLINE;
     
     //用来标记请求的是哪个按钮
     final public static int REQUEST_NONE = 0;
@@ -91,10 +91,16 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
     private int mRequest;
 
     private ListView mSuggestLsv = null;
+    private LinearLayout mPoiBtnGroup;
     private LinearLayout mTrafficBtnGroup;
     private View mMapSelectPointBtn;
     private Button mFavBtn;
     private Button mMyPosBtn;
+    private Button mFoodBtn;
+    private Button mTuangouBtn;
+    private Button mHotelBtn;
+    private Button mBunStationBtn;
+    private Button mMoreBtn;
     
     private SuggestWordListManager mSuggestWordListManager;
     
@@ -231,11 +237,13 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         
         switch (mCurMode) {
         //TODO:add actiontag
-        case MODE_BUELINE:
+        case MODE_BUSLINE:
+        	mPoiBtnGroup.setVisibility(View.GONE);
             mTrafficBtnGroup.setVisibility(View.GONE);
             mKeywordEdt.setHint(getString(R.string.busline_search_hint));
             break;
         case MODE_TRAFFIC:
+        	mPoiBtnGroup.setVisibility(View.GONE);
             mTrafficBtnGroup.setVisibility(View.VISIBLE);
             if (mRequest == REQUEST_TRAFFIC_END) {
                 mKeywordEdt.setHint(getString(R.string.end_));
@@ -246,6 +254,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
             }
             break;
         case MODE_POI:
+        	mPoiBtnGroup.setVisibility(View.VISIBLE);
             mTrafficBtnGroup.setVisibility(View.GONE);
             break;
         }
@@ -262,10 +271,16 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
     protected void findViews() {
         super.findViews();
         mSuggestLsv = (ListView)mRootView.findViewById(R.id.suggest_lsv);
+        mPoiBtnGroup = (LinearLayout)mRootView.findViewById(R.id.poi_btn_group);
         mTrafficBtnGroup = (LinearLayout) mRootView.findViewById(R.id.traffic_btn_group);
         mMapSelectPointBtn = mTrafficBtnGroup.findViewById(R.id.btn_map_position);
         mFavBtn = (Button) mRootView.findViewById(R.id.btn_fav_position);
         mMyPosBtn = (Button) mRootView.findViewById(R.id.btn_my_position);
+        mFoodBtn = (Button) mRootView.findViewById(R.id.btn_food);
+        mTuangouBtn = (Button) mRootView.findViewById(R.id.btn_tuangou);
+        mHotelBtn = (Button) mRootView.findViewById(R.id.btn_hotel);
+        mBunStationBtn = (Button) mRootView.findViewById(R.id.btn_bus_station);
+        mMoreBtn = (Button) mRootView.findViewById(R.id.btn_more);
     }
 
     @Override
@@ -384,7 +399,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         }
         
         switch (mCurMode) {
-            case MODE_BUELINE:
+            case MODE_BUSLINE:
                 submitBuslineQuery(tkWord);
                 break;
             case MODE_TRAFFIC:
