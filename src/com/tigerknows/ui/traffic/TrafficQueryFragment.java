@@ -992,7 +992,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
                             dataQuery.setCityId(getCityId(mStart.getPOI(), mEnd.getPOI()));
                             mSphinx.getInputSearchFragment().setData(dataQuery,
                             		null,
-                                    InputSearchFragment.MODE_BUELINE);
+                                    InputSearchFragment.MODE_BUSLINE);
                             mSphinx.showView(R.id.view_poi_input_search);
                         } else if (index == 2) {
                             mSphinx.getSubwayMapFragment().setData(Globals.getCurrentCityInfo(mSphinx, false));
