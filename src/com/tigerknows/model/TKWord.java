@@ -22,6 +22,7 @@ public class TKWord {
     public int attribute=ATTRIBUTE_HISTORY;
     public String word;
     public Position position;
+    public String address;
     
     public TKWord() {
         
@@ -32,9 +33,14 @@ public class TKWord {
     }
     
     public TKWord(int attribute, String word, Position position) {
+        this(attribute, word, position, null);
+    }
+    
+    public TKWord(int attribute, String word, Position position, String address) {
         this.attribute = attribute;
         this.word = word;
         this.position = position;
+        this.address = address;
     }
     
     private volatile int hashCode = 0;
@@ -78,6 +84,7 @@ public class TKWord {
         if (this.position != null) {
             tkWord.position = this.position.clone();
         }
+        tkWord.address = this.address;
         return tkWord;
     }
     
@@ -85,6 +92,7 @@ public class TKWord {
         POI poi = new POI();
         poi.setName(word);
         poi.setPosition(position);
+        poi.setAddress(address);
         return poi;
     }
     

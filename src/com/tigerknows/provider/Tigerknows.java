@@ -159,4 +159,23 @@ public class Tigerknows {
         public static final String DATA = "_data";
 
     }
+
+    public interface Alarm extends BaseColumns {
+        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/alarm");
+
+        public static final String DEFAULT_SORT_ORDER = "_id ASC";
+
+        public static final String NAME = "tk_name";
+        
+        public static final String POSITION = "tk_position";
+        
+        public static final String RANGE = "tk_range";
+        
+        public static final String RINGTONE = "tk_ringtone";
+        
+        public static final String RINGTONE_NAME = "tk_ringtone_name";
+        
+        public static final String STATUS = "tk_status";
+
+    }
 }

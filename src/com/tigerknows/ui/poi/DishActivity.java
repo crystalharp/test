@@ -823,7 +823,7 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
                 if (dishId == c.getDishId()) {
                     if (isLike) {
                         c.addLike(true);
-                        if (mMyLikeList.contains(c) == false) {
+                        if (mMyLikeList.contains(c) == false && mAllDataQuery != null) {
                             mMyLikeList.add(c);
                         }
                     } else {
@@ -837,7 +837,7 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
                 if (dishId == c.getDishId()) {
                     if (isLike) {
                         c.addLike(true);
-                        if (mMyLikeList.contains(c) == false) {
+                        if (mMyLikeList.contains(c) == false && mRecommendDataQuery != null) {
                             mMyLikeList.add(c);
                         }
                     } else {

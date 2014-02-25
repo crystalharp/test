@@ -1379,4 +1379,11 @@
     <string name="route">路线</string>
     
     <string name="text_iat_begin">请开始说话...</string>
+    
+    <string name="alarm">公交闹铃</string>
+    <string name="manage_alarm">设置公交闹铃</string>
+    <string name="add_alarm">添加闹铃</string>
+    <string name="delete_alarm">删除闹铃</string>
+    <string name="ringtone">铃声：%1$s</string>
+    <string name="ringtone_silent">静音</string>
 </resources>

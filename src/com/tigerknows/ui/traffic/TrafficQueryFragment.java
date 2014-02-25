@@ -534,8 +534,8 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 
 	public void submitTrafficQuery(POI start, POI end) {
         
-        addHistoryWord(start, HistoryWordTable.TYPE_TRAFFIC);
-        addHistoryWord(end, HistoryWordTable.TYPE_TRAFFIC);
+        addHistoryWord(start);
+        addHistoryWord(end);
         mActionLog.addAction(mActionTag +  ActionLog.TrafficTrafficSearch, getQueryType(), mStart.getText(), mEnd.getText());
 
         if (!processMyLocation(start)) {
@@ -575,14 +575,14 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
         return cityId;
 	}
     
-    public void addHistoryWord(POI poi, int type) {
+    public void addHistoryWord(POI poi) {
         if (poi == null) {
             return;
         }
         String name = poi.getName();
         if (name != null && !isKeyword(name.trim())) {
             Position position = poi.getPosition();
-            HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, name, position), type);
+            HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, name, position,poi.getAddress()), HistoryWordTable.TYPE_TRAFFIC);
         }
     }
     

@@ -33,6 +33,16 @@ public class TKLocationManager {
     
     static final String TAG = "TKLocationManager";
     
+    private static TKLocationManager sInstance = null;
+    
+    public static TKLocationManager getInstatce(Context context) {
+        if (sInstance == null) {
+            sInstance = new TKLocationManager(context);
+        }
+        
+        return sInstance;
+    }
+    
     public static final String GPS_COLLECTION_PROVIDER = "tk_gps_collection";
     
     /**
@@ -76,7 +86,7 @@ public class TKLocationManager {
         return networkLocationUpload;
     }
     
-    public TKLocationManager(Context context) {
+    private TKLocationManager(Context context) {
         this.context = context;
         gpsLocationUpload = LocationUpload.getGpsInstance(context);
         networkLocationUpload = LocationUpload.getNetworkInstance(context);
@@ -89,7 +99,7 @@ public class TKLocationManager {
         locationListener = new AndroidLocationListener();
     }
     
-    public void prepareLocation() {
+    private void prepareLocation() {
         List<String> providers = locationManager.getAllProviders();
         if (providers.contains(LocationManager.GPS_PROVIDER)) {
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, REQUEST_MIN_TIME, REQUEST_MIN_DISTANCE, locationListener);
@@ -100,11 +110,7 @@ public class TKLocationManager {
         networkLocationManager.bindService();
     }
     
-    public void removeUpdates() {
-        synchronized (locationChangeLock) {
-            lastLocation = null;
-            locationListenerList.clear();
-        }
+    private void removeUpdates() {
         if (locationManager != null && locationListener != null) {
             locationManager.removeUpdates(locationListener);
         }
@@ -115,23 +121,50 @@ public class TKLocationManager {
     }
     
     public void onCreate() {
-        gpsLocationUpload.onCreate();
-        networkLocationUpload.onCreate();
-        locationQuery.onCreate();
+        synchronized (locationChangeLock) {
+            if (locationListenerList.size() == 0) {
+                gpsLocationUpload.onCreate();
+                networkLocationUpload.onCreate();
+                locationQuery.onCreate();
+            }
+        }
     }
     
-    public void onResume() {
-        locationQuery.onResume();
+    public void onStart(TKLocationListener listener) {
+        synchronized (locationChangeLock) {
+            if (locationListenerList.size() == 0) {
+                prepareLocation();
+                locationQuery.onStart();
+            }
+            
+            lastLocation = null;
+            if (listener != null) {
+                locationListenerList.remove(listener);
+                locationListenerList.add(listener);
+            }
+        }
+        
     }
     
-    public void onPause() {
-        locationQuery.onPasue();
+    public void onStop(TKLocationListener listener) {
+        synchronized (locationChangeLock) {
+            locationListenerList.remove(listener);
+            
+            if (locationListenerList.size() == 0) {
+                removeUpdates();
+                locationQuery.onStop();
+            }
+        }
     }
     
     public void onDestroy() {
-        gpsLocationUpload.onDestroy();
-        networkLocationUpload.onDestroy();
-        locationQuery.onDestory();
+        synchronized (locationChangeLock) {
+            if (locationListenerList.size() == 0) {
+                gpsLocationUpload.onDestroy();
+                networkLocationUpload.onDestroy();
+                locationQuery.onDestory();
+            }
+        }
     }
     
     private void locationChanged(int locationType) {
@@ -187,15 +220,6 @@ public class TKLocationManager {
                 for(TKLocationListener listener : locationListenerList) {
                     listener.onLocationChanged(location);
                 }
-            }
-        }
-    }
-    
-    public void addLocationListener(TKLocationListener listener) {
-        synchronized (locationChangeLock) {
-            lastLocation = null;
-            if (listener != null) {
-                locationListenerList.add(listener);
             }
         }
     }

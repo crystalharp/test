@@ -30,6 +30,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -101,6 +102,7 @@ import com.tigerknows.model.PullMessage.Message.PulledDynamicPOI;
 import com.tigerknows.model.NoticeQuery;
 import com.tigerknows.model.PullMessage;
 import com.tigerknows.model.PullMessage.Message.PulledProductMessage;
+import com.tigerknows.model.Alarm;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.FeedbackUpload;
 import com.tigerknows.model.Response;
@@ -108,6 +110,7 @@ import com.tigerknows.model.Shangjia;
 import com.tigerknows.model.TKDrawable;
 import com.tigerknows.model.Bootstrap;
 import com.tigerknows.model.BootstrapModel;
+import com.tigerknows.model.TKWord;
 import com.tigerknows.model.User;
 import com.tigerknows.model.BootstrapModel.StartupDisplay;
 import com.tigerknows.model.test.BaseQueryTest;
@@ -123,6 +126,8 @@ import com.tigerknows.ui.HomeBottomFragment;
 import com.tigerknows.ui.HomeFragment;
 import com.tigerknows.ui.InfoWindowFragment;
 import com.tigerknows.ui.TitleFragment;
+import com.tigerknows.ui.alarm.AlarmAddFragment;
+import com.tigerknows.ui.alarm.AlarmListFragment;
 import com.tigerknows.ui.common.BrowserActivity;
 import com.tigerknows.ui.common.BrowserFragment;
 import com.tigerknows.ui.common.HintActivity;
@@ -475,6 +480,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     CalendarUtil.initExactTime(mContext);
                     Shangjia.readShangjiaList(Sphinx.this);
                     HotelVendor.readHotelVendorList(Sphinx.this);
+                    Alarm.getAlarmList(mThis);
                 }
             }).start();
 
@@ -969,6 +975,16 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 
         } else if (R.id.activity_poi_dish == requestCode) {
             getPOIDetailFragment().refreshRecommendCook();
+        } else if (R.id.view_alarm_list == requestCode) {
+
+            if (resultCode == RESULT_OK) {
+                Uri uri = null; 
+                if (data != null) {
+                    uri = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
+                }
+                
+                getAlarmListFragment().setData(uri);
+            }
         }
 
         if (REQUEST_CODE_LOCATION_SETTINGS == requestCode) {
@@ -1411,7 +1427,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                             		keyword,
                                     InputSearchFragment.MODE_POI);
                             showView(R.id.view_poi_input_search);
-                            getInputSearchFragment().submitPOIQuery(keyword);
+                            TKWord tkWord = new TKWord(TKWord.ATTRIBUTE_HISTORY, keyword);
+                            getInputSearchFragment().submitPOIQuery(tkWord);
                             query = true;
                         }
                     }
@@ -1466,7 +1483,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                             		keyword,
                                     InputSearchFragment.MODE_POI);
                             showView(R.id.view_poi_input_search);
-                            getInputSearchFragment().submitPOIQuery(keyword);
+                            TKWord tkWord = new TKWord(TKWord.ATTRIBUTE_HISTORY, keyword);
+                            getInputSearchFragment().submitPOIQuery(tkWord);
                         }
                         query = true;
                     }
@@ -2707,6 +2725,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 
     private MeasureDistanceFragment mMeasureDistanceFragment;
 
+    private AlarmListFragment mAlarmListFragment = null;
+    private AlarmAddFragment mAlarmAddFragment = null;
+
     public BaseFragment getFragment(int id) {
         BaseFragment baseFragment = null;
 
@@ -2882,6 +2903,14 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 
             case R.id.view_traffic_result_list_map:
                 baseFragment = getTrafficResultListMapFragment();
+                break;
+                
+            case R.id.view_alarm_list:
+                baseFragment = getAlarmListFragment();
+                break;
+                
+            case R.id.view_alarm_add:
+                baseFragment = getAlarmAddFragment();
                 break;
 
             default:
@@ -3134,6 +3163,30 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 mTrafficCommonAddressFragment = f;
             }
             return mTrafficCommonAddressFragment;
+        }
+    }
+
+    public AlarmListFragment getAlarmListFragment() {
+        synchronized (mUILock) {
+            if (mAlarmListFragment == null) {
+                AlarmListFragment f = new AlarmListFragment(Sphinx.this);
+                f.setId(R.id.view_alarm_list);
+                f.onCreate(null);
+                mAlarmListFragment = f;
+            }
+            return mAlarmListFragment;
+        }
+    }
+
+    public AlarmAddFragment getAlarmAddFragment() {
+        synchronized (mUILock) {
+            if (mAlarmAddFragment == null) {
+                AlarmAddFragment f = new AlarmAddFragment(Sphinx.this);
+                f.setId(R.id.view_alarm_add);
+                f.onCreate(null);
+                mAlarmAddFragment = f;
+            }
+            return mAlarmAddFragment;
         }
     }
 

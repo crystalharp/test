@@ -430,7 +430,7 @@ public class TKActivity extends Activity implements TKAsyncTask.EventListener {
         mMapEngine = MapEngine.getInstance();
 
         mLocationListener = new MyLocationListener(this, null);
-        mTKLocationManager = new TKLocationManager(TKApplication.getInstance());
+        mTKLocationManager = TKLocationManager.getInstatce(getApplicationContext());
         mTKLocationManager.onCreate();
         
         mActionLog = ActionLog.getInstance(mThis);
@@ -468,10 +468,6 @@ public class TKActivity extends Activity implements TKAsyncTask.EventListener {
             return;
         }
         
-        mTKLocationManager.addLocationListener(mLocationListener);
-        mTKLocationManager.prepareLocation();
-        mTKLocationManager.onResume();
-        
         IntentFilter intentFilter = new IntentFilter(Intent.ACTION_MEDIA_MOUNTED);
         intentFilter.addAction(Intent.ACTION_MEDIA_UNMOUNTED);
         registerReceiver(mExternalStorageMountReceiver, intentFilter);
@@ -500,9 +496,6 @@ public class TKActivity extends Activity implements TKAsyncTask.EventListener {
         if (mWakeLock.isHeld()) {
             mWakeLock.release();
         }
-        
-        mTKLocationManager.removeUpdates();
-        mTKLocationManager.onPause();
 
         unregisterReceiver(mExternalStorageMountReceiver);
         unregisterReceiver(mAirPlaneModeReceiver);
@@ -519,6 +512,13 @@ public class TKActivity extends Activity implements TKAsyncTask.EventListener {
             TCAgent.onPause(this);
         }
     }
+
+    
+    @Override
+    protected void onStart() {
+        mTKLocationManager.onStart(mLocationListener);
+        super.onStart();
+    }
     
     @Override
 	protected void onStop() {
@@ -526,6 +526,8 @@ public class TKActivity extends Activity implements TKAsyncTask.EventListener {
         if (null != mIatDialog) {
             mIatDialog.cancel();
         }
+        
+        mTKLocationManager.onStop(mLocationListener);
 		super.onStop();
 	}
 

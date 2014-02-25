@@ -1623,13 +1623,14 @@ public class POI extends BaseData {
     
     /**
      * 克隆一个POI对象。
-     * Notice: 当前仅克隆了名字及经纬度
+     * Notice: 仅克隆名字、经纬度、来源类型、地址
      */
     public POI clone() {
     	POI newPOI = new POI();
     	newPOI.setName(this.name);
     	newPOI.setPosition(this.position);
     	newPOI.setSourceType(this.sourceType);
+    	newPOI.setAddress(this.address);
     	
     	return newPOI;
     }

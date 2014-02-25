@@ -104,7 +104,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
         public void onTextChanged(CharSequence s, int start, int before, int count) {
             mSuggestWordListManager.refresh(mCityInfo.getId());
             if (mTKWord != null &&
-                    s.toString().trim().equals(mTKWord.word)) {
+                    s.toString().trim().equals(mTKWord.word) == false) {
                 mTKWord = null;
             }
             mSuggestLsv.setVisibility(View.VISIBLE);
@@ -295,7 +295,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
                     POI poi = mAlternativeList.get(position);
                     mInvoker.setPOI(poi);
                     mActionLog.addAction(mActionTag+ActionLog.HotelPickLocationAlternativeSelect, position, poi.getName());
-                    HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, poi.getName(), poi.getPosition()), HistoryWordTable.TYPE_TRAFFIC);
+                    HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, poi.getName(), poi.getPosition(), poi.getAddress()), HistoryWordTable.TYPE_TRAFFIC);
                     dismiss();
                 }
             }
@@ -326,19 +326,19 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
     private void submit() {
         TKWord tkWord = mTKWord;
         String word = mKeywordEdt.getText().toString().trim();
-        if (tkWord != null) {
-            tkWord.word.trim();
+        if (tkWord == null || tkWord.word.equals(word) == false) {
+            tkWord = new TKWord(TKWord.ATTRIBUTE_HISTORY, word);
         }
-        if (TextUtils.isEmpty(word)) {
+        if (TextUtils.isEmpty(tkWord.word)) {
             mSphinx.showTip(R.string.search_input_keyword, Toast.LENGTH_SHORT);
             return;
         } else {
             mSphinx.hideSoftInput(mKeywordEdt.getInput());
-            HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, word, null), HistoryWordTable.TYPE_TRAFFIC);
+            HistoryWordTable.addHistoryWord(mSphinx, tkWord, HistoryWordTable.TYPE_TRAFFIC);
             DataQuery poiQuery = new DataQuery(mContext);
             poiQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_ALTERNATIVE);
             poiQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
-            poiQuery.addParameter(DataQuery.SERVER_PARAMETER_KEYWORD, word);
+            poiQuery.addParameter(DataQuery.SERVER_PARAMETER_KEYWORD, tkWord.word);
             poiQuery.addParameter(DataQuery.SERVER_PARAMETER_EXT, DataQuery.EXT_FILTER);
             poiQuery.setup(getId(), getId(), getString(R.string.doing_and_wait), false, false, null);
             poiQuery.setCityId(mCityInfo.getId());

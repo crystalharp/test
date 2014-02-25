@@ -91,6 +91,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     private Button mAppRecommendBtn;
     private Button mFavoriteBtn;
     private Button mCommonPlaceBtn;
+    private Button mManageAlarmBtn;
     private Button mHistoryBrowseBtn;
     private Button mGoCommentBtn;
     private Button mSatisfyRateBtn;
@@ -223,6 +224,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         mAppRecommendBtn = (Button)mRootView.findViewById(R.id.app_recommend_btn);
         mFavoriteBtn = (Button)mRootView.findViewById(R.id.favorite_btn);
         mCommonPlaceBtn = (Button) mRootView.findViewById(R.id.common_place_btn);
+        mManageAlarmBtn = (Button) mRootView.findViewById(R.id.manage_alarm_btn);
         mHistoryBrowseBtn = (Button)mRootView.findViewById(R.id.history_browse_btn);
         mGoCommentBtn = (Button)mRootView.findViewById(R.id.go_comment_btn);
         mSatisfyRateBtn = (Button)mRootView.findViewById(R.id.satisfy_btn);
@@ -252,6 +254,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         mAppRecommendBtn.setOnClickListener(this);
         mFavoriteBtn.setOnClickListener(this);
         mCommonPlaceBtn.setOnClickListener(this);
+        mManageAlarmBtn.setOnClickListener(this);
         mGoCommentBtn.setOnClickListener(this);
         mHistoryBrowseBtn.setOnClickListener(this);
         mSatisfyRateBtn.setOnClickListener(this);
@@ -390,6 +393,9 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
             case R.id.common_place_btn:
                 //TODO:actionlog
                 mSphinx.showView(mSphinx.getTrafficCommonAddressFragment().getId());
+                break;
+            case R.id.manage_alarm_btn:
+                mSphinx.showView(R.id.view_alarm_list);
                 break;
             case R.id.history_browse_btn:
                 mActionLog.addAction(mActionTag +  ActionLog.MoreHistory);

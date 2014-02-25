@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/list_selector_background_gray_light"
+    android:padding="8dp"
+    >
+
+    <TextView
+        android:id="@+id/name_txv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:text="@string/app_name"
+        android:textColor="@color/black_dark"
+        android:textSize="16sp"
+        />
+
+    <Button
+        android:id="@+id/status_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignBottom="@id/name_txv"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        />
+    
+    <TextView
+        android:id="@+id/distance_txv"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@id/status_btn"
+        android:layout_toRightOf="@id/name_txv"
+        android:layout_marginRight="8dp"
+        android:layout_alignBottom="@id/name_txv"
+        android:singleLine="true"
+        android:ellipsize="end"
+        android:text="@string/app_name"
+        android:textColor="@color/black_light"
+        />
+     
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/name_txv"
+        android:weightSum="3">
+        <Button 
+            android:id="@+id/range_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:layout_weight="1"/>
+        <Button 
+            android:id="@+id/ringtone_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:layout_weight="1"/>
+        <Button 
+            android:id="@+id/delete_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/delete_alarm"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:layout_weight="1"/>
+    </LinearLayout>
+
+</RelativeLayout>

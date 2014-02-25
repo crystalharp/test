@@ -21,6 +21,7 @@ import com.tigerknows.model.POI.PresetTime;
 import com.tigerknows.model.POI.Busstop;
 import com.tigerknows.model.POI.SubwayExit;
 import com.tigerknows.model.POI.SubwayPresetTime;
+import com.tigerknows.model.TKWord;
 import com.tigerknows.provider.HistoryWordTable;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIView;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIViewBlock;
@@ -133,9 +134,7 @@ public class ExtraSubwayPOI extends DynamicPOIView {
                             mPOIDetailFragment.mActionLog.addAction(mPOIDetailFragment.mActionTag+ActionLog.POIDetailBusstop, busstopTxv.getText().toString());
                             int cityId = MapEngine.getCityId(mPOI.getPosition());
                             String keyword = busstopTxv.getText().toString();
-                            POI poi = new POI();
-                            poi.setName(keyword);
-                            mSphinx.getTrafficQueryFragment().addHistoryWord(poi, HistoryWordTable.TYPE_BUSLINE);
+                            HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, keyword), HistoryWordTable.TYPE_BUSLINE);
                             BuslineQuery buslineQuery = new BuslineQuery(mPOIDetailFragment.mSphinx);
                             buslineQuery.setup(keyword, 0, false, R.id.view_traffic_home, getString(R.string.doing_and_wait));
                             buslineQuery.setCityId(cityId);

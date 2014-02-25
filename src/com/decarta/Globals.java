@@ -394,4 +394,14 @@ public class Globals {
 
         return cityInfo;
     }
+    
+    public static Position getMyLocationPosition() {
+        Position result = null;
+        CityInfo cityInfo = g_My_Location_City_Info;
+        if (cityInfo != null) {
+            result = cityInfo.getPosition();
+        }
+        
+        return result;
+    }
 }
