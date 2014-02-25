@@ -71,8 +71,7 @@ public class PinnedHeaderListViewAdapter extends BaseAdapter implements SectionI
 			mHeaderParent.setVisibility(View.GONE);
 		}else{
 			int section = getSectionForPosition(position);
-			TextView mHeaderText = (TextView) convertView
-					.findViewById(R.id.item_header_text);
+			TextView mHeaderText = (TextView) convertView.findViewById(R.id.item_header_text);
 			if (getPositionForSection(section) == position) {
 				mHeaderParent.setVisibility(View.VISIBLE);
 				mHeaderText.setText(mFriendsSections.get(section));

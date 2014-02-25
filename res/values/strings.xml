@@ -1387,4 +1387,8 @@
     <string name="delete_alarm">删除闹铃</string>
     <string name="ringtone">铃声：%1$s</string>
     <string name="ringtone_silent">静音</string>
+    <string name="alarm_tip_text">%1$s公交站还有%2$d米就要到了，请携带好随身物品准备下车</string>
+    <string name="close_alarm">关闭闹铃</string>
+    <string name="alarm_enable_tip">若开启公交闹铃需开启“设置->位置”中的GPS功能</string>
+    <string name="alarm_tip_title">到站提醒</string>
 </resources>
