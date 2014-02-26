@@ -409,9 +409,9 @@ public class BuslineResultLineFragment extends BaseFragment {
         BaseQuery baseQuery = tkAsyncTask.getBaseQuery();
         String apiType = baseQuery.getAPIType();
         if (BaseQuery.API_TYPE_BUSLINE_QUERY.equals(apiType)) {
-            InputSearchFragment.dealWithBuslineResponse(mSphinx, (BuslineQuery) baseQuery, mActionTag, mResultLsv);
+            dealWithBuslineResponse(mSphinx, (BuslineQuery) baseQuery, mActionTag, mResultLsv);
         } else if (BaseQuery.API_TYPE_DATA_QUERY.equals(apiType)) {
-            InputSearchFragment.dealWithPOIResponse((DataQuery) baseQuery, mSphinx, this);
+            dealWithPOIResponse((DataQuery) baseQuery, mSphinx, this);
         }
     }
     

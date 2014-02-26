@@ -367,7 +367,7 @@ public class BuslineResultStationFragment extends BaseFragment {
     public void onPostExecute(TKAsyncTask tkAsyncTask) {
         super.onPostExecute(tkAsyncTask);
         BuslineQuery baseQuery = (BuslineQuery)tkAsyncTask.getBaseQuery();
-        InputSearchFragment.dealWithBuslineResponse(mSphinx, baseQuery, mActionTag, mResultLsv);
+        dealWithBuslineResponse(mSphinx, baseQuery, mActionTag, mResultLsv);
     }
     
     class ChildView extends RelativeLayout {

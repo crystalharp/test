@@ -192,7 +192,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
 
     private FilterListView mFilterListView;
     private List<Filter> mFilterList;
-    private boolean mRefreshDiscover = false;
+
     
     @Override
     public void onCreate(Bundle savedInstanceState) {

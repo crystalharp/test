@@ -628,7 +628,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
             }
             
         } else {
-            InputSearchFragment.dealWithPOIResponse((DataQuery) baseQuery, mSphinx, this);
+            dealWithPOIResponse((DataQuery) baseQuery, mSphinx, this);
         }
     }
     
