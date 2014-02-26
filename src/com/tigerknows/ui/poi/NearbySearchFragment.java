@@ -700,7 +700,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     
     public void setData(DataQuery dataQuery) {
         reset();
-        refreshDiscover();
+        refreshDiscoverCities();
         mDataQuery = dataQuery;
         mPOI = mDataQuery.getPOI();
         if(mPOI.getSourceType() != POI.SOURCE_TYPE_MAP_CENTER && mPOI.getSourceType() != POI.SOURCE_TYPE_MY_LOCATION){
@@ -766,17 +766,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         	refreshTitleView(STATUS_HOME);
         }
     }
-	
-	private void refreshDiscover(){
-	    if (mRefreshDiscover == false) {
-	        mRefreshDiscover = true;
-            DataQuery dataQuery = new DataQuery(mSphinx);
-            dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_DISCOVER);
-            dataQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
-            dataQuery.setup(-1, -1, null, true);
-            mSphinx.queryStart(dataQuery);
-	    }
-	}
+
 
     @Override
     public void onPostExecute(TKAsyncTask tkAsyncTask) {
@@ -787,13 +777,13 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         if (BaseQuery.API_TYPE_DATA_QUERY.equals(apiType)) {
             String dataType = baseQuery.getParameter(BaseQuery.SERVER_PARAMETER_DATA_TYPE);
             if (BaseQuery.DATA_TYPE_POI.equals(dataType)) {
-                InputSearchFragment.dealWithPOIResponse((DataQuery) baseQuery, mSphinx, this);
+                dealWithPOIResponse((DataQuery) baseQuery, mSphinx, this);
             } else if (BaseQuery.DATA_TYPE_TUANGOU.equals(dataType) ||
                     BaseQuery.DATA_TYPE_DIANYING.equals(dataType) ||
                     BaseQuery.DATA_TYPE_YANCHU.equals(dataType) ||
                     BaseQuery.DATA_TYPE_ZHANLAN.equals(dataType)) {
                 
-            	InputSearchFragment.dealWithDynamicPOIResponse((DataQuery) baseQuery, mSphinx, this);
+            	dealWithDynamicPOIResponse((DataQuery) baseQuery, mSphinx, this);
             } else if(BaseQuery.DATA_TYPE_FILTER.equals(dataType)){
             	if(setFilterListView()){
             		setFilterOrder();
@@ -801,6 +791,4 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
             }
         }
     }
-    
-
 }

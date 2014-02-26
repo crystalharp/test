@@ -142,6 +142,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     @Override
     public void onResume() {
         super.onResume();
+        mSphinx.uiStackRemove(R.id.view_poi_input_search);
         mTitleBtn.setText(R.string.hotel_reserve);
         refreshTitleRightBtn();
         refreshDate();

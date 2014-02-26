@@ -377,6 +377,9 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     @Override
     public void onResume() {
         super.onResume();
+        
+        mSphinx.uiStackRemove(R.id.view_poi_input_search);
+        
         mIPagerListCallBack = null;
         
         if (isReLogin()) {
