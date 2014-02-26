@@ -77,7 +77,6 @@ import com.tigerknows.util.ByteUtil;
 import com.tigerknows.util.Utility;
 
 import android.content.Context;
-import android.location.Geocoder;
 import android.text.TextUtils;
 
 import java.io.File;

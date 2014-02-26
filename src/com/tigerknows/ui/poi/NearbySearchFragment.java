@@ -38,15 +38,12 @@ import com.tigerknows.map.CityInfo;
 import com.tigerknows.map.MapEngine;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.CategoryProperty;
-import com.tigerknows.model.DataQuery.DiscoverCategoreResponse;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.DataQuery;
-import com.tigerknows.model.Response;
 import com.tigerknows.model.DataQuery.Filter;
 import com.tigerknows.model.DataQuery.FilterCategoryOrder;
 import com.tigerknows.model.DataQuery.FilterOption;
 import com.tigerknows.model.DataQuery.FilterResponse;
-import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.widget.FilterListView;
 

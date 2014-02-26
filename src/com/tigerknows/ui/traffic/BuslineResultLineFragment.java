@@ -42,7 +42,6 @@ import com.tigerknows.model.BuslineQuery;
 import com.tigerknows.model.Response;
 import com.tigerknows.service.AlarmService;
 import com.tigerknows.ui.BaseFragment;
-import com.tigerknows.ui.poi.InputSearchFragment;
 import com.tigerknows.util.Utility;
 import com.tigerknows.widget.SpringbackListView;
 import com.tigerknows.widget.StringArrayAdapter;

@@ -20,7 +20,6 @@ import com.tigerknows.map.MapEngine;
 import com.tigerknows.map.ItemizedOverlayHelper;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.FeedbackUpload;
-import com.tigerknows.model.POI;
 import com.tigerknows.model.Yanchu;
 import com.tigerknows.model.PullMessage.Message.PulledDynamicPOI;
 import com.tigerknows.ui.discover.CycleViewPager.CyclePagerAdapter;

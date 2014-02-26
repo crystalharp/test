@@ -1,19 +1,15 @@
 package com.tigerknows.ui.hotel;
 
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
-import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.HotelOrder;
 import com.tigerknows.ui.BaseFragment;
 

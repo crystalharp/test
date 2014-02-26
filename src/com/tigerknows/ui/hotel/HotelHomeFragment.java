@@ -24,7 +24,6 @@ import com.tigerknows.model.Response;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.ui.more.ChangeCityActivity;
-import com.tigerknows.ui.poi.InputSearchFragment;
 import com.tigerknows.util.Utility;
 import com.tigerknows.widget.FilterListView;
 

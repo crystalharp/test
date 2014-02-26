@@ -33,7 +33,6 @@ import com.tigerknows.model.BuslineModel;
 import com.tigerknows.model.BuslineModel.Station;
 import com.tigerknows.model.BuslineQuery;
 import com.tigerknows.ui.BaseFragment;
-import com.tigerknows.ui.poi.InputSearchFragment;
 import com.tigerknows.widget.SpringbackListView;
 import com.tigerknows.widget.SpringbackListView.OnRefreshListener;
 
