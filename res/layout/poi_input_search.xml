@@ -1,115 +1,128 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical"
-    android:background="@color/list_background"
+    android:background="@color/gray_dark"
     >
-
-    <LinearLayout
-        android:id="@+id/traffic_btn_group"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" 
-        >
-
-        <Button
-            android:id="@+id/btn_my_position"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="12dp"
-            android:layout_weight="1"
-            android:drawableLeft="@drawable/ic_mylocation"
-            android:background="@drawable/btn_filter1"
-            android:text="@string/my_location" />
-
-        <Button
-            android:id="@+id/btn_fav_position"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="12dp"
-            android:layout_weight="1"
-            android:drawableLeft="@drawable/ic_favorite"
-            android:background="@drawable/btn_filter1"
-            android:text="@string/favorite_point" />
-
-        <Button
-            android:id="@+id/btn_map_position"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="12dp"
-            android:layout_weight="1"
-            android:drawableLeft="@drawable/ic_select_point"
-            android:background="@drawable/btn_filter2"
-            android:text="@string/map_select_point" />
-        
+	<LinearLayout
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent"
+	    android:orientation="vertical"
+	    android:background="@color/list_background"   
+	    >     
+	
+	    <LinearLayout
+	        android:id="@+id/traffic_btn_group"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content" 
+	        >
+	
+	        <Button
+	            android:id="@+id/btn_my_position"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:padding="12dp"
+	            android:layout_weight="1"
+	            android:drawableLeft="@drawable/ic_mylocation"
+	            android:background="@drawable/btn_filter1"
+	            android:text="@string/my_location" />
+	
+	        <Button
+	            android:id="@+id/btn_fav_position"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:padding="12dp"
+	            android:layout_weight="1"
+	            android:drawableLeft="@drawable/ic_favorite"
+	            android:background="@drawable/btn_filter1"
+	            android:text="@string/favorite_point" />
+	
+	        <Button
+	            android:id="@+id/btn_map_position"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:padding="12dp"
+	            android:layout_weight="1"
+	            android:drawableLeft="@drawable/ic_select_point"
+	            android:background="@drawable/btn_filter2"
+	            android:text="@string/map_select_point" />
+	        
+	    </LinearLayout>
+	    <LinearLayout
+	        android:id="@+id/poi_btn_group"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content" 
+	
+	        >
+	
+	        <Button
+	            android:id="@+id/btn_food"
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_weight="1"
+	            android:paddingTop="12dp"
+	            android:paddingBottom="12dp"
+	            android:background="@drawable/btn_filter1"
+	            android:text="@string/cate" />
+	        
+	        <Button
+	            android:id="@+id/btn_tuangou"
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_weight="1"
+	            android:paddingTop="12dp"
+	            android:paddingBottom="12dp"
+	            android:background="@drawable/btn_filter1"
+	            android:text="@string/tuangou" />
+	
+	        <Button
+	            android:id="@+id/btn_hotel"
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_weight="1"
+	            android:paddingTop="12dp"
+	            android:paddingBottom="12dp"
+	            android:background="@drawable/btn_filter1"
+	            android:text="@string/hotel" />
+	
+	        <Button
+	            android:id="@+id/btn_bus_station"
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_weight="1"
+	            android:singleLine="true"
+	            android:paddingTop="12dp"
+	            android:paddingBottom="12dp"
+	            android:background="@drawable/btn_filter1"
+	            android:text="@string/bus_station" />
+	
+	
+	        <Button
+	            android:id="@+id/btn_more"
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_weight="1"
+	            android:paddingTop="12dp"
+	            android:paddingBottom="12dp"
+	            android:background="@drawable/btn_filter2"
+	            android:text="@string/more" />                
+	    </LinearLayout>        
+	    <ListView
+	        android:id="@+id/suggest_lsv"
+	        android:layout_width="fill_parent"
+	        android:layout_height="fill_parent"
+	        android:focusable="true"
+	        android:scrollingCache="false"
+	        android:fadingEdge="none"
+	        android:divider="@drawable/bg_line_split"
+	        />
     </LinearLayout>
-    <LinearLayout
-        android:id="@+id/poi_btn_group"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content" 
-
-        >
-
-        <Button
-            android:id="@+id/btn_food"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:paddingTop="12dp"
-            android:paddingBottom="12dp"
-            android:background="@drawable/btn_filter1"
-            android:text="@string/cate" />
-        
-        <Button
-            android:id="@+id/btn_tuangou"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:paddingTop="12dp"
-            android:paddingBottom="12dp"
-            android:background="@drawable/btn_filter1"
-            android:text="@string/tuangou" />
-
-        <Button
-            android:id="@+id/btn_hotel"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:paddingTop="12dp"
-            android:paddingBottom="12dp"
-            android:background="@drawable/btn_filter1"
-            android:text="@string/hotel" />
-
-        <Button
-            android:id="@+id/btn_bus_station"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:singleLine="true"
-            android:paddingTop="12dp"
-            android:paddingBottom="12dp"
-            android:background="@drawable/btn_filter1"
-            android:text="@string/bus_station" />
-
-
-        <Button
-            android:id="@+id/btn_more"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:paddingTop="12dp"
-            android:paddingBottom="12dp"
-            android:background="@drawable/btn_filter2"
-            android:text="@string/more" />                
-    </LinearLayout>        
-    <ListView
-        android:id="@+id/suggest_lsv"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:focusable="true"
-        android:scrollingCache="false"
-        android:fadingEdge="none"
-        android:divider="@drawable/bg_line_split"
-        />
     
-</LinearLayout>
+    <com.tigerknows.widget.FilterListView
+        android:id="@+id/filter_list_view"
+        android:layout_width="fill_parent" 
+        android:layout_height="fill_parent" 
+        android:visibility="gone"
+        >
+    </com.tigerknows.widget.FilterListView>
+</RelativeLayout>

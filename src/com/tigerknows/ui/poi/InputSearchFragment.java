@@ -59,6 +59,10 @@ import com.tigerknows.model.POI;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.TKWord;
 import com.tigerknows.model.DataQuery.DiscoverCategoreResponse;
+import com.tigerknows.model.DataQuery.Filter;
+import com.tigerknows.model.DataQuery.FilterCategoryOrder;
+import com.tigerknows.model.DataQuery.FilterOption;
+import com.tigerknows.model.DataQuery.FilterResponse;
 import com.tigerknows.model.DataQuery.GeoCoderResponse;
 import com.tigerknows.model.DataQuery.POIResponse;
 import com.tigerknows.provider.HistoryWordTable;
@@ -66,6 +70,7 @@ import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.ui.traffic.BuslineResultLineFragment;
 import com.tigerknows.util.Utility;
+import com.tigerknows.widget.FilterListView;
 import com.tigerknows.widget.SpringbackListView;
 import com.tigerknows.widget.StringArrayAdapter;
 import com.tigerknows.widget.SuggestArrayAdapter.BtnEventHandler;
@@ -74,7 +79,7 @@ import com.tigerknows.widget.SuggestWordListManager;
 /**
  * @author Peng Wenyue
  */
-public class InputSearchFragment extends BaseFragment implements View.OnClickListener {
+public class InputSearchFragment extends BaseFragment implements View.OnClickListener, FilterListView.CallBack {
     
     final public static int MODE_POI = HistoryWordTable.TYPE_POI;
     final public static int MODE_TRAFFIC = HistoryWordTable.TYPE_TRAFFIC;
@@ -108,6 +113,9 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
     private IResponsePOI mIResponsePOI;
     
     private TKWord mTKWord;
+    
+    private FilterListView mFilterListView;
+    private List<Filter> mFilterList;
     
     /**
      * 返回POI的接口
@@ -212,6 +220,22 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
     @Override
     public void onResume() {
         super.onResume();
+        mLeftBtn.setOnClickListener(this);
+        
+        if(mFilterListView != null && mFilterListView.getVisibility() == View.VISIBLE){
+        	mSphinx.hideSoftInput();
+			mTitleBtn.setVisibility(View.VISIBLE);
+			mTitleBtn.setText(R.string.more);
+			mKeywordEdt.setVisibility(View.GONE);
+			mRightBtn.setVisibility(View.GONE);
+			mLeftBtn.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					backHome();
+				}
+			});
+			return;
+        }
         
         mTitleBtn.setVisibility(View.GONE);
         mKeywordEdt.setVisibility(View.VISIBLE);
@@ -331,7 +355,17 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         mBusStationBtn.setOnClickListener(this);
         mMoreBtn.setOnClickListener(this);
     }
-
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+    	if(mFilterListView.getVisibility() == View.VISIBLE){
+    		backHome();
+    	}else{
+            synchronized (mSphinx.mUILock) {
+            	dismiss();
+            }
+    	}
+    	return true;
+    }
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -413,11 +447,25 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
             	submitPOIQuery(new TKWord(TKWord.ATTRIBUTE_HISTORY, mSphinx.getString(R.string.bus_station)));
             	break;
             case R.id.btn_more:
+        		//TODO: actionLog
+        		if(setFilterListView()){
+            		mTitleBtn.setText(R.string.more);
+            		mFilterListView.setVisibility(View.VISIBLE);
+            		onResume();
+        		}else{
+        			queryFilter();
+        		}
             	break;
             default:
         }
     }
-    
+    private void queryFilter() {
+        DataQuery dataQuery = new DataQuery(mSphinx);
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_FILTER);
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_CONFIGINFO, DataQuery.CONFIGINFO_POI_CATEGORY_ORDER);
+        dataQuery.setup(getId(), getId(), null, true);
+        mSphinx.queryStart(dataQuery);
+    }    
     private void submit(TKWord tkWord) {
         if (tkWord == null || TextUtils.isEmpty(tkWord.word)) {
             return;
@@ -566,6 +614,11 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         mRequest = request;
         if(MODE_POI == mode){
         	refreshDiscoverCities();
+        	setFilterListView();
+            if (mFilterListView != null) {
+            	mFilterListView.setData(mFilterList, FilterResponse.FIELD_FILTER_CATEGORY_INDEX, this, false, mActionTag);
+        	    mFilterListView.setVisibility(View.GONE);
+            }
         }
     }
     
@@ -611,11 +664,51 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
             } else if (BaseQuery.DATA_TYPE_TUANGOU.equals(dataType)) {
             	dealWithDynamicPOIResponse((DataQuery) baseQuery, mSphinx, this);
             } else if (BaseQuery.DATA_TYPE_FILTER.equals(dataType)) {
-            	//TODO: 
+            	if(setFilterListView()){
+            		mTitleBtn.setText(R.string.more);
+            		mFilterListView.setVisibility(View.VISIBLE);
+            		onResume();
+            	}
             }
         }
     }
+    private boolean setFilterListView() {
+    	boolean result = false;
+        mFilterListView = (FilterListView) mRootView.findViewById(R.id.filter_list_view);
+        mFilterListView.findViewById(R.id.body_view).setPadding(0, 0, 0, 0);    	
+        if (mFilterList != null && mFilterList.size() > 0) {
+            FilterListView.selectedFilter(mFilterList.get(0), -1);
+            result = true;
+        } else {
+            DataQuery.initStaticField(BaseQuery.DATA_TYPE_POI, BaseQuery.SUB_DATA_TYPE_POI, mContext, MapEngine.getCityId(mDataQuery.getPOI().getPosition()));
+            FilterCategoryOrder filterCategory = DataQuery.getPOIFilterCategoryOrder();
+            if (filterCategory != null) {
+                List<FilterOption> filterOptionList = new ArrayList<DataQuery.FilterOption>();
+                List<FilterOption> online = filterCategory.getCategoryFilterOption();
+                if (online != null) {
+                    for(int i = 0, size = online.size(); i < size; i++) {
+                        filterOptionList.add(online.get(i).clone());
+                    }
+                }
+                List<Long> indexList = new ArrayList<Long>();
+                indexList.add(0l);
+                for(int i = 0, size = filterOptionList.size(); i < size; i++) {
+                    long id = filterOptionList.get(i).getId();
+                    indexList.add(id);
+                }
+                Filter categoryFilter = DataQuery.makeFilterResponse(mContext, indexList, filterCategory.getVersion(), filterOptionList, FilterCategoryOrder.FIELD_LIST_CATEGORY, true);
+                categoryFilter.getChidrenFilterList().remove(0);
+                
+                mFilterList = new ArrayList<Filter>();
+                mFilterList.add(categoryFilter);
 
+                mFilterListView.setData(mFilterList, FilterResponse.FIELD_FILTER_CATEGORY_INDEX, this, false, mActionTag);
+                result = true;
+            }
+        }
+        return result;
+    }
+   
     /**
      * 反向定位POI的Apapter
      * @author pengwenwue
@@ -701,6 +794,42 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         dialog.show();
     }
 
+	@Override
+	public void doFilter(String name) {
+		backHome();
+        Filter categoryFitler = mFilterList.get(0);
+        List<Filter> list = categoryFitler.getChidrenFilterList();
+        for(int i = 0, size = list.size(); i < size; i++) {
+            Filter filter = list.get(i);
+            if (filter.isSelected()) {
+            }
+            List<Filter> chidrenList = filter.getChidrenFilterList();
+            for(int j = 0, count = chidrenList.size(); j < count; j++) {
+                Filter children = chidrenList.get(j);
+                if (children.isSelected()) {
+                	String word;
+                	if(children.getFilterOption().getName().contains(mSphinx.getString(R.string.all))){
+                		word = filter.getFilterOption().getName();
+                	}else{
+                		word = children.getFilterOption().getName();
+                	}
+                	mKeywordEdt.setText(word);
+                	submit(new TKWord(TKWord.ATTRIBUTE_HISTORY, word));
+                    return;
+                }
+            }
+        }		
+	}
+
+	@Override
+	public void cancelFilter() {
+		backHome();
+		
+	}
     
+	protected void backHome() {
+        mFilterListView.setVisibility(View.GONE);
+        onResume();
+    }
     
 }
