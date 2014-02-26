@@ -6,7 +6,9 @@ import java.util.List;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
+import android.content.res.Resources;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -14,7 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -53,7 +54,6 @@ import com.tigerknows.ui.traffic.TrafficCommonPlaceFragment.CommonPlaceList;
 import com.tigerknows.ui.traffic.TrafficSearchHistoryFragment.SearchHistoryList;
 import com.tigerknows.util.Utility;
 import com.tigerknows.widget.LinearListAdapter;
-import com.tigerknows.widget.StringArrayAdapter;
 
 /**
  * 此类包含 交通首页、交通输入页、交通全屏页、交通选点页，合称“交通频道首页”
@@ -162,6 +162,12 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
     
 //	int oldCheckButton;
     List<String> keywordList;
+    
+    private View mButtonsView;
+    private ViewGroup mAlarmBtn;
+    private ViewGroup mBusLineBtn;
+    private ViewGroup mBusStationBtn;
+    private ViewGroup mSubWayBtn;
 	
 	private boolean isKeyword(String input) {
 	    return keywordList.contains(input);
@@ -255,6 +261,33 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
         mRootView = mLayoutInflater.inflate(R.layout.traffic_query, container, false);
 
         findViews();
+        setListener();
+        
+        Resources resources = mSphinx.getResources();
+        Drawable left = resources.getDrawable(R.drawable.ic_search_busline);
+        left.setBounds(0, 0, left.getIntrinsicWidth(), left.getIntrinsicHeight());
+        TextView textView = (TextView) mAlarmBtn.getChildAt(0);
+        textView.setCompoundDrawables(left, null, null, null);
+        textView.setText(R.string.alarm_text);
+        
+        left = resources.getDrawable(R.drawable.ic_search_busline);
+        left.setBounds(0, 0, left.getIntrinsicWidth(), left.getIntrinsicHeight());
+        textView = (TextView) mBusLineBtn.getChildAt(0);
+        textView.setCompoundDrawables(left, null, null, null);
+        textView.setText(R.string.busline);
+        
+        left = resources.getDrawable(R.drawable.ic_search_busstop);
+        left.setBounds(0, 0, left.getIntrinsicWidth(), left.getIntrinsicHeight());
+        textView = (TextView) mBusStationBtn.getChildAt(0);
+        textView.setCompoundDrawables(left, null, null, null);
+        textView.setText(R.string.station);
+        
+        left = resources.getDrawable(R.drawable.ic_map_tools_subway);
+        left.setBounds(0, 0, left.getIntrinsicWidth(), left.getIntrinsicHeight());
+        textView = (TextView) mSubWayBtn.getChildAt(0);
+        textView.setCompoundDrawables(left, null, null, null);
+        textView.setText(R.string.subway_map);
+        
         MY_LOCATION = getString(R.string.my_location);
         MAP_LOCATION = getString(R.string.map_point);
         
@@ -291,8 +324,13 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
     	mQueryHistoryLst = (LinearLayout)mRootView.findViewById(R.id.query_history_lst);
 //    	mAddCommonPlace = (LinearLayout)mRootView.findViewById(R.id.add_common_place);
     	mCommonPlaceLst = (LinearLayout)mRootView.findViewById(R.id.common_place_lsv);
+    	
+    	mButtonsView   = mRootView.findViewById(R.id.bottom_buttons_view);
+        mAlarmBtn      = (ViewGroup) mButtonsView.findViewById(R.id.nearby_search_btn);
+        mBusLineBtn    = (ViewGroup) mButtonsView.findViewById(R.id.favorite_btn);
+        mBusStationBtn = (ViewGroup) mButtonsView.findViewById(R.id.share_btn);
+        mSubWayBtn     = (ViewGroup) mButtonsView.findViewById(R.id.error_recovery_btn);
 		
-    	setListener();
     }
 	
     @Override
@@ -387,6 +425,11 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	            return null;
 	        }
 	    };
+
+        mAlarmBtn.setOnClickListener(this);
+        mBusLineBtn.setOnClickListener(this);
+        mBusStationBtn.setOnClickListener(this);
+        mSubWayBtn.setOnClickListener(this);
 	}
     /**
      * 退出该页面时, 发生于从交通输入页返回POI详情页时
@@ -413,7 +456,8 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	public void onResume() {
 	    super.onResume();
          
-        mRightBtn.setVisibility(View.VISIBLE);
+        mRightBtn.setBackgroundResource(R.drawable.btn_confirm);
+        mRightBtn.setText(R.string.search);
 	    mRightBtn.setOnClickListener(this);
 	    /*
          * 由于在一个“session”中会多次调用onresume，导致在地图选点和收藏夹选点之后返回本页面都会调用initstart
@@ -446,12 +490,9 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
 	void refreshRightBtn() {
 	    if (!mStart.textEmpty() 
                 && !mEnd.textEmpty()) {
-            mRightBtn.setBackgroundResource(R.drawable.btn_confirm);
-            mRightBtn.setText(R.string.search);
+            mRightBtn.setVisibility(View.VISIBLE);
         } else {
-            mRightBtn.setText("");
-            mRightBtn.setBackgroundResource(R.drawable.btn_traffic_more_type);
-            mRightBtn.setPadding(0, 0, 0, 0);
+            mRightBtn.setVisibility(View.INVISIBLE);
         }
 	}
 	
@@ -635,37 +676,6 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
             mSphinx.showTip(R.string.forget_end_tip, Toast.LENGTH_SHORT);
             return true;
         }
-		
-		return false;
-	}
-	
-	private boolean checkIsInputEqual() {
-		/*
-		 * 对于"选定的位置"
-		 * 若坐标点不同, 则认为二者不同, 
-		 * 若坐标点相同, 则认为二者相同.
-		 */
-	    POI start, end;
-	    start = mStart.getPOI();
-	    end = mEnd.getPOI();
-		if (MAP_LOCATION.equals(mStart.getText())
-				&& MAP_LOCATION.equals(mEnd.getText())) {
-			if (POI.isPositionEqual(start, end)) {
-				mSphinx.showTip(R.string.start_equal_to_end, Toast.LENGTH_SHORT);
-				return true;
-			} else {
-				return false;
-			}
- 		}
-		
-		/*
-		 * 对于其余的输入
-		 * 若名字相同, 则认为二者相同
-		 */
-		if (POI.isNameEqual(start, end)) {
-			mSphinx.showTip(R.string.start_equal_to_end, Toast.LENGTH_SHORT);
-			return true;
-		} 
 		
 		return false;
 	}
@@ -957,56 +967,6 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
             if (!mStart.textEmpty() && !mEnd.textEmpty()) {
                 mActionLog.addAction(mActionTag + ActionLog.TrafficHomeClickSearchBtn);
                 query();
-            } else {
-                mActionLog.addAction(mActionTag + ActionLog.TrafficHomeClickMoreBtn);
-                String[] list = mSphinx.getResources().getStringArray(R.array.traffic_search_option);
-                int[] leftCompoundIconList = new int[3];
-                leftCompoundIconList[0] = R.drawable.ic_search_busline;
-                leftCompoundIconList[1] = R.drawable.ic_search_busstop;
-                leftCompoundIconList[2] = R.drawable.ic_map_tools_subway;
-                final ArrayAdapter<String> adapter = new StringArrayAdapter(mSphinx, list, leftCompoundIconList);
-                
-                View alterListView = mSphinx.getLayoutInflater().inflate(R.layout.alert_listview, null, false);
-                
-                ListView listView = (ListView) alterListView.findViewById(R.id.listview);
-                listView.setAdapter(adapter);
-                
-                final Dialog dialog = Utility.getChoiceDialog(mSphinx, alterListView, R.style.AlterChoiceDialog);
-                
-                TextView titleTxv = (TextView)alterListView.findViewById(R.id.title_txv);
-                titleTxv.setText(R.string.more);
-                
-                Button button = (Button)alterListView.findViewById(R.id.confirm_btn);
-                button.setVisibility(View.GONE);
-                
-                dialog.show();
-                
-                listView.setOnItemClickListener(new OnItemClickListener() {
-
-                    @Override
-                    public void onItemClick(AdapterView<?> adapterView, View arg1, int index, long arg3) {
-
-                        mActionLog.addAction(mActionTag + ActionLog.TrafficHomeClickMoreAlert, index);
-                        if (index == 0 || index == 1) {
-                            DataQuery dataQuery = new DataQuery(mSphinx);
-                            dataQuery.setCityId(getCityId(mStart.getPOI(), mEnd.getPOI()));
-                            mSphinx.getInputSearchFragment().setData(dataQuery,
-                            		null,
-                                    InputSearchFragment.MODE_BUSLINE);
-                            mSphinx.showView(R.id.view_poi_input_search);
-                        } else if (index == 2) {
-                            mSphinx.getSubwayMapFragment().setData(Globals.getCurrentCityInfo(mSphinx, false));
-                            mSphinx.showView(R.id.view_subway_map);
-                        }
-                        dialog.setOnDismissListener(new OnDismissListener() {
-                            
-                            @Override
-                            public void onDismiss(DialogInterface dialog) {
-                            }
-                        });
-                        dialog.dismiss();
-                    }
-                });
             }
             break;
             
@@ -1070,6 +1030,37 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
         case R.id.traffic_switch_btn:
             mActionLog.addAction(mActionTag + ActionLog.TrafficSwitchStartEnd);
             switchStartEnd();
+            break;
+            
+        case R.id.nearby_search_btn:
+            mActionLog.addAction(mActionTag + ActionLog.TrafficHomeClickAlarmBtn);
+            mSphinx.showView(R.id.view_alarm_list);
+            break;
+            
+        case R.id.favorite_btn:
+            mActionLog.addAction(mActionTag + ActionLog.TrafficHomeClickBusLineBtn);
+            dataQuery = new DataQuery(mSphinx);
+            dataQuery.setCityId(getCityId(mStart.getPOI(), mEnd.getPOI()));
+            mSphinx.getInputSearchFragment().setData(dataQuery,
+                    null,
+                    InputSearchFragment.MODE_BUSLINE);
+            mSphinx.showView(R.id.view_poi_input_search);
+            break;
+            
+        case R.id.share_btn:
+            mActionLog.addAction(mActionTag + ActionLog.TrafficHomeClickBusStationBtn);
+            dataQuery = new DataQuery(mSphinx);
+            dataQuery.setCityId(getCityId(mStart.getPOI(), mEnd.getPOI()));
+            mSphinx.getInputSearchFragment().setData(dataQuery,
+                    null,
+                    InputSearchFragment.MODE_BUSLINE);
+            mSphinx.showView(R.id.view_poi_input_search);
+            break;
+            
+        case R.id.error_recovery_btn:
+            mActionLog.addAction(mActionTag + ActionLog.TrafficHomeClickSubWayBtn);
+            mSphinx.getSubwayMapFragment().setData(Globals.getCurrentCityInfo(mSphinx, false));
+            mSphinx.showView(R.id.view_subway_map);
             break;
             
         }
