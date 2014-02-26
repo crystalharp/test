@@ -10,6 +10,7 @@ import com.tigerknows.util.HttpUtils;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -104,12 +105,14 @@ public class DownloadService extends IntentService {
             service.putExtra(EXTRA_OPERATION_CODE, OPERATION_CODE_ADD);
             service.putExtra(EXTRA_URL, url);
             service.putExtra(EXTRA_TICKERTEXT, tickerText);
-            if(!sDownloadList.containsKey(url)) {// 若已正在下载，则必然已注册过，否则可新注册一个processor
-                DownloadService.registerProcessor(url, processor);
-                context.startService(service);
-            }
-            else {
-                Toast.makeText(context, R.string.file_downloading, Toast.LENGTH_SHORT).show();
+            synchronized (sDownloadList) {
+                if(!sDownloadList.containsKey(url)) {// 若已正在下载，则必然已注册过，否则可新注册一个processor
+                    DownloadService.registerProcessor(url, processor);
+                    context.startService(service);
+                }
+                else {
+                    Toast.makeText(context, R.string.file_downloading, Toast.LENGTH_SHORT).show();
+                }
             }
         }
     }
@@ -151,8 +154,11 @@ public class DownloadService extends IntentService {
         String operationCode = intent.getStringExtra(EXTRA_OPERATION_CODE);
         String url = intent.getStringExtra(EXTRA_URL);
         LogWrapper.d(TAG, "onStartCommand() operationCode, url:" + operationCode + "," + url);
+        DownloadItem downloadItem = null;
         if (OPERATION_CODE_PAUSE.equals(operationCode)) {
-            DownloadItem downloadItem = sDownloadList.remove(url);
+            synchronized (sDownloadList) {
+                downloadItem = sDownloadList.remove(url);
+            }
             if (downloadItem != null) {
                 downloadItem.stop = true;
                 if (currentDownloadItem != null && currentDownloadItem.url.equals(downloadItem.url)) {
@@ -165,15 +171,18 @@ public class DownloadService extends IntentService {
             
             intent.putExtra(EXTRA_IS_DOWNLOADED, true);
         } else if (OPERATION_CODE_ADD.equals(operationCode)) {
+            synchronized (sDownloadList) {
+                downloadItem = sDownloadList.get(url);
+            }
             // 由于外部可不掉用download静态方法来下载而直接调用startService来启动服务，因此这里仍需判断重复
-            if(sDownloadList.containsKey(url)) {
+            if(downloadItem != null) {
                 intent.putExtra(EXTRA_IS_DOWNLOADED, true);
                 Toast.makeText(this, R.string.file_downloading, Toast.LENGTH_SHORT).show();
             } else {
                 
                 String tickerText = intent.getStringExtra(EXTRA_TICKERTEXT);
                 int percent = intent.getIntExtra(EXTRA_PERCENT, 0);
-                DownloadItem downloadItem = notifyOnGoing(url, tickerText, percent);
+                downloadItem = notifyOnGoing(url, tickerText, percent);
                 if (DownloadedList.containsKey(url) == false) {
                     try {
                         File tempFile = createFileByUrl(url);
@@ -186,7 +195,9 @@ public class DownloadService extends IntentService {
                     }
                     DownloadedList.put(url, downloadItem);
                 }
-                sDownloadList.put(url, downloadItem);
+                synchronized (sDownloadList) {
+                    sDownloadList.put(url, downloadItem);
+                }
                 Toast.makeText(this, R.string.add_to_download_list, Toast.LENGTH_SHORT).show();
             }
         }
@@ -202,8 +213,10 @@ public class DownloadService extends IntentService {
         }
         String url = intent.getStringExtra(EXTRA_URL);
         String tickerText = intent.getStringExtra(EXTRA_TICKERTEXT);
-        if (sDownloadList.containsKey(url)) {
+        synchronized (sDownloadList) {
             currentDownloadItem = sDownloadList.get(url);
+        }
+        if (currentDownloadItem != null) {
             File tempFile = null;
             do {
                 tempFile = downFile(currentDownloadItem, url);
@@ -216,10 +229,12 @@ public class DownloadService extends IntentService {
                     }
                 }
             } while (tempFile == null && !stop && !currentDownloadItem.stop);
-            DownloadItem downloadItem = sDownloadList.get(url);
-            if (downloadItem == null || downloadItem.timeMillis == currentDownloadItem.timeMillis) {
-                nm.cancel(currentDownloadItem.url.hashCode());
-                sDownloadList.remove(url);
+            synchronized (sDownloadList) {
+                DownloadItem downloadItem = sDownloadList.get(url);
+                if (downloadItem == null || downloadItem.timeMillis == currentDownloadItem.timeMillis) {
+                    nm.cancel(currentDownloadItem.url.hashCode());
+                    sDownloadList.remove(url);
+                }
             }
             if(tempFile != null && !stop && !currentDownloadItem.stop) {
                 DownloadedProcessor processor = processorMap.get(url);
@@ -286,6 +301,7 @@ public class DownloadService extends IntentService {
             }
             File tempFile = createFileByUrl(url);
             long fileSize = tempFile.length();
+            LogWrapper.d(TAG, "fileSize:"+fileSize);
             httpClient = HttpManager.getNewHttpClient();
             HttpUriRequest request = new HttpGet(url);
             
@@ -302,32 +318,43 @@ public class DownloadService extends IntentService {
             long length = entity.getContentLength();   //TODO: getContentLength()某些服务器可能返回-1
             LogWrapper.d(TAG, "length:"+length);
             InputStream is = entity.getContent();
-            if(is != null) {
-                BufferedInputStream bis = new BufferedInputStream(is);
-                BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(tempFile, true));
-                int read = 0;
-                long count = fileSize;
-                length += fileSize;
-                int percent = 0;
-                int counted_percent = 0;
-                byte[] buffer = new byte[1024];
-                while (!stop && !downloadItem.stop && (read = bis.read(buffer)) != -1) {
-                    bos.write(buffer, 0, read);
-                    count += read;
-                    percent = (int)(((double)count / length) * 100);
-                    if(percent - counted_percent >= 1) {
-                        notifyPercent(downloadItem, percent);
-                        counted_percent = percent;
+            StatusLine status = response.getStatusLine();
+            LogWrapper.d(TAG, "status.getStatusCode():"+status.getStatusCode());
+            if(status != null) {
+                int statusCode = status.getStatusCode();
+                if (statusCode == 416 && fileSize > 0) {
+                    if (!stop && !downloadItem.stop) {
+                        return tempFile;
+                    } else {
+                        return null;
                     }
-                }
-                bos.flush();
-                bos.close();
-                is.close();
-                bis.close();
-                if (!stop && !downloadItem.stop) {
-                    return tempFile;
-                } else {
-                    return null;
+                } else if(((statusCode == 200 && fileSize == 0) || (statusCode == 206 && fileSize > 0)) && is != null) {
+                    BufferedInputStream bis = new BufferedInputStream(is);
+                    BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(tempFile, true));
+                    int read = 0;
+                    long count = fileSize;
+                    length += fileSize;
+                    int percent = 0;
+                    int counted_percent = 0;
+                    byte[] buffer = new byte[1024];
+                    while (!stop && !downloadItem.stop && (read = bis.read(buffer)) != -1) {
+                        bos.write(buffer, 0, read);
+                        count += read;
+                        percent = (int)(((double)count / length) * 100);
+                        if(percent - counted_percent >= 1) {
+                            notifyPercent(downloadItem, percent);
+                            counted_percent = percent;
+                        }
+                    }
+                    bos.flush();
+                    bos.close();
+                    is.close();
+                    bis.close();
+                    if (!stop && !downloadItem.stop) {
+                        return tempFile;
+                    } else {
+                        return null;
+                    }
                 }
             }
         } catch (Exception e) {

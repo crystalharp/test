@@ -128,7 +128,10 @@ public class AlarmShowActivity extends TKActivity implements View.OnClickListene
     }
     
     private void refreshText() {
-        mBodyTxv.setText(getString(R.string.alarm_tip_text, mAlarm.getName(), Position.distanceBetween(Globals.getMyLocationPosition(), mAlarm.getPosition())));
+        Position position = Globals.getMyLocationPosition();
+        if (position != null) {
+            mBodyTxv.setText(getString(R.string.alarm_tip_text, mAlarm.getName(), Position.distanceBetween(position, mAlarm.getPosition())));
+        }
     }
 
     private void play() {
