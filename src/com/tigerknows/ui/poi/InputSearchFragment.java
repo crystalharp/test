@@ -58,6 +58,7 @@ import com.tigerknows.model.DataQuery.POIResponse.POIList;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.TKWord;
+import com.tigerknows.model.DataQuery.DiscoverCategoreResponse;
 import com.tigerknows.model.DataQuery.GeoCoderResponse;
 import com.tigerknows.model.DataQuery.POIResponse;
 import com.tigerknows.provider.HistoryWordTable;
@@ -99,7 +100,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
     private Button mFoodBtn;
     private Button mTuangouBtn;
     private Button mHotelBtn;
-    private Button mBunStationBtn;
+    private Button mBusStationBtn;
     private Button mMoreBtn;
     
     private SuggestWordListManager mSuggestWordListManager;
@@ -279,7 +280,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         mFoodBtn = (Button) mRootView.findViewById(R.id.btn_food);
         mTuangouBtn = (Button) mRootView.findViewById(R.id.btn_tuangou);
         mHotelBtn = (Button) mRootView.findViewById(R.id.btn_hotel);
-        mBunStationBtn = (Button) mRootView.findViewById(R.id.btn_bus_station);
+        mBusStationBtn = (Button) mRootView.findViewById(R.id.btn_bus_station);
         mMoreBtn = (Button) mRootView.findViewById(R.id.btn_more);
     }
 
@@ -321,11 +322,14 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         });
         
         mMapSelectPointBtn.setOnClickListener(this);
-        
         mMyPosBtn.setOnClickListener(this);
-        
         mFavBtn.setOnClickListener(this);
         
+        mFoodBtn.setOnClickListener(this);
+        mTuangouBtn.setOnClickListener(this);
+        mHotelBtn.setOnClickListener(this);
+        mBusStationBtn.setOnClickListener(this);
+        mMoreBtn.setOnClickListener(this);
     }
 
     @Override
@@ -389,6 +393,27 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                 mActionLog.addAction(ActionLog.InputQueryFavPosition);
                 mSphinx.showView(mSphinx.getFetchFavoriteFragment().getId());
                 break;
+            case R.id.btn_food:
+            	// TODO: actionLog
+            	submitPOIQuery(new TKWord(TKWord.ATTRIBUTE_HISTORY, mSphinx.getString(R.string.cate)));
+            	break;
+            case R.id.btn_tuangou:
+                if (DataQuery.checkDiscoveryCity(mDataQuery.getCityId(), Long.parseLong(BaseQuery.DATA_TYPE_TUANGOU)) == false) {
+                    Toast.makeText(mSphinx, R.string.this_city_not_support_tuangou, Toast.LENGTH_LONG).show();
+                    return;
+                }
+                mSphinx.queryStart(getDiscoverDataQuery(BaseQuery.DATA_TYPE_TUANGOU));
+                break;
+            case R.id.btn_hotel:
+        		mSphinx.getHotelHomeFragment().resetDate();
+        		mSphinx.getHotelHomeFragment().setCityInfo(Globals.getCurrentCityInfo(mContext));
+        		mSphinx.showView(R.id.view_hotel_home);
+        		break;
+            case R.id.btn_bus_station:
+            	submitPOIQuery(new TKWord(TKWord.ATTRIBUTE_HISTORY, mSphinx.getString(R.string.bus_station)));
+            	break;
+            case R.id.btn_more:
+            	break;
             default:
         }
     }
@@ -474,6 +499,19 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
     }
     
     /**
+     * 发现频道(团购)搜索
+     * @param String dataType
+     */
+    private DataQuery getDiscoverDataQuery(String dataType) {
+        DataQuery dataQuery = new DataQuery(mDataQuery);
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, dataType);
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
+        dataQuery.delParameter(DataQuery.SERVER_PARAMETER_POI_ID);
+        dataQuery.setup(getId(), getId(), getString(R.string.doing_and_wait));
+        return dataQuery;
+    }
+    
+    /**
      * 公交线路搜索
      * @param keyword
      */
@@ -526,6 +564,9 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         mCurHisWordType = mode;
         mIResponsePOI = iResponsePOI;
         mRequest = request;
+        if(MODE_POI == mode){
+        	refreshDiscoverCities();
+        }
     }
     
     @Override
@@ -565,261 +606,12 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                 Toast.makeText(mSphinx, getString(R.string.can_not_found_target_location), Toast.LENGTH_LONG).show();
                 
             } else if (BaseQuery.DATA_TYPE_POI.equals(dataType)) {
-                int result = dealWithPOIResponse((DataQuery) baseQuery, mSphinx, this);
+                dealWithPOIResponse((DataQuery) baseQuery, mSphinx, this);
 
-            }
-        }
-    }
-
-    /**
-     * 处理POI搜索结果，实现界面跳转和给出相应提示
-     * @param sphinx
-     * @param poiResponse
-     */
-    public static int dealWithPOIResponse(final DataQuery dataQuery, final Sphinx sphinx, BaseFragment baseFragment) {
-        int result = -4;
-        if (dataQuery.isStop()) {
-            result = -3;
-            return result;
-        }
-        
-        if (BaseActivity.checkReLogin(dataQuery, sphinx, sphinx.uiStackContains(R.id.view_user_home), baseFragment.getId(), baseFragment.getId(), baseFragment.getId(), baseFragment.mCancelLoginListener)) {
-            baseFragment.isReLogin = true;
-            result = -2;
-            return result;
-        }
-        
-        boolean isBuslineTurnPage = dataQuery.hasLocalParameter(BuslineResultLineFragment.BUSLINE_TURNPAGE);
-        if (BaseActivity.hasAbnormalResponseCode(dataQuery, sphinx, isBuslineTurnPage ? BaseActivity.SHOW_NOTHING : BaseActivity.SHOW_DIALOG, baseFragment, false)) {
-            if (isBuslineTurnPage) {
-                sphinx.getBuslineResultLineFragment().setData(null, dataQuery);
-            }
-            result = -1;
-            return result;
-        }
-
-        POIResponse poiResponse = (POIResponse)dataQuery.getResponse();
-        
-        // 公交线路数据
-        // 存在此数据则跳转到公交线路列表结果界面
-        BuslineModel buslineModel = poiResponse.getBuslineModel();
-        if (buslineModel != null) {
-            if (buslineModel.getType() == BuslineModel.TYPE_BUSLINE) {
-                sphinx.getBuslineResultLineFragment().setData(null, dataQuery);
-                if (dataQuery.isTurnPage() == false) {
-                    sphinx.showView(R.id.view_traffic_busline_line_result);
-                    sphinx.uiStackRemove(R.id.view_poi_input_search);
-                }
-                result = POIResponse.FIELD_EXT_BUSLINE;
-                return result;
-            }
-        }
-        
-        // 地图的中心和边界范围数据
-        // 若存在此数据则设置地图中心及比例尺，跳转到首页
-        final MapView mapView = sphinx.getMapView();
-        MapCenterAndBorderRange mapCenterAndBorderRange = poiResponse.getMapCenterAndBorderRange();
-        if (mapCenterAndBorderRange != null) {
-            
-            Position mapCenter = mapCenterAndBorderRange.getMapCenter();
-            float zoomLevel = mapView.getZoomLevel();
-            
-            ArrayList<Position> borderRange = mapCenterAndBorderRange.getBorderRange();
-            if (borderRange != null
-                    && borderRange.size() > 0) {
-                
-                DisplayMetrics displayMetrics = Globals.g_metrics;
-                try {
-                    Rect rect = mapView.getPadding();
-                    zoomLevel = Util.getZoomLevelToFitPositions(displayMetrics.widthPixels,
-                            displayMetrics.heightPixels,
-                            rect,
-                            borderRange);
-                } catch (APIException e) {
-                    e.printStackTrace();
-                }
-                
-            }
-            
-            if (mapCenter != null) {
-                mapView.centerOnPosition(mapCenter, zoomLevel);
-                sphinx.getHomeFragment().reset();
-                sphinx.uiStackClearTop(R.id.view_home);
-                result = POIResponse.FIELD_MAP_CENTER_AND_BORDER_RANGE;
-                return result;
-            }
-        }
-        
-        // 城市及结果数量列表数据
-        final List<CityIdAndResultTotal> cityIdAndResultTotalList = poiResponse.getCityIdAndResultTotalList();
-        if (cityIdAndResultTotalList != null && cityIdAndResultTotalList.size() > 0) {
-            // 若只存在一个城市及结果数量时，以城市中心位置发起搜索，不移动地图
-            if (cityIdAndResultTotalList.size() == 1) {
-                int cityId = (int) cityIdAndResultTotalList.get(0).getCityId();
-                CityInfo cityInfo = MapEngine.getCityInfo(cityId);
-                if (cityInfo.isAvailably()) {
-                    DataQuery newDataQuery = new DataQuery(dataQuery);
-                    Position position = cityInfo.getPosition();
-                    newDataQuery.addParameter(BaseQuery.SERVER_PARAMETER_CENTER_LONGITUDE, String.valueOf(position.getLon()));
-                    newDataQuery.addParameter(BaseQuery.SERVER_PARAMETER_CENTER_LATITUDE, String.valueOf(position.getLat()));
-                    newDataQuery.setCityId(cityId);
-                    sphinx.queryStart(newDataQuery);
-                    result = POIResponse.FIELD_CITY_ID_AND_RESULT_TOTAL;
-                    return result;
-                }
-                
-            // 若存在多个城市及结果时，提示城市列表，用户选择后以城市中心位置发起搜索，不移动地图
-            } else {
-                final List<CityInfo> cityList = new ArrayList<CityInfo>();
-                List<String> cityNameList = new ArrayList<String>();
-                for(int i = 0, size = cityIdAndResultTotalList.size(); i < size; i++) {
-                    CityIdAndResultTotal cityIdAndResultTotal = cityIdAndResultTotalList.get(i);
-                    CityInfo cityInfo = MapEngine.getCityInfo((int) cityIdAndResultTotal.getCityId());
-                    if (cityInfo.isAvailably()) {
-                        cityList.add(cityInfo);
-                        cityNameList.add(cityInfo.getCName()+"("+cityIdAndResultTotal.getResultTotal()+")");
-                    }
-                }
-                
-                StringArrayAdapter adapter = new StringArrayAdapter(sphinx, cityNameList);
-                
-                View alterListView = sphinx.getLayoutInflater().inflate(R.layout.alert_listview, null, false);
-                
-                final Dialog dialog = Utility.getChoiceDialog(sphinx, alterListView, R.style.AlterChoiceDialog);
-                
-                ListView listView = (ListView) alterListView.findViewById(R.id.listview);
-                listView.setAdapter(adapter);
-                
-                listView.setOnItemClickListener(new OnItemClickListener() {
-        
-                    @Override
-                    public void onItemClick(AdapterView<?> adapterView, View arg1, int position, long arg3) {
-                        CityIdAndResultTotal cityIdAndResultTotal = cityIdAndResultTotalList.get(position);
-                        DataQuery newDataQuery = new DataQuery(dataQuery);
-                        Position pos = cityList.get(position).getPosition();
-                        newDataQuery.addParameter(BaseQuery.SERVER_PARAMETER_CENTER_LONGITUDE, String.valueOf(pos.getLon()));
-                        newDataQuery.addParameter(BaseQuery.SERVER_PARAMETER_CENTER_LATITUDE, String.valueOf(pos.getLat()));
-                        newDataQuery.setCityId((int) cityIdAndResultTotal.getCityId());
-                        sphinx.queryStart(newDataQuery);
-                        dialog.dismiss();
-                    }
-                });
-                
-                
-                TextView titleTxv = (TextView)alterListView.findViewById(R.id.title_txv);
-                titleTxv.setText(R.string.cityid_and_result_total_list);
-                
-                Button button = (Button)alterListView.findViewById(R.id.confirm_btn);
-                button.setVisibility(View.GONE);
-                
-                dialog.show();
-
-                result = POIResponse.FIELD_CITY_ID_AND_RESULT_TOTAL;
-                return result;
-            }
-        }        
-        
-        // POI结果列表
-        POIList bPOIList = poiResponse.getBPOIList();
-        String subDataType = dataQuery.getParameter(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE);
-        if (DataQuery.SUB_DATA_TYPE_HOTEL.equals(subDataType)) {
-            if (bPOIList == null || bPOIList.getList() == null || bPOIList.getList().isEmpty()) {
-                Toast.makeText(sphinx, sphinx.getString(R.string.no_result), Toast.LENGTH_LONG).show();
-                return 2;
-            }
-        }
-        POIResultFragment poiResultFragment = sphinx.getPOIResultFragment();
-        // 跳转到POI结果列表界面
-        if (bPOIList.getShowType() == 0) {
-            sphinx.uiStackRemove(R.id.view_poi_result);
-            poiResultFragment.setData(dataQuery, true);
-            sphinx.showView(R.id.view_poi_result);
-            poiResultFragment.setSelectionFromTop();
-        
-        // 跳转到POI结果地图界面
-        } else if (bPOIList.getShowType() == 1) {
-            if (bPOIList == null || bPOIList.getList() == null || bPOIList.getList().isEmpty()) {
-                Toast.makeText(sphinx, sphinx.getString(R.string.no_result), Toast.LENGTH_LONG).show();
-                return 2;
-            } else {
-                poiResultFragment.setData(dataQuery, true);
-
-                sphinx.uiStackClearTop(R.id.view_home);
-                sphinx.getResultMapFragment().setData(sphinx.getString(R.string.result_map), ActionLog.POIListMap);
-                sphinx.showView(R.id.view_result_map);
-                // 下面这行代码本来是应该在sphinx.getResultMapFragment().setData（）之前执行，
-                // 由于sphinx.uiStackClearTop(R.id.view_home)的特殊逻辑将其移到此处
-                ItemizedOverlayHelper.drawPOIOverlay(sphinx, bPOIList.getList(), 0, poiResultFragment.getAPOI());
-            }
-        }
-        
-        // 若从公交线路结果列表界面跳转过来，则将其从UI堆栈中移除
-        sphinx.uiStackRemove(R.id.view_traffic_busline_line_result);
-        
-        // 若是在周边搜索页或者从周边搜索页过来，则需要处理UI堆栈信息
-        sphinx.getHandler().sendEmptyMessage(Sphinx.UI_STACK_ADJUST_EXECUTE);
-        
-        result = 3;
-        return result;
-    }
-    
-    /**
-     * 处理公交线路结果，实现界面跳转和给出相应提示
-     * @param sphinx
-     * @param buslineQuery
-     * @param actionTag
-     * @param listView
-     */
-    public static void dealWithBuslineResponse(Sphinx sphinx, BuslineQuery buslineQuery, String actionTag, SpringbackListView listView) {
-        
-        ActionLog actionLog = ActionLog.getInstance(sphinx);
-        BuslineModel buslineModel = buslineQuery.getBuslineModel();
-        
-        if (buslineModel == null) {
-            
-            actionLog.addAction(actionTag + ActionLog.TrafficResultBusline, -1);
-            if (buslineQuery.isTurnPage() && listView != null) {
-                listView.setFooterLoadFailed(true);
-            } else if (buslineQuery.getStatusCode() == BaseQuery.STATUS_CODE_NONE) {
-                sphinx.showTip(R.string.network_failed, Toast.LENGTH_SHORT);
-            } else {
-                sphinx.showTip(R.string.busline_non_tip, Toast.LENGTH_SHORT);
-            }
-            
-        } else if (buslineModel.getType() == BuslineModel.TYPE_EMPTY) {
-            
-            actionLog.addAction(actionTag + ActionLog.TrafficResultBusline, -2);
-            sphinx.showTip(R.string.busline_non_tip, Toast.LENGTH_SHORT);
-            
-        } else if (buslineModel.getType() == BuslineModel.TYPE_UNSUPPORT) {
-            
-            actionLog.addAction(actionTag + ActionLog.TrafficResultBusline, -3);
-            sphinx.showTip(R.string.busline_not_support, Toast.LENGTH_SHORT);
-            
-        } else if (buslineModel.getType() == BuslineModel.TYPE_BUSLINE 
-                || buslineModel.getType() == BuslineModel.TYPE_STATION) {
-            
-            if ((buslineModel.getLineList() == null || buslineModel.getLineList().size() <= 0)
-                    &&  (buslineModel.getStationList() == null || buslineModel.getStationList().size() <= 0)) {
-                
-                sphinx.showTip(R.string.busline_non_tip, Toast.LENGTH_SHORT);
-                actionLog.addAction(actionTag + ActionLog.TrafficResultBusline, 0);
-                
-            } else {
-                
-                if (buslineModel.getType() == BuslineModel.TYPE_BUSLINE) {
-                    actionLog.addAction(actionTag + ActionLog.TrafficResultBusline, buslineQuery.getBuslineModel().getLineList().size());
-                    sphinx.getBuslineResultLineFragment().setData(buslineQuery);
-                    if (buslineQuery.isTurnPage() == false) {
-                        sphinx.showView(R.id.view_traffic_busline_line_result);
-                    }
-                } else if (buslineModel.getType() == BuslineModel.TYPE_STATION) {
-                    actionLog.addAction(actionTag + ActionLog.TrafficResultBusline, buslineQuery.getBuslineModel().getStationList().size());
-                    sphinx.getBuslineResultStationFragment().setData(buslineQuery);
-                    if (buslineQuery.isTurnPage() == false) {
-                        sphinx.showView(R.id.view_traffic_busline_station_result);
-                    }
-                }               
+            } else if (BaseQuery.DATA_TYPE_TUANGOU.equals(dataType)) {
+            	dealWithDynamicPOIResponse((DataQuery) baseQuery, mSphinx, this);
+            } else if (BaseQuery.DATA_TYPE_FILTER.equals(dataType)) {
+            	//TODO: 
             }
         }
     }
@@ -908,4 +700,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         
         dialog.show();
     }
+
+    
+    
 }

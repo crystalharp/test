@@ -700,7 +700,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     
     public void setData(DataQuery dataQuery) {
         reset();
-        refreshDiscover();
+        refreshDiscoverCities();
         mDataQuery = dataQuery;
         mPOI = mDataQuery.getPOI();
         if(mPOI.getSourceType() != POI.SOURCE_TYPE_MAP_CENTER && mPOI.getSourceType() != POI.SOURCE_TYPE_MY_LOCATION){
@@ -766,17 +766,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         	refreshTitleView(STATUS_HOME);
         }
     }
-	
-	private void refreshDiscover(){
-	    if (mRefreshDiscover == false) {
-	        mRefreshDiscover = true;
-            DataQuery dataQuery = new DataQuery(mSphinx);
-            dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_DISCOVER);
-            dataQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
-            dataQuery.setup(-1, -1, null, true);
-            mSphinx.queryStart(dataQuery);
-	    }
-	}
+
 
     @Override
     public void onPostExecute(TKAsyncTask tkAsyncTask) {
@@ -787,13 +777,13 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         if (BaseQuery.API_TYPE_DATA_QUERY.equals(apiType)) {
             String dataType = baseQuery.getParameter(BaseQuery.SERVER_PARAMETER_DATA_TYPE);
             if (BaseQuery.DATA_TYPE_POI.equals(dataType)) {
-                InputSearchFragment.dealWithPOIResponse((DataQuery) baseQuery, mSphinx, this);
+                dealWithPOIResponse((DataQuery) baseQuery, mSphinx, this);
             } else if (BaseQuery.DATA_TYPE_TUANGOU.equals(dataType) ||
                     BaseQuery.DATA_TYPE_DIANYING.equals(dataType) ||
                     BaseQuery.DATA_TYPE_YANCHU.equals(dataType) ||
                     BaseQuery.DATA_TYPE_ZHANLAN.equals(dataType)) {
                 
-                dealWithDynamicPOIResponse((DataQuery) baseQuery);
+            	dealWithDynamicPOIResponse((DataQuery) baseQuery, mSphinx, this);
             } else if(BaseQuery.DATA_TYPE_FILTER.equals(dataType)){
             	if(setFilterListView()){
             		setFilterOrder();
@@ -801,56 +791,4 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
             }
         }
     }
-    
-    private void dealWithDynamicPOIResponse(DataQuery dataQuery) {
-        Response response = dataQuery.getResponse();
-        // check whether the use has loged in at another device
-        if (BaseActivity.checkReLogin(dataQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), getId(), getId(), getId(), mCancelLoginListener)) {
-            isReLogin = true;
-            return;
-        }
-        
-        if (BaseActivity.hasAbnormalResponseCode(dataQuery, mSphinx, BaseActivity.SHOW_DIALOG, this, false, new int[]{Response.RESPONSE_CODE_DISCOVER_NO_SUPPORT})) {
-            return;
-        }
-        
-        int responseCode = response.getResponseCode();
-        if (responseCode == Response.RESPONSE_CODE_DISCOVER_NO_SUPPORT){
-            int resId = R.string.no_result;
-            String dataType = dataQuery.getParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE);
-            if (DataQuery.DATA_TYPE_TUANGOU.equals(dataType)) {
-                        resId = R.string.this_city_not_support_tuangou;
-                    } else if (DataQuery.DATA_TYPE_DIANYING.equals(dataType)) {
-                        resId = R.string.this_city_not_support_dianying;
-            } else if (DataQuery.DATA_TYPE_YANCHU.equals(dataType)) {
-                resId = R.string.this_city_not_support_yanchu;
-            } else if (DataQuery.DATA_TYPE_ZHANLAN.equals(dataType)) {
-                resId = R.string.this_city_not_support_zhanlan;
-            }
-            Toast.makeText(mSphinx, resId, Toast.LENGTH_LONG).show();
-            return;
-        }
-         
-        boolean noResult = true;
-        if (response instanceof DiscoverCategoreResponse) {
-            DiscoverCategoreResponse discoverCategoreResponse = (DiscoverCategoreResponse)dataQuery.getResponse();
-            if (discoverCategoreResponse.getDiscoverResult() != null 
-                    && discoverCategoreResponse.getDiscoverResult().getList() != null 
-                    && discoverCategoreResponse.getDiscoverResult().getList().size() > 0) {
-                
-                noResult = false;
-            }
-            
-        }
-        
-        if (noResult) {
-            Toast.makeText(mSphinx, R.string.no_result, Toast.LENGTH_LONG).show();
-        } else {
-            mSphinx.getDiscoverListFragment().setData(dataQuery, true);
-            mSphinx.showView(R.id.view_discover_list);
-            mSphinx.getDiscoverListFragment().setSelectionFromTop();
-        }
-    }
-    
-
 }
