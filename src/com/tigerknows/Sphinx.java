@@ -760,15 +760,20 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 
             EventRegistry.addEventListener(mMapView, MapView.EventType.MULTITOUCHZOOM, new MapView.MultiTouchZoomEventListener(){
                 @Override
-                public void onMultiTouchZoomEvent(MapView mapView, final float newZoomLevel) {
+                public void onMultiTouchZoomEvent(MapView mapView, float newZoomLevel) {
                     resetShowInPreferZoom();
                     mActionLog.addAction(ActionLog.MapMultiTouchZoom);
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mMapView.setZoomControlsState(newZoomLevel);
+                    mMapView.setZoomControlsState(newZoomLevel);
+                    
+                    if(touchMode.equals(TouchMode.CLICK_SELECT_POINT)) {
+                        InfoWindowFragment infoWindowFragment = getInfoWindowFragment();
+                        ItemizedOverlay itemizedOverlay = infoWindowFragment.getItemizedOverlay();
+                        if (itemizedOverlay != null
+                            && itemizedOverlay.size() == 1) {
+
+                            ItemizedOverlayHelper.drawClickSelectPointOverlay(Sphinx.this, itemizedOverlay.get(0).getMessage());
                         }
-                    });
+                    }
                 }
             });
 

@@ -52,7 +52,7 @@ public class DownloadService extends IntentService {
         Notification notification;
         int percent = 0;
         boolean stop = false;
-        long timeMillis;
+        long size = 0;
         
         DownloadItem(String url, String tickerText, RemoteViews remoteViews, Notification notification, int percent) {
             this.url = url;
@@ -60,7 +60,6 @@ public class DownloadService extends IntentService {
             this.remoteViews = remoteViews;
             this.notification = notification;
             this.percent = percent;
-            timeMillis = System.currentTimeMillis();
         }
     }
     
@@ -95,7 +94,7 @@ public class DownloadService extends IntentService {
     
     private static HashMap<String, DownloadItem> sDownloadList = new HashMap<String, DownloadItem>();
     
-    public static HashMap<String, DownloadItem> DownloadedList = new HashMap<String, DownloadItem>();
+    private static HashMap<String, DownloadItem> DownloadedList = new HashMap<String, DownloadItem>();
     
     private static Map<String, DownloadedProcessor> processorMap = new HashMap<String, DownloadedProcessor>();
     
@@ -231,7 +230,7 @@ public class DownloadService extends IntentService {
             } while (tempFile == null && !stop && !currentDownloadItem.stop);
             synchronized (sDownloadList) {
                 DownloadItem downloadItem = sDownloadList.get(url);
-                if (downloadItem == null || downloadItem.timeMillis == currentDownloadItem.timeMillis) {
+                if (downloadItem == null) {
                     nm.cancel(currentDownloadItem.url.hashCode());
                     sDownloadList.remove(url);
                 }
@@ -322,6 +321,21 @@ public class DownloadService extends IntentService {
             LogWrapper.d(TAG, "status.getStatusCode():"+status.getStatusCode());
             if(status != null) {
                 int statusCode = status.getStatusCode();
+                
+                DownloadItem item = DownloadedList.get(url);
+                if (statusCode == 200 && fileSize == 0) {
+                    if (item != null) {
+                        item.size = length > 0 ? length : 1024*1024*8;
+                    }
+                }
+                
+                if (item.size > 0) {
+                    length = item.size;
+                } else {
+                    tempFile.delete();
+                    return null;
+                }
+                
                 if (statusCode == 416 && fileSize > 0) {
                     if (!stop && !downloadItem.stop) {
                         return tempFile;
@@ -333,7 +347,6 @@ public class DownloadService extends IntentService {
                     BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(tempFile, true));
                     int read = 0;
                     long count = fileSize;
-                    length += fileSize;
                     int percent = 0;
                     int counted_percent = 0;
                     byte[] buffer = new byte[1024];
@@ -342,7 +355,7 @@ public class DownloadService extends IntentService {
                         count += read;
                         percent = (int)(((double)count / length) * 100);
                         if(percent - counted_percent >= 1) {
-                            notifyPercent(downloadItem, percent);
+                            notifyPercent(downloadItem, percent > 99 ? 99 : percent);
                             counted_percent = percent;
                         }
                     }
