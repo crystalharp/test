@@ -58,6 +58,7 @@ import com.tigerknows.model.DataQuery.POIResponse.POIList;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.TKWord;
+import com.tigerknows.model.DataQuery.DiscoverCategoreResponse;
 import com.tigerknows.model.DataQuery.GeoCoderResponse;
 import com.tigerknows.model.DataQuery.POIResponse;
 import com.tigerknows.provider.HistoryWordTable;
@@ -602,16 +603,105 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                 Toast.makeText(mSphinx, getString(R.string.can_not_found_target_location), Toast.LENGTH_LONG).show();
                 
             } else if (BaseQuery.DATA_TYPE_POI.equals(dataType)) {
-                int result = dealWithPOIResponse((DataQuery) baseQuery, mSphinx, this);
+                dealWithPOIResponse((DataQuery) baseQuery, mSphinx, this);
 
+            } else if (BaseQuery.DATA_TYPE_TUANGOU.equals(dataType)) {
+            	dealWithDynamicPOIResponse((DataQuery) baseQuery, mSphinx, this);
+            } else if (BaseQuery.DATA_TYPE_FILTER.equals(dataType)) {
+            	//TODO: 
             }
         }
     }
 
     /**
+     * 反向定位POI的Apapter
+     * @author pengwenwue
+     *
+     */
+    private class PlaceAdapter extends BaseAdapter {
+        List<POI> mList;
+
+        public PlaceAdapter(List<POI> list) {
+            mList = list;
+        }
+        @Override
+        public int getCount() {
+            return mList.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return mList.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            if (convertView == null) {
+                convertView = mLayoutInflater.inflate(R.layout.traffic_alternative_station_item, null);
+            }
+            
+            POI poi = mList.get(position);
+            
+            TextView name = (TextView) convertView.findViewById(R.id.name_txv);
+            TextView address = (TextView) convertView.findViewById(R.id.address_txv);
+            
+            name.setText(poi.getName());
+            address.setText(poi.getAddress());
+            
+            return convertView;
+        }
+        
+    }
+    
+    /**
+     * 显示反向定位POI结果列表对话框
+     * @param list
+     */
+    private void showPlaceListDialog(final List<POI> list) {
+        
+        PlaceAdapter adapter = new PlaceAdapter(list);
+        View alterListView = mSphinx.getLayoutInflater().inflate(R.layout.alert_listview, null, false);
+        ListView listView = (ListView) alterListView.findViewById(R.id.listview);
+        listView.setAdapter(adapter);
+        
+        final Dialog dialog = Utility.getChoiceDialog(mSphinx, alterListView, R.style.AlterChoiceDialog);
+        
+        TextView titleTxv = (TextView)alterListView.findViewById(R.id.title_txv);
+        titleTxv.setText(R.string.confirm_place);
+        
+        Button button = (Button)alterListView.findViewById(R.id.confirm_btn);
+        button.setVisibility(View.GONE);
+        
+        listView.setOnItemClickListener(new OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
+                
+                dialog.dismiss();
+                responsePOI(list.get(position));
+            }
+            
+        });
+        dialog.setOnDismissListener(new OnDismissListener() {
+            
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                mActionLog.addAction(ActionLog.TrafficAlternative + ActionLog.Dismiss);
+            }
+        });
+        
+        dialog.show();
+    }
+
+    
+
+    /**
      * 处理POI搜索结果，实现界面跳转和给出相应提示
-     * @param sphinx
-     * @param poiResponse
      */
     public static int dealWithPOIResponse(final DataQuery dataQuery, final Sphinx sphinx, BaseFragment baseFragment) {
         int result = -4;
@@ -862,87 +952,58 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
     }
 
     /**
-     * 反向定位POI的Apapter
-     * @author pengwenwue
-     *
-     */
-    private class PlaceAdapter extends BaseAdapter {
-        List<POI> mList;
-
-        public PlaceAdapter(List<POI> list) {
-            mList = list;
-        }
-        @Override
-        public int getCount() {
-            return mList.size();
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return mList.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            if (convertView == null) {
-                convertView = mLayoutInflater.inflate(R.layout.traffic_alternative_station_item, null);
-            }
-            
-            POI poi = mList.get(position);
-            
-            TextView name = (TextView) convertView.findViewById(R.id.name_txv);
-            TextView address = (TextView) convertView.findViewById(R.id.address_txv);
-            
-            name.setText(poi.getName());
-            address.setText(poi.getAddress());
-            
-            return convertView;
+     * 处理发现频道动态POI搜索结果，实现界面跳转和给出相应提示
+     */    
+    public static void dealWithDynamicPOIResponse(final DataQuery dataQuery, Sphinx sphinx, BaseFragment baseFragment) {
+        Response response = dataQuery.getResponse();
+        // check whether the use has loged in at another device
+        if (BaseActivity.checkReLogin(dataQuery, sphinx, sphinx.uiStackContains(R.id.view_user_home), baseFragment.getId(), baseFragment.getId(), baseFragment.getId(), baseFragment.mCancelLoginListener)) {
+        	baseFragment.isReLogin = true;
+            return;
         }
         
+        if (BaseActivity.hasAbnormalResponseCode(dataQuery, sphinx, BaseActivity.SHOW_DIALOG, baseFragment, false, new int[]{Response.RESPONSE_CODE_DISCOVER_NO_SUPPORT})) {
+            return;
+        }
+        
+        int responseCode = response.getResponseCode();
+        if (responseCode == Response.RESPONSE_CODE_DISCOVER_NO_SUPPORT){
+            int resId = R.string.no_result;
+            String dataType = dataQuery.getParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE);
+            if (DataQuery.DATA_TYPE_TUANGOU.equals(dataType)) {
+                        resId = R.string.this_city_not_support_tuangou;
+                    } else if (DataQuery.DATA_TYPE_DIANYING.equals(dataType)) {
+                        resId = R.string.this_city_not_support_dianying;
+            } else if (DataQuery.DATA_TYPE_YANCHU.equals(dataType)) {
+                resId = R.string.this_city_not_support_yanchu;
+            } else if (DataQuery.DATA_TYPE_ZHANLAN.equals(dataType)) {
+                resId = R.string.this_city_not_support_zhanlan;
+            }
+            Toast.makeText(sphinx, resId, Toast.LENGTH_LONG).show();
+            return;
+        }
+         
+        boolean noResult = true;
+        if (response instanceof DiscoverCategoreResponse) {
+            DiscoverCategoreResponse discoverCategoreResponse = (DiscoverCategoreResponse)dataQuery.getResponse();
+            if (discoverCategoreResponse.getDiscoverResult() != null 
+                    && discoverCategoreResponse.getDiscoverResult().getList() != null 
+                    && discoverCategoreResponse.getDiscoverResult().getList().size() > 0) {
+                
+                noResult = false;
+            }
+            
+        }
+        
+        if (noResult) {
+            Toast.makeText(sphinx, R.string.no_result, Toast.LENGTH_LONG).show();
+        } else {
+        	sphinx.getDiscoverListFragment().setData(dataQuery, true);
+        	sphinx.showView(R.id.view_discover_list);
+        	sphinx.getDiscoverListFragment().setSelectionFromTop();
+        }
     }
     
-    /**
-     * 显示反向定位POI结果列表对话框
-     * @param list
-     */
-    private void showPlaceListDialog(final List<POI> list) {
-        
-        PlaceAdapter adapter = new PlaceAdapter(list);
-        View alterListView = mSphinx.getLayoutInflater().inflate(R.layout.alert_listview, null, false);
-        ListView listView = (ListView) alterListView.findViewById(R.id.listview);
-        listView.setAdapter(adapter);
-        
-        final Dialog dialog = Utility.getChoiceDialog(mSphinx, alterListView, R.style.AlterChoiceDialog);
-        
-        TextView titleTxv = (TextView)alterListView.findViewById(R.id.title_txv);
-        titleTxv.setText(R.string.confirm_place);
-        
-        Button button = (Button)alterListView.findViewById(R.id.confirm_btn);
-        button.setVisibility(View.GONE);
-        
-        listView.setOnItemClickListener(new OnItemClickListener() {
-
-            @Override
-            public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
-                
-                dialog.dismiss();
-                responsePOI(list.get(position));
-            }
-            
-        });
-        dialog.setOnDismissListener(new OnDismissListener() {
-            
-            @Override
-            public void onDismiss(DialogInterface dialog) {
-                mActionLog.addAction(ActionLog.TrafficAlternative + ActionLog.Dismiss);
-            }
-        });
-        
-        dialog.show();
-    }
+    
+    
 }
