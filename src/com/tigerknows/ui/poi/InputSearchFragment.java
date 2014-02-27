@@ -356,7 +356,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         switch (view.getId()) {
             
             case R.id.btn_map_position:
-                mActionLog.addAction(ActionLog.InputQueryMapPosition);
+                mActionLog.addAction(mActionTag + ActionLog.InputQueryMapPosition);
                 
                 String title;
                 if (mRequest == REQUEST_TRAFFIC_START) {
@@ -391,7 +391,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                 break;
                 
             case R.id.btn_my_position:
-                mActionLog.addAction(ActionLog.InputQueryMyPosition);
+                mActionLog.addAction(mActionTag + ActionLog.InputQueryMyPosition);
                 CityInfo c = Globals.g_My_Location_City_Info;
                 if (c != null && c.getPosition() != null) {
                     POI p = new POI();
@@ -409,14 +409,15 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                 break;
                 
             case R.id.btn_fav_position:
-                mActionLog.addAction(ActionLog.InputQueryFavPosition);
+                mActionLog.addAction(mActionTag + ActionLog.InputQueryFavPosition);
                 mSphinx.showView(mSphinx.getFetchFavoriteFragment().getId());
                 break;
             case R.id.btn_food:
-            	// TODO: actionLog
+            	mActionLog.addAction(mActionTag + ActionLog.InputQueryFoodSearch);
             	submitPOIQuery(new TKWord(TKWord.ATTRIBUTE_HISTORY, mSphinx.getString(R.string.cate)));
             	break;
             case R.id.btn_tuangou:
+            	mActionLog.addAction(mActionTag + ActionLog.InputQueryTuangouSearch);
                 if (DataQuery.checkDiscoveryCity(mDataQuery.getCityId(), Long.parseLong(BaseQuery.DATA_TYPE_TUANGOU)) == false) {
                     Toast.makeText(mSphinx, R.string.this_city_not_support_tuangou, Toast.LENGTH_LONG).show();
                     return;
@@ -424,15 +425,17 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                 mSphinx.queryStart(getDiscoverDataQuery(BaseQuery.DATA_TYPE_TUANGOU));
                 break;
             case R.id.btn_hotel:
+            	mActionLog.addAction(mActionTag + ActionLog.InputQueryHotelSearch);
         		mSphinx.getHotelHomeFragment().resetDate();
         		mSphinx.getHotelHomeFragment().setCityInfo(Globals.getCurrentCityInfo(mContext));
         		mSphinx.showView(R.id.view_hotel_home);
         		break;
             case R.id.btn_bus_station:
+            	mActionLog.addAction(mActionTag + ActionLog.InputQueryStationSearch);
             	submitPOIQuery(new TKWord(TKWord.ATTRIBUTE_HISTORY, mSphinx.getString(R.string.bus_station)));
             	break;
             case R.id.btn_more:
-        		//TODO: actionLog
+            	mActionLog.addAction(mActionTag + ActionLog.InputQueryMoreCategory);
         		if(setFilterListView()){
             		mTitleBtn.setText(R.string.more);
             		mFilterListView.setVisibility(View.VISIBLE);

@@ -31,6 +31,7 @@ import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.TKConfig;
 import com.tigerknows.android.location.Position;
 import com.tigerknows.android.os.TKAsyncTask;
 import android.widget.Toast;
@@ -146,6 +147,8 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
         
         @Override
         public void onCheckedChanged(RadioGroup group, int checkedId) {
+        
+            TKConfig.setPref(mSphinx, TKConfig.PREFS_CHECKED_TRAFFIC_RADIOBUTTON, String.valueOf(checkedId));
             switch (checkedId) {
             case R.id.traffic_transfer_rbt:
                 mActionLog.addAction(mActionTag + ActionLog.TrafficTransferTab);
@@ -478,6 +481,11 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
     	mTrafficTransferRbt.setOnTouchListener(null);
     	mTrafficDriveRbt.setOnTouchListener(null);
     	mTrafficWalkRbt.setOnTouchListener(null);
+    	
+    	int lastRbt = Integer.parseInt(TKConfig.getPref(mSphinx, TKConfig.PREFS_CHECKED_TRAFFIC_RADIOBUTTON, "0"));
+    	if (lastRbt != 0) {
+    	    mRadioGroup.check(lastRbt);
+    	}
         updateCommonPlace();
         initHistory();
         refreshRightBtn();
