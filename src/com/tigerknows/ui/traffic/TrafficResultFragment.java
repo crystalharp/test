@@ -23,6 +23,7 @@ import android.widget.TextView;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.TKConfig;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.TrafficOverlayHelper;
@@ -155,7 +156,9 @@ public class TrafficResultFragment extends BaseFragment {
         mTrafficTransferRbt = (RadioButton) mTrafficTitieView.findViewById(R.id.traffic_transfer_rbt);
         mTrafficDriveRbt = (RadioButton) mTrafficTitieView.findViewById(R.id.traffic_drive_rbt);
         mTrafficWalkRbt = (RadioButton) mTrafficTitieView.findViewById(R.id.traffic_walk_rbt);
+        
         mTrafficTitleRadioGroup.check(R.id.traffic_transfer_rbt);
+        TKConfig.setPref(mSphinx, TKConfig.PREFS_CHECKED_TRAFFIC_RADIOBUTTON, String.valueOf(mTrafficTransferRbt.getId()));
         mTrafficTransferRbt.setOnTouchListener(null);
         mTrafficDriveRbt.setOnTouchListener(onTouchListener);
         mTrafficWalkRbt.setOnTouchListener(onTouchListener);

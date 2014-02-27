@@ -120,11 +120,7 @@ public class TrafficResultListMapFragment extends BaseFragment implements View.O
         if (ActionLog.TrafficDriveListMap.equals(mActionTag)) {
             mSphinx.showHint(TKConfig.PREFS_HINT_TRAFFIC_PREFERENCE, R.layout.hint_traffic_preference);
         }
-        if (ActionLog.TrafficDriveListMap.equals(mActionTag)) {
-            mTrafficDriveRbt.setChecked(true);
-        } else {
-            mTrafficWalkRbt.setChecked(true);
-        }
+        checkRadioBtn(mActionTag);
 
         mRightBtn.setVisibility(View.INVISIBLE);
         changeTrafficType(type, false);
@@ -276,6 +272,16 @@ public class TrafficResultListMapFragment extends BaseFragment implements View.O
             mSphinx.replaceBottomUI(null);
         }
     }
+    
+    private void checkRadioBtn(String tag) {
+        if (ActionLog.TrafficDriveListMap.equals(tag)) {
+            mTrafficDriveRbt.setChecked(true);
+            TKConfig.setPref(mSphinx, TKConfig.PREFS_CHECKED_TRAFFIC_RADIOBUTTON, String.valueOf(mTrafficDriveRbt.getId()));
+        } else if (ActionLog.TrafficWalkListMap.equals(tag)){
+            mTrafficWalkRbt.setChecked(true);
+            TKConfig.setPref(mSphinx, TKConfig.PREFS_CHECKED_TRAFFIC_RADIOBUTTON, String.valueOf(mTrafficWalkRbt.getId()));
+        }
+    }
 
     @Override
     public void onPostExecute(TKAsyncTask tkAsyncTask) {
@@ -284,11 +290,7 @@ public class TrafficResultListMapFragment extends BaseFragment implements View.O
                 mActionTag,
                 (TrafficQuery) tkAsyncTask.getBaseQuery(),
                 false) && this.isShowing()) {
-            if (ActionLog.TrafficDriveListMap.equals(mActionTag)) {
-                mTrafficDriveRbt.setChecked(true);
-            } else if (ActionLog.TrafficWalkListMap.equals(mActionTag)){
-                mTrafficWalkRbt.setChecked(true);
-            }
+            checkRadioBtn(mActionTag);
         }
     }
 }
