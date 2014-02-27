@@ -6,16 +6,44 @@
     android:background="@color/normal_background"
     android:padding="8dp"
     >
-    <Button 
+    
+    <Button
         android:id="@+id/bus_station_btn"
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="按站点添加"
+        android:background="@drawable/list_header"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:paddingRight="26dp"
+        android:paddingLeft="16dp"
+        android:textColor="@color/black_dark"
+        android:textSize="16sp"
+        android:text="@string/alarm_add_by_bus_station"
+        android:gravity="left|center_vertical"
         />
-    <Button 
+    
+    <Button
         android:id="@+id/bus_line_btn"
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="按线路添加"
+        android:background="@drawable/list_footer"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:paddingRight="8dp"
+        android:paddingLeft="16dp"
+        android:textColor="@color/black_dark"
+        android:textSize="16sp"
+        android:text="@string/alarm_add_by_bus_line"
+        android:gravity="left|center_vertical"/>
+    
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:paddingLeft="16dp"
+        android:text="@string/alarm_add_tip"
+        android:textColor="@color/black_light"
+        android:lineSpacingMultiplier="1.5"
         />
+
 </LinearLayout>

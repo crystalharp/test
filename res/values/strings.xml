@@ -1393,4 +1393,9 @@
     <string name="close_alarm">关闭闹铃</string>
     <string name="alarm_enable_tip">若开启公交闹铃需开启“设置->位置”中的GPS功能</string>
     <string name="alarm_tip_title">到站提醒</string>
+    <string name="alarm_add_by_bus_station">按站点添加</string>
+    <string name="alarm_add_by_bus_line">按线路添加</string>
+    <string name="alarm_add_tip">设置闹铃需要打开 GPS 定位系统\n设置闹铃不会耗费网络流量\n乘坐地铁时 GPS 信号较弱，请慎用公交闹铃\n闹铃打开时，关闭 GPS 可能造成定位偏差\n关闭软件公交闹铃将停止运行</string>
+    <string name="range">距离</string> 
+    <string name="alarm_empty_tip">目前没有设置公交闹钟，点击右上角的“添加闹铃”进行添加</string>
 </resources>
