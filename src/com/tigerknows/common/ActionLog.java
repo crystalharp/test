@@ -505,6 +505,10 @@ public class ActionLog extends LogUpload {
     public static final String TrafficHomeClickMoreBtn = "BG";
     public static final String TrafficHomeClickMoreAlert = "BH";
     public static final String TrafficHomeClickSearchBtn = "BI";
+    public static final String TrafficHomeClickAlarmBtn = "BJ";
+    public static final String TrafficHomeClickBusLineBtn = "BK";
+    public static final String TrafficHomeClickBusStationBtn = "BL";
+    public static final String TrafficHomeClickSubWayBtn = "BM";
     
     // 交通查询历史页
     public static final String TrafficSearchHistory = "BC";

@@ -42,7 +42,6 @@
 	        android:scrollingCache="false"
 	        android:childDivider="@drawable/bg_line_split"
 	        android:divider="@drawable/bg_line_split"
-	        android:dividerHeight="0dp"
 	        android:drawSelectorOnTop="false"
 	        android:fadingEdge="none" />
     </RelativeLayout>

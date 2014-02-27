@@ -387,6 +387,7 @@
     <string name="busline_station_listitem_title">共有%1$d条线路经过</string>
     <string name="busline_map_bubble_content">%1$d.%2$s</string>
     <string name="busline_passing_by">途经本站点线路</string>
+    <string name="station">站点</string>
     
     <string name="about_version">%1$s</string>
     <string name="about_release_date">%1$s</string>
@@ -1381,6 +1382,7 @@
     
     <string name="text_iat_begin">请开始说话...</string>
     
+    <string name="alarm_text">闹铃</string>
     <string name="alarm">公交闹铃</string>
     <string name="manage_alarm">设置公交闹铃</string>
     <string name="add_alarm">添加闹铃</string>

@@ -133,6 +133,7 @@
             android:background="@drawable/btn_location_map"
             android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
+            android:layout_marginBottom="8dp"
             android:orientation="vertical"
             android:gravity="center">
             <ImageButton
@@ -161,7 +162,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_above="@id/location_view"
-            android:layout_marginBottom="8dp"
+            android:layout_marginBottom="16dp"
             />
 
     </RelativeLayout>

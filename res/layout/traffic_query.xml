@@ -10,11 +10,20 @@
         android:layout_height="wrap_content" >
     	<include android:id="@+id/content_lnl" layout="@layout/traffic_query_input_block" />
     </FrameLayout>
+    
+    <include
+        android:id="@+id/bottom_buttons_view"
+        layout="@layout/bottom_buttons_view"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        />
     <ScrollView
         android:id="@+id/traffic_scroll"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/content_frl"
+        android:layout_above="@id/bottom_buttons_view"
         android:layout_alignParentLeft="true"
         >
 
