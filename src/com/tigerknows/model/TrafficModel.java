@@ -24,6 +24,7 @@ import com.tigerknows.util.ByteUtil;
 import com.tigerknows.util.NavigationSplitJointRule;
 import com.tigerknows.util.ShareTextUtil;
 import com.tigerknows.util.SqliteWrapper;
+import com.tigerknows.util.Utility;
 
 /**
  * TrafficModel
@@ -1518,7 +1519,7 @@ public class TrafficModel extends XMapData {
         public String getTaxiCost() { return taxiCost ;}
         
         public String getDescription() {
-            return taxiTime + "," + taxiDistance + "," + taxiCost;
+            return Utility.joinFields(",", taxiCost, taxiTime, taxiDistance);
         }
         
         public AddtionalInfo(XMap data) throws APIException {

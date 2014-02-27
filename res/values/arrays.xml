@@ -306,6 +306,6 @@
     <string-array name="drvie_search_option">
         <item>时间最短</item>
         <item>路程最短</item>
-        <item>避免高速</item>
+        <item>不走高速</item>
     </string-array>
 </resources>
