@@ -58,23 +58,26 @@ public class SuggestArrayAdapter extends ArrayAdapter<TKWord> {
         if (tkWord.attribute == TKWord.ATTRIBUTE_HISTORY) {
             iconImv.setVisibility(View.VISIBLE);
             inputBtn.setVisibility(View.VISIBLE);
-            text1Txv.setVisibility(View.VISIBLE);
             iconImv.setImageResource(R.drawable.ic_time);
             textTxv.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
             Utility.formatText(textTxv, tkWord.word, key, TKConfig.COLOR_BLACK_LIGHT);
-            text1Txv.setText(tkWord.address);
+            if (tkWord.address != null) {
+                text1Txv.setText(tkWord.address);
+                text1Txv.setVisibility(View.VISIBLE);
+            } else {
+                text1Txv.setVisibility(View.GONE);
+            }
         } else if (tkWord.attribute == TKWord.ATTRIBUTE_SUGGEST) {
             iconImv.setVisibility(View.VISIBLE);
             inputBtn.setVisibility(View.VISIBLE);
-            text1Txv.setVisibility(View.VISIBLE);
+            text1Txv.setVisibility(View.GONE);
             iconImv.setImageResource(R.drawable.ic_suggest);
             textTxv.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
             Utility.formatText(textTxv, tkWord.word, key, TKConfig.COLOR_BLACK_LIGHT);
-            text1Txv.setText(tkWord.address);
         } else if (tkWord.attribute == TKWord.ATTRIBUTE_CLEANUP) {
             iconImv.setVisibility(View.INVISIBLE);
             inputBtn.setVisibility(View.INVISIBLE);
-            text1Txv.setVisibility(View.INVISIBLE);
+            text1Txv.setVisibility(View.GONE);
             textTxv.setGravity(Gravity.CENTER);
             textTxv.setText(tkWord.word);
         }
