@@ -15,7 +15,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -36,6 +35,7 @@ import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.TrafficOverlayHelper;
 import com.tigerknows.map.MapView.MapScene;
 import com.tigerknows.model.BaseData;
+import com.tigerknows.model.POI;
 import com.tigerknows.model.TrafficModel;
 import com.tigerknows.model.TrafficModel.Plan;
 import com.tigerknows.model.TrafficModel.Plan.PlanTag;
@@ -71,6 +71,8 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
     private ViewGroup mShareBtn = null;
     
     private ViewGroup mErrorRecoveryBtn = null;
+    
+    private ViewGroup mAlarmBtn = null;
     
     //TODO:把mtype和mindex也重构到结果中
     private int mType = -1;
@@ -123,18 +125,21 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
                 mRightBtn.setText(R.string.map);
                 mRightBtn.setOnClickListener(this);
                 mRightBtn.setVisibility(View.VISIBLE);
+                mAlarmBtn.setVisibility(View.VISIBLE);
                 mErrorRecoveryBtn.setVisibility(View.VISIBLE);
-                mBottomButtonsView.setWeightSum(3);
+                mBottomButtonsView.setWeightSum(4);
                 break;
             case Plan.Step.TYPE_DRIVE:
                 mTitleBtn.setText(getString(R.string.title_drive_plan));
                 mRightBtn.setVisibility(View.GONE);
+                mAlarmBtn.setVisibility(View.GONE);
                 mErrorRecoveryBtn.setVisibility(View.GONE);
                 mBottomButtonsView.setWeightSum(2);
                 break;
             case Plan.Step.TYPE_WALK:
                 mTitleBtn.setText(getString(R.string.title_walk_plan));
                 mRightBtn.setVisibility(View.GONE);
+                mAlarmBtn.setVisibility(View.GONE);
                 mErrorRecoveryBtn.setVisibility(View.GONE);
                 mBottomButtonsView.setWeightSum(2);
                 break;
@@ -174,7 +179,9 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         mErrorRecoveryBtn = (ViewGroup) mRootView.findViewById(R.id.error_recovery_btn);
         mFavorateBtn = (ViewGroup) mRootView.findViewById(R.id.favorite_btn);
         mShareBtn = (ViewGroup) mRootView.findViewById(R.id.share_btn);
-        mBottomButtonsView.findViewById(R.id.nearby_search_btn).setVisibility(View.GONE);
+        mAlarmBtn = (ViewGroup) mBottomButtonsView.findViewById(R.id.nearby_search_btn);
+        TextView textView = (TextView) mAlarmBtn.getChildAt(0);
+        textView.setText(R.string.alarm_text);
         mSummaryLayout = mLayoutInflater.inflate(R.layout.traffic_group_traffic, null);
         mSummaryLayout.setBackgroundResource(R.drawable.btn_filter2_normal);
         mSummaryLayout.setPadding(Utility.dip2px(mSphinx, 12), 0, Utility.dip2px(mSphinx, 12), Utility.dip2px(mSphinx, 16));
@@ -201,7 +208,8 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
                 TrafficOverlayHelper.panToPosition(mSphinx, position, mSphinx.getMapView());
             }
         });
-        
+     
+        mAlarmBtn.setOnClickListener(this);
     }
     
     @Override
@@ -210,6 +218,38 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         if (viewId == R.id.right_btn) {
             mActionLog.addAction(mActionTag + ActionLog.TitleRightButton);
             viewMap(true);
+        } else if (viewId == R.id.nearby_search_btn) {
+            List<POI> poiList = new ArrayList<POI>();
+            List<Step> list = mPlan.getStepList();
+            for(int i = 0, size = list.size(); i < size; i++) {
+                Step step = list.get(i);
+                if (step.getType() == Step.TYPE_TRANSFER) {
+                    POI poi;
+                    List<Position> posList = step.getPositionList();
+                    if (posList != null && posList.size() > 0) {
+                        String name = step.getTransferUpStopName();
+                        if (name != null) {
+                            poi = new POI();
+                            poi.setName(name);
+                            poi.setPosition(posList.get(0));
+                            if (poiList.contains(poi) == false) {
+                                poiList.add(poi);
+                            }
+                        }
+                        name = step.getTransferDownStopName();
+                        if (name != null) {
+                            poi = new POI();
+                            poi.setName(name);
+                            poi.setPosition(posList.get(posList.size()-1));
+                            if (poiList.contains(poi) == false) {
+                                poiList.add(poi);
+                            }
+                        }
+                    }
+                }
+            }
+            
+            BuslineResultLineFragment.showAlarmDialog(mSphinx, poiList);
         }
     }
     

@@ -36,6 +36,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.tigerknows.android.location.Position;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.CityInfo;
@@ -75,6 +76,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
     final public static int REQUEST_TRAFFIC_START = 1;
     final public static int REQUEST_TRAFFIC_END = 2;
     final public static int REQUEST_COMMON_PLACE = 3;
+    final public static int REQUEST_ONLY_BUS_STATION = 4;
     
     private DataQuery mDataQuery;
     private int mCurMode;
@@ -92,6 +94,11 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
     private Button mHotelBtn;
     private Button mBusStationBtn;
     private Button mMoreBtn;
+
+    private View mBusView;
+    private ViewGroup mNearbyLineBtn;
+    private ViewGroup mNearbyStationBtn;
+    private Position mMyPosition;
     
     private SuggestWordListManager mSuggestWordListManager;
     
@@ -248,11 +255,18 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         switch (mCurMode) {
         //TODO:add actiontag
         case MODE_BUSLINE:
+            mMyPosition = Globals.getMyLocationPosition();
+            if (mMyPosition != null) {
+                mBusView.setVisibility(View.VISIBLE);
+            } else {
+                mBusView.setVisibility(View.GONE);
+            }
         	mPoiBtnGroup.setVisibility(View.GONE);
             mTrafficBtnGroup.setVisibility(View.GONE);
             mKeywordEdt.setHint(getString(R.string.busline_search_hint));
             break;
         case MODE_TRAFFIC:
+            mBusView.setVisibility(View.GONE);
         	mPoiBtnGroup.setVisibility(View.GONE);
             mTrafficBtnGroup.setVisibility(View.VISIBLE);
             if (mRequest == REQUEST_TRAFFIC_END) {
@@ -264,6 +278,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
             }
             break;
         case MODE_POI:
+            mBusView.setVisibility(View.GONE);
         	mPoiBtnGroup.setVisibility(View.VISIBLE);
             mTrafficBtnGroup.setVisibility(View.GONE);
             break;
@@ -291,6 +306,9 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         mHotelBtn = (Button) mRootView.findViewById(R.id.btn_hotel);
         mBusStationBtn = (Button) mRootView.findViewById(R.id.btn_bus_station);
         mMoreBtn = (Button) mRootView.findViewById(R.id.btn_more);
+        mBusView = mRootView.findViewById(R.id.bus_btn_group);
+        mNearbyLineBtn = (ViewGroup) mRootView.findViewById(R.id.nearby_line_btn);
+        mNearbyStationBtn = (ViewGroup) mRootView.findViewById(R.id.nearby_station_btn);
     }
 
     @Override
@@ -339,6 +357,9 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         mHotelBtn.setOnClickListener(this);
         mBusStationBtn.setOnClickListener(this);
         mMoreBtn.setOnClickListener(this);
+        
+        mNearbyLineBtn.setOnClickListener(this);
+        mNearbyStationBtn.setOnClickListener(this);
     }
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -444,6 +465,17 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         			queryFilter();
         		}
             	break;
+                
+            case R.id.nearby_line_btn:
+                mActionLog.addAction(mActionTag + ActionLog.InputQueryNearbyBusLine);
+                submitBuslineQuery(null, BuslineQuery.BUS_TYPE_LINE);
+                break;
+                
+            case R.id.nearby_station_btn:
+                mActionLog.addAction(mActionTag + ActionLog.InputQueryNearbyBusStation);
+                submitBuslineQuery(null, BuslineQuery.BUS_TYPE_STATION);
+                break;
+                
             default:
         }
     }
@@ -461,7 +493,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         
         switch (mCurMode) {
             case MODE_BUSLINE:
-                submitBuslineQuery(tkWord);
+                submitBuslineQuery(tkWord, mRequest == REQUEST_ONLY_BUS_STATION ? BuslineQuery.BUS_TYPE_STATION_BY_NAME : null);
                 break;
             case MODE_TRAFFIC:
                 if (mRequest == REQUEST_TRAFFIC_START || mRequest == REQUEST_TRAFFIC_END) {
@@ -551,15 +583,22 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
      * 公交线路搜索
      * @param keyword
      */
-    private void submitBuslineQuery(TKWord tkWord) {
-        if (tkWord == null || TextUtils.isEmpty(tkWord.word)){
+    private void submitBuslineQuery(TKWord tkWord, String type) {
+        boolean nearby = (BuslineQuery.BUS_TYPE_LINE.equals(type) || BuslineQuery.BUS_TYPE_STATION.equals(type));
+        
+        if ((tkWord == null || TextUtils.isEmpty(tkWord.word)) && nearby == false){
             mSphinx.showTip(R.string.search_input_keyword, Toast.LENGTH_SHORT);
             return;
         }
 
-        HistoryWordTable.addHistoryWord(mSphinx, tkWord, HistoryWordTable.TYPE_BUSLINE);
         BuslineQuery buslineQuery = new BuslineQuery(mContext);
-        buslineQuery.setup(tkWord.word, 0, false, getId(), getString(R.string.doing_and_wait));
+        if (nearby == false) {
+            HistoryWordTable.addHistoryWord(mSphinx, tkWord, HistoryWordTable.TYPE_BUSLINE);
+        } else if (mMyPosition != null) {
+            buslineQuery.setPosition(mMyPosition);
+        }
+        buslineQuery.setType(type);
+        buslineQuery.setup(nearby ? null : tkWord.word, 0, false, getId(), getString(R.string.doing_and_wait));
 
         mSphinx.queryStart(buslineQuery);
     }
