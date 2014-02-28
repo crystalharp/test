@@ -148,7 +148,9 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
         @Override
         public void onCheckedChanged(RadioGroup group, int checkedId) {
         
-            TKConfig.setPref(mSphinx, TKConfig.PREFS_CHECKED_TRAFFIC_RADIOBUTTON, String.valueOf(checkedId));
+            if (checkedId > 0) {
+                TKConfig.setPref(mSphinx, TKConfig.PREFS_CHECKED_TRAFFIC_RADIOBUTTON, String.valueOf(checkedId));
+            }
             switch (checkedId) {
             case R.id.traffic_transfer_rbt:
                 mActionLog.addAction(mActionTag + ActionLog.TrafficTransferTab);
