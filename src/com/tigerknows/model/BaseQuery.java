@@ -392,10 +392,6 @@ public abstract class BaseQuery {
      * 添加Query的公共参数，继承自此类的Query可以override这个函数
      */
     protected void addCommonParameters(int cityId) {
-        CityInfo cityInfo = Globals.getCurrentCityInfo(context);
-        if (cityId == CityInfo.CITY_ID_INVALID) {
-            cityId = cityInfo.getId();
-        }
         requestParameters.add(sCommonParameters);
 
         requestParameters.add("c", String.valueOf(cityId));
@@ -488,6 +484,10 @@ public abstract class BaseQuery {
         this.context = context;
         this.apiType = apiType;
         this.version = version;
+        CityInfo cityInfo = Globals.getCurrentCityInfo(context);
+        if (cityInfo != null) {
+            this.cityId = cityInfo.getId();
+        }
     }
     
     public BaseQuery(BaseQuery query) {
