@@ -306,6 +306,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         mHotelBtn = (Button) mRootView.findViewById(R.id.btn_hotel);
         mBusStationBtn = (Button) mRootView.findViewById(R.id.btn_bus_station);
         mMoreBtn = (Button) mRootView.findViewById(R.id.btn_more);
+        mFilterListView = (FilterListView) mRootView.findViewById(R.id.filter_list_view);
         mBusView = mRootView.findViewById(R.id.bus_btn_group);
         mNearbyLineBtn = (ViewGroup) mRootView.findViewById(R.id.nearby_line_btn);
         mNearbyStationBtn = (ViewGroup) mRootView.findViewById(R.id.nearby_station_btn);
@@ -701,7 +702,6 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
     }
     private boolean setFilterListView() {
     	boolean result = false;
-        mFilterListView = (FilterListView) mRootView.findViewById(R.id.filter_list_view);
         mFilterListView.findViewById(R.id.body_view).setPadding(0, 0, 0, 0);    	
         if (mFilterList != null && mFilterList.size() > 0) {
             FilterListView.selectedFilter(mFilterList.get(0), -1);
