@@ -39,10 +39,10 @@ import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.BuslineModel.Line;
 import com.tigerknows.model.DataQuery.POIResponse;
 import com.tigerknows.model.BuslineQuery;
+import com.tigerknows.model.POI;
 import com.tigerknows.model.Response;
 import com.tigerknows.service.AlarmService;
 import com.tigerknows.ui.BaseFragment;
-import com.tigerknows.ui.poi.InputSearchFragment;
 import com.tigerknows.util.Utility;
 import com.tigerknows.widget.SpringbackListView;
 import com.tigerknows.widget.StringArrayAdapter;
@@ -164,7 +164,7 @@ public class BuslineResultLineFragment extends BaseFragment {
 					mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position);
 
                     if (mSphinx.uiStackContains(R.id.view_alarm_add)) {
-                        showAlarmDialog(mLineList.get(position));
+                        showAlarmDialog(mSphinx, lineToPOIList(mLineList.get(position)));
                     } else {
                         focusedIndex = position;
     					mSphinx.getBuslineDetailFragment().setData(mLineList.get(position), position, mBuslineQuery.getKeyword());
@@ -409,9 +409,9 @@ public class BuslineResultLineFragment extends BaseFragment {
         BaseQuery baseQuery = tkAsyncTask.getBaseQuery();
         String apiType = baseQuery.getAPIType();
         if (BaseQuery.API_TYPE_BUSLINE_QUERY.equals(apiType)) {
-            InputSearchFragment.dealWithBuslineResponse(mSphinx, (BuslineQuery) baseQuery, mActionTag, mResultLsv);
+            dealWithBuslineResponse(mSphinx, (BuslineQuery) baseQuery, mActionTag, mResultLsv);
         } else if (BaseQuery.API_TYPE_DATA_QUERY.equals(apiType)) {
-            InputSearchFragment.dealWithPOIResponse((DataQuery) baseQuery, mSphinx, this);
+            dealWithPOIResponse((DataQuery) baseQuery, mSphinx, this);
         }
     }
     
@@ -450,23 +450,35 @@ public class BuslineResultLineFragment extends BaseFragment {
         super.dismiss();
         mLineList.clear();
     }
-
-    public void showAlarmDialog(Line line){
-        List<String> list = new ArrayList<String>();
-        final List<Station> stationList = line.getStationList();
-        for(int i = 0, size = stationList.size(); i < size; i++) {
-            list.add(stationList.get(i).getName());
+    
+    public static List<POI> lineToPOIList(Line line) {
+        List<POI> poiList = new ArrayList<POI>();
+        List<Station> list = line.getStationList();
+        for(int i = 0, size = list.size(); i < size; i++) {
+            poiList.add(list.get(i).toPOI());
         }
-        final ArrayAdapter<String> adapter = new StringArrayAdapter(mSphinx, list);
-        View alterListView = mSphinx.getLayoutInflater().inflate(R.layout.alert_listview, null, false);
+        return poiList;
+    }
+
+    public static void showAlarmDialog(final Sphinx sphinx, final List<POI> poiList){
+        if (poiList.size() == 0) {
+            return;
+        }
+        
+        List<String> list = new ArrayList<String>();
+        for(int i = 0, size = poiList.size(); i < size; i++) {
+            list.add(poiList.get(i).getName());
+        }
+        final ArrayAdapter<String> adapter = new StringArrayAdapter(sphinx, list);
+        View alterListView = sphinx.getLayoutInflater().inflate(R.layout.alert_listview, null, false);
         
         final ListView listView = (ListView) alterListView.findViewById(R.id.listview);
         listView.setAdapter(adapter);
         
-        final Dialog dialog = Utility.getChoiceDialog(mSphinx, alterListView, R.style.AlterChoiceDialog);
+        final Dialog dialog = Utility.getChoiceDialog(sphinx, alterListView, R.style.AlterChoiceDialog);
         
         TextView titleTxv = (TextView)alterListView.findViewById(R.id.title_txv);
-        titleTxv.setText(R.string.app_name);
+        titleTxv.setText(R.string.add_alarm);
         
         Button button = (Button)alterListView.findViewById(R.id.confirm_btn);
         button.setVisibility(View.GONE);
@@ -476,15 +488,17 @@ public class BuslineResultLineFragment extends BaseFragment {
         listView.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int which, long arg3){
-                Alarm alarm = new Alarm(mSphinx);
-                Station station = stationList.get(which);
+                Alarm alarm = new Alarm(sphinx);
+                POI station = poiList.get(which);
                 alarm.setName(station.getName());
                 alarm.setPosition(station.getPosition());
-                Alarm.writeAlarm(mSphinx, alarm);
-                AlarmService.start(mSphinx, true);
+                Alarm.writeAlarm(sphinx, alarm);
+                AlarmService.start(sphinx, true);
                 dialog.dismiss();
                 
-                mSphinx.uiStackClearTop(R.id.view_alarm_list);
+                if (sphinx.uiStackContains(R.id.view_alarm_add)) {
+                    sphinx.uiStackClearTop(R.id.view_alarm_list);
+                }
             }
         });
     }

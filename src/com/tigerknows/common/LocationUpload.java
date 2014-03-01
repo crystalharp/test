@@ -143,7 +143,7 @@ public class LocationUpload extends LogUpload {
                 }
                 
                 if (info.length() > 0) {
-                    long length = (mUploading ? mTmpLogFileLength : mLogFileLength);
+                    long length = (mUploading ? mLogFileLength + mTmpLogFileLength : mLogFileLength);
                     if (length > 0 || mStringBuilder.length() > 0) {
                         mStringBuilder.append('|');
                     }

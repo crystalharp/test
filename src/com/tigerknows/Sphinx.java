@@ -760,15 +760,20 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 
             EventRegistry.addEventListener(mMapView, MapView.EventType.MULTITOUCHZOOM, new MapView.MultiTouchZoomEventListener(){
                 @Override
-                public void onMultiTouchZoomEvent(MapView mapView, final float newZoomLevel) {
+                public void onMultiTouchZoomEvent(MapView mapView, float newZoomLevel) {
                     resetShowInPreferZoom();
                     mActionLog.addAction(ActionLog.MapMultiTouchZoom);
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mMapView.setZoomControlsState(newZoomLevel);
+                    mMapView.setZoomControlsState(newZoomLevel);
+                    
+                    if(touchMode.equals(TouchMode.CLICK_SELECT_POINT)) {
+                        InfoWindowFragment infoWindowFragment = getInfoWindowFragment();
+                        ItemizedOverlay itemizedOverlay = infoWindowFragment.getItemizedOverlay();
+                        if (itemizedOverlay != null
+                            && itemizedOverlay.size() == 1) {
+
+                            ItemizedOverlayHelper.drawClickSelectPointOverlay(Sphinx.this, itemizedOverlay.get(0).getMessage());
                         }
-                    });
+                    }
                 }
             });
 
@@ -887,6 +892,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 
         mUIStack.clear();
         getTitleFragment();
+        mMapView.getPadding().top = getTitleFragment().mHeight;
         getMoreFragment().refreshMoreData();
         showView(R.id.view_home);
 
@@ -956,6 +962,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             if (data != null && RESULT_OK == resultCode) {
                 CityInfo cityInfo = data.getParcelableExtra(MapDownloadActivity.EXTRA_CITYINFO);
                 if (cityInfo != null) {
+                    uiStackClearTop(R.id.view_home);
                     changeCity(cityInfo);
                 }
             }
@@ -3745,6 +3752,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 text = R.string.location_text_navigation;
 
                 if (uiStackPeek() == R.id.view_home) {
+                    mMapView.deleteOverlaysByName(ItemizedOverlay.LONG_CLICKED_OVERLAY);
+                    mMapView.deleteOverlaysByName(ItemizedOverlay.MAP_POI_OVERLAY);
                     showInfoWindow(R.id.view_home, mMyLocation);
                 }
             } else if (mMyLocation.mode == MyLocation.MODE_ROTATION) {

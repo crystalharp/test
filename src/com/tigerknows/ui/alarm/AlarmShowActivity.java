@@ -1,8 +1,10 @@
 package com.tigerknows.ui.alarm;
 
+import com.decarta.Globals;
 import com.tigerknows.LauncherActivity;
 import com.tigerknows.R;
 import com.tigerknows.android.app.TKActivity;
+import com.tigerknows.android.location.Position;
 import com.tigerknows.model.Alarm;
 
 import android.app.Service;
@@ -42,6 +44,14 @@ public class AlarmShowActivity extends TKActivity implements View.OnClickListene
     private TextView mBodyTxv;
     private Button mCloseBtn;
     
+    private Runnable mLocationChangedRun = new Runnable() {
+
+        @Override
+        public void run() {
+            refreshText();
+        }
+    };
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +59,8 @@ public class AlarmShowActivity extends TKActivity implements View.OnClickListene
         
         findViews();
         setListener();
+        
+        mLocationListener = new MyLocationListener(mThis, mLocationChangedRun);
         
         mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         mVibrator = (Vibrator) getSystemService(Service.VIBRATOR_SERVICE);
@@ -104,13 +116,19 @@ public class AlarmShowActivity extends TKActivity implements View.OnClickListene
         if (mAlarms.size() > 0) {
             mAlarm = mAlarms.remove(0);
             
-            mBodyTxv.setText(mAlarm.getName());
-
+            refreshText();
             stop();
             play();
             
         } else {
             finish();
+        }
+    }
+    
+    private void refreshText() {
+        Position position = Globals.getMyLocationPosition();
+        if (position != null) {
+            mBodyTxv.setText(getString(R.string.alarm_tip_text, mAlarm.getName(), Position.distanceBetween(position, mAlarm.getPosition())));
         }
     }
 

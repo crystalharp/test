@@ -24,7 +24,6 @@ import com.tigerknows.model.Response;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.ui.more.ChangeCityActivity;
-import com.tigerknows.ui.poi.InputSearchFragment;
 import com.tigerknows.util.Utility;
 import com.tigerknows.widget.FilterListView;
 
@@ -142,6 +141,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     @Override
     public void onResume() {
         super.onResume();
+        mSphinx.uiStackRemove(R.id.view_poi_input_search);
         mTitleBtn.setText(R.string.hotel_reserve);
         refreshTitleRightBtn();
         refreshDate();
@@ -627,7 +627,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
             }
             
         } else {
-            InputSearchFragment.dealWithPOIResponse((DataQuery) baseQuery, mSphinx, this);
+            dealWithPOIResponse((DataQuery) baseQuery, mSphinx, this);
         }
     }
     

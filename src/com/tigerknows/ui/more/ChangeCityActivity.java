@@ -471,7 +471,7 @@ public class ChangeCityActivity extends BaseActivity {
             ImageView imageView = (ImageView)view.findViewById(R.id.icon_imv);
             int order = cityInfo.order;
             if (order == ORDER_LOCATION_TITLE || order == ORDER_CITY_TITLE || order == ORDER_PROVINCE_TITLE) {
-                view.setBackgroundResource(R.drawable.bg_expandablelistview_group);
+                view.setBackgroundColor(mThis.getResources().getColor(R.color.expandable_listview_parent_bg));
                 titleTxv.setText(cname);
                 textTxv.setVisibility(View.GONE);
                 titleTxv.setVisibility(View.VISIBLE);

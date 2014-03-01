@@ -41,8 +41,7 @@
 	        android:focusable="true"
 	        android:scrollingCache="false"
 	        android:childDivider="@drawable/bg_line_split"
-	        android:divider="@color/transparent"
-	        android:dividerHeight="0dp"
+	        android:divider="@drawable/bg_line_split"
 	        android:drawSelectorOnTop="false"
 	        android:fadingEdge="none" />
     </RelativeLayout>
@@ -110,7 +109,7 @@
        		android:id="@+id/wifi_view"
 		    android:layout_width="fill_parent" 
 		    android:layout_height="wrap_content"
-		    android:background="@drawable/bg_expandablelistview_group">
+		    android:background="@color/expandable_listview_parent_bg">
 		    <TextView 
         		android:id="@+id/wifi_txv"
 			    android:layout_width="wrap_content" 

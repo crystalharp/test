@@ -23,6 +23,7 @@ import android.widget.TextView;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.TKConfig;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.TrafficOverlayHelper;
@@ -68,7 +69,13 @@ public class TrafficResultFragment extends BaseFragment {
     
     private View mFooterView;
     
+    private View mHeaderView;
+    
+    private View mStartEndView;
+    
     private View mSearchReturnView;
+    
+    private TextView mStartEndTxv;
     
     private TextView mDescriptionTxv;
     
@@ -122,6 +129,7 @@ public class TrafficResultFragment extends BaseFragment {
         
         mRootView = mLayoutInflater.inflate(R.layout.traffic_result, container, false);
         mFooterView = mLayoutInflater.inflate(R.layout.traffic_transfer_result_footer, null);
+        mHeaderView = mLayoutInflater.inflate(R.layout.traffic_transfer_result_header, null);
         
 //        mTrafficTitieView = mLayoutInflater.inflate(R.layout.traffic_query_bar, null);
 
@@ -130,6 +138,7 @@ public class TrafficResultFragment extends BaseFragment {
         
         mResultAdapter = new TransferProjectListAdapter();
         mResultLsv.addFooterView(mFooterView, null, false);
+        mResultLsv.addHeaderView(mHeaderView, null, false);
         mResultLsv.setAdapter(mResultAdapter);
         
         return mRootView;
@@ -147,7 +156,9 @@ public class TrafficResultFragment extends BaseFragment {
         mTrafficTransferRbt = (RadioButton) mTrafficTitieView.findViewById(R.id.traffic_transfer_rbt);
         mTrafficDriveRbt = (RadioButton) mTrafficTitieView.findViewById(R.id.traffic_drive_rbt);
         mTrafficWalkRbt = (RadioButton) mTrafficTitieView.findViewById(R.id.traffic_walk_rbt);
+        
         mTrafficTitleRadioGroup.check(R.id.traffic_transfer_rbt);
+        TKConfig.setPref(mSphinx, TKConfig.PREFS_CHECKED_TRAFFIC_RADIOBUTTON, String.valueOf(mTrafficTransferRbt.getId()));
         mTrafficTransferRbt.setOnTouchListener(null);
         mTrafficDriveRbt.setOnTouchListener(onTouchListener);
         mTrafficWalkRbt.setOnTouchListener(onTouchListener);
@@ -159,6 +170,9 @@ public class TrafficResultFragment extends BaseFragment {
         AddtionalInfo info = mTrafficModel.getAddtionalInfo();
         String desc = (info == null) ? null : info.getDescription();
         setTxvText(mDescriptionTxv, desc);
+        mStartEndTxv.setText(mTrafficModel.getStart().getName() 
+                + mSphinx.getString(R.string.traffic_transfer_arrow) 
+                + mTrafficModel.getEnd().getName());
         
         if (mDismissed) {
             mResultLsv.setSelectionFromTop(0, 0);
@@ -175,7 +189,9 @@ public class TrafficResultFragment extends BaseFragment {
         super.findViews();
         mResultLsv = (ListView)mRootView.findViewById(R.id.result_lsv);
         mFootLayout = (LinearLayout)mRootView.findViewById(R.id.bottom_buttons_view);
-        mSearchReturnView = mFooterView.findViewById(R.id.search_return_view);
+        mStartEndView = mHeaderView.findViewById(R.id.search_return_view);
+        mSearchReturnView = mHeaderView.findViewById(R.id.imageView2);
+        mStartEndTxv = (TextView) mStartEndView.findViewById(R.id.textView1);
         mDescriptionTxv = (TextView) mFooterView.findViewById(R.id.description_txv);
     }
 
@@ -189,20 +205,21 @@ public class TrafficResultFragment extends BaseFragment {
             public void onItemClick(AdapterView<?> parent, View view,
                     int position, long id) {
 
-                if (position >= mPlanList.size()) {
+                int realPos = (int) id;
+                if (realPos >= mPlanList.size()) {
                     return;
                 }
-                List<PlanTag> list = mPlanList.get(position).getPlanTagList();
+                List<PlanTag> list = mPlanList.get(realPos).getPlanTagList();
                 String tags;
                 if (list != null) {
-                    tags = mPlanList.get(position).getPlanTagList().toString();
+                    tags = mPlanList.get(realPos).getPlanTagList().toString();
                 } else {
                     tags = "";
                 }
-                mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position, tags);
-                focusedIndex = position;
+                mActionLog.addAction(mActionTag + ActionLog.ListViewItem, realPos, tags);
+                focusedIndex = realPos;
                 mSphinx.getTrafficDetailFragment().addResult(mTrafficQuery, mPlanList.get(0).getType(), mPlanList);
-                mSphinx.getTrafficDetailFragment().refreshResult(mPlanList.get(0).getType(), position);
+                mSphinx.getTrafficDetailFragment().refreshResult(mPlanList.get(0).getType(), realPos);
                 mSphinx.showView(R.id.view_traffic_result_detail);
             }
 

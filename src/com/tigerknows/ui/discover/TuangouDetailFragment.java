@@ -23,8 +23,6 @@ import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataOperation;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.FeedbackUpload;
-import com.tigerknows.model.Fendian;
-import com.tigerknows.model.POI;
 import com.tigerknows.model.Tuangou;
 import com.tigerknows.ui.discover.CycleViewPager.CyclePagerAdapter;
 import com.tigerknows.widget.SpringbackListView.IPagerList;

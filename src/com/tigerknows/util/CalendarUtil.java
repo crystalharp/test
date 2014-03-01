@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 import android.content.Context;
 import android.os.SystemClock;
@@ -13,6 +14,7 @@ import com.tigerknows.TKConfig;
 
 public class CalendarUtil {
     public static boolean UseSystemTime = false;
+    public static int BeijingTimeZoneRawOffset = 28800000;
     
 	/**  
      * @param date1 需要比较的时间 不能为空(null),需要正确的日期格式  
@@ -158,6 +160,13 @@ public class CalendarUtil {
 	}
 	
 	public static void initExactTime(Context context) {
+	    TimeZone tzone = TimeZone.getDefault();
+	    if (tzone.getRawOffset() == BeijingTimeZoneRawOffset) {
+	        UseSystemTime = false;
+	    } else {
+	        UseSystemTime = true;
+	        return;
+	    }
 	    long ntpTime = getNtpTime();
 	    long absSysTime = System.currentTimeMillis();
 	    long relSysTime = SystemClock.elapsedRealtime();

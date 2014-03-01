@@ -387,6 +387,7 @@
     <string name="busline_station_listitem_title">共有%1$d条线路经过</string>
     <string name="busline_map_bubble_content">%1$d.%2$s</string>
     <string name="busline_passing_by">途经本站点线路</string>
+    <string name="station">站点</string>
     
     <string name="about_version">%1$s</string>
     <string name="about_release_date">%1$s</string>
@@ -1329,6 +1330,7 @@
     <string name="take_screenshot_save_to_">截图已保存到%1$s</string>
     <string name="traffic_highLight_normal">公交站 / 加油站 / 机场</string>
     <string name="traffic_highLight_subwaymap">地铁图 / 公交站 / 加油站</string>
+    <string name="bus_station">公交站</string>
     
     <string name="like_empty_tip">Yummy~做个有态度的吃货~</string>
     <string name="recommend_cook_empty">暂无推荐菜</string>
@@ -1380,10 +1382,23 @@
     
     <string name="text_iat_begin">请开始说话...</string>
     
+    <string name="alarm_text">闹铃</string>
     <string name="alarm">公交闹铃</string>
     <string name="manage_alarm">设置公交闹铃</string>
     <string name="add_alarm">添加闹铃</string>
     <string name="delete_alarm">删除闹铃</string>
     <string name="ringtone">铃声：%1$s</string>
     <string name="ringtone_silent">静音</string>
+    <string name="alarm_tip_text">%1$s公交站还有%2$d米就要到了，请携带好随身物品准备下车</string>
+    <string name="close_alarm">关闭闹铃</string>
+    <string name="alarm_enable_tip">若开启公交闹铃需开启“设置->位置”中的GPS功能</string>
+    <string name="alarm_tip_title">到站提醒</string>
+    <string name="alarm_add_by_bus_station">按站点添加</string>
+    <string name="alarm_add_by_bus_line">按线路添加</string>
+    <string name="alarm_add_tip">设置闹铃需要打开 GPS 定位系统\n设置闹铃不会耗费网络流量\n乘坐地铁时 GPS 信号较弱，请慎用公交闹铃\n闹铃打开时，关闭 GPS 可能造成定位偏差\n关闭软件公交闹铃将停止运行</string>
+    <string name="range">距离</string> 
+    <string name="alarm_empty_tip">目前没有设置公交闹钟，点击右上角的“添加闹铃”进行添加</string>
+    
+    <string name="nearby_bus_line">附近线路</string>
+    <string name="nearby_bus_station">附近站点</string>
 </resources>

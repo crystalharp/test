@@ -1,13 +1,10 @@
 package com.tigerknows.ui.hotel;
 
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.decarta.android.util.LogWrapper;
@@ -43,7 +40,7 @@ public class HotelOrderSuccessFragment extends BaseFragment{
 
         findViews();
         setListener();
-        //TODO: mActionTag = ActionLog.???;
+        mActionTag = ActionLog.HotelOrderSuccess;
     	
         return mRootView;
     }
@@ -64,7 +61,7 @@ public class HotelOrderSuccessFragment extends BaseFragment{
 			
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
+				mActionLog.addAction(mActionTag + ActionLog.HotelOrderSuccessDetail);
 	            mSphinx.getHotelOrderDetailFragment().setData(mOrder, -1);
 	            mSphinx.getHotelOrderDetailFragment().setStageIndicatorVisible(true);
 	            dismiss();

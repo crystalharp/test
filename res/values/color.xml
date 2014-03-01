@@ -66,4 +66,5 @@
     <color name="nearby_sports">#00a0ec</color>
     <color name="nearby_hospital">#de1a11</color>
     
+    <color name="expandable_listview_parent_bg">#f5f5f5</color>
 </resources>

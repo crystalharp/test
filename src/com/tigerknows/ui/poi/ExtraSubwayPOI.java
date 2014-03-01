@@ -15,7 +15,6 @@ import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.MapEngine;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.BuslineQuery;
-import com.tigerknows.model.POI;
 import com.tigerknows.model.POI.Description;
 import com.tigerknows.model.POI.PresetTime;
 import com.tigerknows.model.POI.Busstop;
@@ -23,6 +22,7 @@ import com.tigerknows.model.POI.SubwayExit;
 import com.tigerknows.model.POI.SubwayPresetTime;
 import com.tigerknows.model.TKWord;
 import com.tigerknows.provider.HistoryWordTable;
+import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIView;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIViewBlock;
 import com.tigerknows.widget.LinearListAdapter;
@@ -156,7 +156,7 @@ public class ExtraSubwayPOI extends DynamicPOIView {
         BaseQuery baseQuery = tkAsyncTask.getBaseQuery();
         String apiType = baseQuery.getAPIType();
         if (BaseQuery.API_TYPE_BUSLINE_QUERY.equals(apiType)) {
-            InputSearchFragment.dealWithBuslineResponse(mSphinx, (BuslineQuery)baseQuery, mPOIDetailFragment.mActionTag, null);
+            BaseFragment.dealWithBuslineResponse(mSphinx, (BuslineQuery)baseQuery, mPOIDetailFragment.mActionTag, null);
         }
     }
 

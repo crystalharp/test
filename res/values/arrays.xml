@@ -40,13 +40,6 @@
         <item>更多</item>
     </string-array>
     
-    <string-array name="select_location_option">
-        <item>当前位置</item>
-        <item>地图选点</item>
-        <item>我的收藏</item>
-        <item>交换起终点</item>
-    </string-array>
-    
     <string-array name="home_category">
         <item>美食</item>
         <item>酒店</item>
@@ -295,17 +288,11 @@
         <item>一般</item>
         <item>满意</item>
         <item>很满意</item>
-    </string-array>    
-    
-    <string-array name="traffic_search_option">
-        <item>线路搜索</item>
-        <item>站点搜索</item>
-        <item>地铁图</item>
     </string-array>
     
     <string-array name="drvie_search_option">
         <item>时间最短</item>
         <item>路程最短</item>
-        <item>避免高速</item>
+        <item>不走高速</item>
     </string-array>
 </resources>

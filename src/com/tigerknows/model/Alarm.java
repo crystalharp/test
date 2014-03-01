@@ -29,14 +29,14 @@ import java.util.List;
 public class Alarm implements Parcelable {
     
     private static List<Alarm> sAlarmList = new ArrayList<Alarm>();
-    private static boolean sEnabled = false;
+    private static int sEnabledCount = 0;
     
     public static List<Alarm> getAlarmList(Context context) {
         synchronized (sAlarmList) {
             if (sAlarmList.size() == 0) {
                 sAlarmList.addAll(readFromDatabases(context));
             }
-            checkStatus(context);
+            checkStatus(context, true);
             return sAlarmList;
             
         }
@@ -46,17 +46,25 @@ public class Alarm implements Parcelable {
         synchronized (sAlarmList) {
             List<Alarm> list = getAlarmList(context);
             if (list.contains(alarm)) {
+                boolean recheck = false;
                 Alarm exist = list.get(list.indexOf(alarm));
+                if (exist.getRange() < alarm.getRange()) {
+                    recheck = true;
+                }
                 exist.setRange(alarm.getRange());
                 exist.setRingtone(alarm.getRingtone());
                 exist.setRingtoneName(alarm.getRingtoneName());
+                if (exist.getStatus() == 1 && alarm.getStatus() == 0) {
+                    recheck = true;
+                }
                 exist.setStatus(alarm.getStatus());
                 exist.updateToDatabases(context);
+                checkStatus(context, recheck);
             } else {
                 alarm.writeToDatabases(context);
                 list.add(alarm);
+                checkStatus(context, true);
             }
-            checkStatus(context);
         }
     }
     
@@ -65,22 +73,21 @@ public class Alarm implements Parcelable {
             List<Alarm> list = getAlarmList(context);
             list.remove(alarm);
             SqliteWrapper.delete(context, context.getContentResolver(), ContentUris.withAppendedId(Tigerknows.Alarm.CONTENT_URI, alarm.id), null, null);
-            checkStatus(context);
+            checkStatus(context, false);
         }
     }
     
-    private static void checkStatus(Context context) {
-        boolean enabled = sEnabled;
-        sEnabled = false;
+    private static void checkStatus(Context context, boolean recheck) {
+        sEnabledCount = 0;
         for(int i = 0, size = sAlarmList.size(); i < size; i++) {
             if (sAlarmList.get(i).getStatus() == 0) {
-                sEnabled = true;
+                sEnabledCount++;
                 break;
             }
         }
 
-        if (sEnabled) {
-            AlarmService.start(context, enabled == false);
+        if (sEnabledCount > 0) {
+            AlarmService.start(context, recheck);
         } else {
             AlarmService.stop(context);
         }
@@ -91,18 +98,16 @@ public class Alarm implements Parcelable {
             return;
         }
         ArrayList<Alarm> list = new ArrayList<Alarm>();
-        List<Alarm> alarmList = Alarm.getAlarmList(context);
-        synchronized (alarmList) {
-            for(int i = 0, size = alarmList.size(); i < size; i++) {
-                Alarm alarm = alarmList.get(i);
-                if (Position.distanceBetween(position, alarm.getPosition()) <= alarm.getRange() &&
-                        alarm.getStatus() == 0) {
+        synchronized (sAlarmList) {
+            for(int i = 0, size = sAlarmList.size(); i < size; i++) {
+                Alarm alarm = sAlarmList.get(i);
+                if (alarm.getStatus() == 0 &&
+                        Position.distanceBetween(position, alarm.getPosition()) <= alarm.getRange()) {
                     alarm.setStatus(1);
                     Alarm.writeAlarm(context, alarm);
                     list.add(alarm);
                 }
             }
-            checkStatus(context);
         }
         
         if (list.size() > 0) {

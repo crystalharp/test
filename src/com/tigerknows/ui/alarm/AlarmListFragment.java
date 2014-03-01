@@ -5,6 +5,7 @@ import java.util.List;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -29,6 +30,8 @@ import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.Alarm;
 import com.tigerknows.service.AlarmService;
 import com.tigerknows.ui.BaseFragment;
+import com.tigerknows.ui.more.SettingActivity;
+import com.tigerknows.util.ShareTextUtil;
 import com.tigerknows.util.Utility;
 import com.tigerknows.widget.StringArrayAdapter;
 
@@ -66,15 +69,19 @@ public class AlarmListFragment extends BaseFragment implements View.OnClickListe
             Bundle savedInstanceState) {
         LogWrapper.d(BaseFragment.TAG, "onCreateView()"+mActionTag);
         
-        mRangeList.add(getString(R.string.length_str_m, 500));
-        mRangeList.add(getString(R.string.length_str_m, 1000));
-        mRangeList.add(getString(R.string.length_str_m, 1500));
-        mRangeList.add(getString(R.string.length_str_m, 2000));
-        mRangeList.add(getString(R.string.length_str_m, 2500));
+        for(int i =  1; i <= 5; i++) {
+            mRangeList.add(getString(R.string.length_str_m, 500*i));
+        }
         
         mRootView = mLayoutInflater.inflate(R.layout.traffic_fetch_favorite, container, false);
         findViews();
         setListener();
+        
+        mListView.setSelector(R.color.transparent);
+        mListView.setDividerHeight(0);
+        mListView.setPadding(0, Utility.dip2px(mSphinx, 4), 0, 0);
+        
+        mEmptyView.setText(R.string.alarm_empty_tip);
         
         return mRootView;
     }
@@ -92,7 +99,9 @@ public class AlarmListFragment extends BaseFragment implements View.OnClickListe
         super.onResume();
 
         mTitleBtn.setText(getString(R.string.manage_alarm));
+        mRightBtn.setBackgroundResource(R.drawable.btn_cancel);
         mRightBtn.setText(R.string.add_alarm);
+        mRightBtn.setTextColor(getResources().getColor(R.color.black_dark));
         mRightBtn.setVisibility(View.VISIBLE);
         mRightBtn.setOnClickListener(this);
         
@@ -145,9 +154,16 @@ public class AlarmListFragment extends BaseFragment implements View.OnClickListe
     }
 
     private class MyAdapter extends ArrayAdapter<Alarm> implements View.OnClickListener {
+        
+        int statusBtnWidth = 0;
 
         public MyAdapter(Context context, List<Alarm> poiList) {
             super(context, R.layout.alarm_item, poiList);
+            View view = mLayoutInflater.inflate(R.layout.alarm_item, null, false);
+            Button statusBtn = (Button) view.findViewById(R.id.status_btn);
+            statusBtn.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+            statusBtnWidth = statusBtn.getMeasuredWidth();
+            statusBtnWidth += Utility.dip2px(mSphinx, 56);
         }
 
         @Override
@@ -169,20 +185,35 @@ public class AlarmListFragment extends BaseFragment implements View.OnClickListe
             Button ringtoneBtn = (Button) view.findViewById(R.id.ringtone_btn);
             Button deleteBtn = (Button) view.findViewById(R.id.delete_btn);
             
-            nameTxv.setText(data.getName());
+            String name = data.getName();
+            nameTxv.setText(name);
             Position myLocation = Globals.getMyLocationPosition();
+            int distanceTxvWidth = 0;
             if (myLocation != null) {
-                distanceTxv.setText(getString(R.string.length_str_m, String.valueOf(Position.distanceBetween(myLocation, data.getPosition()))));
+                distanceTxv.setText(getString(R.string.range) + ShareTextUtil.getPlanLength(mSphinx, Position.distanceBetween(myLocation, data.getPosition())));
+                distanceTxv.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+                distanceTxvWidth = distanceTxv.getMeasuredWidth();
             } else {
                 distanceTxv.setText(null);
             }
             if (data.getStatus() == 0) {
-                statusBtn.setText("OFF");
+                statusBtn.setBackgroundResource(R.drawable.btn_check_enabled);
             } else {
-                statusBtn.setText("ON");
+                statusBtn.setBackgroundResource(R.drawable.btn_check_disabled);
             }
+            
+            ViewGroup.LayoutParams layoutParams = nameTxv.getLayoutParams();
+            layoutParams.width = LayoutParams.WRAP_CONTENT;
+            if (distanceTxvWidth > 0) {
+                nameTxv.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+                int nameTxvWidth = nameTxv.getMeasuredWidth();
+                if (Globals.g_metrics.widthPixels - statusBtnWidth - distanceTxvWidth - nameTxvWidth < 0) {
+                    layoutParams.width = Globals.g_metrics.widthPixels - statusBtnWidth - distanceTxvWidth;
+                }
+            }
+            nameTxv.setText(name);
             rangeBtn.setText(getString(R.string.length_str_m, String.valueOf(data.getRange())));
-            ringtoneBtn.setText(getString(R.string.ringtone, data.getRingtoneName()));
+            ringtoneBtn.setText(data.getRingtoneName());
 
             statusBtn.setTag(position);
             rangeBtn.setTag(position);
@@ -206,6 +237,10 @@ public class AlarmListFragment extends BaseFragment implements View.OnClickListe
                 mAlarm.setStatus(mAlarm.getStatus() == 0 ? 1 : 0);
                 Alarm.writeAlarm(mSphinx, mAlarm);
                 mMyAdapter.notifyDataSetChanged();
+                
+                if (mAlarm.getStatus() == 0) {
+                    showSettingLocationDialog(mSphinx);
+                }
             } else if (id == R.id.range_btn) {
                 showRangeDialog();
             } else if (id == R.id.ringtone_btn) {
@@ -244,7 +279,7 @@ public class AlarmListFragment extends BaseFragment implements View.OnClickListe
         final Dialog dialog = Utility.getChoiceDialog(mSphinx, alterListView, R.style.AlterChoiceDialog);
         
         TextView titleTxv = (TextView)alterListView.findViewById(R.id.title_txv);
-        titleTxv.setText(R.string.app_name);
+        titleTxv.setText(R.string.range);
         
         Button button = (Button)alterListView.findViewById(R.id.confirm_btn);
         button.setVisibility(View.GONE);
@@ -262,5 +297,26 @@ public class AlarmListFragment extends BaseFragment implements View.OnClickListe
                 dialog.dismiss();
             }
         });
+    }
+    
+    public static void showSettingLocationDialog(final Sphinx activity) {
+        if (SettingActivity.checkGPS(activity)) {
+            return;
+        }
+        Utility.showNormalDialog(activity,
+                                 activity.getString(R.string.prompt),
+                                 activity.getString(R.string.alarm_enable_tip),
+                                 activity.getString(R.string.settings),
+                                 activity.getString(R.string.cancel),
+                                 new DialogInterface.OnClickListener() {
+                    
+                                     @Override
+                                     public void onClick(DialogInterface arg0, int id) {
+                                         if (id == DialogInterface.BUTTON_POSITIVE) {
+                                             activity.showView(R.id.activity_setting_location);
+                                         }
+                                     }
+                                 }
+                                 );
     }
 }

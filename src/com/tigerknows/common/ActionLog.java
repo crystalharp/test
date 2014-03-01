@@ -151,6 +151,13 @@ public class ActionLog extends LogUpload {
     public static final String InputQueryMyPosition = "BB";
     public static final String InputQueryFavPosition = "BC";
     public static final String InputQueryMapPosition = "BD";
+    public static final String InputQueryFoodSearch = "BE";
+    public static final String InputQueryTuangouSearch = "BF";
+    public static final String InputQueryHotelSearch = "BG";
+    public static final String InputQueryStationSearch = "BH";
+    public static final String InputQueryMoreCategory = "BI";
+    public static final String InputQueryNearbyBusLine = "BJ";
+    public static final String InputQueryNearbyBusStation = "BK";
 
     // POI结果列表页
     public static final String POIList = "AC";
@@ -500,6 +507,10 @@ public class ActionLog extends LogUpload {
     public static final String TrafficHomeClickMoreBtn = "BG";
     public static final String TrafficHomeClickMoreAlert = "BH";
     public static final String TrafficHomeClickSearchBtn = "BI";
+    public static final String TrafficHomeClickAlarmBtn = "BJ";
+    public static final String TrafficHomeClickBusLineBtn = "BK";
+    public static final String TrafficHomeClickBusStationBtn = "BL";
+    public static final String TrafficHomeClickSubWayBtn = "BM";
     
     // 交通查询历史页
     public static final String TrafficSearchHistory = "BC";
@@ -762,6 +773,10 @@ public class ActionLog extends LogUpload {
     public static final String HotelOrderDetailIssueComment = "BI";
     public static final String HotelOrderDetailOrderAgain= "BJ";
     public static final String HotelOrderDetailServiceTel = "BK";
+    
+    // 预订成功页
+    public static final String HotelOrderSuccess = "GJ";
+    public static final String HotelOrderSuccessDetail = "BA";
     
     public static final String TakeScreenshot = "FG";
     public static final String TakeScreenshotShare = "BA";

@@ -563,17 +563,6 @@ public class MapView extends RelativeLayout implements
 		}
 	}
 
-    public void executeMultiTouchZoomListeners(int zoomLevel) {
-        if (eventListeners.containsKey(EventType.MULTITOUCHZOOM)) {
-            ArrayList<EventListener> listeners = eventListeners
-                    .get(EventType.MULTITOUCHZOOM);
-            for (int i = 0; i < listeners.size(); i++) {
-                ((MultiTouchZoomEventListener) (listeners.get(i)))
-                        .onMultiTouchZoomEvent(this, zoomLevel);
-            }
-        }
-    }
-
 	public void executeLongClickListeners(Position position) {
 		if (eventListeners.containsKey(EventType.LONGCLICK)) {
 			ArrayList<EventListener> listeners = eventListeners

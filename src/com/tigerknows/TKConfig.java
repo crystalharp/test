@@ -751,6 +751,10 @@ public class TKConfig {
      */
     public static final String PREFS_SHOW_ZOOM_BUTTON = "prefs_show_zoom_button";
     
+    /**
+     * 上次点击的交通方式按钮id
+     */
+    public static final String PREFS_CHECKED_TRAFFIC_RADIOBUTTON = "prefs_checked_radiobutton";
 
     public static final String PREFS_HINT_HOME = "PREFS_HINT_HOME";
     public static final String PREFS_HINT_NEARBY_SEARCH = "PREFS_HINT_NEARBY_SEARCH";
@@ -1702,6 +1706,7 @@ public class TKConfig {
         if (context == null || TextUtils.isEmpty(name)) {
             return;
         }
+        LogWrapper.d("prefs", "set pref " + name + ":" + value);
         SharedPreferences sharedPreferences = context.getSharedPreferences(TKConfig.TIGERKNOWS_PREFS, Context.MODE_PRIVATE);
         try {
             sharedPreferences.edit().putString(name, value).commit();
