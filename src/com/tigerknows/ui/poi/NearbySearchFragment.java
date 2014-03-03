@@ -400,9 +400,10 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     				mCategoryBtns[i][j].setContentDescription(cp.getButtonText(j) + ";" + String.valueOf(OP));
     			}
     		}
-    		Drawable drawable = mSphinx.getResources().getDrawable(cp.getDrawableID());
-    		drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
-    		mCategoryBtns[i][CategoryProperty.NUM_OF_SUBBUTTONS].setCompoundDrawables(null, null, drawable, null);
+    		Drawable[] drawables = mCategoryBtns[i][CategoryProperty.NUM_OF_SUBBUTTONS].getCompoundDrawables();
+    		drawables[0] = mSphinx.getResources().getDrawable(cp.getDrawableID());
+    		drawables[0].setBounds(0, 0, drawables[0].getIntrinsicWidth(), drawables[0].getIntrinsicHeight());
+    		mCategoryBtns[i][CategoryProperty.NUM_OF_SUBBUTTONS].setCompoundDrawables(drawables[0], drawables[1], drawables[2], drawables[3]);
     		mCategoryBtns[i][CategoryProperty.NUM_OF_SUBBUTTONS].setTextColor(mSphinx.getResources().getColor(cp.getColorID()));
     	}
     }

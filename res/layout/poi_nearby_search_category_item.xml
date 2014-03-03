@@ -3,33 +3,24 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" 
-    android:paddingLeft="12dp"
-    android:paddingRight="12dp"
-    android:paddingTop="4dp">
+    android:paddingTop="12dp">
     <LinearLayout 
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         >
 	    <Button android:id="@+id/category_btn"
-	        android:layout_width="wrap_content"
+	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
 	        android:text="@string/app_name"
 	        android:drawableRight="@drawable/icon_arrow_right"
-	        android:background="@color/transparent"
+	        android:background="@drawable/btn_category"
 	        android:padding="8dp"
-	        android:textSize="20sp"
-	        android:layout_gravity="left|center_vertical"
+	        android:textSize="18sp"
+	        android:gravity="left|center_vertical"
 	        android:drawablePadding="8dp"
 	        />
-	    <ImageView
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
-	        android:layout_weight="1"
-	        android:contentDescription="@string/app_name"
-	        android:src="@drawable/bg_category_divide" 
-	        android:layout_gravity="center_vertical"
-	        />        
+  
     </LinearLayout>
 
     <LinearLayout android:id="@+id/sub_alpha_lly"
@@ -43,27 +34,24 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/app_name"
-            android:background="@drawable/btn_sub_category"
+            android:background="@drawable/btn_sub_category_1"
             android:padding="8dp"
-            android:layout_margin="4dp"
             />
         <Button android:id="@+id/sub_1_btn"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/app_name"
-            android:background="@drawable/btn_sub_category"
+            android:background="@drawable/btn_sub_category_1"
             android:padding="8dp"
-            android:layout_margin="4dp"
             />
         <Button android:id="@+id/sub_2_btn"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/app_name"
-            android:background="@drawable/btn_sub_category"
+            android:background="@drawable/btn_sub_category_2"
             android:padding="8dp"
-            android:layout_margin="4dp"
             />                
     </LinearLayout>
     <LinearLayout android:id="@+id/sub_beta_lly"
@@ -76,27 +64,24 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/app_name"
-            android:background="@drawable/btn_sub_category"
+            android:background="@drawable/btn_sub_category_1"
             android:padding="8dp"
-            android:layout_margin="4dp"
             />
         <Button android:id="@+id/sub_4_btn"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/app_name"
-            android:background="@drawable/btn_sub_category"
+            android:background="@drawable/btn_sub_category_1"
             android:padding="8dp"
-            android:layout_margin="4dp"
             />
         <Button android:id="@+id/sub_5_btn"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/app_name"
-            android:background="@drawable/btn_sub_category"
+            android:background="@drawable/btn_sub_category_2"
             android:padding="8dp"
-            android:layout_margin="4dp"
             />                
     </LinearLayout>    
     <LinearLayout android:id="@+id/sub_more_lly"
@@ -109,27 +94,24 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/app_name"
-            android:background="@drawable/btn_sub_category"
+            android:background="@drawable/btn_sub_category_1"
             android:padding="8dp"
-            android:layout_margin="4dp"
             />
         <Button android:id="@+id/sub_7_btn"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/app_name"
-            android:background="@drawable/btn_sub_category"
+            android:background="@drawable/btn_sub_category_1"
             android:padding="8dp"
-            android:layout_margin="4dp"
             />
         <Button android:id="@+id/sub_more_btn"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/more"
-            android:background="@drawable/btn_sub_category"
+            android:background="@drawable/btn_sub_category_2"
             android:padding="8dp"
-            android:layout_margin="4dp"
             />                
     </LinearLayout>
 </LinearLayout>
