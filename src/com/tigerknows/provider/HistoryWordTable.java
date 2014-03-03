@@ -290,7 +290,17 @@ public class HistoryWordTable {
             list = History_Word_Busline;
         }
         synchronized (list) {
-            list.remove(tkWord);
+            int index = list.indexOf(tkWord);
+            TKWord old = null;
+            if (index >= 0 && index < list.size()) {
+                old = list.remove(index);
+                if (tkWord.position == null) {
+                    tkWord.position = old.position;
+                }
+                if (tkWord.address == null) {
+                    tkWord.address = old.address;
+                }
+            }
             list.add(0, tkWord);
             if (list.size() > MAX_COUNT) {
                 for(int i = list.size()-1; i >= MAX_COUNT; i--) {
