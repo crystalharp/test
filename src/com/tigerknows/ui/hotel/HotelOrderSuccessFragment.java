@@ -61,7 +61,7 @@ public class HotelOrderSuccessFragment extends BaseFragment{
 			
 			@Override
 			public void onClick(View v) {
-				mActionLog.addAction(mActionTag + ActionLog.HotelOrderSuccessDetail);
+				addActionLog(ActionLog.HotelOrderSuccessDetail);
 	            mSphinx.getHotelOrderDetailFragment().setData(mOrder, -1);
 	            mSphinx.getHotelOrderDetailFragment().setStageIndicatorVisible(true);
 	            dismiss();
