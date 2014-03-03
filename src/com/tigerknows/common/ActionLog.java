@@ -156,6 +156,8 @@ public class ActionLog extends LogUpload {
     public static final String InputQueryHotelSearch = "BG";
     public static final String InputQueryStationSearch = "BH";
     public static final String InputQueryMoreCategory = "BI";
+    public static final String InputQueryNearbyBusLine = "BJ";
+    public static final String InputQueryNearbyBusStation = "BK";
 
     // POI结果列表页
     public static final String POIList = "AC";

@@ -1612,6 +1612,7 @@ public class TrafficModel extends XMapData {
             POI poi = new POI();
             poi.setName(name);
             poi.setPosition(this.position);
+            poi.setAddress(address);
             return poi;
         }
 

@@ -78,6 +78,8 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
     
     private ViewGroup mShareBtn = null;
     
+    private ViewGroup mAlarmBtn = null;
+    
     private Line line = null;
 
 	private List<Line> mLineList = new ArrayList<Line>();
@@ -160,9 +162,11 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
         mFavorateBtn = (ViewGroup)mRootView.findViewById(R.id.favorite_btn);
         mShareBtn = (ViewGroup)mRootView.findViewById(R.id.share_btn);
         mBottomButtonsView = ((LinearLayout) (mRootView.findViewById(R.id.bottom_buttons_view)));
-        mBottomButtonsView.findViewById(R.id.nearby_search_btn).setVisibility(View.GONE);
+        mAlarmBtn = (ViewGroup) mBottomButtonsView.findViewById(R.id.nearby_search_btn);
+        TextView textView = (TextView) mAlarmBtn.getChildAt(0);
+        textView.setText(R.string.alarm_text);
         mBottomButtonsView.findViewById(R.id.error_recovery_btn).setVisibility(View.GONE);
-        mBottomButtonsView.setWeightSum(2);
+        mBottomButtonsView.setWeightSum(3);
     }
 
     @Override
@@ -182,7 +186,7 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
         });
         mFavorateBtn.setOnClickListener(new ResultOnClickListener());
         mShareBtn.setOnClickListener(new ResultOnClickListener());
-
+        mAlarmBtn.setOnClickListener(this);
     }
     
     public void setData(Line line) {
@@ -382,6 +386,8 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
 			itemizedOverlay.focuseOverlayItem(0);
             OverlayItem overlayItem = itemizedOverlay.getItemByFocused();
             mSphinx.showInfoWindow(overlayItem);
+        } else if (id == R.id.nearby_search_btn) {
+            BuslineResultLineFragment.showAlarmDialog(mSphinx, BuslineResultLineFragment.lineToPOIList(line));
         }
     }
     

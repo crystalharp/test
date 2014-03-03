@@ -29,9 +29,11 @@ import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
+import com.tigerknows.model.Alarm;
 import com.tigerknows.model.BuslineModel;
 import com.tigerknows.model.BuslineModel.Station;
 import com.tigerknows.model.BuslineQuery;
+import com.tigerknows.service.AlarmService;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.widget.SpringbackListView;
 import com.tigerknows.widget.SpringbackListView.OnRefreshListener;
@@ -155,7 +157,16 @@ public class BuslineResultStationFragment extends BaseFragment {
                 String busLine = station.getName();
                 if (!TextUtils.isEmpty(busLine)) {
                     mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position);
-                    submitBuslineQuery(busLine);
+                    if (mSphinx.uiStackContains(R.id.view_alarm_add)) {
+                        Alarm alarm = new Alarm(mSphinx);
+                        alarm.setName(station.getName());
+                        alarm.setPosition(station.getPosition());
+                        Alarm.writeAlarm(mSphinx, alarm);
+                        AlarmService.start(mSphinx, true);
+                        mSphinx.uiStackClearTop(R.id.view_alarm_list);
+                    } else {
+                        submitBuslineQuery(busLine);
+                    }
                 }
             }
             
@@ -207,6 +218,8 @@ public class BuslineResultStationFragment extends BaseFragment {
         mResultLsv.changeHeaderViewByState(false, SpringbackListView.REFRESHING);
     	BuslineQuery buslineQuery = new BuslineQuery(mContext);
     	buslineQuery.setup(mBuslineQuery.getKeyword(), mStationList.size(), true, getId(), null);
+    	buslineQuery.setType(mBuslineQuery.getType());
+        buslineQuery.setPosition(mBuslineQuery.getPosition());
     	buslineQuery.setCityId(mBuslineQuery.getCityId());
     	mSphinx.queryStart(buslineQuery);
         mActionLog.addAction(mActionTag+ActionLog.ListViewItemMore);

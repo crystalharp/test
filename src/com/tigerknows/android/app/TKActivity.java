@@ -784,6 +784,8 @@ public class TKActivity extends Activity implements TKAsyncTask.EventListener {
             String responseStringRes = baseQuery.getLocalParameter(BaseQuery.RESPONSE_NULL_ERROR_MSG);
             if(responseStringRes!=null){
             	resId = Integer.parseInt(responseStringRes);
+            } else if (baseQuery.getCityId() == CityInfo.CITY_ID_INVALID) {
+                resId = R.string.no_result;
             }
         }
         

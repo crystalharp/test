@@ -540,9 +540,9 @@ static tk_base_tile_data_t *_tk_load_tile_from_region(tk_region_t *region, tk_co
     common_feature_num = feature_num;
 
 	if (has_new_type_data) {
-		feature_num += (new_type_data_buf.buf[buf_pos] << 4) + ((new_type_data_buf.buf[buf_pos + 1] >> 4) & 0x0f);
-		name_length += ((new_type_data_buf.buf[buf_pos + 1] & 0xf) << 12) + (new_type_data_buf.buf[buf_pos + 2] << 8) + ((new_type_data_buf.buf[buf_pos + 3] >> 4) & 0x0f);
-		point_num += ((new_type_data_buf.buf[buf_pos + 3] & 0xf) << 8) + new_type_data_buf.buf[buf_pos + 4];
+        feature_num += (new_type_data_buf.buf[buf_pos] << 3) | ((new_type_data_buf.buf[buf_pos + 1] >> 5) & 0x07);
+        name_length += ((new_type_data_buf.buf[buf_pos + 1] & 0x1f) << 11) | (new_type_data_buf.buf[buf_pos + 2] << 8) | ((new_type_data_buf.buf[buf_pos + 3] >> 5) & 0x07);
+        point_num += ((new_type_data_buf.buf[buf_pos + 3] & 0x1f) << 8) + new_type_data_buf.buf[buf_pos + 4];
 	}
     if (feature_num == 0) {
 		tk_set_result(TK_STATUS_SUCCESS);

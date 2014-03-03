@@ -1,12 +1,10 @@
 package com.tigerknows.ui.alarm;
 
 import com.decarta.Globals;
-import com.decarta.android.exception.APIException;
 import com.tigerknows.LauncherActivity;
 import com.tigerknows.R;
 import com.tigerknows.android.app.TKActivity;
 import com.tigerknows.android.location.Position;
-import com.tigerknows.map.CityInfo;
 import com.tigerknows.model.Alarm;
 
 import android.app.Service;

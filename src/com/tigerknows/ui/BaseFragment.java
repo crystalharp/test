@@ -774,4 +774,7 @@ public class BaseFragment extends LinearLayout {
 	    }
 	}
         
+	public void addAction(String actionTag, Object... args) {
+	    mActionLog.addAction(mActionTag + actionTag, args);
+	}
 }
