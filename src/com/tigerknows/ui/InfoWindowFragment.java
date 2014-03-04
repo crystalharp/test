@@ -33,10 +33,12 @@ import com.tigerknows.model.DataQuery.GeoCoderResponse.GeoCoderList;
 import com.tigerknows.ui.discover.CycleViewPager;
 import com.tigerknows.ui.discover.CycleViewPager.CycleOnPageChangeListener;
 import com.tigerknows.ui.discover.CycleViewPager.CyclePagerAdapter;
+import com.tigerknows.ui.more.SettingActivity;
 import com.tigerknows.ui.traffic.TrafficDetailFragment;
 import com.tigerknows.ui.traffic.TrafficDetailFragment.PlanItemRefresher;
 import com.tigerknows.util.Utility;
 
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
@@ -586,6 +588,7 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             v.findViewById(R.id.title_txv).setVisibility(View.GONE);
             v.findViewById(R.id.traffic_plan_item).setVisibility(View.GONE);
             v.findViewById(R.id.traffic_step_item).setVisibility(View.GONE);
+            v.findViewById(R.id.location_view).setVisibility(View.GONE);
             v.findViewById(R.id.detail_btn).setVisibility(View.VISIBLE);
             v.findViewById(R.id.bottom_view).setVisibility(View.VISIBLE);
             v.findViewById(R.id.message_view).setVisibility(View.VISIBLE);
@@ -615,6 +618,9 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
                 titleTxv.setTextColor(blackLight);
                 nameTxv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
                 nameTxv.setTextColor(blackDark);
+            } else if (mType == TYPE_MY_LOCATION) {
+            	v.findViewById(R.id.location_view).setVisibility(View.VISIBLE);
+            	v.findViewById(R.id.message_view).setVisibility(View.GONE);
             }
         }
     }
@@ -681,16 +687,23 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
     
     private void setMyLocationToView(View v, OverlayItem overlayItem) {
         
-        TextView titleTxv = (TextView) v.findViewById(R.id.title_txv);
-        titleTxv.setVisibility(View.VISIBLE);
-        titleTxv.setText(getString(R.string.my_location_with_accuracy, Utility.formatMeterString((int)((POI) overlayItem.getAssociatedObject()).getPosition().getAccuracy())));
+        TextView titleTxv = (TextView) v.findViewById(R.id.my_location_txv);
+        titleTxv.setText(getString(R.string.my_location));
         
-        TextView nameTxv=(TextView)v.findViewById(R.id.name_txv);
-        nameTxv.setVisibility(View.VISIBLE);
+        
+        TextView nameTxv=(TextView)v.findViewById(R.id.location_name_txv);
         nameTxv.setText(overlayItem.getMessage());
         
-        Button detailBtn = (Button) v.findViewById(R.id.detail_btn);
-        detailBtn.setVisibility(View.GONE);
+        Button detailBtn = (Button) v.findViewById(R.id.gps_set_btn);
+        detailBtn.setText(getString(R.string.my_location_with_accuracy, Utility.formatMeterString((int)((POI) overlayItem.getAssociatedObject()).getPosition().getAccuracy())));
+        detailBtn.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				addActionLog(ActionLog.InfoWindowGps);
+				mSphinx.startActivityForResult(new Intent("android.settings.LOCATION_SOURCE_SETTINGS"), R.id.activity_setting_location);				
+			}
+		});
     
         v.findViewById(R.id.bottom_view).setVisibility(View.VISIBLE);
     }

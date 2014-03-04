@@ -140,6 +140,7 @@ public class ActionLog extends LogUpload {
     public static final String InfoWindowDetail = "YL";
     public static final String InfoWindowFlingLeft = "YM";
     public static final String InfoWindowFlingRight = "YN";
+    public static final String InfoWindowGps = "YO";
     
     public static final String Launcher = "FI";
     
