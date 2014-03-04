@@ -649,8 +649,12 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             View view = (View) mCyclePagerAdapter.viewList.get((position) % mCyclePagerAdapter.viewList.size());
             position = position % mItemizedOverlay.size();
             if (position == 0) {
-                setMessageToView(view, line.getName(), null, false);
+                view.findViewById(R.id.bus_line_plan).setVisibility(View.VISIBLE);
+                view.findViewById(R.id.message_view).setVisibility(View.GONE);
+                setLineToView(view.findViewById(R.id.bus_line_plan), line);
             } else {
+                view.findViewById(R.id.bus_line_plan).setVisibility(View.GONE);
+                view.findViewById(R.id.message_view).setVisibility(View.VISIBLE);
                 setMessageToView(view, mItemizedOverlay.get(position).getMessage(), null, false);
             }
             
@@ -658,8 +662,12 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
                 view = (View) mCyclePagerAdapter.viewList.get((prevPosition) % mCyclePagerAdapter.viewList.size());
                 prevPosition = prevPosition % mItemizedOverlay.size();
                 if (prevPosition == 0) {
-                    setMessageToView(view, line.getName(), null, false);
+                    view.findViewById(R.id.bus_line_plan).setVisibility(View.VISIBLE);
+                    view.findViewById(R.id.message_view).setVisibility(View.GONE);
+                    setLineToView(view.findViewById(R.id.bus_line_plan), line);
                 } else {
+                    view.findViewById(R.id.bus_line_plan).setVisibility(View.GONE);
+                    view.findViewById(R.id.message_view).setVisibility(View.VISIBLE);
                     setMessageToView(view, mItemizedOverlay.get(prevPosition).getMessage(), null, false);
                 }
             }
@@ -667,8 +675,12 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
                 view = (View) mCyclePagerAdapter.viewList.get((nextPosition) % mCyclePagerAdapter.viewList.size());
                 nextPosition = nextPosition % mItemizedOverlay.size();
                 if (nextPosition == 0) {
-                    setMessageToView(view, line.getName(), null, false);
+                    view.findViewById(R.id.bus_line_plan).setVisibility(View.VISIBLE);
+                    view.findViewById(R.id.message_view).setVisibility(View.GONE);
+                    setLineToView(view.findViewById(R.id.bus_line_plan), line);
                 } else {
+                    view.findViewById(R.id.bus_line_plan).setVisibility(View.GONE);
+                    view.findViewById(R.id.message_view).setVisibility(View.VISIBLE);
                     setMessageToView(view, mItemizedOverlay.get(nextPosition).getMessage(), null, false);
                 }
             }
@@ -688,6 +700,7 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             v.findViewById(R.id.title_txv).setVisibility(View.GONE);
             v.findViewById(R.id.traffic_plan_item).setVisibility(View.GONE);
             v.findViewById(R.id.traffic_step_item).setVisibility(View.GONE);
+            v.findViewById(R.id.bus_line_plan).setVisibility(View.GONE);
             v.findViewById(R.id.location_view).setVisibility(View.GONE);
             v.findViewById(R.id.detail_btn).setVisibility(View.VISIBLE);
             v.findViewById(R.id.bottom_view).setVisibility(View.VISIBLE);
@@ -723,6 +736,16 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             	v.findViewById(R.id.message_view).setVisibility(View.GONE);
             }
         }
+    }
+    
+    private void setLineToView(View view, Line line) {
+
+        TextView text = (TextView)view.findViewById(R.id.text1);
+        TextView summary = (TextView)view.findViewById(R.id.text2);
+        
+        text.setText(line.getName());
+        summary.setText(getString(R.string.busline_line_listitem_title, 
+                line.getTime(), line.getLengthStr(mSphinx)));
     }
     
     private void setPOIToView(View v, POI poi) {

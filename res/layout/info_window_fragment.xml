@@ -165,6 +165,44 @@
 
 
     </RelativeLayout>
+    
+    <RelativeLayout
+        android:id="@+id/bus_line_plan"
+         android:layout_width="fill_parent"
+          android:layout_height="wrap_content"
+        android:padding="4dp"
+        android:gravity="center_vertical|left" >
+    
+          <TextView android:id="@+id/text1"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_marginLeft="10dp"
+              android:layout_marginRight="10dp"
+              android:paddingTop="4dp"
+              android:layout_alignParentLeft="true"
+              android:layout_alignParentTop="true"
+              android:text="@string/app_name"
+              android:textColor="@color/black"
+              android:textSize="16sp"
+              android:singleLine="true"
+              android:ellipsize="end"
+            android:gravity="center_vertical|left"/>
+    
+          <TextView android:id="@+id/text2"
+              android:layout_below="@id/text1"
+              android:layout_marginLeft="10dp"
+              android:layout_marginRight="10dp"
+              android:paddingBottom="4dp"
+              android:layout_alignParentLeft="true"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:singleLine="true"
+              android:ellipsize="end"
+              android:text="@string/app_name"
+              android:textColor="@color/text_hint_gray"
+              android:textSize="14sp"/>
+     
+    </RelativeLayout>
     <include
         android:id="@+id/traffic_plan_item"
         android:layout_width="wrap_content"
@@ -191,7 +229,7 @@
             android:gravity="left|center_vertical"
             android:text="1\n1\n1"
             android:textSize="14sp"
-	        android:lineSpacingExtra="4dp"
+            android:lineSpacingExtra="4dp"
             android:lines="4"
              >
         </TextView>
