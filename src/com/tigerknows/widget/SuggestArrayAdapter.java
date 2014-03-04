@@ -6,6 +6,7 @@ import com.tigerknows.model.TKWord;
 import com.tigerknows.util.Utility;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -61,7 +62,7 @@ public class SuggestArrayAdapter extends ArrayAdapter<TKWord> {
             iconImv.setImageResource(R.drawable.ic_time);
             textTxv.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
             Utility.formatText(textTxv, tkWord.word, key, TKConfig.COLOR_BLACK_LIGHT);
-            if (tkWord.address != null) {
+            if (TextUtils.isEmpty(tkWord.address) == false) {
                 text1Txv.setText(tkWord.address);
                 text1Txv.setVisibility(View.VISIBLE);
             } else {
