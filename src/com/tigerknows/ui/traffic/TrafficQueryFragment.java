@@ -1047,7 +1047,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
             break;
             
         case R.id.nearby_search_btn:
-            mActionLog.addAction(mActionTag + ActionLog.TrafficHomeClickAlarmBtn);
+            addActionLog(ActionLog.AlarmBtn);
             mSphinx.showView(R.id.view_alarm_list);
             break;
             

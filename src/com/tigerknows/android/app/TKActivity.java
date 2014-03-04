@@ -1106,4 +1106,8 @@ public class TKActivity extends Activity implements TKAsyncTask.EventListener {
             mToast.show();
         }
     }
+    
+    protected void addActionLog(String actionInfo, Object... args) {
+        mActionLog.addAction(mActionTag + actionInfo, args);
+    }
 }

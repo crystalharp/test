@@ -32,7 +32,7 @@ public class AlarmAddFragment extends BaseFragment implements View.OnClickListen
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mActionTag = ActionLog.TrafficFetchFavorite;
+        mActionTag = ActionLog.AlarmAdd;
     }
 
     @Override
@@ -80,6 +80,7 @@ public class AlarmAddFragment extends BaseFragment implements View.OnClickListen
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.bus_station_btn) {
+            addActionLog(ActionLog.AlarmAddBusStops);
             DataQuery dataQuery = new DataQuery(mSphinx);
             mSphinx.getInputSearchFragment().setData(dataQuery,
                     null,
@@ -88,7 +89,7 @@ public class AlarmAddFragment extends BaseFragment implements View.OnClickListen
                     InputSearchFragment.REQUEST_ONLY_BUS_STATION);
             mSphinx.showView(R.id.view_poi_input_search);
         } else if (id == R.id.bus_line_btn) {
-
+            addActionLog(ActionLog.AlarmAddBusLine);
             DataQuery dataQuery = new DataQuery(mSphinx);
             mSphinx.getInputSearchFragment().setData(dataQuery,
                     null,

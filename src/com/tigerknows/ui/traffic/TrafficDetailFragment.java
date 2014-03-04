@@ -222,6 +222,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
             TrafficOverlayHelper.panToViewWholeOverlay(mPlan, mSphinx);
             TrafficOverlayHelper.showPlanInfoWindow(mSphinx);
         } else if (viewId == R.id.nearby_search_btn) {
+            addActionLog(ActionLog.AlarmBtn);
             List<POI> poiList = new ArrayList<POI>();
             List<Step> list = mPlan.getStepList();
             for(int i = 0, size = list.size(); i < size; i++) {

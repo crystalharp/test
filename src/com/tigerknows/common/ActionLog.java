@@ -141,6 +141,7 @@ public class ActionLog extends LogUpload {
     public static final String InfoWindowFlingLeft = "YM";
     public static final String InfoWindowFlingRight = "YN";
     public static final String InfoWindowGps = "YO";
+    public static final String AlarmBtn = "YP";
     
     public static final String Launcher = "FI";
     
@@ -508,7 +509,6 @@ public class ActionLog extends LogUpload {
     public static final String TrafficHomeClickMoreBtn = "BG";
     public static final String TrafficHomeClickMoreAlert = "BH";
     public static final String TrafficHomeClickSearchBtn = "BI";
-    public static final String TrafficHomeClickAlarmBtn = "BJ";
     public static final String TrafficHomeClickBusLineBtn = "BK";
     public static final String TrafficHomeClickBusStationBtn = "BL";
     public static final String TrafficHomeClickSubWayBtn = "BM";
@@ -786,6 +786,19 @@ public class ActionLog extends LogUpload {
     public static final String MeasureDistance = "FH";
     public static final String MeasureDistanceRevocation = "BA";
     public static final String MeasureDistanceClear = "BB";
+    
+    public static final String AlarmList = "CO";
+    public static final String AlarmListStatus = "BA";
+    public static final String AlarmListRange = "BB";
+    public static final String AlarmListRingtone = "BC";
+    public static final String AlarmListDelete = "BD";
+    
+    public static final String AlarmAdd = "CP";
+    public static final String AlarmAddBusStops = "BA";
+    public static final String AlarmAddBusLine = "BB";
+    
+    public static final String AlarmShow = "CQ";
+    public static final String AlarmShowClose = "BA";
     
     private long mStartMillis = 0;
     private String lastAction = null;

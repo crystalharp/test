@@ -61,7 +61,7 @@ public class AlarmListFragment extends BaseFragment implements View.OnClickListe
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mActionTag = ActionLog.TrafficFetchFavorite;
+        mActionTag = ActionLog.AlarmList;
     }
 
     @Override
@@ -234,6 +234,7 @@ public class AlarmListFragment extends BaseFragment implements View.OnClickListe
             int position = (Integer) v.getTag();
             mAlarm = mDataList.get(position);
             if (id == R.id.status_btn) {
+                addActionLog(ActionLog.AlarmListStatus, mAlarm.getStatus());
                 mAlarm.setStatus(mAlarm.getStatus() == 0 ? 1 : 0);
                 Alarm.writeAlarm(mSphinx, mAlarm);
                 mMyAdapter.notifyDataSetChanged();
@@ -242,10 +243,13 @@ public class AlarmListFragment extends BaseFragment implements View.OnClickListe
                     showSettingLocationDialog(mSphinx);
                 }
             } else if (id == R.id.range_btn) {
+                addActionLog(ActionLog.AlarmListRange, mAlarm.getRange());
                 showRangeDialog();
             } else if (id == R.id.ringtone_btn) {
+                addActionLog(ActionLog.AlarmListRingtone, mAlarm.getRingtoneName());
                 Alarm.pickRingtone(mSphinx, mAlarm.getRingtone(), R.id.view_alarm_list);
             } else if (id == R.id.delete_btn) {
+                addActionLog(ActionLog.AlarmListDelete);
                 mDataList.remove(mAlarm);
                 Alarm.deleteAlarm(mSphinx, mAlarm);
                 mMyAdapter.notifyDataSetChanged();

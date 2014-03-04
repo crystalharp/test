@@ -391,6 +391,7 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
             OverlayItem overlayItem = itemizedOverlay.getItemByFocused();
             mSphinx.showInfoWindow(overlayItem);
         } else if (id == R.id.nearby_search_btn) {
+            addActionLog(ActionLog.AlarmBtn);
             BuslineResultLineFragment.showAlarmDialog(mSphinx, BuslineResultLineFragment.lineToPOIList(line));
         }
     }

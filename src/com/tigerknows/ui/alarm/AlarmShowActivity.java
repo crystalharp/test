@@ -5,6 +5,7 @@ import com.tigerknows.LauncherActivity;
 import com.tigerknows.R;
 import com.tigerknows.android.app.TKActivity;
 import com.tigerknows.android.location.Position;
+import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.Alarm;
 
 import android.app.Service;
@@ -55,6 +56,9 @@ public class AlarmShowActivity extends TKActivity implements View.OnClickListene
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        mActionTag = ActionLog.AlarmShow;
+        
         setContentView(R.layout.alarm_show);
         
         findViews();
@@ -174,6 +178,7 @@ public class AlarmShowActivity extends TKActivity implements View.OnClickListene
 
     @Override
     public void onClick(View v) {
+        addActionLog(ActionLog.AlarmShowClose);
         showNextAlarm();
     }
 

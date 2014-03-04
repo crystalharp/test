@@ -180,8 +180,4 @@ public class BaseActivity extends TKActivity implements TKAsyncTask.EventListene
         putViewId(intent);
         super.startActivity(intent);
     }
-    
-	protected void addActionLog(String actionInfo, Object... args) {
-	    mActionLog.addAction(mActionTag + actionInfo, args);
-	}
 }
