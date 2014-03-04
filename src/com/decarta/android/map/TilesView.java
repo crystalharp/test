@@ -1025,14 +1025,14 @@ public class TilesView extends GLSurfaceView {
 						lastDirection = getDirection(event.getX(0),
 								event.getY(0), event.getX(1), event.getY(1));
 						// tigerknows delete begin
-						// }else{
-						// synchronized(drawingLock){
-						// XYFloat
-						// newDirection=getDirection(event.getX(0),event.getY(0),event.getX(1),event.getY(1));
-						// rotateZ(lastDirection,newDirection);
-						// lastDirection=newDirection;
-						// }
-						// refreshMap();
+					}else{
+					    synchronized(drawingLock){
+					        XYFloat
+					        newDirection=getDirection(event.getX(0),event.getY(0),event.getX(1),event.getY(1));
+					        rotateZ(lastDirection,newDirection);
+					        lastDirection=newDirection;
+					    }
+					    refreshMap();
 						// tigerknows delete end
 					}
 				} else if (touchMode == 2) {// tilting
