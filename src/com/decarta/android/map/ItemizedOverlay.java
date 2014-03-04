@@ -570,41 +570,6 @@ public class ItemizedOverlay {
         }
 	}
 
-    public OverlayItem switchItem(boolean next) {
-        synchronized(idxLock){
-        OverlayItem overlayItem = null;
-        int index = -1;
-        int size = overlayItems.size();
-        for(int i = 0; i < size; i++) {
-            if (overlayItems.get(i).isFoucsed) {
-                if (next) {
-                    index = i + 1;
-                } else {
-                    index = i - 1;
-                }
-//                index %= size;
-                index = (index + size)%size;
-                break;
-            }
-        }
-        
-        if (index == -1) {
-            index = 0;
-        }
-        
-        for(int i = 0; i < size; i++) {
-            if (index == i) {
-                overlayItem = overlayItems.get(i);
-                overlayItem.isFoucsed = true;                
-            } else {
-                overlayItems.get(i).isFoucsed = false;
-            }
-        }
-        
-        return overlayItem;
-        }
-    }
-    
     public void focuseOverlayItem(int focusedPosition) {
         synchronized(idxLock){
     	

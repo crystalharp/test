@@ -1995,7 +1995,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     }
 
     public boolean showInfoWindow(OverlayItem overlayItem) {
-        return showInfoWindow(R.id.view_result_map, overlayItem);
+        return showInfoWindow(uiStackPeek(), overlayItem);
     }
 
     public boolean showInfoWindow(int fragmentId, OverlayItem overlayItem) {
@@ -2137,6 +2137,12 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 mUIStack.add(id);
                 result = true;
             }
+            if (id == R.id.view_result_map &&
+                    mUIStack.size() > 2 &&
+                    mUIStack.get(mUIStack.size()-2) == R.id.view_traffic_result_detail &&
+                    mUIStack.get(mUIStack.size()-3) == R.id.view_result_map) {
+                mUIStack.remove(mUIStack.size()-3);
+            }
             return result;
         }
     }
@@ -2203,7 +2209,13 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                             id == R.id.view_discover_zhanlan_detail ||
                             id == R.id.view_traffic_busline_detail ||
                             id == R.id.view_traffic_result_detail) {
-                        uiStackRemove(R.id.view_result_map);
+                        if (id == R.id.view_traffic_result_detail &&
+                                mUIStack.size() > 1 &&
+                                mUIStack.get(mUIStack.size()-2) == R.id.view_traffic_home) {
+                            // donothing
+                        } else {
+                            uiStackRemove(R.id.view_result_map);
+                        }
                     } else if (id == R.id.view_traffic_result_transfer) {
                         uiStackClearTop(R.id.view_traffic_home);
                     }
@@ -2641,10 +2653,12 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 
             if (mBottomView.getChildAt(0) != mBottomFragment) {
                 mBottomView.removeAllViews();
+                int id = uiStackPeek();
                 if (mBottomFragment != null &&
-                        (fragment != null &&
-                        (fragment.getId() == R.id.view_home ||
-                            fragment.getId() == R.id.view_result_map))) {
+                        (id == R.id.view_home ||
+                            id == R.id.view_result_map) &&
+                        fragment != null &&
+                        fragment.getId() == id) {
                     mBottomView.addView(mBottomFragment);
                 }
             }

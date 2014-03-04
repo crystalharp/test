@@ -185,7 +185,7 @@ public class TrafficResultListMapFragment extends BaseFragment implements View.O
                     } else {
                         f.refreshDrive(plan);
                         TrafficOverlayHelper.drawOverlay(mSphinx, plan);
-                        TrafficOverlayHelper.panToViewWholeOverlay(plan, mSphinx.getMapView(), mSphinx);
+                        TrafficOverlayHelper.panToViewWholeOverlay(plan, mSphinx);
                     }
                     
                     dialog.setOnDismissListener(new OnDismissListener() {
@@ -247,14 +247,14 @@ public class TrafficResultListMapFragment extends BaseFragment implements View.O
                 mRightBtn.setOnClickListener(this);
                 
                 TrafficOverlayHelper.drawTrafficPlanListOverlay(mSphinx, list, 0);
-                TrafficOverlayHelper.panToViewWholeOverlay(list.get(0), mSphinx.getMapView(), mSphinx);
+                TrafficOverlayHelper.panToViewWholeOverlay(list.get(0), mSphinx);
                 result = true;
             } else if (type == Plan.Step.TYPE_WALK) {
                 mActionTag = ActionLog.TrafficWalkListMap;
                 mRightBtn.setVisibility(View.INVISIBLE);
 
                 TrafficOverlayHelper.drawTrafficPlanListOverlay(mSphinx, list, 0);
-                TrafficOverlayHelper.panToViewWholeOverlay(list.get(0), mSphinx.getMapView(), mSphinx);
+                TrafficOverlayHelper.panToViewWholeOverlay(list.get(0), mSphinx);
                 result = true;
             }
         }

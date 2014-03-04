@@ -28,6 +28,8 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.decarta.Globals;
+import com.decarta.android.map.ItemizedOverlay;
+import com.decarta.android.map.OverlayItem;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
@@ -816,24 +818,26 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
             	} else if (type == Plan.Step.TYPE_DRIVE) {
             	    // 驾车
             	    f.refreshResult(type);
-            		if (sphinx.uiStackPeek() == R.id.view_traffic_result_list_map) {
-                        sphinx.getTrafficResultListMapFragment().changeTrafficType(type);
+            		if (sphinx.uiStackPeek() == R.id.view_result_map) {
+                        sphinx.getResultMapFragment().changeTrafficType(type);
                     } else {
-                        sphinx.getTrafficResultListMapFragment().setData(null, ActionLog.TrafficDriveListMap);
-                        sphinx.showView(R.id.view_traffic_result_list_map);
-                        TrafficOverlayHelper.drawTrafficPlanListOverlay(sphinx, planList, 0);
-                        TrafficOverlayHelper.panToViewWholeOverlay(planList.get(0), sphinx.getMapView(), sphinx);
+                        sphinx.getResultMapFragment().setData(null, ActionLog.TrafficDriveMap);
+                        sphinx.showView(R.id.view_result_map);
+                        TrafficOverlayHelper.drawOverlay(sphinx, planList.get(0));
+                        TrafficOverlayHelper.panToViewWholeOverlay(planList.get(0), sphinx);
+                        TrafficOverlayHelper.showPlanInfoWindow(sphinx);
                     }
             	} else if (type == Plan.Step.TYPE_WALK) {
                     // 步行方式
             	    f.refreshResult(type);
-                    if (sphinx.uiStackPeek() == R.id.view_traffic_result_list_map) {
-                        sphinx.getTrafficResultListMapFragment().changeTrafficType(type);
+                    if (sphinx.uiStackPeek() == R.id.view_result_map) {
+                        sphinx.getResultMapFragment().changeTrafficType(type);
                     } else {
-                        sphinx.getTrafficResultListMapFragment().setData(null, ActionLog.TrafficWalkListMap);
-                        sphinx.showView(R.id.view_traffic_result_list_map);
-                        TrafficOverlayHelper.drawTrafficPlanListOverlay(sphinx, planList, 0);
-                        TrafficOverlayHelper.panToViewWholeOverlay(planList.get(0), sphinx.getMapView(), sphinx);
+                        sphinx.getResultMapFragment().setData(null, ActionLog.TrafficWalkMap);
+                        sphinx.showView(R.id.view_result_map);
+                        TrafficOverlayHelper.drawOverlay(sphinx, planList.get(0));
+                        TrafficOverlayHelper.panToViewWholeOverlay(planList.get(0), sphinx);
+                        TrafficOverlayHelper.showPlanInfoWindow(sphinx);
                     }
                 }
             }

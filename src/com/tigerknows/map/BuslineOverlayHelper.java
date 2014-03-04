@@ -46,10 +46,18 @@ public class BuslineOverlayHelper {
 	 */
 	public static void drawOverlay(final Sphinx sphinx, final MapView mapView, Line line) {
 	    
-	    sphinx.clearMap();
-	    
 		try {
 			if (line != null) {
+			    ItemizedOverlay itemizedOverlay = mapView.getOverlaysByName(ItemizedOverlay.BUSLINE_OVERLAY);
+			    if (itemizedOverlay != null) {
+			        Object o = itemizedOverlay.get(0).getAssociatedObject();
+			        if (o == line) {
+			            return;
+			        }
+			    }
+		        
+		        sphinx.clearMap();
+			    
 				mapView.getMapPreference().setRouteId(ItemizedOverlay.BUSLINE_OVERLAY);
 				
 				// 线路所经过的路径
@@ -66,6 +74,12 @@ public class BuslineOverlayHelper {
 		        }
 		        
 		        RotationTilt rt = new RotationTilt(RotateReference.SCREEN, TiltReference.SCREEN);
+                
+                OverlayItem overlayItem = new OverlayItem(new Position(39, 116), Icon.getIcon(sphinx.getResources(), R.drawable.btn_bubble_b_normal, Icon.OFFSET_LOCATION_CENTER_BOTTOM), 
+                        Icon.getIcon(sphinx.getResources(), R.drawable.btn_bubble_b_normal, Icon.OFFSET_LOCATION_CENTER_BOTTOM),
+                        line.getName(), rt);
+                overlayItem.setAssociatedObject(line);
+                overlay.addOverlayItem(overlayItem);
 				
 		        // 绘制每一个站点图标及起点终点图标
 		        Icon busStartIc = Icon.getIcon(sphinx.getResources(), R.drawable.icon_start_pin, Icon.OFFSET_LOCATION_CENTER_BOTTOM);
@@ -91,7 +105,7 @@ public class BuslineOverlayHelper {
 					}
 					i++;
 					
-					OverlayItem overlayItem = new OverlayItem(poi.getPosition(), busIc, busIcFocused, sphinx.getString(R.string.busline_map_bubble_content, i, poi.getName()), rt);
+					overlayItem = new OverlayItem(poi.getPosition(), busIc, busIcFocused, sphinx.getString(R.string.busline_map_bubble_content, i, poi.getName()), rt);
 					
 					overlayItem.setPreferZoomLevel(DEFAULT_SHOW_STEP_ZOOMLEVEL);
 	                
@@ -143,13 +157,13 @@ public class BuslineOverlayHelper {
 	/**
 	 * 将地图缩放至可以显示完整的交通路径, 并平移到交通路径中心点
 	 */
-	public static Position panToViewWholeOverlay(Line line, MapView mapview, Activity activity) {
+	public static Position panToViewWholeOverlay(Line line, Sphinx sphinx) {
 		LogWrapper.d(TAG, "panToViewWholeOverlay");
 		Position position = null;
 		if (line == null) {
 			return position;
 		}
-		
+		MapView mapview = sphinx.getMapView();
 		mapview.getOverlaysByName(ItemizedOverlay.BUSLINE_OVERLAY).isShowInPreferZoom = true;
 		
 		List<Position> positions = new ArrayList<Position>();
@@ -198,7 +212,7 @@ public class BuslineOverlayHelper {
 		 */
 		try {
 		    Rect rect = mapview.getPadding();
-		    Icon start = Icon.getIcon(activity.getResources(), R.drawable.icon_start_pin, Icon.OFFSET_LOCATION_CENTER_BOTTOM);
+		    Icon start = Icon.getIcon(sphinx.getResources(), R.drawable.icon_start_pin, Icon.OFFSET_LOCATION_CENTER_BOTTOM);
 		    int fitZoom = Util.getZoomLevelToFitBoundingBox(screenX, screenY, 
 		            rect, boundingBox);
 			LogWrapper.d(TAG, "get fitZoom: " + fitZoom);

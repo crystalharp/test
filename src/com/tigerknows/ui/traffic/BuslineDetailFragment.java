@@ -185,7 +185,7 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
                 // 绘制线路图层
                 viewMap();
                 // 将地图平移到某一坐标点, 并缩放至某一级别
-                BuslineOverlayHelper.panToPosition(mSphinx, position, mSphinx.getMapView());
+                BuslineOverlayHelper.panToPosition(mSphinx, position+1, mSphinx.getMapView());
             }
         });
         mFavorateBtn.setOnClickListener(new ResultOnClickListener());
@@ -352,7 +352,7 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
         }
 
         BuslineOverlayHelper.drawOverlay(mSphinx, mSphinx.getMapView(), line);
-        Position position = BuslineOverlayHelper.panToViewWholeOverlay(line, mSphinx.getMapView(), (Activity)mSphinx);
+        Position position = BuslineOverlayHelper.panToViewWholeOverlay(line, mSphinx);
         
         ShareAPI.share(mSphinx, line, position, mActionTag);
     }
@@ -385,7 +385,7 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
         	// 绘制交通图层
 			viewMap();
 			// 将地图缩放至可以显示完整的交通路径, 并平移到交通路径中心点
-			BuslineOverlayHelper.panToViewWholeOverlay(line, mSphinx.getMapView(), (Activity)mSphinx);
+			BuslineOverlayHelper.panToViewWholeOverlay(line, mSphinx);
 			ItemizedOverlay itemizedOverlay = mSphinx.getMapView().getOverlaysByName(ItemizedOverlay.BUSLINE_OVERLAY);
 			itemizedOverlay.focuseOverlayItem(0);
             OverlayItem overlayItem = itemizedOverlay.getItemByFocused();

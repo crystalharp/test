@@ -83,11 +83,20 @@ public class TrafficOverlayHelper {
 	 */
 	public static void drawOverlay(Sphinx sphinx, Plan plan) {
 	    
-	    sphinx.clearMap();
-	    
 		try {
 	        if(plan!=null){
 	            MapView mapView = sphinx.getMapView();
+	            
+	            ItemizedOverlay itemizedOverlay = mapView.getOverlaysByName(ItemizedOverlay.TRAFFIC_OVERLAY);
+	            if (itemizedOverlay != null) {
+	                Object o = itemizedOverlay.get(0).getAssociatedObject();
+	                if (o == plan) {
+	                    return;
+	                }
+	            }
+	            
+	            sphinx.clearMap();
+	            
 	        	mapView.getMapPreference().setRouteId(ItemizedOverlay.TRAFFIC_OVERLAY); 
 	            
 	        	// 线路所经过的路径
@@ -98,6 +107,12 @@ public class TrafficOverlayHelper {
 	            ItemizedOverlay overlay = new ItemizedOverlay(ItemizedOverlay.TRAFFIC_OVERLAY);
 
 	            RotationTilt rt = new RotationTilt(RotateReference.SCREEN,TiltReference.SCREEN);
+	            
+	            OverlayItem overlayItem = new OverlayItem(new Position(39, 116), Icon.getIcon(sphinx.getResources(), R.drawable.btn_bubble_b_normal, Icon.OFFSET_LOCATION_CENTER_BOTTOM), 
+	                    Icon.getIcon(sphinx.getResources(), R.drawable.btn_bubble_b_normal, Icon.OFFSET_LOCATION_CENTER_BOTTOM),
+	                    plan.getDescription(), rt);
+	            overlayItem.setAssociatedObject(plan);
+	            overlay.addOverlayItem(overlayItem);
 	            
 	            List<Step> steps = plan.getStepList();
 	            List<CharSequence> strings = NavigationSplitJointRule.splitJoint(sphinx, plan);
@@ -110,7 +125,7 @@ public class TrafficOverlayHelper {
 	    	    Icon walkIc = Icon.getIcon(resources, R.drawable.icon_map_walk);
 	            
 	    	    // 添加起点item. 包括终点图标, 起点文本:"起点"
-	    	    OverlayItem overlayItem = new OverlayItem(steps.get(0).getPositionList().get(0), start, start, 
+	    	    overlayItem = new OverlayItem(steps.get(0).getPositionList().get(0), start, start, 
             			sphinx.getString(R.string.start), rt);
 	    	    overlayItem.setAssociatedObject(new Step(new XMap()));
 	            addTouchEventListenerToOverlayItem(sphinx, mapView, overlayItem);
@@ -172,6 +187,13 @@ public class TrafficOverlayHelper {
 	    }
 	}
 	
+	public static void showPlanInfoWindow(Sphinx sphinx) {
+	    ItemizedOverlay itemizedOverlay = sphinx.getMapView().getOverlaysByName(ItemizedOverlay.TRAFFIC_OVERLAY);
+        OverlayItem overlayItem = itemizedOverlay.get(0);
+        itemizedOverlay.focuseOverlayItem(overlayItem);
+        sphinx.showInfoWindow(overlayItem);
+	}
+	
 	/**
 	 * 为每个OverlayItem附加点击事件,
 	 * 点击后将弹出InfoWindow显示信息
@@ -206,12 +228,13 @@ public class TrafficOverlayHelper {
 	/**
 	 * 将地图缩放至可以显示完整的交通路径, 并平移到交通路径中心点
 	 */
-	public static Position panToViewWholeOverlay(Plan plan, MapView mapview, Activity activity) {
+	public static Position panToViewWholeOverlay(Plan plan, Sphinx sphinx) {
 		Position position = null;
 		if (plan == null) {
 			return position;
 		}
 		
+		MapView mapview = sphinx.getMapView();
 		mapview.getOverlaysByName(ItemizedOverlay.TRAFFIC_OVERLAY).isShowInPreferZoom = true;
 		
 		List<Position> positions = plan.getRouteGeometry();
@@ -257,7 +280,7 @@ public class TrafficOverlayHelper {
 		 */
 		try {
             Rect rect = mapview.getPadding();
-		    Icon start = Icon.getIcon(activity.getResources(), R.drawable.icon_start_pin, Icon.OFFSET_LOCATION_CENTER_BOTTOM);
+		    Icon start = Icon.getIcon(sphinx.getResources(), R.drawable.icon_start_pin, Icon.OFFSET_LOCATION_CENTER_BOTTOM);
 		    int fitZoom = Util.getZoomLevelToFitBoundingBox(screenX, screenY, rect, boundingBox);
 			LogWrapper.d(TAG, "get fitZoom: " + fitZoom);
 			Position centerPosition = boundingBox.getCenterPosition();

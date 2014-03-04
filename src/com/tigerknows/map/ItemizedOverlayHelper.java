@@ -189,6 +189,10 @@ public class ItemizedOverlayHelper {
      * 将地图中心移至当前OverlayItem, 并显示InfoWindow
      */
     public static void centerShowCurrentOverlayFocusedItem(Sphinx sphinx) {
+        centerShowCurrentOverlayFocusedItem(sphinx, true);
+    }
+    
+    public static void centerShowCurrentOverlayFocusedItem(Sphinx sphinx, boolean showInfoWindow) {
         
         MapView mapView = sphinx.getMapView();
         ItemizedOverlay itemizedOverlay = mapView.getCurrentOverlay();
@@ -208,7 +212,9 @@ public class ItemizedOverlayHelper {
             } else {
                 mapView.panToPosition(overlayItem.getPosition());
             }
-            sphinx.showInfoWindow(sphinx.uiStackPeek(), overlayItem);
+            if (showInfoWindow) {
+                sphinx.showInfoWindow(overlayItem);
+            }
             }
         }
         

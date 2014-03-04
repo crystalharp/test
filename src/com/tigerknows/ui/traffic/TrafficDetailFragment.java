@@ -122,29 +122,27 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         switch(mType) {
             case Plan.Step.TYPE_TRANSFER:
                 mTitleBtn.setText(getString(R.string.title_transfer_plan));
-                mRightBtn.setText(R.string.map);
-                mRightBtn.setOnClickListener(this);
-                mRightBtn.setVisibility(View.VISIBLE);
                 mAlarmBtn.setVisibility(View.VISIBLE);
                 mErrorRecoveryBtn.setVisibility(View.VISIBLE);
                 mBottomButtonsView.setWeightSum(4);
                 break;
             case Plan.Step.TYPE_DRIVE:
                 mTitleBtn.setText(getString(R.string.title_drive_plan));
-                mRightBtn.setVisibility(View.GONE);
                 mAlarmBtn.setVisibility(View.GONE);
                 mErrorRecoveryBtn.setVisibility(View.GONE);
                 mBottomButtonsView.setWeightSum(2);
                 break;
             case Plan.Step.TYPE_WALK:
                 mTitleBtn.setText(getString(R.string.title_walk_plan));
-                mRightBtn.setVisibility(View.GONE);
                 mAlarmBtn.setVisibility(View.GONE);
                 mErrorRecoveryBtn.setVisibility(View.GONE);
                 mBottomButtonsView.setWeightSum(2);
                 break;
             default:
         }
+        mRightBtn.setText(R.string.map);
+        mRightBtn.setOnClickListener(this);
+        mRightBtn.setVisibility(View.VISIBLE);
         
         Utility.setFavoriteBtn(mSphinx, mFavorateBtn, mPlan.checkFavorite(mContext));
         
@@ -206,9 +204,9 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
                 mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position);
 
                 // 绘制交通图层
-                viewMap(false);
+                viewMap();
                 // 将地图平移到某一item index, 并缩放至某一级别
-                TrafficOverlayHelper.panToPosition(mSphinx, position, mSphinx.getMapView());
+                TrafficOverlayHelper.panToPosition(mSphinx, position+1, mSphinx.getMapView());
             }
         });
      
@@ -220,7 +218,9 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         int viewId = v.getId();
         if (viewId == R.id.right_btn) {
             mActionLog.addAction(mActionTag + ActionLog.TitleRightButton);
-            viewMap(true);
+            viewMap();
+            TrafficOverlayHelper.panToViewWholeOverlay(mPlan, mSphinx);
+            TrafficOverlayHelper.showPlanInfoWindow(mSphinx);
         } else if (viewId == R.id.nearby_search_btn) {
             List<POI> poiList = new ArrayList<POI>();
             List<Step> list = mPlan.getStepList();
@@ -562,30 +562,27 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         
         MapScene mapScene = mSphinx.getMapView().getCurrentMapScene();
         TrafficOverlayHelper.drawOverlay(mSphinx, plan);
-        Position position = TrafficOverlayHelper.panToViewWholeOverlay(plan, mSphinx.getMapView(), (Activity)mSphinx);
+        Position position = TrafficOverlayHelper.panToViewWholeOverlay(plan, mSphinx);
+        TrafficOverlayHelper.showPlanInfoWindow(mSphinx);
         
         ShareAPI.share(mSphinx, plan, position, mapScene, mActionTag);
     }
     
-    private void viewMap(boolean showList) {
+    private void viewMap() {
         
         if (mPlan != null) {
             String title = null;
             String actionTag = "";
             switch (mType) {
                 case Plan.Step.TYPE_TRANSFER:
-                    if (showList) {
-                        actionTag = ActionLog.TrafficTransferListMap;
-                    } else {
-                        actionTag = ActionLog.TrafficTransferMap;
-                        title = getString(R.string.transfer_map);
-                    }
+                    actionTag = ActionLog.TrafficTransferMap;
+                    title = getString(R.string.transfer_map);
                     break;
                 case Plan.Step.TYPE_DRIVE:
-                    actionTag = showList ? ActionLog.TrafficDriveListMap : ActionLog.TrafficDriveMap;
+                    actionTag = ActionLog.TrafficDriveMap;
                     break;
                 case Plan.Step.TYPE_WALK:
-                    actionTag = showList ? ActionLog.TrafficWalkListMap : ActionLog.TrafficWalkMap;
+                    actionTag = ActionLog.TrafficWalkMap;
                     break;
                 default:
 
@@ -595,12 +592,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
             resultMapFragment.setData(title, actionTag);
             mSphinx.showView(R.id.view_result_map);
             
-            if (showList) {
-                TrafficOverlayHelper.drawTrafficPlanListOverlay(mSphinx, mResult.getResult(mType), mIndex);
-            } else {
-                TrafficOverlayHelper.drawOverlay(mSphinx, mPlan);
-                TrafficOverlayHelper.panToViewWholeOverlay(mPlan, mSphinx.getMapView(), mSphinx);
-            }
+            TrafficOverlayHelper.drawOverlay(mSphinx, mPlan);
             
         }
     }

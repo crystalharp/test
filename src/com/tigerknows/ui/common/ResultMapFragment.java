@@ -15,18 +15,35 @@ import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.MapView.MapScene;
 import com.tigerknows.map.MapView.SnapMap;
+import com.tigerknows.map.TrafficOverlayHelper;
 import com.tigerknows.model.POI;
+import com.tigerknows.model.TrafficModel.Plan;
+import com.tigerknows.model.TrafficQuery;
 import com.tigerknows.ui.BaseFragment;
+import com.tigerknows.ui.traffic.TrafficDetailFragment;
+import com.tigerknows.ui.traffic.TrafficQueryFragment;
+import com.tigerknows.util.Utility;
+import com.tigerknows.widget.StringArrayAdapter;
 
 import android.app.Activity;
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.TextView;
 
 import java.util.List;
 
@@ -44,6 +61,38 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
         super(sphinx);
     }
 
+    private View mTrafficTitieView;
+    private RadioGroup mTrafficTitleRadioGroup;
+    private RadioButton mTrafficTransferRbt;
+    private RadioButton mTrafficDriveRbt;
+    private RadioButton mTrafficWalkRbt;
+    
+    View.OnTouchListener onTouchListener = new OnTouchListener() {
+
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            int id = v.getId();
+            if (mTrafficTitleRadioGroup.getCheckedRadioButtonId() == id) {
+                return true;
+            }
+            int action = event.getAction() & MotionEvent.ACTION_MASK;
+            boolean result = false;
+            if (action == MotionEvent.ACTION_UP) {
+                if (R.id.traffic_transfer_rbt == id) {
+                    mActionLog.addAction(mActionTag, ActionLog.TrafficTransferTab);
+                    result = !changeTrafficType(Plan.Step.TYPE_TRANSFER);
+                } else if (R.id.traffic_drive_rbt == id) {
+                    mActionLog.addAction(mActionTag, ActionLog.TrafficDriveTab);
+                    result = !changeTrafficType(Plan.Step.TYPE_DRIVE);
+                } else if (R.id.traffic_walk_rbt == id) {
+                    mActionLog.addAction(mActionTag, ActionLog.TrafficWalkTab);
+                    result = !changeTrafficType(Plan.Step.TYPE_WALK);
+                }
+            }
+            return result;
+        }
+    };
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,8 +128,19 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
         } else {
             mSnapView.setVisibility(View.GONE);
         }
-
-        if (ActionLog.ResultMapTuangouList.equals(mActionTag) ||
+        
+        int type = 0;
+        if (ActionLog.TrafficTransferMap.equals(mActionTag)) {
+            type = Plan.Step.TYPE_TRANSFER;
+        } else if (ActionLog.TrafficDriveMap.equals(mActionTag)) {
+            type = Plan.Step.TYPE_DRIVE;
+        } else if (ActionLog.TrafficWalkListMap.equals(mActionTag)) {
+            type = Plan.Step.TYPE_WALK;
+        }
+        
+        if (ActionLog.TrafficDriveMap.equals(mActionTag)) {
+            mSphinx.showHint(TKConfig.PREFS_HINT_TRAFFIC_PREFERENCE, R.layout.hint_traffic_preference);
+        } else if (ActionLog.ResultMapTuangouList.equals(mActionTag) ||
                 ActionLog.ResultMapYanchuList.equals(mActionTag) ||
                 ActionLog.ResultMapZhanlanList.equals(mActionTag) ||
                 ActionLog.POIListMap.equals(mActionTag) ||
@@ -92,9 +152,26 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
             mTitleBtn.setText(getString(R.string.title_drive_result_map));
         } else if (ActionLog.TrafficWalkMap.equals(mActionTag)) {
             mTitleBtn.setText(getString(R.string.title_walk_result_map));
-        } else if (ActionLog.TrafficTransferMap.equals(mActionTag) ||
-                ActionLog.TrafficTransferListMap.equals(mActionTag)) {
+        } else if (ActionLog.TrafficTransferMap.equals(mActionTag)) {
             mTitleBtn.setText(getString(R.string.title_transfer_result_map));
+        }
+        if (ActionLog.TrafficDriveMap.equals(mActionTag) ||
+                ActionLog.TrafficWalkMap.equals(mActionTag)) {
+            mTitleBtn.setVisibility(View.GONE);
+            mTrafficTitieView = mSphinx.getTrafficQueryFragment().getTitleView();
+            mTrafficTitleRadioGroup = (RadioGroup) mTrafficTitieView.findViewById(R.id.traffic_rgp);
+            ((ViewGroup)mSphinx.getTitleFragment().mRootView).addView(mTrafficTitieView, TrafficQueryFragment.sLayoutParams);
+    
+            mTrafficTransferRbt = (RadioButton) mTrafficTitieView.findViewById(R.id.traffic_transfer_rbt);
+            mTrafficDriveRbt = (RadioButton) mTrafficTitieView.findViewById(R.id.traffic_drive_rbt);
+            mTrafficWalkRbt = (RadioButton) mTrafficTitieView.findViewById(R.id.traffic_walk_rbt);
+            mTrafficTransferRbt.setOnTouchListener(onTouchListener);
+            mTrafficDriveRbt.setOnTouchListener(onTouchListener);
+            mTrafficWalkRbt.setOnTouchListener(onTouchListener);
+            checkRadioBtn(mActionTag);
+    
+            mRightBtn.setVisibility(View.INVISIBLE);
+            changeTrafficType(type, false);
         }
     }
 
@@ -174,10 +251,127 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
             }, mSphinx.getMapView().getCenterPosition(), mSphinx.getMapView().getCurrentMapScene());
             break;
             
+        case R.id.right_btn:
+            mActionLog.addAction(mActionTag + ActionLog.TitleRightButton);
+            String[] list = mSphinx.getResources().getStringArray(R.array.drvie_search_option);
+            final int[] driveTypeList = {1,2,3};
+            final ArrayAdapter<String> adapter = new StringArrayAdapter(mSphinx, list);
+            
+            View alterListView = mSphinx.getLayoutInflater().inflate(R.layout.alert_listview, null, false);
+            
+            ListView listView = (ListView) alterListView.findViewById(R.id.listview);
+            listView.setAdapter(adapter);
+            
+            final Dialog dialog = Utility.getChoiceDialog(mSphinx, alterListView, R.style.AlterChoiceDialog);
+            
+            TextView titleTxv = (TextView)alterListView.findViewById(R.id.title_txv);
+            titleTxv.setText(R.string.preference);
+            
+            Button button = (Button)alterListView.findViewById(R.id.confirm_btn);
+            button.setVisibility(View.GONE);
+            
+            dialog.show();
+            
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View arg1, int index, long arg3) {
+
+                    mActionLog.addAction(mActionTag + ActionLog.TrafficDriveListMapPreference, index);
+                    TrafficDetailFragment f = mSphinx.getTrafficDetailFragment();
+                    TrafficQuery trafficQuery = f.getTrafficQuery();
+                    Plan plan = f.findDriveType(driveTypeList[index]);
+
+                    if (plan == null) {
+                        TrafficQuery newTrafficQuery = new TrafficQuery(mContext);
+                        newTrafficQuery.setup(trafficQuery.getStart(),
+                                trafficQuery.getEnd(),
+                                TrafficQuery.QUERY_TYPE_DRIVE,
+                                ResultMapFragment.this.getId(),
+                                getString(R.string.doing_and_wait));
+                        newTrafficQuery.setCityId(trafficQuery.getCityId());
+                        newTrafficQuery.addParameter(TrafficQuery.SERVER_PARAMETER_BIAS, String.valueOf(driveTypeList[index]));
+                        mSphinx.queryStart(newTrafficQuery);
+                    } else {
+                        f.refreshDrive(plan);
+                        TrafficOverlayHelper.drawOverlay(mSphinx, plan);
+                        TrafficOverlayHelper.panToViewWholeOverlay(plan, mSphinx);
+                        TrafficOverlayHelper.showPlanInfoWindow(mSphinx);
+                    }
+                    
+                    dialog.setOnDismissListener(new OnDismissListener() {
+                        
+                        @Override
+                        public void onDismiss(DialogInterface dialog) {
+                        }
+                    });
+                    dialog.dismiss();
+                }
+            });
+            break;
         default:
             break;
         }
 
+    }
+    
+    public boolean changeTrafficType(int type) {
+        return changeTrafficType(type, true);
+    }
+    
+    private boolean changeTrafficType(int type, boolean jumpTransferResultFragment) {
+        boolean result = false;
+        TrafficDetailFragment trafficDetailFragment = mSphinx.getTrafficDetailFragment();
+        TrafficQuery trafficQuery = trafficDetailFragment.getTrafficQuery();
+
+        if (type != Plan.Step.TYPE_TRANSFER && type != Plan.Step.TYPE_DRIVE && type != Plan.Step.TYPE_WALK) {
+            return result;
+        }
+        
+        if (!trafficDetailFragment.hasResult(type)) {
+            TrafficQuery newTrafficQuery = new TrafficQuery(mContext);
+            newTrafficQuery.setup(trafficQuery.getStart(),
+                    trafficQuery.getEnd(),
+                    type,
+                    this.getId(),
+                    getString(R.string.doing_and_wait));
+            newTrafficQuery.setCityId(trafficQuery.getCityId());
+            mSphinx.queryStart(newTrafficQuery);
+        } else {
+            trafficDetailFragment.refreshResult(type);
+            List<Plan> list = trafficDetailFragment.getResult(type);
+            if (type == Plan.Step.TYPE_TRANSFER) {
+                if (jumpTransferResultFragment) {
+                    TrafficQuery newTrafficQuery = mSphinx.getTrafficResultFragment().getTrafficQuery();
+                    mSphinx.getTrafficResultFragment().setData(newTrafficQuery);
+                    mSphinx.showView(R.id.view_traffic_result_transfer);
+                } else {
+                    mActionTag = ActionLog.TrafficTransferMap;
+                    mRightBtn.setVisibility(View.INVISIBLE);
+                }
+                result = true;
+            } else if (type == Plan.Step.TYPE_DRIVE) {
+                mActionTag = ActionLog.TrafficDriveMap;
+                mRightBtn.setText(R.string.preference);
+                mRightBtn.setVisibility(View.VISIBLE);
+                mRightBtn.setOnClickListener(this);
+                
+                TrafficOverlayHelper.drawOverlay(mSphinx, list.get(0));
+                TrafficOverlayHelper.panToViewWholeOverlay(list.get(0), mSphinx);
+                TrafficOverlayHelper.showPlanInfoWindow(mSphinx);
+                
+                result = true;
+            } else if (type == Plan.Step.TYPE_WALK) {
+                mActionTag = ActionLog.TrafficWalkMap;
+                mRightBtn.setVisibility(View.INVISIBLE);
+
+                TrafficOverlayHelper.drawOverlay(mSphinx, list.get(0));
+                TrafficOverlayHelper.panToViewWholeOverlay(list.get(0), mSphinx);
+                TrafficOverlayHelper.showPlanInfoWindow(mSphinx);
+                result = true;
+            }
+        }
+        return result;
     }
     
     @Override
@@ -190,6 +384,7 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
             view.setVisibility(View.INVISIBLE);
             mSphinx.replaceBottomUI(null);
         }
+        
         if (mResultData != null) {
             boolean existPOI = false;
             List<ItemizedOverlay> list = mResultData.mapScene.itemizedOverlayList;
@@ -205,10 +400,26 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
             }
         }
     }
+    
+    private void checkRadioBtn(String tag) {
+        if (ActionLog.TrafficDriveMap.equals(tag)) {
+            mTrafficDriveRbt.setChecked(true);
+            TKConfig.setPref(mSphinx, TKConfig.PREFS_CHECKED_TRAFFIC_RADIOBUTTON, String.valueOf(mTrafficDriveRbt.getId()));
+        } else if (ActionLog.TrafficWalkMap.equals(tag)){
+            mTrafficWalkRbt.setChecked(true);
+            TKConfig.setPref(mSphinx, TKConfig.PREFS_CHECKED_TRAFFIC_RADIOBUTTON, String.valueOf(mTrafficWalkRbt.getId()));
+        }
+    }
 
     @Override
     public void onPostExecute(TKAsyncTask tkAsyncTask) {
         super.onPostExecute(tkAsyncTask);
+        if (TrafficQueryFragment.dealWithTrafficResponse(mSphinx,
+                mActionTag,
+                (TrafficQuery) tkAsyncTask.getBaseQuery(),
+                false) && this.isShowing()) {
+            checkRadioBtn(mActionTag);
+        }
     }
     
     // 在进入到交通选点界面和交通结果地图界面时，保存之前的地图相关信息
@@ -220,13 +431,17 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
                 ActionLog.TrafficTransferMap.equals(actionTag) ||
                 ActionLog.TrafficDriveMap.equals(actionTag) ||
                 ActionLog.TrafficWalkMap.equals(actionTag) ||
-                ActionLog.TrafficTransferListMap.equals(actionTag)) {
+                ActionLog.TrafficTransferListMap.equals(actionTag) ||
+                ActionLog.TrafficDriveListMap.equals(actionTag) ||
+                ActionLog.TrafficWalkListMap.equals(actionTag)) {
             
             if (ActionLog.TrafficSelectPoint.equals(mActionTag) == false &&
                     ActionLog.TrafficTransferMap.equals(mActionTag) == false &&
                     ActionLog.TrafficDriveMap.equals(mActionTag) == false &&
                     ActionLog.TrafficWalkMap.equals(mActionTag) == false &&
-                    ActionLog.TrafficTransferListMap.equals(mActionTag) == false) {
+                    ActionLog.TrafficTransferListMap.equals(mActionTag) == false &&
+                    ActionLog.TrafficDriveListMap.equals(mActionTag) == false &&
+                    ActionLog.TrafficWalkListMap.equals(mActionTag) == false) {
                 
                 mResultData = new ResultData();
                 mResultData.title = mTitle;
@@ -241,14 +456,18 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
                 ActionLog.TrafficTransferMap.equals(mActionTag) ||
                 ActionLog.TrafficDriveMap.equals(mActionTag) ||
                 ActionLog.TrafficWalkMap.equals(mActionTag) ||
-                ActionLog.TrafficTransferListMap.equals(mActionTag)) {
+                ActionLog.TrafficTransferListMap.equals(mActionTag) ||
+                ActionLog.TrafficDriveListMap.equals(mActionTag) ||
+                ActionLog.TrafficWalkListMap.equals(mActionTag)) {
             
             if (mResultData != null) {
                 if (ActionLog.TrafficSelectPoint.equals(mResultData.actionTag) == false &&
                         ActionLog.TrafficTransferMap.equals(mResultData.actionTag) == false &&
                         ActionLog.TrafficDriveMap.equals(mResultData.actionTag) == false &&
                         ActionLog.TrafficWalkMap.equals(mResultData.actionTag) == false &&
-                        ActionLog.TrafficTransferListMap.equals(mResultData.actionTag) == false) {
+                        ActionLog.TrafficTransferListMap.equals(mResultData.actionTag) == false &&
+                        ActionLog.TrafficDriveListMap.equals(mResultData.actionTag) == false &&
+                        ActionLog.TrafficWalkListMap.equals(mResultData.actionTag) == false) {
                     
                     if (mActionTag.equals(mResultData.actionTag) == false) {
                         mSphinx.clearMap();

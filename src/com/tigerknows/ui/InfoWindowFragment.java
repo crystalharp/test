@@ -14,11 +14,13 @@ import com.tigerknows.Sphinx.TouchMode;
 import com.tigerknows.android.location.Position;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
+import com.tigerknows.map.BuslineOverlayHelper;
 import com.tigerknows.map.ItemizedOverlayHelper;
 import com.tigerknows.map.MapEngine;
 import com.tigerknows.map.MapView;
 import com.tigerknows.map.TrafficOverlayHelper;
 import com.tigerknows.model.BaseQuery;
+import com.tigerknows.model.BuslineModel.Line;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.Dianying;
 import com.tigerknows.model.POI;
@@ -33,7 +35,6 @@ import com.tigerknows.model.DataQuery.GeoCoderResponse.GeoCoderList;
 import com.tigerknows.ui.discover.CycleViewPager;
 import com.tigerknows.ui.discover.CycleViewPager.CycleOnPageChangeListener;
 import com.tigerknows.ui.discover.CycleViewPager.CyclePagerAdapter;
-import com.tigerknows.ui.more.SettingActivity;
 import com.tigerknows.ui.traffic.TrafficDetailFragment;
 import com.tigerknows.ui.traffic.TrafficDetailFragment.PlanItemRefresher;
 import com.tigerknows.util.Utility;
@@ -80,7 +81,9 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
     public static final int TYPE_PLAN_LIST = 9;
     
     public static final int TYPE_STEP = 10;
-
+    
+    public static final int TYPE_BUS_LINE = 11;
+    
     /**
      * 下面这些ViewGroup用于InfoWindow
      * 最初是想避免重新创建它们，但是重用时会出现文字不对齐、高宽计算不协调情况？
@@ -91,6 +94,7 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
     private int mOwerFragmentId;
     private int mType;
     private int mPosition;
+    private int mLastPosition;
 
     private int mTitleHeight;
     private int mPOIHeight;
@@ -246,17 +250,25 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             mType = TYPE_TUANGUO;
         } else if (object instanceof Plan) {
             mType = TYPE_PLAN_LIST;
-        } else if (object instanceof Step) {
-            mType = TYPE_STEP;
         } else {
             mType = TYPE_MESSAGE;
         }
         
+        if (ItemizedOverlay.BUSLINE_OVERLAY.equals(itemizedOverlay.getName())) {
+            mType = TYPE_BUS_LINE;
+        } else if (ItemizedOverlay.TRAFFIC_OVERLAY.equals(itemizedOverlay.getName())) {
+            mType = TYPE_STEP;
+        }
+        
         LogWrapper.d(TAG, "mType = " + mType);
 
-        List<View> list = getInfoWindowViewList();
-        mCyclePagerAdapter.viewList = list;
+        getInfoWindowViewList();
         mCyclePagerAdapter.count = itemizedOverlay.size();
+        if (TYPE_BUS_LINE == mType || TYPE_STEP == mType) {
+            mCyclePagerAdapter.count = 256 * mItemizedOverlay.size();
+            mPosition = 128 * mItemizedOverlay.size() + mPosition;
+        }
+        mLastPosition = -1;
         mCyclePagerAdapter.notifyDataSetChanged();
         mCycleOnPageChangeListener.count = mCyclePagerAdapter.count;
         layoutInfoWindowView();
@@ -308,6 +320,7 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             setListenerToView(view);
             viewList.add(view);
             mInfoWindow = viewList;
+            mCyclePagerAdapter.viewList = mInfoWindow;
         }
 
         return mInfoWindow;
@@ -335,16 +348,44 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
 
     @Override
     public void refreshViews(int position) {
+        if (mLastPosition == position) {
+            return;
+        }
+        mLastPosition = position;
         MapView mapView = mSphinx.getMapView();
         if (position < mPosition) {
             mActionLog.addAction(mActionTag, ActionLog.InfoWindowFlingLeft);
-            mItemizedOverlay.switchItem(false);
-            ItemizedOverlayHelper.centerShowCurrentOverlayFocusedItem(mSphinx);
+            mItemizedOverlay.focuseOverlayItem(position%mItemizedOverlay.size());
+            if (mType == TYPE_BUS_LINE || mType == TYPE_STEP) {
+                if (position%mItemizedOverlay.size() == 0) {
+                    if (mType == TYPE_BUS_LINE) {
+                        BuslineOverlayHelper.panToViewWholeOverlay((Line)(mItemizedOverlay.get(0).getAssociatedObject()), mSphinx);
+                    } else if(mType == TYPE_STEP) {
+                        TrafficOverlayHelper.panToViewWholeOverlay((Plan)(mItemizedOverlay.get(0).getAssociatedObject()), mSphinx);
+                    }
+                } else {
+                    ItemizedOverlayHelper.centerShowCurrentOverlayFocusedItem(mSphinx, false);
+                }
+            } else {
+                ItemizedOverlayHelper.centerShowCurrentOverlayFocusedItem(mSphinx, false);
+            }
             mapView.showOverlay(ItemizedOverlay.MY_LOCATION_OVERLAY, false);
         } else if (position > mPosition) {
             mActionLog.addAction(mActionTag, ActionLog.InfoWindowFlingRight);
-            mItemizedOverlay.switchItem(true);
-            ItemizedOverlayHelper.centerShowCurrentOverlayFocusedItem(mSphinx);
+            mItemizedOverlay.focuseOverlayItem(position%mItemizedOverlay.size());
+            if (mType == TYPE_BUS_LINE || mType == TYPE_STEP) {
+                if (position%mItemizedOverlay.size() == 0) {
+                    if (mType == TYPE_BUS_LINE) {
+                        BuslineOverlayHelper.panToViewWholeOverlay((Line)(mItemizedOverlay.get(0).getAssociatedObject()), mSphinx);
+                    } else if(mType == TYPE_STEP) {
+                        TrafficOverlayHelper.panToViewWholeOverlay((Plan)(mItemizedOverlay.get(0).getAssociatedObject()), mSphinx);
+                    }
+                } else {
+                    ItemizedOverlayHelper.centerShowCurrentOverlayFocusedItem(mSphinx, false);
+                }
+            } else {
+                ItemizedOverlayHelper.centerShowCurrentOverlayFocusedItem(mSphinx, false);
+            }
             mapView.showOverlay(ItemizedOverlay.MY_LOCATION_OVERLAY, false);
         }
         mPosition = position;
@@ -548,7 +589,7 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             setPlanListToView(view, plan);
             
             TrafficOverlayHelper.drawOverlay(mSphinx, plan);
-            TrafficOverlayHelper.panToViewWholeOverlay(plan, mapView, mSphinx);
+            TrafficOverlayHelper.panToViewWholeOverlay(plan, mSphinx);
             
             if (prevPosition != -1) {
                 view = mCyclePagerAdapter.viewList.get(prevPosition % mCyclePagerAdapter.viewList.size());
@@ -561,16 +602,75 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
         } else if (mType == TYPE_STEP) {
             mHeight = mTrafficStepHeight;
             
+            OverlayItem overlayItem = mItemizedOverlay.get(0);
+            Plan plan = (Plan) overlayItem.getAssociatedObject();
             View view = (View) mCyclePagerAdapter.viewList.get((position) % mCyclePagerAdapter.viewList.size());
-            setStepToView(view, position);
+            position = position % mItemizedOverlay.size();
+            if (position == 0) {
+                view.findViewById(R.id.traffic_plan_item).setVisibility(View.VISIBLE);
+                view.findViewById(R.id.traffic_step_item).setVisibility(View.GONE);
+                setPlanListToView(view, plan);
+            } else {
+                view.findViewById(R.id.traffic_plan_item).setVisibility(View.GONE);
+                view.findViewById(R.id.traffic_step_item).setVisibility(View.VISIBLE);
+                setStepToView(view, position-1);
+            }
             
             if (prevPosition != -1) {
                 view = mCyclePagerAdapter.viewList.get(prevPosition % mCyclePagerAdapter.viewList.size());
-                setStepToView(view, prevPosition);
+                prevPosition = prevPosition % mItemizedOverlay.size();
+                if (prevPosition == 0) {
+                    view.findViewById(R.id.traffic_plan_item).setVisibility(View.VISIBLE);
+                    view.findViewById(R.id.traffic_step_item).setVisibility(View.GONE);
+                    setPlanListToView(view, plan);
+                } else {
+                    view.findViewById(R.id.traffic_plan_item).setVisibility(View.GONE);
+                    view.findViewById(R.id.traffic_step_item).setVisibility(View.VISIBLE);
+                    setStepToView(view, prevPosition-1);
+                }
             }
             if (nextPosition != -1) {
                 view = mCyclePagerAdapter.viewList.get(nextPosition % mCyclePagerAdapter.viewList.size());
-                setStepToView(view, nextPosition);
+                nextPosition = nextPosition % mItemizedOverlay.size();
+                if (nextPosition == 0) {
+                    view.findViewById(R.id.traffic_plan_item).setVisibility(View.VISIBLE);
+                    view.findViewById(R.id.traffic_step_item).setVisibility(View.GONE);
+                    setPlanListToView(view, plan);
+                } else {
+                    view.findViewById(R.id.traffic_plan_item).setVisibility(View.GONE);
+                    view.findViewById(R.id.traffic_step_item).setVisibility(View.VISIBLE);
+                    setStepToView(view, nextPosition-1);
+                }
+            }
+        } else if (mType == TYPE_BUS_LINE) {
+            mHeight -= mBottomHeight;
+            OverlayItem overlayItem = mItemizedOverlay.get(0);
+            Line line = (Line) overlayItem.getAssociatedObject();
+            View view = (View) mCyclePagerAdapter.viewList.get((position) % mCyclePagerAdapter.viewList.size());
+            position = position % mItemizedOverlay.size();
+            if (position == 0) {
+                setMessageToView(view, line.getName(), null, false);
+            } else {
+                setMessageToView(view, mItemizedOverlay.get(position).getMessage(), null, false);
+            }
+            
+            if (prevPosition != -1) {
+                view = (View) mCyclePagerAdapter.viewList.get((prevPosition) % mCyclePagerAdapter.viewList.size());
+                prevPosition = prevPosition % mItemizedOverlay.size();
+                if (prevPosition == 0) {
+                    setMessageToView(view, line.getName(), null, false);
+                } else {
+                    setMessageToView(view, mItemizedOverlay.get(prevPosition).getMessage(), null, false);
+                }
+            }
+            if (nextPosition != -1) {
+                view = (View) mCyclePagerAdapter.viewList.get((nextPosition) % mCyclePagerAdapter.viewList.size());
+                nextPosition = nextPosition % mItemizedOverlay.size();
+                if (nextPosition == 0) {
+                    setMessageToView(view, line.getName(), null, false);
+                } else {
+                    setMessageToView(view, mItemizedOverlay.get(nextPosition).getMessage(), null, false);
+                }
             }
         }
         if (mSphinx.getBottomFragment() == this) {
