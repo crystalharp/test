@@ -1052,7 +1052,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
             break;
             
         case R.id.favorite_btn:
-            mActionLog.addAction(mActionTag + ActionLog.TrafficHomeClickBusLineBtn);
+            addActionLog(ActionLog.TrafficHomeClickBusLineBtn);
             dataQuery = new DataQuery(mSphinx);
             dataQuery.setCityId(getCityId(mStart.getPOI(), mEnd.getPOI()));
             mSphinx.getInputSearchFragment().setData(dataQuery,
@@ -1062,7 +1062,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
             break;
             
         case R.id.share_btn:
-            mActionLog.addAction(mActionTag + ActionLog.TrafficHomeClickBusStationBtn);
+            addActionLog(ActionLog.TrafficHomeClickBusStationBtn);
             dataQuery = new DataQuery(mSphinx);
             dataQuery.setCityId(getCityId(mStart.getPOI(), mEnd.getPOI()));
             mSphinx.getInputSearchFragment().setData(dataQuery,
@@ -1072,7 +1072,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
             break;
             
         case R.id.error_recovery_btn:
-            mActionLog.addAction(mActionTag + ActionLog.TrafficHomeClickSubWayBtn);
+            addActionLog(ActionLog.TrafficHomeClickSubWayBtn);
             mSphinx.getSubwayMapFragment().setData(Globals.getCurrentCityInfo(mSphinx, false));
             mSphinx.showView(R.id.view_subway_map);
             break;

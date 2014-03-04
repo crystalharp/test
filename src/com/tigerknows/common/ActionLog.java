@@ -337,6 +337,8 @@ public class ActionLog extends LogUpload {
     public static final String MoreAppDownload = "BS";
     public static final String MoreNotice = "BT";
     public static final String MoreDingdan = "BU";
+    public static final String MoreCommonPlace = "BV";
+    public static final String MoreAlarm = "BW";
     
     // 切换城市页
     public static final String ChangeCity = "CB";
@@ -509,9 +511,9 @@ public class ActionLog extends LogUpload {
     public static final String TrafficHomeClickMoreBtn = "BG";
     public static final String TrafficHomeClickMoreAlert = "BH";
     public static final String TrafficHomeClickSearchBtn = "BI";
-    public static final String TrafficHomeClickBusLineBtn = "BK";
-    public static final String TrafficHomeClickBusStationBtn = "BL";
-    public static final String TrafficHomeClickSubWayBtn = "BM";
+    public static final String TrafficHomeClickBusLineBtn = "BJ";
+    public static final String TrafficHomeClickBusStationBtn = "BK";
+    public static final String TrafficHomeClickSubWayBtn = "BL";
     
     // 交通查询历史页
     public static final String TrafficSearchHistory = "BC";
