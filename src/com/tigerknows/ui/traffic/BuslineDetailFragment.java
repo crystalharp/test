@@ -10,6 +10,7 @@ import java.util.List;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -165,6 +166,9 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
         mAlarmBtn = (ViewGroup) mBottomButtonsView.findViewById(R.id.nearby_search_btn);
         TextView textView = (TextView) mAlarmBtn.getChildAt(0);
         textView.setText(R.string.alarm_text);
+        Drawable left = getResources().getDrawable(R.drawable.ic_alarm);
+        left.setBounds(0, 0, left.getIntrinsicWidth(), left.getIntrinsicHeight());
+        textView.setCompoundDrawables(left, null, null, null);
         mBottomButtonsView.findViewById(R.id.error_recovery_btn).setVisibility(View.GONE);
         mBottomButtonsView.setWeightSum(3);
     }

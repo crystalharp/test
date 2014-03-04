@@ -126,7 +126,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:drawableLeft="@drawable/ic_mylocation"
+                    android:drawableLeft="@drawable/ic_bus_line_input_query"
                     android:text="@string/nearby_bus_line" />
             </LinearLayout>
     
@@ -142,7 +142,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:drawableLeft="@drawable/ic_mylocation"
+                    android:drawableLeft="@drawable/ic_bus_stops_input_query"
                     android:text="@string/nearby_bus_station" />
             </LinearLayout>
             

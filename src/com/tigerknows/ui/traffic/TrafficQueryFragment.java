@@ -269,25 +269,25 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
         setListener();
         
         Resources resources = mSphinx.getResources();
-        Drawable left = resources.getDrawable(R.drawable.ic_search_busline);
+        Drawable left = resources.getDrawable(R.drawable.ic_alarm);
         left.setBounds(0, 0, left.getIntrinsicWidth(), left.getIntrinsicHeight());
         TextView textView = (TextView) mAlarmBtn.getChildAt(0);
         textView.setCompoundDrawables(left, null, null, null);
         textView.setText(R.string.alarm_text);
         
-        left = resources.getDrawable(R.drawable.ic_search_busline);
+        left = resources.getDrawable(R.drawable.ic_bus_line_traffic_home);
         left.setBounds(0, 0, left.getIntrinsicWidth(), left.getIntrinsicHeight());
         textView = (TextView) mBusLineBtn.getChildAt(0);
         textView.setCompoundDrawables(left, null, null, null);
         textView.setText(R.string.busline);
         
-        left = resources.getDrawable(R.drawable.ic_search_busstop);
+        left = resources.getDrawable(R.drawable.ic_bus_stops_traffic_home);
         left.setBounds(0, 0, left.getIntrinsicWidth(), left.getIntrinsicHeight());
         textView = (TextView) mBusStationBtn.getChildAt(0);
         textView.setCompoundDrawables(left, null, null, null);
         textView.setText(R.string.station);
         
-        left = resources.getDrawable(R.drawable.ic_map_tools_subway);
+        left = resources.getDrawable(R.drawable.ic_subway_traffic_home);
         left.setBounds(0, 0, left.getIntrinsicWidth(), left.getIntrinsicHeight());
         textView = (TextView) mSubWayBtn.getChildAt(0);
         textView.setCompoundDrawables(left, null, null, null);

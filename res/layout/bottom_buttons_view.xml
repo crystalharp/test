@@ -19,7 +19,7 @@
             android:drawableLeft="@drawable/ic_nearby_search"
             android:drawablePadding="4dp"
             android:text="@string/perimeter"
-            android:textSize="12sp"
+            android:textSize="14sp"
             android:textColor="#dbdbdc"
             />
         
@@ -39,7 +39,7 @@
             android:drawableLeft="@drawable/ic_add_favorite"
             android:drawablePadding="4dp"
             android:text="@string/more_favorite"
-            android:textSize="12sp"
+            android:textSize="14sp"
             android:textColor="#dbdbdc"
             />
         
@@ -59,7 +59,7 @@
             android:drawableLeft="@drawable/ic_share"
             android:drawablePadding="4dp"
             android:text="@string/share"
-            android:textSize="12sp"
+            android:textSize="14sp"
             android:textColor="#dbdbdc"
             />
         
@@ -78,7 +78,7 @@
             android:drawableLeft="@drawable/ic_recovery_error"
             android:drawablePadding="4dp"
             android:text="@string/error_recovery"
-            android:textSize="12sp"
+            android:textSize="14sp"
             android:textColor="#dbdbdc"
             />
         
