@@ -1205,4 +1205,8 @@ public class MapView extends RelativeLayout implements
     public XYFloat mercXYToScreenXYConv(XYDouble mercXY, float zoomLevel) {
         return tilesView.mercXYToScreenXYConv(mercXY, zoomLevel);
     }
+    
+    public float getZRotation() {
+        return tilesView.getMapMode().getzRotation();
+    }
 }

@@ -238,7 +238,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     private View mMapOverView;
     private View mCenterTokenView;
 	private CityInfo mInitCityInfo;
-    private View mCompassView;
+    private View mMapDirectionIndicatorView;
 	private LinearLayout mZoomView;
     private View mLocationView=null;
     private ImageButton mLocationBtn=null;
@@ -253,6 +253,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 	public enum TouchMode{
 		NORMAL, CLICK_SELECT_POINT, LONG_CLICK_SELECT_POINT, MEASURE_DISTANCE;
 	}
+	
+	//在用户手动旋转地图时小于这个角度的转动会被回正
+	private static float MIN_ROTATIONZ_ANGLE = 5.0f;
 
 	// Handler message code
     public static int MAP_LONG_CLICKED = 0x01;
@@ -710,11 +713,24 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             EventRegistry.addEventListener(mMapView, MapView.EventType.TOUCHDOWN, new MapView.TouchEventListener(){
                 @Override
                 public void onTouchEvent(EventSource eventSource, Position position) {
-
-                    if (mMyLocation.mode == MyLocation.MODE_ROTATION) {
+                    
+//                    if (mMyLocation.mode == MyLocation.MODE_ROTATION) {
+//                        mResetLocatoinBtnWhenTouch = true;
+//                    }
+//                    resetLoactionButtonState();
+                    //FIXME:还有各种情况?
+                    switch(mMyLocation.mode) {
+                    case MyLocation.MODE_NORMAL:
+                    case MyLocation.MODE_NONE:
+                        return;
+                    case MyLocation.MODE_ROTATION:
                         mResetLocatoinBtnWhenTouch = true;
+                        onRotationModeTouch();
+                        break;
+                    default:
+                        resetLoactionButtonState();
+                        break;
                     }
-                    resetLoactionButtonState();
 
                     if (infoWindowBackInHome(ItemizedOverlay.MY_LOCATION_OVERLAY)) {
                         return;
@@ -787,6 +803,19 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     message.what = MAP_LONG_CLICKED;
                     message.obj = position;
                     mHandler.sendMessage(message);
+                }
+            });
+            
+            EventRegistry.addEventListener(mMapView, MapView.EventType.ROTATEEND, new MapView.RotateEndEventListener() {
+                
+                @Override
+                public void onRotateEndEvent(MapView mapView, float rotation) {
+                    // FIXME Auto-generated method stub
+                    LogWrapper.d("conan", "onRotateEndEvent, rotation:" + rotation);
+                    if (Math.abs(rotation) < MIN_ROTATIONZ_ANGLE) {
+                        resetLoactionButtonState();
+                    }
+                    updateMapDirectionIndicatorState(mMyLocation.mode);
                 }
             });
 
@@ -1260,7 +1289,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         mLocationView=(findViewById(R.id.location_view));
         mLocationBtn=(ImageButton)(findViewById(R.id.location_btn));
         mLocationTxv=(TextView)(findViewById(R.id.location_txv));
-        mCompassView = findViewById(R.id.compass_imv);
+        mMapDirectionIndicatorView = findViewById(R.id.compass_imv);
 
         mMapToolsView = findViewById(R.id.map_tools_view);
         mMapToolsBtn = (ImageButton)findViewById(R.id.map_tools_btn);
@@ -1371,6 +1400,20 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 
                 mPopupWindowTools.showAsDropDown(mMapToolsBtn, 0, 0);
 
+            }
+        });
+            
+    	mMapDirectionIndicatorView.setOnClickListener(new View.OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                // FIXME:unfinished.
+                resetLoactionButtonState();
+                updateLoactionButtonState(mMyLocation.mode);
+                
+                if (infoWindowBackInHome(ItemizedOverlay.MY_LOCATION_OVERLAY)) {
+                    return;
+                }
             }
         });
     }
@@ -3720,6 +3763,30 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         }
     }
 
+    private final void updateMapDirectionIndicatorState(int state) {
+        
+        if (state == MyLocation.MODE_ROTATION || 
+                Math.abs(mMapView.getZRotation() - 0.0) > MIN_ROTATIONZ_ANGLE) {
+            mMapDirectionIndicatorView.setVisibility(View.VISIBLE);
+        } else {
+            mMapDirectionIndicatorView.setVisibility(View.INVISIBLE);
+        }
+        LogWrapper.d("conan", "zrotation:" + mMapView.getZRotation() + " state:" + state);
+    }
+    
+    //FIXME:临时函数,重构掉
+    private void onRotationModeTouch() {
+        mMyLocation.mode = MyLocation.MODE_NORMAL;
+        Compass compass = mMapView.getCompass();
+        compass.setVisible(false);
+        int resid = R.drawable.ic_location_normal;
+        int text = R.string.location_text;
+        rotateZ = 365;
+        mLocationBtn.setImageResource(resid);
+        mLocationTxv.setText(text);
+        updateMapDirectionIndicatorState(mMyLocation.mode);
+    }
+    
     private void updateLoactionButtonState(int locationButtonState) {
         mMyLocation.mode = locationButtonState;
         Compass compass = mMapView.getCompass();
@@ -3727,8 +3794,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             compass.setVisible(false);
             mMapView.refreshMap();
 
-            if (uiStackSize() > 0)
-                mCompassView.setVisibility(View.VISIBLE);
             mLocationBtn.setImageResource(R.drawable.progress_location);
             mLocationTxv.setText(R.string.location_text_doing);
             Animatable animationDrawable = (Animatable)(mLocationBtn.getDrawable());
@@ -3744,8 +3809,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 
             if (mMyLocation.mode == MyLocation.MODE_NAVIGATION) {
                 compass.setVisible(false);
-                if (uiStackSize() > 0)
-                    mCompassView.setVisibility(View.VISIBLE);
                 rotateZ = 365;
                 mMapView.rotateZToDegree(0);
                 resid = R.drawable.ic_location_navigation;
@@ -3760,8 +3823,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 compass.setVisible(true);
                 mMapView.refreshMap();
 
-                if (uiStackSize() > 0)
-                    mCompassView.setVisibility(View.INVISIBLE);
                 rotateZ = 365;
                 resid = R.drawable.ic_location_rotation;
                 text = R.string.location_text_compass;
@@ -3771,8 +3832,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 }
             } else {
                 compass.setVisible(false);
-                if (uiStackSize() > 0)
-                    mCompassView.setVisibility(View.VISIBLE);
                 resid = R.drawable.ic_location_normal;
                 text = R.string.location_text;
                 rotateZ = 365;
@@ -3781,6 +3840,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             mLocationBtn.setImageResource(resid);
             mLocationTxv.setText(text);
         }
+        updateMapDirectionIndicatorState(locationButtonState);
     }
 
     public void resetLoactionButtonState() {
