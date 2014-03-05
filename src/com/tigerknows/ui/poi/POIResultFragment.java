@@ -183,7 +183,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             Bundle savedInstanceState) {  
         
         mTitleBtnPaddingLeft = Utility.dip2px(mSphinx, 16);
-        mTitleBtnPaddingTop = Utility.dip2px(mSphinx, 14);
+        mTitleBtnPaddingTop = Utility.dip2px(mSphinx, 14.5f);
         
         mRootView = mLayoutInflater.inflate(R.layout.poi_result, container, false);
 
