@@ -1261,6 +1261,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                         if (baseFragment != null) {
                             baseFragment.dismiss();
                         }
+                        Alarm.resetShowSettingLocation();
                         Sphinx.this.finish();
                     } else {
                         mLastBackKeyDown = time;

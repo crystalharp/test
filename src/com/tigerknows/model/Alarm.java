@@ -1,16 +1,20 @@
 package com.tigerknows.model;
 
 import com.tigerknows.R;
+import com.tigerknows.Sphinx;
 import com.tigerknows.android.location.Position;
 import com.tigerknows.provider.Tigerknows;
 import com.tigerknows.service.AlarmService;
 import com.tigerknows.ui.alarm.AlarmShowActivity;
+import com.tigerknows.ui.more.SettingActivity;
 import com.tigerknows.util.SqliteWrapper;
+import com.tigerknows.util.Utility;
 
 import android.app.Activity;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
@@ -31,9 +35,16 @@ public class Alarm implements Parcelable {
     
     private static List<Alarm> sAlarmList = new ArrayList<Alarm>();
     private static int sEnabledCount = 0;
+    private static boolean sShowSettingLocation = false;
     
     public static List<Alarm> getAlarmListForNoRead() {
         return sAlarmList;
+    }
+    
+    public static void resetShowSettingLocation() {
+        synchronized (sAlarmList) {
+            sShowSettingLocation = false;   
+        }
     }
     
     public static List<Alarm> getAlarmList(Context context) {
@@ -65,6 +76,9 @@ public class Alarm implements Parcelable {
                 exist.setRingtoneName(alarm.getRingtoneName());
                 if (exist.getStatus() == 1 && alarm.getStatus() == 0) {
                     recheck = true;
+                    if (context instanceof Sphinx) {
+                        showSettingLocationDialog((Sphinx) context);
+                    }
                 }
                 exist.setStatus(alarm.getStatus());
                 exist.updateToDatabases(context);
@@ -72,6 +86,9 @@ public class Alarm implements Parcelable {
             } else {
                 alarm.writeToDatabases(context);
                 checkStatus(context, true);
+                if (alarm.getStatus() == 0 && context instanceof Sphinx) {
+                    showSettingLocationDialog((Sphinx) context);
+                }
             }
             list.remove(alarm);
             list.add(0,alarm);
@@ -403,5 +420,29 @@ public class Alarm implements Parcelable {
         intent.putExtra(RingtoneManager.EXTRA_RINGTONE_DEFAULT_URI, Settings.System.DEFAULT_ALARM_ALERT_URI);
         intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, uri);
         activity.startActivityForResult(intent, requestCode);
+    }
+    
+    private static void showSettingLocationDialog(final Sphinx activity) {
+        if (sShowSettingLocation || SettingActivity.checkGPS(activity)) {
+            return;
+        }
+        synchronized (sAlarmList) {
+            sShowSettingLocation = true;
+        }
+        Utility.showNormalDialog(activity,
+                                 activity.getString(R.string.prompt),
+                                 activity.getString(R.string.alarm_enable_tip),
+                                 activity.getString(R.string.settings),
+                                 activity.getString(R.string.cancel),
+                                 new DialogInterface.OnClickListener() {
+                    
+                                     @Override
+                                     public void onClick(DialogInterface arg0, int id) {
+                                         if (id == DialogInterface.BUTTON_POSITIVE) {
+                                             activity.showView(R.id.activity_setting_location);
+                                         }
+                                     }
+                                 }
+                                 );
     }
 }

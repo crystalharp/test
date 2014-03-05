@@ -25,6 +25,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
@@ -467,6 +468,7 @@ public class BuslineResultLineFragment extends BaseFragment {
 
     public static void showAlarmDialog(final Sphinx sphinx, final List<POI> poiList){
         if (poiList.size() == 0) {
+            sphinx.showTip(R.string.setting_alarm_no_station, Toast.LENGTH_SHORT);
             return;
         }
         

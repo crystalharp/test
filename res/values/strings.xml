@@ -1406,4 +1406,5 @@
     <string name="nearby_bus_station">附近站点</string>
     <string name="setting_alarm_range">设置闹钟距离</string>
     <string name="setting_alarm_station">设定闹钟站点</string>
+    <string name="setting_alarm_no_station">无换乘车站可选</string>
 </resources>
