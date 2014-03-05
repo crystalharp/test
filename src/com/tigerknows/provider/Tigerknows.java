@@ -163,7 +163,7 @@ public class Tigerknows {
     public interface Alarm extends BaseColumns {
         public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/alarm");
 
-        public static final String DEFAULT_SORT_ORDER = "_id ASC";
+        public static final String DEFAULT_SORT_ORDER = "_id DESC";
 
         public static final String NAME = "tk_name";
         

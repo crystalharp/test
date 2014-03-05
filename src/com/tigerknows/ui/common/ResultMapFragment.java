@@ -404,10 +404,10 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
     private void checkRadioBtn(String tag) {
         if (ActionLog.TrafficDriveMap.equals(tag)) {
             mTrafficDriveRbt.setChecked(true);
-            TKConfig.setPref(mSphinx, TKConfig.PREFS_CHECKED_TRAFFIC_RADIOBUTTON, String.valueOf(mTrafficDriveRbt.getId()));
+            TKConfig.setPref(mSphinx, TKConfig.PREFS_CHECKED_TRAFFIC_RADIOBUTTON, String.valueOf(Plan.Step.TYPE_DRIVE));
         } else if (ActionLog.TrafficWalkMap.equals(tag)){
             mTrafficWalkRbt.setChecked(true);
-            TKConfig.setPref(mSphinx, TKConfig.PREFS_CHECKED_TRAFFIC_RADIOBUTTON, String.valueOf(mTrafficWalkRbt.getId()));
+            TKConfig.setPref(mSphinx, TKConfig.PREFS_CHECKED_TRAFFIC_RADIOBUTTON, String.valueOf(Plan.Step.TYPE_WALK));
         }
     }
 

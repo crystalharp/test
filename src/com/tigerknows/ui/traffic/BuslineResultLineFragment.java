@@ -10,6 +10,7 @@ import java.util.List;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -126,7 +127,15 @@ public class BuslineResultLineFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
 
-        mTitleBtn.setText(getString(R.string.title_busline_result));
+        if (mBuslineQuery != null && TextUtils.isEmpty(mBuslineQuery.getKeyword()) == false) {
+            mTitleBtn.setText(getString(R.string.title_busline_result));
+            mCommentTxv.setText(getString(R.string.busline_result_title, mBuslineQuery.getKeyword(), 
+                    mBuslineModel.getTotal()));
+            mCommentTxv.setVisibility(View.VISIBLE);
+        } else {
+            mTitleBtn.setText(getString(R.string.nearby_bus_line));
+            mCommentTxv.setVisibility(View.GONE);
+        }
     	
         if (mResultLsv.isFooterSpringback()) {
             mSphinx.getHandler().postDelayed(mTurnPageRun, 1000);
@@ -269,14 +278,6 @@ public class BuslineResultLineFragment extends BaseFragment {
         
         if (buslineModel != null) {
             mBuslineModel = buslineModel;
-        }
-
-        if (mBuslineQuery.getKeyword() != null) {
-            mCommentTxv.setText(getString(R.string.busline_result_title, mBuslineQuery.getKeyword(), 
-                    mBuslineModel.getTotal()));
-            mCommentTxv.setVisibility(View.VISIBLE);
-        } else {
-            mCommentTxv.setVisibility(View.GONE);
         }
         
         if (mBuslineQuery.isTurnPage()) {
@@ -482,7 +483,7 @@ public class BuslineResultLineFragment extends BaseFragment {
         final Dialog dialog = Utility.getChoiceDialog(sphinx, alterListView, R.style.AlterChoiceDialog);
         
         TextView titleTxv = (TextView)alterListView.findViewById(R.id.title_txv);
-        titleTxv.setText(R.string.add_alarm);
+        titleTxv.setText(R.string.setting_alarm_station);
         
         Button button = (Button)alterListView.findViewById(R.id.confirm_btn);
         button.setVisibility(View.GONE);
@@ -496,7 +497,7 @@ public class BuslineResultLineFragment extends BaseFragment {
                 POI station = poiList.get(which);
                 alarm.setName(station.getName());
                 alarm.setPosition(station.getPosition());
-                Alarm.writeAlarm(sphinx, alarm, true);
+                Alarm.writeAlarm(sphinx, alarm, sphinx.uiStackContains(R.id.view_alarm_add) ? R.string.alarm_add_success : R.string.alarm_add_success_and_view);
                 AlarmService.start(sphinx, true);
                 dialog.dismiss();
                 

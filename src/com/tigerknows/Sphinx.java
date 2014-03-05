@@ -3949,6 +3949,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         return mMapCleanBtn;
     }
 
+    public View getMapToolsBtn() {
+        return mMapToolsBtn;
+    }
+
     public void setMapViewPaddingBottom(int bottom) {
         Rect rect = mMapView.getPadding();
         if (rect.bottom != bottom) {

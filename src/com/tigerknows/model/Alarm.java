@@ -48,10 +48,10 @@ public class Alarm implements Parcelable {
     }
     
     public static void writeAlarm(Context context, Alarm alarm) {
-        writeAlarm(context, alarm, false);
+        writeAlarm(context, alarm, 0);
     }
     
-    public static void writeAlarm(Context context, Alarm alarm, boolean showToast) {
+    public static void writeAlarm(Context context, Alarm alarm, int showToastResId) {
         synchronized (sAlarmList) {
             List<Alarm> list = getAlarmList(context);
             if (list.contains(alarm)) {
@@ -71,12 +71,13 @@ public class Alarm implements Parcelable {
                 checkStatus(context, recheck);
             } else {
                 alarm.writeToDatabases(context);
-                list.add(alarm);
                 checkStatus(context, true);
             }
+            list.remove(alarm);
+            list.add(0,alarm);
         }
-        if (showToast) {
-            Toast.makeText(context, R.string.alarm_add_success, Toast.LENGTH_SHORT).show();
+        if (showToastResId != 0) {
+            Toast.makeText(context, showToastResId, Toast.LENGTH_SHORT).show();
         }
     }
     

@@ -1399,8 +1399,11 @@
     <string name="range">距离</string> 
     <string name="alarm_empty_tip">公交闹钟为空\n点击右上角添加闹铃按钮去添加</string>
     <string name="exit_app_for_exist_alarm">再按一次回到桌面，公交闹铃将保持到站提醒</string>
-    <string name="alarm_add_success">设置成功，请在更多中查看公交闹铃</string>
-    
+    <string name="alarm_add_success_and_view">设置成功，请在更多中查看公交闹铃</string>
+    <string name="alarm_add_success">公交闹铃设置成功</string>
+    <string name="alarm_delete_tip">确定要删除此闹铃吗？</string>
     <string name="nearby_bus_line">附近线路</string>
     <string name="nearby_bus_station">附近站点</string>
+    <string name="setting_alarm_range">设置闹钟距离</string>
+    <string name="setting_alarm_station">设定闹钟站点</string>
 </resources>

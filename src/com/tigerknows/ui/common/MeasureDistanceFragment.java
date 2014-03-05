@@ -42,6 +42,7 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
     private MapView mMapView;
     private int mVisibilityLocation;
     private int mVisibilityCleanMap;
+    private int mVisibilityMapTools;
     private TouchMode mTouchMode;
     private ViewGroup mInfoWindowView;
     private TextView mInfoWindowTxv;
@@ -240,6 +241,7 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
         if (touchMode != Sphinx.TouchMode.MEASURE_DISTANCE) {
             mVisibilityCleanMap = mSphinx.getMapCleanBtn().getVisibility();
             mVisibilityLocation = mSphinx.getLocationView().getVisibility();
+            mVisibilityMapTools = mSphinx.getMapToolsBtn().getVisibility();
             InfoWindowHelper.hideInfoWindow(mMapView);
             mTouchMode = touchMode;
         }
@@ -262,6 +264,7 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
         
         mSphinx.getMapCleanBtn().setVisibility(View.INVISIBLE);
         mSphinx.getLocationView().setVisibility(View.INVISIBLE);
+        mSphinx.getMapToolsBtn().setVisibility(View.INVISIBLE);
         
         mSphinx.setTouchMode(TouchMode.MEASURE_DISTANCE);
     }
@@ -300,5 +303,6 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
         
         mSphinx.getMapCleanBtn().setVisibility(mVisibilityCleanMap);
         mSphinx.getLocationView().setVisibility(mVisibilityLocation);
+        mSphinx.getMapToolsBtn().setVisibility(mVisibilityMapTools);
     }
 }
