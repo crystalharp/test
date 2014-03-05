@@ -208,24 +208,27 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         
         return mRootView;
     }
+    
+    private void onFilterListVisible(){
+    	mSphinx.hideSoftInput();
+		mTitleBtn.setVisibility(View.VISIBLE);
+		mTitleBtn.setText(R.string.more);
+		mKeywordEdt.setVisibility(View.GONE);
+		mRightBtn.setVisibility(View.GONE);
+		mLeftBtn.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				backHome();
+			}
+		});
+    }
 
     @Override
     public void onResume() {
         super.onResume();
-        mLeftBtn.setOnClickListener(this);
         
         if(mFilterListView != null && mFilterListView.getVisibility() == View.VISIBLE){
-        	mSphinx.hideSoftInput();
-			mTitleBtn.setVisibility(View.VISIBLE);
-			mTitleBtn.setText(R.string.more);
-			mKeywordEdt.setVisibility(View.GONE);
-			mRightBtn.setVisibility(View.GONE);
-			mLeftBtn.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					backHome();
-				}
-			});
+        	onFilterListVisible();
 			return;
         }
         
@@ -377,10 +380,6 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
     public void onClick(View view) {
         switch (view.getId()) {
             
-            case R.id.left_btn:
-                dismiss();
-                break;
-            
             case R.id.btn_map_position:
                 mActionLog.addAction(mActionTag + ActionLog.InputQueryMapPosition);
                 
@@ -465,7 +464,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         		if(setFilterListView()){
             		mTitleBtn.setText(R.string.more);
             		mFilterListView.setVisibility(View.VISIBLE);
-            		onResume();
+            		onFilterListVisible();
         		}else{
         			queryFilter();
         		}
@@ -699,7 +698,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
             	if(setFilterListView()){
             		mTitleBtn.setText(R.string.more);
             		mFilterListView.setVisibility(View.VISIBLE);
-            		onResume();
+            		onFilterListVisible();
             	}
             }
         }
