@@ -159,7 +159,7 @@ public class TrafficResultFragment extends BaseFragment {
         mTrafficWalkRbt = (RadioButton) mTrafficTitieView.findViewById(R.id.traffic_walk_rbt);
         
         mTrafficTitleRadioGroup.check(R.id.traffic_transfer_rbt);
-        TKConfig.setPref(mSphinx, TKConfig.PREFS_CHECKED_TRAFFIC_RADIOBUTTON, String.valueOf(mTrafficTransferRbt.getId()));
+        TKConfig.setPref(mSphinx, TKConfig.PREFS_CHECKED_TRAFFIC_RADIOBUTTON, String.valueOf(Plan.Step.TYPE_TRANSFER));
         mTrafficTransferRbt.setOnTouchListener(null);
         mTrafficDriveRbt.setOnTouchListener(onTouchListener);
         mTrafficWalkRbt.setOnTouchListener(onTouchListener);

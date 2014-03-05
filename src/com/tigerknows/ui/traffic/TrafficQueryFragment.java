@@ -150,20 +150,22 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
         @Override
         public void onCheckedChanged(RadioGroup group, int checkedId) {
         
-            if (checkedId > 0) {
-                TKConfig.setPref(mSphinx, TKConfig.PREFS_CHECKED_TRAFFIC_RADIOBUTTON, String.valueOf(checkedId));
-            }
+            int type = Plan.Step.TYPE_TRANSFER;
             switch (checkedId) {
             case R.id.traffic_transfer_rbt:
                 mActionLog.addAction(mActionTag + ActionLog.TrafficTransferTab);
+                type = Plan.Step.TYPE_TRANSFER;
                 break;
             case R.id.traffic_drive_rbt:
                 mActionLog.addAction(mActionTag + ActionLog.TrafficDriveTab);
+                type = Plan.Step.TYPE_DRIVE;
                 break;
             case R.id.traffic_walk_rbt:
                 mActionLog.addAction(mActionTag + ActionLog.TrafficWalkTab);
+                type = Plan.Step.TYPE_WALK;
                 break;
             }
+            TKConfig.setPref(mSphinx, TKConfig.PREFS_CHECKED_TRAFFIC_RADIOBUTTON, String.valueOf(type));
         }
     };
     
@@ -485,11 +487,6 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
     	mTrafficTransferRbt.setOnTouchListener(null);
     	mTrafficDriveRbt.setOnTouchListener(null);
     	mTrafficWalkRbt.setOnTouchListener(null);
-    	
-    	int lastRbt = Integer.parseInt(TKConfig.getPref(mSphinx, TKConfig.PREFS_CHECKED_TRAFFIC_RADIOBUTTON, "0"));
-    	if (lastRbt != 0) {
-    	    mRadioGroup.check(lastRbt);
-    	}
         updateCommonPlace();
         initHistory();
         refreshRightBtn();
@@ -497,6 +494,19 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
         if (autoStartQuery && !mStart.textEmpty() && !mEnd.textEmpty()) {
             query();
         }
+	}
+	
+	public void setRadioGroupByPrefs() {
+        int lastRbt = Integer.parseInt(TKConfig.getPref(mSphinx, TKConfig.PREFS_CHECKED_TRAFFIC_RADIOBUTTON, String.valueOf(Plan.Step.TYPE_TRANSFER)));
+        int id = R.id.traffic_transfer_rbt;
+        if (lastRbt == Plan.Step.TYPE_TRANSFER) {
+            id = R.id.traffic_transfer_rbt;
+        } else if (lastRbt == Plan.Step.TYPE_DRIVE) {
+            id = R.id.traffic_drive_rbt;
+        } else if (lastRbt == Plan.Step.TYPE_WALK) {
+            id = R.id.traffic_walk_rbt;
+        }
+        mRadioGroup.check(id);
 	}
     	
 	void refreshRightBtn() {
@@ -818,6 +828,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
             	} else if (type == Plan.Step.TYPE_DRIVE) {
             	    // 驾车
             	    f.refreshResult(type);
+            	    f.refreshDrive(planList.get(0));
             		if (sphinx.uiStackPeek() == R.id.view_result_map) {
                         sphinx.getResultMapFragment().changeTrafficType(type);
                     } else {
