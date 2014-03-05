@@ -27,6 +27,8 @@
                 android:layout_height="fill_parent"
                 android:text="@string/tel_reserve_hotel"
                 android:gravity="center"
+                android:textColor="@color/orange"
+                android:textSize="16sp"
                  />
         </LinearLayout>
         
