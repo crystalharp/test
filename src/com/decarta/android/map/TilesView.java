@@ -765,6 +765,7 @@ public class TilesView extends GLSurfaceView {
 		int action = event.getAction() & MotionEvent.ACTION_MASK;
 		int pCount = event.getPointerCount();
 
+		XYFloat xyScreen = new XYFloat(event.getX(0), event.getY(0));
 		XYFloat xy0Conv = screenXYToScreenXYConv(event.getX(0), event.getY(0));
 
 		if (action == MotionEvent.ACTION_DOWN) {
@@ -1227,10 +1228,10 @@ public class TilesView extends GLSurfaceView {
                         boolean lableTouched = false;
                         for(int i = 0, s = shownLabels.size(); i < s; i++) {
                             SingleRectLabel label = shownLabels.get(i);
-                            if (xy0Conv.x >= label.rect.left
-                                    && xy0Conv.x <= label.rect.right
-                                    && xy0Conv.y >= label.rect.top
-                                    && xy0Conv.y <= label.rect.bottom) {
+                            if (xyScreen.x >= label.rect.left
+                                    && xyScreen.x <= label.rect.right
+                                    && xyScreen.y >= label.rect.top
+                                    && xyScreen.y <= label.rect.bottom) {
 
                                 Position pos = getSingleLabelPostion(label);
                                 mParentMapView.executeClickPOIEventListener(pos, label.name, position);
@@ -1351,7 +1352,8 @@ public class TilesView extends GLSurfaceView {
 		float x = rotation == 0 ? (dx + cx) : (cosRot * (dx) - (dy) * sinRot + cx);//旋转变换
 		float y = rotation == 0 ? (dy + cy) : ((dx) * sinRot + (dy) * cosRot + cy);
 
-		Position pos = screenXYConvToPos(x, y);
+		XYFloat xyConv = screenXYToScreenXYConv(x, y);
+		Position pos = screenXYConvToPos(xyConv.x, xyConv.y);
 		return pos;
 	}
 
