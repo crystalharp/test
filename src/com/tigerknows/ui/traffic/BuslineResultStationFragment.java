@@ -27,6 +27,7 @@ import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.android.location.Position;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.Alarm;
@@ -35,6 +36,7 @@ import com.tigerknows.model.BuslineModel.Station;
 import com.tigerknows.model.BuslineQuery;
 import com.tigerknows.service.AlarmService;
 import com.tigerknows.ui.BaseFragment;
+import com.tigerknows.util.ShareTextUtil;
 import com.tigerknows.widget.SpringbackListView;
 import com.tigerknows.widget.SpringbackListView.OnRefreshListener;
 
@@ -103,8 +105,13 @@ public class BuslineResultStationFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
         
-        mCommentTxv.setText(getString(R.string.busline_result_title, mBuslineQuery.getKeyword(), 
-        		mBuslineModel.getTotal()));
+        if (mBuslineQuery.getKeyword() != null) {
+            mCommentTxv.setText(getString(R.string.busline_result_title, mBuslineQuery.getKeyword(), 
+                    mBuslineModel.getTotal()));
+            mCommentTxv.setVisibility(View.VISIBLE);
+        } else {
+            mCommentTxv.setVisibility(View.GONE);
+        }
         mTitleBtn.setText(getString(R.string.title_station_result));
     	
         if (mResultLsv.isFooterSpringback()) {
@@ -267,6 +274,7 @@ public class BuslineResultStationFragment extends BaseFragment {
 
 
     public static class ViewHolder {
+        public TextView distance;
         public TextView text;
         public TextView summary;
         public TextView index;
@@ -293,6 +301,7 @@ public class BuslineResultStationFragment extends BaseFragment {
             	convertView = new ChildView(mContext);
                 
                 stationHolder = new ViewHolder();
+                stationHolder.distance = (TextView)convertView.findViewById(R.id.text0);
                 stationHolder.text = (TextView)convertView.findViewById(R.id.text1);
                 stationHolder.summary = (TextView)convertView.findViewById(R.id.text2);
                 stationHolder.index = (TextView)convertView.findViewById(R.id.index);
@@ -306,6 +315,15 @@ public class BuslineResultStationFragment extends BaseFragment {
             final Station station = (Station)getItem(position);
 
             stationHolder.text.setText(station.getName());
+            
+            Position pos1 = mBuslineQuery.getPosition();
+            Position pos2 = station.getPosition();
+            if (pos1 != null && pos2 != null) {
+                stationHolder.distance.setText(ShareTextUtil.getPlanLength(mSphinx, Position.distanceBetween(pos1, pos2)));
+                stationHolder.distance.setVisibility(View.VISIBLE);
+            } else {
+                stationHolder.distance.setVisibility(View.GONE);
+            }
                         
             //在List中每条线路(除环路外)会出现两次,表示往返,使用Set作为中间转化去重.
             List<String> list = station.getLineList();

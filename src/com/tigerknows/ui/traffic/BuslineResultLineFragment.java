@@ -271,8 +271,13 @@ public class BuslineResultLineFragment extends BaseFragment {
             mBuslineModel = buslineModel;
         }
 
-        mCommentTxv.setText(getString(R.string.busline_result_title, mBuslineQuery.getKeyword(), 
-                mBuslineModel.getTotal()));
+        if (mBuslineQuery.getKeyword() != null) {
+            mCommentTxv.setText(getString(R.string.busline_result_title, mBuslineQuery.getKeyword(), 
+                    mBuslineModel.getTotal()));
+            mCommentTxv.setVisibility(View.VISIBLE);
+        } else {
+            mCommentTxv.setVisibility(View.GONE);
+        }
         
         if (mBuslineQuery.isTurnPage()) {
             if (buslineModel == null) {
