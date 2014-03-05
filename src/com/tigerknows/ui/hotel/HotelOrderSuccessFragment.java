@@ -1,5 +1,7 @@
 package com.tigerknows.ui.hotel;
 
+import java.util.Date;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +15,7 @@ import com.tigerknows.Sphinx;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.HotelOrder;
 import com.tigerknows.ui.BaseFragment;
+import com.tigerknows.util.CalendarUtil;
 
 public class HotelOrderSuccessFragment extends BaseFragment{
 
@@ -23,6 +26,7 @@ public class HotelOrderSuccessFragment extends BaseFragment{
 	
 	private HotelOrder mOrder;
 	private TextView mHotelNameTxv;
+	private TextView mHotelRoomLatestTxv;
 	private TextView mHotelRoomtypeTxv;
 	private RelativeLayout mOrderDetailRly;
 	
@@ -50,6 +54,7 @@ public class HotelOrderSuccessFragment extends BaseFragment{
         super.findViews();
 		mHotelNameTxv = (TextView) mRootView.findViewById(R.id.hotel_name_txv);
 		mHotelRoomtypeTxv = (TextView) mRootView.findViewById(R.id.hotel_roomtype_txv);
+		c = (TextView) mRootView.findViewById(R.id.room_latest_txv);
 		mOrderDetailRly = (RelativeLayout) mRootView.findViewById(R.id.order_detail_rly);
 
     }
@@ -76,6 +81,10 @@ public class HotelOrderSuccessFragment extends BaseFragment{
     	super.onResume();
     	mTitleBtn.setText(mSphinx.getString(R.string.order_status));
     	mHotelNameTxv.setText(mOrder.getHotelName());
+		mHotelRoomLatestTxv.setText(mSphinx.getString(
+				R.string.hotel_room_latest, 
+				CalendarUtil.ymd8c_Hm4.format(new Date(mOrder.getRetentionTime()))
+				));
     	mHotelRoomtypeTxv.setText(mOrder.getRoomType());
     }
     

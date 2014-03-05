@@ -8,35 +8,38 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:background="@drawable/list_single"
         android:layout_margin="8dp">
+        <ImageView 
+			android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_drive"
+            android:layout_gravity="center"
+            android:padding="16dp"
+		/>
         <TextView 
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/hotel_success_order"
-            android:textSize="18sp"
+            android:textColor="@color/"
+            android:layout_gravity="center"
+            android:textSize="20sp"
+            android:padding="8dp"
             />
         <TextView 
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/hotel_success_sms"
+            android:layout_gravity="center"
             android:textSize="16sp"
             android:textColor="@color/black_light"
             />
     </LinearLayout>
     
-    <TextView 
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/hotel_order_detail"
-        android:textColor="@color/black_light"
-        android:paddingLeft="8dp"
-        />
     <RelativeLayout android:id="@+id/order_detail_rly"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:background="@drawable/list_single"
+        android:background="@drawable/list_header"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp">
         <ImageView android:id="@+id/arrow_imv"
@@ -53,6 +56,7 @@
             android:layout_toLeftOf="@id/arrow_imv"
             android:singleLine="true"
             android:textSize="18sp"
+            android:padding="8dp"
             />
         <TextView android:id="@+id/hotel_roomtype_txv"
             android:layout_width="fill_parent"
@@ -63,26 +67,41 @@
             android:layout_toLeftOf="@id/arrow_imv"
             android:textSize="16sp"
             android:textColor="@color/black_light"
+            android:padding="8dp"
             />
     </RelativeLayout>
     <LinearLayout 
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:background="@drawable/list_single"
-        android:layout_margin="8dp">
+        android:background="@drawable/list_footer"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp">
         <TextView 
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/warm_tips_colon"
-            android:textSize="18sp"
+            android:textColor="@color/black_light"
+            android:textSize="16sp"
+            android:padding="8dp"
             />
+        <TextView 
+            android:id="@+id/room_latest_txv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            android:textSize="16sp"
+            android:textColor="@color/black_light"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            />        
         <TextView 
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/hotel_success_tip"
             android:textSize="16sp"
             android:textColor="@color/black_light"
+            android:padding="8dp"
             />
     </LinearLayout>    
 </LinearLayout>
