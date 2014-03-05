@@ -249,10 +249,25 @@ public class AlarmListFragment extends BaseFragment implements View.OnClickListe
                 Alarm.pickRingtone(mSphinx, mAlarm.getRingtone(), R.id.view_alarm_list);
             } else if (id == R.id.delete_btn) {
                 addActionLog(ActionLog.AlarmListDelete);
-                mDataList.remove(mAlarm);
-                Alarm.deleteAlarm(mSphinx, mAlarm);
-                mMyAdapter.notifyDataSetChanged();
-                refreshEmptyView();
+                Utility.showNormalDialog(mSphinx, 
+                        getString(R.string.prompt), 
+                        getString(R.string.alarm_delete_tip), 
+                        getString(R.string.delete),
+                        getString(R.string.cancel),
+                        new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog,
+                            int which) {
+                        if (which == DialogInterface.BUTTON_POSITIVE) {
+                            mDataList.remove(mAlarm);
+                            Alarm.deleteAlarm(mSphinx, mAlarm);
+                            mMyAdapter.notifyDataSetChanged();
+                            refreshEmptyView();
+                        } 
+                    }
+                
+                });
             }
         }
         
