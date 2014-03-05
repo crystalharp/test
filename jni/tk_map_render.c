@@ -320,10 +320,7 @@ static tk_status_t _tk_draw_subways(tk_context_t *context, tk_layer_t *subway_la
         // add label
         if (context->zoom >= context->style->label_min &&
             context->zoom <= context->style->label_max &&
-            gdi->label_priority != 0) {
-            char a[256] = {0};
-            strncpy(a, subway_feature->feature->name, subway_feature->feature->name_length);
-            LOG_INFO(a);
+            gdi->label_priority != 0 && subway_feature->feature->name_length > 0) {
             tk_add_line_feature_to_labels(context, subway_feature->feature, relation == TK_RECT_COVER);
         }
         
