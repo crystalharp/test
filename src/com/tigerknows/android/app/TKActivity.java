@@ -458,6 +458,8 @@ public class TKActivity extends Activity implements TKAsyncTask.EventListener {
             mWakeLock.release();
         }
         
+        mTKLocationManager.onResume(mLocationListener);
+        
         try {
             TKConfig.checkStorageSize(mThis);
             mMapEngine.initMapDataPath(mThis);
@@ -496,6 +498,8 @@ public class TKActivity extends Activity implements TKAsyncTask.EventListener {
         if (mWakeLock.isHeld()) {
             mWakeLock.release();
         }
+        
+        mTKLocationManager.onPause(mLocationListener);
 
         unregisterReceiver(mExternalStorageMountReceiver);
         unregisterReceiver(mAirPlaneModeReceiver);
@@ -516,7 +520,6 @@ public class TKActivity extends Activity implements TKAsyncTask.EventListener {
     
     @Override
     protected void onStart() {
-        mTKLocationManager.onStart(mLocationListener);
         super.onStart();
     }
     
@@ -527,7 +530,6 @@ public class TKActivity extends Activity implements TKAsyncTask.EventListener {
             mIatDialog.cancel();
         }
         
-        mTKLocationManager.onStop(mLocationListener);
 		super.onStop();
 	}
 

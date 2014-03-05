@@ -130,11 +130,11 @@ public class TKLocationManager {
         }
     }
     
-    public void onStart(TKLocationListener listener) {
+    public void onResume(TKLocationListener listener) {
         synchronized (locationChangeLock) {
             if (locationListenerList.size() == 0) {
                 prepareLocation();
-                locationQuery.onStart();
+                locationQuery.onResume();
             }
             
             lastLocation = null;
@@ -146,13 +146,13 @@ public class TKLocationManager {
         
     }
     
-    public void onStop(TKLocationListener listener) {
+    public void onPause(TKLocationListener listener) {
         synchronized (locationChangeLock) {
             locationListenerList.remove(listener);
             
             if (locationListenerList.size() == 0) {
                 removeUpdates();
-                locationQuery.onStop();
+                locationQuery.onPause();
             }
         }
     }

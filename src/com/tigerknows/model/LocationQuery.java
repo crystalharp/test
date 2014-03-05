@@ -455,11 +455,11 @@ public class LocationQuery extends BaseQuery {
     public void onCreate() {
     }
     
-    public void onStart() {
+    public void onResume() {
         context.registerReceiver(scanWifiBroadcastReceiver, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
     }
     
-    public void onStop() {
+    public void onPause() {
         context.unregisterReceiver(scanWifiBroadcastReceiver);
     }
     
