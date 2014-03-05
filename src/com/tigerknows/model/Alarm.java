@@ -22,6 +22,7 @@ import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.text.TextUtils;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +31,10 @@ public class Alarm implements Parcelable {
     
     private static List<Alarm> sAlarmList = new ArrayList<Alarm>();
     private static int sEnabledCount = 0;
+    
+    public static List<Alarm> getAlarmListForNoRead() {
+        return sAlarmList;
+    }
     
     public static List<Alarm> getAlarmList(Context context) {
         synchronized (sAlarmList) {
@@ -43,6 +48,10 @@ public class Alarm implements Parcelable {
     }
     
     public static void writeAlarm(Context context, Alarm alarm) {
+        writeAlarm(context, alarm, false);
+    }
+    
+    public static void writeAlarm(Context context, Alarm alarm, boolean showToast) {
         synchronized (sAlarmList) {
             List<Alarm> list = getAlarmList(context);
             if (list.contains(alarm)) {
@@ -65,6 +74,9 @@ public class Alarm implements Parcelable {
                 list.add(alarm);
                 checkStatus(context, true);
             }
+        }
+        if (showToast) {
+            Toast.makeText(context, R.string.alarm_add_success, Toast.LENGTH_SHORT).show();
         }
     }
     

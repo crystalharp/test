@@ -1264,7 +1264,19 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                         Sphinx.this.finish();
                     } else {
                         mLastBackKeyDown = time;
-                        Toast.makeText(mThis, R.string.exit_app, Toast.LENGTH_SHORT).show();
+                        List<Alarm> list = Alarm.getAlarmListForNoRead();
+                        boolean existEnabledAlarm = false;
+                        try {
+                            for(int i = 0, size = list.size(); i < size; i++) {
+                                if (list.get(i).getStatus() == 0) {
+                                    existEnabledAlarm = true;
+                                    break;
+                                }
+                            }
+                        } catch (Exception e) {
+                            // donothing
+                        }
+                        Toast.makeText(mThis, existEnabledAlarm ? R.string.exit_app_for_exist_alarm : R.string.exit_app, Toast.LENGTH_SHORT).show();
                     }
 
                     return true;

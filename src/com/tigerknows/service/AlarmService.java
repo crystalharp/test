@@ -23,7 +23,7 @@ import android.os.IBinder;
  */
 public class AlarmService extends TKService {
     
-    static final String TAG = "PositionAlarmService";
+    static final String TAG = "AlarmService";
     
     public static final String EXTRA_RECHECK = "EXTRA_RECHECK";
     
@@ -60,7 +60,7 @@ public class AlarmService extends TKService {
         mTKLocationManager = TKLocationManager.getInstatce(getApplicationContext());
         
         mTKLocationManager.onCreate();
-        mTKLocationManager.onStart(mLocationListener);
+        mTKLocationManager.onResume(mLocationListener);
     }
 
     @Override
@@ -79,7 +79,7 @@ public class AlarmService extends TKService {
 
     @Override
     public void onDestroy() {
-        mTKLocationManager.onStop(mLocationListener);
+        mTKLocationManager.onPause(mLocationListener);
         mTKLocationManager.onDestroy();
         super.onDestroy();
     }

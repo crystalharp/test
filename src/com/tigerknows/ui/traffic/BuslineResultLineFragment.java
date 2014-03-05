@@ -499,7 +499,7 @@ public class BuslineResultLineFragment extends BaseFragment {
                 POI station = poiList.get(which);
                 alarm.setName(station.getName());
                 alarm.setPosition(station.getPosition());
-                Alarm.writeAlarm(sphinx, alarm);
+                Alarm.writeAlarm(sphinx, alarm, true);
                 AlarmService.start(sphinx, true);
                 dialog.dismiss();
                 

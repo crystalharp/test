@@ -168,7 +168,7 @@ public class BuslineResultStationFragment extends BaseFragment {
                         Alarm alarm = new Alarm(mSphinx);
                         alarm.setName(station.getName());
                         alarm.setPosition(station.getPosition());
-                        Alarm.writeAlarm(mSphinx, alarm);
+                        Alarm.writeAlarm(mSphinx, alarm, true);
                         AlarmService.start(mSphinx, true);
                         mSphinx.uiStackClearTop(R.id.view_alarm_list);
                     } else {

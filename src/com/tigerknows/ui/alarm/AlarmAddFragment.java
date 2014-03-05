@@ -93,7 +93,9 @@ public class AlarmAddFragment extends BaseFragment implements View.OnClickListen
             DataQuery dataQuery = new DataQuery(mSphinx);
             mSphinx.getInputSearchFragment().setData(dataQuery,
                     null,
-                    InputSearchFragment.MODE_BUSLINE);
+                    InputSearchFragment.MODE_BUSLINE,
+                    null,
+                    InputSearchFragment.REQUEST_ONLY_BUS_STATION);
             mSphinx.showView(R.id.view_poi_input_search);
         }
     }
