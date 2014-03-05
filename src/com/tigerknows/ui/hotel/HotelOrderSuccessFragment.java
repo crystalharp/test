@@ -54,7 +54,7 @@ public class HotelOrderSuccessFragment extends BaseFragment{
         super.findViews();
 		mHotelNameTxv = (TextView) mRootView.findViewById(R.id.hotel_name_txv);
 		mHotelRoomtypeTxv = (TextView) mRootView.findViewById(R.id.hotel_roomtype_txv);
-		c = (TextView) mRootView.findViewById(R.id.room_latest_txv);
+		mHotelRoomLatestTxv = (TextView) mRootView.findViewById(R.id.room_latest_txv);
 		mOrderDetailRly = (RelativeLayout) mRootView.findViewById(R.id.order_detail_rly);
 
     }
