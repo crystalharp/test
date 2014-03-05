@@ -44,6 +44,7 @@ public class AlarmShowActivity extends TKActivity implements View.OnClickListene
     
     private TextView mBodyTxv;
     private Button mCloseBtn;
+    private boolean onWindowFocusChanged = false;
     
     private Runnable mLocationChangedRun = new Runnable() {
 
@@ -58,6 +59,7 @@ public class AlarmShowActivity extends TKActivity implements View.OnClickListene
         super.onCreate(savedInstanceState);
         
         mActionTag = ActionLog.AlarmShow;
+        onWindowFocusChanged = false;
         
         setContentView(R.layout.alarm_show);
         
@@ -101,9 +103,25 @@ public class AlarmShowActivity extends TKActivity implements View.OnClickListene
     }
 
     @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        if (hasFocus) {
+            onWindowFocusChanged = true;
+        }
+        super.onWindowFocusChanged(hasFocus);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         LauncherActivity.LastActivityClassName = null;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (onWindowFocusChanged) {
+            finish();
+        }
     }
     
     @Override

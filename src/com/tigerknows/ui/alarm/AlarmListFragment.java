@@ -115,7 +115,6 @@ public class AlarmListFragment extends BaseFragment implements View.OnClickListe
     
     private void refreshEmptyView() {
         if (mDataList.size() == 0) {
-            mEmptyView.setText(R.string.favorite_empty_poi);
             mEmptyView.setVisibility(View.VISIBLE);
         } else {
             mEmptyView.setVisibility(View.GONE);

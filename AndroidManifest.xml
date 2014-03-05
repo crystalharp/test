@@ -364,6 +364,7 @@
         </service>
         
         <activity android:name="com.tigerknows.ui.alarm.AlarmShowActivity"
+            android:excludeFromRecents="true"
             android:theme="@style/Hit" 
             android:launchMode="singleTask"
             android:label="@string/alarm"
