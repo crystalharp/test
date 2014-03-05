@@ -28,8 +28,16 @@
 	        android:layout_marginRight="8dp"
 	        android:ellipsize="end"
 	        android:singleLine="true"
+	        android:textSize="16sp"
             android:text="@string/find_return" />
         
     </RelativeLayout>
-      
+    <ImageView 
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/content_rly"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/bg_sawtooth"
+        />
+    
 </LinearLayout>

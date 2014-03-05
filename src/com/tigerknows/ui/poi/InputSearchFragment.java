@@ -575,7 +575,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
      * @param String dataType
      */
     private DataQuery getDiscoverDataQuery(String dataType) {
-        DataQuery dataQuery = new DataQuery(mDataQuery);
+        DataQuery dataQuery = new DataQuery(mSphinx.buildDataQuery(mDataQuery.getPOI()));
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, dataType);
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
         dataQuery.delParameter(DataQuery.SERVER_PARAMETER_POI_ID);

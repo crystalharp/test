@@ -18,7 +18,9 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.LinearLayout.LayoutParams;
 
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
@@ -35,6 +37,7 @@ import com.tigerknows.model.TrafficQuery;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.ui.traffic.TrafficDetailFragment.PlanItemRefresher;
 import com.tigerknows.ui.common.ResultMapFragment;
+import com.tigerknows.util.Utility;
 
 /**
  * 
@@ -140,6 +143,7 @@ public class TrafficResultFragment extends BaseFragment {
         mResultAdapter = new TransferProjectListAdapter();
         mResultLsv.addFooterView(mFooterView, null, false);
         mResultLsv.addHeaderView(mHeaderView, null, false);
+        mResultLsv.setDivider(null);
         mResultLsv.setAdapter(mResultAdapter);
         
         return mRootView;
@@ -327,9 +331,20 @@ public class TrafficResultFragment extends BaseFragment {
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
         	if(convertView == null) {
-        	    convertView = mLayoutInflater.inflate(R.layout.traffic_group_traffic, null);
+        	    convertView = mLayoutInflater.inflate(R.layout.traffic_transfer_list_middle, null);
         	}
-        	
+        	RelativeLayout rly = (RelativeLayout)convertView.findViewById(R.id.content_rly);
+        	if(position == 0){
+        		rly.setBackgroundResource(R.drawable.list_header);
+        	}else if(position == mPlanList.size() - 1){
+        		rly.setBackgroundResource(R.drawable.list_footer);
+        	}else{
+        		rly.setBackgroundResource(R.drawable.list_middle);
+        	}
+        	RelativeLayout.LayoutParams rp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.FILL_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        	rp.setMargins(Utility.dip2px(mContext, 8), 0, Utility.dip2px(mContext, 8), 0);
+        	rly.setLayoutParams(rp);
+        	rly.setPadding(Utility.dip2px(mContext, 16), 0, Utility.dip2px(mContext, 16), Utility.dip2px(mContext, 20));
         	Plan plan = (Plan) getItem(position);
         	PlanItemRefresher.refresh(mSphinx, plan, convertView, true);
         	

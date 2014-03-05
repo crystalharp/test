@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+ 	android:layout_width="fill_parent"
+  	android:layout_height="wrap_content"
+  	android:layout_alignParentTop="true"
+	android:gravity="center_vertical|left">
+	<RelativeLayout
+	    android:id="@+id/content_rly"
+	    android:layout_width="fill_parent"
+  		android:layout_height="fill_parent"
+  		android:paddingLeft="16dp"
+  		android:paddingRight="16dp"
+  		android:paddingBottom="20dp"
+  		android:background="@drawable/list_selector_background_gray_light"
+	    >
+	  	<TextView
+	  	    android:id="@+id/title_txv"
+	  	    android:layout_width="wrap_content"
+	  	    android:layout_height="wrap_content"
+	  	    android:layout_alignParentLeft="true"
+		    android:paddingTop="20dp"
+	  	    android:lineSpacingExtra="4dp"
+	  	    android:textColor="@color/black"
+	  	    android:text="title"
+	  	    android:textSize="16sp" />
+	  	
+	  	<TextView
+	  	    android:id="@+id/tagtitle_txv"
+	  	    android:layout_width="wrap_content"
+	  	    android:layout_height="wrap_content"
+	  	    android:layout_alignBaseline="@+id/title_txv"
+	  	    android:layout_alignBottom="@+id/title_txv"
+	  	    android:layout_toRightOf="@+id/title_txv"
+	  	    android:layout_marginLeft="8dp"
+	  	    android:lineSpacingExtra="2dp"
+	  	    android:visibility="gone"
+	  	    android:text="title"
+	  	    android:textColor="@color/white"
+	  	    android:textSize="12sp" />
+	  	
+	  	<LinearLayout
+	  	    android:layout_width="fill_parent"
+	  	    android:layout_height="wrap_content"
+	  	    android:orientation="horizontal"
+	  	    android:gravity="center_vertical"
+	      	android:layout_below="@id/title_txv"
+	  	     >
+		  	<TextView
+		  	    android:id="@+id/txv1"
+		  	    android:layout_width="wrap_content"
+		  	    android:layout_height="wrap_content"
+		      	android:paddingRight="8dp"
+		  	    android:lineSpacingMultiplier="1.1"
+		  	    android:ellipsize="end"
+		  	    android:singleLine="true"
+		  	    android:textColor="@color/black_light"
+		  	    android:text="bustime"
+		  	    android:textSize="12sp" />
+		  	
+		  	<TextView
+		  	    android:id="@+id/txv2"
+		  	    android:layout_width="wrap_content"
+		  	    android:layout_height="wrap_content"
+		  	    android:ellipsize="end"
+		  	    android:paddingRight="8dp"
+		  	    android:drawableLeft="@drawable/ic_vertical_split"
+		  	    android:drawablePadding="8dp"
+		  	    android:lineSpacingMultiplier="1.1"
+		  	    android:singleLine="true"
+		  	    android:textColor="@color/black_light"
+		  	    android:text="distance"
+		  	    android:textSize="12sp" />
+		  	
+		  	
+		  	<TextView
+		  	    android:id="@+id/txv3"
+		  	    android:layout_width="wrap_content"
+		  	    android:layout_height="wrap_content"
+		  	    android:singleLine="true"
+		  	    android:paddingRight="8dp"
+		  	    android:drawableLeft="@drawable/ic_vertical_split"
+		  	    android:textColor="@color/black_light"
+		  	    android:drawablePadding="8dp"
+		  	    android:lineSpacingMultiplier="1.1"
+		  	    android:text="walk_distance"
+		  	    android:textSize="12sp" />
+		  	
+		  	<TextView
+		  	    android:id="@+id/txv4"
+		  	    android:layout_width="wrap_content"
+		  	    android:layout_height="wrap_content"
+		  	    android:ellipsize="end"
+		  	    android:singleLine="true"
+		  	    android:drawableLeft="@drawable/ic_vertical_split"
+		  	    android:drawablePadding="8dp"
+		  	    android:lineSpacingMultiplier="1.1"
+		  	    android:textColor="@color/black_light"
+		  	    android:text="busstop_num"
+		  	    android:textSize="12sp" />
+	  	</LinearLayout>
+	  	
+	  	<LinearLayout
+	  	    android:id="@+id/tags_view"
+	  	    android:layout_alignParentTop="true"
+	      	android:layout_alignParentRight="true"
+	      	android:paddingRight="8dp"
+	      	android:orientation="horizontal"
+	  	    android:layout_width="wrap_content"
+	  	    android:layout_height="wrap_content" >
+	  	</LinearLayout>
+		    	    
+	</RelativeLayout>
+
+
+</RelativeLayout>
+
