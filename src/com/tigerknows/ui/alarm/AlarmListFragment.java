@@ -297,7 +297,7 @@ public class AlarmListFragment extends BaseFragment implements View.OnClickListe
         final Dialog dialog = Utility.getChoiceDialog(mSphinx, alterListView, R.style.AlterChoiceDialog);
         
         TextView titleTxv = (TextView)alterListView.findViewById(R.id.title_txv);
-        titleTxv.setText(R.string.range);
+        titleTxv.setText(R.string.setting_alarm_range);
         
         Button button = (Button)alterListView.findViewById(R.id.confirm_btn);
         button.setVisibility(View.GONE);

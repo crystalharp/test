@@ -1403,4 +1403,6 @@
     <string name="alarm_delete_tip">确定要删除此闹铃吗？</string>
     <string name="nearby_bus_line">附近线路</string>
     <string name="nearby_bus_station">附近站点</string>
+    <string name="setting_alarm_range">设置闹钟距离</string>
+    <string name="setting_alarm_station">设定闹钟站点</string>
 </resources>

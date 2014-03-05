@@ -483,7 +483,7 @@ public class BuslineResultLineFragment extends BaseFragment {
         final Dialog dialog = Utility.getChoiceDialog(sphinx, alterListView, R.style.AlterChoiceDialog);
         
         TextView titleTxv = (TextView)alterListView.findViewById(R.id.title_txv);
-        titleTxv.setText(R.string.add_alarm);
+        titleTxv.setText(R.string.setting_alarm_station);
         
         Button button = (Button)alterListView.findViewById(R.id.confirm_btn);
         button.setVisibility(View.GONE);
