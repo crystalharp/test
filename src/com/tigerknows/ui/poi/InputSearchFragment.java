@@ -377,6 +377,10 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
     public void onClick(View view) {
         switch (view.getId()) {
             
+            case R.id.left_btn:
+                dismiss();
+                break;
+            
             case R.id.btn_map_position:
                 mActionLog.addAction(mActionTag + ActionLog.InputQueryMapPosition);
                 
