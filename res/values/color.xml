@@ -48,6 +48,7 @@
     <color name="blue_light">#cdedff</color>
     <color name="blue_title">#586b95</color>
     <color name="red">#fe0101</color>
+    <color name="green">#65b243</color>
     
     <color name="infowindow_split_line">#e6e6e6</color>
     <color name="home_list_bg">#f8f6ff</color>
