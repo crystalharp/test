@@ -277,7 +277,6 @@ public class BuslineResultStationFragment extends BaseFragment {
         public TextView distance;
         public TextView text;
         public TextView summary;
-        public TextView index;
         public int position;
     }
 
@@ -304,7 +303,6 @@ public class BuslineResultStationFragment extends BaseFragment {
                 stationHolder.distance = (TextView)convertView.findViewById(R.id.text0);
                 stationHolder.text = (TextView)convertView.findViewById(R.id.text1);
                 stationHolder.summary = (TextView)convertView.findViewById(R.id.text2);
-                stationHolder.index = (TextView)convertView.findViewById(R.id.index);
                 stationHolder.position = position;
                 
                 convertView.setTag(stationHolder);
@@ -343,8 +341,6 @@ public class BuslineResultStationFragment extends BaseFragment {
                 stationHolder.summary.setVisibility(View.GONE);
             }
 
-            stationHolder.index.setText(String.valueOf(position+1));
-            
             if (focusedIndex == position) {
 //            	stationHolder.index.setBackgroundResource(R.drawable.bg_index_focused);
 			} else {

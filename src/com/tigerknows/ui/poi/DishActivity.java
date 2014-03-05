@@ -536,7 +536,7 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
             commendView.setTag(R.id.commend_view, data);
             commendView.setTag(R.id.commend_imv, commendImv);
             commendView.setTag(R.id.commend_txv, commendTxv);
-            commendView.setTag(R.id.index, position);
+            commendView.setTag(R.id.order_id, position);
             commendView.setOnClickListener(DishActivity.this);
             commendView.setClickable(true);
             commendImv.setAnimation(null);
@@ -779,7 +779,7 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
         } else if (id == R.id.commend_view) {
             v.setClickable(false);
             Dish data = (Dish) v.getTag(R.id.commend_view);
-            int position = (Integer) v.getTag(R.id.index);
+            int position = (Integer) v.getTag(R.id.order_id);
             ImageView commendImv = (ImageView) v.getTag(R.id.commend_imv);
             TextView commendTxv = (TextView) v.getTag(R.id.commend_txv);
             final boolean isLike = !data.isLike();

@@ -6,6 +6,7 @@ import com.tigerknows.model.TKWord;
 import com.tigerknows.util.Utility;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -34,6 +35,8 @@ public class SuggestArrayAdapter extends ArrayAdapter<TKWord> {
     private Context context;
     private BtnEventHandler inputBtnEventHandler;
     public String key;
+    private int mBlackDark;
+    private int mBlackLight;
     
     public void setInputBtnEventHandler(BtnEventHandler btnEventHandler) {
         this.inputBtnEventHandler = btnEventHandler;
@@ -42,6 +45,9 @@ public class SuggestArrayAdapter extends ArrayAdapter<TKWord> {
     public SuggestArrayAdapter(Context context, List<TKWord> objects) {
         super(context, TEXTVIEW_RESOURCE_ID, objects);
         this.context = context;
+        Resources resources = context.getResources();
+        mBlackDark = resources.getColor(R.color.black_dark);
+        mBlackLight = resources.getColor(R.color.black_light);
     }        
 
     @Override
@@ -61,6 +67,7 @@ public class SuggestArrayAdapter extends ArrayAdapter<TKWord> {
             inputBtn.setVisibility(View.VISIBLE);
             iconImv.setImageResource(R.drawable.ic_time);
             textTxv.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
+            textTxv.setTextColor(mBlackDark);
             Utility.formatText(textTxv, tkWord.word, key, TKConfig.COLOR_BLACK_LIGHT);
             if (TextUtils.isEmpty(tkWord.address) == false) {
                 text1Txv.setText(tkWord.address);
@@ -74,12 +81,14 @@ public class SuggestArrayAdapter extends ArrayAdapter<TKWord> {
             text1Txv.setVisibility(View.GONE);
             iconImv.setImageResource(R.drawable.ic_suggest);
             textTxv.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
+            textTxv.setTextColor(mBlackDark);
             Utility.formatText(textTxv, tkWord.word, key, TKConfig.COLOR_BLACK_LIGHT);
         } else if (tkWord.attribute == TKWord.ATTRIBUTE_CLEANUP) {
             iconImv.setVisibility(View.INVISIBLE);
             inputBtn.setVisibility(View.INVISIBLE);
             text1Txv.setVisibility(View.GONE);
             textTxv.setGravity(Gravity.CENTER);
+            textTxv.setTextColor(mBlackLight);
             textTxv.setText(tkWord.word);
         }
         if (inputBtnEventHandler != null) {

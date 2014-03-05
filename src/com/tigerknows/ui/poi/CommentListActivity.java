@@ -509,7 +509,7 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
                 commendView.setTag(R.id.commend_view, comment);
                 commendView.setTag(R.id.commend_imv, commendImv);
                 commendView.setTag(R.id.commend_txv, commendTxv);
-                commendView.setTag(R.id.index, position);
+                commendView.setTag(R.id.order_id, position);
                 commendView.setOnClickListener(CommentListActivity.this);
                 String likes = String.valueOf(comment.getLikes());
                 commendTxv.setText(likes);
@@ -736,7 +736,7 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
             changeMode(false);
         } else if (id == R.id.commend_view) {
             Comment comment = (Comment) v.getTag(R.id.commend_view);
-            int position = (Integer) v.getTag(R.id.index);
+            int position = (Integer) v.getTag(R.id.order_id);
             mActionLog.addAction(mActionTag+ActionLog.POICommentListCommend, position, comment.getLikes());
             ImageView commendImv = (ImageView) v.getTag(R.id.commend_imv);
             TextView commendTxv = (TextView) v.getTag(R.id.commend_txv);

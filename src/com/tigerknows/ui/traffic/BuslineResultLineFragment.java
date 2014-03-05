@@ -338,7 +338,6 @@ public class BuslineResultLineFragment extends BaseFragment {
     public static class ViewHolder {
         public TextView text;
         public TextView summary;
-        public TextView index;
         public int position;
     }
 
@@ -372,7 +371,6 @@ public class BuslineResultLineFragment extends BaseFragment {
                 lineHolder = new ViewHolder();
                 lineHolder.text = (TextView)convertView.findViewById(R.id.text1);
                 lineHolder.summary = (TextView)convertView.findViewById(R.id.text2);
-                lineHolder.index = (TextView)convertView.findViewById(R.id.index);
                 lineHolder.position = position;
                 
                 convertView.setTag(lineHolder);
@@ -384,7 +382,6 @@ public class BuslineResultLineFragment extends BaseFragment {
             lineHolder.text.setText(line.getName());
             lineHolder.summary.setText(getString(R.string.busline_line_listitem_title, 
             		line.getTime(), line.getLengthStr(mSphinx)));
-            lineHolder.index.setText(String.valueOf(position+1));
             lineHolder.position = position;
             
             if (focusedIndex == position) {
