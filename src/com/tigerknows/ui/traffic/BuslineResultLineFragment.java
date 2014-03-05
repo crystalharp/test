@@ -10,6 +10,7 @@ import java.util.List;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -126,7 +127,15 @@ public class BuslineResultLineFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
 
-        mTitleBtn.setText(getString(R.string.title_busline_result));
+        if (mBuslineQuery != null && TextUtils.isEmpty(mBuslineQuery.getKeyword()) == false) {
+            mTitleBtn.setText(getString(R.string.title_busline_result));
+            mCommentTxv.setText(getString(R.string.busline_result_title, mBuslineQuery.getKeyword(), 
+                    mBuslineModel.getTotal()));
+            mCommentTxv.setVisibility(View.VISIBLE);
+        } else {
+            mTitleBtn.setText(getString(R.string.nearby_bus_line));
+            mCommentTxv.setVisibility(View.GONE);
+        }
     	
         if (mResultLsv.isFooterSpringback()) {
             mSphinx.getHandler().postDelayed(mTurnPageRun, 1000);
@@ -269,14 +278,6 @@ public class BuslineResultLineFragment extends BaseFragment {
         
         if (buslineModel != null) {
             mBuslineModel = buslineModel;
-        }
-
-        if (mBuslineQuery.getKeyword() != null) {
-            mCommentTxv.setText(getString(R.string.busline_result_title, mBuslineQuery.getKeyword(), 
-                    mBuslineModel.getTotal()));
-            mCommentTxv.setVisibility(View.VISIBLE);
-        } else {
-            mCommentTxv.setVisibility(View.GONE);
         }
         
         if (mBuslineQuery.isTurnPage()) {

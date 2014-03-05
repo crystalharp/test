@@ -105,15 +105,16 @@ public class BuslineResultStationFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
         
-        if (mBuslineQuery.getKeyword() != null) {
+        if (mBuslineQuery != null && TextUtils.isEmpty(mBuslineQuery.getKeyword()) == false) {
+            mTitleBtn.setText(getString(R.string.title_station_result));
             mCommentTxv.setText(getString(R.string.busline_result_title, mBuslineQuery.getKeyword(), 
                     mBuslineModel.getTotal()));
             mCommentTxv.setVisibility(View.VISIBLE);
         } else {
+            mTitleBtn.setText(getString(R.string.nearby_bus_station));
             mCommentTxv.setVisibility(View.GONE);
         }
-        mTitleBtn.setText(getString(R.string.title_station_result));
-    	
+        
         if (mResultLsv.isFooterSpringback()) {
             mSphinx.getHandler().postDelayed(mTurnPageRun, 1000);
         }
