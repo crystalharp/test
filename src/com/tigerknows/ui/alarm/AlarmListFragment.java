@@ -189,7 +189,7 @@ public class AlarmListFragment extends BaseFragment implements View.OnClickListe
             Position myLocation = Globals.getMyLocationPosition();
             int distanceTxvWidth = 0;
             if (myLocation != null) {
-                distanceTxv.setText(getString(R.string.range) + ShareTextUtil.getPlanLength(mSphinx, Position.distanceBetween(myLocation, data.getPosition())));
+                distanceTxv.setText(getString(R.string.range) + ShareTextUtil.getPlanLength(mSphinx, (int) Position.distanceBetween(myLocation, data.getPosition())));
                 distanceTxv.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
                 distanceTxvWidth = distanceTxv.getMeasuredWidth();
             } else {

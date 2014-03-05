@@ -319,7 +319,7 @@ public class BuslineResultStationFragment extends BaseFragment {
             Position pos1 = mBuslineQuery.getPosition();
             Position pos2 = station.getPosition();
             if (pos1 != null && pos2 != null) {
-                stationHolder.distance.setText(ShareTextUtil.getPlanLength(mSphinx, Position.distanceBetween(pos1, pos2)));
+                stationHolder.distance.setText(ShareTextUtil.getPlanLength(mSphinx, (int) Position.distanceBetween(pos1, pos2)));
                 stationHolder.distance.setVisibility(View.VISIBLE);
             } else {
                 stationHolder.distance.setVisibility(View.GONE);
