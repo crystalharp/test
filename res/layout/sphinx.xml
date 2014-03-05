@@ -75,6 +75,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/title_view"
         android:layout_alignParentLeft="true"
+        android:visibility="invisible"
         android:src="@drawable/ic_compass_arrow"
         />
 
