@@ -194,16 +194,8 @@ public class TrafficModel extends XMapData {
         return resultStat;
     }
 
-    public void setStat(int stat) {
-        this.resultStat = stat;
-    }
-
     public String getResultTip() {
         return resultTip;
-    }
-
-    public void setResultTip(String resultTip) {
-        this.resultTip = resultTip;
     }
 
     public TrafficModel() {
