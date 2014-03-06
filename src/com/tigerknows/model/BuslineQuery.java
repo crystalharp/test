@@ -30,7 +30,8 @@ public final class BuslineQuery extends BaseQuery {
 
     public static final String BUS_TYPE_STATION = "1";
     public static final String BUS_TYPE_LINE = "2";
-    public static final String BUS_TYPE_STATION_BY_NAME = "3";
+    public static final String BUS_TYPE_STATION_FOR_POSITION = "3";
+    public static final String BUS_TYPE_LINE_FOR_POSITION = "4";
 
     private int startPos = 0;
     

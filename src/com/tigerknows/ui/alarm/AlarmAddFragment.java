@@ -95,7 +95,7 @@ public class AlarmAddFragment extends BaseFragment implements View.OnClickListen
                     null,
                     InputSearchFragment.MODE_BUSLINE,
                     null,
-                    InputSearchFragment.REQUEST_ONLY_BUS_STATION);
+                    InputSearchFragment.REQUEST_ONLY_BUS_LINE);
             mSphinx.showView(R.id.view_poi_input_search);
         }
     }
