@@ -490,6 +490,11 @@ public class TKConfig {
      * 离开软件时地图上的比例尺大小，且此时经纬度一定在选择城市范围内
      */
     public static final String PREFS_LAST_ZOOM_LEVEL = "prefs_last_zoom_level";
+    
+    /**
+     * 显示过"点击指北针重置地图"的次数
+     */
+    public static final String PREFS_SHOW_RESET_MAP_TIP_TIMES = "prefs_show_reset_map_tip_times";
 
     /**
      * 当前软件版本
