@@ -170,6 +170,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
                 mTKWord = tkWord.clone();
                 mKeywordEdt.setText(tkWord.word);
                 mActionLog.addAction(mActionTag + ActionLog.HistoryWordInput, position, tkWord.word, tkWord.attribute);
+                mTKWord.attribute = TKWord.ATTRIBUTE_HISTORY;
             }
         };
 
