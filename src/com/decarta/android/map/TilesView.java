@@ -1342,9 +1342,6 @@ public class TilesView extends GLSurfaceView {
 
 	private Position getSingleLabelPostion(SingleRectLabel label) {
 		float scale = (float) Math.pow(2, zoomLevel - centerXYZ.z);
-		float rotation = mapMode.getzRotation();
-		float sinRot = mapMode.getSinZ();
-		float cosRot = mapMode.getCosZ();
 		XYInteger center = new XYInteger(displaySize.x / 2,
 		        displaySize.y / 2);
 		int tileSize = CONFIG.TILE_SIZE;
@@ -1356,11 +1353,10 @@ public class TilesView extends GLSurfaceView {
 		float sy = label.point.y + refy;
 		float dx = scale == 1 ? (sx - cx) : scale * (sx - cx);
 		float dy = scale == 1 ? (sy - cy) : scale * (sy - cy);
-		float x = rotation == 0 ? (dx + cx) : (cosRot * (dx) - (dy) * sinRot + cx);//旋转变换
-		float y = rotation == 0 ? (dy + cy) : ((dx) * sinRot + (dy) * cosRot + cy);
+		float x = dx + cx;
+		float y = dy + cy;
 
-		XYFloat xyConv = screenXYToScreenXYConv(x, y);
-		Position pos = screenXYConvToPos(xyConv.x, xyConv.y);
+		Position pos = screenXYConvToPos(x, y);
 		return pos;
 	}
 

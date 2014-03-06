@@ -441,6 +441,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                 break;
             case R.id.btn_food:
             	mActionLog.addAction(mActionTag + ActionLog.InputQueryFoodSearch);
+            	mKeywordEdt.setText(mSphinx.getString(R.string.cate));
             	submitPOIQuery(new TKWord(TKWord.ATTRIBUTE_HISTORY, mSphinx.getString(R.string.cate)));
             	break;
             case R.id.btn_tuangou:
@@ -459,6 +460,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         		break;
             case R.id.btn_bus_station:
             	mActionLog.addAction(mActionTag + ActionLog.InputQueryStationSearch);
+            	mKeywordEdt.setText(mSphinx.getString(R.string.bus_station));
             	submitPOIQuery(new TKWord(TKWord.ATTRIBUTE_HISTORY, mSphinx.getString(R.string.bus_station)));
             	break;
             case R.id.btn_more:
