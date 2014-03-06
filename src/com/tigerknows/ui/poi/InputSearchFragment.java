@@ -77,6 +77,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
     final public static int REQUEST_TRAFFIC_END = 2;
     final public static int REQUEST_COMMON_PLACE = 3;
     final public static int REQUEST_ONLY_BUS_STATION = 4;
+    final public static int REQUEST_ONLY_BUS_LINE = 5;
     
     private DataQuery mDataQuery;
     private int mCurMode;
@@ -498,7 +499,13 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         
         switch (mCurMode) {
             case MODE_BUSLINE:
-                submitBuslineQuery(tkWord, mRequest == REQUEST_ONLY_BUS_STATION ? BuslineQuery.BUS_TYPE_STATION_BY_NAME : null);
+                String type = null;
+                if (mRequest == REQUEST_ONLY_BUS_STATION) {
+                    type = BuslineQuery.BUS_TYPE_STATION_FOR_POSITION;
+                } else if (mRequest == REQUEST_ONLY_BUS_LINE) {
+                    type = BuslineQuery.BUS_TYPE_LINE_FOR_POSITION;
+                }
+                submitBuslineQuery(tkWord, type);
                 break;
             case MODE_TRAFFIC:
                 if (mRequest == REQUEST_TRAFFIC_START || mRequest == REQUEST_TRAFFIC_END) {
