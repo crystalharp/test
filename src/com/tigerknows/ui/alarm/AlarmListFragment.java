@@ -46,6 +46,8 @@ public class AlarmListFragment extends BaseFragment implements View.OnClickListe
     
     private Alarm mAlarm;
     
+    private Alarm mFristAlarm = null;
+    
     private View mLoadingView = null;
     
     private TextView mEmptyView;
@@ -109,6 +111,18 @@ public class AlarmListFragment extends BaseFragment implements View.OnClickListe
         } else {
             mMyAdapter.notifyDataSetChanged();
             refreshEmptyView();
+            
+            if (mFristAlarm == null || (mDataList != null && mDataList.size() > 0 && mFristAlarm != mDataList.get(0))) {
+                mListView.setSelectionFromTop(0, 0);
+            }
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (mDataList != null && mDataList.size() > 0) {
+            mFristAlarm = mDataList.get(0);
         }
     }
     
