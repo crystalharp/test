@@ -7,7 +7,6 @@ package com.tigerknows.ui.traffic;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
@@ -34,6 +33,7 @@ import com.tigerknows.android.location.Position;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.TrafficOverlayHelper;
 import com.tigerknows.map.MapView.MapScene;
+import com.tigerknows.model.Alarm;
 import com.tigerknows.model.BaseData;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.TrafficModel;
@@ -236,7 +236,15 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
                             poi = new POI();
                             poi.setName(name);
                             poi.setPosition(posList.get(0));
-                            if (poiList.contains(poi) == false) {
+                            boolean exist = false;
+                            for(int j = poiList.size() - 1; j >= 0; j--) {
+                                POI item = poiList.get(j);
+                                if (item.getName().equals(poi.getName()) && Position.distanceBetween(item.getPosition(), poi.getPosition()) <= Alarm.MIN_DISTANCE) {
+                                    exist = true;
+                                    break;
+                                }
+                            }
+                            if (exist == false) {
                                 poiList.add(poi);
                             }
                         }
@@ -245,7 +253,15 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
                             poi = new POI();
                             poi.setName(name);
                             poi.setPosition(posList.get(posList.size()-1));
-                            if (poiList.contains(poi) == false) {
+                            boolean exist = false;
+                            for(int j = poiList.size() - 1; j >= 0; j--) {
+                                POI item = poiList.get(j);
+                                if (item.getName().equals(poi.getName()) && Position.distanceBetween(item.getPosition(), poi.getPosition()) <= Alarm.MIN_DISTANCE) {
+                                    exist = true;
+                                    break;
+                                }
+                            }
+                            if (exist == false) {
                                 poiList.add(poi);
                             }
                         }

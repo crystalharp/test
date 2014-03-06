@@ -205,6 +205,9 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             } else if (plan.getType() == Step.TYPE_TRANSFER) {
                 mSphinx.getFragment(this.getOwerFragmentId()).dismiss();
             }
+        } else if (id == R.id.bus_line_plan) {
+            mActionLog.addAction(mActionTag + ActionLog.InfoWindowDetail);
+            mSphinx.getFragment(this.getOwerFragmentId()).dismiss();
         }
         
     }
@@ -331,6 +334,7 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
         v.findViewById(R.id.poi_btn).setOnClickListener(this);
         v.findViewById(R.id.traffic_btn).setOnClickListener(this);
         v.findViewById(R.id.traffic_plan_item).setOnClickListener(this);
+        v.findViewById(R.id.bus_line_plan).setOnClickListener(this);
     }
     
     /**
@@ -1065,6 +1069,7 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
                             poi.init(list.get(0).getData(), true);
                             poi.setPosition(position);
                             poi.setFrom(POI.FROM_ONLINE);
+                            mLastPosition = -1;
                             refreshViews(mPosition);
                         } catch (APIException e) {
                             e.printStackTrace();

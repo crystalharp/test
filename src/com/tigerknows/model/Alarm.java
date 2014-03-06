@@ -33,18 +33,23 @@ import java.util.List;
 
 public class Alarm implements Parcelable {
     
+    public static int MIN_DISTANCE = 200;
+    
     private static List<Alarm> sAlarmList = new ArrayList<Alarm>();
     private static int sEnabledCount = 0;
-    private static boolean sShowSettingLocation = false;
+    
+    private static Alarm sWaitAlarm = null;
+    
+    public static Alarm getWaitAlarm() {
+        return sWaitAlarm;
+    }
+    
+    public static void resetWaitAlarm() {
+        sWaitAlarm = null;
+    }
     
     public static List<Alarm> getAlarmListForNoRead() {
         return sAlarmList;
-    }
-    
-    public static void resetShowSettingLocation() {
-        synchronized (sAlarmList) {
-            sShowSettingLocation = false;   
-        }
     }
     
     public static List<Alarm> getAlarmList(Context context) {
@@ -63,35 +68,51 @@ public class Alarm implements Parcelable {
     }
     
     public static void writeAlarm(Context context, Alarm alarm, int showToastResId) {
+        writeAlarm(context, alarm, showToastResId, true);
+    }
+    
+    public static void writeAlarm(Context context, Alarm alarm, int showToastResId, boolean checkedGPS) {
         synchronized (sAlarmList) {
             List<Alarm> list = getAlarmList(context);
-            if (list.contains(alarm)) {
-                boolean recheck = false;
-                Alarm exist = list.get(list.indexOf(alarm));
-                if (exist.getRange() < alarm.getRange()) {
-                    recheck = true;
-                }
-                exist.setRange(alarm.getRange());
-                exist.setRingtone(alarm.getRingtone());
-                exist.setRingtoneName(alarm.getRingtoneName());
-                if (exist.getStatus() == 1 && alarm.getStatus() == 0) {
-                    recheck = true;
-                    if (context instanceof Sphinx) {
-                        showSettingLocationDialog((Sphinx) context);
-                    }
-                }
-                exist.setStatus(alarm.getStatus());
-                exist.updateToDatabases(context);
-                checkStatus(context, recheck);
-            } else {
-                alarm.writeToDatabases(context);
-                checkStatus(context, true);
-                if (alarm.getStatus() == 0 && context instanceof Sphinx) {
-                    showSettingLocationDialog((Sphinx) context);
+            boolean enabled = (alarm.getStatus() == 0);
+            if (enabled) {
+                checkedGPS &= (SettingActivity.checkGPS(context) == false);
+                if (checkedGPS) {
+                    alarm.setStatus(1);
                 }
             }
-            list.remove(alarm);
-            list.add(0,alarm);
+            
+            Alarm exist = null;
+            for(int i = list.size() - 1; i >= 0; i--) {
+                Alarm element = list.get(i);
+                if (element == alarm ||
+                        (element.getName().equals(alarm.getName()) && Position.distanceBetween(element.position, alarm.position) <= MIN_DISTANCE)) {
+                    exist = element;
+                }
+            }
+            
+            if (exist != null) {
+                if (showToastResId != 0) {
+                    deleteAlarm(context, exist);
+                    alarm.writeToDatabases(context);
+                    list.add(0, alarm);
+                } else {
+                    exist.setPosition(alarm.getPosition());
+                    exist.setRange(alarm.getRange());
+                    exist.setRingtone(alarm.getRingtone());
+                    exist.setRingtoneName(alarm.getRingtoneName());
+                    exist.setStatus(alarm.getStatus());
+                    exist.updateToDatabases(context);
+                }
+                checkStatus(context, alarm.getStatus() == 0);
+            } else {
+                alarm.writeToDatabases(context);
+                list.add(0, alarm);
+                checkStatus(context, false);
+            }
+            if (enabled && checkedGPS && context instanceof Sphinx) {
+                showSettingLocationDialog((Sphinx) context, alarm);
+            }
         }
         if (showToastResId != 0) {
             Toast.makeText(context, showToastResId, Toast.LENGTH_SHORT).show();
@@ -422,13 +443,7 @@ public class Alarm implements Parcelable {
         activity.startActivityForResult(intent, requestCode);
     }
     
-    private static void showSettingLocationDialog(final Sphinx activity) {
-        if (sShowSettingLocation || SettingActivity.checkGPS(activity)) {
-            return;
-        }
-        synchronized (sAlarmList) {
-            sShowSettingLocation = true;
-        }
+    private static void showSettingLocationDialog(final Sphinx activity, final Alarm alarm) {
         Utility.showNormalDialog(activity,
                                  activity.getString(R.string.prompt),
                                  activity.getString(R.string.alarm_enable_tip),
@@ -439,6 +454,7 @@ public class Alarm implements Parcelable {
                                      @Override
                                      public void onClick(DialogInterface arg0, int id) {
                                          if (id == DialogInterface.BUTTON_POSITIVE) {
+                                             sWaitAlarm = alarm;
                                              activity.showView(R.id.activity_setting_location);
                                          }
                                      }

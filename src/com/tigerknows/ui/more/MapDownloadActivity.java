@@ -907,7 +907,8 @@ public class MapDownloadActivity extends BaseActivity implements View.OnClickLis
             @Override
             public boolean onTouch(View view, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    hideSoftInput();
+                    hideSoftInput(false);
+                    mAddCityElv.requestFocus();
                 }
                 return false;
             }
@@ -969,6 +970,7 @@ public class MapDownloadActivity extends BaseActivity implements View.OnClickLis
             public boolean onTouch(View view, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     hideSoftInput(false);
+                    mSuggestCityLsv.requestFocus();
                 }
                 return false;
             }
@@ -1812,7 +1814,7 @@ public class MapDownloadActivity extends BaseActivity implements View.OnClickLis
             mAddView.setVisibility(View.VISIBLE);
             mKeywordEdt.setText("");
             showAddCityOrSuggestCity("");
-            hideSoftInput();
+            hideSoftInput(false);
             mAddCityElv.requestFocus();
         }
     }

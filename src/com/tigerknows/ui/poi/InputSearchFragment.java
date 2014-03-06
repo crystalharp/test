@@ -202,6 +202,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                 mKeywordEdt.setText(tkWord.word);
                 mTKWord = tkWord.clone();
                 mActionLog.addAction(mActionTag + ActionLog.HistoryWordInput, position, tkWord.word, tkWord.attribute);
+                mTKWord.attribute = TKWord.ATTRIBUTE_HISTORY;
             }
         };
         mSuggestWordListManager = new SuggestWordListManager(mSphinx, mSuggestLsv, mKeywordEdt, btnHandler, HistoryWordTable.TYPE_POI);

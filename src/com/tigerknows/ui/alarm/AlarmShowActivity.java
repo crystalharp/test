@@ -104,9 +104,7 @@ public class AlarmShowActivity extends TKActivity implements View.OnClickListene
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
-        if (hasFocus) {
-            onWindowFocusChanged = true;
-        }
+        onWindowFocusChanged = hasFocus;
         super.onWindowFocusChanged(hasFocus);
     }
 
@@ -120,7 +118,7 @@ public class AlarmShowActivity extends TKActivity implements View.OnClickListene
     protected void onPause() {
         super.onPause();
         if (onWindowFocusChanged) {
-            finish();
+            showNextAlarm();
         }
     }
     
