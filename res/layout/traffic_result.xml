@@ -20,5 +20,6 @@
         android:fadingEdge="none"
         android:drawSelectorOnTop="false"
         android:scrollingCache="false"
-		android:divider="@drawable/bg_line_split" />
+		android:divider="@drawable/bg_line_split" 
+		android:listSelector="@color/transparent"/>
 </RelativeLayout>
