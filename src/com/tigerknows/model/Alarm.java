@@ -33,6 +33,8 @@ import java.util.List;
 
 public class Alarm implements Parcelable {
     
+    public static int MIN_DISTANCE = 200;
+    
     private static List<Alarm> sAlarmList = new ArrayList<Alarm>();
     private static int sEnabledCount = 0;
     
@@ -79,27 +81,38 @@ public class Alarm implements Parcelable {
                     alarm.setStatus(1);
                 }
             }
-            if (list.contains(alarm)) {
-                boolean recheck = false;
-                Alarm exist = list.get(list.indexOf(alarm));
-                if (exist.getRange() < alarm.getRange()) {
-                    recheck = true;
+            
+            Alarm exist = null;
+            for(int i = list.size() - 1; i >= 0; i--) {
+                Alarm element = list.get(i);
+                if (element == alarm ||
+                        (element.getName().equals(alarm.getName()) && Position.distanceBetween(element.position, alarm.position) <= MIN_DISTANCE)) {
+                    exist = element;
                 }
-                exist.setRange(alarm.getRange());
-                exist.setRingtone(alarm.getRingtone());
-                exist.setRingtoneName(alarm.getRingtoneName());
-                exist.setStatus(alarm.getStatus());
-                exist.updateToDatabases(context);
-                checkStatus(context, recheck);
+            }
+            
+            if (exist != null) {
+                if (showToastResId != 0) {
+                    deleteAlarm(context, exist);
+                    alarm.writeToDatabases(context);
+                    list.add(0, alarm);
+                } else {
+                    exist.setPosition(alarm.getPosition());
+                    exist.setRange(alarm.getRange());
+                    exist.setRingtone(alarm.getRingtone());
+                    exist.setRingtoneName(alarm.getRingtoneName());
+                    exist.setStatus(alarm.getStatus());
+                    exist.updateToDatabases(context);
+                }
+                checkStatus(context, alarm.getStatus() == 0);
             } else {
                 alarm.writeToDatabases(context);
+                list.add(0, alarm);
                 checkStatus(context, false);
             }
             if (enabled && checkedGPS && context instanceof Sphinx) {
                 showSettingLocationDialog((Sphinx) context, alarm);
             }
-            list.remove(alarm);
-            list.add(0,alarm);
         }
         if (showToastResId != 0) {
             Toast.makeText(context, showToastResId, Toast.LENGTH_SHORT).show();
