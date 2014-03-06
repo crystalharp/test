@@ -976,6 +976,12 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 }
             }
         } else if (R.id.activity_setting_location == requestCode) {
+            Alarm alarm = Alarm.getWaitAlarm();
+            if (alarm != null) {
+                Alarm.resetWaitAlarm();
+                alarm.setStatus(0);
+                Alarm.writeAlarm(mThis, alarm, 0, false);
+            }
         } else if (R.id.activity_more_setting == requestCode) {
             boolean request = TextUtils.isEmpty(TKConfig.getPref(mContext, TKConfig.PREFS_ACQUIRE_WAKELOCK));
             if (request) {
@@ -1261,7 +1267,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                         if (baseFragment != null) {
                             baseFragment.dismiss();
                         }
-                        Alarm.resetShowSettingLocation();
                         Sphinx.this.finish();
                     } else {
                         mLastBackKeyDown = time;
