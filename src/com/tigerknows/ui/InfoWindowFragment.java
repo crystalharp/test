@@ -1069,6 +1069,7 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
                             poi.init(list.get(0).getData(), true);
                             poi.setPosition(position);
                             poi.setFrom(POI.FROM_ONLINE);
+                            mLastPosition = -1;
                             refreshViews(mPosition);
                         } catch (APIException e) {
                             e.printStackTrace();
