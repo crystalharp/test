@@ -971,8 +971,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             }
         } else if (R.id.activity_setting_location == requestCode) {
             Alarm alarm = Alarm.getWaitAlarm();
-            if (alarm != null) {
-                Alarm.resetWaitAlarm();
+            Alarm.resetWaitAlarm();
+            if (alarm != null && SettingActivity.checkGPS(mThis)) {
                 alarm.setStatus(0);
                 Alarm.writeAlarm(mThis, alarm, 0, false);
             }
