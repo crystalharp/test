@@ -608,6 +608,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
             HistoryWordTable.addHistoryWord(mSphinx, tkWord, HistoryWordTable.TYPE_BUSLINE);
         } else if (mMyPosition != null) {
             buslineQuery.setPosition(mMyPosition);
+            buslineQuery.setCityId(MapEngine.getCityId(mMyPosition));
         }
         buslineQuery.setType(type);
         buslineQuery.setup(nearby ? null : tkWord.word, 0, false, getId(), getString(R.string.doing_and_wait));
