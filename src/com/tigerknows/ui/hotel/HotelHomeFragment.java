@@ -470,8 +470,11 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                         }
                     }
                 }
-                FilterListView.selectedFilter(areaFilter, (int)selectId);
-    
+                boolean result = FilterListView.selectedFilter(areaFilter, (int)selectId);
+                if (result == false) {
+                    FilterListView.selectedFilter(areaFilter, 0);
+                    queryFilter();
+                }
                 deleteFilter(mFilterList, FilterArea.FIELD_LIST);
                 mFilterList.add(areaFilter);
             } else {
