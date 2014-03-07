@@ -193,19 +193,16 @@ public class TrafficCompassActivity extends BaseActivity implements SensorEventL
     
    
     private void setSunCompass(Location location){
-    	if(location == null){
-    		mCompassImv.setImageResource(R.drawable.ani_compass_notavailable);
-    		mCompassBgImv.setImageResource(R.drawable.transparent_bg);
-    		setCompassAnimation(0, 0, LocationService.RETRY_INTERVAL * 30);
-    		mSunCompassHintTxv.setVisibility(View.GONE);
-    		return;
-    	}
     	mSunCompassHintTxv.setVisibility(View.VISIBLE);
     	Calendar calendar = Calendar.getInstance();
     	calendar.setTimeInMillis(CalendarUtil.getExactTime(mThis));
     	double degree = 0;
 		try {
-			degree = SolarRadiation.taiYangFangWeiJiao(calendar, location.getLongitude(), location.getLatitude());
+			if(location == null){
+				degree = SolarRadiation.taiYangFangWeiJiao(calendar, 116.3, 40.0);
+			}else{
+				degree = SolarRadiation.taiYangFangWeiJiao(calendar, location.getLongitude(), location.getLatitude());
+			}
 		} catch (APIException e) {
 			e.printStackTrace();
 		}

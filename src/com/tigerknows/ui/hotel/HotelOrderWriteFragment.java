@@ -363,8 +363,8 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         mBookUsernameEdt.setText(TKConfig.getPref(mContext, TKConfig.PREFS_HOTEL_LAST_BOOKNAME, ""));
         mBookUsernameEdt.requestFocus();
         Selection.setSelection(mBookUsernameEdt.getText(), mBookUsernameEdt.length());
-        String lastMobile = TKConfig.getPref(mContext, TKConfig.PREFS_HOTEL_LAST_MOBILE, "");
-        if(TextUtils.isEmpty(lastMobile)){
+        String lastMobile = TKConfig.getPref(mContext, TKConfig.PREFS_HOTEL_LAST_MOBILE, "FirstFirstFirst");
+        if(TextUtils.equals(lastMobile, "FirstFirstFirst")){
         	mRoomMobileNumberEdt.setText(Globals.g_User != null ? TKConfig.getPref(mContext, TKConfig.PREFS_PHONENUM, "") : "");
         }else{
         	mRoomMobileNumberEdt.setText(lastMobile);
