@@ -1120,7 +1120,7 @@ public final class DataQuery extends BaseQuery {
         for(int i = 0, size = filterList.size(); i < size; i++) {
             Filter filter = filterList.get(i);
             if (filter.key != key) {
-                int id = -1;
+                int id = 0;
                 List<Filter> childrenFilterList1 = filter.getChidrenFilterList();
                 for(Filter childrenFilter1 : childrenFilterList1) {
                     if (childrenFilter1.isSelected()) {
