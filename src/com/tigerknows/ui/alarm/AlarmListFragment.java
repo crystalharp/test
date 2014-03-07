@@ -112,7 +112,7 @@ public class AlarmListFragment extends BaseFragment implements View.OnClickListe
             mMyAdapter.notifyDataSetChanged();
             refreshEmptyView();
             
-            if (mFristAlarm == null || (mDataList != null && mDataList.size() > 0 && mFristAlarm != mDataList.get(0))) {
+            if (mDismissed || mFristAlarm == null || (mDataList != null && mDataList.size() > 0 && mFristAlarm != mDataList.get(0))) {
                 mListView.setSelectionFromTop(0, 0);
             }
         }

@@ -971,10 +971,11 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             }
         } else if (R.id.activity_setting_location == requestCode) {
             Alarm alarm = Alarm.getWaitAlarm();
+            int showToastResId =  Alarm.getShowToastResId();
             Alarm.resetWaitAlarm();
             if (alarm != null && SettingActivity.checkGPS(mThis)) {
                 alarm.setStatus(0);
-                Alarm.writeAlarm(mThis, alarm, 0, false);
+                Alarm.writeAlarm(mThis, alarm, showToastResId);
             }
         } else if (R.id.activity_more_setting == requestCode) {
             boolean request = TextUtils.isEmpty(TKConfig.getPref(mContext, TKConfig.PREFS_ACQUIRE_WAKELOCK));
