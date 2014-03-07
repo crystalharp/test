@@ -897,7 +897,7 @@ public class BaseQueryTest {
             .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
                     try {
-                        if (TKConfig.LaunchTest == 0) {
+                        if (TKConfig.LaunchTest == 1) {
                             String str = responseCodeEdt.getEditableText().toString().trim();
                             if (TextUtils.isEmpty(str) == false) {
                                 RESPONSE_CODE = Integer.parseInt(str);

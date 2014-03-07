@@ -174,6 +174,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
 		
 		mScrollView = (ScrollView) mRootView.findViewById(R.id.body_scv);
 		mNameView = mRootView.findViewById(R.id.name_view);
+		mNameView.setBackgroundResource(R.drawable.list_header_title);
     }
 
     @Override
