@@ -1487,6 +1487,9 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                     if (poi.getName() == null && poi.getUUID() != null) {
                         if (BaseActivity.hasAbnormalResponseCode(baseQuery, mSphinx, BaseActivity.SHOW_TOAST, POIDetailFragment.this, true)) {
                             mActionLog.addAction(mActionTag+ActionLog.POIDetailPullFailed);
+                            if (mDoingView.getVisibility() == View.VISIBLE) {
+                                dismiss();
+                            }
                         } else {
                             POI onlinePOI = ((POIQueryResponse)response).getPOI();
                             if (onlinePOI != null && onlinePOI.getUUID() != null && onlinePOI.getUUID().equals(poi.getUUID())) {
