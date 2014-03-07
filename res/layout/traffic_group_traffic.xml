@@ -7,7 +7,7 @@
   	android:layout_alignParentTop="true"
   	android:paddingLeft="16dp"
   	android:paddingRight="16dp"
-  	android:paddingBottom="20dp"
+  	android:paddingBottom="32dp"
 	android:gravity="center_vertical|left"
     android:background="@drawable/list_selector_background_gray_light">
 
