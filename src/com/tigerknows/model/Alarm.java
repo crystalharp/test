@@ -39,6 +39,11 @@ public class Alarm implements Parcelable {
     private static int sEnabledCount = 0;
     
     private static Alarm sWaitAlarm = null;
+    private static int sShowToastResId = 0;
+    
+    public static int getShowToastResId() {
+        return sShowToastResId;
+    }
     
     public static Alarm getWaitAlarm() {
         return sWaitAlarm;
@@ -46,6 +51,7 @@ public class Alarm implements Parcelable {
     
     public static void resetWaitAlarm() {
         sWaitAlarm = null;
+        sShowToastResId = 0;
     }
     
     public static List<Alarm> getAlarmListForNoRead() {
@@ -68,17 +74,18 @@ public class Alarm implements Parcelable {
     }
     
     public static void writeAlarm(Context context, Alarm alarm, int showToastResId) {
-        writeAlarm(context, alarm, showToastResId, true);
-    }
     
-    public static void writeAlarm(Context context, Alarm alarm, int showToastResId, boolean checkedGPS) {
         synchronized (sAlarmList) {
             List<Alarm> list = getAlarmList(context);
             boolean enabled = (alarm.getStatus() == 0);
             if (enabled) {
-                checkedGPS &= (SettingActivity.checkGPS(context) == false);
-                if (checkedGPS) {
+                if (SettingActivity.checkGPS(context) == false && context instanceof Sphinx) {
                     alarm.setStatus(1);
+                    showSettingLocationDialog((Sphinx) context, alarm, showToastResId);
+                    return;
+                }
+                if (showToastResId != 0) {
+                    Toast.makeText(context, showToastResId, Toast.LENGTH_SHORT).show();
                 }
             }
             
@@ -91,11 +98,13 @@ public class Alarm implements Parcelable {
                 }
             }
             
+            boolean add = false;
             if (exist != null) {
                 if (showToastResId != 0) {
                     deleteAlarm(context, exist);
                     alarm.writeToDatabases(context);
                     list.add(0, alarm);
+                    add = true;
                 } else {
                     exist.setPosition(alarm.getPosition());
                     exist.setRange(alarm.getRange());
@@ -104,18 +113,12 @@ public class Alarm implements Parcelable {
                     exist.setStatus(alarm.getStatus());
                     exist.updateToDatabases(context);
                 }
-                checkStatus(context, alarm.getStatus() == 0);
             } else {
                 alarm.writeToDatabases(context);
                 list.add(0, alarm);
-                checkStatus(context, false);
+                add = true;
             }
-            if (enabled && checkedGPS && context instanceof Sphinx) {
-                showSettingLocationDialog((Sphinx) context, alarm);
-            }
-        }
-        if (showToastResId != 0) {
-            Toast.makeText(context, showToastResId, Toast.LENGTH_SHORT).show();
+            checkStatus(context, add);
         }
     }
     
@@ -443,7 +446,7 @@ public class Alarm implements Parcelable {
         activity.startActivityForResult(intent, requestCode);
     }
     
-    private static void showSettingLocationDialog(final Sphinx activity, final Alarm alarm) {
+    private static void showSettingLocationDialog(final Sphinx activity, final Alarm alarm, final int showToastResId) {
         Utility.showNormalDialog(activity,
                                  activity.getString(R.string.prompt),
                                  activity.getString(R.string.alarm_enable_tip),
@@ -455,6 +458,7 @@ public class Alarm implements Parcelable {
                                      public void onClick(DialogInterface arg0, int id) {
                                          if (id == DialogInterface.BUTTON_POSITIVE) {
                                              sWaitAlarm = alarm;
+                                             sShowToastResId = showToastResId;
                                              activity.showView(R.id.activity_setting_location);
                                          }
                                      }

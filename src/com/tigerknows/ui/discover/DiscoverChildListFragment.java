@@ -479,7 +479,7 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
             refreshDayView(yingxun, todayBtn, tomorrowBtn, afterTomorrowBtn, showTimeDividerImv, notimeView);
             
             if(toScrollDownPos != 0){
-            	mResultLsv.smoothScrollToPosition(toScrollDownPos);
+            	mResultLsv.setSelectionFromTop(toScrollDownPos, 0);
             	toScrollDownPos = 0;
             }
             

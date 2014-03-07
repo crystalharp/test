@@ -971,10 +971,11 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             }
         } else if (R.id.activity_setting_location == requestCode) {
             Alarm alarm = Alarm.getWaitAlarm();
+            int showToastResId =  Alarm.getShowToastResId();
             Alarm.resetWaitAlarm();
             if (alarm != null && SettingActivity.checkGPS(mThis)) {
                 alarm.setStatus(0);
-                Alarm.writeAlarm(mThis, alarm, 0, false);
+                Alarm.writeAlarm(mThis, alarm, showToastResId);
             }
         } else if (R.id.activity_more_setting == requestCode) {
             boolean request = TextUtils.isEmpty(TKConfig.getPref(mContext, TKConfig.PREFS_ACQUIRE_WAKELOCK));
@@ -3797,8 +3798,15 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
      */
     private final void updateMapDirectionIndicatorState(int state) {
         
+        int showTipTimes = Integer.parseInt(TKConfig.getPref(mThis, TKConfig.PREFS_SHOW_RESET_MAP_TIP_TIMES, "0"));
         if (state == MyLocation.MODE_ROTATION || 
                 Math.abs(mMapView.getZRotation() - 0.0) > MIN_ROTATIONZ_ANGLE) {
+            if (mMapDirectionIndicatorView.getVisibility() == View.INVISIBLE &&
+                    showTipTimes < 3) {
+                showTip(R.string.click_compass_to_reset_map, Toast.LENGTH_SHORT);
+                showTipTimes++;
+                TKConfig.setPref(mThis, TKConfig.PREFS_SHOW_RESET_MAP_TIP_TIMES, String.valueOf(showTipTimes));
+            }
             mMapDirectionIndicatorView.setVisibility(View.VISIBLE);
         } else {
             mMapDirectionIndicatorView.setVisibility(View.INVISIBLE);

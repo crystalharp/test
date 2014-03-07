@@ -1806,6 +1806,7 @@ public class MapDownloadActivity extends BaseActivity implements View.OnClickLis
             mKeywordEdt.setText("");
             hideSoftInput();
             mDownloadCityLsv.requestFocus();
+            mDownloadCityLsv.setSelectionFromTop(0, 0);
         } else {
             mTitleBtn.setText(R.string.add_city);
             mAddBtn.setVisibility(View.GONE);
@@ -1816,6 +1817,7 @@ public class MapDownloadActivity extends BaseActivity implements View.OnClickLis
             showAddCityOrSuggestCity("");
             hideSoftInput(false);
             mAddCityElv.requestFocus();
+            mAddCityElv.setSelectionFromTop(0, 0);
         }
     }
     
