@@ -517,7 +517,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 public void onClick(View arg0) {
                     mActionLog.addAction(ActionLog.MapCleanMap);
                     clearMap();
+                    MapScene mapScene = mMapView.getCurrentMapScene();
                     uiStackClearTop(R.id.view_home);
+                    mMapView.restoreScene(mapScene);
                 }
             });
 
