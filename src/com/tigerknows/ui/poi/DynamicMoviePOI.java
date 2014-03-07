@@ -226,7 +226,8 @@ public class DynamicMoviePOI extends DynamicPOIViewTemplate {
         int mPOIFragmentId = mPOIDetailFragment.getId();
         Dianying dianying = null;
         for(BaseQuery baseQuery : baseQueryList) {
-            if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), mPOIFragmentId, mPOIFragmentId, mPOIFragmentId, null)) {
+            if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), mPOIFragmentId, mPOIFragmentId, mPOIFragmentId, mPOIDetailFragment.mCancelLoginListener, mPOIDetailFragment.mShowReLoginTip)) {
+                mPOIDetailFragment.mShowReLoginTip  = false;
                 mPOIDetailFragment.isReLogin = true;
                 return;
             }

@@ -108,6 +108,7 @@ public class History extends BaseData{
             }
             planList.get(0).setType(trafficType);
             trafficQuery = new TrafficQuery(context);
+            trafficQuery.setup(planList.get(0).getStart(), planList.get(0).getEnd(), trafficType, 0, null);
             trafficQuery.setTrafficModel(trafficModel);
             return planList.isEmpty() == false;
         }

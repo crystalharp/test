@@ -222,6 +222,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     
     protected ImageButton mDishBtn;
     
+    protected boolean mShowReLoginTip = false;
+    
     @Override
     public boolean isReLogin() {
         boolean isRelogin = this.isReLogin;
@@ -1101,6 +1103,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     }
     
     public void setData(POI poi, int position) {
+        mShowReLoginTip = true;
         mPOI = poi;
         if (poi == null) {
             return;
@@ -1455,7 +1458,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         minusLoadingView();
         List<BaseQuery> baseQueryList = tkAsyncTask.getBaseQueryList();
         for(BaseQuery baseQuery : baseQueryList) {
-            if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), getId(), getId(), getId(), mCancelLoginListener)) {
+            if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), getId(), getId(), getId(), mCancelLoginListener, mShowReLoginTip)) {
+                mShowReLoginTip = false;
                 isReLogin = true;
                 return;
             }

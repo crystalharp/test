@@ -121,7 +121,8 @@ public class DynamicDishPOI extends DynamicPOIViewTemplate implements View.OnCli
             return;
         }
         int mPOIFragmentId = mPOIDetailFragment.getId();
-        if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), mPOIFragmentId, mPOIFragmentId, mPOIFragmentId, null)) {
+        if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), mPOIFragmentId, mPOIFragmentId, mPOIFragmentId, mPOIDetailFragment.mCancelLoginListener, mPOIDetailFragment.mShowReLoginTip)) {
+            mPOIDetailFragment.mShowReLoginTip  = false;
             mPOIDetailFragment.isReLogin = true;
             return;
         }

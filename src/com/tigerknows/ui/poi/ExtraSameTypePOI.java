@@ -124,7 +124,8 @@ public class ExtraSameTypePOI extends DynamicPOIViewTemplate {
         mPOIDetailFragment.minusLoadingView();
         
         DataQuery dataQuery = (DataQuery) tkAsyncTask.getBaseQuery();
-        if (BaseActivity.checkReLogin(dataQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), mPOIDetailFragment.getId(), mPOIDetailFragment.getId(), mPOIDetailFragment.getId(), null)) {
+        if (BaseActivity.checkReLogin(dataQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), mPOIDetailFragment.getId(), mPOIDetailFragment.getId(), mPOIDetailFragment.getId(), mPOIDetailFragment.mCancelLoginListener, mPOIDetailFragment.mShowReLoginTip)) {
+            mPOIDetailFragment.mShowReLoginTip  = false;
             mPOIDetailFragment.isReLogin = true;
             return;
         }
