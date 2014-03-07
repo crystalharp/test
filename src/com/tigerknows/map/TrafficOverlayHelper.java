@@ -52,8 +52,8 @@ public class TrafficOverlayHelper {
             for(int i = 0, size = list.size(); i < size; i++) {
                 Plan plan = list.get(i);
                 RotationTilt rt = new RotationTilt(RotateReference.SCREEN,TiltReference.SCREEN);
-                OverlayItem overlayItem = new OverlayItem(new Position(39, 116), Icon.getIcon(sphinx.getResources(), R.drawable.btn_bubble_b_normal, Icon.OFFSET_LOCATION_CENTER_BOTTOM), 
-                        Icon.getIcon(sphinx.getResources(), R.drawable.btn_bubble_b_normal, Icon.OFFSET_LOCATION_CENTER_BOTTOM),
+                OverlayItem overlayItem = new OverlayItem(new Position(39, 116), Icon.getIcon(sphinx.getResources(), R.drawable.ic_transparent, Icon.OFFSET_LOCATION_CENTER_BOTTOM), 
+                        Icon.getIcon(sphinx.getResources(), R.drawable.ic_transparent, Icon.OFFSET_LOCATION_CENTER_BOTTOM),
                         plan.getDescription(), rt);
                 overlayItem.setAssociatedObject(plan);
                 overlay.addOverlayItem(overlayItem);
@@ -108,8 +108,8 @@ public class TrafficOverlayHelper {
 
 	            RotationTilt rt = new RotationTilt(RotateReference.SCREEN,TiltReference.SCREEN);
 	            
-	            OverlayItem overlayItem = new OverlayItem(new Position(39, 116), Icon.getIcon(sphinx.getResources(), R.drawable.btn_bubble_b_normal, Icon.OFFSET_LOCATION_CENTER_BOTTOM), 
-	                    Icon.getIcon(sphinx.getResources(), R.drawable.btn_bubble_b_normal, Icon.OFFSET_LOCATION_CENTER_BOTTOM),
+	            OverlayItem overlayItem = new OverlayItem(new Position(39, 116), Icon.getIcon(sphinx.getResources(), R.drawable.ic_transparent, Icon.OFFSET_LOCATION_CENTER_BOTTOM), 
+	                    Icon.getIcon(sphinx.getResources(), R.drawable.ic_transparent, Icon.OFFSET_LOCATION_CENTER_BOTTOM),
 	                    plan.getDescription(), rt);
 	            overlayItem.setAssociatedObject(plan);
 	            overlay.addOverlayItem(overlayItem);

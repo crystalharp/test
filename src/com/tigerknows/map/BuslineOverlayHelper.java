@@ -75,8 +75,8 @@ public class BuslineOverlayHelper {
 		        
 		        RotationTilt rt = new RotationTilt(RotateReference.SCREEN, TiltReference.SCREEN);
                 
-                OverlayItem overlayItem = new OverlayItem(new Position(39, 116), Icon.getIcon(sphinx.getResources(), R.drawable.btn_bubble_b_normal, Icon.OFFSET_LOCATION_CENTER_BOTTOM), 
-                        Icon.getIcon(sphinx.getResources(), R.drawable.btn_bubble_b_normal, Icon.OFFSET_LOCATION_CENTER_BOTTOM),
+                OverlayItem overlayItem = new OverlayItem(new Position(39, 116), Icon.getIcon(sphinx.getResources(), R.drawable.ic_transparent, Icon.OFFSET_LOCATION_CENTER_BOTTOM), 
+                        Icon.getIcon(sphinx.getResources(), R.drawable.ic_transparent, Icon.OFFSET_LOCATION_CENTER_BOTTOM),
                         line.getName(), rt);
                 overlayItem.setAssociatedObject(line);
                 overlay.addOverlayItem(overlayItem);
