@@ -77,6 +77,10 @@ public class TrafficSearchHistoryFragment extends BaseFragment {
         mRightBtn.setVisibility(View.VISIBLE);
         Utility.refreshButton(mSphinx, mRightBtn, null, getString(R.string.clear), false);
         mRightBtn.setOnClickListener(mRightListener);
+        if(mDismissed){
+        	mDismissed = false;
+        	mHistoryLsv.setSelectionFromTop(0, 0);
+        }
     }
 
     public TrafficSearchHistoryFragment(Sphinx sphinx) {

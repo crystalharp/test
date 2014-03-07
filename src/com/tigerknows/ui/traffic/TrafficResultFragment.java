@@ -168,8 +168,7 @@ public class TrafficResultFragment extends BaseFragment {
         mTrafficDriveRbt.setOnTouchListener(onTouchListener);
         mTrafficWalkRbt.setOnTouchListener(onTouchListener);
         
-        mRightBtn.setBackgroundResource(R.drawable.btn_back);
-        mRightBtn.setVisibility(View.INVISIBLE);
+        mRightBtn.setBackgroundColor(mSphinx.getResources().getColor(R.color.transparent));
         
         mFootLayout.setVisibility(View.GONE);
         AddtionalInfo info = mTrafficModel.getAddtionalInfo();
