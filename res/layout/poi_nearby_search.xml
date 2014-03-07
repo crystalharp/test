@@ -23,6 +23,7 @@
 		        android:orientation="vertical"
 		        android:background="@drawable/bg_white"
 		        android:layout_marginBottom="8dp"
+		        android:paddingBottom="8dp"
 		        >
 		        <LinearLayout android:id="@+id/hot_0_lly"
 		            android:layout_width="fill_parent"
