@@ -32,6 +32,7 @@
     <string name="location_text_navigation">导航</string>
     <string name="location_text_compass">罗盘</string>
 	<string name="location_unknown">未知地点</string>
+	<string name="click_compass_to_reset_map">要恢复地图方向,请点击指北针</string>
 
     <string name="go_buy">立即抢购</string>
     <string name="poi_change_location">切换位置</string>
