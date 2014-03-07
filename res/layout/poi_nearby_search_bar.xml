@@ -5,6 +5,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:gravity="center"
+    android:background="@color/white"
     >
     <LinearLayout 
         android:id="@+id/nearby_bar_lly"
@@ -32,6 +33,7 @@
 	        android:layout_height="wrap_content"
 	        android:text="@string/quote_nearby_search"
 	        android:visibility="gone"
+	        android:background="@color/white"
 	        />
     </LinearLayout>
 </LinearLayout>
