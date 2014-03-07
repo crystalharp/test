@@ -291,6 +291,7 @@ public class SettingActivity extends BaseActivity {
 	                switch (type) {
                         case DataBean.TYPE_MAP_ZOOM:
                             mActionLog.addAction(mActionTag + ActionLog.SettingMapZoom, String.valueOf(dataBean.checked));
+                            dataBean.checked = !dataBean.checked;
                             refreshDataSetChanged(type-1);
                             switchMapZoom();
                             break;
