@@ -82,6 +82,14 @@ public class BuslineResultLineFragment extends BaseFragment {
         }
     };
     
+    private Runnable mSetSelectionFromTopRun = new Runnable() {
+        
+        @Override
+        public void run() {
+            mResultLsv.setSelectionFromTop(0, 0);
+        }
+    };
+    
     /*
      * 用于控制序号图片显示
      */
@@ -143,7 +151,7 @@ public class BuslineResultLineFragment extends BaseFragment {
         }
         
         if (mDismissed) {
-            mResultLsv.setSelectionFromTop(0, 0);
+            mSphinx.getHandler().postDelayed(mSetSelectionFromTopRun, 300);
         }
     }
 
