@@ -118,7 +118,8 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
         super.onResume();
         
         restoreResultData();
-        
+        mSphinx.resetLoactionButtonState();
+        mSphinx.resetMapDegree();
         mSphinx.getHomeFragment().reset();
         mSphinx.getMapView().setStopRefreshMyLocation(false);
         mTitleBtn.setText(mTitle);

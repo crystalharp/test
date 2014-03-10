@@ -266,6 +266,7 @@ public class MeasureDistanceFragment extends BaseFragment implements View.OnClic
         mSphinx.getLocationView().setVisibility(View.INVISIBLE);
         mSphinx.getMapToolsBtn().setVisibility(View.INVISIBLE);
         
+        mSphinx.resetLoactionButtonState();
         mSphinx.setTouchMode(TouchMode.MEASURE_DISTANCE);
     }
 
