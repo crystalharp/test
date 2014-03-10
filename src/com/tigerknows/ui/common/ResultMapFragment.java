@@ -142,7 +142,7 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
             type = Plan.Step.TYPE_WALK;
         }
         
-        if (ActionLog.TrafficDriveMap.equals(mActionTag)) {
+        if (ActionLog.TrafficDriveListMap.equals(mActionTag)) {
             mSphinx.showHint(TKConfig.PREFS_HINT_TRAFFIC_PREFERENCE, R.layout.hint_traffic_preference);
         } else if (ActionLog.ResultMapTuangouList.equals(mActionTag) ||
                 ActionLog.ResultMapYanchuList.equals(mActionTag) ||
