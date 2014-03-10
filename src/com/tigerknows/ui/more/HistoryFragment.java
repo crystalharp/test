@@ -24,6 +24,7 @@ import com.tigerknows.util.SqliteWrapper;
 import com.tigerknows.widget.SpringbackListView;
 import com.tigerknows.widget.SpringbackListView.OnRefreshListener;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Resources;
@@ -120,6 +121,8 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
             }
         }
     };
+    
+    private Dialog mProgressDialog;
     
     @SuppressWarnings("rawtypes")
     private Comparator mComparator = new Comparator() {
@@ -460,18 +463,19 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
                                 @Override
                                 public void onClick(DialogInterface arg0, int id) {
                                     if (id == DialogInterface.BUTTON_POSITIVE) {
+                                        LoadThread loadThread;
                                         if (mLayerType.equals(ItemizedOverlay.POI_OVERLAY)) {
-                                            SqliteWrapper.delete(mContext, mContext.getContentResolver(), Tigerknows.POI.CONTENT_URI, Tigerknows.POI.STORE_TYPE + "=" + Tigerknows.STORE_TYPE_HISTORY, null);
-                                            mPOIList.clear();
-                                            mPOILsv.setFooterSpringback(false);
-                                            mPOIAdapter.notifyDataSetChanged();
+                                            loadThread = new LoadThread();
+                                            loadThread.layerType = ItemizedOverlay.POI_OVERLAY;
+                                            loadThread.operation = LoadThread.OP_DELETE;
                                         } else {
-                                            SqliteWrapper.delete(mContext, mContext.getContentResolver(), Tigerknows.History.CONTENT_URI, null, null);
-                                            mTrafficList.clear();
-                                            mTrafficLsv.setFooterSpringback(false);
-                                            mTrafficAdapter.notifyDataSetChanged();
+                                            loadThread = new LoadThread();
+                                            loadThread.layerType = ItemizedOverlay.TRAFFIC_OVERLAY;
+                                            loadThread.operation = LoadThread.OP_DELETE;
                                         }
-                                        refreshContent();
+                                        mProgressDialog = mSphinx.getDialog(R.id.dialog_share_doing);
+                                        mProgressDialog.show();
+                                        loadThread.start();
                                     }
                                 }
                             });
@@ -683,45 +687,63 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
         @SuppressWarnings("unchecked")
         public void handleMessage(Message msg) {
             if (0 == msg.what) {
-                mPOILsv.onRefreshComplete(false);
-                List<POI> poiList = (List<POI>)msg.obj;
-                if (poiList.size() > 0) {
-                    mRightBtn.setEnabled(true);
-                    for(POI poi : poiList) {
-                        if (mPOIList.contains(poi)) {
-                            mPOIList.remove(poi);
-                        }
-                        mPOIList.add(poi);
-                    }
-//                    Collections.sort(mPOIList, mComparator);
+                if (msg.arg2 == 1) {
+                    mPOILsv.setFooterSpringback(false);
                     mPOIAdapter.notifyDataSetChanged();
-                    mPOILsv.setFooterSpringback(msg.arg1 > mPOIList.size());
-                    if (mPOILsv.isFooterSpringback()) {
-                        mSphinx.getHandler().postDelayed(mTurnPageRunPOI, 1000);
+                    
+                    if (mProgressDialog != null && mProgressDialog.isShowing()) {
+                        mProgressDialog.dismiss();
                     }
                 } else {
-                    mPOILsv.setFooterSpringback(false);
+                    mPOILsv.onRefreshComplete(false);
+                    List<POI> poiList = (List<POI>)msg.obj;
+                    if (poiList.size() > 0) {
+                        mRightBtn.setEnabled(true);
+                        for(POI poi : poiList) {
+                            if (mPOIList.contains(poi)) {
+                                mPOIList.remove(poi);
+                            }
+                            mPOIList.add(poi);
+                        }
+    //                    Collections.sort(mPOIList, mComparator);
+                        mPOIAdapter.notifyDataSetChanged();
+                        mPOILsv.setFooterSpringback(msg.arg1 > mPOIList.size());
+                        if (mPOILsv.isFooterSpringback()) {
+                            mSphinx.getHandler().postDelayed(mTurnPageRunPOI, 1000);
+                        }
+                    } else {
+                        mPOILsv.setFooterSpringback(false);
+                    }
                 }
                 refreshContent();
             } else if (1 == msg.what) {
-                mTrafficLsv.onRefreshComplete(false);
-                List<History> trafficList = (List<History>)msg.obj;
-                if (trafficList.size() > 0) {
-                    mRightBtn.setEnabled(true);
-                    for(History traffic : trafficList) {
-                        if (mTrafficList.contains(traffic)) {
-                            mTrafficList.remove(traffic);
-                        }
-                        mTrafficList.add(traffic);
-                    }
-//                    Collections.sort(mTrafficList, mComparator);
+                if (msg.arg2 == 1) {
+                    mTrafficLsv.setFooterSpringback(false);
                     mTrafficAdapter.notifyDataSetChanged();
-                    mTrafficLsv.setFooterSpringback(msg.arg1 > mTrafficList.size());
-                    if (mTrafficLsv.isFooterSpringback()) {
-                        mSphinx.getHandler().postDelayed(mTurnPageRunTraffic, 1000);
+                    
+                    if (mProgressDialog != null && mProgressDialog.isShowing()) {
+                        mProgressDialog.dismiss();
                     }
                 } else {
-                    mTrafficLsv.setFooterSpringback(false);
+                    mTrafficLsv.onRefreshComplete(false);
+                    List<History> trafficList = (List<History>)msg.obj;
+                    if (trafficList.size() > 0) {
+                        mRightBtn.setEnabled(true);
+                        for(History traffic : trafficList) {
+                            if (mTrafficList.contains(traffic)) {
+                                mTrafficList.remove(traffic);
+                            }
+                            mTrafficList.add(traffic);
+                        }
+    //                    Collections.sort(mTrafficList, mComparator);
+                        mTrafficAdapter.notifyDataSetChanged();
+                        mTrafficLsv.setFooterSpringback(msg.arg1 > mTrafficList.size());
+                        if (mTrafficLsv.isFooterSpringback()) {
+                            mSphinx.getHandler().postDelayed(mTurnPageRunTraffic, 1000);
+                        }
+                    } else {
+                        mTrafficLsv.setFooterSpringback(false);
+                    }
                 }
                 refreshContent();
             }
@@ -729,26 +751,44 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
     };
     
     class LoadThread extends Thread{
+
+        static final String OP_READ = "OP_READ";
+        static final String OP_DELETE = "OP_DELETE";
         
         long maxId;
         String layerType;
+        String operation = null;
         
         @Override
         public void run(){
             Message msg = Message.obtain();
             int type;
             if (layerType.equals(ItemizedOverlay.POI_OVERLAY)) {
-                List<POI> poiList = new ArrayList<POI>();
-                int total = readPOI(poiList, maxId, 0, false);
                 type = 0;
-                msg.obj = poiList;
-                msg.arg1 = total;
+                if (OP_DELETE.equals(operation)) {
+                    SqliteWrapper.delete(mContext, mContext.getContentResolver(), Tigerknows.POI.CONTENT_URI, Tigerknows.POI.STORE_TYPE + "=" + Tigerknows.STORE_TYPE_HISTORY, null);
+                    mPOIList.clear();
+                    msg.arg2 = 1;
+                } else if (OP_READ.equals(operation)) {
+                    List<POI> poiList = new ArrayList<POI>();
+                    int total = readPOI(poiList, maxId, 0, false);
+                    msg.obj = poiList;
+                    msg.arg1 = total;
+                    msg.arg2 = 0;
+                }
             } else {
-                List<History> trafficList = new ArrayList<History>();
-                int total = readTraffic(mContext, trafficList, maxId, 0, false);
                 type = 1;
-                msg.obj = trafficList;
-                msg.arg1 = total;
+                if (OP_DELETE.equals(operation)) {
+                    SqliteWrapper.delete(mContext, mContext.getContentResolver(), Tigerknows.History.CONTENT_URI, null, null);
+                    mTrafficList.clear();
+                    msg.arg2 = 1;
+                } else if (OP_READ.equals(operation)) {
+                    List<History> trafficList = new ArrayList<History>();
+                    int total = readTraffic(mContext, trafficList, maxId, 0, false);
+                    msg.obj = trafficList;
+                    msg.arg1 = total;
+                    msg.arg2 = 0;
+                }
             }
             msg.what = type;
             mHandler.sendMessage(msg);
