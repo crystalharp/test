@@ -509,10 +509,6 @@ public class BuslineResultLineFragment extends BaseFragment {
                 alarm.setPosition(station.getPosition());
                 Alarm.writeAlarm(sphinx, alarm, sphinx.uiStackContains(R.id.view_alarm_add) ? R.string.alarm_add_success : R.string.alarm_add_success_and_view);
                 dialog.dismiss();
-                
-                if (sphinx.uiStackContains(R.id.view_alarm_add)) {
-                    sphinx.uiStackClearTop(R.id.view_alarm_list);
-                }
             }
         });
     }
