@@ -504,12 +504,12 @@ public class TKConfig {
     /**
      * 是否为升级后使用本软件
      */
-    public static final String PREFS_UPGRADE = "prefs_learn_5.8.0";    
+    public static final String PREFS_UPGRADE = "prefs_learn_5.8.2";    
     
     /**
      * 是否为第一次安装使用本软件
      */
-    public static final String PREFS_FIRST_USE = "prefs_learn_5.8.0";    
+    public static final String PREFS_FIRST_USE = "prefs_learn_5.8.1";    
     
     /**
      * 是否已创建快捷方式
