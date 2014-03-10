@@ -923,7 +923,7 @@ public class TilesView extends GLSurfaceView {
 
 				touchRecord2.push(0, event.getX(0), event.getY(0));
 				touchRecord2.push(0, event.getX(1), event.getY(1));
-				if (touchRecord2.size >= 2 * 2  && touchMode == MODE_NONE) {
+				if (touchRecord2.size >= touchRecord2.capacity - 1  && touchMode == MODE_NONE) {
 					int touchModeL = MODE_ZOOMING;// zooming
 
 					int index = touchRecord2.index;
