@@ -301,6 +301,8 @@ public class HistoryWordTable {
             list = History_Word_Busline;
         }
         synchronized (list) {
+            tkWord.attribute = TKWord.ATTRIBUTE_HISTORY;
+            
             HistoryWordTable historyWordTable = new HistoryWordTable(context);
             
             // 删除旧版本中存在相同名称但地址为空的历史词
