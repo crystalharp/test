@@ -16,6 +16,7 @@
 		    <include layout="@layout/poi_nearby_search_bar"
 		        android:layout_width="fill_parent"
 		        android:layout_height="wrap_content"
+		        android:background="@color/normal_background"
 		        />
 		    <LinearLayout android:id="@+id/hot_lly"
 		        android:layout_width="fill_parent"
