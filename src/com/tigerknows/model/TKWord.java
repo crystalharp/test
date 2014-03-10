@@ -52,6 +52,9 @@ public class TKWord {
             if (word != null) {
                 hash += word.hashCode();
             }
+            if (address != null) {
+                hash += address.hashCode();
+            }
 //            if (position != null) {
 //                hash += position.hashCode();
 //            }
@@ -70,9 +73,9 @@ public class TKWord {
             TKWord other = (TKWord) object;
             if (attribute == other.attribute || (attribute != ATTRIBUTE_CLEANUP && other.attribute != ATTRIBUTE_CLEANUP)) {
                 if ((word != null && word.equals(other.word)) || (word == null && word == other.word)) {
-//                    if ((position != null && position.equals(other.position)) || (position == null && position == other.position)) {
+                    if ((address != null && address.equals(other.address)) || (address == null && address == other.address)) {
                         return true;
-//                    }
+                    }
                 }
             }
         }

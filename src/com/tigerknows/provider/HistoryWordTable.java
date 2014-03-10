@@ -176,6 +176,17 @@ public class HistoryWordTable {
 		mDb.delete(TABLE_NAME,  "(" + TYPE + "=" + type+ ") AND (" + HASHCODE + "=" + hashCode+ ")", null);
 		mDb.insert(TABLE_NAME, null, cv);
 	}
+	
+    public void delete(TKWord tkWord, int type) {
+        if (tkWord == null || TextUtils.isEmpty(tkWord.word)) {
+            return;
+        }
+        if(!mDb.isOpen())
+            return;
+        int hashCode = tkWord.hashCode();
+
+        mDb.delete(TABLE_NAME,  "(" + TYPE + "=" + type+ ") AND (" + HASHCODE + "=" + hashCode+ ")", null);
+    }
 
     private void read(List<TKWord> list, int type) {
         if(!mDb.isOpen())
@@ -290,28 +301,51 @@ public class HistoryWordTable {
             list = History_Word_Busline;
         }
         synchronized (list) {
-            int index = list.indexOf(tkWord);
+            HistoryWordTable historyWordTable = new HistoryWordTable(context);
+            
+            // 删除旧版本中存在相同名称但地址为空的历史词
+            // 更新存在相同名称和地址的历史词
             TKWord old = null;
-            if (index >= 0 && index < list.size()) {
-                old = list.remove(index);
+            TKWord last = null;
+            for(int i =  list.size() - 1; i >= 0; i--) {
+                TKWord item = list.get(i);
+                if (item.word.equals(tkWord.word)) {
+                    if (TextUtils.isEmpty(item.address)) {
+                        old = item;
+                    } else if (item.address.equals(tkWord.address)) {
+                        last = item;
+                    }
+                }
+            }
+            if (old != null) {
                 if (tkWord.position == null) {
                     tkWord.position = old.position;
                 }
-                if (tkWord.address == null) {
-                    tkWord.address = old.address;
-                }
+                list.remove(old);
+                historyWordTable.delete(old, type);
             }
+            
+            if (last != null) {
+                if (tkWord.position == null) {
+                    tkWord.position = last.position;
+                }
+                if (TextUtils.isEmpty(tkWord.address)) {
+                    tkWord.address = last.address;
+                }
+                list.remove(last);
+                historyWordTable.delete(last, type);
+            }
+            
             list.add(0, tkWord);
             if (list.size() > MAX_COUNT) {
                 for(int i = list.size()-1; i >= MAX_COUNT; i--) {
                     list.remove(i);
                 }
             }
+            historyWordTable.write(tkWord, type);
+            historyWordTable.optimize(type);
+            historyWordTable.close();
         }
-        HistoryWordTable historyWordTable = new HistoryWordTable(context);
-        historyWordTable.write(tkWord, type);
-        historyWordTable.optimize(type);
-        historyWordTable.close();
     }
     
     public static void clearHistoryWord(Context context, int type) {
