@@ -860,7 +860,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
         if (!trafficQuery.isStop()) {
             
             TrafficModel trafficModel = trafficQuery.getTrafficModel();
-            if (trafficModel == null && trafficQuery.getStatusCode() == BaseQuery.STATUS_CODE_NONE) {
+            if (trafficModel == null || trafficQuery.getStatusCode() == BaseQuery.STATUS_CODE_NONE) {
                 sphinx.showTip(R.string.network_failed, Toast.LENGTH_SHORT);
                 return;
             } else if (trafficModel.getResultStat() >= 0){
