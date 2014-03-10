@@ -313,6 +313,7 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             v = view.findViewById(R.id.traffic_step_item);
             v.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
             mTrafficStepHeight = v.getMeasuredHeight();
+            mTrafficPlanHeight = mTrafficStepHeight;
             LogWrapper.d(TAG, "step height:" + mTrafficStepHeight);
             
             view = mLayoutInflater.inflate(R.layout.info_window_fragment, this, false);
