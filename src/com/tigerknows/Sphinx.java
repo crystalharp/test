@@ -2670,7 +2670,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 int id = uiStackPeek();
                 if (mBottomFragment != null &&
                         (id == R.id.view_home ||
-                            id == R.id.view_result_map) &&
+                        id == R.id.view_result_map ||
+                        id == R.id.view_traffic_result_list_map ||
+                        id == R.id.view_traffic_detail_map) &&
                         fragment != null &&
                         fragment.getId() == id) {
                     mBottomView.addView(mBottomFragment);
@@ -2769,7 +2771,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     private CustomCategoryFragment mCustomCategoryFragment;
     private TrafficDetailFragment mTrafficDetailFragment = null;
     private TrafficResultFragment mTrafficResultFragment = null; 
-    private TrafficResultListMapFragment mTrafficResultListMapFragment = null;
+    private ResultMapFragment mTrafficResultListMapFragment = null;
+    private ResultMapFragment mTrafficDetailMapFragment = null;
     private TrafficCommonPlaceFragment mTrafficCommonAddressFragment = null;
     private TrafficSearchHistoryFragment mTrafficSearchHistoryFragment = null;
     private BuslineResultLineFragment mBuslineResultLineFragment = null;
@@ -2981,6 +2984,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 
             case R.id.view_traffic_result_list_map:
                 baseFragment = getTrafficResultListMapFragment();
+                break;
+                
+            case R.id.view_traffic_detail_map:
+                baseFragment = getTrafficDetailMapFragment();
                 break;
                 
             case R.id.view_alarm_list:
@@ -3207,16 +3214,29 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         }
     }
     
-    public TrafficResultListMapFragment getTrafficResultListMapFragment(){
+    public ResultMapFragment getTrafficResultListMapFragment(){
 
         synchronized (mUILock) {
             if (mTrafficResultListMapFragment == null) {
-                TrafficResultListMapFragment fragment = new TrafficResultListMapFragment(Sphinx.this);
+                ResultMapFragment fragment = new ResultMapFragment(Sphinx.this);
                 fragment.setId(R.id.view_traffic_result_list_map);
                 fragment.onCreate(null);
                 mTrafficResultListMapFragment = fragment;
             }
             return mTrafficResultListMapFragment;
+        }
+    }
+    
+    public ResultMapFragment getTrafficDetailMapFragment(){
+
+        synchronized (mUILock) {
+            if (mTrafficDetailMapFragment == null) {
+                ResultMapFragment fragment = new ResultMapFragment(Sphinx.this);
+                fragment.setId(R.id.view_traffic_detail_map);
+                fragment.onCreate(null);
+                mTrafficDetailMapFragment = fragment;
+            }
+            return mTrafficDetailMapFragment;
         }
     }
 

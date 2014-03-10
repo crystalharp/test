@@ -30,6 +30,7 @@ import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.TrafficModel.Plan;
 import com.tigerknows.model.TrafficModel.Plan.Step;
 import com.tigerknows.model.xobject.XMap;
+import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.util.NavigationSplitJointRule;
 
 public class TrafficOverlayHelper {
@@ -209,7 +210,11 @@ public class TrafficOverlayHelper {
                     if (sphinx.getTouchMode().equals(TouchMode.MEASURE_DISTANCE)) {
                         return;
                     }
-                    String tag = sphinx.getResultMapFragment().mActionTag;
+                    BaseFragment fragment = sphinx.getFragment(sphinx.uiStackPeek());
+                    String tag = null;
+                    if (fragment != null) {
+                        tag = fragment.mActionTag;
+                    }
                     if (ActionLog.TrafficDriveListMap.equals(tag) ||
                             ActionLog.TrafficWalkListMap.equals(tag)) {
                         return;

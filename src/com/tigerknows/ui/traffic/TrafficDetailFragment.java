@@ -580,7 +580,6 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         MapScene mapScene = mSphinx.getMapView().getCurrentMapScene();
         TrafficOverlayHelper.drawOverlay(mSphinx, plan);
         Position position = TrafficOverlayHelper.panToViewWholeOverlay(plan, mSphinx);
-        TrafficOverlayHelper.showPlanInfoWindow(mSphinx);
         
         ShareAPI.share(mSphinx, plan, position, mapScene, mActionTag);
     }
@@ -605,9 +604,9 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
 
             }
 
-            ResultMapFragment resultMapFragment = mSphinx.getResultMapFragment();
+            ResultMapFragment resultMapFragment = mSphinx.getTrafficDetailMapFragment();
             resultMapFragment.setData(title, actionTag);
-            mSphinx.showView(R.id.view_result_map);
+            mSphinx.showView(R.id.view_traffic_detail_map);
             
             TrafficOverlayHelper.drawOverlay(mSphinx, mPlan);
             

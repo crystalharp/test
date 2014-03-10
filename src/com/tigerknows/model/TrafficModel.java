@@ -1121,14 +1121,6 @@ public class TrafficModel extends XMapData {
             
         }
         
-        public void resetData() {
-            /*
-             * 将服务端返回的"长度为0米"的步骤去除
-             */
-            this.data = null;
-            this.data = getData();
-        }
-        
         public XMap getData() {
             if (data == null) {
                 data = new XMap();

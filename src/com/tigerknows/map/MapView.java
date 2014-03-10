@@ -1130,12 +1130,12 @@ public class MapView extends RelativeLayout implements
         }
         mapScene.shapeList = shapeList;
         InfoWindowFragment infoWindowFragment = sphinx.getInfoWindowFragment();
+        mapScene.fragmentId = infoWindowFragment.getOwerFragmentId();
         ItemizedOverlay itemizedOverlay = infoWindowFragment.getItemizedOverlay();
         ItemizedOverlay currentOverlay = getCurrentOverlay();
         if (itemizedOverlay != null &&
                 currentOverlay != null &&
                 itemizedOverlay.getName().equals(currentOverlay.getName())) {
-            mapScene.fragmentId = infoWindowFragment.getOwerFragmentId();
             mapScene.overlayItem = itemizedOverlay.getItemByFocused();
         } else {
             mapScene.overlayItem = null;

@@ -116,6 +116,9 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
     @Override
     public void onResume() {
         super.onResume();
+        
+        restoreResultData();
+        
         mSphinx.getHomeFragment().reset();
         mSphinx.getMapView().setStopRefreshMyLocation(false);
         mTitleBtn.setText(mTitle);
@@ -132,7 +135,7 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
         int type = 0;
         if (ActionLog.TrafficTransferMap.equals(mActionTag)) {
             type = Plan.Step.TYPE_TRANSFER;
-        } else if (ActionLog.TrafficDriveMap.equals(mActionTag)) {
+        } else if (ActionLog.TrafficDriveListMap.equals(mActionTag)) {
             type = Plan.Step.TYPE_DRIVE;
         } else if (ActionLog.TrafficWalkListMap.equals(mActionTag)) {
             type = Plan.Step.TYPE_WALK;
@@ -155,8 +158,8 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
         } else if (ActionLog.TrafficTransferMap.equals(mActionTag)) {
             mTitleBtn.setText(getString(R.string.title_transfer_result_map));
         }
-        if (ActionLog.TrafficDriveMap.equals(mActionTag) ||
-                ActionLog.TrafficWalkMap.equals(mActionTag)) {
+        if (ActionLog.TrafficDriveListMap.equals(mActionTag) ||
+                ActionLog.TrafficWalkListMap.equals(mActionTag)) {
             mTitleBtn.setVisibility(View.GONE);
             mTrafficTitieView = mSphinx.getTrafficQueryFragment().getTitleView();
             mTrafficTitleRadioGroup = (RadioGroup) mTrafficTitieView.findViewById(R.id.traffic_rgp);
@@ -178,12 +181,13 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
     @Override
     public void onPause() {
         super.onPause();
+        saveResultData();
     }
     
     public void setData(String title, String actionTag) {
-        saveResultData(actionTag);
         mTitle = title;
         mActionTag = actionTag;
+        mMapSceneData = null;
     }
     
     @Override
@@ -338,6 +342,7 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
             newTrafficQuery.setCityId(trafficQuery.getCityId());
             mSphinx.queryStart(newTrafficQuery);
         } else {
+            
             trafficDetailFragment.refreshResult(type);
             List<Plan> list = trafficDetailFragment.getResult(type);
             if (type == Plan.Step.TYPE_TRANSFER) {
@@ -351,7 +356,7 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
                 }
                 result = true;
             } else if (type == Plan.Step.TYPE_DRIVE) {
-                mActionTag = ActionLog.TrafficDriveMap;
+                mActionTag = ActionLog.TrafficDriveListMap;
                 mRightBtn.setText(R.string.preference);
                 mRightBtn.setVisibility(View.VISIBLE);
                 mRightBtn.setOnClickListener(this);
@@ -362,7 +367,7 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
                 
                 result = true;
             } else if (type == Plan.Step.TYPE_WALK) {
-                mActionTag = ActionLog.TrafficWalkMap;
+                mActionTag = ActionLog.TrafficWalkListMap;
                 mRightBtn.setVisibility(View.INVISIBLE);
 
                 TrafficOverlayHelper.drawOverlay(mSphinx, list.get(0));
@@ -383,21 +388,6 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
         if (view.getVisibility() == View.VISIBLE) {
             view.setVisibility(View.INVISIBLE);
             mSphinx.replaceBottomUI(null);
-        }
-        
-        if (mResultData != null) {
-            boolean existPOI = false;
-            List<ItemizedOverlay> list = mResultData.mapScene.itemizedOverlayList;
-            for(int i = list.size() - 1; i >= 0; i--) {
-                if (ItemizedOverlay.POI_OVERLAY.contains(list.get(i).getName())) {
-                    existPOI = true;
-                    break;
-                }
-            }
-            
-            if (existPOI) {
-                restoreDataBean();
-            }
         }
     }
     
@@ -423,66 +413,18 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
     }
     
     // 在进入到交通选点界面和交通结果地图界面时，保存之前的地图相关信息
-    private ResultData mResultData;
+    private MapScene mMapSceneData;
     
-    private void saveResultData(String actionTag) {
-
-        if (ActionLog.TrafficSelectPoint.equals(actionTag) ||
-                ActionLog.TrafficTransferMap.equals(actionTag) ||
-                ActionLog.TrafficDriveMap.equals(actionTag) ||
-                ActionLog.TrafficWalkMap.equals(actionTag) ||
-                ActionLog.TrafficTransferListMap.equals(actionTag) ||
-                ActionLog.TrafficDriveListMap.equals(actionTag) ||
-                ActionLog.TrafficWalkListMap.equals(actionTag)) {
-            
-            if (ActionLog.TrafficSelectPoint.equals(mActionTag) == false &&
-                    ActionLog.TrafficTransferMap.equals(mActionTag) == false &&
-                    ActionLog.TrafficDriveMap.equals(mActionTag) == false &&
-                    ActionLog.TrafficWalkMap.equals(mActionTag) == false &&
-                    ActionLog.TrafficTransferListMap.equals(mActionTag) == false &&
-                    ActionLog.TrafficDriveListMap.equals(mActionTag) == false &&
-                    ActionLog.TrafficWalkListMap.equals(mActionTag) == false) {
-                
-                mResultData = new ResultData();
-                mResultData.title = mTitle;
-                mResultData.actionTag = mActionTag;
-                mResultData.mapScene = mSphinx.getMapView().getCurrentMapScene();
-            }
-        }
+    private void saveResultData() {
+        mMapSceneData = mSphinx.getMapView().getCurrentMapScene();
+        mMapSceneData.overlayItem = mSphinx.getInfoWindowFragment().getItemizedOverlay().getItemByFocused();
     }
     
-    private void restoreDataBean() {
-        if (ActionLog.TrafficSelectPoint.equals(mActionTag) ||
-                ActionLog.TrafficTransferMap.equals(mActionTag) ||
-                ActionLog.TrafficDriveMap.equals(mActionTag) ||
-                ActionLog.TrafficWalkMap.equals(mActionTag) ||
-                ActionLog.TrafficTransferListMap.equals(mActionTag) ||
-                ActionLog.TrafficDriveListMap.equals(mActionTag) ||
-                ActionLog.TrafficWalkListMap.equals(mActionTag)) {
-            
-            if (mResultData != null) {
-                if (ActionLog.TrafficSelectPoint.equals(mResultData.actionTag) == false &&
-                        ActionLog.TrafficTransferMap.equals(mResultData.actionTag) == false &&
-                        ActionLog.TrafficDriveMap.equals(mResultData.actionTag) == false &&
-                        ActionLog.TrafficWalkMap.equals(mResultData.actionTag) == false &&
-                        ActionLog.TrafficTransferListMap.equals(mResultData.actionTag) == false &&
-                        ActionLog.TrafficDriveListMap.equals(mResultData.actionTag) == false &&
-                        ActionLog.TrafficWalkListMap.equals(mResultData.actionTag) == false) {
-                    
-                    if (mActionTag.equals(mResultData.actionTag) == false) {
-                        mSphinx.clearMap();
-                        setData(mResultData.title, mResultData.actionTag);
-                        mSphinx.getMapView().restoreScene(mResultData.mapScene);
-                        mResultData = null;
-                    }
-                }
-            }
+    private void restoreResultData() {
+        if (mMapSceneData != null) {
+            mSphinx.clearMap();
+            mSphinx.getMapView().restoreScene(mMapSceneData);
+            mMapSceneData = null;
         }
-    }
-    
-    public class ResultData {
-        public String title;
-        public String actionTag;
-        public MapScene mapScene;
     }
 }
