@@ -54,6 +54,7 @@ import android.widget.PopupWindow;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.PopupWindow.OnDismissListener;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -873,7 +874,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     public void onCancelled(TKAsyncTask tkAsyncTask) {
         super.onCancelled(tkAsyncTask);
         mResultLsv.changeHeaderViewByState(false, SpringbackListView.PULL_TO_REFRESH);
-        invokeIPagerListCallBack();
+        invokeIPagerListCallBack(0);
     }
 
     @Override
@@ -884,7 +885,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         
         mResultLsv.onRefreshComplete(false);
         if (dataQuery.isStop()) {
-            invokeIPagerListCallBack();
+            invokeIPagerListCallBack(0);
             return;
         }
 
@@ -899,36 +900,36 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 if (responsCode != Response.RESPONSE_CODE_OK) {
                     if (responsCode == 701) {
                     } else {
+                        int resid = BaseActivity.getResponseResId(dataQuery);
                         if (dataQuery.isTurnPage()) {
-                            invokeIPagerListCallBack();
+                            invokeIPagerListCallBack(resid);
                             return;
                         }
-                        int resid = BaseActivity.getResponseResId(dataQuery);
                         mRetryView.setText(resid, true);
                         mState = STATE_ERROR;
                         updateView();
                     }
 
-                    invokeIPagerListCallBack();
+                    invokeIPagerListCallBack(R.string.network_failed);
                     return;
                 }
             } else {
                 if (dataQuery.isTurnPage()) {
                     mResultLsv.setFooterLoadFailed(true);
-                    invokeIPagerListCallBack();
+                    invokeIPagerListCallBack(R.string.network_failed);
                     return;
                 }
                 mRetryView.setText(R.string.touch_screen_and_retry, true);
                 mState = STATE_ERROR;
                 updateView();
-                invokeIPagerListCallBack();
+                invokeIPagerListCallBack(R.string.network_failed);
                 return;
             }
         }
 
         mResultLsv.setFooterSpringback(false);
         setData(dataQuery, false);
-        invokeIPagerListCallBack();
+        invokeIPagerListCallBack(0);
     }
     
     public void setData(DataQuery dataQuery, boolean resetFilter) {
@@ -1066,8 +1067,11 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         }
     }
     
-    private boolean invokeIPagerListCallBack() {
+    private boolean invokeIPagerListCallBack(int errorResId) {
         if (mIPagerListCallBack != null) {
+            if (errorResId != 0) {
+                Toast.makeText(mSphinx, errorResId, Toast.LENGTH_SHORT).show();
+            }
             mIPagerListCallBack.turnPageEnd(false, getList().size());
             mIPagerListCallBack = null;
             return true;
