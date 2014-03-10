@@ -416,19 +416,36 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
         }
     }
     
-    // 在进入到交通选点界面和交通结果地图界面时，保存之前的地图相关信息
     private MapScene mMapSceneData;
+    private MapScene mMapSceneDataForShowMap; // 仅用于服务器要求将结果直接显示在地图上的情况，用来保存离开此页面时地图信息
     
     private void saveResultData() {
         mMapSceneData = mSphinx.getMapView().getCurrentMapScene();
         mMapSceneData.overlayItem = mSphinx.getInfoWindowFragment().getItemizedOverlay().getItemByFocused();
+        if (mSphinx.uiStackSize() == 2 &&
+                mSphinx.uiStackPeekBottom() == R.id.view_home &&
+                mSphinx.uiStackPeek() == R.id.view_result_map) {
+            mMapSceneDataForShowMap = mMapSceneData;
+        }
     }
     
     private void restoreResultData() {
-        if (mMapSceneData != null) {
-            mSphinx.clearMap();
-            mSphinx.getMapView().restoreScene(mMapSceneData);
+        MapScene mapScene = null;
+        if (mSphinx.uiStackSize() == 2 &&
+                mSphinx.uiStackPeekBottom() == R.id.view_home &&
+                mSphinx.uiStackPeek() == R.id.view_result_map &&
+                mMapSceneDataForShowMap != null) {
+            mapScene = mMapSceneDataForShowMap;
+            mMapSceneDataForShowMap = null;
             mMapSceneData = null;
+        } else {
+            mapScene = mMapSceneData;
+            mMapSceneData = null;
+        }
+        
+        if (mapScene != null) {
+            mSphinx.clearMap();
+            mSphinx.getMapView().restoreScene(mapScene);
         }
     }
 }
