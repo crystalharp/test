@@ -717,11 +717,12 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 @Override
                 public void onTouchEvent(EventSource eventSource, Position position) {
                     
-//                    if (mMyLocation.mode == MyLocation.MODE_ROTATION) {
-//                        mResetLocatoinBtnWhenTouch = true;
-//                    }
-//                    resetLoactionButtonState();
-                    //FIXME:还有各种情况?
+                    LogWrapper.i(TAG, "onTouchEvent:" + position.toString());
+                    
+                    if(touchMode.equals(TouchMode.MEASURE_DISTANCE)) {
+                        return;
+                    }
+                    
                     if (mMyLocation.mode == MyLocation.MODE_ROTATION) {
                         mResetLocatoinBtnWhenTouch = true;
                         updateMapDirectionIndicatorState(mMyLocation.mode);

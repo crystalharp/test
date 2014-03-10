@@ -304,7 +304,8 @@ public class BaseFragment extends LinearLayout {
         if (id != R.id.view_invalid && id != R.id.view_infowindow) {
             dismissPopupWindow();
             mSphinx.hideSoftInput();
-            mSphinx.resetLoactionButtonState();
+            //TODO:产品要求界面切换时不改变地图状态,注掉这句话试试.
+//            mSphinx.resetLoactionButtonState();
             if (!TextUtils.isEmpty(mActionTag)) {
                 mActionLog.addAction(mActionTag + ActionLog.Dismiss);
             }
