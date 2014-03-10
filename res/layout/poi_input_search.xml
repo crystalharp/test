@@ -164,6 +164,7 @@
             android:scrollingCache="false"
             android:fadingEdge="none"
             android:divider="@drawable/bg_line_split"
+            android:background="@color/normal_background"
             />
     </LinearLayout>
     
