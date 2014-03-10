@@ -84,9 +84,6 @@ public class Alarm implements Parcelable {
                     showSettingLocationDialog((Sphinx) context, alarm, showToastResId);
                     return;
                 }
-                if (showToastResId != 0) {
-                    Toast.makeText(context, showToastResId, Toast.LENGTH_SHORT).show();
-                }
             }
             
             Alarm exist = null;
@@ -119,6 +116,15 @@ public class Alarm implements Parcelable {
                 add = true;
             }
             checkStatus(context, add);
+
+            if (enabled && showToastResId != 0 && context instanceof Sphinx) {
+                Toast.makeText(context, showToastResId, Toast.LENGTH_SHORT).show();
+
+                Sphinx sphinx = (Sphinx) context;
+                if (showToastResId == R.string.alarm_add_success && sphinx.uiStackContains(R.id.view_alarm_list)) {
+                    sphinx.uiStackClearTop(R.id.view_alarm_list);
+                }
+            }
         }
     }
     

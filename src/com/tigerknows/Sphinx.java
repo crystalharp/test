@@ -979,9 +979,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             if (alarm != null && SettingActivity.checkGPS(mThis)) {
                 alarm.setStatus(0);
                 Alarm.writeAlarm(mThis, alarm, showToastResId);
-                if (showToastResId == R.string.alarm_add_success) {
-                    uiStackClearTop(R.id.view_alarm_list);
-                }
             }
         } else if (R.id.activity_more_setting == requestCode) {
             boolean request = TextUtils.isEmpty(TKConfig.getPref(mContext, TKConfig.PREFS_ACQUIRE_WAKELOCK));
