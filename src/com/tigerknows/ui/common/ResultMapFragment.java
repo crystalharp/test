@@ -348,6 +348,7 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
             List<Plan> list = trafficDetailFragment.getResult(type);
             if (type == Plan.Step.TYPE_TRANSFER) {
                 if (jumpTransferResultFragment) {
+                    mSphinx.uiStackRemove(R.id.view_traffic_result_list_map);
                     TrafficQuery newTrafficQuery = mSphinx.getTrafficResultFragment().getTrafficQuery();
                     mSphinx.getTrafficResultFragment().setData(newTrafficQuery);
                     mSphinx.showView(R.id.view_traffic_result_transfer);
@@ -361,7 +362,9 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
                 mRightBtn.setText(R.string.preference);
                 mRightBtn.setVisibility(View.VISIBLE);
                 mRightBtn.setOnClickListener(this);
-                
+
+                trafficDetailFragment.refreshDrive(list.get(0));
+
                 TrafficOverlayHelper.drawOverlay(mSphinx, list.get(0));
                 TrafficOverlayHelper.panToViewWholeOverlay(list.get(0), mSphinx);
                 TrafficOverlayHelper.showPlanInfoWindow(mSphinx);
@@ -393,10 +396,10 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
     }
     
     private void checkRadioBtn(String tag) {
-        if (ActionLog.TrafficDriveMap.equals(tag)) {
+        if (ActionLog.TrafficDriveListMap.equals(tag)) {
             mTrafficDriveRbt.setChecked(true);
             TKConfig.setPref(mSphinx, TKConfig.PREFS_CHECKED_TRAFFIC_RADIOBUTTON, String.valueOf(Plan.Step.TYPE_DRIVE));
-        } else if (ActionLog.TrafficWalkMap.equals(tag)){
+        } else if (ActionLog.TrafficWalkListMap.equals(tag)){
             mTrafficWalkRbt.setChecked(true);
             TKConfig.setPref(mSphinx, TKConfig.PREFS_CHECKED_TRAFFIC_RADIOBUTTON, String.valueOf(Plan.Step.TYPE_WALK));
         }

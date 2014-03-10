@@ -822,6 +822,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
             	TrafficDetailFragment f = sphinx.getTrafficDetailFragment();
             	f.addResult(trafficQuery, type, planList);
             	if (type == Plan.Step.TYPE_TRANSFER) {
+            	    sphinx.uiStackRemove(R.id.view_traffic_result_list_map);
             	    // 换乘方式
             	    sphinx.getTrafficResultFragment().setData(trafficQuery);
             	    sphinx.showView(R.id.view_traffic_result_transfer);
