@@ -45,9 +45,11 @@ public class AlarmService extends TKService {
             if (location != null) {
                 Position position = new Position(location.getLatitude(), location.getLongitude());
                 MapEngine mapEngine = MapEngine.getInstance();
-                mLastPosition = mapEngine.latlonTransform(position);
-                
-                Alarm.showAlarm(getApplicationContext(), mLastPosition);
+                if (Position.distanceBetween(mLastPosition, position) > 50) {
+                    mLastPosition = mapEngine.latlonTransform(position);
+                    
+                    Alarm.showAlarm(getApplicationContext(), mLastPosition);
+                }
             }
         }
     }
