@@ -1143,7 +1143,7 @@
     
     <string name="order_submit_success">订单提交成功</string>
     <string name="order_status">订单状态</string>
-    <string name="hotel_success_order">您的订单已提交</string>
+    <string name="hotel_success_order">您的订单已提交成功</string>
     <string name="hotel_success_sms">我们将尽快与您短信联系</string>
     <string name="warm_tips_colon">温馨提示：</string>
     <string name="hotel_room_latest">最晚到店时间：%1$s\n请在最晚到店时间前到达，否则酒店可能无法为您保留房间</string>
