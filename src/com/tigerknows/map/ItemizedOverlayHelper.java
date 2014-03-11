@@ -346,8 +346,12 @@ public class ItemizedOverlayHelper {
                         });
             }
             mapView.addOverlay(overlay);
-            if (focus != null && showInfoWindow) {
-                sphinx.showInfoWindow(focus);
+            if (focus != null) {
+                if (showInfoWindow) {
+                    sphinx.showInfoWindow(focus);
+                } else {
+                    focus.isFoucsed = false;
+                }
             }
             if (dataList.size() > 1) {
                 overlay.isShowInPreferZoom = true;
