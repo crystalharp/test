@@ -281,7 +281,7 @@ public class SingleRectLabel extends Label {
         	vertexBuffer.position(0);
         	GLES10.glDrawArrays(GLES10.GL_TRIANGLE_STRIP, 0, 4);
         	x = iconSize.x >> 1;
-        	y = - (height >> 1);
+        	y = - (height >> 1) - 3;
         	GLES10.glBindTexture(GLES10.GL_TEXTURE_2D, textTexture.textureRef);
         	vertexBuffer.clear();
         	vertexBuffer.put(x);
@@ -312,7 +312,7 @@ public class SingleRectLabel extends Label {
         	vertexBuffer.position(0);
         	GLES10.glDrawArrays(GLES10.GL_TRIANGLE_STRIP, 0, 4);
         	x = - (iconSize.x >> 1) - width;
-        	y = - (height >> 1);
+        	y = - (height >> 1) - 3;
         	GLES10.glBindTexture(GLES10.GL_TEXTURE_2D, textTexture.textureRef);
         	vertexBuffer.clear();
         	vertexBuffer.put(x);
