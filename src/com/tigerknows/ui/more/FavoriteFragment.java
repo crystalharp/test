@@ -784,7 +784,7 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
         
         long maxId;
         String layerType;
-        String operation = null;
+        String operation = OP_READ;
         
         @Override
         public void run(){

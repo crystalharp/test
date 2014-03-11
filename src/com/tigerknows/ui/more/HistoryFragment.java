@@ -757,7 +757,7 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
         
         long maxId;
         String layerType;
-        String operation = null;
+        String operation = OP_READ;
         
         @Override
         public void run(){
