@@ -17,7 +17,7 @@ import com.tigerknows.Sphinx;
  * 简化自己生成布局的代码.
  * 
  * ItemInitializer接口其实就是Adapter的getView函数,目前参数少个position,不知道
- * 会不会导致什么问题.
+ * 会不会导致什么问题.(deprecated)
  * 
  * 如果要进行和list的位置有关的操作,则可以配合使用getSize和getChildView来进行修改
  * 

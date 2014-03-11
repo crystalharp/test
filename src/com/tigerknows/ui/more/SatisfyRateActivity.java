@@ -163,9 +163,9 @@ public class SatisfyRateActivity extends BaseActivity implements View.OnClickLis
     		mActionLog.addAction(mActionTag + ActionLog.TitleRightButton);
     		if (mStatus) {
     		    submit();
-    		} else {
-    		    finish();
-    		}
+    		} else if (showDiscardDialog() == false /*这一行执行了一些更改了UI线程的代码，因此在此后边不能再添加else分支*/){
+        		finish();
+        	}
     	}else if(view.getId() == R.id.left_btn){
     		mActionLog.addAction(mActionTag + ActionLog.TitleLeftButton);
     		if (showDiscardDialog() == false){
