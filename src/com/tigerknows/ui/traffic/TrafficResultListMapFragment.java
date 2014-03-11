@@ -94,6 +94,8 @@ public class TrafficResultListMapFragment extends BaseFragment implements View.O
     @Override
     public void onResume() {
         super.onResume();
+        mSphinx.resetLoactionButtonState();
+        mSphinx.resetMapDegree();
         mSphinx.getHomeFragment().reset();
         mSphinx.getMapView().setStopRefreshMyLocation(false);
         mTitleBtn.setText(mTitle);
