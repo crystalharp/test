@@ -95,6 +95,7 @@ public class DynamicMoviePOI extends DynamicPOIViewTemplate {
                 TextView nameTxv = (TextView) child.findViewById(R.id.name_txv);
                 RatingBar starsRtb = (RatingBar) child.findViewById(R.id.stars_rtb);
                 TextView distanceTxv = (TextView) child.findViewById(R.id.distance_txv);
+                TextView distanceFromTxv = (TextView) child.findViewById(R.id.distance_from_txv);
                 TextView addressTxv = (TextView) child.findViewById(R.id.category_txv);
                 TextView dateTxv = (TextView) child.findViewById(R.id.date_txv);
 
@@ -120,6 +121,7 @@ public class DynamicMoviePOI extends DynamicPOIViewTemplate {
                 nameTxv.setText(movie.getName());
                 starsRtb.setProgress((int) movie.getRank());
                 distanceTxv.setVisibility(View.GONE);
+                distanceFromTxv.setVisibility(View.GONE);
 
                 addressTxv.setText(movie.getTag());
                 if (TextUtils.isEmpty(movie.getLength())) {
