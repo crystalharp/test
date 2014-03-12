@@ -1180,10 +1180,10 @@ public class MapView extends RelativeLayout implements
                 tilesView.getOverlays().addAll(mapScene.itemizedOverlayList);
             }
             showOverlay(ItemizedOverlay.MY_LOCATION_OVERLAY, false);
+            sphinx.showInfoWindow(mapScene.fragmentId, mapScene.overlayItem, false);
             if (mapScene.position != null) {
                 centerOnPosition(mapScene.position, mapScene.zoomLevel);
             }
-            sphinx.showInfoWindow(mapScene.fragmentId, mapScene.overlayItem, false);
         } catch (APIException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

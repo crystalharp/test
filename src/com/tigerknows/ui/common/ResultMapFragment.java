@@ -374,18 +374,22 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
 
                 trafficDetailFragment.refreshDrive(list.get(0));
 
-                TrafficOverlayHelper.drawOverlay(mSphinx, list.get(0));
-                TrafficOverlayHelper.panToViewWholeOverlay(list.get(0), mSphinx);
-                TrafficOverlayHelper.drawTrafficPlanListOverlay(mSphinx, list, 0);
+                if (jumpTransferResultFragment) {
+                    TrafficOverlayHelper.drawOverlay(mSphinx, list.get(0));
+                    TrafficOverlayHelper.panToViewWholeOverlay(list.get(0), mSphinx);
+                    TrafficOverlayHelper.drawTrafficPlanListOverlay(mSphinx, list, 0);
+                }
                 
                 result = true;
             } else if (type == Plan.Step.TYPE_WALK) {
                 mActionTag = ActionLog.TrafficWalkListMap;
                 mRightBtn.setVisibility(View.INVISIBLE);
 
-                TrafficOverlayHelper.drawOverlay(mSphinx, list.get(0));
-                TrafficOverlayHelper.panToViewWholeOverlay(list.get(0), mSphinx);
-                TrafficOverlayHelper.drawTrafficPlanListOverlay(mSphinx, list, 0);
+                if (jumpTransferResultFragment) {
+                    TrafficOverlayHelper.drawOverlay(mSphinx, list.get(0));
+                    TrafficOverlayHelper.panToViewWholeOverlay(list.get(0), mSphinx);
+                    TrafficOverlayHelper.drawTrafficPlanListOverlay(mSphinx, list, 0);
+                }
                 
                 result = true;
             }
