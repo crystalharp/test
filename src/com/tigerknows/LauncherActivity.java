@@ -67,6 +67,7 @@ public class LauncherActivity extends TKActivity {
             
             String lastActivityClassName = LastActivityClassName;
             if (lastActivityClassName != null && lastActivityClassName.equals(this.getLocalClassName()) == false) {
+                LastActivityClassName = null;
                 finish();
                 return;
             }
