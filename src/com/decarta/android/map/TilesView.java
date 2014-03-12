@@ -366,12 +366,6 @@ public class TilesView extends GLSurfaceView {
 	 * linked list to contain all tiles that's waiting for loading.
 	 */
 	private LinkedList<Tile> tilesWaitForLoading = new LinkedList<Tile>();
-	
-	//双指操作的模式
-	private static int MODE_NONE = -1;
-	private static int MODE_ZOOMING = 0;
-	private static int MODE_ROTATING = 1;
-	private static int MODE_TILTING = 2;
 
 	private float zoomLevel = 13;
 	private boolean zooming = false;
@@ -398,7 +392,7 @@ public class TilesView extends GLSurfaceView {
 	private float lastDistConv = 0;
 	private XYFloat lastDirection = null;
 	private XYFloat lastTouchY = null;
-	private int touchMode = MODE_NONE;
+	private int touchMode = 0;
 	private TouchRecord touchRecord2 = new TouchRecord(10);
 	private Timer longTouchTimer = null;
 	private Object longTouchLock = new Object();
@@ -803,7 +797,7 @@ public class TilesView extends GLSurfaceView {
 			lastDistConv = 0;
 			lastTouchY = null;
 			lastDirection = null;
-			touchMode = MODE_NONE;
+			touchMode = 0;// zooming
 
 			lastZoomLevel = zoomLevel;
 			lastXRotation = mapMode.getxRotation();
@@ -923,8 +917,8 @@ public class TilesView extends GLSurfaceView {
 
 				touchRecord2.push(0, event.getX(0), event.getY(0));
 				touchRecord2.push(0, event.getX(1), event.getY(1));
-				if (touchRecord2.size >= touchRecord2.capacity - 1  && touchMode == MODE_NONE) {
-					int touchModeL = MODE_ZOOMING;// zooming
+				if (touchRecord2.size >= 2 * 2) {
+					int touchModeL = 0;// zooming
 
 					int index = touchRecord2.index;
 					int start = (index - (touchRecord2.size - 1) + touchRecord2.capacity)
@@ -949,18 +943,18 @@ public class TilesView extends GLSurfaceView {
 							double r = Math.sqrt(vx * vx + vy * vy);
 							if (Math.abs(x0 * vx + y0 * vy + x1 * vx + y1 * vy)
 									/ ((r0 + r1) * r) < Cos60) {
-								touchModeL = MODE_ROTATING;// rotating
+								touchModeL = 1;// rotating
 							}
 						}
 					} else if ((x0 * x1 + y0 * y1) / (r0 * r1) > Cos30) {
 						if (Math.abs(y0) / r0 > Cos30
 								&& Math.abs(y1) / r1 > Cos30)
-							touchModeL = MODE_TILTING;// tilt
+							touchModeL = 2;// tilt
 					} else if ((x0 * x1 + y0 * y1) / (r0 * r1) < -Cos30) {
 						double r = Math.sqrt(vx * vx + vy * vy);
 						if (Math.abs(x0 * vx + y0 * vy) / (r0 * r) < Cos60
 								&& Math.abs(x1 * vx + y1 * vy) / (r1 * r) < Cos60) {
-							touchModeL = MODE_ROTATING;// rotating
+							touchModeL = 1;// rotating
 						}
 					}
 
@@ -973,7 +967,7 @@ public class TilesView extends GLSurfaceView {
 						touchMode = touchModeL;
 					}
 				}
-				if (touchMode == MODE_ZOOMING) {// zooming
+				if (touchMode == 0) {// zooming
 					XYFloat xy1Conv = screenXYToScreenXYConv(event.getX(1),
 							event.getY(1));
 					float distXConv = xy0Conv.x - xy1Conv.x;
@@ -1019,7 +1013,7 @@ public class TilesView extends GLSurfaceView {
 							refreshMap();
 						}
 					}
-				} else if (touchMode == MODE_ROTATING) {// rotating
+				} else if (touchMode == 1) {// rotating
 					float distX = event.getX(1) - event.getX(0);
 					float distY = event.getY(1) - event.getY(0);
 					float dist = (float) Math.sqrt(distX * distX + distY
@@ -1043,7 +1037,7 @@ public class TilesView extends GLSurfaceView {
 					    refreshMap();
 						// tigerknows delete end
 					}
-				} else if (touchMode == MODE_TILTING) {// tilting
+				} else if (touchMode == 2) {// tilting
 					if (lastTouchY == null) {
 						lastTouchY = new XYFloat(event.getY(0), event.getY(1));
 					} else {
@@ -1080,7 +1074,6 @@ public class TilesView extends GLSurfaceView {
 		} else if (action == MotionEvent.ACTION_UP) {
 //			LogWrapper.i("TilesView","onTouchEvent touchup pCount:"+pCount);
 
-		    touchMode = MODE_NONE;
 			isTouchBegin = false;
 			resetLongTouchTimer();
 
