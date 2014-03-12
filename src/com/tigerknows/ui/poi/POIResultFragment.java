@@ -631,6 +631,10 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         private int padding = 0;
         private String subDataType = BaseQuery.SUB_DATA_TYPE_POI;
         
+        private List<String> DPOITypeList = new ArrayList<String>();
+        private int dynamicPOIIconWidth;
+        private int nameMaxWidth;
+        
         public String getSubDataType() {
             return this.subDataType;
         }
@@ -655,6 +659,8 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             addressTitle = resources.getString(R.string.address) + " : ";
             hotelPicWidth = Util.dip2px(Globals.g_metrics.density, 68);
             padding = Util.dip2px(Globals.g_metrics.density, 4);
+            dynamicPOIIconWidth = resources.getDrawable(R.drawable.ic_dynamicpoi_tuangou).getIntrinsicWidth();
+            nameMaxWidth = Globals.g_metrics.widthPixels - (6*Util.dip2px(Globals.g_metrics.density, 8));
         }
         
         @Override
@@ -820,7 +826,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             
             ViewGroup dynamicPOIListView = (ViewGroup) view.findViewById(R.id.dynamic_poi_list_view);
             int viewIndex = refresDynamicPOI(list, dynamicPOIListView);
-            int dynamicPOIWidth = viewIndex * activity.getResources().getDrawable(R.drawable.ic_dynamicpoi_tuangou).getIntrinsicWidth();
+            int dynamicPOIWidth = viewIndex * dynamicPOIIconWidth;
             
             int viewCount = dynamicPOIListView.getChildCount();
             for(int i = viewIndex; i < viewCount; i++) {
@@ -829,14 +835,14 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             if (dynamicPOIWidth > 0) {
                 nameTxv.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
                 int nameTxvWidth = nameTxv.getMeasuredWidth();
-                int width = Globals.g_metrics.widthPixels-(6*Util.dip2px(Globals.g_metrics.density, 8));
-                if (nameTxvWidth > width-dynamicPOIWidth-hotelPicWidth) {
-                    nameTxv.getLayoutParams().width = (width-dynamicPOIWidth-hotelPicWidth);
+                int width = nameMaxWidth-dynamicPOIWidth-hotelPicWidth;
+                if (nameTxvWidth > width) {
+                    nameTxv.getLayoutParams().width = width;
                 } else {
-                    nameTxv.getLayoutParams().width = LinearLayout.LayoutParams.WRAP_CONTENT;
+                    nameTxv.getLayoutParams().width = LayoutParams.WRAP_CONTENT;
                 }
             } else {
-                nameTxv.getLayoutParams().width = LinearLayout.LayoutParams.WRAP_CONTENT;
+                nameTxv.getLayoutParams().width = LayoutParams.WRAP_CONTENT;
             }
             
             return view;
@@ -869,8 +875,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 return 0;
             }
             
-            List<String> DPOITypeList = new ArrayList<String>();
-            
+            DPOITypeList.clear();
             int viewCount = listView.getChildCount();
             int viewIndex = 0;
             for(int i = 0, size = list.size(); i < size; i++) {
@@ -878,27 +883,23 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 final String dataType = dynamicPOI.getType();
                 if (!DPOITypeList.contains(dataType)) {
                     DPOITypeList.add(dataType);
-                    View child;
-                    if (viewIndex < viewCount) {
-                        child = listView.getChildAt(viewIndex);
-                        child.setVisibility(View.VISIBLE);
-                    } else {
-                        child = new ImageView(activity);
-                        listView.addView(child, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-                    }
-                    ImageView iconImv = (ImageView) child;
-                    iconImv.setPadding(Util.dip2px(Globals.g_metrics.density, 2), 0, 0, 0);
                     if (BaseQuery.DATA_TYPE_TUANGOU.equals(dataType)) {
+                        ImageView iconImv = getImageView(viewIndex, viewCount, listView);
                         iconImv.setImageResource(R.drawable.ic_dynamicpoi_tuangou);
                     } else if (BaseQuery.DATA_TYPE_YANCHU.equals(dataType)) {
+                        ImageView iconImv = getImageView(viewIndex, viewCount, listView);
                         iconImv.setImageResource(R.drawable.ic_dynamicpoi_yanchu);
                     } else if (BaseQuery.DATA_TYPE_ZHANLAN.equals(dataType)) {
+                        ImageView iconImv = getImageView(viewIndex, viewCount, listView);
                         iconImv.setImageResource(R.drawable.ic_dynamicpoi_zhanlan);
                     } else if (DynamicPOI.TYPE_HOTEL.equals(dataType) && !BaseQuery.SUB_DATA_TYPE_HOTEL.equals(subDataType)) {
+                        ImageView iconImv = getImageView(viewIndex, viewCount, listView);
                         iconImv.setImageResource(R.drawable.ic_dynamicpoi_hotel);
                     } else if (BaseQuery.DATA_TYPE_DIANYING.equals(dataType)) {
+                        ImageView iconImv = getImageView(viewIndex, viewCount, listView);
                         iconImv.setImageResource(R.drawable.ic_dynamicpoi_dianying);
                     } else if (BaseQuery.DATA_TYPE_COUPON.equals(dataType)) {
+                        ImageView iconImv = getImageView(viewIndex, viewCount, listView);
                         iconImv.setImageResource(R.drawable.ic_dynamicpoi_coupon);
                     } else {
                         continue;
@@ -908,6 +909,18 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             }
             
             return viewIndex;
+        }
+        
+        ImageView getImageView(int viewIndex, int viewCount, ViewGroup listView) {
+            ImageView imageView;
+            if (viewIndex < viewCount) {
+                imageView = (ImageView) listView.getChildAt(viewIndex);
+                imageView.setVisibility(View.VISIBLE);
+            } else {
+                imageView = new ImageView(activity);
+                listView.addView(imageView);
+            }
+            return imageView;
         }
     }
 
