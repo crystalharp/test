@@ -184,7 +184,6 @@ import com.tigerknows.ui.traffic.TrafficDetailFragment;
 import com.tigerknows.ui.traffic.TrafficQueryFragment;
 import com.tigerknows.ui.traffic.TrafficReportErrorActivity;
 import com.tigerknows.ui.traffic.TrafficResultFragment;
-import com.tigerknows.ui.traffic.TrafficResultListMapFragment;
 import com.tigerknows.ui.traffic.TrafficSearchHistoryFragment;
 import com.tigerknows.ui.user.MyCommentListFragment;
 import com.tigerknows.ui.user.UserBaseActivity;
@@ -2152,12 +2151,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 mUIStack.add(id);
                 result = true;
             }
-            if (id == R.id.view_result_map &&
-                    mUIStack.size() > 2 &&
-                    mUIStack.get(mUIStack.size()-2) == R.id.view_traffic_result_detail &&
-                    mUIStack.get(mUIStack.size()-3) == R.id.view_result_map) {
-                mUIStack.remove(mUIStack.size()-3);
-            }
             return result;
         }
     }
@@ -2174,6 +2167,16 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             int size = mUIStack.size();
             if (size > 0) {
                 return mUIStack.get(size-1);
+            }
+            return R.id.view_invalid;
+        }
+    }
+
+    public int uiStackGet(int index) {
+        synchronized (mUILock) {
+            int size = mUIStack.size();
+            if (size > index && index >= 0) {
+                return mUIStack.get(index);
             }
             return R.id.view_invalid;
         }
@@ -2671,9 +2674,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 int id = uiStackPeek();
                 if (mBottomFragment != null &&
                         (id == R.id.view_home ||
-                        id == R.id.view_result_map ||
-                        id == R.id.view_traffic_result_list_map ||
-                        id == R.id.view_traffic_detail_map) &&
+                        id == R.id.view_result_map) &&
                         fragment != null &&
                         fragment.getId() == id) {
                     mBottomView.addView(mBottomFragment);
@@ -2772,8 +2773,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     private CustomCategoryFragment mCustomCategoryFragment;
     private TrafficDetailFragment mTrafficDetailFragment = null;
     private TrafficResultFragment mTrafficResultFragment = null; 
-    private ResultMapFragment mTrafficResultListMapFragment = null;
-    private ResultMapFragment mTrafficDetailMapFragment = null;
     private TrafficCommonPlaceFragment mTrafficCommonAddressFragment = null;
     private TrafficSearchHistoryFragment mTrafficSearchHistoryFragment = null;
     private BuslineResultLineFragment mBuslineResultLineFragment = null;
@@ -2981,14 +2980,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 
             case R.id.view_measure_distance:
                 baseFragment = getMeasureDistanceFragment();
-                break;
-                
-            case R.id.view_traffic_result_list_map:
-                baseFragment = getTrafficResultListMapFragment();
-                break;
-                
-            case R.id.view_traffic_detail_map:
-                baseFragment = getTrafficDetailMapFragment();
                 break;
                 
             case R.id.view_alarm_list:
@@ -3212,32 +3203,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 mTrafficResultFragment = trafficResultFragment;
             }
             return mTrafficResultFragment;
-        }
-    }
-    
-    public ResultMapFragment getTrafficResultListMapFragment(){
-
-        synchronized (mUILock) {
-            if (mTrafficResultListMapFragment == null) {
-                ResultMapFragment fragment = new ResultMapFragment(Sphinx.this);
-                fragment.setId(R.id.view_traffic_result_list_map);
-                fragment.onCreate(null);
-                mTrafficResultListMapFragment = fragment;
-            }
-            return mTrafficResultListMapFragment;
-        }
-    }
-    
-    public ResultMapFragment getTrafficDetailMapFragment(){
-
-        synchronized (mUILock) {
-            if (mTrafficDetailMapFragment == null) {
-                ResultMapFragment fragment = new ResultMapFragment(Sphinx.this);
-                fragment.setId(R.id.view_traffic_detail_map);
-                fragment.onCreate(null);
-                mTrafficDetailMapFragment = fragment;
-            }
-            return mTrafficDetailMapFragment;
         }
     }
 

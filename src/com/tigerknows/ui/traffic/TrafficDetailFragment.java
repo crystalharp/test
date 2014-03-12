@@ -604,9 +604,9 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
 
             }
 
-            ResultMapFragment resultMapFragment = mSphinx.getTrafficDetailMapFragment();
+            ResultMapFragment resultMapFragment = mSphinx.getResultMapFragment();
             resultMapFragment.setData(title, actionTag);
-            mSphinx.showView(R.id.view_traffic_detail_map);
+            mSphinx.showView(R.id.view_result_map);
             
             TrafficOverlayHelper.drawOverlay(mSphinx, mPlan);
             

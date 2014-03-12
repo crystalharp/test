@@ -188,7 +188,14 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
     public void setData(String title, String actionTag) {
         mTitle = title;
         mActionTag = actionTag;
-        mMapSceneData = null;
+        if (ActionLog.TrafficDriveListMap.equals(mActionTag) ||
+                ActionLog.TrafficWalkListMap.equals(mActionTag)) {
+            mResultDataForPlanList = null;
+        } else if (ActionLog.TrafficTransferMap.equals(mActionTag) ||
+                ActionLog.TrafficDriveMap.equals(mActionTag) ||
+                ActionLog.TrafficWalkMap.equals(mActionTag)) {
+            mResultDataForPlanDetail = null;
+        }
     }
     
     @Override
@@ -348,7 +355,9 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
             List<Plan> list = trafficDetailFragment.getResult(type);
             if (type == Plan.Step.TYPE_TRANSFER) {
                 if (jumpTransferResultFragment) {
-                    mSphinx.uiStackRemove(R.id.view_traffic_result_list_map);
+                    if (mSphinx.uiStackPeek() == R.id.view_result_map) {
+                        mSphinx.uiStackRemove(R.id.view_result_map);
+                    }
                     TrafficQuery newTrafficQuery = mSphinx.getTrafficResultFragment().getTrafficQuery();
                     mSphinx.getTrafficResultFragment().setData(newTrafficQuery);
                     mSphinx.showView(R.id.view_traffic_result_transfer);
@@ -367,7 +376,7 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
 
                 TrafficOverlayHelper.drawOverlay(mSphinx, list.get(0));
                 TrafficOverlayHelper.panToViewWholeOverlay(list.get(0), mSphinx);
-                TrafficOverlayHelper.showPlanInfoWindow(mSphinx);
+                TrafficOverlayHelper.drawTrafficPlanListOverlay(mSphinx, list, 0);
                 
                 result = true;
             } else if (type == Plan.Step.TYPE_WALK) {
@@ -376,7 +385,8 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
 
                 TrafficOverlayHelper.drawOverlay(mSphinx, list.get(0));
                 TrafficOverlayHelper.panToViewWholeOverlay(list.get(0), mSphinx);
-                TrafficOverlayHelper.showPlanInfoWindow(mSphinx);
+                TrafficOverlayHelper.drawTrafficPlanListOverlay(mSphinx, list, 0);
+                
                 result = true;
             }
         }
@@ -386,6 +396,14 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
     @Override
     public void dismiss() {
         super.dismiss();
+        
+        if (mSphinx.uiStackContains(getId()) == false) {
+            mResultData = null;
+            mResultDataForSelectPoint = null;
+            mResultDataForShowMap = null;
+            mResultDataForPlanList = null;
+            mResultDataForPlanDetail = null;
+        }
 
         View view = mSphinx.getCenterTokenView();
         mSphinx.setTouchMode(TouchMode.NORMAL);
@@ -416,36 +434,74 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
         }
     }
     
-    private MapScene mMapSceneData;
-    private MapScene mMapSceneDataForShowMap; // 仅用于服务器要求将结果直接显示在地图上的情况，用来保存离开此页面时地图信息
+    private ResultData mResultData;
+    private ResultData mResultDataForShowMap; // 仅用于服务器要求将结果直接显示在地图上的情况，用来保存离开此页面时地图信息
+    private ResultData mResultDataForPlanList; // 仅用于自驾或步行方案列表显示在地图上的情况，用来保存离开此页面时地图信息
+    private ResultData mResultDataForPlanDetail; // 仅用于交通方案详情显示在地图上的情况，用来保存离开此页面时地图信息
+    private ResultData mResultDataForSelectPoint; // 仅用于交通选点显示在地图上的情况，用来保存离开此页面时地图信息
     
     private void saveResultData() {
-        mMapSceneData = mSphinx.getMapView().getCurrentMapScene();
-        mMapSceneData.overlayItem = mSphinx.getInfoWindowFragment().getItemizedOverlay().getItemByFocused();
+        MapScene mapScene = mSphinx.getMapView().getCurrentMapScene();
+        mapScene.overlayItem = mSphinx.getInfoWindowFragment().getItemizedOverlay().getItemByFocused();
+        ResultData resultData = new ResultData();
+        resultData.mapScene =mapScene;
+        resultData.actionTag = mActionTag;
+        resultData.title = mTitle;
         if (mSphinx.uiStackSize() == 2 &&
                 mSphinx.uiStackPeekBottom() == R.id.view_home &&
                 mSphinx.uiStackPeek() == R.id.view_result_map) {
-            mMapSceneDataForShowMap = mMapSceneData;
+            mResultDataForShowMap = resultData;
+        } else if ((mSphinx.uiStackGet(mSphinx.uiStackSize()-2) == R.id.view_traffic_home ||
+                mSphinx.uiStackGet(mSphinx.uiStackSize()-2) == R.id.view_more_favorite ||
+                mSphinx.uiStackGet(mSphinx.uiStackSize()-2) == R.id.view_more_history) &&
+                mSphinx.uiStackPeek() == R.id.view_result_map) {
+            mResultDataForPlanList = resultData;
+        } else if (mSphinx.uiStackGet(mSphinx.uiStackSize()-2) == R.id.view_traffic_result_detail &&
+                mSphinx.uiStackPeek() == R.id.view_result_map) {
+            mResultDataForPlanDetail = resultData;
+        } else if (mSphinx.uiStackGet(mSphinx.uiStackSize()-2) == R.id.view_poi_input_search &&
+                mSphinx.uiStackPeek() == R.id.view_result_map) {
+            mResultDataForSelectPoint = resultData;
+        } else {
+            mResultData = resultData;
         }
     }
     
     private void restoreResultData() {
-        MapScene mapScene = null;
+        ResultData resultData = null;
         if (mSphinx.uiStackSize() == 2 &&
                 mSphinx.uiStackPeekBottom() == R.id.view_home &&
                 mSphinx.uiStackPeek() == R.id.view_result_map &&
-                mMapSceneDataForShowMap != null) {
-            mapScene = mMapSceneDataForShowMap;
-            mMapSceneDataForShowMap = null;
-            mMapSceneData = null;
-        } else {
-            mapScene = mMapSceneData;
-            mMapSceneData = null;
+                mResultDataForShowMap != null) {
+            resultData = mResultDataForShowMap;
+        } else if ((mSphinx.uiStackGet(mSphinx.uiStackSize()-2) == R.id.view_traffic_home ||
+                mSphinx.uiStackGet(mSphinx.uiStackSize()-2) == R.id.view_more_favorite ||
+                mSphinx.uiStackGet(mSphinx.uiStackSize()-2) == R.id.view_more_history) &&
+                mSphinx.uiStackPeek() == R.id.view_result_map &&
+                mResultDataForPlanList != null) {
+            resultData = mResultDataForPlanList;
+        } else if (mSphinx.uiStackGet(mSphinx.uiStackSize()-2) == R.id.view_traffic_result_detail &&
+                mSphinx.uiStackPeek() == R.id.view_result_map &&
+                mResultDataForPlanDetail != null) {
+            resultData = mResultDataForPlanDetail;
+        } else if (mSphinx.uiStackGet(mSphinx.uiStackSize()-2) == R.id.view_poi_input_search &&
+                mSphinx.uiStackPeek() == R.id.view_result_map) {
+            resultData = mResultDataForSelectPoint;
+        } else if (mResultData != null) {
+            resultData = mResultData;
         }
         
-        if (mapScene != null) {
+        if (resultData != null) {
+            mActionTag = resultData.actionTag;
+            mTitle = resultData.title;
             mSphinx.clearMap();
-            mSphinx.getMapView().restoreScene(mapScene);
+            mSphinx.getMapView().restoreScene(resultData.mapScene);
         }
+    }
+    
+    static class ResultData {
+        MapScene mapScene;
+        String actionTag;
+        String title;
     }
 }

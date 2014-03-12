@@ -822,7 +822,9 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
             	TrafficDetailFragment f = sphinx.getTrafficDetailFragment();
             	f.addResult(trafficQuery, type, planList);
             	if (type == Plan.Step.TYPE_TRANSFER) {
-            	    sphinx.uiStackRemove(R.id.view_traffic_result_list_map);
+            	    if (sphinx.uiStackPeek() == R.id.view_result_map) {
+            	        sphinx.uiStackRemove(R.id.view_result_map);
+            	    }
             	    // 换乘方式
             	    sphinx.getTrafficResultFragment().setData(trafficQuery);
             	    sphinx.showView(R.id.view_traffic_result_transfer);
@@ -830,11 +832,12 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
             	    // 驾车
             	    f.refreshResult(type);
             	    f.refreshDrive(planList.get(0));
-            		if (sphinx.uiStackPeek() == R.id.view_traffic_result_list_map) {
-                        sphinx.getTrafficResultListMapFragment().changeTrafficType(type);
+            		if (sphinx.uiStackPeek() == R.id.view_result_map) {
+                        sphinx.getResultMapFragment().changeTrafficType(type);
                     } else {
-                        sphinx.getTrafficResultListMapFragment().setData(null, ActionLog.TrafficDriveListMap);
-                        sphinx.showView(R.id.view_traffic_result_list_map);
+                        sphinx.getResultMapFragment().setData(null, ActionLog.TrafficDriveListMap);
+                        sphinx.showView(R.id.view_result_map);
+
                         TrafficOverlayHelper.drawOverlay(sphinx, planList.get(0));
                         TrafficOverlayHelper.panToViewWholeOverlay(planList.get(0), sphinx);
                         TrafficOverlayHelper.drawTrafficPlanListOverlay(sphinx, planList, 0);
@@ -842,11 +845,12 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
             	} else if (type == Plan.Step.TYPE_WALK) {
                     // 步行方式
             	    f.refreshResult(type);
-                    if (sphinx.uiStackPeek() == R.id.view_traffic_result_list_map) {
-                        sphinx.getTrafficResultListMapFragment().changeTrafficType(type);
+                    if (sphinx.uiStackPeek() == R.id.view_result_map) {
+                        sphinx.getResultMapFragment().changeTrafficType(type);
                     } else {
-                        sphinx.getTrafficResultListMapFragment().setData(null, ActionLog.TrafficWalkListMap);
-                        sphinx.showView(R.id.view_traffic_result_list_map);
+                        sphinx.getResultMapFragment().setData(null, ActionLog.TrafficWalkListMap);
+                        sphinx.showView(R.id.view_result_map);
+
                         TrafficOverlayHelper.drawOverlay(sphinx, planList.get(0));
                         TrafficOverlayHelper.panToViewWholeOverlay(planList.get(0), sphinx);
                         TrafficOverlayHelper.drawTrafficPlanListOverlay(sphinx, planList, 0);

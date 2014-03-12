@@ -268,7 +268,7 @@ public class TrafficResultFragment extends BaseFragment {
             if (type == Plan.Step.TYPE_DRIVE) {
                 ResultMapFragment resultMapFragment = mSphinx.getResultMapFragment();
                 resultMapFragment.setData(null, ActionLog.TrafficDriveListMap);
-                mSphinx.showView(R.id.view_traffic_result_list_map);
+                mSphinx.showView(R.id.view_result_map);
 
                 TrafficOverlayHelper.drawOverlay(mSphinx, list.get(0));
                 TrafficOverlayHelper.panToViewWholeOverlay(list.get(0), mSphinx);
@@ -276,9 +276,9 @@ public class TrafficResultFragment extends BaseFragment {
                 
                 result = true;
             } else if (type == Plan.Step.TYPE_WALK) {
-                ResultMapFragment resultMapFragment = mSphinx.getTrafficResultListMapFragment();
+                ResultMapFragment resultMapFragment = mSphinx.getResultMapFragment();
                 resultMapFragment.setData(null, ActionLog.TrafficWalkListMap);
-                mSphinx.showView(R.id.view_traffic_result_list_map);
+                mSphinx.showView(R.id.view_result_map);
 
                 TrafficOverlayHelper.drawOverlay(mSphinx, list.get(0));
                 TrafficOverlayHelper.panToViewWholeOverlay(list.get(0), mSphinx);
