@@ -149,6 +149,8 @@ public class AlarmShowActivity extends TKActivity implements View.OnClickListene
         Position position = Globals.getMyLocationPosition();
         if (position != null) {
             mBodyTxv.setText(getString(R.string.alarm_tip_text, mAlarm.getName(), Position.distanceBetween(position, mAlarm.getPosition())));
+        } else {
+            mBodyTxv.setText(getString(R.string.alarm_tip_text, mAlarm.getName(), mAlarm.getRange()));
         }
     }
 
