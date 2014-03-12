@@ -167,15 +167,14 @@ public class AlarmListFragment extends BaseFragment implements View.OnClickListe
 
     private class MyAdapter extends ArrayAdapter<Alarm> implements View.OnClickListener {
         
-        int statusBtnWidth = 0;
+        int nameMaxWidth = 0;
 
         public MyAdapter(Context context, List<Alarm> poiList) {
             super(context, R.layout.alarm_item, poiList);
             View view = mLayoutInflater.inflate(R.layout.alarm_item, null, false);
             Button statusBtn = (Button) view.findViewById(R.id.status_btn);
             statusBtn.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-            statusBtnWidth = statusBtn.getMeasuredWidth();
-            statusBtnWidth += Utility.dip2px(mSphinx, 56);
+            nameMaxWidth = Globals.g_metrics.widthPixels - (statusBtn.getMeasuredWidth() + Utility.dip2px(mSphinx, 56));
         }
 
         @Override
@@ -215,15 +214,18 @@ public class AlarmListFragment extends BaseFragment implements View.OnClickListe
             }
             
             ViewGroup.LayoutParams layoutParams = nameTxv.getLayoutParams();
-            layoutParams.width = LayoutParams.WRAP_CONTENT;
             if (distanceTxvWidth > 0) {
                 nameTxv.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
                 int nameTxvWidth = nameTxv.getMeasuredWidth();
-                if (Globals.g_metrics.widthPixels - statusBtnWidth - distanceTxvWidth - nameTxvWidth < 0) {
-                    layoutParams.width = Globals.g_metrics.widthPixels - statusBtnWidth - distanceTxvWidth;
+                if (nameMaxWidth - distanceTxvWidth - nameTxvWidth < 0) {
+                    layoutParams.width = nameMaxWidth - distanceTxvWidth;
+                } else {
+                    layoutParams.width = LayoutParams.WRAP_CONTENT;
                 }
+            } else {
+                layoutParams.width = LayoutParams.WRAP_CONTENT;
             }
-            nameTxv.setText(name);
+            nameTxv.setText(name); // 需要再次setText才更新nameTev的宽度??
             rangeBtn.setText(getString(R.string.length_str_m, String.valueOf(data.getRange())));
             ringtoneBtn.setText(data.getRingtoneName());
 
