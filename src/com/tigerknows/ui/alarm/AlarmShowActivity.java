@@ -118,7 +118,7 @@ public class AlarmShowActivity extends TKActivity implements View.OnClickListene
     protected void onPause() {
         super.onPause();
         if (onWindowFocusChanged) {
-            showNextAlarm();
+            finish();
         }
     }
     
