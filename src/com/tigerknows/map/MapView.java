@@ -239,6 +239,8 @@ public class MapView extends RelativeLayout implements
         public static int UPDATEPOIPOSITION = 14; //地图上选中的poi修正了位置
         public static int TOUCHDOWN = 15;
         public static int TOUCHPIN = 16;
+        
+        public static int ROTATE = 17;
 	}
 
     public interface DrawFrameEventListener extends EventListener{
@@ -332,6 +334,10 @@ public class MapView extends RelativeLayout implements
 	public interface TiltEndEventListener extends EventListener{
 		public void onTiltEndEvent(MapView mapView,float tilt);
 	}
+	
+	public interface RotateEventListener extends EventListener {
+	    public void onRotateEvent(MapView mapView);
+	}
 
 	/**
 	 * implement the addEventListener method of EventSource interface
@@ -384,6 +390,8 @@ public class MapView extends RelativeLayout implements
                 && (listener instanceof TouchEventListener)
                 || eventType == EventType.TOUCHPIN
                 && (listener instanceof TouchEventListener)
+                || eventType == EventType.ROTATE
+                && (listener instanceof RotateEventListener)
 				)
 			return true;
 		else
@@ -583,6 +591,16 @@ public class MapView extends RelativeLayout implements
 						this,rotation);
 			}
 		}
+	}
+	
+	public void executeRotateListeners() {
+	    if (eventListeners.containsKey(MapView.EventType.ROTATE)) {
+            ArrayList<EventListener> listeners = eventListeners
+                    .get(MapView.EventType.ROTATE);
+            for (int i = 0; i < listeners.size(); i++) {
+                ((RotateEventListener) (listeners.get(i))).onRotateEvent(this);
+            }
+        }
 	}
 
 	public void executeTiltEndListeners(float tilt) {

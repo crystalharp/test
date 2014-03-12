@@ -21,6 +21,9 @@ import android.content.DialogInterface.OnDismissListener;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.AnimationDrawable;
@@ -239,6 +242,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 	private CityInfo mInitCityInfo;
 	//地图左上角的指北针
     private View mMapDirectionIndicatorView;
+    private Matrix matrix = new Matrix();
+    private Bitmap mDirectionIndicatorBitmap;
 	private LinearLayout mZoomView;
     private View mLocationView=null;
     private ImageButton mLocationBtn=null;
@@ -321,6 +326,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 	protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mOnCreateTimeMillis = System.currentTimeMillis();
+        mDirectionIndicatorBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_compass_arrow);
         BaseQuery.sClentStatus = BaseQuery.CLIENT_STATUS_START;
 //        Debug.startMethodTracing("spinxTracing");
 
@@ -812,6 +818,18 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                         resetMapDegree();
                     }
                     updateMapDirectionIndicatorState(mMyLocation.mode);
+                }
+            });
+            
+            EventRegistry.addEventListener(mMapView, MapView.EventType.ROTATE, new MapView.RotateEventListener() {
+                
+                @Override
+                public void onRotateEvent(MapView mapView) {
+                    // TODO Auto-generated method stub
+                    if (Math.abs(mapView.getZRotation()) > 0.0001) {
+                        LogWrapper.d("conan", "onRotateEvent, rotation:" + mapView.getZRotation());
+                        rotateMapDirectionIndicator(mapView.getZRotation());
+                    }
                 }
             });
 
@@ -3678,6 +3696,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 mMapView.rotateLocationZToDegree(-rotateZ);
                 if (mMyLocation.mode == MyLocation.MODE_ROTATION) {
                     mMapView.rotateZToDegree(-rotateZ);
+                    rotateMapDirectionIndicator(-rotateZ);
                 }
             }
         }
@@ -3804,6 +3823,14 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             mMapDirectionIndicatorView.setVisibility(View.INVISIBLE);
         }
         LogWrapper.d("conan", "zrotation:" + mMapView.getZRotation() + " state:" + state);
+    }
+    
+    public final void rotateMapDirectionIndicator(float degree) {
+        // 设置旋转角度  
+        matrix.setRotate(degree);  
+        // 重新绘制Bitmap  
+        Bitmap turnbm = Bitmap.createBitmap(mDirectionIndicatorBitmap, 0, 0, mDirectionIndicatorBitmap.getWidth(),mDirectionIndicatorBitmap.getHeight(), matrix, true);  
+        ((ImageView) mMapDirectionIndicatorView).setImageBitmap(turnbm);  
     }
     
     /**

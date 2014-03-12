@@ -1038,6 +1038,7 @@ public class TilesView extends GLSurfaceView {
 					        newDirection=getDirection(event.getX(0),event.getY(0),event.getX(1),event.getY(1));
 					        rotateZ(lastDirection,newDirection);
 					        lastDirection=newDirection;
+					        mParentMapView.executeRotateListeners();
 					    }
 					    refreshMap();
 						// tigerknows delete end
