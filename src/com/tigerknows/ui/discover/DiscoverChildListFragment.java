@@ -355,6 +355,7 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
             TextView addressTxv = (TextView) view.findViewById(R.id.address_txv);
             final TextView telephoneTxv = (TextView) view.findViewById(R.id.telephone_txv);
             View telephoneView = view.findViewById(R.id.telephone_view);
+            View nameView = view.findViewById(R.id.name_view);
 
             final Fendian fendian = getItem(position);
             String distance = fendian.getDistance();
@@ -380,6 +381,7 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
                 }
             };
             
+            nameView.setFocusable(true);
             addressView.setOnClickListener(onClickListener);
             telephoneView.setOnClickListener(onClickListener);
             
