@@ -12,11 +12,13 @@ import android.widget.AbsListView.OnScrollListener;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
 
 import com.tigerknows.R;
 import com.tigerknows.model.DataQuery.Filter;
+import com.tigerknows.util.Utility;
 import com.tigerknows.widget.PinnedHeaderListView.PinnedHeaderAdapter;
 
 public class PinnedHeaderListViewAdapter extends BaseAdapter implements SectionIndexer,
@@ -32,6 +34,8 @@ public class PinnedHeaderListViewAdapter extends BaseAdapter implements SectionI
 	private boolean mNotPinFirst;
 
 	private int selectedPosition = -1;
+    private int marginRight;
+    private int marginRightForAllArea;
 	
 	public PinnedHeaderListViewAdapter(Context context, List<Filter> datas, List<String> friendsSections,
 			List<Integer> friendsPositions, boolean pinnedMode, boolean notPinFirst, int selectedPosition) {
@@ -42,6 +46,9 @@ public class PinnedHeaderListViewAdapter extends BaseAdapter implements SectionI
 		mPinnedMode = pinnedMode;
 		mNotPinFirst = notPinFirst;
 		this.selectedPosition = selectedPosition;
+
+        marginRight = Utility.dip2px(context, 8);
+        marginRightForAllArea = Utility.dip2px(context, 20);
 	}
 
 	@Override
@@ -86,6 +93,12 @@ public class PinnedHeaderListViewAdapter extends BaseAdapter implements SectionI
 
 		if(selectedPosition!=-1 && position == selectedPosition){
             iconImv.setVisibility(View.VISIBLE);
+            RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) iconImv.getLayoutParams();
+            if (mPinnedMode && position==0) {
+                layoutParams.rightMargin = marginRightForAllArea;
+            } else {
+                layoutParams.rightMargin = marginRight;
+            }
 		}else{
 		    iconImv.setVisibility(View.GONE);
 		}
