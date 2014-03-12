@@ -963,6 +963,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 		if (R.id.activity_more_app_recommend == requestCode) {
         } else if (R.id.activity_more_change_city == requestCode) {
             if (data != null && RESULT_OK == resultCode) {
+                resetLoactionButtonState();
+                resetMapDegree();
                 CityInfo cityInfo = data.getParcelableExtra(ChangeCityActivity.EXTRA_CITYINFO);
                 boolean changeHotelCity = data.getBooleanExtra(ChangeCityActivity.EXTRA_ONLY_CHANGE_HOTEL_CITY, false);
                 if (changeHotelCity) {
@@ -994,6 +996,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             if (data != null && RESULT_OK == resultCode) {
                 CityInfo cityInfo = data.getParcelableExtra(MapDownloadActivity.EXTRA_CITYINFO);
                 if (cityInfo != null) {
+                    resetLoactionButtonState();
+                    resetMapDegree();
                     uiStackClearTop(R.id.view_home);
                     changeCity(cityInfo);
                 }

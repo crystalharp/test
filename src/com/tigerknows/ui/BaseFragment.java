@@ -528,6 +528,8 @@ public class BaseFragment extends LinearLayout {
             }
             
             if (mapCenter != null) {
+                sphinx.resetLoactionButtonState();
+                sphinx.resetMapDegree();
                 mapView.centerOnPosition(mapCenter, zoomLevel);
                 sphinx.getHomeFragment().reset();
                 sphinx.uiStackClearTop(R.id.view_home);
