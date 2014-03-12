@@ -86,9 +86,13 @@
             android:layout_marginTop="8dp"
             android:paddingTop="0dp"
             android:paddingBottom="0dp"
-            android:drawableRight="@drawable/icon_arrow_right"
-            android:background="@drawable/btn_gps_accuracy"
-            android:text="@string/detail" />
+            android:paddingLeft="8dp"
+            android:drawableRight="@drawable/ic_arrow_right_blue"
+            android:background="@color/transparent"
+            android:text="@string/detail"
+            android:textColor="@color/blue" 
+            android:textSize="14sp"
+            android:layout_alignBaseline="@id/my_location_txv"/>
         
         <TextView
             android:id="@+id/location_name_txv"
