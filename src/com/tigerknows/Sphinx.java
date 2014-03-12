@@ -2249,10 +2249,15 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                             id == R.id.view_discover_zhanlan_detail ||
                             id == R.id.view_traffic_busline_detail ||
                             id == R.id.view_traffic_result_detail) {
-                        if (id == R.id.view_traffic_result_detail &&
-                                mUIStack.size() > 1 &&
-                                mUIStack.get(mUIStack.size()-2) == R.id.view_traffic_home) {
-                            // donothing
+                        
+                        if (id == R.id.view_traffic_result_detail) {
+                            if (mUIStack.size() > 1 &&
+                                    mUIStack.get(mUIStack.size()-2) == R.id.view_traffic_home) {
+                                // donothing
+                            } else {
+                                uiStackClearTop(R.id.view_traffic_result_detail);
+                                uiStackRemove(R.id.view_traffic_result_detail);
+                            }
                         } else {
                             uiStackRemove(R.id.view_result_map);
                         }
@@ -2275,6 +2280,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 	if (id == R.id.view_poi_input_search) {
                 		mHandler.sendEmptyMessage(UI_STACK_ADJUST_CANCEL);
                 	}
+                } else if (uiStackPeek() == R.id.view_traffic_result_detail) {
+                    uiStackClearTop(R.id.view_traffic_result_detail);
                 }
 
                 id = uiStackPeek();

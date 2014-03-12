@@ -471,18 +471,15 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
         ResultData resultData = null;
         if (mSphinx.uiStackSize() == 2 &&
                 mSphinx.uiStackPeekBottom() == R.id.view_home &&
-                mSphinx.uiStackPeek() == R.id.view_result_map &&
-                mResultDataForShowMap != null) {
+                mSphinx.uiStackPeek() == R.id.view_result_map) {
             resultData = mResultDataForShowMap;
         } else if ((mSphinx.uiStackGet(mSphinx.uiStackSize()-2) == R.id.view_traffic_home ||
                 mSphinx.uiStackGet(mSphinx.uiStackSize()-2) == R.id.view_more_favorite ||
                 mSphinx.uiStackGet(mSphinx.uiStackSize()-2) == R.id.view_more_history) &&
-                mSphinx.uiStackPeek() == R.id.view_result_map &&
-                mResultDataForPlanList != null) {
+                mSphinx.uiStackPeek() == R.id.view_result_map) {
             resultData = mResultDataForPlanList;
         } else if (mSphinx.uiStackGet(mSphinx.uiStackSize()-2) == R.id.view_traffic_result_detail &&
-                mSphinx.uiStackPeek() == R.id.view_result_map &&
-                mResultDataForPlanDetail != null) {
+                mSphinx.uiStackPeek() == R.id.view_result_map) {
             resultData = mResultDataForPlanDetail;
         } else if (mSphinx.uiStackGet(mSphinx.uiStackSize()-2) == R.id.view_poi_input_search &&
                 mSphinx.uiStackPeek() == R.id.view_result_map) {
