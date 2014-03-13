@@ -835,6 +835,9 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
             		if (sphinx.uiStackPeek() == R.id.view_result_map) {
                         sphinx.getResultMapFragment().changeTrafficType(type);
                     } else {
+                        if (sphinx.uiStackPeek() == R.id.view_traffic_result_transfer) {
+                            sphinx.uiStackRemove(R.id.view_traffic_result_transfer);
+                        }
                         sphinx.getResultMapFragment().setData(null, ActionLog.TrafficDriveListMap);
                         sphinx.showView(R.id.view_result_map);
 
@@ -848,6 +851,9 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
                     if (sphinx.uiStackPeek() == R.id.view_result_map) {
                         sphinx.getResultMapFragment().changeTrafficType(type);
                     } else {
+                        if (sphinx.uiStackPeek() == R.id.view_traffic_result_transfer) {
+                            sphinx.uiStackRemove(R.id.view_traffic_result_transfer);
+                        }
                         sphinx.getResultMapFragment().setData(null, ActionLog.TrafficWalkListMap);
                         sphinx.showView(R.id.view_result_map);
 

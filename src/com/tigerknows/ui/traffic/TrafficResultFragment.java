@@ -361,13 +361,9 @@ public class TrafficResultFragment extends BaseFragment {
     public void onPostExecute(TKAsyncTask tkAsyncTask) {
         super.onPostExecute(tkAsyncTask);
         
-        if (TrafficQueryFragment.dealWithTrafficResponse(mSphinx,
+        TrafficQueryFragment.dealWithTrafficResponse(mSphinx,
                 mActionTag,
                 (TrafficQuery) tkAsyncTask.getBaseQuery(),
-                false)) {
-            if (mSphinx.uiStackPeek() != this.getId()) {
-                mSphinx.uiStackRemove(this.getId());
-            }
-        }
+                false);
     }
 }

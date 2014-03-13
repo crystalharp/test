@@ -191,10 +191,13 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
         if (ActionLog.TrafficDriveListMap.equals(mActionTag) ||
                 ActionLog.TrafficWalkListMap.equals(mActionTag)) {
             mResultDataForPlanList = null;
+            mResultDataForPlanDetail = null;
         } else if (ActionLog.TrafficTransferMap.equals(mActionTag) ||
                 ActionLog.TrafficDriveMap.equals(mActionTag) ||
                 ActionLog.TrafficWalkMap.equals(mActionTag)) {
             mResultDataForPlanDetail = null;
+        } else if (ActionLog.TrafficSelectPoint.equals(mActionTag)) {
+            mResultDataForSelectPoint = null;
         }
     }
     
@@ -306,9 +309,10 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
                         mSphinx.queryStart(newTrafficQuery);
                     } else {
                         f.refreshDrive(plan);
-                        TrafficOverlayHelper.drawOverlay(mSphinx, plan);
+                        List<Plan> list = f.getResult(Plan.Step.TYPE_DRIVE);
+                        TrafficOverlayHelper.drawOverlay(mSphinx, list.get(0));
                         TrafficOverlayHelper.panToViewWholeOverlay(plan, mSphinx);
-                        TrafficOverlayHelper.showPlanInfoWindow(mSphinx);
+                        TrafficOverlayHelper.drawTrafficPlanListOverlay(mSphinx, list, 0);
                     }
                     
                     dialog.setOnDismissListener(new OnDismissListener() {
