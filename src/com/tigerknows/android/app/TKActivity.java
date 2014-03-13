@@ -746,7 +746,7 @@ public class TKActivity extends Activity implements TKAsyncTask.EventListener {
     }
     
     public static boolean hasAbnormalResponseCode(final BaseQuery baseQuery, final Activity activity, int showErrorType, final Object sourceView, boolean exit) {
-    	return hasAbnormalResponseCode(baseQuery, activity, showErrorType, sourceView, false, null);
+    	return hasAbnormalResponseCode(baseQuery, activity, showErrorType, sourceView, exit, null);
     }
     
     public static final int SHOW_NOTHING = 0;
