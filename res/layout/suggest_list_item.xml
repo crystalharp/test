@@ -46,6 +46,8 @@
             android:textSize="16sp"
             android:focusable="false"
             android:focusableInTouchMode="false"
+            android:singleLine="true"
+            android:ellipsize="end"
             />
         <TextView
             android:id="@+id/text1_txv"
@@ -57,6 +59,8 @@
             android:textSize="14sp"
             android:focusable="false"
             android:focusableInTouchMode="false"
+            android:singleLine="true"
+            android:ellipsize="end"
             />
     </LinearLayout>
 </RelativeLayout>
