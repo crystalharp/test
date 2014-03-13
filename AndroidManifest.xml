@@ -278,7 +278,7 @@
             android:theme="@style/Theme.NoTitleBar" 
             android:launchMode="singleTop"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|fontScale"
-            android:windowSoftInputMode="adjustResize|stateHidden"
+            android:windowSoftInputMode="stateAlwaysHidden"
             android:screenOrientation="portrait" />
         
         <activity android:name="com.tigerknows.ui.common.AddPictureActivity"
