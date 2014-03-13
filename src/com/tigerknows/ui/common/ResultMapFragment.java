@@ -493,6 +493,9 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
         }
         
         if (resultData != null) {
+            if (resultData.actionTag.equals(mActionTag)) {
+                return;
+            }
             mActionTag = resultData.actionTag;
             mTitle = resultData.title;
             mSphinx.clearMap();
