@@ -830,6 +830,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                         LogWrapper.d("conan", "onRotateEvent, rotation:" + mapView.getZRotation());
                         rotateMapDirectionIndicator(mapView.getZRotation());
                     }
+                    updateMapDirectionIndicatorState(mMyLocation.mode);
                 }
             });
 
