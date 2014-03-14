@@ -16,7 +16,6 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_above="@id/loading_lnl"
-            android:paddingBottom="4dp"
             android:background="@color/normal_background"
             >
 	        <ListView android:id="@+id/favorite_lsv"
