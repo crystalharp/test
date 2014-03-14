@@ -21,7 +21,6 @@
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:drawableLeft="@drawable/ic_location_nearby"
-	        android:background="@color/white"
 	        android:text="@string/app_name"
 	        android:textColor="@color/blue_title"
 	        android:visibility="visible"
@@ -33,7 +32,6 @@
 	        android:layout_height="wrap_content"
 	        android:text="@string/quote_nearby_search"
 	        android:visibility="gone"
-	        android:background="@color/white"
 	        />
     </LinearLayout>
 </LinearLayout>
