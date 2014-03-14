@@ -93,8 +93,8 @@ public class MapDownloadService extends TKService implements MapTileDataDownload
         CityInfoList.clear();
         context = getApplicationContext();
         mapEngine = MapEngine.getInstance();
-        mapMetaFileDownload = new MapMetaFileDownload(context, mapEngine);
-        mapTileDataDownload = new MapTileDataDownload(context, mapEngine);
+        mapMetaFileDownload = new MapMetaFileDownload(context, mapEngine, MapMetaFileDownload.DOWNLOAD_TYPE_CITY);
+        mapTileDataDownload = new MapTileDataDownload(context, mapEngine, MapMetaFileDownload.DOWNLOAD_TYPE_CITY);
         mapTileDataDownload.setFillMapTile(this);
 
         new Thread(new Runnable() {

@@ -55,8 +55,8 @@ public class DownloadThread extends Thread implements MapTileDataDownload.ITileD
 		this.sequence=sequence;
 		this.tilesView=tilesView;
 		this.mapEngine = MapEngine.getInstance();
-        this.mapMetaFileDownload = new MapMetaFileDownload(tilesView.getContext(), mapEngine);
-        this.mapTileDataDownload = new MapTileDataDownload(tilesView.getContext(), mapEngine);
+        this.mapMetaFileDownload = new MapMetaFileDownload(tilesView.getContext(), mapEngine, MapMetaFileDownload.DOWNLOAD_TYPE_TILE);
+        this.mapTileDataDownload = new MapTileDataDownload(tilesView.getContext(), mapEngine, MapMetaFileDownload.DOWNLOAD_TYPE_TILE);
         this.mapTileDataDownload.setFillMapTile(this);
 	}
 	

@@ -27,12 +27,18 @@ public class MapMetaFileDownload extends BaseQuery {
     
     protected static final String VERSION = "1";
 
+    public static final String SERVER_PARAMETER_DOWNLOAD_TYPE = "dt";
+    public static final String DOWNLOAD_TYPE_TILE = "1";
+    public static final String DOWNLOAD_TYPE_CITY = "2";
+
     private MapEngine mapEngine;
+    private String downloadType;
     
-    public MapMetaFileDownload(Context context, MapEngine mapEngine) {
+    public MapMetaFileDownload(Context context, MapEngine mapEngine, String downloadType) {
         super(context, API_TYPE_MAP_META_DOWNLOAD, VERSION);
         this.mapEngine = mapEngine;
         this.requestParameters = new ListRequestParameters();
+        this.downloadType = downloadType;
     }
     
     private int mRegionId;
@@ -78,6 +84,7 @@ public class MapMetaFileDownload extends BaseQuery {
     protected void addCommonParameters() {
         addParameter(SERVER_PARAMETER_API_TYPE, apiType);
         addParameter(SERVER_PARAMETER_VERSION, version);
+        addParameter(SERVER_PARAMETER_DOWNLOAD_TYPE, downloadType);
         addParameter("rid", String.valueOf(mRegionId));
         addParameter("vs", TKConfig.getClientSoftVersion());
         String mapPath = TKConfig.getDataPath(true);
