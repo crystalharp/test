@@ -816,8 +816,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     LogWrapper.d(TAG, "onRotateEndEvent, rotation:" + rotation);
                     if (Math.abs(rotation) < MIN_ROTATIONZ_ANGLE) {
                         resetMapDegree();
+                    }else{
+                    	updateMapDirectionIndicatorState(mMyLocation.mode);
                     }
-                    updateMapDirectionIndicatorState(mMyLocation.mode);
                 }
             });
             
@@ -1450,7 +1451,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     updateLoactionButtonState(MyLocation.MODE_NAVIGATION);
                 }
                 resetMapDegree();
-                updateMapDirectionIndicatorState(mMyLocation.mode);
             }
         });
     }
@@ -3905,6 +3905,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     public void resetMapDegree() {
         rotateZ = 365;
         mMapView.rotateZToDegree(0);
+        rotateMapDirectionIndicator(0);
+        updateMapDirectionIndicatorState(mMyLocation.mode);
     }
     // TODO: my location end
 
