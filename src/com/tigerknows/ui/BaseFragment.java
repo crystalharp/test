@@ -631,8 +631,6 @@ public class BaseFragment extends LinearLayout {
                 return 2;
             } else {
                 poiResultFragment.setData(dataQuery, true);
-                sphinx.resetLoactionButtonState();
-                sphinx.resetMapDegree();
 
                 sphinx.uiStackClearTop(R.id.view_home);
                 sphinx.getResultMapFragment().setData(sphinx.getString(R.string.result_map), ActionLog.POIListMap);
