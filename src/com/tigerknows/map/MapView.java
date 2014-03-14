@@ -336,7 +336,7 @@ public class MapView extends RelativeLayout implements
 	}
 	
 	public interface RotateEventListener extends EventListener {
-	    public void onRotateEvent(MapView mapView);
+	    public void onRotateEvent(MapView mapView, float degree);
 	}
 
 	/**
@@ -598,7 +598,7 @@ public class MapView extends RelativeLayout implements
             ArrayList<EventListener> listeners = eventListeners
                     .get(MapView.EventType.ROTATE);
             for (int i = 0; i < listeners.size(); i++) {
-                ((RotateEventListener) (listeners.get(i))).onRotateEvent(this);
+                ((RotateEventListener) (listeners.get(i))).onRotateEvent(this, getZRotation());
             }
         }
 	}
