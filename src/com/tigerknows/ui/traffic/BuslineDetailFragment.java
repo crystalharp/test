@@ -348,6 +348,8 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
             poiList.add(station.toPOI());
         }
 
+        mSphinx.resetLoactionButtonState();
+        mSphinx.resetMapDegree();
         BuslineOverlayHelper.drawOverlay(mSphinx, mSphinx.getMapView(), line);
         Position position = BuslineOverlayHelper.panToViewWholeOverlay(line, mSphinx);
         

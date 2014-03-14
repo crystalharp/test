@@ -577,6 +577,10 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         if(plan == null)
             return;
         
+
+        mSphinx.resetLoactionButtonState();
+        mSphinx.resetMapDegree();
+        
         MapScene mapScene = mSphinx.getMapView().getCurrentMapScene();
         TrafficOverlayHelper.drawOverlay(mSphinx, plan);
         Position position = TrafficOverlayHelper.panToViewWholeOverlay(plan, mSphinx);

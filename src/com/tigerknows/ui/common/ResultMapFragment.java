@@ -379,6 +379,8 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
                 trafficDetailFragment.refreshDrive(list.get(0));
 
                 if (jumpTransferResultFragment) {
+                    mSphinx.resetLoactionButtonState();
+                    mSphinx.resetMapDegree();
                     TrafficOverlayHelper.drawOverlay(mSphinx, list.get(0));
                     TrafficOverlayHelper.panToViewWholeOverlay(list.get(0), mSphinx);
                     TrafficOverlayHelper.drawTrafficPlanListOverlay(mSphinx, list, 0);
@@ -390,6 +392,8 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
                 mRightBtn.setVisibility(View.INVISIBLE);
 
                 if (jumpTransferResultFragment) {
+                    mSphinx.resetLoactionButtonState();
+                    mSphinx.resetMapDegree();
                     TrafficOverlayHelper.drawOverlay(mSphinx, list.get(0));
                     TrafficOverlayHelper.panToViewWholeOverlay(list.get(0), mSphinx);
                     TrafficOverlayHelper.drawTrafficPlanListOverlay(mSphinx, list, 0);
