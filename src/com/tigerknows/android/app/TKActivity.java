@@ -784,9 +784,10 @@ public class TKActivity extends Activity implements TKAsyncTask.EventListener {
             resId = getResponseResId(baseQuery);
         }else {
             String responseStringRes = baseQuery.getLocalParameter(BaseQuery.RESPONSE_NULL_ERROR_MSG);
+            int cityId = baseQuery.getCityId();
             if(responseStringRes!=null){
             	resId = Integer.parseInt(responseStringRes);
-            } else if (baseQuery.getCityId() == CityInfo.CITY_ID_INVALID) {
+            } else if (cityId == CityInfo.CITY_ID_INVALID || cityId == CityInfo.CITY_ID_HONGKONG || cityId == CityInfo.CITY_ID_MACAO) {
                 resId = R.string.no_result;
             }
         }
