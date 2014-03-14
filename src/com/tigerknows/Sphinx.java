@@ -825,10 +825,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             EventRegistry.addEventListener(mMapView, MapView.EventType.ROTATE, new MapView.RotateEventListener() {
                 
                 @Override
-                public void onRotateEvent(MapView mapView) {
-                    // TODO Auto-generated method stub
-                    if (Math.abs(mapView.getZRotation()) > 0.0001) {
-                        LogWrapper.d("conan", "onRotateEvent, rotation:" + mapView.getZRotation());
+                public void onRotateEvent(MapView mapView, float degree) {
+                    if (Math.abs(degree) > 0.0001) {
                         rotateMapDirectionIndicator(mapView.getZRotation());
                     }
                     updateMapDirectionIndicatorState(mMyLocation.mode);
