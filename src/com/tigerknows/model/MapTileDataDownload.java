@@ -26,6 +26,7 @@ import com.tigerknows.util.HttpUtils.TKHttpClient.RealTimeRecive;
 public class MapTileDataDownload extends BaseQuery {
     
     protected static final String VERSION = "1";
+    private String downloadType;
 
     public interface ITileDownload {
         public int fillMapTile(TileDownload[] tileInfos, int rid, byte[] data, int start);
@@ -54,10 +55,11 @@ public class MapTileDataDownload extends BaseQuery {
         }
     };
     
-    public MapTileDataDownload(Context context, MapEngine mapEngine) {
+    public MapTileDataDownload(Context context, MapEngine mapEngine, String downloadType) {
         super(context, API_TYPE_MAP_TILE_DOWNLOAD, VERSION);
         this.isTranslatePart = true;
         this.requestParameters = new ListRequestParameters();
+        this.downloadType = downloadType;
     }
     
     public void setFillMapTile(ITileDownload iTileDownload) {
@@ -110,6 +112,7 @@ public class MapTileDataDownload extends BaseQuery {
     protected void addCommonParameters() {
         addParameter(SERVER_PARAMETER_API_TYPE, apiType);
         addParameter(SERVER_PARAMETER_VERSION, version);
+        addParameter(MapMetaFileDownload.SERVER_PARAMETER_DOWNLOAD_TYPE, downloadType);
         addParameter("rid", String.valueOf(rid));
         addParameter("vs", TKConfig.getClientSoftVersion());
         String version = null;
