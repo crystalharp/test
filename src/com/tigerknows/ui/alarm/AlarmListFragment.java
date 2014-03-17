@@ -250,7 +250,7 @@ public class AlarmListFragment extends BaseFragment implements View.OnClickListe
             if (id == R.id.status_btn) {
                 addActionLog(ActionLog.AlarmListStatus, mAlarm.getStatus());
                 mAlarm.setStatus(mAlarm.getStatus() == 0 ? 1 : 0);
-                Alarm.writeAlarm(mSphinx, mAlarm);
+                Alarm.writeAlarm(mSphinx, mAlarm, R.string.alarm_add_success);
                 mMyAdapter.notifyDataSetChanged();
             } else if (id == R.id.range_btn) {
                 addActionLog(ActionLog.AlarmListRange, mAlarm.getRange());

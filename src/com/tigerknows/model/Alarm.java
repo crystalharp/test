@@ -79,7 +79,7 @@ public class Alarm implements Parcelable {
             List<Alarm> list = getAlarmList(context);
             boolean enabled = (alarm.getStatus() == 0);
             if (enabled) {
-                if (SettingActivity.checkGPS(context) == false && context instanceof Sphinx) {
+                if (SettingActivity.checkGPS(context) == false && context instanceof Sphinx && showToastResId != 0) {
                     alarm.setStatus(1);
                     showSettingLocationDialog((Sphinx) context, alarm, showToastResId);
                     return;
