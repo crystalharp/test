@@ -699,7 +699,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), getId(), getId(), getId(), mCancelLoginListener)) {
             isReLogin = true;
             return;
-        } else if (BaseActivity.hasAbnormalResponseCode(baseQuery, mSphinx, BaseActivity.SHOW_DIALOG, HotelOrderWriteFragment.this, false, new int[] {825, 826})) {
+        }else if (BaseActivity.hasAbnormalResponseCode(baseQuery, mSphinx, BaseActivity.SHOW_DIALOG, HotelOrderWriteFragment.this, false, new int[] {821, 825, 826})) {
             return;
         }
         Response response = baseQuery.getResponse();
@@ -797,6 +797,9 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         	default:
         	    Utility.showNormalDialog(mSphinx, description);
         	}
+        	break;
+        case Response.RESPONSE_CODE_HOTEL_ORDER_CREATE_FAILED:
+        	Utility.showNormalDialog(mSphinx, getString(R.string.response_code_821));
             break;
         }
     }
