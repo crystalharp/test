@@ -404,7 +404,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 	mUIStackAdjustReady = R.id.view_invalid;
                 } else if (msg.what == UI_STACK_ADJUST_CANCEL){
                 	mUIStackAdjustReady = R.id.view_invalid;
-                } else if (msg.what == HOTEL_ORDER_OLD_SYNC || msg.what == HOTEL_ORDER_DELETE_SYNC){
+                } else if (mHotelOrderDetailFragment != null && (msg.what == HOTEL_ORDER_OLD_SYNC || msg.what == HOTEL_ORDER_DELETE_SYNC)){
                 	getHotelOrderDetailFragment().handleMessage(msg);
                 }
 
