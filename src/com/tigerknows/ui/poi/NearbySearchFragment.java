@@ -246,6 +246,10 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         				- nearbyTxv.getPaint().measureText(nearbyTxv.getText().toString())
         				));
         mLocationTxv.setText(style);
+        
+        if (isReLogin()) {
+            return;
+        }
     }
     
     private void refreshTitleView(int status){
