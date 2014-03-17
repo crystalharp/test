@@ -15,7 +15,20 @@
 -->
 
 <animation-list xmlns:android="http://schemas.android.com/apk/res/android" android:oneshot="false">
-    <item android:drawable="@drawable/ic_querying1" android:duration="200" />
-    <item android:drawable="@drawable/ic_querying2" android:duration="200" />
-    <item android:drawable="@drawable/ic_querying3" android:duration="200" />
+    <item android:drawable="@drawable/ic_querying1" android:duration="30" />
+    <item android:drawable="@drawable/ic_querying2" android:duration="30" />
+    <item android:drawable="@drawable/ic_querying3" android:duration="30" />
+    <item android:drawable="@drawable/ic_querying4" android:duration="30" />
+    <item android:drawable="@drawable/ic_querying5" android:duration="30" />
+    <item android:drawable="@drawable/ic_querying6" android:duration="30" />
+    <item android:drawable="@drawable/ic_querying7" android:duration="30" />
+    <item android:drawable="@drawable/ic_querying8" android:duration="30" />
+    <item android:drawable="@drawable/ic_querying9" android:duration="30" />
+    <item android:drawable="@drawable/ic_querying10" android:duration="30" />
+    <item android:drawable="@drawable/ic_querying11" android:duration="30" />
+    <item android:drawable="@drawable/ic_querying12" android:duration="30" />
+    <item android:drawable="@drawable/ic_querying13" android:duration="30" />
+    <item android:drawable="@drawable/ic_querying14" android:duration="30" />
+    <item android:drawable="@drawable/ic_querying15" android:duration="30" />
+    <item android:drawable="@drawable/ic_querying16" android:duration="30" />
 </animation-list>
