@@ -1703,7 +1703,7 @@ public class MapDownloadActivity extends BaseActivity implements View.OnClickLis
                     startService(intent);
                 }
                 textTxv.setTextColor(mColorBlackLight);
-                view.setBackgroundResource(R.color.gray_light);
+                view.setBackgroundResource(R.drawable.list_selector_background_gray_light);
                 statusTxv.setText(getStateText(downloadCity));
                 statusTxv.setVisibility(View.VISIBLE);
             } else {
