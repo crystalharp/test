@@ -15,6 +15,7 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Vibrator;
 import android.view.KeyEvent;
 import android.view.View;
@@ -35,12 +36,22 @@ public class AlarmShowActivity extends TKActivity implements View.OnClickListene
     
     public static final String EXTRA_ALARM_LIST = "EXTRA_ALARM_LIST";
     
+    private static final long VIBRATOR_TIME = 1000 * 60 * 2;
+    
     private MediaPlayer mAudio;
     private AudioManager mAudioManager;
     private Vibrator mVibrator;
     private List<Alarm> mAlarms = new ArrayList<Alarm>();
     private Alarm mAlarm;
     private long[] mPattern = {1000, 2000, 1000, 2000, 1000, 2000};
+    private Handler mHandler;
+    private Runnable mShowNextAlarm = new Runnable() {
+        
+        @Override
+        public void run() {
+            showNextAlarm();
+        }
+    };
     
     private TextView mBodyTxv;
     private Button mCloseBtn;
@@ -60,6 +71,8 @@ public class AlarmShowActivity extends TKActivity implements View.OnClickListene
         
         mActionTag = ActionLog.AlarmShow;
         onWindowFocusChanged = false;
+        
+        mHandler = new Handler();
         
         setContentView(R.layout.alarm_show);
         
@@ -104,7 +117,9 @@ public class AlarmShowActivity extends TKActivity implements View.OnClickListene
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
-        onWindowFocusChanged = hasFocus;
+        if (hasFocus) {
+            onWindowFocusChanged = hasFocus;
+        }
         super.onWindowFocusChanged(hasFocus);
     }
 
@@ -137,6 +152,8 @@ public class AlarmShowActivity extends TKActivity implements View.OnClickListene
             mAlarm = mAlarms.remove(0);
             
             refreshText();
+            mHandler.removeCallbacks(mShowNextAlarm);
+            mHandler.postDelayed(mShowNextAlarm, VIBRATOR_TIME);
             stop();
             play();
             
@@ -202,6 +219,7 @@ public class AlarmShowActivity extends TKActivity implements View.OnClickListene
 
     @Override
     public void finish() {
+        mHandler.removeCallbacks(mShowNextAlarm);
         mVibrator.cancel();
         stop();
         super.finish();
