@@ -97,7 +97,7 @@ public class Alarm implements Parcelable {
             
             boolean add = false;
             if (exist != null) {
-                if (showToastResId != 0) {
+                if (showToastResId > 0) {
                     deleteAlarm(context, exist);
                     alarm.writeToDatabases(context);
                     list.add(0, alarm);
@@ -117,7 +117,7 @@ public class Alarm implements Parcelable {
             }
             checkStatus(context, add);
 
-            if (enabled && showToastResId != 0 && context instanceof Sphinx) {
+            if (enabled && showToastResId > 0 && context instanceof Sphinx) {
                 Toast.makeText(context, showToastResId, Toast.LENGTH_SHORT).show();
 
                 Sphinx sphinx = (Sphinx) context;
