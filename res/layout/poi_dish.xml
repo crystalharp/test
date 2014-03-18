@@ -101,7 +101,8 @@
         android:footerDividersEnabled="false"
         android:fadingEdge="none"
         android:scrollingCache="false"
-        android:paddingBottom="50dp"/>
+        android:paddingBottom="50dp"
+        android:background="@color/normal_background"/>
                 
     <include
         layout="@layout/poi_dish_all"
@@ -113,6 +114,7 @@
         android:footerDividersEnabled="false"
         android:fadingEdge="none"
         android:scrollingCache="false"
-        android:paddingBottom="50dp"/>
+        android:paddingBottom="50dp"
+        android:background="@color/normal_background"/>
     
 </RelativeLayout>
