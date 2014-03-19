@@ -50,6 +50,8 @@ public class AlarmService extends TKService {
                     
                     Alarm.showAlarm(getApplicationContext(), mLastPosition);
                 }
+            } else {
+                mLastPosition = null;
             }
         }
     }
