@@ -308,6 +308,8 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
                         newTrafficQuery.addParameter(TrafficQuery.SERVER_PARAMETER_BIAS, String.valueOf(driveTypeList[index]));
                         mSphinx.queryStart(newTrafficQuery);
                     } else {
+                        mSphinx.resetLoactionButtonState();
+                        mSphinx.resetMapDegree();
                         f.refreshDrive(plan);
                         List<Plan> list = f.getResult(Plan.Step.TYPE_DRIVE);
                         TrafficOverlayHelper.drawOverlay(mSphinx, list.get(0));
