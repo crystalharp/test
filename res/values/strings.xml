@@ -1056,7 +1056,7 @@
 
 <!-- Hotel Reservation Start -->
     
-    <string name="hotel_btn_book">预订</string>
+    <string name="hotel_btn_book">快速预订</string>
     <string name="check_in_time">入住时间</string>
     <string name="hotel_btn_sold_out">订满</string>
     <string name="hotel_btn_x_room_left">仅剩%1$s间</string>
