@@ -840,6 +840,8 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
                         }
                         sphinx.getResultMapFragment().setData(null, ActionLog.TrafficDriveListMap);
                         sphinx.showView(R.id.view_result_map);
+                        sphinx.resetLoactionButtonState();
+                        sphinx.resetMapDegree();
 
                         TrafficOverlayHelper.drawOverlay(sphinx, planList.get(0));
                         TrafficOverlayHelper.panToViewWholeOverlay(planList.get(0), sphinx);
@@ -856,6 +858,8 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
                         }
                         sphinx.getResultMapFragment().setData(null, ActionLog.TrafficWalkListMap);
                         sphinx.showView(R.id.view_result_map);
+                        sphinx.resetLoactionButtonState();
+                        sphinx.resetMapDegree();
 
                         TrafficOverlayHelper.drawOverlay(sphinx, planList.get(0));
                         TrafficOverlayHelper.panToViewWholeOverlay(planList.get(0), sphinx);
