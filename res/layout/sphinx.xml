@@ -75,8 +75,11 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/title_view"
         android:layout_alignParentLeft="true"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="8dp"
         android:visibility="invisible"
-        android:src="@drawable/ic_compass_arrow"
+        android:scaleType="matrix"
+        android:src="@drawable/btn_compass"
         />
 
     <RelativeLayout

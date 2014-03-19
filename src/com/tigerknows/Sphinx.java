@@ -241,9 +241,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     private View mCenterTokenView;
 	private CityInfo mInitCityInfo;
 	//地图左上角的指北针
-    private View mMapDirectionIndicatorView;
-    private Matrix matrix = new Matrix();
-    private Bitmap mDirectionIndicatorBitmap;
+    private ImageView mMapDirectionIndicatorView;
+    private Matrix mCompassMatrix = new Matrix();
+    private int mCompassPX,mCompassPY;
 	private LinearLayout mZoomView;
     private View mLocationView=null;
     private ImageButton mLocationBtn=null;
@@ -326,7 +326,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 	protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mOnCreateTimeMillis = System.currentTimeMillis();
-        mDirectionIndicatorBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_compass_arrow);
+        Drawable compassDrawable = getResources().getDrawable(R.drawable.btn_compass);
+        mCompassPX = compassDrawable.getMinimumWidth()/2;
+        mCompassPY = compassDrawable.getMinimumHeight()/2;
         BaseQuery.sClentStatus = BaseQuery.CLIENT_STATUS_START;
 //        Debug.startMethodTracing("spinxTracing");
 
@@ -1327,7 +1329,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         mLocationView=(findViewById(R.id.location_view));
         mLocationBtn=(ImageButton)(findViewById(R.id.location_btn));
         mLocationTxv=(TextView)(findViewById(R.id.location_txv));
-        mMapDirectionIndicatorView = findViewById(R.id.compass_imv);
+        mMapDirectionIndicatorView = (ImageView) findViewById(R.id.compass_imv);
 
         mMapToolsView = findViewById(R.id.map_tools_view);
         mMapToolsBtn = (ImageButton)findViewById(R.id.map_tools_btn);
@@ -3833,10 +3835,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     
     public final void rotateMapDirectionIndicator(float degree) {
         // 设置旋转角度  
-        matrix.setRotate(degree);  
-        // 重新绘制Bitmap  
-        Bitmap turnbm = Bitmap.createBitmap(mDirectionIndicatorBitmap, 0, 0, mDirectionIndicatorBitmap.getWidth(),mDirectionIndicatorBitmap.getHeight(), matrix, true);  
-        ((ImageView) mMapDirectionIndicatorView).setImageBitmap(turnbm);  
+        mCompassMatrix.setRotate(degree, mCompassPX, mCompassPY);
+        mMapDirectionIndicatorView.setImageMatrix(mCompassMatrix);
     }
     
     /**
