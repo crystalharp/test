@@ -34,7 +34,7 @@ public class GuideScreenActivity extends TKActivity {
     
     public static final String APP_UPGRADE = "AppUpgrade";
     
-    private int mPagecount = 2;
+    private int mPagecount = 1;
 
     private ViewPager mViewPager;
     
@@ -62,6 +62,7 @@ public class GuideScreenActivity extends TKActivity {
         findViews();
         setListener();
         
+        mIndicatorView.setVisibility(View.GONE);
         Utility.pageIndicatorInit(mThis, mIndicatorView, mPagecount, 0, R.drawable.ic_dot_guide_screen_normal, R.drawable.ic_dot_guide_screen_focused);
         mViewPager.setAdapter(new MyAdapter());
         
