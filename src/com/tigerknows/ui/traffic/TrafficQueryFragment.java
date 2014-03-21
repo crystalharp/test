@@ -34,6 +34,7 @@ import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
+import com.tigerknows.TKFragmentManager;
 import com.tigerknows.android.location.Position;
 import com.tigerknows.android.os.TKAsyncTask;
 import android.widget.Toast;
@@ -405,7 +406,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
                                 }
                             },
                             InputSearchFragment.REQUEST_COMMON_PLACE);
-                    mSphinx.showView(R.id.view_poi_input_search);
+                    mSphinx.showView(TKFragmentManager.ID_view_poi_input_search);
                 } else {
                     mEnd.setPOI(c.poi);
                     if (!mStart.textEmpty()) {
@@ -822,24 +823,24 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
             	TrafficDetailFragment f = sphinx.getTrafficDetailFragment();
             	f.addResult(trafficQuery, type, planList);
             	if (type == Plan.Step.TYPE_TRANSFER) {
-            	    if (sphinx.uiStackPeek() == R.id.view_result_map) {
-            	        sphinx.uiStackRemove(R.id.view_result_map);
+            	    if (sphinx.uiStackPeek() == TKFragmentManager.ID_view_result_map) {
+            	        sphinx.uiStackRemove(TKFragmentManager.ID_view_result_map);
             	    }
             	    // 换乘方式
             	    sphinx.getTrafficResultFragment().setData(trafficQuery);
-            	    sphinx.showView(R.id.view_traffic_result_transfer);
+            	    sphinx.showView(TKFragmentManager.ID_view_traffic_result_transfer);
             	} else if (type == Plan.Step.TYPE_DRIVE) {
             	    // 驾车
             	    f.refreshResult(type);
             	    f.refreshDrive(planList.get(0));
-            		if (sphinx.uiStackPeek() == R.id.view_result_map) {
+            		if (sphinx.uiStackPeek() == TKFragmentManager.ID_view_result_map) {
                         sphinx.getResultMapFragment().changeTrafficType(type);
                     } else {
-                        if (sphinx.uiStackPeek() == R.id.view_traffic_result_transfer) {
-                            sphinx.uiStackRemove(R.id.view_traffic_result_transfer);
+                        if (sphinx.uiStackPeek() == TKFragmentManager.ID_view_traffic_result_transfer) {
+                            sphinx.uiStackRemove(TKFragmentManager.ID_view_traffic_result_transfer);
                         }
                         sphinx.getResultMapFragment().setData(null, ActionLog.TrafficDriveListMap);
-                        sphinx.showView(R.id.view_result_map);
+                        sphinx.showView(TKFragmentManager.ID_view_result_map);
                         sphinx.resetLoactionButtonState();
                         sphinx.resetMapDegree();
 
@@ -850,14 +851,14 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
             	} else if (type == Plan.Step.TYPE_WALK) {
                     // 步行方式
             	    f.refreshResult(type);
-                    if (sphinx.uiStackPeek() == R.id.view_result_map) {
+                    if (sphinx.uiStackPeek() == TKFragmentManager.ID_view_result_map) {
                         sphinx.getResultMapFragment().changeTrafficType(type);
                     } else {
-                        if (sphinx.uiStackPeek() == R.id.view_traffic_result_transfer) {
-                            sphinx.uiStackRemove(R.id.view_traffic_result_transfer);
+                        if (sphinx.uiStackPeek() == TKFragmentManager.ID_view_traffic_result_transfer) {
+                            sphinx.uiStackRemove(TKFragmentManager.ID_view_traffic_result_transfer);
                         }
                         sphinx.getResultMapFragment().setData(null, ActionLog.TrafficWalkListMap);
-                        sphinx.showView(R.id.view_result_map);
+                        sphinx.showView(TKFragmentManager.ID_view_result_map);
                         sphinx.resetLoactionButtonState();
                         sphinx.resetMapDegree();
 
@@ -1031,7 +1032,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
                         }
                     },
                     InputSearchFragment.REQUEST_TRAFFIC_END);
-            mSphinx.showView(R.id.view_poi_input_search);
+            mSphinx.showView(TKFragmentManager.ID_view_poi_input_search);
             break;
             
         case R.id.start_btn:
@@ -1054,17 +1055,17 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
                         }
                     },
                     InputSearchFragment.REQUEST_TRAFFIC_START);
-            mSphinx.showView(R.id.view_poi_input_search);
+            mSphinx.showView(TKFragmentManager.ID_view_poi_input_search);
             break;
             
         case R.id.add_common_place:
 //            mActionLog.addAction(mActionTag, );
-            mSphinx.showView(R.id.view_traffic_common_places);
+            mSphinx.showView(TKFragmentManager.ID_view_traffic_common_places);
             break;
         
         case R.id.query_history_title:
             mActionLog.addAction(mActionTag + ActionLog.TrafficHomeHistoryTitle);
-            mSphinx.showView(R.id.view_traffic_search_history);
+            mSphinx.showView(TKFragmentManager.ID_view_traffic_search_history);
             break;
             
         case R.id.traffic_switch_btn:
@@ -1074,7 +1075,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
             
         case R.id.nearby_search_btn:
             addActionLog(ActionLog.AlarmBtn);
-            mSphinx.showView(R.id.view_alarm_list);
+            mSphinx.showView(TKFragmentManager.ID_view_alarm_list);
             break;
             
         case R.id.favorite_btn:
@@ -1084,7 +1085,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
             mSphinx.getInputSearchFragment().setData(dataQuery,
                     null,
                     InputSearchFragment.MODE_BUSLINE);
-            mSphinx.showView(R.id.view_poi_input_search);
+            mSphinx.showView(TKFragmentManager.ID_view_poi_input_search);
             break;
             
         case R.id.share_btn:
@@ -1094,13 +1095,13 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
             mSphinx.getInputSearchFragment().setData(dataQuery,
                     null,
                     InputSearchFragment.MODE_BUSLINE);
-            mSphinx.showView(R.id.view_poi_input_search);
+            mSphinx.showView(TKFragmentManager.ID_view_poi_input_search);
             break;
             
         case R.id.error_recovery_btn:
             addActionLog(ActionLog.TrafficHomeClickSubWayBtn);
             mSphinx.getSubwayMapFragment().setData(Globals.getCurrentCityInfo(mSphinx, false));
-            mSphinx.showView(R.id.view_subway_map);
+            mSphinx.showView(TKFragmentManager.ID_view_subway_map);
             break;
             
         }

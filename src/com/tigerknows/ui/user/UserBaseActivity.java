@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
+import com.tigerknows.TKFragmentManager;
 import com.tigerknows.android.os.TKAsyncTask;
 import android.widget.Toast;
 
@@ -66,9 +67,9 @@ public abstract class UserBaseActivity extends BaseActivity {
 	
 	protected void getViewId(Intent intent) {
 	    super.getViewId(intent);
-	    mSourceViewIdLogin = intent.getIntExtra(SOURCE_VIEW_ID_LOGIN, R.id.view_invalid);
-        mTargetViewIdLoginSuccess = intent.getIntExtra(TARGET_VIEW_ID_LOGIN_SUCCESS, R.id.view_invalid);
-        mTargetViewIdLoginFailed = intent.getIntExtra(TARGET_VIEW_ID_LOGIN_FAILED, R.id.view_invalid);
+	    mSourceViewIdLogin = intent.getIntExtra(SOURCE_VIEW_ID_LOGIN, TKFragmentManager.ID_view_invalid);
+        mTargetViewIdLoginSuccess = intent.getIntExtra(TARGET_VIEW_ID_LOGIN_SUCCESS, TKFragmentManager.ID_view_invalid);
+        mTargetViewIdLoginFailed = intent.getIntExtra(TARGET_VIEW_ID_LOGIN_FAILED, TKFragmentManager.ID_view_invalid);
     }
     
     protected void putViewId(Intent intent) {
@@ -168,7 +169,7 @@ public abstract class UserBaseActivity extends BaseActivity {
 		// TODO Auto-generated method stub
 		super.onPostExecute(tkAsyncTask);
 		BaseQuery baseQuery = tkAsyncTask.getBaseQuery();
-        if (BaseActivity.checkReLogin(baseQuery, mThis, true, mId, R.id.view_user_home, R.id.view_more_home, null)) {
+        if (BaseActivity.checkReLogin(baseQuery, mThis, true, mId, TKFragmentManager.ID_view_user_home, TKFragmentManager.ID_view_more_home, null)) {
             return;
         }
 		

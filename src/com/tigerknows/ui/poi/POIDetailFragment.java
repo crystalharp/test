@@ -47,6 +47,7 @@ import android.widget.TextView;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
+import com.tigerknows.TKFragmentManager;
 import com.tigerknows.android.app.TKActivity;
 import com.tigerknows.android.os.TKAsyncTask;
 import android.widget.Toast;
@@ -965,7 +966,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             case R.id.nearby_search_btn:
                 mActionLog.addAction(mActionTag +  ActionLog.POIDetailSearch);
                 mSphinx.getPOINearbyFragment().setData(mSphinx.buildDataQuery(poi));
-                mSphinx.showView(R.id.view_poi_nearby_search);
+                mSphinx.showView(TKFragmentManager.ID_view_poi_nearby_search);
                 break;
                 
             case R.id.share_btn:
@@ -1032,7 +1033,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             return;
         }
         mSphinx.getResultMapFragment().setData(getString(R.string.result_map), poi.getSourceType() == POI.SOURCE_TYPE_HOTEL ? ActionLog.POIHotelDetailMap : ActionLog.POIDetailMap);
-        mSphinx.showView(R.id.view_result_map);
+        mSphinx.showView(TKFragmentManager.ID_view_result_map);
         List<POI> pois = new ArrayList<POI>();
         pois.add(poi);
         ItemizedOverlayHelper.drawPOIOverlay(mSphinx, pois, 0);
@@ -1430,7 +1431,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                                         switch (id) {
                                             case DialogInterface.BUTTON_POSITIVE:
                                                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                                                mSphinx.startActivityForResult(intent, R.id.view_invalid);
+                                                mSphinx.startActivityForResult(intent, TKFragmentManager.ID_view_invalid);
                                                 break;
     
                                             default:
@@ -1460,7 +1461,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         minusLoadingView();
         List<BaseQuery> baseQueryList = tkAsyncTask.getBaseQueryList();
         for(BaseQuery baseQuery : baseQueryList) {
-            if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), getId(), getId(), getId(), mCancelLoginListener, mShowReLoginTip)) {
+            if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(TKFragmentManager.ID_view_user_home), getId(), getId(), getId(), mCancelLoginListener, mShowReLoginTip)) {
                 mShowReLoginTip = false;
                 isReLogin = true;
                 return;

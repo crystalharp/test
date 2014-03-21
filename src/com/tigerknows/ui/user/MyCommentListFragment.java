@@ -24,6 +24,7 @@ import com.decarta.android.exception.APIException;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
+import com.tigerknows.TKFragmentManager;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BaseQuery;
@@ -68,7 +69,7 @@ public class MyCommentListFragment extends BaseFragment {
             if (comment.getPOIStatus() >= 0) {
                 POI poi = comment.getPOI();
                 if (poi.getPosition() != null) {
-                    mSphinx.showView(R.id.view_poi_detail);
+                    mSphinx.showView(TKFragmentManager.ID_view_poi_detail);
                     mSphinx.getPOIDetailFragment().setData(poi, position);
                 } else {
                     DataOperation poiQuery = new DataOperation(mSphinx);
@@ -305,7 +306,7 @@ public class MyCommentListFragment extends BaseFragment {
     public void onPostExecute(TKAsyncTask tkAsyncTask) {   
         super.onPostExecute(tkAsyncTask);
         BaseQuery baseQuery = tkAsyncTask.getBaseQuery();   
-        if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), getId(), R.id.view_user_home, R.id.view_more_home, null)) {
+        if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(TKFragmentManager.ID_view_user_home), getId(), TKFragmentManager.ID_view_user_home, TKFragmentManager.ID_view_more_home, null)) {
             isReLogin = true;
             return;
         }
@@ -324,7 +325,7 @@ public class MyCommentListFragment extends BaseFragment {
                     try {
                         commentPOI.init(poi.getData(), false);
                         commentPOI.setMyComment(comment);
-                        mSphinx.showView(R.id.view_poi_detail);
+                        mSphinx.showView(TKFragmentManager.ID_view_poi_detail);
                         mSphinx.getPOIDetailFragment().setData(commentPOI, i);
                         return;
                     } catch (APIException e) {

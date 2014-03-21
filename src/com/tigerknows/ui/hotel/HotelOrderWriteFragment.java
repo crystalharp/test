@@ -42,6 +42,7 @@ import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
+import com.tigerknows.TKFragmentManager;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BaseQuery;
@@ -696,7 +697,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
             return;
         }
 
-        if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), getId(), getId(), getId(), mCancelLoginListener)) {
+        if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(TKFragmentManager.ID_view_user_home), getId(), getId(), getId(), mCancelLoginListener)) {
             isReLogin = true;
             return;
         }else if (BaseActivity.hasAbnormalResponseCode(baseQuery, mSphinx, BaseActivity.SHOW_DIALOG, mSphinx.getFragment(mSphinx.uiStackPeek()), false, new int[] {825, 826})) {
@@ -737,11 +738,11 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
                     );
             TKConfig.setPref(mContext, TKConfig.PREFS_HOTEL_LAST_BOOKNAME, mBookUsername);
             TKConfig.setPref(mContext, TKConfig.PREFS_HOTEL_LAST_MOBILE, mMobile);
-            if(mSphinx.uiStackContains(R.id.view_hotel_credit_assure)){
+            if(mSphinx.uiStackContains(TKFragmentManager.ID_view_hotel_credit_assure)){
                 if(mSphinx.getHotelOrderCreditFragment().isShowing()){
                 	mSphinx.getHotelOrderCreditFragment().dismiss();
                 }
-                mSphinx.uiStackRemove(R.id.view_hotel_credit_assure);
+                mSphinx.uiStackRemove(TKFragmentManager.ID_view_hotel_credit_assure);
             }
             mSphinx.getHotelOrderSuccessFragment().setData(mHotelOrder);
             HotelOrderTable hotelOrderTable = new HotelOrderTable(mSphinx);
@@ -758,8 +759,8 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
             mSphinx.getHotelOrderListFragment().clearOrders();
             mSphinx.getHotelOrderListFragment().syncOrder();
             dismiss();
-            mSphinx.uiStackRemove(R.id.view_hotel_order_write);
-            mSphinx.showView(R.id.view_hotel_order_success);
+            mSphinx.uiStackRemove(TKFragmentManager.ID_view_hotel_order_write);
+            mSphinx.showView(TKFragmentManager.ID_view_hotel_order_success);
             break;
         case Response.RESPONSE_CODE_HOTEL_NEED_CREDIT_ASSURE:
             mSphinx.getHotelOrderCreditFragment().setData(response.getDescription(),
@@ -767,7 +768,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
                     Utility.formatHotelPrice(mTotalPrice),
                     (int)mTypeCreditAssure,
                     mBookUsername);
-            mSphinx.showView(R.id.view_hotel_credit_assure);
+            mSphinx.showView(TKFragmentManager.ID_view_hotel_credit_assure);
             break;
         case Response.RESPONSE_CODE_HOTEL_OTHER_ERROR:
         	String description = response.getDescription().split("!")[0].split("！")[0];
@@ -786,10 +787,10 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
                                 if (which == DialogInterface.BUTTON_POSITIVE) {
                                 	mSphinx.getHotelOrderListFragment().clearOrders();
                                 	mSphinx.getHotelOrderListFragment().syncOrder();
-                                	if(mSphinx.uiStackContains(R.id.view_hotel_credit_assure)){
+                                	if(mSphinx.uiStackContains(TKFragmentManager.ID_view_hotel_credit_assure)){
                                 		mSphinx.getHotelOrderCreditFragment().clearVerifyEdt();
                                 	}
-                                	mSphinx.showView(R.id.view_hotel_order_list);
+                                	mSphinx.showView(TKFragmentManager.ID_view_hotel_order_list);
                                 }
                             }								
 						});

@@ -2,6 +2,7 @@ package com.tigerknows.model;
 
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.TKFragmentManager;
 import com.tigerknows.android.location.Position;
 import com.tigerknows.provider.Tigerknows;
 import com.tigerknows.service.AlarmService;
@@ -121,8 +122,8 @@ public class Alarm implements Parcelable {
                 Toast.makeText(context, showToastResId, Toast.LENGTH_SHORT).show();
 
                 Sphinx sphinx = (Sphinx) context;
-                if (showToastResId == R.string.alarm_add_success && sphinx.uiStackContains(R.id.view_alarm_list)) {
-                    sphinx.uiStackClearTop(R.id.view_alarm_list);
+                if (showToastResId == R.string.alarm_add_success && sphinx.uiStackContains(TKFragmentManager.ID_view_alarm_list)) {
+                    sphinx.uiStackClearTop(TKFragmentManager.ID_view_alarm_list);
                 }
             }
         }

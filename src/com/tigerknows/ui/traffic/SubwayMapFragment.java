@@ -31,6 +31,7 @@ import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
+import com.tigerknows.TKFragmentManager;
 import com.tigerknows.android.location.Position;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
@@ -308,7 +309,7 @@ public class SubwayMapFragment extends BaseFragment implements RetryView.CallBac
                     poi.setUUID(poiid);
                     poi.ciytId =  mCityInfo.getId();
                     mSphinx.getPOIDetailFragment().setData(poi);
-                    mSphinx.showView(R.id.view_poi_detail);
+                    mSphinx.showView(TKFragmentManager.ID_view_poi_detail);
                     Message msg = new Message();
                     msg.what = Sphinx.UI_STACK_ADJUST_READY;
                     msg.arg1 = getId();
@@ -340,7 +341,7 @@ public class SubwayMapFragment extends BaseFragment implements RetryView.CallBac
                     poi.setSourceType(POI.SOURCE_TYPE_SUBWAY);
                     poi.setFrom(POI.FROM_LOCAL);
                     mSphinx.getPOINearbyFragment().setData(mSphinx.buildDataQuery(poi));
-                    mSphinx.showView(R.id.view_poi_nearby_search);
+                    mSphinx.showView(TKFragmentManager.ID_view_poi_nearby_search);
                 }
                 
             };

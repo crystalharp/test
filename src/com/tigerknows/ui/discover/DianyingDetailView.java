@@ -27,6 +27,7 @@ import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
+import com.tigerknows.TKFragmentManager;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BaseData;
@@ -394,7 +395,7 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
             case R.id.nearby_fendian_view:        
                 mActionLog.addAction(mActionTag +  ActionLog.DiscoverCommonBranch);       
                 mSphinx.getDiscoverChildListFragment().setup(mData, mNearbyFendianTxv.getText().toString(), ActionLog.YingxunList);
-                mSphinx.showView(R.id.view_discover_child_list);
+                mSphinx.showView(TKFragmentManager.ID_view_discover_child_list);
                 break;
 
         }
@@ -411,7 +412,7 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
         List<BaseQuery> baseQueryList = tkAsyncTask.getBaseQueryList();
         for (BaseQuery baseQuery : baseQueryList) {
 
-            if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), mParentFragment.getId(), mParentFragment.getId(), mParentFragment.getId(), mParentFragment.mCancelLoginListener, super.mParentFragment.mViewPager.getCurrentItem()==mPosition)) {
+            if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(TKFragmentManager.ID_view_user_home), mParentFragment.getId(), mParentFragment.getId(), mParentFragment.getId(), mParentFragment.mCancelLoginListener, super.mParentFragment.mViewPager.getCurrentItem()==mPosition)) {
                 mParentFragment.isReLogin = true;
                 return true;
             } else {

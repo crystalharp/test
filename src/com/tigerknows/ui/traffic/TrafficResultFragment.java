@@ -26,6 +26,7 @@ import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
+import com.tigerknows.TKFragmentManager;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.TrafficOverlayHelper;
@@ -224,7 +225,7 @@ public class TrafficResultFragment extends BaseFragment {
                 focusedIndex = realPos;
                 mSphinx.getTrafficDetailFragment().addResult(mTrafficQuery, mPlanList.get(0).getType(), mPlanList);
                 mSphinx.getTrafficDetailFragment().refreshResult(mPlanList.get(0).getType(), realPos);
-                mSphinx.showView(R.id.view_traffic_result_detail);
+                mSphinx.showView(TKFragmentManager.ID_view_traffic_result_detail);
             }
 
         });
@@ -268,7 +269,7 @@ public class TrafficResultFragment extends BaseFragment {
             if (type == Plan.Step.TYPE_DRIVE) {
                 ResultMapFragment resultMapFragment = mSphinx.getResultMapFragment();
                 resultMapFragment.setData(null, ActionLog.TrafficDriveListMap);
-                mSphinx.showView(R.id.view_result_map);
+                mSphinx.showView(TKFragmentManager.ID_view_result_map);
 
                 TrafficOverlayHelper.drawOverlay(mSphinx, list.get(0));
                 TrafficOverlayHelper.panToViewWholeOverlay(list.get(0), mSphinx);
@@ -278,7 +279,7 @@ public class TrafficResultFragment extends BaseFragment {
             } else if (type == Plan.Step.TYPE_WALK) {
                 ResultMapFragment resultMapFragment = mSphinx.getResultMapFragment();
                 resultMapFragment.setData(null, ActionLog.TrafficWalkListMap);
-                mSphinx.showView(R.id.view_result_map);
+                mSphinx.showView(TKFragmentManager.ID_view_result_map);
 
                 TrafficOverlayHelper.drawOverlay(mSphinx, list.get(0));
                 TrafficOverlayHelper.panToViewWholeOverlay(list.get(0), mSphinx);
@@ -301,8 +302,8 @@ public class TrafficResultFragment extends BaseFragment {
         mPlanList.clear();
         mPlanList.addAll(mTrafficModel.getPlanList());
         mResultAdapter.notifyDataSetChanged();
-        if (mSphinx.uiStackPeek() == R.id.view_result_map) {
-            mSphinx.uiStackClearTop(R.id.view_traffic_home);
+        if (mSphinx.uiStackPeek() == TKFragmentManager.ID_view_result_map) {
+            mSphinx.uiStackClearTop(TKFragmentManager.ID_view_traffic_home);
         }
     }
     

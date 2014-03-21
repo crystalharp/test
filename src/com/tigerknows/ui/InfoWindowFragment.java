@@ -11,6 +11,7 @@ import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.Sphinx.TouchMode;
+import com.tigerknows.TKFragmentManager;
 import com.tigerknows.android.location.Position;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
@@ -165,11 +166,11 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             }
             mActionLog.addAction(mActionTag + ActionLog.InfoWindowPOI);
             mSphinx.getPOINearbyFragment().setData(mSphinx.buildDataQuery(poi));
-            mSphinx.showView(R.id.view_poi_nearby_search);
+            mSphinx.showView(TKFragmentManager.ID_view_poi_nearby_search);
         } else if (id == R.id.traffic_btn) {
             mActionLog.addAction(mActionTag + ActionLog.InfoWindowTraffic);
             if (mType == TYPE_MY_LOCATION) {
-                mSphinx.showView(R.id.view_traffic_home);
+                mSphinx.showView(TKFragmentManager.ID_view_traffic_home);
             } else {
                 Object object = overlayItem.getAssociatedObject();
                 POI poi = null;
@@ -198,10 +199,10 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             TrafficDetailFragment f = mSphinx.getTrafficDetailFragment();
             if (plan.getType() == Step.TYPE_DRIVE ) {
                 f.refreshDrive(plan);
-                mSphinx.showView(R.id.view_traffic_result_detail);
+                mSphinx.showView(TKFragmentManager.ID_view_traffic_result_detail);
             } else if (plan.getType() == Step.TYPE_WALK) {
                 f.refreshResult(plan.getType());
-                mSphinx.showView(R.id.view_traffic_result_detail);
+                mSphinx.showView(TKFragmentManager.ID_view_traffic_result_detail);
             } else if (plan.getType() == Step.TYPE_TRANSFER) {
                 mSphinx.getFragment(this.getOwerFragmentId()).dismiss();
             }
@@ -945,18 +946,18 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
                 || mType == TYPE_MY_LOCATION) {
             
             POI poi = (POI) overlayItem.getAssociatedObject();
-            if (mSphinx.uiStackContains(R.id.view_poi_detail)) {
-                mSphinx.dismissView(R.id.view_result_map);
+            if (mSphinx.uiStackContains(TKFragmentManager.ID_view_poi_detail)) {
+                mSphinx.dismissView(TKFragmentManager.ID_view_result_map);
             } else {
-                mSphinx.showView(R.id.view_poi_detail);
+                mSphinx.showView(TKFragmentManager.ID_view_poi_detail);
             }
             mSphinx.getPOIDetailFragment().setData(poi);
         } else if(mType == TYPE_MAP_POI) {
             POI poi = (POI) overlayItem.getAssociatedObject();
-            if (mSphinx.uiStackContains(R.id.view_poi_detail)) {
-                mSphinx.dismissView(R.id.view_result_map);
+            if (mSphinx.uiStackContains(TKFragmentManager.ID_view_poi_detail)) {
+                mSphinx.dismissView(TKFragmentManager.ID_view_result_map);
             } else {
-                mSphinx.showView(R.id.view_poi_detail);
+                mSphinx.showView(TKFragmentManager.ID_view_poi_detail);
             }
             mSphinx.getPOIDetailFragment().setData(poi);
         } else if (overlayItem != null) {
@@ -971,65 +972,65 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
                             || sourceType == POI.SOURCE_TYPE_YANCHU
                             || sourceType == POI.SOURCE_TYPE_DIANYING
                             || sourceType == POI.SOURCE_TYPE_TUANGOU) {
-                        mSphinx.dismissView(R.id.view_result_map);
+                        mSphinx.dismissView(TKFragmentManager.ID_view_result_map);
                     } else {
-                        if (mSphinx.uiStackContains(R.id.view_poi_detail)) {
-                            mSphinx.dismissView(R.id.view_result_map);
+                        if (mSphinx.uiStackContains(TKFragmentManager.ID_view_poi_detail)) {
+                            mSphinx.dismissView(TKFragmentManager.ID_view_result_map);
                         } else {
-                            mSphinx.showView(R.id.view_poi_detail);
+                            mSphinx.showView(TKFragmentManager.ID_view_poi_detail);
                         }
                         mSphinx.getPOIDetailFragment().setData(target);
                     }
                 } else if (object instanceof Tuangou) {
                     Tuangou target = (Tuangou) object;
-                    if (mSphinx.uiStackContains(R.id.view_discover_tuangou_detail)) {
-                        mSphinx.dismissView(R.id.view_result_map);
+                    if (mSphinx.uiStackContains(TKFragmentManager.ID_view_discover_tuangou_detail)) {
+                        mSphinx.dismissView(TKFragmentManager.ID_view_result_map);
                     } else {
-                        mSphinx.showView(R.id.view_discover_tuangou_detail);
+                        mSphinx.showView(TKFragmentManager.ID_view_discover_tuangou_detail);
                     }
                     mSphinx.getTuangouDetailFragment().setData(target);
                 } else if (object instanceof Dianying) {
                     Dianying target = (Dianying) object;
-                    if (mSphinx.uiStackContains(R.id.view_discover_dianying_detail)) {
-                        mSphinx.dismissView(R.id.view_result_map);
+                    if (mSphinx.uiStackContains(TKFragmentManager.ID_view_discover_dianying_detail)) {
+                        mSphinx.dismissView(TKFragmentManager.ID_view_result_map);
                     } else {
-                        mSphinx.showView(R.id.view_discover_dianying_detail);
+                        mSphinx.showView(TKFragmentManager.ID_view_discover_dianying_detail);
                     }
                     mSphinx.getDianyingDetailFragment().setData(target);
                 } else if (object instanceof Zhanlan) {
                     Zhanlan target = (Zhanlan) object;
-                    if (mSphinx.uiStackContains(R.id.view_discover_zhanlan_detail)) {
-                        mSphinx.dismissView(R.id.view_result_map);
+                    if (mSphinx.uiStackContains(TKFragmentManager.ID_view_discover_zhanlan_detail)) {
+                        mSphinx.dismissView(TKFragmentManager.ID_view_result_map);
                     } else {
-                        mSphinx.showView(R.id.view_discover_zhanlan_detail);
+                        mSphinx.showView(TKFragmentManager.ID_view_discover_zhanlan_detail);
                     }
                     mSphinx.getZhanlanDetailFragment().setData(target);
                 } else if (object instanceof Yanchu) {
                     Yanchu target = (Yanchu) object;
-                    if (mSphinx.uiStackContains(R.id.view_discover_yanchu_detail)) {
-                        mSphinx.dismissView(R.id.view_result_map);
+                    if (mSphinx.uiStackContains(TKFragmentManager.ID_view_discover_yanchu_detail)) {
+                        mSphinx.dismissView(TKFragmentManager.ID_view_result_map);
                     } else {
-                        mSphinx.showView(R.id.view_discover_yanchu_detail);
+                        mSphinx.showView(TKFragmentManager.ID_view_discover_yanchu_detail);
                     }
                     mSphinx.getYanchuDetailFragment().setData(target);
                 }
             } else if (overlayName.equals(ItemizedOverlay.TRAFFIC_PLAN_LIST_OVERLAY)) {
-                if (mSphinx.uiStackContains(R.id.view_traffic_result_detail)) {
-                    mSphinx.dismissView(R.id.view_result_map);
+                if (mSphinx.uiStackContains(TKFragmentManager.ID_view_traffic_result_detail)) {
+                    mSphinx.dismissView(TKFragmentManager.ID_view_result_map);
                 } else {
-                    mSphinx.showView(R.id.view_traffic_result_detail);
+                    mSphinx.showView(TKFragmentManager.ID_view_traffic_result_detail);
                 }
             } else if (overlayName.equals(ItemizedOverlay.TRAFFIC_OVERLAY)) {
-                if (mSphinx.uiStackContains(R.id.view_traffic_result_detail)) {
-                    mSphinx.dismissView(R.id.view_result_map);
+                if (mSphinx.uiStackContains(TKFragmentManager.ID_view_traffic_result_detail)) {
+                    mSphinx.dismissView(TKFragmentManager.ID_view_result_map);
                 } else {
-                    mSphinx.showView(R.id.view_traffic_result_detail);
+                    mSphinx.showView(TKFragmentManager.ID_view_traffic_result_detail);
                 }
             } else if (overlayName.equals(ItemizedOverlay.BUSLINE_OVERLAY)) {
-                if (mSphinx.uiStackContains(R.id.view_traffic_busline_detail)) {
-                    mSphinx.dismissView(R.id.view_result_map);
+                if (mSphinx.uiStackContains(TKFragmentManager.ID_view_traffic_busline_detail)) {
+                    mSphinx.dismissView(TKFragmentManager.ID_view_result_map);
                 } else {
-                    mSphinx.showView(R.id.view_traffic_busline_detail);
+                    mSphinx.showView(TKFragmentManager.ID_view_traffic_busline_detail);
                 }
             }
         }
@@ -1048,7 +1049,7 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
     public void onPostExecute(TKAsyncTask tkAsyncTask) {
         super.onPostExecute(tkAsyncTask);
         BaseQuery baseQuery = tkAsyncTask.getBaseQuery();
-        if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), getId(), getId(), getId(), mCancelLoginListener)) {
+        if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(TKFragmentManager.ID_view_user_home), getId(), getId(), getId(), mCancelLoginListener)) {
             isReLogin = true;
             return;
         }

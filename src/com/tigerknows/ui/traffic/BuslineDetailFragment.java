@@ -31,6 +31,7 @@ import com.decarta.android.map.OverlayItem;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.TKFragmentManager;
 
 import android.widget.Toast;
 
@@ -362,7 +363,7 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
             return;
         }
         mSphinx.getResultMapFragment().setData(getString(R.string.title_busline_result_map), ActionLog.TrafficBuslineMap);
-        mSphinx.showView(R.id.view_result_map);
+        mSphinx.showView(TKFragmentManager.ID_view_result_map);
 
         BuslineOverlayHelper.drawOverlay(mSphinx, mSphinx.getMapView(), line);
     }

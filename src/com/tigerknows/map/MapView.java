@@ -49,6 +49,7 @@ import com.decarta.android.util.XYFloat;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
+import com.tigerknows.TKFragmentManager;
 import com.tigerknows.android.location.Position;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.ui.InfoWindowFragment;
@@ -178,7 +179,7 @@ public class MapView extends RelativeLayout implements
 		}
 
 		tilesView = new TilesView(context, this);
-		tilesView.setId(R.id.view_invalid);
+		tilesView.setId(TKFragmentManager.ID_view_invalid);
 		addView(tilesView, android.view.ViewGroup.LayoutParams.FILL_PARENT,
 				android.view.ViewGroup.LayoutParams.FILL_PARENT);
         tilesView.setCompass(compass);

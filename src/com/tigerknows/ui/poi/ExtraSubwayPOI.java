@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.tigerknows.R;
+import com.tigerknows.TKFragmentManager;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.MapEngine;
@@ -136,7 +137,7 @@ public class ExtraSubwayPOI extends DynamicPOIView {
                             String keyword = busstopTxv.getText().toString();
                             HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, keyword), HistoryWordTable.TYPE_BUSLINE);
                             BuslineQuery buslineQuery = new BuslineQuery(mPOIDetailFragment.mSphinx);
-                            buslineQuery.setup(keyword, 0, false, R.id.view_traffic_home, getString(R.string.doing_and_wait));
+                            buslineQuery.setup(keyword, 0, false, TKFragmentManager.ID_view_traffic_home, getString(R.string.doing_and_wait));
                             buslineQuery.setCityId(cityId);
                             
                             queryStart(buslineQuery);

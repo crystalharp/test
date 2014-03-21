@@ -26,6 +26,7 @@ import android.widget.TextView;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.TKFragmentManager;
 
 import android.widget.Toast;
 
@@ -610,7 +611,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
 
             ResultMapFragment resultMapFragment = mSphinx.getResultMapFragment();
             resultMapFragment.setData(title, actionTag);
-            mSphinx.showView(R.id.view_result_map);
+            mSphinx.showView(TKFragmentManager.ID_view_result_map);
             
             TrafficOverlayHelper.drawOverlay(mSphinx, mPlan);
             

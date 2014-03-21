@@ -39,6 +39,7 @@ import com.decarta.android.exception.APIException;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
+import com.tigerknows.TKFragmentManager;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.CityInfo;
 import com.tigerknows.model.Bootstrap;
@@ -154,7 +155,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 
 		@Override
 		public void run() {
-			if(mSphinx.uiStackPeek() == R.id.view_more_home && mPagecount > 1){
+			if(mSphinx.uiStackPeek() == TKFragmentManager.ID_view_more_home && mPagecount > 1){
 				mViewPager.setCurrentItem(mViewPager.getCurrentItem()+1);
 			}
 		}
@@ -338,11 +339,11 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     
     @Override
     public void correctUIStack(){
-    	if(R.id.view_more_home == mSphinx.uiStackPeek()){
-    		if(!mSphinx.uiStackContains(R.id.view_home)){
-    			mSphinx.uiStackInsert(R.id.view_home, 0);
+    	if(TKFragmentManager.ID_view_more_home == mSphinx.uiStackPeek()){
+    		if(!mSphinx.uiStackContains(TKFragmentManager.ID_view_home)){
+    			mSphinx.uiStackInsert(TKFragmentManager.ID_view_home, 0);
     		}
-    		mSphinx.uiStackClearBetween(R.id.view_home, R.id.view_more_home);
+    		mSphinx.uiStackClearBetween(TKFragmentManager.ID_view_home, TKFragmentManager.ID_view_more_home);
 
     	}
     }
@@ -354,12 +355,12 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
             case R.id.user_btn:
             	if (TextUtils.isEmpty(Globals.g_Session_Id) == false) {
                     mActionLog.addAction(mActionTag +  ActionLog.MoreUserHome);
-            		mSphinx.showView(R.id.view_user_home);
+            		mSphinx.showView(TKFragmentManager.ID_view_user_home);
             	} else {
                     mActionLog.addAction(mActionTag +  ActionLog.MoreLoginRegist);
             		Intent intent = new Intent(mSphinx, UserLoginRegistActivity.class);
                     intent.putExtra(UserBaseActivity.SOURCE_VIEW_ID_LOGIN, getId());
-                    intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_SUCCESS, R.id.view_user_home);
+                    intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_SUCCESS, TKFragmentManager.ID_view_user_home);
                     intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_FAILED, getId());
             		mSphinx.startActivityForResult(intent, 0);
             	}
@@ -367,7 +368,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
             case R.id.my_order_btn:
             	mActionLog.addAction(mActionTag + ActionLog.MoreDingdan);
             	mSphinx.getMyOrderFragment().setData(false);
-            	mSphinx.showView(R.id.view_more_my_order);
+            	mSphinx.showView(TKFragmentManager.ID_view_more_my_order);
             	break;
             case R.id.change_city_btn:
                 mActionLog.addAction(mActionTag +  ActionLog.MoreChangeCity);
@@ -388,7 +389,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
                 break;
             case R.id.favorite_btn:
                 mActionLog.addAction(mActionTag +  ActionLog.MoreFavorite);
-                mSphinx.showView(R.id.view_more_favorite);
+                mSphinx.showView(TKFragmentManager.ID_view_more_favorite);
                 break;
             case R.id.common_place_btn:
                 addActionLog(ActionLog.MoreCommonPlace);
@@ -396,15 +397,15 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
                 break;
             case R.id.manage_alarm_btn:
                 addActionLog(ActionLog.MoreAlarm);
-                mSphinx.showView(R.id.view_alarm_list);
+                mSphinx.showView(TKFragmentManager.ID_view_alarm_list);
                 break;
             case R.id.history_browse_btn:
                 mActionLog.addAction(mActionTag +  ActionLog.MoreHistory);
-                mSphinx.showView(R.id.view_more_history);
+                mSphinx.showView(TKFragmentManager.ID_view_more_history);
                 break;
             case R.id.go_comment_btn:
             	mActionLog.addAction(mActionTag +  ActionLog.MoreGoComment);
-                mSphinx.showView(R.id.view_more_go_comment);
+                mSphinx.showView(TKFragmentManager.ID_view_more_go_comment);
                 break;
             case R.id.right_btn:
                 mActionLog.addAction(mActionTag +  ActionLog.MoreSetting);

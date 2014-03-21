@@ -30,6 +30,7 @@ import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.TKFragmentManager;
 
 import android.widget.Toast;
 
@@ -396,7 +397,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                 
                 Toast.makeText(mSphinx, R.string.move_map_select_point, Toast.LENGTH_LONG).show();
                 mSphinx.getResultMapFragment().setData(getString(R.string.map_select_point), ActionLog.TrafficSelectPoint);
-                mSphinx.showView(R.id.view_result_map);
+                mSphinx.showView(TKFragmentManager.ID_view_result_map);
                 
                 ItemizedOverlayHelper.drawClickSelectPointOverlay(mSphinx, title);
                 
@@ -456,7 +457,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
             	mActionLog.addAction(mActionTag + ActionLog.InputQueryHotelSearch);
         		mSphinx.getHotelHomeFragment().resetDate();
         		mSphinx.getHotelHomeFragment().setCityInfo(Globals.getCurrentCityInfo(mContext));
-        		mSphinx.showView(R.id.view_hotel_home);
+        		mSphinx.showView(TKFragmentManager.ID_view_hotel_home);
         		break;
             case R.id.btn_bus_station:
             	mActionLog.addAction(mActionTag + ActionLog.InputQueryStationSearch);
@@ -676,7 +677,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
             String dataType = baseQuery.getParameter(BaseQuery.SERVER_PARAMETER_DATA_TYPE);
             if (BaseQuery.DATA_TYPE_GEOCODER.equals(dataType)) {
                 
-                if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), getId(), getId(), getId(), mCancelLoginListener)) {
+                if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(TKFragmentManager.ID_view_user_home), getId(), getId(), getId(), mCancelLoginListener)) {
                     isReLogin = true;
                 } else if (BaseActivity.hasAbnormalResponseCode(baseQuery, mSphinx, BaseActivity.SHOW_DIALOG, this, false)) {
                     return;

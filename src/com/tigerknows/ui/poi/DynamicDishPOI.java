@@ -3,6 +3,7 @@ package com.tigerknows.ui.poi;
 import java.util.List;
 
 import com.tigerknows.R;
+import com.tigerknows.TKFragmentManager;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BaseQuery;
@@ -121,7 +122,7 @@ public class DynamicDishPOI extends DynamicPOIViewTemplate implements View.OnCli
             return;
         }
         int mPOIFragmentId = mPOIDetailFragment.getId();
-        if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), mPOIFragmentId, mPOIFragmentId, mPOIFragmentId, mPOIDetailFragment.mCancelLoginListener, mPOIDetailFragment.mShowReLoginTip)) {
+        if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(TKFragmentManager.ID_view_user_home), mPOIFragmentId, mPOIFragmentId, mPOIFragmentId, mPOIDetailFragment.mCancelLoginListener, mPOIDetailFragment.mShowReLoginTip)) {
             mPOIDetailFragment.mShowReLoginTip  = false;
             mPOIDetailFragment.isReLogin = true;
             return;

@@ -6,6 +6,7 @@ package com.tigerknows.ui;
 
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.TKFragmentManager;
 import com.tigerknows.common.ActionLog;
 
 import android.os.Bundle;
@@ -62,15 +63,15 @@ public class HomeBottomFragment extends BaseFragment implements View.OnClickList
         if (id == R.id.poi_view) {
             mActionLog.addAction(ActionLog.MenuPOI);
             mSphinx.getPOINearbyFragment().setData(mSphinx.buildDataQuery());
-            mSphinx.showView(R.id.view_poi_nearby_search);
+            mSphinx.showView(TKFragmentManager.ID_view_poi_nearby_search);
         } else if (id == R.id.traffic_view) {
             mSphinx.getTrafficQueryFragment().setRadioGroupByPrefs();
-            mSphinx.showView(R.id.view_traffic_home);
+            mSphinx.showView(TKFragmentManager.ID_view_traffic_home);
             mActionLog.addAction(ActionLog.MenuTraffic);
         } else if (id == R.id.more_view) {
             mActionLog.addAction(ActionLog.MenuMore);
             mMoreImv.setVisibility(View.GONE);
-            mSphinx.showView(R.id.view_more_home);
+            mSphinx.showView(TKFragmentManager.ID_view_more_home);
         }
         
     }

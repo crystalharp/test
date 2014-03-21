@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.TKFragmentManager;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.POI;
@@ -116,7 +117,7 @@ public class TrafficCommonPlaceFragment extends BaseFragment{
                         InputSearchFragment.MODE_TRAFFIC,
                         mCallback,
                         InputSearchFragment.REQUEST_COMMON_PLACE);
-                mSphinx.showView(R.id.view_poi_input_search);
+                mSphinx.showView(TKFragmentManager.ID_view_poi_input_search);
             }
         });
     }

@@ -6,6 +6,7 @@ package com.tigerknows.ui.discover;
 
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.TKFragmentManager;
 import com.tigerknows.android.location.Position;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
@@ -296,23 +297,23 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                             Tuangou tagret = (Tuangou) object;
 //                            tagret.getFendian().setOrderNumber(position+1);
                             mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position, tagret.getUid());
-                            mSphinx.showView(R.id.view_discover_tuangou_detail);
+                            mSphinx.showView(TKFragmentManager.ID_view_discover_tuangou_detail);
                             mSphinx.getTuangouDetailFragment().setData(mTuangouList, position, DiscoverListFragment.this);
                         } else if (object instanceof Yanchu){
                             Yanchu tagret = (Yanchu) object;
                             mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position, tagret.getUid());
-                            mSphinx.showView(R.id.view_discover_yanchu_detail);
+                            mSphinx.showView(TKFragmentManager.ID_view_discover_yanchu_detail);
                         	mSphinx.getYanchuDetailFragment().setData(mYanchuList, position, DiscoverListFragment.this);
                         } else if (object instanceof Dianying){
                             Dianying tagret = (Dianying) object;
 //                            tagret.getYingxun().setOrderNumber(position+1);
                             mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position, tagret.getUid());
-                        	mSphinx.showView(R.id.view_discover_dianying_detail);
+                        	mSphinx.showView(TKFragmentManager.ID_view_discover_dianying_detail);
                         	mSphinx.getDianyingDetailFragment().setData(mDianyingList, position, DiscoverListFragment.this);
                         } else if (object instanceof Zhanlan){
                         	Zhanlan tagret = (Zhanlan) object;
                             mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position, tagret.getUid());
-                            mSphinx.showView(R.id.view_discover_zhanlan_detail);
+                            mSphinx.showView(TKFragmentManager.ID_view_discover_zhanlan_detail);
                         	mSphinx.getZhanlanDetailFragment().setData(mZhanlanList, position, DiscoverListFragment.this);
                         }
                     }
@@ -379,7 +380,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     public void onResume() {
         super.onResume();
         
-        mSphinx.uiStackRemove(R.id.view_poi_input_search);
+        mSphinx.uiStackRemove(TKFragmentManager.ID_view_poi_input_search);
         
         mIPagerListCallBack = null;
         
@@ -574,7 +575,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             actionTag = ActionLog.ResultMapZhanlanList;
         }
         mSphinx.getResultMapFragment().setData(getString(name), actionTag);
-        mSphinx.showView(R.id.view_result_map);   
+        mSphinx.showView(TKFragmentManager.ID_view_result_map);   
         int firstIndex = page[2];
         ItemizedOverlayHelper.drawPOIOverlay(mSphinx, dataList, firstIndex, mAPOI);
     }
@@ -633,7 +634,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             case R.id.dingdan_btn:
                 mActionLog.addAction(mActionTag +  ActionLog.TuangouListDingdan);
                 mSphinx.getMyOrderFragment().setData(true);
-                mSphinx.showView(R.id.view_more_my_order);
+                mSphinx.showView(TKFragmentManager.ID_view_more_my_order);
                 break;
                 
             default:
@@ -889,7 +890,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             return;
         }
 
-        if (BaseActivity.checkReLogin(dataQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), getId(), getId(), getId(), mCancelLoginListener)) {
+        if (BaseActivity.checkReLogin(dataQuery, mSphinx, mSphinx.uiStackContains(TKFragmentManager.ID_view_user_home), getId(), getId(), getId(), mCancelLoginListener)) {
             isReLogin = true;
             return;
         } else {

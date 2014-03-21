@@ -23,6 +23,7 @@ import com.tigerknows.LauncherActivity;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
+import com.tigerknows.TKFragmentManager;
 import com.tigerknows.android.location.Position;
 import com.tigerknows.android.location.TKLocationManager;
 import com.tigerknows.android.location.TKLocationListener;
@@ -718,8 +719,8 @@ public class TKActivity extends Activity implements TKAsyncTask.EventListener {
                                     Intent intent = new Intent(activity, UserLoginRegistActivity.class);
                                     intent.putExtra(BaseActivity.SOURCE_USER_HOME, true);
                                     intent.putExtra(UserBaseActivity.SOURCE_VIEW_ID_LOGIN, sourceViewIdLogin);
-                                    intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_SUCCESS, R.id.view_user_home);
-                                    intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_FAILED, R.id.view_more_home);
+                                    intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_SUCCESS, TKFragmentManager.ID_view_user_home);
+                                    intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_FAILED, TKFragmentManager.ID_view_more_home);
                                     activity.startActivityForResult(intent, R.id.activity_user_login_regist);
                                 }
                             });

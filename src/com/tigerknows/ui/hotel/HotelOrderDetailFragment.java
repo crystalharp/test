@@ -28,6 +28,7 @@ import android.widget.Toast;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.TKFragmentManager;
 import com.tigerknows.android.app.TKActivity;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
@@ -302,7 +303,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
 			HotelOrderTable table = new HotelOrderTable(mContext);
 			table.delete(mOrder.getId());
 			table.close();
-			if(getId() == R.id.view_hotel_order_detail_2 && mSphinx.uiStackContains(R.id.view_hotel_order_detail)){
+			if(getId() == TKFragmentManager.ID_view_hotel_order_detail_2 && mSphinx.uiStackContains(TKFragmentManager.ID_view_hotel_order_detail)){
 				Message msg = new Message();
 				msg.what = Sphinx.HOTEL_ORDER_DELETE_SYNC;
 				msg.obj = mOrder.getId();
@@ -357,7 +358,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
 				}
 			});
         }
-        if(getId() == R.id.view_hotel_order_detail_2){
+        if(getId() == TKFragmentManager.ID_view_hotel_order_detail_2){
             icOrderAgainDisabled.setBounds(0, 0, icOrderAgainDisabled.getIntrinsicWidth(), icOrderAgainDisabled.getIntrinsicHeight());
         	mBtnOrderAgain.setCompoundDrawables(null, icOrderAgainDisabled, null, null);
         	mBtnOrderAgain.setEnabled(false);
@@ -494,7 +495,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
 
 	@Override
 	public void onPause() {
-		if(getId() == R.id.view_hotel_order_detail_2){
+		if(getId() == TKFragmentManager.ID_view_hotel_order_detail_2){
 			Message msg = new Message();
 			msg.what = Sphinx.HOTEL_ORDER_OLD_SYNC;
 			msg.arg1 = mOrder.getState();
@@ -520,7 +521,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
         LogWrapper.i(TAG, "Response: " + tkAsyncTask.getBaseQuery().getResponse());
         for (BaseQuery baseQuery : baseQueryList) {
         	// TODO: if query is state query, don't show dialogs?
-	        if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), getId(), getId(), getId(), mCancelLoginListener)) {
+	        if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(TKFragmentManager.ID_view_user_home), getId(), getId(), getId(), mCancelLoginListener)) {
 	            isReLogin = true;
 	            return;
 	        } else {
@@ -657,7 +658,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
             	POIQueryResponse response = (POIQueryResponse) baseQuery.getResponse();
             	POI hotelPoi = response.getPOI();
                 mSphinx.getPOIDetailFragment().setData(hotelPoi, mPosition);
-                mSphinx.showView(R.id.view_poi_detail);
+                mSphinx.showView(TKFragmentManager.ID_view_poi_detail);
 
             }//end API type decision
             

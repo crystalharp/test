@@ -25,6 +25,7 @@ import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.TKFragmentManager;
 import com.tigerknows.android.location.Position;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.Alarm;
@@ -257,7 +258,7 @@ public class AlarmListFragment extends BaseFragment implements View.OnClickListe
                 showRangeDialog();
             } else if (id == R.id.ringtone_btn) {
                 addActionLog(ActionLog.AlarmListRingtone, mAlarm.getRingtoneName());
-                Alarm.pickRingtone(mSphinx, mAlarm.getRingtone(), R.id.view_alarm_list);
+                Alarm.pickRingtone(mSphinx, mAlarm.getRingtone(), TKFragmentManager.ID_view_alarm_list);
             } else if (id == R.id.delete_btn) {
                 addActionLog(ActionLog.AlarmListDelete);
                 Utility.showNormalDialog(mSphinx, 
@@ -286,7 +287,7 @@ public class AlarmListFragment extends BaseFragment implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        mSphinx.showView(R.id.view_alarm_add);
+        mSphinx.showView(TKFragmentManager.ID_view_alarm_add);
     }
 
 

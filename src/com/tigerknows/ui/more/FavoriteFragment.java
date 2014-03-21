@@ -8,6 +8,8 @@ import com.decarta.android.map.ItemizedOverlay;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.TKFragmentManager;
+
 import android.widget.Toast;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BaseData;
@@ -343,7 +345,7 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
                     POI poi = (POI) adapterView.getAdapter().getItem(position);
                     if (poi != null) {
                         mActionLog.addAction(mActionTag + ActionLog.ListViewItem + ActionLog.FavoritePOI, position);
-                        mSphinx.showView(R.id.view_poi_detail);
+                        mSphinx.showView(TKFragmentManager.ID_view_poi_detail);
                         mSphinx.getPOIDetailFragment().setData(poi, position);
                     }
                 }
@@ -520,14 +522,14 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
         switch (type) {
             case Tigerknows.Favorite.FAVORITE_BUSLINE:
             	mSphinx.getBuslineDetailFragment().setData(traffic.getBuslineQuery().getBuslineModel().getLineList().get(0));
-                mSphinx.showView(R.id.view_traffic_busline_detail);
+                mSphinx.showView(TKFragmentManager.ID_view_traffic_busline_detail);
                 break;
                 
             case Tigerknows.Favorite.FAVORITE_TRANSFER:
                 tf.resetResult();
                 tf.addResult(traffic.getTrafficQuery(), Step.TYPE_TRANSFER, traffic.getTrafficQuery().getTrafficModel().getPlanList());
                 tf.refreshResult(Step.TYPE_TRANSFER);
-                mSphinx.showView(R.id.view_traffic_result_detail);
+                mSphinx.showView(TKFragmentManager.ID_view_traffic_result_detail);
                 break;
             case Tigerknows.Favorite.FAVORITE_DRIVE:
                 tf.resetResult();

@@ -14,6 +14,7 @@ import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.TKFragmentManager;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.AccountManage;
@@ -84,7 +85,7 @@ public class UserHomeFragment extends UserBaseFragment {
                 Intent intent = new Intent(mSphinx, UserUpdatePhoneActivity.class);
                 intent.putExtra(UserBaseActivity.SOURCE_VIEW_ID_LOGIN, getId());
                 intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_SUCCESS, getId());
-                intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_FAILED, R.id.view_more_home);
+                intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_FAILED, TKFragmentManager.ID_view_more_home);
 				mSphinx.showView(R.id.activity_user_update_phone, intent);
 			}
 		});
@@ -109,7 +110,7 @@ public class UserHomeFragment extends UserBaseFragment {
 				Intent intent = new Intent(mSphinx, UserUpdatePasswordActivity.class);
 				intent.putExtra(UserBaseActivity.SOURCE_VIEW_ID_LOGIN, getId());
                 intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_SUCCESS, getId());
-                intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_FAILED, R.id.view_more_home);
+                intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_FAILED, TKFragmentManager.ID_view_more_home);
                 mSphinx.showView(R.id.activity_user_update_password, intent);
 			}
 		});
@@ -144,7 +145,7 @@ public class UserHomeFragment extends UserBaseFragment {
             @Override
             public void onClick(View v) {
 				mActionLog.addAction(mActionTag +  ActionLog.UserHomeMyComment);
-                mSphinx.showView(R.id.view_user_my_comment_list);
+                mSphinx.showView(TKFragmentManager.ID_view_user_my_comment_list);
             }
         });
         
@@ -198,7 +199,7 @@ public class UserHomeFragment extends UserBaseFragment {
 	}
 	
 	private void onBack() {
-		int preferViewId = R.id.view_more_home;
+		int preferViewId = TKFragmentManager.ID_view_more_home;
 		if (mSphinx.uiStackContains(preferViewId)) {
 			mSphinx.uiStackClearTop(preferViewId);
         } 

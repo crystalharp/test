@@ -22,6 +22,7 @@ import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.TKFragmentManager;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BaseQuery;
@@ -87,7 +88,7 @@ public class MyOrderFragment extends BaseFragment{
 				mActionLog.addAction(mActionTag + ActionLog.MyAllOrderHotel);
             	mSphinx.getHotelOrderListFragment().clearOrders();
             	mSphinx.getHotelOrderListFragment().syncOrder();
-                mSphinx.showView(R.id.view_hotel_order_list);
+                mSphinx.showView(TKFragmentManager.ID_view_hotel_order_list);
 			}
 		});
 	}
@@ -266,7 +267,7 @@ public class MyOrderFragment extends BaseFragment{
         if (baseQuery.isStop()){
         	return;
         }
-        if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), getId(), getId(), getId(), mCancelLoginListener)){
+        if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(TKFragmentManager.ID_view_user_home), getId(), getId(), getId(), mCancelLoginListener)){
         	isReLogin = true;
         	return;
         } else if(BaseActivity.hasAbnormalResponseCode(baseQuery, mSphinx, BaseActivity.SHOW_NOTHING, MyOrderFragment.this, false)){

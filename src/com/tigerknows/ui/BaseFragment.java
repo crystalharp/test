@@ -11,6 +11,7 @@ import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
 import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
+import com.tigerknows.TKFragmentManager;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.android.location.Position;
@@ -82,6 +83,8 @@ public class BaseFragment extends LinearLayout {
     public ActionLog mActionLog;
     
     public String mActionTag;
+    
+    public TKFragmentManager mFragmentManager;
     
     protected LayoutInflater mLayoutInflater;
     
@@ -161,7 +164,7 @@ public class BaseFragment extends LinearLayout {
     
     public BaseFragment(Sphinx sphinx) {
         super(sphinx);
-        setId(R.id.view_invalid);
+        setId(TKFragmentManager.ID_view_invalid);
         mSphinx = sphinx;
     }
     
@@ -170,9 +173,10 @@ public class BaseFragment extends LinearLayout {
         mContext = mSphinx.getBaseContext();
         mActionLog = ActionLog.getInstance(mContext);
         mLayoutInflater = mSphinx.getLayoutInflater();
+        mFragmentManager = mSphinx.mFragmentManager;
         
         int id = getId();
-        if (id != R.id.view_invalid) {
+        if (id != TKFragmentManager.ID_view_invalid) {
             mTitleFragment = mSphinx.getTitleFragment();            
             mTitleBtn = mTitleFragment.mTitleBtn;
             mKeywordEdt = mTitleFragment.mKeywordEdt;
@@ -301,7 +305,7 @@ public class BaseFragment extends LinearLayout {
     public void onPause() {
         LogWrapper.d(TAG, "onPause()"+mActionTag);
         int id = getId();
-        if (id != R.id.view_invalid && id != R.id.view_infowindow) {
+        if (id != TKFragmentManager.ID_view_invalid && id != TKFragmentManager.ID_view_infowindow) {
             dismissPopupWindow();
             mSphinx.hideSoftInput();
             //TODO:产品要求界面切换时不改变地图状态,注掉这句话试试.
@@ -319,12 +323,12 @@ public class BaseFragment extends LinearLayout {
     public void onResume() {
         LogWrapper.d(TAG, "onResume()"+mActionTag);
         int id = getId();
-        if (id != R.id.view_invalid && id != R.id.view_infowindow) { 
+        if (id != TKFragmentManager.ID_view_invalid && id != TKFragmentManager.ID_view_infowindow) { 
             if (!TextUtils.isEmpty(mActionTag)) {
                 mActionLog.addAction(mActionTag);
             }
             
-            if (R.id.view_home == getId()) {
+            if (TKFragmentManager.ID_view_home == getId()) {
                 mSphinx.getTitleView().getChildAt(0).setVisibility(View.VISIBLE);
                 mSphinx.getTitleView().getChildAt(1).setVisibility(View.GONE);
             } else {
@@ -469,7 +473,7 @@ public class BaseFragment extends LinearLayout {
             return result;
         }
         
-        if (BaseActivity.checkReLogin(dataQuery, sphinx, sphinx.uiStackContains(R.id.view_user_home), baseFragment.getId(), baseFragment.getId(), baseFragment.getId(), baseFragment.mCancelLoginListener)) {
+        if (BaseActivity.checkReLogin(dataQuery, sphinx, sphinx.uiStackContains(TKFragmentManager.ID_view_user_home), baseFragment.getId(), baseFragment.getId(), baseFragment.getId(), baseFragment.mCancelLoginListener)) {
             baseFragment.isReLogin = true;
             result = -2;
             return result;
@@ -493,8 +497,8 @@ public class BaseFragment extends LinearLayout {
             if (buslineModel.getType() == BuslineModel.TYPE_BUSLINE) {
                 sphinx.getBuslineResultLineFragment().setData(null, dataQuery);
                 if (dataQuery.isTurnPage() == false) {
-                    sphinx.showView(R.id.view_traffic_busline_line_result);
-                    sphinx.uiStackRemove(R.id.view_poi_input_search);
+                    sphinx.showView(TKFragmentManager.ID_view_traffic_busline_line_result);
+                    sphinx.uiStackRemove(TKFragmentManager.ID_view_poi_input_search);
                 }
                 result = POIResponse.FIELD_EXT_BUSLINE;
                 return result;
@@ -532,7 +536,7 @@ public class BaseFragment extends LinearLayout {
                 sphinx.resetMapDegree();
                 mapView.centerOnPosition(mapCenter, zoomLevel);
                 sphinx.getHomeFragment().reset();
-                sphinx.uiStackClearTop(R.id.view_home);
+                sphinx.uiStackClearTop(TKFragmentManager.ID_view_home);
                 result = POIResponse.FIELD_MAP_CENTER_AND_BORDER_RANGE;
                 return result;
             }
@@ -619,9 +623,9 @@ public class BaseFragment extends LinearLayout {
         POIResultFragment poiResultFragment = sphinx.getPOIResultFragment();
         // 跳转到POI结果列表界面
         if (bPOIList.getShowType() == 0) {
-            sphinx.uiStackRemove(R.id.view_poi_result);
+            sphinx.uiStackRemove(TKFragmentManager.ID_view_poi_result);
             poiResultFragment.setData(dataQuery, true);
-            sphinx.showView(R.id.view_poi_result);
+            sphinx.showView(TKFragmentManager.ID_view_poi_result);
             poiResultFragment.setSelectionFromTop();
         
         // 跳转到POI结果地图界面
@@ -632,17 +636,17 @@ public class BaseFragment extends LinearLayout {
             } else {
                 poiResultFragment.setData(dataQuery, true);
 
-                sphinx.uiStackClearTop(R.id.view_home);
+                sphinx.uiStackClearTop(TKFragmentManager.ID_view_home);
                 sphinx.getResultMapFragment().setData(sphinx.getString(R.string.result_map), ActionLog.POIListMap);
-                sphinx.showView(R.id.view_result_map);
+                sphinx.showView(TKFragmentManager.ID_view_result_map);
                 // 下面这行代码本来是应该在sphinx.getResultMapFragment().setData（）之前执行，
-                // 由于sphinx.uiStackClearTop(R.id.view_home)的特殊逻辑将其移到此处
+                // 由于sphinx.uiStackClearTop(TKFragmentManager.ID_view_home)的特殊逻辑将其移到此处
                 ItemizedOverlayHelper.drawPOIOverlay(sphinx, bPOIList.getList(), 0, poiResultFragment.getAPOI());
             }
         }
         
         // 若从公交线路结果列表界面跳转过来，则将其从UI堆栈中移除
-        sphinx.uiStackRemove(R.id.view_traffic_busline_line_result);
+        sphinx.uiStackRemove(TKFragmentManager.ID_view_traffic_busline_line_result);
         
         // 若是在周边搜索页或者从周边搜索页过来，则需要处理UI堆栈信息
         sphinx.getHandler().sendEmptyMessage(Sphinx.UI_STACK_ADJUST_EXECUTE);
@@ -699,13 +703,13 @@ public class BaseFragment extends LinearLayout {
                     actionLog.addAction(actionTag + ActionLog.TrafficResultBusline, buslineQuery.getBuslineModel().getLineList().size());
                     sphinx.getBuslineResultLineFragment().setData(buslineQuery);
                     if (buslineQuery.isTurnPage() == false) {
-                        sphinx.showView(R.id.view_traffic_busline_line_result);
+                        sphinx.showView(TKFragmentManager.ID_view_traffic_busline_line_result);
                     }
                 } else if (buslineModel.getType() == BuslineModel.TYPE_STATION) {
                     actionLog.addAction(actionTag + ActionLog.TrafficResultBusline, buslineQuery.getBuslineModel().getStationList().size());
                     sphinx.getBuslineResultStationFragment().setData(buslineQuery);
                     if (buslineQuery.isTurnPage() == false) {
-                        sphinx.showView(R.id.view_traffic_busline_station_result);
+                        sphinx.showView(TKFragmentManager.ID_view_traffic_busline_station_result);
                     }
                 }               
             }
@@ -718,7 +722,7 @@ public class BaseFragment extends LinearLayout {
     public static void dealWithDynamicPOIResponse(final DataQuery dataQuery, Sphinx sphinx, BaseFragment baseFragment) {
         Response response = dataQuery.getResponse();
         // check whether the use has loged in at another device
-        if (BaseActivity.checkReLogin(dataQuery, sphinx, sphinx.uiStackContains(R.id.view_user_home), baseFragment.getId(), baseFragment.getId(), baseFragment.getId(), baseFragment.mCancelLoginListener)) {
+        if (BaseActivity.checkReLogin(dataQuery, sphinx, sphinx.uiStackContains(TKFragmentManager.ID_view_user_home), baseFragment.getId(), baseFragment.getId(), baseFragment.getId(), baseFragment.mCancelLoginListener)) {
         	baseFragment.isReLogin = true;
             return;
         }
@@ -760,7 +764,7 @@ public class BaseFragment extends LinearLayout {
             Toast.makeText(sphinx, R.string.no_result, Toast.LENGTH_LONG).show();
         } else {
         	sphinx.getDiscoverListFragment().setData(dataQuery, true);
-        	sphinx.showView(R.id.view_discover_list);
+        	sphinx.showView(TKFragmentManager.ID_view_discover_list);
         	sphinx.getDiscoverListFragment().setSelectionFromTop();
         }
     }

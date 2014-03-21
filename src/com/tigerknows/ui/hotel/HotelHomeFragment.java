@@ -7,6 +7,7 @@ package com.tigerknows.ui.hotel;
 import com.decarta.Globals;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.TKFragmentManager;
 import com.tigerknows.android.location.Position;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
@@ -141,7 +142,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     @Override
     public void onResume() {
         super.onResume();
-        mSphinx.uiStackRemove(R.id.view_poi_input_search);
+        mSphinx.uiStackRemove(TKFragmentManager.ID_view_poi_input_search);
         mTitleBtn.setText(R.string.hotel_reserve);
         refreshTitleRightBtn();
         refreshDate();
@@ -264,7 +265,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                     queryFilter();
                     showProgressDialog();
                 } else {
-                    mSphinx.showView(R.id.view_hotel_pick_location);
+                    mSphinx.showView(TKFragmentManager.ID_view_hotel_pick_location);
                 }
                 break;
                 
@@ -290,7 +291,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                 mActionLog.addAction(mActionTag + ActionLog.HotelQueryOrder);
             	mSphinx.getHotelOrderListFragment().clearOrders();
             	mSphinx.getHotelOrderListFragment().syncOrder();
-                mSphinx.showView(R.id.view_hotel_order_list);
+                mSphinx.showView(TKFragmentManager.ID_view_hotel_order_list);
             	break;
                 
             case R.id.right_btn:
@@ -554,7 +555,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         super.onPostExecute(tkAsyncTask);
         
         BaseQuery baseQuery = tkAsyncTask.getBaseQuery();
-        if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), getId(), getId(), getId(), mCancelLoginListener)) {
+        if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(TKFragmentManager.ID_view_user_home), getId(), getId(), getId(), mCancelLoginListener)) {
             isReLogin = true;
             return;
         } else if (baseQuery.hasParameter(DataQuery.SERVER_PARAMETER_APPENDACTION)) {
@@ -624,7 +625,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                 }
                 
                 if (mProgressDialog != null && mProgressDialog.isShowing()) {
-                    mSphinx.showView(R.id.view_hotel_pick_location);
+                    mSphinx.showView(TKFragmentManager.ID_view_hotel_pick_location);
                     dismissProgressDialog();
                 }
             }

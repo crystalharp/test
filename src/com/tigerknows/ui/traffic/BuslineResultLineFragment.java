@@ -31,6 +31,7 @@ import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.TKFragmentManager;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.Alarm;
@@ -181,12 +182,12 @@ public class BuslineResultLineFragment extends BaseFragment {
 				if (mLineList != null && mLineList.size() > position) {
 					mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position);
 
-                    if (mSphinx.uiStackContains(R.id.view_alarm_add)) {
+                    if (mSphinx.uiStackContains(TKFragmentManager.ID_view_alarm_add)) {
                         showAlarmDialog(mSphinx, lineToPOIList(mLineList.get(position)));
                     } else {
                         focusedIndex = position;
     					mSphinx.getBuslineDetailFragment().setData(mLineList.get(position), position, mBuslineQuery.getKeyword());
-    					mSphinx.showView(R.id.view_traffic_busline_detail);
+    					mSphinx.showView(TKFragmentManager.ID_view_traffic_busline_detail);
                     }
 				} else if (mResultLsv.isFooterSpringback() == false && mDataQuery != null) {
                     mActionLog.addAction(mActionTag + ActionLog.TrafficBuslineViewPOI);
@@ -273,7 +274,7 @@ public class BuslineResultLineFragment extends BaseFragment {
         mDataQuery = dataQuery;
         if (mDataQuery != null) {
             buslineQuery = new BuslineQuery(mSphinx);
-            buslineQuery.setup(dataQuery.getParameter(BaseQuery.SERVER_PARAMETER_KEYWORD), 0, false, R.id.view_traffic_busline_line_result, null);
+            buslineQuery.setup(dataQuery.getParameter(BaseQuery.SERVER_PARAMETER_KEYWORD), 0, false, TKFragmentManager.ID_view_traffic_busline_line_result, null);
             Response response = mDataQuery.getResponse();
             if (response != null && response instanceof POIResponse) {
                 buslineQuery.setBuslineModel(((POIResponse) response).getBuslineModel());
@@ -507,7 +508,7 @@ public class BuslineResultLineFragment extends BaseFragment {
                 POI station = poiList.get(which);
                 alarm.setName(station.getName());
                 alarm.setPosition(station.getPosition());
-                Alarm.writeAlarm(sphinx, alarm, sphinx.uiStackContains(R.id.view_alarm_add) ? R.string.alarm_add_success : R.string.alarm_add_success_and_view);
+                Alarm.writeAlarm(sphinx, alarm, sphinx.uiStackContains(TKFragmentManager.ID_view_alarm_add) ? R.string.alarm_add_success : R.string.alarm_add_success_and_view);
                 dialog.dismiss();
             }
         });

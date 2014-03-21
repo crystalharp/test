@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.TKFragmentManager;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.HotelOrder;
 import com.tigerknows.ui.BaseFragment;
@@ -71,7 +72,7 @@ public class HotelOrderSuccessFragment extends BaseFragment{
 	            mSphinx.getHotelOrderDetailFragment().setStageIndicatorVisible(true);
 	            dismiss();
 	            mSphinx.uiStackRemove(getId());
-	            mSphinx.showView(R.id.view_hotel_order_detail);
+	            mSphinx.showView(TKFragmentManager.ID_view_hotel_order_detail);
 			}
 		});
     }

@@ -30,6 +30,7 @@ import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
+import com.tigerknows.TKFragmentManager;
 import com.tigerknows.android.os.TKAsyncTask;
 
 import android.widget.Toast;
@@ -276,7 +277,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
                     if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     	addActionLog(ActionLog.TitleCenterButton);
                     	mSphinx.getInputSearchFragment().setData(mDataQuery, null, InputSearchFragment.MODE_POI);        	
-                        mSphinx.showView(R.id.view_poi_input_search);
+                        mSphinx.showView(TKFragmentManager.ID_view_poi_input_search);
                     }
                     return false;
                 }
@@ -483,7 +484,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         		mSphinx.getInputSearchFragment().setData(mDataQuery,
         				null,
         				InputSearchFragment.MODE_POI);
-        		mSphinx.showView(R.id.view_poi_input_search);
+        		mSphinx.showView(TKFragmentManager.ID_view_poi_input_search);
         	}
             
             break;
@@ -552,13 +553,13 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     		addActionLog(actionLogInfo, str[0]);
     		mSphinx.getHotelHomeFragment().resetDate();
     		mSphinx.getHotelHomeFragment().setCityInfo(Globals.getCurrentCityInfo(mContext));
-    		mSphinx.showView(R.id.view_hotel_home);
+    		mSphinx.showView(TKFragmentManager.ID_view_hotel_home);
     		mSphinx.getHandler().sendEmptyMessage(Sphinx.UI_STACK_ADJUST_EXECUTE);
     		break;
     	case CategoryProperty.OP_SUBWAY:
     		addActionLog(actionLogInfo, str[0]);
     		mSphinx.getSubwayMapFragment().setData(Globals.getCurrentCityInfo(mContext, false));
-    		mSphinx.showView(R.id.view_subway_map);
+    		mSphinx.showView(TKFragmentManager.ID_view_subway_map);
     		// 再次进地铁图时，调整的堆栈与其他情况不同
             Message msg = new Message();
             msg.what = Sphinx.UI_STACK_ADJUST_READY;
@@ -626,7 +627,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
             break;
     	case CategoryProperty.OP_CUSTOM:
     		addActionLog(ActionLog.POINearbySearchCustom);
-    		mSphinx.showView(R.id.view_poi_custom_category);
+    		mSphinx.showView(TKFragmentManager.ID_view_poi_custom_category);
     		break;
     	default:
     		break;
@@ -706,12 +707,12 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         mDataQuery = dataQuery;
         mPOI = mDataQuery.getPOI();
         if(mPOI.getSourceType() != POI.SOURCE_TYPE_MAP_CENTER && mPOI.getSourceType() != POI.SOURCE_TYPE_MY_LOCATION){
-        	if(mSphinx.uiStackContains(R.id.view_poi_nearby_search)){
-        		mSphinx.uiStackRemove(R.id.view_poi_nearby_search);
+        	if(mSphinx.uiStackContains(TKFragmentManager.ID_view_poi_nearby_search)){
+        		mSphinx.uiStackRemove(TKFragmentManager.ID_view_poi_nearby_search);
         	}
         	Message msg = new Message();
         	msg.what = Sphinx.UI_STACK_ADJUST_READY;
-        	msg.arg1 = (mSphinx.uiStackPeek() == R.id.view_subway_map) ? mSphinx.uiStackPeek() : getId();
+        	msg.arg1 = (mSphinx.uiStackPeek() == TKFragmentManager.ID_view_subway_map) ? mSphinx.uiStackPeek() : getId();
         	mSphinx.getHandler().sendMessage(msg);
         }else{
         	mSphinx.getHandler().sendEmptyMessage(Sphinx.UI_STACK_ADJUST_CANCEL);

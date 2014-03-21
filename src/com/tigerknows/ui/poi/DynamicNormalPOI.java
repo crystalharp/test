@@ -8,6 +8,7 @@ import com.decarta.Globals;
 import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
+import com.tigerknows.TKFragmentManager;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BaseQuery;
@@ -150,7 +151,7 @@ public class DynamicNormalPOI extends DynamicPOIViewTemplate {
                 // some coupons, s operation
                 } else {
                 	mPOIDetailFragment.mActionLog.addAction(mPOIDetailFragment.mActionTag + ActionLog.POIDetailCouponMulti);
-                    mSphinx.showView(R.id.view_coupon_list);
+                    mSphinx.showView(TKFragmentManager.ID_view_coupon_list);
                     mSphinx.getCouponListFragment().setData(mPOI);
                 }
             }
@@ -166,7 +167,7 @@ public class DynamicNormalPOI extends DynamicPOIViewTemplate {
         List<BaseQuery> baseQueryList = tkAsyncTask.getBaseQueryList();
         int mPOIFragmentId = mPOIDetailFragment.getId();
         for(BaseQuery baseQuery : baseQueryList) {
-            if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), mPOIFragmentId, mPOIFragmentId, mPOIFragmentId, mPOIDetailFragment.mCancelLoginListener, mPOIDetailFragment.mShowReLoginTip)) {
+            if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(TKFragmentManager.ID_view_user_home), mPOIFragmentId, mPOIFragmentId, mPOIFragmentId, mPOIDetailFragment.mCancelLoginListener, mPOIDetailFragment.mShowReLoginTip)) {
                 mPOIDetailFragment.mShowReLoginTip  = false;
                 mPOIDetailFragment.isReLogin = true;
                 return;
@@ -180,7 +181,7 @@ public class DynamicNormalPOI extends DynamicPOIViewTemplate {
                 Yanchu yanchu = ((YanchuQueryResponse) response).getYanchu();
                 List<Yanchu> list = new ArrayList<Yanchu>();
                 list.add(yanchu);
-                mSphinx.showView(R.id.view_discover_yanchu_detail);
+                mSphinx.showView(TKFragmentManager.ID_view_discover_yanchu_detail);
                 mSphinx.getYanchuDetailFragment().setData(list, 0, null);
 
                 // 查询展览的结果
@@ -188,14 +189,14 @@ public class DynamicNormalPOI extends DynamicPOIViewTemplate {
                 Zhanlan zhanlan = ((ZhanlanQueryResponse) response).getZhanlan();
                 List<Zhanlan> list = new ArrayList<Zhanlan>();
                 list.add(zhanlan);
-                mSphinx.showView(R.id.view_discover_zhanlan_detail);
+                mSphinx.showView(TKFragmentManager.ID_view_discover_zhanlan_detail);
                 mSphinx.getZhanlanDetailFragment().setData(list, 0, null);
                 //查询单条优惠券的结果
             } else if (BaseQuery.DATA_TYPE_COUPON.equals(dataType)) {
                 Coupon coupon = ((CouponQueryResponse) response).getCoupon();
                 List<Coupon> list = new ArrayList<Coupon>();
                 list.add(coupon);
-                mSphinx.showView(R.id.view_coupon_detail);
+                mSphinx.showView(TKFragmentManager.ID_view_coupon_detail);
                 mSphinx.getCouponDetailFragment().setData(list, 0);
             }
         }

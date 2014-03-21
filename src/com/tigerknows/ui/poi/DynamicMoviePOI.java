@@ -7,6 +7,7 @@ import com.decarta.Globals;
 import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
+import com.tigerknows.TKFragmentManager;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BaseQuery;
@@ -228,7 +229,7 @@ public class DynamicMoviePOI extends DynamicPOIViewTemplate {
         int mPOIFragmentId = mPOIDetailFragment.getId();
         Dianying dianying = null;
         for(BaseQuery baseQuery : baseQueryList) {
-            if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), mPOIFragmentId, mPOIFragmentId, mPOIFragmentId, mPOIDetailFragment.mCancelLoginListener, mPOIDetailFragment.mShowReLoginTip)) {
+            if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(TKFragmentManager.ID_view_user_home), mPOIFragmentId, mPOIFragmentId, mPOIFragmentId, mPOIDetailFragment.mCancelLoginListener, mPOIDetailFragment.mShowReLoginTip)) {
                 mPOIDetailFragment.mShowReLoginTip  = false;
                 mPOIDetailFragment.isReLogin = true;
                 return;
@@ -257,7 +258,7 @@ public class DynamicMoviePOI extends DynamicPOIViewTemplate {
                         List<Dianying> list = new ArrayList<Dianying>();
                         list.add(dianying);
                         dianying.getYingxun().setChangciOption(Yingxun.Changci.OPTION_DAY_TODAY);
-                        mSphinx.showView(R.id.view_discover_dianying_detail);
+                        mSphinx.showView(TKFragmentManager.ID_view_discover_dianying_detail);
                         mSphinx.getDianyingDetailFragment().setData(list, 0, null);
                     }
                 }

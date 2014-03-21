@@ -37,6 +37,7 @@ import android.widget.TextView;
 import com.decarta.Globals;
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
+import com.tigerknows.TKFragmentManager;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BaseQuery;
@@ -603,7 +604,7 @@ public class CommentListActivity extends BaseActivity implements View.OnClickLis
                                             switch (id) {
                                                 case DialogInterface.BUTTON_POSITIVE:
                                                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                                                    mThis.startActivityForResult(intent, R.id.view_invalid);
+                                                    mThis.startActivityForResult(intent, TKFragmentManager.ID_view_invalid);
                                                     break;
         
                                                 default:

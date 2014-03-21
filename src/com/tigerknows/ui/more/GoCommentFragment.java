@@ -7,6 +7,7 @@ package com.tigerknows.ui.more;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
+import com.tigerknows.TKFragmentManager;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BaseQuery;
@@ -154,7 +155,7 @@ public class GoCommentFragment extends BaseFragment implements View.OnClickListe
                 if (position < mPOIList.size()) {
                     POI poi = mPOIList.get(position);
                     mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position, poi.getUUID(), poi.getName());
-                    mSphinx.showView(R.id.view_poi_detail);
+                    mSphinx.showView(TKFragmentManager.ID_view_poi_detail);
                     mSphinx.getPOIDetailFragment().setData(poi, position);
                 }
             }
@@ -177,7 +178,7 @@ public class GoCommentFragment extends BaseFragment implements View.OnClickListe
     public void onClick(View view) {
         mActionLog.addAction(mActionTag +  ActionLog.GoCommentInput);
         mSphinx.getInputSearchFragment().setData();
-        mSphinx.showView(R.id.view_poi_input_search);
+        mSphinx.showView(TKFragmentManager.ID_view_poi_input_search);
     }
     
     private void queryPOIByFavorite(List<POI> list, long maxId, long minId, boolean next){
@@ -407,7 +408,7 @@ public class GoCommentFragment extends BaseFragment implements View.OnClickListe
                 exit = false;
             }
         }
-        if (BaseActivity.checkReLogin(dataQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), getId(), getId(), getId(), mCancelLoginListener)) {
+        if (BaseActivity.checkReLogin(dataQuery, mSphinx, mSphinx.uiStackContains(TKFragmentManager.ID_view_user_home), getId(), getId(), getId(), mCancelLoginListener)) {
             isReLogin = true;
             return;
         } else if (BaseActivity.hasAbnormalResponseCode(dataQuery, mSphinx, mPOIList.isEmpty() ? BaseActivity.SHOW_DIALOG : BaseActivity.SHOW_NOTHING, this, exit)) {

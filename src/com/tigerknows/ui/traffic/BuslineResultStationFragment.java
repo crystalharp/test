@@ -5,6 +5,7 @@
 package com.tigerknows.ui.traffic;
 
 import java.util.ArrayList;
+import com.tigerknows.TKFragmentManager;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -165,7 +166,7 @@ public class BuslineResultStationFragment extends BaseFragment {
                 String busLine = station.getName();
                 if (!TextUtils.isEmpty(busLine)) {
                     mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position);
-                    if (mSphinx.uiStackContains(R.id.view_alarm_add)) {
+                    if (mSphinx.uiStackContains(TKFragmentManager.ID_view_alarm_add)) {
                         Alarm alarm = new Alarm(mSphinx);
                         alarm.setName(station.getName());
                         alarm.setPosition(station.getPosition());

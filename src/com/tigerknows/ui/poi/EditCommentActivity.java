@@ -10,6 +10,7 @@ import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
+import com.tigerknows.TKFragmentManager;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.android.app.TKActivity;
 import com.tigerknows.common.ActionLog;
@@ -1077,7 +1078,7 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
             return;
         }
         User user = Globals.g_User;
-        if (user != null && user.isNickNameDefault(mThis) && (data == null || data.getIntExtra(SOURCE_VIEW_ID, R.id.view_invalid) != R.id.activity_user_update_nickname)) {
+        if (user != null && user.isNickNameDefault(mThis) && (data == null || data.getIntExtra(SOURCE_VIEW_ID, TKFragmentManager.ID_view_invalid) != R.id.activity_user_update_nickname)) {
             Intent intent = new Intent();
             intent.setClass(mThis, UserUpdateNickNameActivity.class);
             intent.putExtra(UserBaseActivity.SOURCE_VIEW_ID_LOGIN, mId);
@@ -1201,7 +1202,7 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
             }
         }
         
-        if ((commentArrayList == null || commentArrayList.isEmpty()) && mFromViewId != R.id.view_user_my_comment_list) {
+        if ((commentArrayList == null || commentArrayList.isEmpty()) && mFromViewId != TKFragmentManager.ID_view_user_my_comment_list) {
             try {
                 XMap data = new XMap();
                 CommentList commentList = new CommentList(data);

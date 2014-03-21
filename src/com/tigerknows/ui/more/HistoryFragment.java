@@ -8,6 +8,7 @@ import com.decarta.android.map.ItemizedOverlay;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.TKFragmentManager;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BaseData;
 import com.tigerknows.model.History;
@@ -329,7 +330,7 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
                     POI poi = (POI) adapterView.getAdapter().getItem(position);
                     if (poi != null) {
                         mActionLog.addAction(mActionTag + ActionLog.ListViewItem + ActionLog.HistoryPOI, position);
-                        mSphinx.showView(R.id.view_poi_detail);
+                        mSphinx.showView(TKFragmentManager.ID_view_poi_detail);
                         mSphinx.getPOIDetailFragment().setData(poi, position);
                     }
                 }
@@ -502,14 +503,14 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
         switch (type) {
             case Tigerknows.History.HISTORY_BUSLINE:
                 sphinx.getBuslineDetailFragment().setData(traffic.getBuslineQuery().getBuslineModel().getLineList().get(0));
-                sphinx.showView(R.id.view_traffic_busline_detail);
+                sphinx.showView(TKFragmentManager.ID_view_traffic_busline_detail);
                 break;
                 
             case Tigerknows.History.HISTORY_TRANSFER:
                 tf.resetResult();
                 tf.addResult(traffic.getTrafficQuery(), Step.TYPE_TRANSFER, traffic.getTrafficQuery().getTrafficModel().getPlanList());
                 tf.refreshResult(Step.TYPE_TRANSFER);
-                sphinx.showView(R.id.view_traffic_result_detail);
+                sphinx.showView(TKFragmentManager.ID_view_traffic_result_detail);
                 break;
             case Tigerknows.History.HISTORY_DRIVE:
                 tf.resetResult();

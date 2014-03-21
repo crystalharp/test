@@ -9,6 +9,7 @@ import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.TKFragmentManager;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.ItemizedOverlayHelper;
@@ -311,7 +312,7 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
     private void viewMap(List<POI> poiList, int index) {
         boolean yingxun = BaseQuery.DATA_TYPE_YINGXUN.equals(mDataType);
         mSphinx.getResultMapFragment().setData(getString(yingxun ? R.string.dianying_ditu : R.string.shanghu_ditu), yingxun ? ActionLog.ResultMapDianyingBranchList : ActionLog.ResultMapTuangouBranchList);
-        mSphinx.showView(R.id.view_result_map);   
+        mSphinx.showView(TKFragmentManager.ID_view_result_map);   
         ItemizedOverlayHelper.drawPOIOverlay(mSphinx, poiList, index);
     }
 
@@ -896,7 +897,7 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
                 exit = false;
             }
         }
-        if (BaseActivity.checkReLogin(dataQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), getId(), getId(), getId(), mCancelLoginListener)) {
+        if (BaseActivity.checkReLogin(dataQuery, mSphinx, mSphinx.uiStackContains(TKFragmentManager.ID_view_user_home), getId(), getId(), getId(), mCancelLoginListener)) {
             isReLogin = true;
             return;
         } else if (BaseActivity.hasAbnormalResponseCode(dataQuery, mSphinx, BaseActivity.SHOW_DIALOG, this, exit)) {

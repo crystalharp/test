@@ -6,6 +6,7 @@ package com.tigerknows.ui;
 
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
+import com.tigerknows.TKFragmentManager;
 import com.tigerknows.android.app.TKActivity;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
@@ -129,7 +130,7 @@ public class BaseActivity extends TKActivity implements TKAsyncTask.EventListene
     }
     
     protected void getViewId(Intent intent) {
-        mSourceViewId = intent.getIntExtra(SOURCE_VIEW_ID, R.id.view_invalid);
+        mSourceViewId = intent.getIntExtra(SOURCE_VIEW_ID, TKFragmentManager.ID_view_invalid);
         mSourceUserHome = intent.getBooleanExtra(SOURCE_USER_HOME, false);
     }
     

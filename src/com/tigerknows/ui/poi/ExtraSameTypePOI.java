@@ -10,6 +10,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.tigerknows.R;
+import com.tigerknows.TKFragmentManager;
 import com.tigerknows.android.location.Position;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
@@ -28,7 +29,7 @@ public class ExtraSameTypePOI extends DynamicPOIViewTemplate {
         if (mPOI == null || mPOI.isOnlyAPOI()) {
             return false;
         }
-        if (TextUtils.isEmpty(mPOI.getCategory()) == false && mSphinx.uiStackContains(R.id.view_poi_result)) {
+        if (TextUtils.isEmpty(mPOI.getCategory()) == false && mSphinx.uiStackContains(TKFragmentManager.ID_view_poi_result)) {
             return true;
         }
         return false;
@@ -124,7 +125,7 @@ public class ExtraSameTypePOI extends DynamicPOIViewTemplate {
         mPOIDetailFragment.minusLoadingView();
         
         DataQuery dataQuery = (DataQuery) tkAsyncTask.getBaseQuery();
-        if (BaseActivity.checkReLogin(dataQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), mPOIDetailFragment.getId(), mPOIDetailFragment.getId(), mPOIDetailFragment.getId(), mPOIDetailFragment.mCancelLoginListener, mPOIDetailFragment.mShowReLoginTip)) {
+        if (BaseActivity.checkReLogin(dataQuery, mSphinx, mSphinx.uiStackContains(TKFragmentManager.ID_view_user_home), mPOIDetailFragment.getId(), mPOIDetailFragment.getId(), mPOIDetailFragment.getId(), mPOIDetailFragment.mCancelLoginListener, mPOIDetailFragment.mShowReLoginTip)) {
             mPOIDetailFragment.mShowReLoginTip  = false;
             mPOIDetailFragment.isReLogin = true;
             return;

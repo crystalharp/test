@@ -10,6 +10,7 @@ import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.Sphinx.TouchMode;
 import com.tigerknows.TKConfig;
+import com.tigerknows.TKFragmentManager;
 import com.tigerknows.android.location.Position;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
@@ -361,12 +362,12 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
             List<Plan> list = trafficDetailFragment.getResult(type);
             if (type == Plan.Step.TYPE_TRANSFER) {
                 if (jumpTransferResultFragment) {
-                    if (mSphinx.uiStackPeek() == R.id.view_result_map) {
-                        mSphinx.uiStackRemove(R.id.view_result_map);
+                    if (mSphinx.uiStackPeek() == TKFragmentManager.ID_view_result_map) {
+                        mSphinx.uiStackRemove(TKFragmentManager.ID_view_result_map);
                     }
                     TrafficQuery newTrafficQuery = mSphinx.getTrafficResultFragment().getTrafficQuery();
                     mSphinx.getTrafficResultFragment().setData(newTrafficQuery);
-                    mSphinx.showView(R.id.view_traffic_result_transfer);
+                    mSphinx.showView(TKFragmentManager.ID_view_traffic_result_transfer);
                 } else {
                     mActionTag = ActionLog.TrafficTransferMap;
                     mRightBtn.setVisibility(View.INVISIBLE);
@@ -462,19 +463,19 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
         resultData.actionTag = mActionTag;
         resultData.title = mTitle;
         if (mSphinx.uiStackSize() == 2 &&
-                mSphinx.uiStackPeekBottom() == R.id.view_home &&
-                mSphinx.uiStackPeek() == R.id.view_result_map) {
+                mSphinx.uiStackPeekBottom() == TKFragmentManager.ID_view_home &&
+                mSphinx.uiStackPeek() == TKFragmentManager.ID_view_result_map) {
             mResultDataForShowMap = resultData;
-        } else if ((mSphinx.uiStackGet(mSphinx.uiStackSize()-2) == R.id.view_traffic_home ||
-                mSphinx.uiStackGet(mSphinx.uiStackSize()-2) == R.id.view_more_favorite ||
-                mSphinx.uiStackGet(mSphinx.uiStackSize()-2) == R.id.view_more_history) &&
-                mSphinx.uiStackPeek() == R.id.view_result_map) {
+        } else if ((mSphinx.uiStackGet(mSphinx.uiStackSize()-2) == TKFragmentManager.ID_view_traffic_home ||
+                mSphinx.uiStackGet(mSphinx.uiStackSize()-2) == TKFragmentManager.ID_view_more_favorite ||
+                mSphinx.uiStackGet(mSphinx.uiStackSize()-2) == TKFragmentManager.ID_view_more_history) &&
+                mSphinx.uiStackPeek() == TKFragmentManager.ID_view_result_map) {
             mResultDataForPlanList = resultData;
-        } else if (mSphinx.uiStackGet(mSphinx.uiStackSize()-2) == R.id.view_traffic_result_detail &&
-                mSphinx.uiStackPeek() == R.id.view_result_map) {
+        } else if (mSphinx.uiStackGet(mSphinx.uiStackSize()-2) == TKFragmentManager.ID_view_traffic_result_detail &&
+                mSphinx.uiStackPeek() == TKFragmentManager.ID_view_result_map) {
             mResultDataForPlanDetail = resultData;
-        } else if (mSphinx.uiStackGet(mSphinx.uiStackSize()-2) == R.id.view_poi_input_search &&
-                mSphinx.uiStackPeek() == R.id.view_result_map) {
+        } else if (mSphinx.uiStackGet(mSphinx.uiStackSize()-2) == TKFragmentManager.ID_view_poi_input_search &&
+                mSphinx.uiStackPeek() == TKFragmentManager.ID_view_result_map) {
             mResultDataForSelectPoint = resultData;
         } else {
             mResultData = resultData;
@@ -484,19 +485,19 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
     private void restoreResultData() {
         ResultData resultData = null;
         if (mSphinx.uiStackSize() == 2 &&
-                mSphinx.uiStackPeekBottom() == R.id.view_home &&
-                mSphinx.uiStackPeek() == R.id.view_result_map) {
+                mSphinx.uiStackPeekBottom() == TKFragmentManager.ID_view_home &&
+                mSphinx.uiStackPeek() == TKFragmentManager.ID_view_result_map) {
             resultData = mResultDataForShowMap;
-        } else if ((mSphinx.uiStackGet(mSphinx.uiStackSize()-2) == R.id.view_traffic_home ||
-                mSphinx.uiStackGet(mSphinx.uiStackSize()-2) == R.id.view_more_favorite ||
-                mSphinx.uiStackGet(mSphinx.uiStackSize()-2) == R.id.view_more_history) &&
-                mSphinx.uiStackPeek() == R.id.view_result_map) {
+        } else if ((mSphinx.uiStackGet(mSphinx.uiStackSize()-2) == TKFragmentManager.ID_view_traffic_home ||
+                mSphinx.uiStackGet(mSphinx.uiStackSize()-2) == TKFragmentManager.ID_view_more_favorite ||
+                mSphinx.uiStackGet(mSphinx.uiStackSize()-2) == TKFragmentManager.ID_view_more_history) &&
+                mSphinx.uiStackPeek() == TKFragmentManager.ID_view_result_map) {
             resultData = mResultDataForPlanList;
-        } else if (mSphinx.uiStackGet(mSphinx.uiStackSize()-2) == R.id.view_traffic_result_detail &&
-                mSphinx.uiStackPeek() == R.id.view_result_map) {
+        } else if (mSphinx.uiStackGet(mSphinx.uiStackSize()-2) == TKFragmentManager.ID_view_traffic_result_detail &&
+                mSphinx.uiStackPeek() == TKFragmentManager.ID_view_result_map) {
             resultData = mResultDataForPlanDetail;
-        } else if (mSphinx.uiStackGet(mSphinx.uiStackSize()-2) == R.id.view_poi_input_search &&
-                mSphinx.uiStackPeek() == R.id.view_result_map) {
+        } else if (mSphinx.uiStackGet(mSphinx.uiStackSize()-2) == TKFragmentManager.ID_view_poi_input_search &&
+                mSphinx.uiStackPeek() == TKFragmentManager.ID_view_result_map) {
             resultData = mResultDataForSelectPoint;
         } else if (mResultData != null) {
             resultData = mResultData;

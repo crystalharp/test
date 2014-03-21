@@ -87,6 +87,8 @@ import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
+import com.tigerknows.TKFragmentManager;
+
 import android.widget.Toast;
 
 import com.tigerknows.android.app.TKActivity;
@@ -1233,7 +1235,7 @@ public class Utility {
                 } else {
                     trafficQueryFragment.setShowStartMyLocation(false);
                 }
-                sphinx.showView(R.id.view_traffic_home);
+                sphinx.showView(TKFragmentManager.ID_view_traffic_home);
             }
         };
         button1.setOnClickListener(onClickListener);

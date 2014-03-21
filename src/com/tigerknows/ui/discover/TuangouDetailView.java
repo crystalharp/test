@@ -31,6 +31,7 @@ import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
+import com.tigerknows.TKFragmentManager;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BaseData;
@@ -599,7 +600,7 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
 
     private int lastY = 0;
 
-    private int touchEventId = R.id.view_invalid;
+    private int touchEventId = TKFragmentManager.ID_view_invalid;
 
         
     Handler handler = new Handler() {
@@ -739,7 +740,7 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
                 if (mNearbyFendianTxv.getVisibility() == View.VISIBLE) {
                     mActionLog.addAction(mActionTag +  ActionLog.DiscoverCommonBranch);
                     mSphinx.getDiscoverChildListFragment().setup(mData, mNearbyFendianTxv.getText().toString(), ActionLog.FendianList);
-                    mSphinx.showView(R.id.view_discover_child_list);
+                    mSphinx.showView(TKFragmentManager.ID_view_discover_child_list);
                 }
                 break;
             case R.id.service_hotline_view:
@@ -838,7 +839,7 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
         }
         
         final DataOperation dataOperation = (DataOperation)(tkAsyncTask.getBaseQuery());
-        if (BaseActivity.checkReLogin(dataOperation, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), mParentFragment.getId(), mParentFragment.getId(), mParentFragment.getId(), mCancelLoginListener, super.mParentFragment.mViewPager.getCurrentItem()==mPosition)) {
+        if (BaseActivity.checkReLogin(dataOperation, mSphinx, mSphinx.uiStackContains(TKFragmentManager.ID_view_user_home), mParentFragment.getId(), mParentFragment.getId(), mParentFragment.getId(), mCancelLoginListener, super.mParentFragment.mViewPager.getCurrentItem()==mPosition)) {
             mParentFragment.isReLogin = true;
             return true;
         }
@@ -873,7 +874,7 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
                     tip = shangjia.getName();
                 }
                 mParentFragment.mSphinx.getBrowserFragment().setData(getString(R.string.buy), url, tip);
-                mParentFragment.mSphinx.showView(R.id.view_browser);
+                mParentFragment.mSphinx.showView(TKFragmentManager.ID_view_browser);
             } else {
                 mParentFragment.mSphinx.getBrowserFragment().setData(getString(R.string.buy), url, null);
             }

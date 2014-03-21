@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.TKFragmentManager;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BaseQuery;
@@ -131,7 +132,7 @@ public class CouponListFragment extends BaseFragment implements RetryView.CallBa
                     mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position);
                     Coupon data = (Coupon) adapterView.getAdapter().getItem(position);
                     if (data != null) {
-                        mSphinx.showView(R.id.view_coupon_detail);
+                        mSphinx.showView(TKFragmentManager.ID_view_coupon_detail);
                         mSphinx.getCouponDetailFragment().setData(mCouponArrayList, position);
                     }
                 }
@@ -231,13 +232,13 @@ public class CouponListFragment extends BaseFragment implements RetryView.CallBa
     public void onPostExecute(TKAsyncTask tkAsyncTask) {   
         super.onPostExecute(tkAsyncTask);
         BaseQuery baseQuery = tkAsyncTask.getBaseQuery();   
-        if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), getId(), getId(), getId(), mCancelLoginListener)) {
+        if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(TKFragmentManager.ID_view_user_home), getId(), getId(), getId(), mCancelLoginListener)) {
             isReLogin = true;
             return;
         }
         
         if (baseQuery instanceof DataQuery) { 
-            int resId = R.id.view_invalid;
+            int resId = TKFragmentManager.ID_view_invalid;
             Response response = baseQuery.getResponse();
             if (response == null) {
                 resId = R.string.touch_screen_and_retry;
@@ -245,7 +246,7 @@ public class CouponListFragment extends BaseFragment implements RetryView.CallBa
                 resId = BaseActivity.getResponseResId(baseQuery);
             }
             
-            if (resId != R.id.view_invalid) {
+            if (resId != TKFragmentManager.ID_view_invalid) {
                 mRetryView.setText(resId, true);
                 mState = STATE_ERROR;
                 updateView();

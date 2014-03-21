@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.TKFragmentManager;
 import com.tigerknows.android.os.TKAsyncTask;
 import android.widget.Toast;
 
@@ -137,7 +138,7 @@ public abstract class UserBaseFragment extends BaseFragment {
 		// TODO Auto-generated method stub
 		super.onPostExecute(tkAsyncTask);
 		BaseQuery baseQuery = tkAsyncTask.getBaseQuery();
-		if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), getId(), R.id.view_user_home, R.id.view_more_home, null)) {
+		if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(TKFragmentManager.ID_view_user_home), getId(), TKFragmentManager.ID_view_user_home, TKFragmentManager.ID_view_more_home, null)) {
 		    return;
         }
 

@@ -9,6 +9,7 @@ import android.widget.Button;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.TKFragmentManager;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.Alarm;
 import com.tigerknows.model.DataQuery;
@@ -87,7 +88,7 @@ public class AlarmAddFragment extends BaseFragment implements View.OnClickListen
                     InputSearchFragment.MODE_BUSLINE,
                     null,
                     InputSearchFragment.REQUEST_ONLY_BUS_STATION);
-            mSphinx.showView(R.id.view_poi_input_search);
+            mSphinx.showView(TKFragmentManager.ID_view_poi_input_search);
         } else if (id == R.id.bus_line_btn) {
             addActionLog(ActionLog.AlarmAddBusLine);
             DataQuery dataQuery = new DataQuery(mSphinx);
@@ -96,7 +97,7 @@ public class AlarmAddFragment extends BaseFragment implements View.OnClickListen
                     InputSearchFragment.MODE_BUSLINE,
                     null,
                     InputSearchFragment.REQUEST_ONLY_BUS_LINE);
-            mSphinx.showView(R.id.view_poi_input_search);
+            mSphinx.showView(TKFragmentManager.ID_view_poi_input_search);
         }
     }
 

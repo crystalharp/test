@@ -15,6 +15,7 @@ import android.view.animation.Animation;
 
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.TKFragmentManager;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.PullMessage.Message.PulledDynamicPOI;
@@ -170,7 +171,7 @@ public class BaseDetailFragment extends DiscoverBaseFragment implements View.OnC
      * 在地图上显示当前详情页相关的POI
      */
     public void viewMap() {
-        mSphinx.showView(R.id.view_result_map);
+        mSphinx.showView(TKFragmentManager.ID_view_result_map);
     }
 
     @Override

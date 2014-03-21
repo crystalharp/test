@@ -21,6 +21,7 @@ import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
+import com.tigerknows.TKFragmentManager;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BaseData;
@@ -275,7 +276,7 @@ public class YanchuDetailView extends BaseDetailView implements View.OnClickList
         }
         final DataOperation dataOperation = (DataOperation)(tkAsyncTask.getBaseQuery());
         boolean isPulledDynamicPOIRequest = dataOperation.isPulledDynamicPOIRequest();
-        if (BaseActivity.checkReLogin(dataOperation, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), mParentFragment.getId(), mParentFragment.getId(), mParentFragment.getId(), mParentFragment.mCancelLoginListener, super.mParentFragment.mViewPager.getCurrentItem()==mPosition)) {
+        if (BaseActivity.checkReLogin(dataOperation, mSphinx, mSphinx.uiStackContains(TKFragmentManager.ID_view_user_home), mParentFragment.getId(), mParentFragment.getId(), mParentFragment.getId(), mParentFragment.mCancelLoginListener, super.mParentFragment.mViewPager.getCurrentItem()==mPosition)) {
             mParentFragment.isReLogin = true;
             return true;
         } else {

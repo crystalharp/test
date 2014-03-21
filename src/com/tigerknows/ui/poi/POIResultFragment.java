@@ -8,6 +8,7 @@ import com.decarta.Globals;
 import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.TKFragmentManager;
 import com.tigerknows.android.location.Position;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
@@ -247,7 +248,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                     POI poi = mPOIList.get(position);
                     if (poi != null) {
                         mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position, poi.getUUID(), poi.getName());
-                        mSphinx.showView(R.id.view_poi_detail);
+                        mSphinx.showView(TKFragmentManager.ID_view_poi_detail);
                         mSphinx.getPOIDetailFragment().setData(poi, position);
                     }
                 } else if (location > 0 && mResultLsv.isFooterSpringback() == false) {
@@ -359,7 +360,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         super.onResume();
 
         // 5.8.0 2.2.2 2)从搜索结果列表页返回时，不应再返回搜索输入页，应跨过搜索输入页直接跳回搜索输入页的上一页
-        mSphinx.uiStackRemove(R.id.view_poi_input_search);
+        mSphinx.uiStackRemove(TKFragmentManager.ID_view_poi_input_search);
 
         mRightBtn.setText(R.string.map);
         mRightBtn.setOnClickListener(this);
@@ -529,7 +530,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         }
         int firstIndex = page[2];
         mSphinx.getResultMapFragment().setData(getString(R.string.result_map), BaseQuery.SUB_DATA_TYPE_HOTEL.equals(mResultAdapter.getSubDataType()) ? ActionLog.POIHotelListMap : ActionLog.POIListMap);
-        mSphinx.showView(R.id.view_result_map);   
+        mSphinx.showView(TKFragmentManager.ID_view_result_map);   
         ItemizedOverlayHelper.drawPOIOverlay(mSphinx, poiList, firstIndex, mAPOI);
     }
     
@@ -586,7 +587,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 mSphinx.getInputSearchFragment().setData(dataQuery,
                 		mInputText,
                 		InputSearchFragment.MODE_POI);
-                mSphinx.showView(R.id.view_poi_input_search);
+                mSphinx.showView(TKFragmentManager.ID_view_poi_input_search);
                 break;
                 
             case R.id.right_btn:
@@ -959,7 +960,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         }
 
         mResultLsv.setFooterSpringback(false);
-        if (BaseActivity.checkReLogin(dataQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), getId(), getId(), getId(), mCancelLoginListener)) {
+        if (BaseActivity.checkReLogin(dataQuery, mSphinx, mSphinx.uiStackContains(TKFragmentManager.ID_view_user_home), getId(), getId(), getId(), mCancelLoginListener)) {
             isReLogin = true;
             return;
         } else {
@@ -970,7 +971,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                     if (dataQuery.isTurnPage()) {
                         return;
                     }
-                    int resId = R.id.view_invalid;
+                    int resId = TKFragmentManager.ID_view_invalid;
                     if (BaseQuery.SUB_DATA_TYPE_HOTEL.equals(subDataType)) {
                         int responseCode = response.getResponseCode();
                         if (responseCode == 702) {
@@ -981,7 +982,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                         
                     }
                     
-                    if (resId == R.id.view_invalid) {
+                    if (resId == TKFragmentManager.ID_view_invalid) {
                         int resid = BaseActivity.getResponseResId(dataQuery);
                         mRetryView.setText(resid, true);
                     } else {

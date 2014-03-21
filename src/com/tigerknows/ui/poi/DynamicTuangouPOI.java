@@ -8,6 +8,7 @@ import com.decarta.android.exception.APIException;
 import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
+import com.tigerknows.TKFragmentManager;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BaseQuery;
@@ -231,7 +232,7 @@ public class DynamicTuangouPOI extends DynamicPOIViewTemplate{
         List<BaseQuery> baseQueryList = tkAsyncTask.getBaseQueryList();
         int mPOIFragmentId = mPOIDetailFragment.getId();
         for(BaseQuery baseQuery : baseQueryList) {
-            if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), mPOIFragmentId, mPOIFragmentId, mPOIFragmentId, mPOIDetailFragment.mCancelLoginListener, mPOIDetailFragment.mShowReLoginTip)) {
+            if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(TKFragmentManager.ID_view_user_home), mPOIFragmentId, mPOIFragmentId, mPOIFragmentId, mPOIDetailFragment.mCancelLoginListener, mPOIDetailFragment.mShowReLoginTip)) {
                 mPOIDetailFragment.mShowReLoginTip  = false;
                 mPOIDetailFragment.isReLogin = true;
                 return;
@@ -250,7 +251,7 @@ public class DynamicTuangouPOI extends DynamicPOIViewTemplate{
                     tuangou.setFendian(((FendianQueryResponse) response).getFendian());
                     List<Tuangou> list = new ArrayList<Tuangou>();
                     list.add(tuangou);
-                    mSphinx.showView(R.id.view_discover_tuangou_detail);
+                    mSphinx.showView(TKFragmentManager.ID_view_discover_tuangou_detail);
                     mSphinx.getTuangouDetailFragment().setData(list, 0, null);
                 }
             }
