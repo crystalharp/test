@@ -109,8 +109,8 @@ public class ExtraSameTypePOI extends DynamicPOIViewTemplate {
                     
                     @Override
                     public void onClick(View v) {
-                        mSphinx.getPOIDetailFragment().smoothScroolToTop();
-                        mSphinx.getPOIDetailFragment().setData(target, pos);
+                        mFragmentManager.getPOIDetailFragment().smoothScroolToTop();
+                        mFragmentManager.getPOIDetailFragment().setData(target, pos);
                         mPOIDetailFragment.mActionLog.addAction(mPOIDetailFragment.mActionTag + ActionLog.POIDetailSameCategory, target.getUUID(), target.getName());
                     }
                 });
@@ -159,7 +159,7 @@ public class ExtraSameTypePOI extends DynamicPOIViewTemplate {
             return;
         }
         
-        POIResultFragment poiResultFragment = (POIResultFragment) mSphinx.getPOIResultFragment();
+        POIResultFragment poiResultFragment = (POIResultFragment) mFragmentManager.getPOIResultFragment();
         
         DataQuery dataQuery = poiResultFragment.getDataQuery();
         if (dataQuery == null) {

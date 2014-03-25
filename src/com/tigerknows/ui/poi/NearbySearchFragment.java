@@ -276,7 +276,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
                 public boolean onTouch(View v, MotionEvent event) {
                     if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     	addActionLog(ActionLog.TitleCenterButton);
-                    	mSphinx.getInputSearchFragment().setData(mDataQuery, null, InputSearchFragment.MODE_POI);        	
+                    	mFragmentManager.getInputSearchFragment().setData(mDataQuery, null, InputSearchFragment.MODE_POI);        	
                         mSphinx.showView(TKFragmentManager.ID_view_poi_input_search);
                     }
                     return false;
@@ -481,7 +481,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
                 	dismiss();
                 }        		
         	}else{
-        		mSphinx.getInputSearchFragment().setData(mDataQuery,
+        		mFragmentManager.getInputSearchFragment().setData(mDataQuery,
         				null,
         				InputSearchFragment.MODE_POI);
         		mSphinx.showView(TKFragmentManager.ID_view_poi_input_search);
@@ -551,14 +551,14 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     		break;
     	case CategoryProperty.OP_HOTEL:
     		addActionLog(actionLogInfo, str[0]);
-    		mSphinx.getHotelHomeFragment().resetDate();
-    		mSphinx.getHotelHomeFragment().setCityInfo(Globals.getCurrentCityInfo(mContext));
+    		mFragmentManager.getHotelHomeFragment().resetDate();
+    		mFragmentManager.getHotelHomeFragment().setCityInfo(Globals.getCurrentCityInfo(mContext));
     		mSphinx.showView(TKFragmentManager.ID_view_hotel_home);
     		mSphinx.getHandler().sendEmptyMessage(Sphinx.UI_STACK_ADJUST_EXECUTE);
     		break;
     	case CategoryProperty.OP_SUBWAY:
     		addActionLog(actionLogInfo, str[0]);
-    		mSphinx.getSubwayMapFragment().setData(Globals.getCurrentCityInfo(mContext, false));
+    		mFragmentManager.getSubwayMapFragment().setData(Globals.getCurrentCityInfo(mContext, false));
     		mSphinx.showView(TKFragmentManager.ID_view_subway_map);
     		// 再次进地铁图时，调整的堆栈与其他情况不同
             Message msg = new Message();

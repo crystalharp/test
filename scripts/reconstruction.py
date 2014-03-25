@@ -14,9 +14,10 @@ def walk_dir(dir,topdown=True):
 			j_file=open(os.path.join(root,name), 'r+');
 			content=j_file.read();
 			for k,v in trans.iteritems():
-				content=re.sub("(mSphinx\.|sphinx\.)" + v + "\(\)\.", "((%s)\g<1>getFragment(ViewIDs.%s))."%(k,id_dict[k]), content)
-				content=re.sub(v + "\(\)\.", "((%s)getFragment(ViewIDs.%s))."%(k,id_dict[k]), content)
-				content=re.sub(v + "\(\)", "getFragment(ViewIDs.%s)"%id_dict[k], content)
+				content=re.sub("(mSphinx\.|sphinx\.)?(" + v + ")", 
+						"mFragmentManager.\g<2>", content)
+				#content=re.sub(v + "\(\)\.", "((%s)getFragment(ViewIDs.%s))."%(k,id_dict[k]), content)
+				#content=re.sub(v + "\(\)", "getFragment(TKFragmentManager.%s)"%id_dict[k], content)
 			j_file.seek(0)
 			j_file.write(content)
 

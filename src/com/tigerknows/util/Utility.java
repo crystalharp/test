@@ -1222,7 +1222,7 @@ public class Utility {
                 ActionLog.getInstance(sphinx).addAction(actionTag + ActionLog.GotoHere + ActionLog.ListViewItem, index);
                 
                 CityInfo locationCityInfo = Globals.g_My_Location_City_Info;
-                TrafficQueryFragment trafficQueryFragment = sphinx.getTrafficQueryFragment();
+                TrafficQueryFragment trafficQueryFragment = sphinx.mFragmentManager.getTrafficQueryFragment();
                 if (location == TrafficQueryFragment.START) {
                     trafficQueryFragment.setStart(poiForTraffic);
                 } else {

@@ -112,7 +112,7 @@ public class TrafficCommonPlaceFragment extends BaseFragment{
                 }
 
                 DataQuery dataQuery = new DataQuery(mSphinx);
-                mSphinx.getInputSearchFragment().setData(dataQuery,
+                mFragmentManager.getInputSearchFragment().setData(dataQuery,
                 		keyWord,
                         InputSearchFragment.MODE_TRAFFIC,
                         mCallback,

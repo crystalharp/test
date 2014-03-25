@@ -298,23 +298,23 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
 //                            tagret.getFendian().setOrderNumber(position+1);
                             mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position, tagret.getUid());
                             mSphinx.showView(TKFragmentManager.ID_view_discover_tuangou_detail);
-                            mSphinx.getTuangouDetailFragment().setData(mTuangouList, position, DiscoverListFragment.this);
+                            mFragmentManager.getTuangouDetailFragment().setData(mTuangouList, position, DiscoverListFragment.this);
                         } else if (object instanceof Yanchu){
                             Yanchu tagret = (Yanchu) object;
                             mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position, tagret.getUid());
                             mSphinx.showView(TKFragmentManager.ID_view_discover_yanchu_detail);
-                        	mSphinx.getYanchuDetailFragment().setData(mYanchuList, position, DiscoverListFragment.this);
+                        	mFragmentManager.getYanchuDetailFragment().setData(mYanchuList, position, DiscoverListFragment.this);
                         } else if (object instanceof Dianying){
                             Dianying tagret = (Dianying) object;
 //                            tagret.getYingxun().setOrderNumber(position+1);
                             mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position, tagret.getUid());
                         	mSphinx.showView(TKFragmentManager.ID_view_discover_dianying_detail);
-                        	mSphinx.getDianyingDetailFragment().setData(mDianyingList, position, DiscoverListFragment.this);
+                        	mFragmentManager.getDianyingDetailFragment().setData(mDianyingList, position, DiscoverListFragment.this);
                         } else if (object instanceof Zhanlan){
                         	Zhanlan tagret = (Zhanlan) object;
                             mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position, tagret.getUid());
                             mSphinx.showView(TKFragmentManager.ID_view_discover_zhanlan_detail);
-                        	mSphinx.getZhanlanDetailFragment().setData(mZhanlanList, position, DiscoverListFragment.this);
+                        	mFragmentManager.getZhanlanDetailFragment().setData(mZhanlanList, position, DiscoverListFragment.this);
                         }
                     }
                 }
@@ -546,7 +546,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 Tuangou data = mTuangouList.get(minIndex);
                 dataList.add(data);
             }
-            mSphinx.getTuangouDetailFragment().setData(mTuangouList, page[2], DiscoverListFragment.this);
+            mFragmentManager.getTuangouDetailFragment().setData(mTuangouList, page[2], DiscoverListFragment.this);
         } else if (BaseQuery.DATA_TYPE_DIANYING.equals(mDataType)) {
             
         } else if (BaseQuery.DATA_TYPE_YANCHU.equals(mDataType)) {
@@ -554,13 +554,13 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 Yanchu data = mYanchuList.get(minIndex);
                 dataList.add(data);
             }
-            mSphinx.getYanchuDetailFragment().setData(mYanchuList, page[2], DiscoverListFragment.this);
+            mFragmentManager.getYanchuDetailFragment().setData(mYanchuList, page[2], DiscoverListFragment.this);
         } else if (BaseQuery.DATA_TYPE_ZHANLAN.equals(mDataType)) {
             for(;minIndex >= 0 && minIndex <= maxIndex && minIndex < mZhanlanList.size(); minIndex++) {
                 Zhanlan data = mZhanlanList.get(minIndex);
                 dataList.add(data);
             }
-            mSphinx.getZhanlanDetailFragment().setData(mZhanlanList, page[2], DiscoverListFragment.this);
+            mFragmentManager.getZhanlanDetailFragment().setData(mZhanlanList, page[2], DiscoverListFragment.this);
         }
         if (dataList.isEmpty()) {
             return;
@@ -574,7 +574,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             name = R.string.zhanlan_ditu;
             actionTag = ActionLog.ResultMapZhanlanList;
         }
-        mSphinx.getResultMapFragment().setData(getString(name), actionTag);
+        mFragmentManager.getResultMapFragment().setData(getString(name), actionTag);
         mSphinx.showView(TKFragmentManager.ID_view_result_map);   
         int firstIndex = page[2];
         ItemizedOverlayHelper.drawPOIOverlay(mSphinx, dataList, firstIndex, mAPOI);
@@ -633,7 +633,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 
             case R.id.dingdan_btn:
                 mActionLog.addAction(mActionTag +  ActionLog.TuangouListDingdan);
-                mSphinx.getMyOrderFragment().setData(true);
+                mFragmentManager.getMyOrderFragment().setData(true);
                 mSphinx.showView(TKFragmentManager.ID_view_more_my_order);
                 break;
                 

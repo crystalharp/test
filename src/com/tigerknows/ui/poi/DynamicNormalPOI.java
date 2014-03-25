@@ -152,7 +152,7 @@ public class DynamicNormalPOI extends DynamicPOIViewTemplate {
                 } else {
                 	mPOIDetailFragment.mActionLog.addAction(mPOIDetailFragment.mActionTag + ActionLog.POIDetailCouponMulti);
                     mSphinx.showView(TKFragmentManager.ID_view_coupon_list);
-                    mSphinx.getCouponListFragment().setData(mPOI);
+                    mFragmentManager.getCouponListFragment().setData(mPOI);
                 }
             }
         }
@@ -182,7 +182,7 @@ public class DynamicNormalPOI extends DynamicPOIViewTemplate {
                 List<Yanchu> list = new ArrayList<Yanchu>();
                 list.add(yanchu);
                 mSphinx.showView(TKFragmentManager.ID_view_discover_yanchu_detail);
-                mSphinx.getYanchuDetailFragment().setData(list, 0, null);
+                mFragmentManager.getYanchuDetailFragment().setData(list, 0, null);
 
                 // 查询展览的结果
             } else if (BaseQuery.DATA_TYPE_ZHANLAN.equals(dataType)) {
@@ -190,14 +190,14 @@ public class DynamicNormalPOI extends DynamicPOIViewTemplate {
                 List<Zhanlan> list = new ArrayList<Zhanlan>();
                 list.add(zhanlan);
                 mSphinx.showView(TKFragmentManager.ID_view_discover_zhanlan_detail);
-                mSphinx.getZhanlanDetailFragment().setData(list, 0, null);
+                mFragmentManager.getZhanlanDetailFragment().setData(list, 0, null);
                 //查询单条优惠券的结果
             } else if (BaseQuery.DATA_TYPE_COUPON.equals(dataType)) {
                 Coupon coupon = ((CouponQueryResponse) response).getCoupon();
                 List<Coupon> list = new ArrayList<Coupon>();
                 list.add(coupon);
                 mSphinx.showView(TKFragmentManager.ID_view_coupon_detail);
-                mSphinx.getCouponDetailFragment().setData(list, 0);
+                mFragmentManager.getCouponDetailFragment().setData(list, 0);
             }
         }
 		

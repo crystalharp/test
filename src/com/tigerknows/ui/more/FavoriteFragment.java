@@ -346,7 +346,7 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
                     if (poi != null) {
                         mActionLog.addAction(mActionTag + ActionLog.ListViewItem + ActionLog.FavoritePOI, position);
                         mSphinx.showView(TKFragmentManager.ID_view_poi_detail);
-                        mSphinx.getPOIDetailFragment().setData(poi, position);
+                        mFragmentManager.getPOIDetailFragment().setData(poi, position);
                     }
                 }
             }
@@ -518,10 +518,10 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
     
     private void showTrafficDetail(Favorite traffic) {
         int type = traffic.getFavoriteType();
-        TrafficDetailFragment tf = mSphinx.getTrafficDetailFragment();
+        TrafficDetailFragment tf = mFragmentManager.getTrafficDetailFragment();
         switch (type) {
             case Tigerknows.Favorite.FAVORITE_BUSLINE:
-            	mSphinx.getBuslineDetailFragment().setData(traffic.getBuslineQuery().getBuslineModel().getLineList().get(0));
+            	mFragmentManager.getBuslineDetailFragment().setData(traffic.getBuslineQuery().getBuslineModel().getLineList().get(0));
                 mSphinx.showView(TKFragmentManager.ID_view_traffic_busline_detail);
                 break;
                 

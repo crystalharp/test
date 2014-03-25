@@ -155,8 +155,8 @@ public class TrafficResultFragment extends BaseFragment {
         super.onResume();
 
         mTitleBtn.setVisibility(View.GONE);
-        mTrafficTitieView = mSphinx.getTrafficQueryFragment().getTitleView();
-        ((ViewGroup)mSphinx.getTitleFragment().mRootView).addView(mTrafficTitieView, TrafficQueryFragment.sLayoutParams);
+        mTrafficTitieView = mFragmentManager.getTrafficQueryFragment().getTitleView();
+        ((ViewGroup)mFragmentManager.getTitleFragment().mRootView).addView(mTrafficTitieView, TrafficQueryFragment.sLayoutParams);
         
         mTrafficTitleRadioGroup = (RadioGroup) mTrafficTitieView.findViewById(R.id.traffic_rgp);
         mTrafficTransferRbt = (RadioButton) mTrafficTitieView.findViewById(R.id.traffic_transfer_rbt);
@@ -223,8 +223,8 @@ public class TrafficResultFragment extends BaseFragment {
                 }
                 mActionLog.addAction(mActionTag + ActionLog.ListViewItem, realPos, tags);
                 focusedIndex = realPos;
-                mSphinx.getTrafficDetailFragment().addResult(mTrafficQuery, mPlanList.get(0).getType(), mPlanList);
-                mSphinx.getTrafficDetailFragment().refreshResult(mPlanList.get(0).getType(), realPos);
+                mFragmentManager.getTrafficDetailFragment().addResult(mTrafficQuery, mPlanList.get(0).getType(), mPlanList);
+                mFragmentManager.getTrafficDetailFragment().refreshResult(mPlanList.get(0).getType(), realPos);
                 mSphinx.showView(TKFragmentManager.ID_view_traffic_result_detail);
             }
 
@@ -235,8 +235,8 @@ public class TrafficResultFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
                 mActionLog.addAction(mActionTag + ActionLog.TrafficResultSearchReturn);
-                mSphinx.getTrafficQueryFragment().switchStartEnd();
-                mSphinx.getTrafficQueryFragment().query();
+                mFragmentManager.getTrafficQueryFragment().switchStartEnd();
+                mFragmentManager.getTrafficQueryFragment().query();
                 mDismissed = true;
             }
         });
@@ -246,7 +246,7 @@ public class TrafficResultFragment extends BaseFragment {
     private boolean changeTrafficType(int type) {
         boolean result = false;
         
-        TrafficDetailFragment trafficDetailFragment = mSphinx.getTrafficDetailFragment();
+        TrafficDetailFragment trafficDetailFragment = mFragmentManager.getTrafficDetailFragment();
         TrafficQuery trafficQuery = trafficDetailFragment.getTrafficQuery();
 
         if (type != Plan.Step.TYPE_DRIVE && type != Plan.Step.TYPE_WALK) {
@@ -267,7 +267,7 @@ public class TrafficResultFragment extends BaseFragment {
             trafficDetailFragment.refreshResult(type);
             mSphinx.uiStackRemove(this.getId());
             if (type == Plan.Step.TYPE_DRIVE) {
-                ResultMapFragment resultMapFragment = mSphinx.getResultMapFragment();
+                ResultMapFragment resultMapFragment = mFragmentManager.getResultMapFragment();
                 resultMapFragment.setData(null, ActionLog.TrafficDriveListMap);
                 mSphinx.showView(TKFragmentManager.ID_view_result_map);
 
@@ -277,7 +277,7 @@ public class TrafficResultFragment extends BaseFragment {
                 
                 result = true;
             } else if (type == Plan.Step.TYPE_WALK) {
-                ResultMapFragment resultMapFragment = mSphinx.getResultMapFragment();
+                ResultMapFragment resultMapFragment = mFragmentManager.getResultMapFragment();
                 resultMapFragment.setData(null, ActionLog.TrafficWalkListMap);
                 mSphinx.showView(TKFragmentManager.ID_view_result_map);
 

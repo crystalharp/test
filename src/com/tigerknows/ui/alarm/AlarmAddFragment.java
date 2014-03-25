@@ -83,7 +83,7 @@ public class AlarmAddFragment extends BaseFragment implements View.OnClickListen
         if (id == R.id.bus_station_btn) {
             addActionLog(ActionLog.AlarmAddBusStops);
             DataQuery dataQuery = new DataQuery(mSphinx);
-            mSphinx.getInputSearchFragment().setData(dataQuery,
+            mFragmentManager.getInputSearchFragment().setData(dataQuery,
                     null,
                     InputSearchFragment.MODE_BUSLINE,
                     null,
@@ -92,7 +92,7 @@ public class AlarmAddFragment extends BaseFragment implements View.OnClickListen
         } else if (id == R.id.bus_line_btn) {
             addActionLog(ActionLog.AlarmAddBusLine);
             DataQuery dataQuery = new DataQuery(mSphinx);
-            mSphinx.getInputSearchFragment().setData(dataQuery,
+            mFragmentManager.getInputSearchFragment().setData(dataQuery,
                     null,
                     InputSearchFragment.MODE_BUSLINE,
                     null,

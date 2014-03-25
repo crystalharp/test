@@ -174,6 +174,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     public DynamicHotelPOI(POIDetailFragment poiFragment, LayoutInflater inflater){
         mPOIDetailFragment = poiFragment;
         mSphinx = poiFragment.mSphinx;
+        mFragmentManager = mSphinx.mFragmentManager;
         mInflater = inflater;
         upperView = mInflater.inflate(R.layout.poi_dynamic_hotel_upper, null);
         lowerView = mInflater.inflate(R.layout.poi_dynamic_hotel_lower, null);
@@ -574,8 +575,8 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         mPOI = poi;
         mHotel = mPOI.getHotel();
         List<BaseQuery> baseQueryList = new LinkedList<BaseQuery>();
-        Calendar checkinInHoteHome = mSphinx.getHotelHomeFragment().getCheckin();
-        Calendar checkoutInHoteHome = mSphinx.getHotelHomeFragment().getCheckout();
+        Calendar checkinInHoteHome = mFragmentManager.getHotelHomeFragment().getCheckin();
+        Calendar checkoutInHoteHome = mFragmentManager.getHotelHomeFragment().getCheckout();
         boolean updateCanReserve = false;
         if (this.checkin.equals(checkinInHoteHome) && this.checkout.equals(checkoutInHoteHome)) {
             updateCanReserve = true;
@@ -670,7 +671,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
                 RoomTypeDynamic roomInfo = ((RoomTypeDynamic)response);
                 if (roomInfo.getNum() > 0){
                     //如果有房，跳转
-                    mSphinx.getHotelOrderWriteFragment().setData(mPOI, mClickedRoomType, roomInfo, checkin, checkout);
+                    mFragmentManager.getHotelOrderWriteFragment().setData(mPOI, mClickedRoomType, roomInfo, checkin, checkout);
                     mSphinx.showView(TKFragmentManager.ID_view_hotel_order_write);
                 } else {
                     //更新按钮状态
@@ -695,7 +696,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         } else if (fromType == FROM_ONRESUME) {
             if (!mPOI.getUUID().equals(mInitDatePOIid)) {
                 if (mSphinx.uiStackContains(TKFragmentManager.ID_view_hotel_home)) {
-                    HotelHomeFragment hotelFragment = mSphinx.getHotelHomeFragment();
+                    HotelHomeFragment hotelFragment = mFragmentManager.getHotelHomeFragment();
                     initDate(hotelFragment.getCheckin(), hotelFragment.getCheckout());
                 } else {
                     initDate();

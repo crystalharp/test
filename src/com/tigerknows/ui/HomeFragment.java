@@ -48,7 +48,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
 
         mRootView = mLayoutInflater.inflate(R.layout.home, container, false);
         
-        mBottomFragment = mSphinx.getHomeBottomFragment();
+        mBottomFragment = mFragmentManager.getHomeBottomFragment();
 
         findViews();
         setListener();
@@ -72,7 +72,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         mLeftBtn.setVisibility(View.GONE);
         
         mSphinx.clearMap();
-        mBottomFragment = mSphinx.getHomeBottomFragment();
+        mBottomFragment = mFragmentManager.getHomeBottomFragment();
         mSphinx.replaceBottomUI(this);
         MapView mapView = mSphinx.getMapView();
         mapView.setStopRefreshMyLocation(false);
@@ -95,7 +95,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
     @Override
     public void onPause() {
         mItemizedOverlay = mSphinx.getMapView().getCurrentOverlay();
-        InfoWindowFragment infoWindowFragment = mSphinx.getInfoWindowFragment();
+        InfoWindowFragment infoWindowFragment = mFragmentManager.getInfoWindowFragment();
         ItemizedOverlay itemizedOverlay = infoWindowFragment.getItemizedOverlay();
         if (mSphinx.getBottomFragment() == infoWindowFragment &&
                 infoWindowFragment.getOwerFragmentId() == getId() &&
@@ -118,8 +118,8 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
     	mActionLog.addAction(mActionTag + ActionLog.TitleCenterButton);
-        mBottomFragment = mSphinx.getHomeBottomFragment();
-        mSphinx.getInputSearchFragment().setData(mSphinx.buildDataQuery(),
+        mBottomFragment = mFragmentManager.getHomeBottomFragment();
+        mFragmentManager.getInputSearchFragment().setData(mSphinx.buildDataQuery(),
         		null,
                 InputSearchFragment.MODE_POI);
         mSphinx.showView(TKFragmentManager.ID_view_poi_input_search);

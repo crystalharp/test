@@ -394,7 +394,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
                 if (c.isEmptyFixedPlace()) {
                     DataQuery dataQuery = new DataQuery(mSphinx);
                     dataQuery.setCityId(getCityId(mStart.getPOI(), mEnd.getPOI()));
-                    mSphinx.getInputSearchFragment().setData(dataQuery,
+                    mFragmentManager.getInputSearchFragment().setData(dataQuery,
                     		null,
                             InputSearchFragment.MODE_TRAFFIC,
                             new InputSearchFragment.IResponsePOI(){
@@ -480,7 +480,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
         }
         
         mTitleBtn.setVisibility(View.GONE);
-        ((ViewGroup)mSphinx.getTitleFragment().mRootView).addView(mTitleBar, sLayoutParams);
+        ((ViewGroup)mFragmentManager.getTitleFragment().mRootView).addView(mTitleBar, sLayoutParams);
     	mRadioGroup.setOnCheckedChangeListener(mRadioCheckedChangedListener);
     	mTrafficTransferRbt = (RadioButton) mRadioGroup.findViewById(R.id.traffic_transfer_rbt);
     	mTrafficDriveRbt = (RadioButton) mRadioGroup.findViewById(R.id.traffic_drive_rbt);
@@ -803,7 +803,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
         		|| trafficModel.getType() == TrafficModel.TYPE_PROJECT) {
             
             if (trafficModel.getType() == TrafficModel.TYPE_ALTERNATIVES) {
-        		sphinx.getTrafficQueryFragment().showAlternativeDialog(trafficQuery.getTrafficModel().getStartAlternativesList(), trafficQuery.getTrafficModel().getEndAlternativesList());
+        		sphinx.mFragmentManager.getTrafficQueryFragment().showAlternativeDialog(trafficQuery.getTrafficModel().getStartAlternativesList(), trafficQuery.getTrafficModel().getEndAlternativesList());
         		
             } else if (trafficModel.getPlanList() == null
                     || trafficModel.getPlanList().size() <= 0) {
@@ -814,32 +814,32 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
             } else if (trafficModel.getType() == TrafficModel.TYPE_PROJECT) {
                 List<Plan> planList = trafficModel.getPlanList();
                 if (reset) {
-                    sphinx.getTrafficDetailFragment().resetResult();
+                    sphinx.mFragmentManager.getTrafficDetailFragment().resetResult();
                 }
                 
                 actionLog.addAction(actionTag + ActionLog.TrafficResultTraffic, planList.size());
             	
             	int type = planList.get(0).getType();
-            	TrafficDetailFragment f = sphinx.getTrafficDetailFragment();
+            	TrafficDetailFragment f = sphinx.mFragmentManager.getTrafficDetailFragment();
             	f.addResult(trafficQuery, type, planList);
             	if (type == Plan.Step.TYPE_TRANSFER) {
             	    if (sphinx.uiStackPeek() == TKFragmentManager.ID_view_result_map) {
             	        sphinx.uiStackRemove(TKFragmentManager.ID_view_result_map);
             	    }
             	    // 换乘方式
-            	    sphinx.getTrafficResultFragment().setData(trafficQuery);
+            	    sphinx.mFragmentManager.getTrafficResultFragment().setData(trafficQuery);
             	    sphinx.showView(TKFragmentManager.ID_view_traffic_result_transfer);
             	} else if (type == Plan.Step.TYPE_DRIVE) {
             	    // 驾车
             	    f.refreshResult(type);
             	    f.refreshDrive(planList.get(0));
             		if (sphinx.uiStackPeek() == TKFragmentManager.ID_view_result_map) {
-                        sphinx.getResultMapFragment().changeTrafficType(type);
+                        sphinx.mFragmentManager.getResultMapFragment().changeTrafficType(type);
                     } else {
                         if (sphinx.uiStackPeek() == TKFragmentManager.ID_view_traffic_result_transfer) {
                             sphinx.uiStackRemove(TKFragmentManager.ID_view_traffic_result_transfer);
                         }
-                        sphinx.getResultMapFragment().setData(null, ActionLog.TrafficDriveListMap);
+                        sphinx.mFragmentManager.getResultMapFragment().setData(null, ActionLog.TrafficDriveListMap);
                         sphinx.showView(TKFragmentManager.ID_view_result_map);
                         sphinx.resetLoactionButtonState();
                         sphinx.resetMapDegree();
@@ -852,12 +852,12 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
                     // 步行方式
             	    f.refreshResult(type);
                     if (sphinx.uiStackPeek() == TKFragmentManager.ID_view_result_map) {
-                        sphinx.getResultMapFragment().changeTrafficType(type);
+                        sphinx.mFragmentManager.getResultMapFragment().changeTrafficType(type);
                     } else {
                         if (sphinx.uiStackPeek() == TKFragmentManager.ID_view_traffic_result_transfer) {
                             sphinx.uiStackRemove(TKFragmentManager.ID_view_traffic_result_transfer);
                         }
-                        sphinx.getResultMapFragment().setData(null, ActionLog.TrafficWalkListMap);
+                        sphinx.mFragmentManager.getResultMapFragment().setData(null, ActionLog.TrafficWalkListMap);
                         sphinx.showView(TKFragmentManager.ID_view_result_map);
                         sphinx.resetLoactionButtonState();
                         sphinx.resetMapDegree();
@@ -1020,7 +1020,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
             }
             dataQuery = new DataQuery(mSphinx);
             dataQuery.setCityId(getCityId(mStart.getPOI(), mEnd.getPOI()));
-            mSphinx.getInputSearchFragment().setData(dataQuery,
+            mFragmentManager.getInputSearchFragment().setData(dataQuery,
             		e,
                     InputSearchFragment.MODE_TRAFFIC,
                     new InputSearchFragment.IResponsePOI(){
@@ -1043,7 +1043,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
             }
             dataQuery = new DataQuery(mSphinx);
             dataQuery.setCityId(getCityId(mStart.getPOI(), mEnd.getPOI()));
-            mSphinx.getInputSearchFragment().setData(dataQuery,
+            mFragmentManager.getInputSearchFragment().setData(dataQuery,
             		s,
                     InputSearchFragment.MODE_TRAFFIC,
                     new InputSearchFragment.IResponsePOI(){
@@ -1082,7 +1082,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
             addActionLog(ActionLog.TrafficHomeClickBusLineBtn);
             dataQuery = new DataQuery(mSphinx);
             dataQuery.setCityId(getCityId(mStart.getPOI(), mEnd.getPOI()));
-            mSphinx.getInputSearchFragment().setData(dataQuery,
+            mFragmentManager.getInputSearchFragment().setData(dataQuery,
                     null,
                     InputSearchFragment.MODE_BUSLINE);
             mSphinx.showView(TKFragmentManager.ID_view_poi_input_search);
@@ -1092,7 +1092,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
             addActionLog(ActionLog.TrafficHomeClickBusStationBtn);
             dataQuery = new DataQuery(mSphinx);
             dataQuery.setCityId(getCityId(mStart.getPOI(), mEnd.getPOI()));
-            mSphinx.getInputSearchFragment().setData(dataQuery,
+            mFragmentManager.getInputSearchFragment().setData(dataQuery,
                     null,
                     InputSearchFragment.MODE_BUSLINE);
             mSphinx.showView(TKFragmentManager.ID_view_poi_input_search);
@@ -1100,7 +1100,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
             
         case R.id.error_recovery_btn:
             addActionLog(ActionLog.TrafficHomeClickSubWayBtn);
-            mSphinx.getSubwayMapFragment().setData(Globals.getCurrentCityInfo(mSphinx, false));
+            mFragmentManager.getSubwayMapFragment().setData(Globals.getCurrentCityInfo(mSphinx, false));
             mSphinx.showView(TKFragmentManager.ID_view_subway_map);
             break;
             

@@ -252,7 +252,7 @@ public class DynamicTuangouPOI extends DynamicPOIViewTemplate{
                     List<Tuangou> list = new ArrayList<Tuangou>();
                     list.add(tuangou);
                     mSphinx.showView(TKFragmentManager.ID_view_discover_tuangou_detail);
-                    mSphinx.getTuangouDetailFragment().setData(list, 0, null);
+                    mFragmentManager.getTuangouDetailFragment().setData(list, 0, null);
                 }
             }
         }

@@ -309,7 +309,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
 				msg.obj = mOrder.getId();
 				mSphinx.getHandler().sendMessage(msg);
 			}
-			mSphinx.getHotelOrderListFragment().removeOrder(mOrder);
+			mFragmentManager.getHotelOrderListFragment().removeOrder(mOrder);
 			dismiss();
 			Toast.makeText(mSphinx, R.string.hotel_order_delete_success, Toast.LENGTH_LONG).show();
 		} catch (Exception e) {
@@ -657,7 +657,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
             	// 一个数据操作的情况是： 再订一单。跳转到酒店POI详情界面。
             	POIQueryResponse response = (POIQueryResponse) baseQuery.getResponse();
             	POI hotelPoi = response.getPOI();
-                mSphinx.getPOIDetailFragment().setData(hotelPoi, mPosition);
+                mFragmentManager.getPOIDetailFragment().setData(hotelPoi, mPosition);
                 mSphinx.showView(TKFragmentManager.ID_view_poi_detail);
 
             }//end API type decision

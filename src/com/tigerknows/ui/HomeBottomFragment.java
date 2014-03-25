@@ -62,10 +62,10 @@ public class HomeBottomFragment extends BaseFragment implements View.OnClickList
         int id = v.getId();
         if (id == R.id.poi_view) {
             mActionLog.addAction(ActionLog.MenuPOI);
-            mSphinx.getPOINearbyFragment().setData(mSphinx.buildDataQuery());
+            mFragmentManager.getNearbySearchFragment().setData(mSphinx.buildDataQuery());
             mSphinx.showView(TKFragmentManager.ID_view_poi_nearby_search);
         } else if (id == R.id.traffic_view) {
-            mSphinx.getTrafficQueryFragment().setRadioGroupByPrefs();
+            mFragmentManager.getTrafficQueryFragment().setRadioGroupByPrefs();
             mSphinx.showView(TKFragmentManager.ID_view_traffic_home);
             mActionLog.addAction(ActionLog.MenuTraffic);
         } else if (id == R.id.more_view) {

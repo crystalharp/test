@@ -184,12 +184,12 @@ public class HotelOrderListFragment extends BaseFragment{
 				
 				// 如果是从订单填写页提交了重复的订单，建议用户取消订单时，跳转到额外的一个订单详情页
 				if(mSphinx.uiStackContains(TKFragmentManager.ID_view_hotel_order_write)){
-					mSphinx.getHotelOrderDetailFragmentTwo().setData(orders.get(position) , position);
-					mSphinx.getHotelOrderDetailFragmentTwo().setStageIndicatorVisible(false);
+					mFragmentManager.getHotelOrderDetailFragment2().setData(orders.get(position) , position);
+					mFragmentManager.getHotelOrderDetailFragment2().setStageIndicatorVisible(false);
 					mSphinx.showView(TKFragmentManager.ID_view_hotel_order_detail_2);
 				}else{
-					mSphinx.getHotelOrderDetailFragment().setData(orders.get(position) , position);
-					mSphinx.getHotelOrderDetailFragment().setStageIndicatorVisible(false);
+					mFragmentManager.getHotelOrderDetailFragment().setData(orders.get(position) , position);
+					mFragmentManager.getHotelOrderDetailFragment().setStageIndicatorVisible(false);
 					mSphinx.showView(TKFragmentManager.ID_view_hotel_order_detail);
 				}
 			}

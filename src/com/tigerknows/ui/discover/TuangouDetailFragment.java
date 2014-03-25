@@ -164,7 +164,7 @@ public class TuangouDetailFragment extends BaseDetailFragment
      * View fendian poi on map
      */
     public void viewMap() {
-        mSphinx.getResultMapFragment().setData(getString(R.string.shanghu_ditu), ActionLog.ResultMapTuangouDetail);
+        mFragmentManager.getResultMapFragment().setData(getString(R.string.shanghu_ditu), ActionLog.ResultMapTuangouDetail);
         super.viewMap();
     	//Get Fendian poi
         Tuangou data = this.mDataList.get(mViewPager.getCurrentItem());
@@ -209,6 +209,6 @@ public class TuangouDetailFragment extends BaseDetailFragment
     
     public void dismiss() {
         super.dismiss();
-        mSphinx.getBrowserFragment().stopLoading();
+        mFragmentManager.getBrowserFragment().stopLoading();
     }
 }

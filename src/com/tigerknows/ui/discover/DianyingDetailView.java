@@ -394,7 +394,7 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
                 
             case R.id.nearby_fendian_view:        
                 mActionLog.addAction(mActionTag +  ActionLog.DiscoverCommonBranch);       
-                mSphinx.getDiscoverChildListFragment().setup(mData, mNearbyFendianTxv.getText().toString(), ActionLog.YingxunList);
+                mFragmentManager.getDiscoverChildListFragment().setup(mData, mNearbyFendianTxv.getText().toString(), ActionLog.YingxunList);
                 mSphinx.showView(TKFragmentManager.ID_view_discover_child_list);
                 break;
 
@@ -446,7 +446,7 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
                     dianying.setYingxun(yingxun);
                     List<Dianying> list = new ArrayList<Dianying>();
                     list.add(dianying);
-                    mSphinx.getDianyingDetailFragment().setData(list, mParentFragment.position, null);
+                    mFragmentManager.getDianyingDetailFragment().setData(list, mParentFragment.position, null);
                 }
                 
             }

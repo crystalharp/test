@@ -98,7 +98,7 @@ public class ZhanlanDetailFragment extends BaseDetailFragment
     }
     
     public void viewMap() {
-        mSphinx.getResultMapFragment().setData(getString(R.string.zhanlan_didian_ditu), ActionLog.ResultMapZhanlanDetail);
+        mFragmentManager.getResultMapFragment().setData(getString(R.string.zhanlan_didian_ditu), ActionLog.ResultMapZhanlanDetail);
         super.viewMap();
         Zhanlan data = mDataList.get(mViewPager.getCurrentItem());
         List<Zhanlan> list = new ArrayList<Zhanlan>();

@@ -609,7 +609,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
 
             }
 
-            ResultMapFragment resultMapFragment = mSphinx.getResultMapFragment();
+            ResultMapFragment resultMapFragment = mFragmentManager.getResultMapFragment();
             resultMapFragment.setData(title, actionTag);
             mSphinx.showView(TKFragmentManager.ID_view_result_map);
             

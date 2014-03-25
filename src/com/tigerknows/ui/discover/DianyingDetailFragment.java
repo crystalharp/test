@@ -99,7 +99,7 @@ public class DianyingDetailFragment extends BaseDetailFragment
     }
     
     public void viewMap() {
-        mSphinx.getResultMapFragment().setData(getString(R.string.dianying_ditu), ActionLog.ResultMapDianyingDetail);
+        mFragmentManager.getResultMapFragment().setData(getString(R.string.dianying_ditu), ActionLog.ResultMapDianyingDetail);
         super.viewMap();
         Dianying data = mDataList.get(mViewPager.getCurrentItem());
         List<Dianying> list = new ArrayList<Dianying>();

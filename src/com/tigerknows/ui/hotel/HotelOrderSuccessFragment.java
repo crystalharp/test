@@ -68,8 +68,8 @@ public class HotelOrderSuccessFragment extends BaseFragment{
 			@Override
 			public void onClick(View v) {
 				addActionLog(ActionLog.HotelOrderSuccessDetail);
-	            mSphinx.getHotelOrderDetailFragment().setData(mOrder, -1);
-	            mSphinx.getHotelOrderDetailFragment().setStageIndicatorVisible(true);
+	            mFragmentManager.getHotelOrderDetailFragment().setData(mOrder, -1);
+	            mFragmentManager.getHotelOrderDetailFragment().setStageIndicatorVisible(true);
 	            dismiss();
 	            mSphinx.uiStackRemove(getId());
 	            mSphinx.showView(TKFragmentManager.ID_view_hotel_order_detail);

@@ -14,6 +14,7 @@ import android.widget.ScrollView;
 
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.TKFragmentManager;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BaseData;
@@ -42,6 +43,7 @@ public class BaseDetailView extends LinearLayout {
     protected Runnable mActualLoadedDrawableRun = null;
     
     protected Sphinx mSphinx;
+    protected TKFragmentManager mFragmentManager;
     protected BaseDetailFragment mParentFragment;
     protected String mActionTag;
     protected ActionLog mActionLog;
@@ -66,6 +68,7 @@ public class BaseDetailView extends LinearLayout {
         super(sphinx);
         mSphinx = sphinx;
         mParentFragment = parentFragment;
+        mFragmentManager = mSphinx.mFragmentManager;
         mActionLog = ActionLog.getInstance(mSphinx);
         
         mSphinx.getLayoutInflater().inflate(layoutResId, this, true);

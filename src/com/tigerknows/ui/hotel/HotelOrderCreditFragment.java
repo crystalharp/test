@@ -234,7 +234,7 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
             }
             list.add(str);
             
-            mSphinx.getHotelOrderWriteFragment().setCredit(list);
+            mFragmentManager.getHotelOrderWriteFragment().setCredit(list);
             break;
         default:
             break;

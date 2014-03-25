@@ -345,7 +345,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 if (msg.what == MAP_MOVEEND) {
 
                     if(touchMode.equals(TouchMode.CLICK_SELECT_POINT)) {
-                        InfoWindowFragment infoWindowFragment = getInfoWindowFragment();
+                        InfoWindowFragment infoWindowFragment = mFragmentManager.getInfoWindowFragment();
                         ItemizedOverlay itemizedOverlay = infoWindowFragment.getItemizedOverlay();
                         if (itemizedOverlay != null
                             && itemizedOverlay.size() == 1) {
@@ -366,7 +366,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                         return;
                     }
 
-                    InfoWindowFragment infoWindowFragment = getInfoWindowFragment();
+                    InfoWindowFragment infoWindowFragment = mFragmentManager.getInfoWindowFragment();
                     if (infoWindowFragment == mBottomFragment) {
                         ItemizedOverlay itemizedOverlay = infoWindowFragment.getItemizedOverlay();
                         String overlayName = itemizedOverlay.getName();
@@ -410,8 +410,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 	mUIStackAdjustReady = TKFragmentManager.ID_view_invalid;
                 } else if (msg.what == UI_STACK_ADJUST_CANCEL){
                 	mUIStackAdjustReady = TKFragmentManager.ID_view_invalid;
-                } else if (mHotelOrderDetailFragment != null && (msg.what == HOTEL_ORDER_OLD_SYNC || msg.what == HOTEL_ORDER_DELETE_SYNC)){
-                	getHotelOrderDetailFragment().handleMessage(msg);
+                } else if (mFragmentManager.hasCreatedFragment(TKFragmentManager.ID_view_hotel_order_detail) 
+                        && (msg.what == HOTEL_ORDER_OLD_SYNC || msg.what == HOTEL_ORDER_DELETE_SYNC)){
+                	mFragmentManager.getHotelOrderDetailFragment().handleMessage(msg);
                 }
 
             }
@@ -597,14 +598,14 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     }
 
                     if(touchMode.equals(TouchMode.MEASURE_DISTANCE)) {
-                        getMeasureDistanceFragment().addPoint(touchPosition);
+                        mFragmentManager.getMeasureDistanceFragment().addPoint(touchPosition);
                         return;
                     }
 
                     mMapView.deleteOverlaysByName(ItemizedOverlay.LONG_CLICKED_OVERLAY);
                     mMapView.deleteOverlaysByName(ItemizedOverlay.MAP_POI_OVERLAY);
 
-                    InfoWindowFragment infoWindowFragment = getInfoWindowFragment();
+                    InfoWindowFragment infoWindowFragment = mFragmentManager.getInfoWindowFragment();
                     if (infoWindowFragment == mBottomFragment) {
                         ItemizedOverlay itemizedOverlay = infoWindowFragment.getItemizedOverlay();
                         String overlayName = itemizedOverlay.getName();
@@ -682,7 +683,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 public void onTouchEvent(EventSource eventSource, Position position) {
 
                     if(touchMode.equals(TouchMode.MEASURE_DISTANCE)) {
-                        getMeasureDistanceFragment().addPoint(position);
+                        mFragmentManager.getMeasureDistanceFragment().addPoint(position);
                         return;
                     }
                 }
@@ -697,11 +698,11 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     }
 
                     if(touchMode.equals(TouchMode.MEASURE_DISTANCE)) {
-                        getMeasureDistanceFragment().addPoint(position);
+                        mFragmentManager.getMeasureDistanceFragment().addPoint(position);
                         return;
                     }
 
-                    InfoWindowFragment infoWindowFragment = getInfoWindowFragment();
+                    InfoWindowFragment infoWindowFragment = mFragmentManager.getInfoWindowFragment();
                     if (infoWindowFragment == mBottomFragment) {
                         ItemizedOverlay itemizedOverlay = infoWindowFragment.getItemizedOverlay();
                         String overlayName = itemizedOverlay.getName();
@@ -763,7 +764,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                         return;
                     }
 
-                    InfoWindowFragment infoWindowFragment = getInfoWindowFragment();
+                    InfoWindowFragment infoWindowFragment = mFragmentManager.getInfoWindowFragment();
                     if (infoWindowFragment == mBottomFragment) {
                         ItemizedOverlay itemizedOverlay = infoWindowFragment.getItemizedOverlay();
                         String overlayName = itemizedOverlay.getName();
@@ -792,7 +793,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     mMapView.setZoomControlsState(newZoomLevel);
                     
                     if(touchMode.equals(TouchMode.CLICK_SELECT_POINT)) {
-                        InfoWindowFragment infoWindowFragment = getInfoWindowFragment();
+                        InfoWindowFragment infoWindowFragment = mFragmentManager.getInfoWindowFragment();
                         ItemizedOverlay itemizedOverlay = infoWindowFragment.getItemizedOverlay();
                         if (itemizedOverlay != null
                             && itemizedOverlay.size() == 1) {
@@ -941,9 +942,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         }
 
         mUIStack.clear();
-        getTitleFragment();
-        mMapView.getPadding().top = getTitleFragment().mHeight;
-        getMoreFragment().refreshMoreData();
+        mFragmentManager.getTitleFragment();
+        mMapView.getPadding().top = mFragmentManager.getTitleFragment().mHeight;
+        mFragmentManager.getMoreHomeFragment().refreshMoreData();
         showView(TKFragmentManager.ID_view_home);
 
         Sphinx.this.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -993,7 +994,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 CityInfo cityInfo = data.getParcelableExtra(ChangeCityActivity.EXTRA_CITYINFO);
                 boolean changeHotelCity = data.getBooleanExtra(ChangeCityActivity.EXTRA_ONLY_CHANGE_HOTEL_CITY, false);
                 if (changeHotelCity) {
-                    getHotelHomeFragment().setCityInfo(cityInfo);
+                    mFragmentManager.getHotelHomeFragment().setCityInfo(cityInfo);
                 } else {
                     changeCity(cityInfo);
                 }
@@ -1036,13 +1037,13 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 			if (resultCode == RESULT_CANCELED
 					&& data != null
 					&& data.getBooleanExtra(REFRESH_POI_DETAIL, false)) {
-				getPOIDetailFragment().refreshDetail();
-				getPOIDetailFragment().refreshComment();
+				mFragmentManager.getPOIDetailFragment().refreshDetail();
+				mFragmentManager.getPOIDetailFragment().refreshComment();
 			}
         } else if (R.id.activity_hint == requestCode) {
 
         } else if (R.id.activity_poi_dish == requestCode) {
-            getPOIDetailFragment().refreshRecommendCook();
+            mFragmentManager.getPOIDetailFragment().refreshRecommendCook();
         } else if (TKFragmentManager.ID_view_alarm_list == requestCode) {
 
             if (resultCode == RESULT_OK) {
@@ -1051,7 +1052,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     uri = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
                 }
                 
-                getAlarmListFragment().setData(uri);
+                mFragmentManager.getAlarmListFragment().setData(uri);
             }
         }
 
@@ -1100,7 +1101,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 		boolean ensureThreadsRunning = mMapView.ensureThreadRunning();
 		// TODO mTrafficQueryFragment实例的成员变量在地图的背景线程被重新生成后会造成丢失的问题
 		if (ensureThreadsRunning) {
-		    mTrafficQueryFragment = null;
+		    mFragmentManager.clearFragment(TKFragmentManager.ID_view_traffic_home);
 		}
 
         if (mSensorOrientation) {
@@ -1115,7 +1116,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         registerReceiver(mCountCurrentDownloadCityBroadcastReceiver, intentFilter);
 
         int id = uiStackPeek();
-        BaseFragment baseFragment = getFragment(id);
+        BaseFragment baseFragment = mFragmentManager.getFragment(id);
         if (baseFragment != null) {
             baseFragment.onResume();
         }
@@ -1213,7 +1214,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            MoreHomeFragment moreHomeFragment = getMoreFragment();
+            MoreHomeFragment moreHomeFragment = mFragmentManager.getMoreHomeFragment();
             moreHomeFragment.refreshMapDownloadData();
         }
     };
@@ -1261,7 +1262,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             case KeyEvent.KEYCODE_BACK:
 
                 mActionLog.addAction(ActionLog.KeyCodeBack);
-                BaseFragment baseFragment = getFragment(uiStackPeek());
+                BaseFragment baseFragment = mFragmentManager.getFragment(uiStackPeek());
                 if (baseFragment != null && baseFragment.onKeyDown(keyCode, event)) {
                     return true;
                 }
@@ -1290,7 +1291,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                                 }
                             });
                         }
-                        baseFragment = getFragment(uiStackPeek());
+                        baseFragment = mFragmentManager.getFragment(uiStackPeek());
                         if (baseFragment != null) {
                             baseFragment.dismiss();
                         }
@@ -1377,12 +1378,12 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                         public void onClick(View v) {
                             int id = v.getId();
                             if (uiStackPeek() == TKFragmentManager.ID_view_traffic_home) {
-                                getTrafficQueryFragment().priorityMyLocation = false;
+                                mFragmentManager.getTrafficQueryFragment().priorityMyLocation = false;
                             }
                             if (id == R.id.button0_view) {
 
                                 mActionLog.addAction(ActionLog.MapSubway);
-                                getSubwayMapFragment().setData(Globals.getCurrentCityInfo(mThis, false));
+                                mFragmentManager.getSubwayMapFragment().setData(Globals.getCurrentCityInfo(mThis, false));
                                 showView(TKFragmentManager.ID_view_subway_map);
                                 mPopupWindowTools.dismiss();
                             } else if (id == R.id.button1_view) {
@@ -1406,7 +1407,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                             } else if (id == R.id.button2_view) {
                                 mActionLog.addAction(ActionLog.MapDistance);
 
-                                getMeasureDistanceFragment().setData();
+                                mFragmentManager.getMeasureDistanceFragment().setData();
                                 showView(TKFragmentManager.ID_view_measure_distance);
 
                                 Toast.makeText(mThis, R.string.measure_distance_tip, Toast.LENGTH_LONG).show();
@@ -1515,12 +1516,12 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     } else if ("q".equals(parm[0])) {
                         String keyword = parm[1];
                         if (!TextUtils.isEmpty(keyword)) {
-                            getInputSearchFragment().setData(buildDataQuery(),
+                            mFragmentManager.getInputSearchFragment().setData(buildDataQuery(),
                             		keyword,
                                     InputSearchFragment.MODE_POI);
                             showView(TKFragmentManager.ID_view_poi_input_search);
                             TKWord tkWord = new TKWord(TKWord.ATTRIBUTE_HISTORY, keyword);
-                            getInputSearchFragment().submitPOIQuery(tkWord);
+                            mFragmentManager.getInputSearchFragment().submitPOIQuery(tkWord);
                             query = true;
                         }
                     }
@@ -1528,7 +1529,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     e.printStackTrace();
                 }
                 if (query == false && Util.inChina(poi.getPosition())) {
-                    getResultMapFragment().setData(getString(R.string.result_map), ActionLog.POIDetailMap);
+                    mFragmentManager.getResultMapFragment().setData(getString(R.string.result_map), ActionLog.POIDetailMap);
                     showView(TKFragmentManager.ID_view_result_map);
                     List<POI> list = new ArrayList<POI>();
                     list.add(poi);
@@ -1571,12 +1572,12 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     } else if ("q".equals(parm[0])) {
                         String keyword = parm[1];
                         if (!TextUtils.isEmpty(keyword)) {
-                            getInputSearchFragment().setData(buildDataQuery(),
+                            mFragmentManager.getInputSearchFragment().setData(buildDataQuery(),
                             		keyword,
                                     InputSearchFragment.MODE_POI);
                             showView(TKFragmentManager.ID_view_poi_input_search);
                             TKWord tkWord = new TKWord(TKWord.ATTRIBUTE_HISTORY, keyword);
-                            getInputSearchFragment().submitPOIQuery(tkWord);
+                            mFragmentManager.getInputSearchFragment().submitPOIQuery(tkWord);
                         }
                         query = true;
                     }
@@ -1593,7 +1594,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     } else {
                         poi.setName(getString(R.string.select_point));
                     }
-                    getResultMapFragment().setData(getString(R.string.result_map), ActionLog.POIDetailMap);
+                    mFragmentManager.getResultMapFragment().setData(getString(R.string.result_map), ActionLog.POIDetailMap);
                     showView(TKFragmentManager.ID_view_result_map);
                     List<POI> list = new ArrayList<POI>();
                     list.add(poi);
@@ -1619,7 +1620,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 poi.setSourceType(POI.SOURCE_TYPE_MY_LOCATION);
             }
             if (poi != null && poi.getPosition() != null) {
-                getResultMapFragment().setData(getString(R.string.result_map), ActionLog.POIDetailMap);
+                mFragmentManager.getResultMapFragment().setData(getString(R.string.result_map), ActionLog.POIDetailMap);
                 showView(TKFragmentManager.ID_view_result_map);
                 List<POI> list = new ArrayList<POI>();
                 list.add(poi);
@@ -1634,7 +1635,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 return true;
             }
             uiStackClose(new int[]{TKFragmentManager.ID_view_home});
-            getInputSearchFragment().setData();
+            mFragmentManager.getInputSearchFragment().setData();
             showView(TKFragmentManager.ID_view_poi_input_search);
         } else if (intent.getBooleanExtra(EXTRA_WEIXIN, false)) { //   来自微信的调用，为其提供POI数据作为返回
         	mFromThirdParty = THIRD_PARTY_WENXIN_REQUET;
@@ -1697,7 +1698,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                                         POI poi = new POI();
                                         poi.setUUID(poiuid);
                                         poi.ciytId =  cityId;
-                                        getPOIDetailFragment().setData(poi);
+                                        mFragmentManager.getPOIDetailFragment().setData(poi);
                                         showView(TKFragmentManager.ID_view_poi_detail);
                                     }
                                 }
@@ -1715,9 +1716,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 
         @Override
         public void run() {
-            getPOIDetailFragment().refreshStamp();
-            getPOIResultFragment().refreshStamp();
-            getMyCommentListFragment().refreshComment();
+            mFragmentManager.getPOIDetailFragment().refreshStamp();
+            mFragmentManager.getPOIResultFragment().refreshStamp();
+            mFragmentManager.getMyCommentListFragment().refreshComment();
         }
     };
 
@@ -1788,19 +1789,19 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 
     		// show yanchu dynamic poi
             showView(TKFragmentManager.ID_view_discover_yanchu_detail);
-            getYanchuDetailFragment().setPulledDynamicPOI(pulledDynamicPOI);
+            mFragmentManager.getYanchuDetailFragment().setPulledDynamicPOI(pulledDynamicPOI);
 
     	}else if(BaseQuery.DATA_TYPE_ZHANLAN.equals(masterType)){
 
     		// show zhanlan dynamic poi
             showView(TKFragmentManager.ID_view_discover_zhanlan_detail);
-            getZhanlanDetailFragment().setPulledDynamicPOI(pulledDynamicPOI);
+            mFragmentManager.getZhanlanDetailFragment().setPulledDynamicPOI(pulledDynamicPOI);
 
     	}else if(BaseQuery.DATA_TYPE_DIANYING.equals(masterType)){
 
     		// show dianying dynamic poi
             showView(TKFragmentManager.ID_view_discover_dianying_detail);
-            getDianyingDetailFragment().setPulledDynamicPOI(pulledDynamicPOI);
+            mFragmentManager.getDianyingDetailFragment().setPulledDynamicPOI(pulledDynamicPOI);
 
     	}
 
@@ -1855,7 +1856,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         }
 
         int id = uiStackPeek();
-        BaseFragment baseFragment = getFragment(id);
+        BaseFragment baseFragment = mFragmentManager.getFragment(id);
         if (baseFragment != null) {
             baseFragment.onPause();
         }
@@ -1955,7 +1956,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 
     @Override
     public boolean onMenuItemSelected(int featureId, MenuItem item) {
-        BaseFragment baseFragment = getFragment(uiStackPeek());
+        BaseFragment baseFragment = mFragmentManager.getFragment(uiStackPeek());
         if (baseFragment != null && baseFragment.onMenuItemSelected(featureId, item)) {
             return true;
         }
@@ -1967,7 +1968,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         BaseQuery baseQuery = tkAsyncTask.getBaseQuery();
         int targetViewId = baseQuery.getTargetViewId();
 
-        BaseFragment baseFragment = getFragment(targetViewId);
+        BaseFragment baseFragment = mFragmentManager.getFragment(targetViewId);
         if (baseFragment != null) {
             baseFragment.onCancelled(tkAsyncTask);
         }
@@ -1977,7 +1978,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     public void onPostExecute(TKAsyncTask tkAsyncTask) {
         BaseQuery baseQuery = tkAsyncTask.getBaseQuery();
         int targetViewId = baseQuery.getTargetViewId();
-        BaseFragment baseFragment = getFragment(targetViewId);
+        BaseFragment baseFragment = mFragmentManager.getFragment(targetViewId);
         if (baseFragment != null) {
             baseFragment.onPostExecute(tkAsyncTask);
         }
@@ -1997,9 +1998,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     }
                 }
                 if (uiStackPeek() == TKFragmentManager.ID_view_more_home) {
-                    getMoreFragment().refreshBootStrapData(true);
+                    mFragmentManager.getMoreHomeFragment().refreshBootStrapData(true);
                 }else{
-                	getMoreFragment().refreshBootStrapData(false);
+                	mFragmentManager.getMoreHomeFragment().refreshBootStrapData(false);
                 }
 
             } else if (baseQuery instanceof NoticeQuery) {
@@ -2007,7 +2008,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             	if (response instanceof NoticeResultResponse) {
             		NoticeResultResponse noticeResultResponse = (NoticeResultResponse) response;
             		if(noticeResultResponse != null){
-            			getMoreFragment().refreshMoreNotice(noticeResultResponse);
+            			mFragmentManager.getMoreHomeFragment().refreshMoreNotice(noticeResultResponse);
             		}
             	}
             } else if (baseQuery instanceof FeedbackUpload){
@@ -2050,8 +2051,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             return false;
         }
 
-        BaseFragment fragment = getFragment(fragmentId);
-        InfoWindowFragment infoWindowFragment = getInfoWindowFragment();
+        BaseFragment fragment = mFragmentManager.getFragment(fragmentId);
+        InfoWindowFragment infoWindowFragment = mFragmentManager.getInfoWindowFragment();
         if (fragment != null && infoWindowFragment != null) {
             infoWindowFragment.setData(fragmentId, overlayItem.getOwnerOverlay(), fragment.mActionTag);
             fragment.mBottomFragment = infoWindowFragment;
@@ -2072,9 +2073,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             return;
         }
         String cName = cityInfo.getCName();
-        if (mMoreFragment != null) {
-            getMoreFragment().refreshCity(cName);
-            getMoreFragment().refreshMapDownloadData();
+        if (mFragmentManager.hasCreatedFragment(TKFragmentManager.ID_view_more_home)) {
+            mFragmentManager.getMoreHomeFragment().refreshCity(cName);
+            mFragmentManager.getMoreHomeFragment().refreshMapDownloadData();
         }
     };
 
@@ -2133,7 +2134,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     	if (tkAsyncTask != null) {
 	        BaseQuery baseQuery = tkAsyncTask.getBaseQuery();
 	        int targetViewId = baseQuery.getTargetViewId();
-	        BaseFragment baseFragment = getFragment(targetViewId);
+	        BaseFragment baseFragment = mFragmentManager.getFragment(targetViewId);
 	        if (baseFragment != null) {
 	            baseFragment.setTkAsyncTasking(tkAsyncTask);
 	            baseFragment.setBaseQuerying(baseQuerying);
@@ -2217,7 +2218,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             for(int i = mUIStack.size()-1; i >= 0; i--) {
                 if (mUIStack.get(i) == id) {
                     mUIStack.remove(i);
-                    BaseFragment baseFragment = getFragment(id);
+                    BaseFragment baseFragment = mFragmentManager.getFragment(id);
                     if (baseFragment != null) {
                         baseFragment.dismiss();
                     }
@@ -2291,7 +2292,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 }
 
                 id = uiStackPeek();
-                BaseFragment fragment = getFragment(id);
+                BaseFragment fragment = mFragmentManager.getFragment(id);
 
                 if (fragment != null) {
                     fragment.onResume();
@@ -2344,7 +2345,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             }
             mUIPreventDismissCallBack = true;
             mUIStack.remove(mUIStack.size()-1);
-            BaseFragment baseFragment = getFragment(id);
+            BaseFragment baseFragment = mFragmentManager.getFragment(id);
             if (baseFragment != null) {
                 baseFragment.dismiss();
                 result = true;
@@ -2386,7 +2387,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 }
                 if (dismiss) {
                     mUIStack.remove(i);
-                    BaseFragment baseFragment = getFragment(id);
+                    BaseFragment baseFragment = mFragmentManager.getFragment(id);
                     if (baseFragment != null) {
                         baseFragment.dismiss();
                     }
@@ -2413,7 +2414,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 }
             }
             uiStackClose(filterIds);
-            BaseFragment baseFragment = getFragment(preferTop);
+            BaseFragment baseFragment = mFragmentManager.getFragment(preferTop);
             if (baseFragment != null) {
                 baseFragment.onResume();
                 result = true;
@@ -2638,11 +2639,11 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             mUIProcessing = true;
             boolean show = false;
             int currentId = uiStackPeek();
-            BaseFragment baseFragment = getFragment(viewId);
+            BaseFragment baseFragment = mFragmentManager.getFragment(viewId);
             if (currentId != viewId) {
                 if (baseFragment != null) {
 
-                    BaseFragment backBaseFragment = getFragment(currentId);
+                    BaseFragment backBaseFragment = mFragmentManager.getFragment(currentId);
                     if (backBaseFragment != null) {
                         backBaseFragment.onPause();
                     }
@@ -2668,7 +2669,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     public boolean dismissView(int viewId) {
         synchronized (mUILock) {
             boolean dismiss = false;
-            BaseFragment baseFragment = getFragment(viewId);
+            BaseFragment baseFragment = mFragmentManager.getFragment(viewId);
             if (baseFragment != null && baseFragment.isShown()) {
                 baseFragment.dismiss();
                 dismiss = true;
@@ -2788,665 +2789,665 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     // TODO: get dialog end
 
     // TODO: get fragment start
-    private TitleFragment mTitleFragment;
-
-    private InfoWindowFragment mInfoWindowFragment;
-
-    private HomeBottomFragment mHomeBottomFragment;
-    private HomeFragment mHomeFragment;
-    private MoreHomeFragment mMoreFragment;
-    private MyOrderFragment mMyOrderFragment;
-    private GoCommentFragment mGoCommentFragment;
-    private ResultMapFragment mResultMapFragment;
-    private BrowserFragment mBrowserFragment;
-    private FavoriteFragment mFavoriteFragment;
-    private HistoryFragment mHistoryFragment;
-    private POIDetailFragment mPOIDetailFragment;
-    private POIResultFragment mPOIResultFragment;
-    private InputSearchFragment mInputSearchFragment;
-    private NearbySearchFragment mPOINearbyFragment;
-    private CustomCategoryFragment mCustomCategoryFragment;
-    private TrafficDetailFragment mTrafficDetailFragment = null;
-    private TrafficResultFragment mTrafficResultFragment = null; 
-    private TrafficCommonPlaceFragment mTrafficCommonAddressFragment = null;
-    private TrafficSearchHistoryFragment mTrafficSearchHistoryFragment = null;
-    private BuslineResultLineFragment mBuslineResultLineFragment = null;
-    private BuslineResultStationFragment mBuslineResultStationFragment = null;
-    private BuslineDetailFragment mBuslineDetailFragment = null;
-    private TrafficQueryFragment mTrafficQueryFragment = null;
-    private SubwayMapFragment mSubwayMapFragment = null;
-    private FetchFavoriteFragment mFetchFavoriteFragment = null;
-    private MyCommentListFragment mMyCommentListFragment;
-    private UserHomeFragment mUserHomeFragment;
-
-    private DiscoverListFragment mDiscoverListFragment;
-    private TuangouDetailFragment mTuangouDetailFragment;
-    private YanchuDetailFragment mYanchuDetailFragment;
-    private ZhanlanDetailFragment mZhanlanDetailFragment;
-    private DianyingDetailFragment mDianyingDetailFragment;
-    private DiscoverChildListFragment mDiscoverChildListFragment;
-
-    private HotelHomeFragment mHotelHomeFragment;
-    private PickLocationFragment mPickLocationFragment;
-    private HotelOrderWriteFragment mHotelOrderWriteFragment;
-    private HotelOrderCreditFragment mHotelOrderCreditFragment;
-
-    private HotelOrderSuccessFragment mHotelOrderSuccessFragment;
-    private HotelOrderDetailFragment mHotelOrderDetailFragment;
-    private HotelOrderDetailFragment mHotelOrderDetailFragment2;
-    private HotelOrderListFragment mHotelOrderListFragment;
-
-    private CouponListFragment mCouponListFragment;
-    private CouponDetailFragment mCouponDetailFragment;
-
-    private MeasureDistanceFragment mMeasureDistanceFragment;
-
-    private AlarmListFragment mAlarmListFragment = null;
-    private AlarmAddFragment mAlarmAddFragment = null;
-    private HashMap<Integer, BaseFragment> FragmentHashmap = new HashMap<Integer, BaseFragment>();
-
-    @SuppressWarnings("unchecked")
-    public <T> T getFragment(int id) {
-
-        Integer key = id;
-        if (id < TKFragmentManager.ID_max && id > TKFragmentManager.ID_view_invalid) {
-            if (FragmentHashmap.containsKey(key)) {
-                return (T)FragmentHashmap.get(key);
-            } else {
-                Constructor<?> a;
-                BaseFragment b = null;
-                Class<?> c = TKFragmentManager.ViewID2Class[id];
-                try {
-                    a = c.getConstructor(Sphinx.class);
-                    b = (BaseFragment) a.newInstance(Sphinx.this);
-                    b.setId(id);
-                    FragmentHashmap.put(key, b);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                return (T)b;
-            }
-        } else {
-            return null;
-        }
-    }
+//    private TitleFragment mTitleFragment;
+//
+//    private InfoWindowFragment mInfoWindowFragment;
+//
+//    private HomeBottomFragment mHomeBottomFragment;
+//    private HomeFragment mHomeFragment;
+//    private MoreHomeFragment mMoreFragment;
+//    private MyOrderFragment mMyOrderFragment;
+//    private GoCommentFragment mGoCommentFragment;
+//    private ResultMapFragment mResultMapFragment;
+//    private BrowserFragment mBrowserFragment;
+//    private FavoriteFragment mFavoriteFragment;
+//    private HistoryFragment mHistoryFragment;
+//    private POIDetailFragment mPOIDetailFragment;
+//    private POIResultFragment mPOIResultFragment;
+//    private InputSearchFragment mInputSearchFragment;
+//    private NearbySearchFragment mPOINearbyFragment;
+//    private CustomCategoryFragment mCustomCategoryFragment;
+//    private TrafficDetailFragment mTrafficDetailFragment = null;
+//    private TrafficResultFragment mTrafficResultFragment = null; 
+//    private TrafficCommonPlaceFragment mTrafficCommonAddressFragment = null;
+//    private TrafficSearchHistoryFragment mTrafficSearchHistoryFragment = null;
+//    private BuslineResultLineFragment mBuslineResultLineFragment = null;
+//    private BuslineResultStationFragment mBuslineResultStationFragment = null;
+//    private BuslineDetailFragment mBuslineDetailFragment = null;
+//    private TrafficQueryFragment mTrafficQueryFragment = null;
+//    private SubwayMapFragment mSubwayMapFragment = null;
+//    private FetchFavoriteFragment mFetchFavoriteFragment = null;
+//    private MyCommentListFragment mMyCommentListFragment;
+//    private UserHomeFragment mUserHomeFragment;
+//
+//    private DiscoverListFragment mDiscoverListFragment;
+//    private TuangouDetailFragment mTuangouDetailFragment;
+//    private YanchuDetailFragment mYanchuDetailFragment;
+//    private ZhanlanDetailFragment mZhanlanDetailFragment;
+//    private DianyingDetailFragment mDianyingDetailFragment;
+//    private DiscoverChildListFragment mDiscoverChildListFragment;
+//
+//    private HotelHomeFragment mHotelHomeFragment;
+//    private PickLocationFragment mPickLocationFragment;
+//    private HotelOrderWriteFragment mHotelOrderWriteFragment;
+//    private HotelOrderCreditFragment mHotelOrderCreditFragment;
+//
+//    private HotelOrderSuccessFragment mHotelOrderSuccessFragment;
+//    private HotelOrderDetailFragment mHotelOrderDetailFragment;
+//    private HotelOrderDetailFragment mHotelOrderDetailFragment2;
+//    private HotelOrderListFragment mHotelOrderListFragment;
+//
+//    private CouponListFragment mCouponListFragment;
+//    private CouponDetailFragment mCouponDetailFragment;
+//
+//    private MeasureDistanceFragment mMeasureDistanceFragment;
+//
+//    private AlarmListFragment mAlarmListFragment = null;
+//    private AlarmAddFragment mAlarmAddFragment = null;
+//    private HashMap<Integer, BaseFragment> FragmentHashmap = new HashMap<Integer, BaseFragment>();
+//
+//    @SuppressWarnings("unchecked")
+//    public <T> T mFragmentManager.getFragment(int id) {
+//
+//        Integer key = id;
+//        if (id < TKFragmentManager.ID_max && id > TKFragmentManager.ID_view_invalid) {
+//            if (FragmentHashmap.containsKey(key)) {
+//                return (T)FragmentHashmap.get(key);
+//            } else {
+//                Constructor<?> a;
+//                BaseFragment b = null;
+//                Class<?> c = TKFragmentManager.ViewID2Class[id];
+//                try {
+//                    a = c.getConstructor(Sphinx.class);
+//                    b = (BaseFragment) a.newInstance(Sphinx.this);
+//                    b.setId(id);
+//                    FragmentHashmap.put(key, b);
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//                return (T)b;
+//            }
+//        } else {
+//            return null;
+//        }
+//    }
 
     public ViewGroup getTitleView() {
         synchronized (mUILock) {
             return mTitleView;
         }
     }
-
-    public TitleFragment getTitleFragment() {
-        synchronized (mUILock) {
-            if (mTitleFragment == null) {
-                TitleFragment fragment = new TitleFragment(Sphinx.this);
-                fragment.onCreate(null);
-                fragment.setVisibility(View.GONE);
-                mTitleView.addView(fragment);
-                mTitleFragment = fragment;
-            }
-            return mTitleFragment;
-        }
-    }
-
-    public InfoWindowFragment getInfoWindowFragment() {
-        synchronized (mUILock) {
-            if (mInfoWindowFragment == null) {
-                InfoWindowFragment fragment = new InfoWindowFragment(Sphinx.this);
-                fragment.setId(TKFragmentManager.ID_view_infowindow);
-                fragment.onCreate(null);
-                mInfoWindowFragment = fragment;
-            }
-            return mInfoWindowFragment;
-        }
-    }
-
-    public HomeBottomFragment getHomeBottomFragment() {
-        synchronized (mUILock) {
-            if (mHomeBottomFragment == null) {
-                HomeBottomFragment fragment = new HomeBottomFragment(Sphinx.this);
-                fragment.onCreate(null);
-                mHomeBottomFragment = fragment;
-            }
-            return mHomeBottomFragment;
-        }
-    }
-
-    public HomeFragment getHomeFragment() {
-        synchronized (mUILock) {
-            if (mHomeFragment == null) {
-                HomeFragment fragment = new HomeFragment(Sphinx.this);
-                fragment.setId(TKFragmentManager.ID_view_home);
-                fragment.onCreate(null);
-                mHomeFragment = fragment;
-            }
-            return mHomeFragment;
-        }
-    }
-
-    public MyOrderFragment getMyOrderFragment() {
-        synchronized (mUILock) {
-            if (mMyOrderFragment == null) {
-                MyOrderFragment fragment = new MyOrderFragment(Sphinx.this);
-                fragment.setId(TKFragmentManager.ID_view_more_my_order);
-                fragment.onCreate(null);
-                mMyOrderFragment = fragment;
-            }
-            return mMyOrderFragment;
-        }
-    }
-
-    public MoreHomeFragment getMoreFragment() {
-        synchronized (mUILock) {
-            if (mMoreFragment == null) {
-                MoreHomeFragment moreFragment = new MoreHomeFragment(Sphinx.this);
-                moreFragment.setId(TKFragmentManager.ID_view_more_home);
-                moreFragment.onCreate(null);
-                mMoreFragment = moreFragment;
-            }
-            return mMoreFragment;
-        }
-    }
-
-    public ResultMapFragment getResultMapFragment() {
-        synchronized (mUILock) {
-            if (mResultMapFragment == null) {
-                ResultMapFragment resultMapFragment = new ResultMapFragment(Sphinx.this);
-                resultMapFragment.setId(TKFragmentManager.ID_view_result_map);
-                resultMapFragment.onCreate(null);
-                mResultMapFragment = resultMapFragment;
-            }
-            return mResultMapFragment;
-        }
-    }
-
-    public BrowserFragment getBrowserFragment() {
-        synchronized (mUILock) {
-            if (mBrowserFragment == null) {
-                BrowserFragment fragment = new BrowserFragment(Sphinx.this);
-                fragment.setId(TKFragmentManager.ID_view_browser);
-                fragment.onCreate(null);
-                mBrowserFragment = fragment;
-            }
-            return mBrowserFragment;
-        }
-    }
-
-    public FavoriteFragment getFavoriteFragment() {
-        synchronized (mUILock) {
-            if (mFavoriteFragment == null) {
-                FavoriteFragment favoriteFragment = new FavoriteFragment(Sphinx.this);
-                favoriteFragment.setId(TKFragmentManager.ID_view_more_favorite);
-                favoriteFragment.onCreate(null);
-                mFavoriteFragment = favoriteFragment;
-            }
-            return mFavoriteFragment;
-        }
-    }
-
-    public HistoryFragment getHistoryFragment() {
-        synchronized (mUILock) {
-            if (mHistoryFragment == null) {
-                HistoryFragment historyFragment = new HistoryFragment(Sphinx.this);
-                historyFragment.setId(TKFragmentManager.ID_view_more_history);
-                historyFragment.onCreate(null);
-                mHistoryFragment = historyFragment;
-            }
-            return mHistoryFragment;
-        }
-    }
-
-    public TrafficSearchHistoryFragment getTrafficSearchHistoryFragment() {
-        synchronized (mUILock) {
-            if (mTrafficSearchHistoryFragment == null) {
-                TrafficSearchHistoryFragment f = new TrafficSearchHistoryFragment(Sphinx.this);
-                f.setId(TKFragmentManager.ID_view_traffic_search_history);
-                f.onCreate(null);
-                mTrafficSearchHistoryFragment = f;
-            }
-            return mTrafficSearchHistoryFragment;
-        }
-    }
-
-    public POIDetailFragment getPOIDetailFragment() {
-        synchronized (mUILock) {
-            if (mPOIDetailFragment == null) {
-                POIDetailFragment poiDetailFragment = new POIDetailFragment(Sphinx.this);
-                poiDetailFragment.setId(TKFragmentManager.ID_view_poi_detail);
-                poiDetailFragment.onCreate(null);
-                mPOIDetailFragment = poiDetailFragment;
-            }
-            return mPOIDetailFragment;
-        }
-    }
-
-    public POIResultFragment getPOIResultFragment() {
-        synchronized (mUILock) {
-            if (mPOIResultFragment == null) {
-                POIResultFragment poiResultFragment = new POIResultFragment(Sphinx.this);
-                poiResultFragment.setId(TKFragmentManager.ID_view_poi_result);
-                poiResultFragment.onCreate(null);
-                mPOIResultFragment = poiResultFragment;
-            }
-            return mPOIResultFragment;
-        }
-    }
-
-    public InputSearchFragment getInputSearchFragment() {
-        synchronized (mUILock) {
-            if (mInputSearchFragment == null) {
-                InputSearchFragment poiQueryFragment = new InputSearchFragment(Sphinx.this);
-                poiQueryFragment.setId(TKFragmentManager.ID_view_poi_input_search);
-                poiQueryFragment.onCreate(null);
-                mInputSearchFragment = poiQueryFragment;
-            }
-            return mInputSearchFragment;
-        }
-    }
-
-    public NearbySearchFragment getPOINearbyFragment() {
-        synchronized (mUILock) {
-            if (mPOINearbyFragment == null) {
-                NearbySearchFragment poiNearbyFragment = new NearbySearchFragment(Sphinx.this);
-                poiNearbyFragment.setId(TKFragmentManager.ID_view_poi_nearby_search);
-                poiNearbyFragment.onCreate(null);
-                mPOINearbyFragment = poiNearbyFragment;
-            }
-            return mPOINearbyFragment;
-        }
-    }
-
-    public CustomCategoryFragment getCustomCategoryFragment() {
-        synchronized (mUILock) {
-            if (mCustomCategoryFragment == null) {
-            	CustomCategoryFragment customCategoryFragment = new CustomCategoryFragment(Sphinx.this);
-            	customCategoryFragment.setId(TKFragmentManager.ID_view_poi_custom_category);
-            	customCategoryFragment.onCreate(null);
-                mCustomCategoryFragment = customCategoryFragment;
-            }
-            return mCustomCategoryFragment;
-        }
-    }
-
-    public TrafficResultFragment getTrafficResultFragment() {
-        synchronized (mUILock) {
-            if (mTrafficResultFragment == null) {
-                TrafficResultFragment trafficResultFragment = new TrafficResultFragment(Sphinx.this);
-                trafficResultFragment.setId(TKFragmentManager.ID_view_traffic_result_transfer);
-                trafficResultFragment.onCreate(null);
-                mTrafficResultFragment = trafficResultFragment;
-            }
-            return mTrafficResultFragment;
-        }
-    }
-
-    public TrafficDetailFragment getTrafficDetailFragment() {
-        synchronized (mUILock) {
-            if (mTrafficDetailFragment == null) {
-                TrafficDetailFragment trafficDetailFragment = new TrafficDetailFragment(Sphinx.this);
-                trafficDetailFragment.setId(TKFragmentManager.ID_view_traffic_result_detail);
-                trafficDetailFragment.onCreate(null);
-                mTrafficDetailFragment = trafficDetailFragment;
-            }
-            return mTrafficDetailFragment;
-        }
-    }
-
-    public TrafficCommonPlaceFragment getTrafficCommonAddressFragment() {
-        synchronized (mUILock) {
-            if (mTrafficCommonAddressFragment == null) {
-                TrafficCommonPlaceFragment f = new TrafficCommonPlaceFragment(Sphinx.this);
-                f.setId(TKFragmentManager.ID_view_traffic_common_places);
-                f.onCreate(null);
-                mTrafficCommonAddressFragment = f;
-            }
-            return mTrafficCommonAddressFragment;
-        }
-    }
-
-    public AlarmListFragment getAlarmListFragment() {
-        synchronized (mUILock) {
-            if (mAlarmListFragment == null) {
-                AlarmListFragment f = new AlarmListFragment(Sphinx.this);
-                f.setId(TKFragmentManager.ID_view_alarm_list);
-                f.onCreate(null);
-                mAlarmListFragment = f;
-            }
-            return mAlarmListFragment;
-        }
-    }
-
-    public AlarmAddFragment getAlarmAddFragment() {
-        synchronized (mUILock) {
-            if (mAlarmAddFragment == null) {
-                AlarmAddFragment f = new AlarmAddFragment(Sphinx.this);
-                f.setId(TKFragmentManager.ID_view_alarm_add);
-                f.onCreate(null);
-                mAlarmAddFragment = f;
-            }
-            return mAlarmAddFragment;
-        }
-    }
-
-    public BuslineResultLineFragment getBuslineResultLineFragment() {
-        synchronized (mUILock) {
-            if (mBuslineResultLineFragment == null) {
-                BuslineResultLineFragment buslineResultLineFragment = new BuslineResultLineFragment(Sphinx.this);
-                buslineResultLineFragment.setId(TKFragmentManager.ID_view_traffic_busline_line_result);
-                buslineResultLineFragment.onCreate(null);
-                mBuslineResultLineFragment = buslineResultLineFragment;
-            }
-            return mBuslineResultLineFragment;
-        }
-    }
-
-    public BuslineResultStationFragment getBuslineResultStationFragment() {
-        synchronized (mUILock) {
-            if (mBuslineResultStationFragment == null) {
-                BuslineResultStationFragment buslineResultStationFragment = new BuslineResultStationFragment(Sphinx.this);
-                buslineResultStationFragment.setId(TKFragmentManager.ID_view_traffic_busline_station_result);
-                buslineResultStationFragment.onCreate(null);
-                mBuslineResultStationFragment = buslineResultStationFragment;
-            }
-            return mBuslineResultStationFragment;
-        }
-    }
-
-    public BuslineDetailFragment getBuslineDetailFragment() {
-        synchronized (mUILock) {
-            if (mBuslineDetailFragment == null) {
-                BuslineDetailFragment buslineDetailFragment = new BuslineDetailFragment(Sphinx.this);
-                buslineDetailFragment.setId(TKFragmentManager.ID_view_traffic_busline_detail);
-                buslineDetailFragment.onCreate(null);
-                mBuslineDetailFragment = buslineDetailFragment;
-            }
-            return mBuslineDetailFragment;
-        }
-    }
-
-    public TrafficQueryFragment getTrafficQueryFragment() {
-        synchronized (mUILock) {
-            if (mTrafficQueryFragment == null) {
-                TrafficQueryFragment trafficQueryFragment = new TrafficQueryFragment(Sphinx.this);
-                trafficQueryFragment.setId(TKFragmentManager.ID_view_traffic_home);
-                trafficQueryFragment.onCreate(null);
-                mTrafficQueryFragment = trafficQueryFragment;
-            }
-            return mTrafficQueryFragment;
-        }
-    }
-
-    public SubwayMapFragment getSubwayMapFragment() {
-        synchronized (mUILock) {
-            if (mSubwayMapFragment == null) {
-                SubwayMapFragment subwayMapFragment = new SubwayMapFragment(Sphinx.this);
-                subwayMapFragment.setId(TKFragmentManager.ID_view_subway_map);
-                subwayMapFragment.onCreate(null);
-                mSubwayMapFragment = subwayMapFragment;
-            }
-            return mSubwayMapFragment;
-        }
-    }
-
-    public FetchFavoriteFragment getFetchFavoriteFragment() {
-        synchronized (mUILock) {
-            if (mFetchFavoriteFragment == null) {
-                FetchFavoriteFragment fetchFavoriteFragment = new FetchFavoriteFragment(Sphinx.this);
-                fetchFavoriteFragment.setId(TKFragmentManager.ID_view_traffic_fetch_favorite_poi);
-                fetchFavoriteFragment.onCreate(null);
-                mFetchFavoriteFragment = fetchFavoriteFragment;
-            }
-            return mFetchFavoriteFragment;
-        }
-    }
-
-    public UserHomeFragment getUserHomeFragment() {
-        synchronized (mUILock) {
-            if (mUserHomeFragment == null) {
-                UserHomeFragment userHomeFragment = new UserHomeFragment(Sphinx.this);
-                userHomeFragment.setId(TKFragmentManager.ID_view_user_home);
-                userHomeFragment.onCreate(null);
-                mUserHomeFragment = userHomeFragment;
-            }
-            return mUserHomeFragment;
-        }
-    }
-
-
-    public MyCommentListFragment getMyCommentListFragment() {
-        synchronized (mUILock) {
-            if (mMyCommentListFragment == null) {
-                MyCommentListFragment myCommentListFragment = new MyCommentListFragment(Sphinx.this);
-                myCommentListFragment.setId(TKFragmentManager.ID_view_user_my_comment_list);
-                myCommentListFragment.onCreate(null);
-                mMyCommentListFragment = myCommentListFragment;
-            }
-            return mMyCommentListFragment;
-        }
-    }
-
-    public GoCommentFragment getGoCommentFragment() {
-        synchronized (mUILock) {
-            if (mGoCommentFragment == null) {
-                GoCommentFragment goCommentFragment = new GoCommentFragment(Sphinx.this);
-                goCommentFragment.setId(TKFragmentManager.ID_view_more_go_comment);
-                goCommentFragment.onCreate(null);
-                mGoCommentFragment = goCommentFragment;
-            }
-            return mGoCommentFragment;
-        }
-    }
-
-    public DiscoverListFragment getDiscoverListFragment() {
-        synchronized (mUILock) {
-            if (mDiscoverListFragment == null) {
-                DiscoverListFragment discoverListFragment = new DiscoverListFragment(Sphinx.this);
-                discoverListFragment.setId(TKFragmentManager.ID_view_discover_list);
-                discoverListFragment.onCreate(null);
-                mDiscoverListFragment = discoverListFragment;
-            }
-            return mDiscoverListFragment;
-        }
-    }
-
-    public TuangouDetailFragment getTuangouDetailFragment() {
-        synchronized (mUILock) {
-            if (mTuangouDetailFragment == null) {
-                TuangouDetailFragment tuangouDetailFragment = new TuangouDetailFragment(Sphinx.this);
-                tuangouDetailFragment.setId(TKFragmentManager.ID_view_discover_tuangou_detail);
-                tuangouDetailFragment.onCreate(null);
-                mTuangouDetailFragment = tuangouDetailFragment;
-            }
-            return mTuangouDetailFragment;
-        }
-    }
-
-    public DiscoverChildListFragment getDiscoverChildListFragment() {
-        synchronized (mUILock) {
-            if (mDiscoverChildListFragment == null) {
-                DiscoverChildListFragment discoverChildListFragment = new DiscoverChildListFragment(Sphinx.this);
-                discoverChildListFragment.setId(TKFragmentManager.ID_view_discover_child_list);
-                discoverChildListFragment.onCreate(null);
-                mDiscoverChildListFragment = discoverChildListFragment;
-            }
-            return mDiscoverChildListFragment;
-        }
-    }
-
-    public YanchuDetailFragment getYanchuDetailFragment() {
-        synchronized (mUILock) {
-            if (mYanchuDetailFragment == null) {
-                YanchuDetailFragment yanchuDetailFragment = new YanchuDetailFragment(Sphinx.this);
-                yanchuDetailFragment.setId(TKFragmentManager.ID_view_discover_yanchu_detail);
-                yanchuDetailFragment.onCreate(null);
-                mYanchuDetailFragment = yanchuDetailFragment;
-            }
-            return mYanchuDetailFragment;
-        }
-    }
-
-    public ZhanlanDetailFragment getZhanlanDetailFragment() {
-        synchronized (mUILock) {
-            if (mZhanlanDetailFragment == null) {
-            	ZhanlanDetailFragment zhanlanDetailFragment = new ZhanlanDetailFragment(Sphinx.this);
-                zhanlanDetailFragment.setId(TKFragmentManager.ID_view_discover_zhanlan_detail);
-                zhanlanDetailFragment.onCreate(null);
-                mZhanlanDetailFragment = zhanlanDetailFragment;
-            }
-            return mZhanlanDetailFragment;
-        }
-    }
-
-    public DianyingDetailFragment getDianyingDetailFragment() {
-        synchronized (mUILock) {
-            if (mDianyingDetailFragment == null) {
-                DianyingDetailFragment dianyingDetailFragment = new DianyingDetailFragment(Sphinx.this);
-                dianyingDetailFragment.setId(TKFragmentManager.ID_view_discover_dianying_detail);
-                dianyingDetailFragment.onCreate(null);
-                mDianyingDetailFragment = dianyingDetailFragment;
-            }
-            return mDianyingDetailFragment;
-        }
-    }
-
-    public HotelHomeFragment getHotelHomeFragment() {
-        synchronized (mUILock) {
-            if (mHotelHomeFragment == null) {
-                HotelHomeFragment fragment = new HotelHomeFragment(Sphinx.this);
-                fragment.setId(TKFragmentManager.ID_view_hotel_home);
-                fragment.onCreate(null);
-                mHotelHomeFragment = fragment;
-            }
-            return mHotelHomeFragment;
-        }
-    }
-
-    public PickLocationFragment getPickLocationFragment() {
-        synchronized (mUILock) {
-            if (mPickLocationFragment == null) {
-                PickLocationFragment fragment = new PickLocationFragment(Sphinx.this);
-                fragment.setId(TKFragmentManager.ID_view_hotel_pick_location);
-                fragment.onCreate(null);
-                mPickLocationFragment = fragment;
-            }
-            return mPickLocationFragment;
-        }
-    }
-
-    public HotelOrderWriteFragment getHotelOrderWriteFragment() {
-        synchronized (mUILock) {
-            if (mHotelOrderWriteFragment == null) {
-                HotelOrderWriteFragment fragment = new HotelOrderWriteFragment(Sphinx.this);
-                fragment.setId(TKFragmentManager.ID_view_hotel_order_write);
-                fragment.onCreate(null);
-                mHotelOrderWriteFragment = fragment;
-            }
-            return mHotelOrderWriteFragment;
-        }
-    }
-
-    public HotelOrderCreditFragment getHotelOrderCreditFragment() {
-        synchronized (mUILock) {
-            if (mHotelOrderCreditFragment == null) {
-            	HotelOrderCreditFragment fragment = new HotelOrderCreditFragment(Sphinx.this);
-                fragment.setId(TKFragmentManager.ID_view_hotel_credit_assure);
-                fragment.onCreate(null);
-                mHotelOrderCreditFragment = fragment;
-            }
-            return mHotelOrderCreditFragment;
-        }
-    }
-
-    public HotelOrderListFragment getHotelOrderListFragment() {
-        synchronized (mUILock) {
-            if (mHotelOrderListFragment == null) {
-            	HotelOrderListFragment fragment = new HotelOrderListFragment(Sphinx.this);
-                fragment.setId(TKFragmentManager.ID_view_hotel_order_list);
-                fragment.onCreate(null);
-                mHotelOrderListFragment = fragment;
-            }
-            return mHotelOrderListFragment;
-        }
-    }
-    
-    public HotelOrderSuccessFragment getHotelOrderSuccessFragment(){
-
-        synchronized (mUILock) {
-            if (mHotelOrderSuccessFragment == null) {
-            	HotelOrderSuccessFragment fragment = new HotelOrderSuccessFragment(Sphinx.this);
-                fragment.setId(TKFragmentManager.ID_view_hotel_order_success);
-                fragment.onCreate(null);
-                mHotelOrderSuccessFragment = fragment;
-            }
-            return mHotelOrderSuccessFragment;
-        }
-    }    
-
-    public HotelOrderDetailFragment getHotelOrderDetailFragment(){
-
-        synchronized (mUILock) {
-            if (mHotelOrderDetailFragment == null) {
-            	HotelOrderDetailFragment fragment = new HotelOrderDetailFragment(Sphinx.this);
-                fragment.setId(TKFragmentManager.ID_view_hotel_order_detail);
-                fragment.onCreate(null);
-                mHotelOrderDetailFragment = fragment;
-            }
-            return mHotelOrderDetailFragment;
-        }
-    }
-    
-    public HotelOrderDetailFragment getHotelOrderDetailFragmentTwo(){
-
-        synchronized (mUILock) {
-            if (mHotelOrderDetailFragment2 == null) {
-            	HotelOrderDetailFragment fragment = new HotelOrderDetailFragment(Sphinx.this);
-                fragment.setId(TKFragmentManager.ID_view_hotel_order_detail_2);
-                fragment.onCreate(null);
-                mHotelOrderDetailFragment2 = fragment;
-            }
-            return mHotelOrderDetailFragment2;
-        }
-    }
-
-    public CouponListFragment getCouponListFragment(){
-
-        synchronized (mUILock) {
-            if (mCouponListFragment == null) {
-                CouponListFragment fragment = new CouponListFragment(Sphinx.this);
-                fragment.setId(TKFragmentManager.ID_view_coupon_list);
-                fragment.onCreate(null);
-                mCouponListFragment = fragment;
-            }
-            return mCouponListFragment;
-        }
-    }
-
-    public CouponDetailFragment getCouponDetailFragment(){
-
-        synchronized (mUILock) {
-            if (mCouponDetailFragment == null) {
-                CouponDetailFragment fragment = new CouponDetailFragment(Sphinx.this);
-                fragment.setId(TKFragmentManager.ID_view_coupon_detail);
-                fragment.onCreate(null);
-                mCouponDetailFragment = fragment;
-            }
-            return mCouponDetailFragment;
-        }
-    }
-
-    public MeasureDistanceFragment getMeasureDistanceFragment(){
-
-        synchronized (mUILock) {
-            if (mMeasureDistanceFragment == null) {
-                MeasureDistanceFragment fragment = new MeasureDistanceFragment(Sphinx.this);
-                fragment.setId(TKFragmentManager.ID_view_measure_distance);
-                fragment.onCreate(null);
-                mMeasureDistanceFragment = fragment;
-            }
-            return mMeasureDistanceFragment;
-        }
-    }
+//
+//    public TitleFragment getTitleFragment() {
+//        synchronized (mUILock) {
+//            if (mTitleFragment == null) {
+//                TitleFragment fragment = new TitleFragment(Sphinx.this);
+//                fragment.onCreate(null);
+//                fragment.setVisibility(View.GONE);
+//                mTitleView.addView(fragment);
+//                mTitleFragment = fragment;
+//            }
+//            return mTitleFragment;
+//        }
+//    }
+//
+//    public InfoWindowFragment mFragmentManager.getInfoWindowFragment() {
+//        synchronized (mUILock) {
+//            if (mInfoWindowFragment == null) {
+//                InfoWindowFragment fragment = new InfoWindowFragment(Sphinx.this);
+//                fragment.setId(TKFragmentManager.ID_view_infowindow);
+//                fragment.onCreate(null);
+//                mInfoWindowFragment = fragment;
+//            }
+//            return mInfoWindowFragment;
+//        }
+//    }
+//
+//    public HomeBottomFragment getHomeBottomFragment() {
+//        synchronized (mUILock) {
+//            if (mHomeBottomFragment == null) {
+//                HomeBottomFragment fragment = new HomeBottomFragment(Sphinx.this);
+//                fragment.onCreate(null);
+//                mHomeBottomFragment = fragment;
+//            }
+//            return mHomeBottomFragment;
+//        }
+//    }
+//
+//    public HomeFragment mFragmentManager.getHomeFragment() {
+//        synchronized (mUILock) {
+//            if (mHomeFragment == null) {
+//                HomeFragment fragment = new HomeFragment(Sphinx.this);
+//                fragment.setId(TKFragmentManager.ID_view_home);
+//                fragment.onCreate(null);
+//                mHomeFragment = fragment;
+//            }
+//            return mHomeFragment;
+//        }
+//    }
+//
+//    public MyOrderFragment mFragmentManager.getMyOrderFragment() {
+//        synchronized (mUILock) {
+//            if (mMyOrderFragment == null) {
+//                MyOrderFragment fragment = new MyOrderFragment(Sphinx.this);
+//                fragment.setId(TKFragmentManager.ID_view_more_my_order);
+//                fragment.onCreate(null);
+//                mMyOrderFragment = fragment;
+//            }
+//            return mMyOrderFragment;
+//        }
+//    }
+//
+//    public MoreHomeFragment mFragmentManager.getMoreHomeFragment() {
+//        synchronized (mUILock) {
+//            if (mMoreFragment == null) {
+//                MoreHomeFragment moreFragment = new MoreHomeFragment(Sphinx.this);
+//                moreFragment.setId(TKFragmentManager.ID_view_more_home);
+//                moreFragment.onCreate(null);
+//                mMoreFragment = moreFragment;
+//            }
+//            return mMoreFragment;
+//        }
+//    }
+//
+//    public ResultMapFragment mFragmentManager.getResultMapFragment() {
+//        synchronized (mUILock) {
+//            if (mResultMapFragment == null) {
+//                ResultMapFragment resultMapFragment = new ResultMapFragment(Sphinx.this);
+//                resultMapFragment.setId(TKFragmentManager.ID_view_result_map);
+//                resultMapFragment.onCreate(null);
+//                mResultMapFragment = resultMapFragment;
+//            }
+//            return mResultMapFragment;
+//        }
+//    }
+//
+//    public BrowserFragment mFragmentManager.getBrowserFragment() {
+//        synchronized (mUILock) {
+//            if (mBrowserFragment == null) {
+//                BrowserFragment fragment = new BrowserFragment(Sphinx.this);
+//                fragment.setId(TKFragmentManager.ID_view_browser);
+//                fragment.onCreate(null);
+//                mBrowserFragment = fragment;
+//            }
+//            return mBrowserFragment;
+//        }
+//    }
+//
+//    public FavoriteFragment mFragmentManager.getFavoriteFragment() {
+//        synchronized (mUILock) {
+//            if (mFavoriteFragment == null) {
+//                FavoriteFragment favoriteFragment = new FavoriteFragment(Sphinx.this);
+//                favoriteFragment.setId(TKFragmentManager.ID_view_more_favorite);
+//                favoriteFragment.onCreate(null);
+//                mFavoriteFragment = favoriteFragment;
+//            }
+//            return mFavoriteFragment;
+//        }
+//    }
+//
+//    public HistoryFragment mFragmentManager.getHistoryFragment() {
+//        synchronized (mUILock) {
+//            if (mHistoryFragment == null) {
+//                HistoryFragment historyFragment = new HistoryFragment(Sphinx.this);
+//                historyFragment.setId(TKFragmentManager.ID_view_more_history);
+//                historyFragment.onCreate(null);
+//                mHistoryFragment = historyFragment;
+//            }
+//            return mHistoryFragment;
+//        }
+//    }
+//
+//    public TrafficSearchHistoryFragment mFragmentManager.getTrafficSearchHistoryFragment() {
+//        synchronized (mUILock) {
+//            if (mTrafficSearchHistoryFragment == null) {
+//                TrafficSearchHistoryFragment f = new TrafficSearchHistoryFragment(Sphinx.this);
+//                f.setId(TKFragmentManager.ID_view_traffic_search_history);
+//                f.onCreate(null);
+//                mTrafficSearchHistoryFragment = f;
+//            }
+//            return mTrafficSearchHistoryFragment;
+//        }
+//    }
+//
+//    public POIDetailFragment mFragmentManager.getPOIDetailFragment() {
+//        synchronized (mUILock) {
+//            if (mPOIDetailFragment == null) {
+//                POIDetailFragment poiDetailFragment = new POIDetailFragment(Sphinx.this);
+//                poiDetailFragment.setId(TKFragmentManager.ID_view_poi_detail);
+//                poiDetailFragment.onCreate(null);
+//                mPOIDetailFragment = poiDetailFragment;
+//            }
+//            return mPOIDetailFragment;
+//        }
+//    }
+//
+//    public POIResultFragment mFragmentManager.getPOIResultFragment() {
+//        synchronized (mUILock) {
+//            if (mPOIResultFragment == null) {
+//                POIResultFragment poiResultFragment = new POIResultFragment(Sphinx.this);
+//                poiResultFragment.setId(TKFragmentManager.ID_view_poi_result);
+//                poiResultFragment.onCreate(null);
+//                mPOIResultFragment = poiResultFragment;
+//            }
+//            return mPOIResultFragment;
+//        }
+//    }
+//
+//    public InputSearchFragment mFragmentManager.getInputSearchFragment() {
+//        synchronized (mUILock) {
+//            if (mInputSearchFragment == null) {
+//                InputSearchFragment poiQueryFragment = new InputSearchFragment(Sphinx.this);
+//                poiQueryFragment.setId(TKFragmentManager.ID_view_poi_input_search);
+//                poiQueryFragment.onCreate(null);
+//                mInputSearchFragment = poiQueryFragment;
+//            }
+//            return mInputSearchFragment;
+//        }
+//    }
+//
+//    public NearbySearchFragment mFragmentManager.getNearbySearchFragment() {
+//        synchronized (mUILock) {
+//            if (mPOINearbyFragment == null) {
+//                NearbySearchFragment poiNearbyFragment = new NearbySearchFragment(Sphinx.this);
+//                poiNearbyFragment.setId(TKFragmentManager.ID_view_poi_nearby_search);
+//                poiNearbyFragment.onCreate(null);
+//                mPOINearbyFragment = poiNearbyFragment;
+//            }
+//            return mPOINearbyFragment;
+//        }
+//    }
+//
+//    public CustomCategoryFragment mFragmentManager.getCustomCategoryFragment() {
+//        synchronized (mUILock) {
+//            if (mCustomCategoryFragment == null) {
+//            	CustomCategoryFragment customCategoryFragment = new CustomCategoryFragment(Sphinx.this);
+//            	customCategoryFragment.setId(TKFragmentManager.ID_view_poi_custom_category);
+//            	customCategoryFragment.onCreate(null);
+//                mCustomCategoryFragment = customCategoryFragment;
+//            }
+//            return mCustomCategoryFragment;
+//        }
+//    }
+//
+//    public TrafficResultFragment mFragmentManager.getTrafficResultFragment() {
+//        synchronized (mUILock) {
+//            if (mTrafficResultFragment == null) {
+//                TrafficResultFragment trafficResultFragment = new TrafficResultFragment(Sphinx.this);
+//                trafficResultFragment.setId(TKFragmentManager.ID_view_traffic_result_transfer);
+//                trafficResultFragment.onCreate(null);
+//                mTrafficResultFragment = trafficResultFragment;
+//            }
+//            return mTrafficResultFragment;
+//        }
+//    }
+//
+//    public TrafficDetailFragment mFragmentManager.getTrafficDetailFragment() {
+//        synchronized (mUILock) {
+//            if (mTrafficDetailFragment == null) {
+//                TrafficDetailFragment trafficDetailFragment = new TrafficDetailFragment(Sphinx.this);
+//                trafficDetailFragment.setId(TKFragmentManager.ID_view_traffic_result_detail);
+//                trafficDetailFragment.onCreate(null);
+//                mTrafficDetailFragment = trafficDetailFragment;
+//            }
+//            return mTrafficDetailFragment;
+//        }
+//    }
+//
+//    public TrafficCommonPlaceFragment mFragmentManager.getTrafficCommonAddressFragment() {
+//        synchronized (mUILock) {
+//            if (mTrafficCommonAddressFragment == null) {
+//                TrafficCommonPlaceFragment f = new TrafficCommonPlaceFragment(Sphinx.this);
+//                f.setId(TKFragmentManager.ID_view_traffic_common_places);
+//                f.onCreate(null);
+//                mTrafficCommonAddressFragment = f;
+//            }
+//            return mTrafficCommonAddressFragment;
+//        }
+//    }
+//
+//    public AlarmListFragment mFragmentManager.getAlarmListFragment() {
+//        synchronized (mUILock) {
+//            if (mAlarmListFragment == null) {
+//                AlarmListFragment f = new AlarmListFragment(Sphinx.this);
+//                f.setId(TKFragmentManager.ID_view_alarm_list);
+//                f.onCreate(null);
+//                mAlarmListFragment = f;
+//            }
+//            return mAlarmListFragment;
+//        }
+//    }
+//
+//    public AlarmAddFragment mFragmentManager.getAlarmAddFragment() {
+//        synchronized (mUILock) {
+//            if (mAlarmAddFragment == null) {
+//                AlarmAddFragment f = new AlarmAddFragment(Sphinx.this);
+//                f.setId(TKFragmentManager.ID_view_alarm_add);
+//                f.onCreate(null);
+//                mAlarmAddFragment = f;
+//            }
+//            return mAlarmAddFragment;
+//        }
+//    }
+//
+//    public BuslineResultLineFragment mFragmentManager.getBuslineResultLineFragment() {
+//        synchronized (mUILock) {
+//            if (mBuslineResultLineFragment == null) {
+//                BuslineResultLineFragment buslineResultLineFragment = new BuslineResultLineFragment(Sphinx.this);
+//                buslineResultLineFragment.setId(TKFragmentManager.ID_view_traffic_busline_line_result);
+//                buslineResultLineFragment.onCreate(null);
+//                mBuslineResultLineFragment = buslineResultLineFragment;
+//            }
+//            return mBuslineResultLineFragment;
+//        }
+//    }
+//
+//    public BuslineResultStationFragment mFragmentManager.getBuslineResultStationFragment() {
+//        synchronized (mUILock) {
+//            if (mBuslineResultStationFragment == null) {
+//                BuslineResultStationFragment buslineResultStationFragment = new BuslineResultStationFragment(Sphinx.this);
+//                buslineResultStationFragment.setId(TKFragmentManager.ID_view_traffic_busline_station_result);
+//                buslineResultStationFragment.onCreate(null);
+//                mBuslineResultStationFragment = buslineResultStationFragment;
+//            }
+//            return mBuslineResultStationFragment;
+//        }
+//    }
+//
+//    public BuslineDetailFragment mFragmentManager.getBuslineDetailFragment() {
+//        synchronized (mUILock) {
+//            if (mBuslineDetailFragment == null) {
+//                BuslineDetailFragment buslineDetailFragment = new BuslineDetailFragment(Sphinx.this);
+//                buslineDetailFragment.setId(TKFragmentManager.ID_view_traffic_busline_detail);
+//                buslineDetailFragment.onCreate(null);
+//                mBuslineDetailFragment = buslineDetailFragment;
+//            }
+//            return mBuslineDetailFragment;
+//        }
+//    }
+//
+//    public TrafficQueryFragment mFragmentManager.getTrafficQueryFragment() {
+//        synchronized (mUILock) {
+//            if (mTrafficQueryFragment == null) {
+//                TrafficQueryFragment trafficQueryFragment = new TrafficQueryFragment(Sphinx.this);
+//                trafficQueryFragment.setId(TKFragmentManager.ID_view_traffic_home);
+//                trafficQueryFragment.onCreate(null);
+//                mTrafficQueryFragment = trafficQueryFragment;
+//            }
+//            return mTrafficQueryFragment;
+//        }
+//    }
+//
+//    public SubwayMapFragment mFragmentManager.getSubwayMapFragment() {
+//        synchronized (mUILock) {
+//            if (mSubwayMapFragment == null) {
+//                SubwayMapFragment subwayMapFragment = new SubwayMapFragment(Sphinx.this);
+//                subwayMapFragment.setId(TKFragmentManager.ID_view_subway_map);
+//                subwayMapFragment.onCreate(null);
+//                mSubwayMapFragment = subwayMapFragment;
+//            }
+//            return mSubwayMapFragment;
+//        }
+//    }
+//
+//    public FetchFavoriteFragment mFragmentManager.getFetchFavoriteFragment() {
+//        synchronized (mUILock) {
+//            if (mFetchFavoriteFragment == null) {
+//                FetchFavoriteFragment fetchFavoriteFragment = new FetchFavoriteFragment(Sphinx.this);
+//                fetchFavoriteFragment.setId(TKFragmentManager.ID_view_traffic_fetch_favorite_poi);
+//                fetchFavoriteFragment.onCreate(null);
+//                mFetchFavoriteFragment = fetchFavoriteFragment;
+//            }
+//            return mFetchFavoriteFragment;
+//        }
+//    }
+//
+//    public UserHomeFragment mFragmentManager.getUserHomeFragment() {
+//        synchronized (mUILock) {
+//            if (mUserHomeFragment == null) {
+//                UserHomeFragment userHomeFragment = new UserHomeFragment(Sphinx.this);
+//                userHomeFragment.setId(TKFragmentManager.ID_view_user_home);
+//                userHomeFragment.onCreate(null);
+//                mUserHomeFragment = userHomeFragment;
+//            }
+//            return mUserHomeFragment;
+//        }
+//    }
+//
+//
+//    public MyCommentListFragment mFragmentManager.getMyCommentListFragment() {
+//        synchronized (mUILock) {
+//            if (mMyCommentListFragment == null) {
+//                MyCommentListFragment myCommentListFragment = new MyCommentListFragment(Sphinx.this);
+//                myCommentListFragment.setId(TKFragmentManager.ID_view_user_my_comment_list);
+//                myCommentListFragment.onCreate(null);
+//                mMyCommentListFragment = myCommentListFragment;
+//            }
+//            return mMyCommentListFragment;
+//        }
+//    }
+//
+//    public GoCommentFragment mFragmentManager.getGoCommentFragment() {
+//        synchronized (mUILock) {
+//            if (mGoCommentFragment == null) {
+//                GoCommentFragment goCommentFragment = new GoCommentFragment(Sphinx.this);
+//                goCommentFragment.setId(TKFragmentManager.ID_view_more_go_comment);
+//                goCommentFragment.onCreate(null);
+//                mGoCommentFragment = goCommentFragment;
+//            }
+//            return mGoCommentFragment;
+//        }
+//    }
+//
+//    public DiscoverListFragment mFragmentManager.getDiscoverListFragment() {
+//        synchronized (mUILock) {
+//            if (mDiscoverListFragment == null) {
+//                DiscoverListFragment discoverListFragment = new DiscoverListFragment(Sphinx.this);
+//                discoverListFragment.setId(TKFragmentManager.ID_view_discover_list);
+//                discoverListFragment.onCreate(null);
+//                mDiscoverListFragment = discoverListFragment;
+//            }
+//            return mDiscoverListFragment;
+//        }
+//    }
+//
+//    public TuangouDetailFragment mFragmentManager.getTuangouDetailFragment() {
+//        synchronized (mUILock) {
+//            if (mTuangouDetailFragment == null) {
+//                TuangouDetailFragment tuangouDetailFragment = new TuangouDetailFragment(Sphinx.this);
+//                tuangouDetailFragment.setId(TKFragmentManager.ID_view_discover_tuangou_detail);
+//                tuangouDetailFragment.onCreate(null);
+//                mTuangouDetailFragment = tuangouDetailFragment;
+//            }
+//            return mTuangouDetailFragment;
+//        }
+//    }
+//
+//    public DiscoverChildListFragment mFragmentManager.getDiscoverChildListFragment() {
+//        synchronized (mUILock) {
+//            if (mDiscoverChildListFragment == null) {
+//                DiscoverChildListFragment discoverChildListFragment = new DiscoverChildListFragment(Sphinx.this);
+//                discoverChildListFragment.setId(TKFragmentManager.ID_view_discover_child_list);
+//                discoverChildListFragment.onCreate(null);
+//                mDiscoverChildListFragment = discoverChildListFragment;
+//            }
+//            return mDiscoverChildListFragment;
+//        }
+//    }
+//
+//    public YanchuDetailFragment mFragmentManager.getYanchuDetailFragment() {
+//        synchronized (mUILock) {
+//            if (mYanchuDetailFragment == null) {
+//                YanchuDetailFragment yanchuDetailFragment = new YanchuDetailFragment(Sphinx.this);
+//                yanchuDetailFragment.setId(TKFragmentManager.ID_view_discover_yanchu_detail);
+//                yanchuDetailFragment.onCreate(null);
+//                mYanchuDetailFragment = yanchuDetailFragment;
+//            }
+//            return mYanchuDetailFragment;
+//        }
+//    }
+//
+//    public ZhanlanDetailFragment mFragmentManager.getZhanlanDetailFragment() {
+//        synchronized (mUILock) {
+//            if (mZhanlanDetailFragment == null) {
+//            	ZhanlanDetailFragment zhanlanDetailFragment = new ZhanlanDetailFragment(Sphinx.this);
+//                zhanlanDetailFragment.setId(TKFragmentManager.ID_view_discover_zhanlan_detail);
+//                zhanlanDetailFragment.onCreate(null);
+//                mZhanlanDetailFragment = zhanlanDetailFragment;
+//            }
+//            return mZhanlanDetailFragment;
+//        }
+//    }
+//
+//    public DianyingDetailFragment mFragmentManager.getDianyingDetailFragment() {
+//        synchronized (mUILock) {
+//            if (mDianyingDetailFragment == null) {
+//                DianyingDetailFragment dianyingDetailFragment = new DianyingDetailFragment(Sphinx.this);
+//                dianyingDetailFragment.setId(TKFragmentManager.ID_view_discover_dianying_detail);
+//                dianyingDetailFragment.onCreate(null);
+//                mDianyingDetailFragment = dianyingDetailFragment;
+//            }
+//            return mDianyingDetailFragment;
+//        }
+//    }
+//
+//    public HotelHomeFragment mFragmentManager.getHotelHomeFragment() {
+//        synchronized (mUILock) {
+//            if (mHotelHomeFragment == null) {
+//                HotelHomeFragment fragment = new HotelHomeFragment(Sphinx.this);
+//                fragment.setId(TKFragmentManager.ID_view_hotel_home);
+//                fragment.onCreate(null);
+//                mHotelHomeFragment = fragment;
+//            }
+//            return mHotelHomeFragment;
+//        }
+//    }
+//
+//    public PickLocationFragment mFragmentManager.getPickLocationFragment() {
+//        synchronized (mUILock) {
+//            if (mPickLocationFragment == null) {
+//                PickLocationFragment fragment = new PickLocationFragment(Sphinx.this);
+//                fragment.setId(TKFragmentManager.ID_view_hotel_pick_location);
+//                fragment.onCreate(null);
+//                mPickLocationFragment = fragment;
+//            }
+//            return mPickLocationFragment;
+//        }
+//    }
+//
+//    public HotelOrderWriteFragment mFragmentManager.getHotelOrderWriteFragment() {
+//        synchronized (mUILock) {
+//            if (mHotelOrderWriteFragment == null) {
+//                HotelOrderWriteFragment fragment = new HotelOrderWriteFragment(Sphinx.this);
+//                fragment.setId(TKFragmentManager.ID_view_hotel_order_write);
+//                fragment.onCreate(null);
+//                mHotelOrderWriteFragment = fragment;
+//            }
+//            return mHotelOrderWriteFragment;
+//        }
+//    }
+//
+//    public HotelOrderCreditFragment mFragmentManager.getHotelOrderCreditFragment() {
+//        synchronized (mUILock) {
+//            if (mHotelOrderCreditFragment == null) {
+//            	HotelOrderCreditFragment fragment = new HotelOrderCreditFragment(Sphinx.this);
+//                fragment.setId(TKFragmentManager.ID_view_hotel_credit_assure);
+//                fragment.onCreate(null);
+//                mHotelOrderCreditFragment = fragment;
+//            }
+//            return mHotelOrderCreditFragment;
+//        }
+//    }
+//
+//    public HotelOrderListFragment mFragmentManager.getHotelOrderListFragment() {
+//        synchronized (mUILock) {
+//            if (mHotelOrderListFragment == null) {
+//            	HotelOrderListFragment fragment = new HotelOrderListFragment(Sphinx.this);
+//                fragment.setId(TKFragmentManager.ID_view_hotel_order_list);
+//                fragment.onCreate(null);
+//                mHotelOrderListFragment = fragment;
+//            }
+//            return mHotelOrderListFragment;
+//        }
+//    }
+//    
+//    public HotelOrderSuccessFragment mFragmentManager.getHotelOrderSuccessFragment(){
+//
+//        synchronized (mUILock) {
+//            if (mHotelOrderSuccessFragment == null) {
+//            	HotelOrderSuccessFragment fragment = new HotelOrderSuccessFragment(Sphinx.this);
+//                fragment.setId(TKFragmentManager.ID_view_hotel_order_success);
+//                fragment.onCreate(null);
+//                mHotelOrderSuccessFragment = fragment;
+//            }
+//            return mHotelOrderSuccessFragment;
+//        }
+//    }    
+//
+//    public HotelOrderDetailFragment mFragmentManager.getHotelOrderDetailFragment(){
+//
+//        synchronized (mUILock) {
+//            if (mHotelOrderDetailFragment == null) {
+//            	HotelOrderDetailFragment fragment = new HotelOrderDetailFragment(Sphinx.this);
+//                fragment.setId(TKFragmentManager.ID_view_hotel_order_detail);
+//                fragment.onCreate(null);
+//                mHotelOrderDetailFragment = fragment;
+//            }
+//            return mHotelOrderDetailFragment;
+//        }
+//    }
+//    
+//    public HotelOrderDetailFragment mFragmentManager.getHotelOrderDetailFragmentTwo(){
+//
+//        synchronized (mUILock) {
+//            if (mHotelOrderDetailFragment2 == null) {
+//            	HotelOrderDetailFragment fragment = new HotelOrderDetailFragment(Sphinx.this);
+//                fragment.setId(TKFragmentManager.ID_view_hotel_order_detail_2);
+//                fragment.onCreate(null);
+//                mHotelOrderDetailFragment2 = fragment;
+//            }
+//            return mHotelOrderDetailFragment2;
+//        }
+//    }
+//
+//    public CouponListFragment mFragmentManager.getCouponListFragment(){
+//
+//        synchronized (mUILock) {
+//            if (mCouponListFragment == null) {
+//                CouponListFragment fragment = new CouponListFragment(Sphinx.this);
+//                fragment.setId(TKFragmentManager.ID_view_coupon_list);
+//                fragment.onCreate(null);
+//                mCouponListFragment = fragment;
+//            }
+//            return mCouponListFragment;
+//        }
+//    }
+//
+//    public CouponDetailFragment mFragmentManager.getCouponDetailFragment(){
+//
+//        synchronized (mUILock) {
+//            if (mCouponDetailFragment == null) {
+//                CouponDetailFragment fragment = new CouponDetailFragment(Sphinx.this);
+//                fragment.setId(TKFragmentManager.ID_view_coupon_detail);
+//                fragment.onCreate(null);
+//                mCouponDetailFragment = fragment;
+//            }
+//            return mCouponDetailFragment;
+//        }
+//    }
+//
+//    public MeasureDistanceFragment mFragmentManager.getMeasureDistanceFragment(){
+//
+//        synchronized (mUILock) {
+//            if (mMeasureDistanceFragment == null) {
+//                MeasureDistanceFragment fragment = new MeasureDistanceFragment(Sphinx.this);
+//                fragment.setId(TKFragmentManager.ID_view_measure_distance);
+//                fragment.onCreate(null);
+//                mMeasureDistanceFragment = fragment;
+//            }
+//            return mMeasureDistanceFragment;
+//        }
+//    }
 
     // TODO: get fragment end
 
@@ -3574,7 +3575,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 mMyLocationCircle.setVisible(false);
                 mMapView.refreshMap();
 
-                InfoWindowFragment fragment = getInfoWindowFragment();
+                InfoWindowFragment fragment = mFragmentManager.getInfoWindowFragment();
                 if (fragment == mBottomFragment && fragment.getItemizedOverlay() == mMyLocationOverlay) {
                     fragment.setData(fragment.getOwerFragmentId(), mMyLocationOverlay, fragment.mActionTag);
                 }
@@ -3602,7 +3603,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     }
                 } else {
 
-                    InfoWindowFragment fragment = getInfoWindowFragment();
+                    InfoWindowFragment fragment = mFragmentManager.getInfoWindowFragment();
                     if (fragment == mBottomFragment && fragment.getItemizedOverlay() == mMyLocationOverlay) {
                         fragment.setData(fragment.getOwerFragmentId(), mMyLocationOverlay, fragment.mActionTag);
                     }
@@ -3841,8 +3842,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         boolean result = false;
 
         BaseFragment bottomfragment = mBottomFragment;
-        InfoWindowFragment infoWindowFragment = getInfoWindowFragment();
-        HomeFragment homeFragment = getHomeFragment();
+        InfoWindowFragment infoWindowFragment = mFragmentManager.getInfoWindowFragment();
+        HomeFragment homeFragment = mFragmentManager.getHomeFragment();
 
         int id = uiStackPeek();
         if (id == TKFragmentManager.ID_view_home
@@ -3851,7 +3852,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 && overlayName.equals(infoWindowFragment.getItemizedOverlay().getName())) {
 
             result = true;
-            homeFragment.mBottomFragment = getHomeBottomFragment();
+            homeFragment.mBottomFragment = mFragmentManager.getHomeBottomFragment();
             replaceBottomUI(homeFragment);
 
             if (ItemizedOverlay.MY_LOCATION_OVERLAY.equals(overlayName) == false) {
@@ -3865,7 +3866,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     private boolean infoWindowBackInResultMap(String overlayName) {
 
         boolean result = false;
-        InfoWindowFragment infoWindowFragment = getInfoWindowFragment();
+        InfoWindowFragment infoWindowFragment = mFragmentManager.getInfoWindowFragment();
 
         int id = uiStackPeek();
         if (id == TKFragmentManager.ID_view_result_map

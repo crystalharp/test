@@ -30,6 +30,7 @@ public abstract class DynamicPOIViewTemplate extends POIDetailFragment.DynamicPO
     public DynamicPOIViewTemplate(POIDetailFragment poiFragment, LayoutInflater inflater){
         mPOIDetailFragment = poiFragment;
         mSphinx = mPOIDetailFragment.mSphinx;
+        mFragmentManager = mSphinx.mFragmentManager;
         mInflater = inflater;
 
         mRootView = mInflater.inflate(R.layout.poi_dynamic_template, null);

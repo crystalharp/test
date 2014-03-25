@@ -177,7 +177,7 @@ public class BaseFragment extends LinearLayout {
         
         int id = getId();
         if (id != TKFragmentManager.ID_view_invalid) {
-            mTitleFragment = mSphinx.getTitleFragment();            
+            mTitleFragment = mFragmentManager.getTitleFragment();            
             mTitleBtn = mTitleFragment.mTitleBtn;
             mKeywordEdt = mTitleFragment.mKeywordEdt;
             mLeftBtn = mTitleFragment.mLeftBtn;
@@ -482,7 +482,7 @@ public class BaseFragment extends LinearLayout {
         boolean isBuslineTurnPage = dataQuery.hasLocalParameter(BuslineResultLineFragment.BUSLINE_TURNPAGE);
         if (BaseActivity.hasAbnormalResponseCode(dataQuery, sphinx, isBuslineTurnPage ? BaseActivity.SHOW_NOTHING : BaseActivity.SHOW_DIALOG, baseFragment, false)) {
             if (isBuslineTurnPage) {
-                sphinx.getBuslineResultLineFragment().setData(null, dataQuery);
+                sphinx.mFragmentManager.getBuslineResultLineFragment().setData(null, dataQuery);
             }
             result = -1;
             return result;
@@ -495,7 +495,7 @@ public class BaseFragment extends LinearLayout {
         BuslineModel buslineModel = poiResponse.getBuslineModel();
         if (buslineModel != null) {
             if (buslineModel.getType() == BuslineModel.TYPE_BUSLINE) {
-                sphinx.getBuslineResultLineFragment().setData(null, dataQuery);
+                sphinx.mFragmentManager.getBuslineResultLineFragment().setData(null, dataQuery);
                 if (dataQuery.isTurnPage() == false) {
                     sphinx.showView(TKFragmentManager.ID_view_traffic_busline_line_result);
                     sphinx.uiStackRemove(TKFragmentManager.ID_view_poi_input_search);
@@ -535,7 +535,7 @@ public class BaseFragment extends LinearLayout {
                 sphinx.resetLoactionButtonState();
                 sphinx.resetMapDegree();
                 mapView.centerOnPosition(mapCenter, zoomLevel);
-                sphinx.getHomeFragment().reset();
+                sphinx.mFragmentManager.getHomeFragment().reset();
                 sphinx.uiStackClearTop(TKFragmentManager.ID_view_home);
                 result = POIResponse.FIELD_MAP_CENTER_AND_BORDER_RANGE;
                 return result;
@@ -620,7 +620,7 @@ public class BaseFragment extends LinearLayout {
                 return 2;
             }
         }
-        POIResultFragment poiResultFragment = sphinx.getPOIResultFragment();
+        POIResultFragment poiResultFragment = sphinx.mFragmentManager.getPOIResultFragment();
         // 跳转到POI结果列表界面
         if (bPOIList.getShowType() == 0) {
             sphinx.uiStackRemove(TKFragmentManager.ID_view_poi_result);
@@ -637,9 +637,9 @@ public class BaseFragment extends LinearLayout {
                 poiResultFragment.setData(dataQuery, true);
 
                 sphinx.uiStackClearTop(TKFragmentManager.ID_view_home);
-                sphinx.getResultMapFragment().setData(sphinx.getString(R.string.result_map), ActionLog.POIListMap);
+                sphinx.mFragmentManager.getResultMapFragment().setData(sphinx.getString(R.string.result_map), ActionLog.POIListMap);
                 sphinx.showView(TKFragmentManager.ID_view_result_map);
-                // 下面这行代码本来是应该在sphinx.getResultMapFragment().setData（）之前执行，
+                // 下面这行代码本来是应该在mFragmentManager.getResultMapFragment().setData（）之前执行，
                 // 由于sphinx.uiStackClearTop(TKFragmentManager.ID_view_home)的特殊逻辑将其移到此处
                 ItemizedOverlayHelper.drawPOIOverlay(sphinx, bPOIList.getList(), 0, poiResultFragment.getAPOI());
             }
@@ -701,13 +701,13 @@ public class BaseFragment extends LinearLayout {
                 
                 if (buslineModel.getType() == BuslineModel.TYPE_BUSLINE) {
                     actionLog.addAction(actionTag + ActionLog.TrafficResultBusline, buslineQuery.getBuslineModel().getLineList().size());
-                    sphinx.getBuslineResultLineFragment().setData(buslineQuery);
+                    sphinx.mFragmentManager.getBuslineResultLineFragment().setData(buslineQuery);
                     if (buslineQuery.isTurnPage() == false) {
                         sphinx.showView(TKFragmentManager.ID_view_traffic_busline_line_result);
                     }
                 } else if (buslineModel.getType() == BuslineModel.TYPE_STATION) {
                     actionLog.addAction(actionTag + ActionLog.TrafficResultBusline, buslineQuery.getBuslineModel().getStationList().size());
-                    sphinx.getBuslineResultStationFragment().setData(buslineQuery);
+                    sphinx.mFragmentManager.getBuslineResultStationFragment().setData(buslineQuery);
                     if (buslineQuery.isTurnPage() == false) {
                         sphinx.showView(TKFragmentManager.ID_view_traffic_busline_station_result);
                     }
@@ -763,9 +763,9 @@ public class BaseFragment extends LinearLayout {
         if (noResult) {
             Toast.makeText(sphinx, R.string.no_result, Toast.LENGTH_LONG).show();
         } else {
-        	sphinx.getDiscoverListFragment().setData(dataQuery, true);
+            sphinx.mFragmentManager.getDiscoverListFragment().setData(dataQuery, true);
         	sphinx.showView(TKFragmentManager.ID_view_discover_list);
-        	sphinx.getDiscoverListFragment().setSelectionFromTop();
+        	sphinx.mFragmentManager.getDiscoverListFragment().setSelectionFromTop();
         }
     }
     

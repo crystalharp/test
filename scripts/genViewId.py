@@ -51,7 +51,7 @@ IDs = {
 		}
 
 classesTemp = """
-	public static final Class<?>[] ViewID2Class = {
+	private static final Class<?>[] ViewID2Class = {
 %s
 	};
 """
@@ -68,9 +68,9 @@ if __name__ == "__main__":
 	filename = file(path + "TKFragmentManager.java", 'r+')
 	key_head_str = "\tpublic static final int %s = %d;\n"
 	class_str = "\n\t\t%s.class,"
-	imports_str = "import %s;\n"
+	#imports_str = "import %s;\n"
 	classes = ""
-	imports = ""
+	#imports = ""
 	facadeFunc = ""
 
 	keys = key_head_str % ("ID_view_invalid", -1)
@@ -85,7 +85,7 @@ if __name__ == "__main__":
 		class_name = v.split(".")[-1]
 		keys += key_head_str % (k, i)
 		classes += class_str % class_name
-		imports += imports_str % v
+		#imports += imports_str % v
 		func_name = class_name + (k[-1].isdigit() and k[-1] or "")
 		facadeFunc += facadeFuncTemp % (class_name, func_name, k)
 		i += 1

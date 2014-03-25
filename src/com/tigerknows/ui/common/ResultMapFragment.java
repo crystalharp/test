@@ -106,7 +106,7 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
         
         mRootView = mLayoutInflater.inflate(R.layout.result_map, container, false);
         
-        mBottomFragment = mSphinx.getInfoWindowFragment();
+        mBottomFragment = mFragmentManager.getInfoWindowFragment();
         
         findViews();
         setListener();
@@ -121,7 +121,7 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
         restoreResultData();
         mSphinx.resetLoactionButtonState();
         mSphinx.resetMapDegree();
-        mSphinx.getHomeFragment().reset();
+        mFragmentManager.getHomeFragment().reset();
         mSphinx.getMapView().setStopRefreshMyLocation(false);
         mTitleBtn.setText(mTitle);
         setOnTouchListener(null);
@@ -163,9 +163,9 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
         if (ActionLog.TrafficDriveListMap.equals(mActionTag) ||
                 ActionLog.TrafficWalkListMap.equals(mActionTag)) {
             mTitleBtn.setVisibility(View.GONE);
-            mTrafficTitieView = mSphinx.getTrafficQueryFragment().getTitleView();
+            mTrafficTitieView = mFragmentManager.getTrafficQueryFragment().getTitleView();
             mTrafficTitleRadioGroup = (RadioGroup) mTrafficTitieView.findViewById(R.id.traffic_rgp);
-            ((ViewGroup)mSphinx.getTitleFragment().mRootView).addView(mTrafficTitieView, TrafficQueryFragment.sLayoutParams);
+            ((ViewGroup)mFragmentManager.getTitleFragment().mRootView).addView(mTrafficTitieView, TrafficQueryFragment.sLayoutParams);
     
             mTrafficTransferRbt = (RadioButton) mTrafficTitieView.findViewById(R.id.traffic_transfer_rbt);
             mTrafficDriveRbt = (RadioButton) mTrafficTitieView.findViewById(R.id.traffic_drive_rbt);
@@ -294,7 +294,7 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
                 public void onItemClick(AdapterView<?> adapterView, View arg1, int index, long arg3) {
 
                     mActionLog.addAction(mActionTag + ActionLog.TrafficDriveListMapPreference, index);
-                    TrafficDetailFragment f = mSphinx.getTrafficDetailFragment();
+                    TrafficDetailFragment f = mFragmentManager.getTrafficDetailFragment();
                     TrafficQuery trafficQuery = f.getTrafficQuery();
                     Plan plan = f.findDriveType(driveTypeList[index]);
 
@@ -340,7 +340,7 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
     
     private boolean changeTrafficType(int type, boolean jumpTransferResultFragment) {
         boolean result = false;
-        TrafficDetailFragment trafficDetailFragment = mSphinx.getTrafficDetailFragment();
+        TrafficDetailFragment trafficDetailFragment = mFragmentManager.getTrafficDetailFragment();
         TrafficQuery trafficQuery = trafficDetailFragment.getTrafficQuery();
 
         if (type != Plan.Step.TYPE_TRANSFER && type != Plan.Step.TYPE_DRIVE && type != Plan.Step.TYPE_WALK) {
@@ -365,8 +365,8 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
                     if (mSphinx.uiStackPeek() == TKFragmentManager.ID_view_result_map) {
                         mSphinx.uiStackRemove(TKFragmentManager.ID_view_result_map);
                     }
-                    TrafficQuery newTrafficQuery = mSphinx.getTrafficResultFragment().getTrafficQuery();
-                    mSphinx.getTrafficResultFragment().setData(newTrafficQuery);
+                    TrafficQuery newTrafficQuery = mFragmentManager.getTrafficResultFragment().getTrafficQuery();
+                    mFragmentManager.getTrafficResultFragment().setData(newTrafficQuery);
                     mSphinx.showView(TKFragmentManager.ID_view_traffic_result_transfer);
                 } else {
                     mActionTag = ActionLog.TrafficTransferMap;
@@ -457,7 +457,7 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
     
     private void saveResultData() {
         MapScene mapScene = mSphinx.getMapView().getCurrentMapScene();
-        mapScene.overlayItem = mSphinx.getInfoWindowFragment().getItemizedOverlay().getItemByFocused();
+        mapScene.overlayItem = mFragmentManager.getInfoWindowFragment().getItemizedOverlay().getItemByFocused();
         ResultData resultData = new ResultData();
         resultData.mapScene =mapScene;
         resultData.actionTag = mActionTag;

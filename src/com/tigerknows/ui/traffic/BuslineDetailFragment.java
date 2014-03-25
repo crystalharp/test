@@ -205,7 +205,7 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
     		return;
 
         this.line = line;
-        this.mLineList = mSphinx.getBuslineResultLineFragment().getData();
+        this.mLineList = mFragmentManager.getBuslineResultLineFragment().getData();
         this.curLineNum = position;
         
         setHighlightStation(highlightStation);
@@ -362,7 +362,7 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
         if (line == null) {
             return;
         }
-        mSphinx.getResultMapFragment().setData(getString(R.string.title_busline_result_map), ActionLog.TrafficBuslineMap);
+        mFragmentManager.getResultMapFragment().setData(getString(R.string.title_busline_result_map), ActionLog.TrafficBuslineMap);
         mSphinx.showView(TKFragmentManager.ID_view_result_map);
 
         BuslineOverlayHelper.drawOverlay(mSphinx, mSphinx.getMapView(), line);

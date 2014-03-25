@@ -259,7 +259,7 @@ public class DynamicMoviePOI extends DynamicPOIViewTemplate {
                         list.add(dianying);
                         dianying.getYingxun().setChangciOption(Yingxun.Changci.OPTION_DAY_TODAY);
                         mSphinx.showView(TKFragmentManager.ID_view_discover_dianying_detail);
-                        mSphinx.getDianyingDetailFragment().setData(list, 0, null);
+                        mFragmentManager.getDianyingDetailFragment().setData(list, 0, null);
                     }
                 }
             }

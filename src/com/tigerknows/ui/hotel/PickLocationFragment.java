@@ -196,7 +196,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
         mRightBtn.setOnClickListener(this);
         Utility.refreshButton(mSphinx, mRightBtn, getString(R.string.confirm), getString(R.string.cancel), mKeywordEdt.getText().toString().trim().length() > 0);
         
-        mCityInfo = mSphinx.getHotelHomeFragment().getCityInfo();
+        mCityInfo = mFragmentManager.getHotelHomeFragment().getCityInfo();
         mSuggestWordListManager.refresh(mCityInfo.getId());
     }
 

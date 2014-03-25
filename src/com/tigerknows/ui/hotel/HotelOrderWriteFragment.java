@@ -700,7 +700,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(TKFragmentManager.ID_view_user_home), getId(), getId(), getId(), mCancelLoginListener)) {
             isReLogin = true;
             return;
-        }else if (BaseActivity.hasAbnormalResponseCode(baseQuery, mSphinx, BaseActivity.SHOW_DIALOG, mSphinx.getFragment(mSphinx.uiStackPeek()), false, new int[] {825, 826})) {
+        }else if (BaseActivity.hasAbnormalResponseCode(baseQuery, mSphinx, BaseActivity.SHOW_DIALOG, mFragmentManager.getFragment(mSphinx.uiStackPeek()), false, new int[] {825, 826})) {
             return;
         }
         Response response = baseQuery.getResponse();
@@ -739,12 +739,12 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
             TKConfig.setPref(mContext, TKConfig.PREFS_HOTEL_LAST_BOOKNAME, mBookUsername);
             TKConfig.setPref(mContext, TKConfig.PREFS_HOTEL_LAST_MOBILE, mMobile);
             if(mSphinx.uiStackContains(TKFragmentManager.ID_view_hotel_credit_assure)){
-                if(mSphinx.getHotelOrderCreditFragment().isShowing()){
-                	mSphinx.getHotelOrderCreditFragment().dismiss();
+                if(mFragmentManager.getHotelOrderCreditFragment().isShowing()){
+                	mFragmentManager.getHotelOrderCreditFragment().dismiss();
                 }
                 mSphinx.uiStackRemove(TKFragmentManager.ID_view_hotel_credit_assure);
             }
-            mSphinx.getHotelOrderSuccessFragment().setData(mHotelOrder);
+            mFragmentManager.getHotelOrderSuccessFragment().setData(mHotelOrder);
             HotelOrderTable hotelOrderTable = new HotelOrderTable(mSphinx);
             try {
                 hotelOrderTable.write(mHotelOrder);
@@ -756,14 +756,14 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
                 hotelOrderTable.close();
             }
             //订单列表已经发生了变化，在此处清除列表界面的内容，列表页onResume时会重新加载订单。
-            mSphinx.getHotelOrderListFragment().clearOrders();
-            mSphinx.getHotelOrderListFragment().syncOrder();
+            mFragmentManager.getHotelOrderListFragment().clearOrders();
+            mFragmentManager.getHotelOrderListFragment().syncOrder();
             dismiss();
             mSphinx.uiStackRemove(TKFragmentManager.ID_view_hotel_order_write);
             mSphinx.showView(TKFragmentManager.ID_view_hotel_order_success);
             break;
         case Response.RESPONSE_CODE_HOTEL_NEED_CREDIT_ASSURE:
-            mSphinx.getHotelOrderCreditFragment().setData(response.getDescription(),
+            mFragmentManager.getHotelOrderCreditFragment().setData(response.getDescription(),
                     Utility.formatHotelPrice(mOneNightPrice),
                     Utility.formatHotelPrice(mTotalPrice),
                     (int)mTypeCreditAssure,
@@ -785,10 +785,10 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
 							public void onClick(DialogInterface dialog,
 									int which) {
                                 if (which == DialogInterface.BUTTON_POSITIVE) {
-                                	mSphinx.getHotelOrderListFragment().clearOrders();
-                                	mSphinx.getHotelOrderListFragment().syncOrder();
+                                	mFragmentManager.getHotelOrderListFragment().clearOrders();
+                                	mFragmentManager.getHotelOrderListFragment().syncOrder();
                                 	if(mSphinx.uiStackContains(TKFragmentManager.ID_view_hotel_credit_assure)){
-                                		mSphinx.getHotelOrderCreditFragment().clearVerifyEdt();
+                                		mFragmentManager.getHotelOrderCreditFragment().clearVerifyEdt();
                                 	}
                                 	mSphinx.showView(TKFragmentManager.ID_view_hotel_order_list);
                                 }

@@ -376,6 +376,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         
         POIDetailFragment mPOIDetailFragment;
         Sphinx mSphinx;
+        TKFragmentManager mFragmentManager;
         POI mPOI;
         LayoutInflater mInflater;
         boolean mExist;
@@ -965,7 +966,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                 
             case R.id.nearby_search_btn:
                 mActionLog.addAction(mActionTag +  ActionLog.POIDetailSearch);
-                mSphinx.getPOINearbyFragment().setData(mSphinx.buildDataQuery(poi));
+                mFragmentManager.getNearbySearchFragment().setData(mSphinx.buildDataQuery(poi));
                 mSphinx.showView(TKFragmentManager.ID_view_poi_nearby_search);
                 break;
                 
@@ -1032,7 +1033,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         if (poi == null) {
             return;
         }
-        mSphinx.getResultMapFragment().setData(getString(R.string.result_map), poi.getSourceType() == POI.SOURCE_TYPE_HOTEL ? ActionLog.POIHotelDetailMap : ActionLog.POIDetailMap);
+        mFragmentManager.getResultMapFragment().setData(getString(R.string.result_map), poi.getSourceType() == POI.SOURCE_TYPE_HOTEL ? ActionLog.POIHotelDetailMap : ActionLog.POIDetailMap);
         mSphinx.showView(TKFragmentManager.ID_view_result_map);
         List<POI> pois = new ArrayList<POI>();
         pois.add(poi);

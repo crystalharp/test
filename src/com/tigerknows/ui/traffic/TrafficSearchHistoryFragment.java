@@ -99,7 +99,7 @@ public class TrafficSearchHistoryFragment extends BaseFragment {
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
                     long arg3) {
                 mActionLog.addAction(mActionTag + ActionLog.ListViewItem, arg2);
-                TrafficQueryFragment f = mSphinx.getTrafficQueryFragment();
+                TrafficQueryFragment f = mFragmentManager.getTrafficQueryFragment();
                 f.setStart(mList.get(arg2).start);
                 f.setEnd(mList.get(arg2).end);
                 f.autoStartQuery(true);

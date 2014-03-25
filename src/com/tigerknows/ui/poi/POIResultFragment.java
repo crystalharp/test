@@ -249,7 +249,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                     if (poi != null) {
                         mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position, poi.getUUID(), poi.getName());
                         mSphinx.showView(TKFragmentManager.ID_view_poi_detail);
-                        mSphinx.getPOIDetailFragment().setData(poi, position);
+                        mFragmentManager.getPOIDetailFragment().setData(poi, position);
                     }
                 } else if (location > 0 && mResultLsv.isFooterSpringback() == false) {
                     showAddMerchant();
@@ -529,7 +529,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             poiList.add(poi);
         }
         int firstIndex = page[2];
-        mSphinx.getResultMapFragment().setData(getString(R.string.result_map), BaseQuery.SUB_DATA_TYPE_HOTEL.equals(mResultAdapter.getSubDataType()) ? ActionLog.POIHotelListMap : ActionLog.POIListMap);
+        mFragmentManager.getResultMapFragment().setData(getString(R.string.result_map), BaseQuery.SUB_DATA_TYPE_HOTEL.equals(mResultAdapter.getSubDataType()) ? ActionLog.POIHotelListMap : ActionLog.POIListMap);
         mSphinx.showView(TKFragmentManager.ID_view_result_map);   
         ItemizedOverlayHelper.drawPOIOverlay(mSphinx, poiList, firstIndex, mAPOI);
     }
@@ -584,7 +584,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 dataQuery.removeParameter(DataQuery.SERVER_PARAMETER_INFO);
                 dataQuery.removeParameter(DataQuery.SERVER_PARAMETER_FILTER);
                 dataQuery.removeParameter(DataQuery.SERVER_PARAMETER_FILTER_STRING);
-                mSphinx.getInputSearchFragment().setData(dataQuery,
+                mFragmentManager.getInputSearchFragment().setData(dataQuery,
                 		mInputText,
                 		InputSearchFragment.MODE_POI);
                 mSphinx.showView(TKFragmentManager.ID_view_poi_input_search);

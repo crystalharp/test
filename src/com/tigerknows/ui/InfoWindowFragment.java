@@ -165,7 +165,7 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
                 poi = ((Zhanlan) object).getPOI();
             }
             mActionLog.addAction(mActionTag + ActionLog.InfoWindowPOI);
-            mSphinx.getPOINearbyFragment().setData(mSphinx.buildDataQuery(poi));
+            mFragmentManager.getNearbySearchFragment().setData(mSphinx.buildDataQuery(poi));
             mSphinx.showView(TKFragmentManager.ID_view_poi_nearby_search);
         } else if (id == R.id.traffic_btn) {
             mActionLog.addAction(mActionTag + ActionLog.InfoWindowTraffic);
@@ -196,7 +196,7 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             if (plan == null) {
                 return;
             }
-            TrafficDetailFragment f = mSphinx.getTrafficDetailFragment();
+            TrafficDetailFragment f = mFragmentManager.getTrafficDetailFragment();
             if (plan.getType() == Step.TYPE_DRIVE ) {
                 f.refreshDrive(plan);
                 mSphinx.showView(TKFragmentManager.ID_view_traffic_result_detail);
@@ -204,11 +204,11 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
                 f.refreshResult(plan.getType());
                 mSphinx.showView(TKFragmentManager.ID_view_traffic_result_detail);
             } else if (plan.getType() == Step.TYPE_TRANSFER) {
-                mSphinx.getFragment(this.getOwerFragmentId()).dismiss();
+                mFragmentManager.getBaseFragment(this.getOwerFragmentId()).dismiss();
             }
         } else if (id == R.id.bus_line_plan) {
             mActionLog.addAction(mActionTag + ActionLog.InfoWindowDetail);
-            mSphinx.getFragment(this.getOwerFragmentId()).dismiss();
+            mFragmentManager.getBaseFragment(this.getOwerFragmentId()).dismiss();
         }
         
     }
@@ -587,7 +587,7 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             View view = (View) mCyclePagerAdapter.viewList.get((position) % mCyclePagerAdapter.viewList.size());
             Plan plan = (Plan) mItemizedOverlay.get(position).getAssociatedObject();
             if (plan.getType() == Step.TYPE_TRANSFER) {
-                TrafficDetailFragment f = mSphinx.getTrafficDetailFragment();
+                TrafficDetailFragment f = mFragmentManager.getTrafficDetailFragment();
                 if (f.getResult(Step.TYPE_TRANSFER).size() != 0) {
                     f.refreshResult(Step.TYPE_TRANSFER, f.getResult(Step.TYPE_TRANSFER).indexOf(plan));
                 }
@@ -794,8 +794,8 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
     private void setStepToView(View v, int position) {
         ImageView img = (ImageView) v.findViewById(R.id.step_icon);
         TextView txv = (TextView) v.findViewById(R.id.step_txv);
-        img.setBackgroundDrawable(mSphinx.getTrafficDetailFragment().getStepIcon(position));
-        txv.setText(mSphinx.getTrafficDetailFragment().getStepDescription(position));
+        img.setBackgroundDrawable(mFragmentManager.getTrafficDetailFragment().getStepIcon(position));
+        txv.setText(mFragmentManager.getTrafficDetailFragment().getStepDescription(position));
     }
     
     private void setClickSelectPointToView(View v, OverlayItem overlayItem) {
@@ -939,8 +939,8 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
         if(mType == TYPE_CLICKED_SELECT_POINT) {
             
             POI poi = (POI) overlayItem.getAssociatedObject();
-            mSphinx.getFragment(mOwerFragmentId).dismiss();
-            mSphinx.getInputSearchFragment().responsePOI(poi);
+            mFragmentManager.getBaseFragment(mOwerFragmentId).dismiss();
+            mFragmentManager.getInputSearchFragment().responsePOI(poi);
             
         } else if(mType == TYPE_LONG_CLICKED_SELECT_POINT
                 || mType == TYPE_MY_LOCATION) {
@@ -951,7 +951,7 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             } else {
                 mSphinx.showView(TKFragmentManager.ID_view_poi_detail);
             }
-            mSphinx.getPOIDetailFragment().setData(poi);
+            mFragmentManager.getPOIDetailFragment().setData(poi);
         } else if(mType == TYPE_MAP_POI) {
             POI poi = (POI) overlayItem.getAssociatedObject();
             if (mSphinx.uiStackContains(TKFragmentManager.ID_view_poi_detail)) {
@@ -959,7 +959,7 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
             } else {
                 mSphinx.showView(TKFragmentManager.ID_view_poi_detail);
             }
-            mSphinx.getPOIDetailFragment().setData(poi);
+            mFragmentManager.getPOIDetailFragment().setData(poi);
         } else if (overlayItem != null) {
             if (overlayName.equals(ItemizedOverlay.POI_OVERLAY)) {
                 Object object = overlayItem.getAssociatedObject();
@@ -979,7 +979,7 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
                         } else {
                             mSphinx.showView(TKFragmentManager.ID_view_poi_detail);
                         }
-                        mSphinx.getPOIDetailFragment().setData(target);
+                        mFragmentManager.getPOIDetailFragment().setData(target);
                     }
                 } else if (object instanceof Tuangou) {
                     Tuangou target = (Tuangou) object;
@@ -988,7 +988,7 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
                     } else {
                         mSphinx.showView(TKFragmentManager.ID_view_discover_tuangou_detail);
                     }
-                    mSphinx.getTuangouDetailFragment().setData(target);
+                    mFragmentManager.getTuangouDetailFragment().setData(target);
                 } else if (object instanceof Dianying) {
                     Dianying target = (Dianying) object;
                     if (mSphinx.uiStackContains(TKFragmentManager.ID_view_discover_dianying_detail)) {
@@ -996,7 +996,7 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
                     } else {
                         mSphinx.showView(TKFragmentManager.ID_view_discover_dianying_detail);
                     }
-                    mSphinx.getDianyingDetailFragment().setData(target);
+                    mFragmentManager.getDianyingDetailFragment().setData(target);
                 } else if (object instanceof Zhanlan) {
                     Zhanlan target = (Zhanlan) object;
                     if (mSphinx.uiStackContains(TKFragmentManager.ID_view_discover_zhanlan_detail)) {
@@ -1004,7 +1004,7 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
                     } else {
                         mSphinx.showView(TKFragmentManager.ID_view_discover_zhanlan_detail);
                     }
-                    mSphinx.getZhanlanDetailFragment().setData(target);
+                    mFragmentManager.getZhanlanDetailFragment().setData(target);
                 } else if (object instanceof Yanchu) {
                     Yanchu target = (Yanchu) object;
                     if (mSphinx.uiStackContains(TKFragmentManager.ID_view_discover_yanchu_detail)) {
@@ -1012,7 +1012,7 @@ public class InfoWindowFragment extends BaseFragment implements View.OnClickList
                     } else {
                         mSphinx.showView(TKFragmentManager.ID_view_discover_yanchu_detail);
                     }
-                    mSphinx.getYanchuDetailFragment().setData(target);
+                    mFragmentManager.getYanchuDetailFragment().setData(target);
                 }
             } else if (overlayName.equals(ItemizedOverlay.TRAFFIC_PLAN_LIST_OVERLAY)) {
                 if (mSphinx.uiStackContains(TKFragmentManager.ID_view_traffic_result_detail)) {

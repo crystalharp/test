@@ -86,8 +86,8 @@ public class MyOrderFragment extends BaseFragment{
 			@Override
 			public void onClick(View v) {
 				mActionLog.addAction(mActionTag + ActionLog.MyAllOrderHotel);
-            	mSphinx.getHotelOrderListFragment().clearOrders();
-            	mSphinx.getHotelOrderListFragment().syncOrder();
+            	mFragmentManager.getHotelOrderListFragment().clearOrders();
+            	mFragmentManager.getHotelOrderListFragment().syncOrder();
                 mSphinx.showView(TKFragmentManager.ID_view_hotel_order_list);
 			}
 		});

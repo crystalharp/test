@@ -107,8 +107,8 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
         mBaseList = null;
         mActionTag = actionTag;
         
-        String filter = DataQuery.makeFilterRequest(mSphinx.getDiscoverListFragment().getFilterList());
-        DataQuery dataQuery = new DataQuery(mSphinx.getDiscoverListFragment().getLastQuery());
+        String filter = DataQuery.makeFilterRequest(mFragmentManager.getDiscoverListFragment().getFilterList());
+        DataQuery dataQuery = new DataQuery(mFragmentManager.getDiscoverListFragment().getLastQuery());
         
         if (object instanceof Tuangou) {
             mTuangou = (Tuangou) object;
@@ -311,7 +311,7 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
     
     private void viewMap(List<POI> poiList, int index) {
         boolean yingxun = BaseQuery.DATA_TYPE_YINGXUN.equals(mDataType);
-        mSphinx.getResultMapFragment().setData(getString(yingxun ? R.string.dianying_ditu : R.string.shanghu_ditu), yingxun ? ActionLog.ResultMapDianyingBranchList : ActionLog.ResultMapTuangouBranchList);
+        mFragmentManager.getResultMapFragment().setData(getString(yingxun ? R.string.dianying_ditu : R.string.shanghu_ditu), yingxun ? ActionLog.ResultMapDianyingBranchList : ActionLog.ResultMapTuangouBranchList);
         mSphinx.showView(TKFragmentManager.ID_view_result_map);   
         ItemizedOverlayHelper.drawPOIOverlay(mSphinx, poiList, index);
     }

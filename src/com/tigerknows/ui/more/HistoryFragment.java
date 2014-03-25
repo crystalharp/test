@@ -331,7 +331,7 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
                     if (poi != null) {
                         mActionLog.addAction(mActionTag + ActionLog.ListViewItem + ActionLog.HistoryPOI, position);
                         mSphinx.showView(TKFragmentManager.ID_view_poi_detail);
-                        mSphinx.getPOIDetailFragment().setData(poi, position);
+                        mFragmentManager.getPOIDetailFragment().setData(poi, position);
                     }
                 }
             }
@@ -499,10 +499,10 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
     
     public static void showTrafficDetail(Sphinx sphinx, History traffic) {
         int type = traffic.getHistoryType();
-        TrafficDetailFragment tf = sphinx.getTrafficDetailFragment();
+        TrafficDetailFragment tf = sphinx.mFragmentManager.getTrafficDetailFragment();
         switch (type) {
             case Tigerknows.History.HISTORY_BUSLINE:
-                sphinx.getBuslineDetailFragment().setData(traffic.getBuslineQuery().getBuslineModel().getLineList().get(0));
+                sphinx.mFragmentManager.getBuslineDetailFragment().setData(traffic.getBuslineQuery().getBuslineModel().getLineList().get(0));
                 sphinx.showView(TKFragmentManager.ID_view_traffic_busline_detail);
                 break;
                 

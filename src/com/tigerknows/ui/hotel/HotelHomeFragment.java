@@ -258,8 +258,8 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                 
             case R.id.location_view:
                 mActionLog.addAction(mActionTag + ActionLog.HotelQueryLocation);
-                mSphinx.getPickLocationFragment().setInvoker(this);
-                mSphinx.getPickLocationFragment().reset();
+                mFragmentManager.getPickLocationFragment().setInvoker(this);
+                mFragmentManager.getPickLocationFragment().reset();
                 Filter filter = getFilter(mFilterList, FilterArea.FIELD_LIST);
                 if (filter == null || filter.getVersion().equals("0.0.0")) {
                     queryFilter();
@@ -289,8 +289,8 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                 
             case R.id.dingdan_view:
                 mActionLog.addAction(mActionTag + ActionLog.HotelQueryOrder);
-            	mSphinx.getHotelOrderListFragment().clearOrders();
-            	mSphinx.getHotelOrderListFragment().syncOrder();
+            	mFragmentManager.getHotelOrderListFragment().clearOrders();
+            	mFragmentManager.getHotelOrderListFragment().syncOrder();
                 mSphinx.showView(TKFragmentManager.ID_view_hotel_order_list);
             	break;
                 
@@ -518,7 +518,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                 FilterListView.selectedFilter(filter, -1);
             }
         }
-        mSphinx.getPickLocationFragment().setData(mFilterList);
+        mFragmentManager.getPickLocationFragment().setData(mFilterList);
         refreshFilterAreaView();
     }
     

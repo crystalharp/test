@@ -186,7 +186,7 @@ public class BuslineResultLineFragment extends BaseFragment {
                         showAlarmDialog(mSphinx, lineToPOIList(mLineList.get(position)));
                     } else {
                         focusedIndex = position;
-    					mSphinx.getBuslineDetailFragment().setData(mLineList.get(position), position, mBuslineQuery.getKeyword());
+    					mFragmentManager.getBuslineDetailFragment().setData(mLineList.get(position), position, mBuslineQuery.getKeyword());
     					mSphinx.showView(TKFragmentManager.ID_view_traffic_busline_detail);
                     }
 				} else if (mResultLsv.isFooterSpringback() == false && mDataQuery != null) {

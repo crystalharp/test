@@ -210,7 +210,7 @@ public class TrafficOverlayHelper {
                     if (sphinx.getTouchMode().equals(TouchMode.MEASURE_DISTANCE)) {
                         return;
                     }
-                    BaseFragment fragment = sphinx.getFragment(sphinx.uiStackPeek());
+                    BaseFragment fragment = sphinx.mFragmentManager.getFragment(sphinx.uiStackPeek());
                     String tag = null;
                     if (fragment != null) {
                         tag = fragment.mActionTag;

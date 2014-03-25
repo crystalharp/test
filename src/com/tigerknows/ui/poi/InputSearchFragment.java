@@ -396,7 +396,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                 }
                 
                 Toast.makeText(mSphinx, R.string.move_map_select_point, Toast.LENGTH_LONG).show();
-                mSphinx.getResultMapFragment().setData(getString(R.string.map_select_point), ActionLog.TrafficSelectPoint);
+                mFragmentManager.getResultMapFragment().setData(getString(R.string.map_select_point), ActionLog.TrafficSelectPoint);
                 mSphinx.showView(TKFragmentManager.ID_view_result_map);
                 
                 ItemizedOverlayHelper.drawClickSelectPointOverlay(mSphinx, title);
@@ -438,7 +438,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                 
             case R.id.btn_fav_position:
                 mActionLog.addAction(mActionTag + ActionLog.InputQueryFavPosition);
-                mSphinx.showView(mSphinx.getFetchFavoriteFragment().getId());
+                mSphinx.showView(mFragmentManager.getFetchFavoriteFragment().getId());
                 break;
             case R.id.btn_food:
             	mActionLog.addAction(mActionTag + ActionLog.InputQueryFoodSearch);
@@ -455,8 +455,8 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                 break;
             case R.id.btn_hotel:
             	mActionLog.addAction(mActionTag + ActionLog.InputQueryHotelSearch);
-        		mSphinx.getHotelHomeFragment().resetDate();
-        		mSphinx.getHotelHomeFragment().setCityInfo(Globals.getCurrentCityInfo(mContext));
+        		mFragmentManager.getHotelHomeFragment().resetDate();
+        		mFragmentManager.getHotelHomeFragment().setCityInfo(Globals.getCurrentCityInfo(mContext));
         		mSphinx.showView(TKFragmentManager.ID_view_hotel_home);
         		break;
             case R.id.btn_bus_station:

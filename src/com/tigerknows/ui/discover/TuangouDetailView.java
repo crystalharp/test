@@ -349,7 +349,7 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
         if (data == null || (data instanceof Tuangou) == false || mData == data) {
             if (mData != null && mParentFragment.position == position) {
                 if (mData.getUrl() != null) {
-                    mParentFragment.mSphinx.getBrowserFragment().setData(getString(R.string.buy), mData.getUrl(), null);
+                    mParentFragment.mFragmentManager.getBrowserFragment().setData(getString(R.string.buy), mData.getUrl(), null);
                 }
             }
             return;
@@ -357,7 +357,7 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
         mData = (Tuangou)data;
         if (mParentFragment.position == position) {
             if (mData.getUrl() != null) {
-                mParentFragment.mSphinx.getBrowserFragment().setData(getString(R.string.buy), mData.getUrl(), null);
+                mParentFragment.mFragmentManager.getBrowserFragment().setData(getString(R.string.buy), mData.getUrl(), null);
             }
         }
 
@@ -739,7 +739,7 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
             case R.id.nearby_fendian_view:
                 if (mNearbyFendianTxv.getVisibility() == View.VISIBLE) {
                     mActionLog.addAction(mActionTag +  ActionLog.DiscoverCommonBranch);
-                    mSphinx.getDiscoverChildListFragment().setup(mData, mNearbyFendianTxv.getText().toString(), ActionLog.FendianList);
+                    mFragmentManager.getDiscoverChildListFragment().setup(mData, mNearbyFendianTxv.getText().toString(), ActionLog.FendianList);
                     mSphinx.showView(TKFragmentManager.ID_view_discover_child_list);
                 }
                 break;
@@ -873,10 +873,10 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
                 if (shangjia != null) {
                     tip = shangjia.getName();
                 }
-                mParentFragment.mSphinx.getBrowserFragment().setData(getString(R.string.buy), url, tip);
+                mParentFragment.mFragmentManager.getBrowserFragment().setData(getString(R.string.buy), url, tip);
                 mParentFragment.mSphinx.showView(TKFragmentManager.ID_view_browser);
             } else {
-                mParentFragment.mSphinx.getBrowserFragment().setData(getString(R.string.buy), url, null);
+                mParentFragment.mFragmentManager.getBrowserFragment().setData(getString(R.string.buy), url, null);
             }
         } else if (BaseQuery.DATA_TYPE_TUANGOU.equals(dataType)) {
             if (BaseActivity.hasAbnormalResponseCode(dataOperation, mSphinx, BaseActivity.SHOW_NOTHING, mParentFragment, false)) {

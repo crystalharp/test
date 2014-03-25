@@ -928,7 +928,7 @@ public class BaseQueryTest {
     static void historyFavoriteData(Activity activity, int type) {
         if (activity instanceof Sphinx) {
             Sphinx sphinx = (Sphinx) activity;
-            BaseFragment fragment = sphinx.getFragment(sphinx.uiStackPeek());
+            BaseFragment fragment = sphinx.mFragmentManager.getFragment(sphinx.uiStackPeek());
             if (fragment != null) {
                 if (fragment instanceof POIResultFragment) {
                     POIResultFragment dataFragment = (POIResultFragment) fragment;

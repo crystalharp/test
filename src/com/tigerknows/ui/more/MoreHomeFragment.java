@@ -367,7 +367,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
                 break;
             case R.id.my_order_btn:
             	mActionLog.addAction(mActionTag + ActionLog.MoreDingdan);
-            	mSphinx.getMyOrderFragment().setData(false);
+            	mFragmentManager.getMyOrderFragment().setData(false);
             	mSphinx.showView(TKFragmentManager.ID_view_more_my_order);
             	break;
             case R.id.change_city_btn:
@@ -393,7 +393,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
                 break;
             case R.id.common_place_btn:
                 addActionLog(ActionLog.MoreCommonPlace);
-                mSphinx.showView(mSphinx.getTrafficCommonAddressFragment().getId());
+                mSphinx.showView(mFragmentManager.getTrafficCommonPlaceFragment().getId());
                 break;
             case R.id.manage_alarm_btn:
                 addActionLog(ActionLog.MoreAlarm);
@@ -457,10 +457,10 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     
     public void refreshHomeBottomFragment() {
         if(mUpgradeMap || TextUtils.equals(TKConfig.getPref(mContext, TKConfig.PREFS_MORE_OPENED, ""), "no")){
-            mSphinx.getHomeBottomFragment().getMoreImv().setVisibility(View.VISIBLE);
+            mFragmentManager.getHomeBottomFragment().getMoreImv().setVisibility(View.VISIBLE);
         	return;
         }else{
-            mSphinx.getHomeBottomFragment().getMoreImv().setVisibility(View.GONE);
+            mFragmentManager.getHomeBottomFragment().getMoreImv().setVisibility(View.GONE);
         }
     }
     
@@ -882,18 +882,18 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         	imageView.setScaleType(ScaleType.FIT_XY);
         	switch(notice.getLocalLayoutType()){
         	case 2:
-        		sphinx.getMoreFragment().refreshDrawable(notice.getpicTkDrawable(), imageView, R.drawable.bg_picture_detail, false);
+        		sphinx.mFragmentManager.getMoreHomeFragment().refreshDrawable(notice.getpicTkDrawable(), imageView, R.drawable.bg_picture_detail, false);
         		break;
         	case 3:
         		if(notice.getLocalType()==1){
         		    imageView.setBackgroundResource(R.drawable.ic_soft_update);
         		}else{
-        			sphinx.getMoreFragment().refreshDrawable(notice.getpicTkDrawable(), imageView, R.drawable.bg_picture_none, false);
+        		    sphinx.mFragmentManager.getMoreHomeFragment().refreshDrawable(notice.getpicTkDrawable(), imageView, R.drawable.bg_picture_none, false);
         		}
         		imageView.setLayoutParams(layoutParams);
         		break;
         	case 7:
-        		sphinx.getMoreFragment().refreshDrawable(notice.getpicTkDrawable(), imageView, R.drawable.bg_picture_none, false);
+        	    sphinx.mFragmentManager.getMoreHomeFragment().refreshDrawable(notice.getpicTkDrawable(), imageView, R.drawable.bg_picture_none, false);
         		imageView.setLayoutParams(layoutParams);
         	}
         	imageView.setLayoutParams(layoutParams);

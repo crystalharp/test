@@ -97,7 +97,7 @@ public class YanchuDetailFragment extends BaseDetailFragment
     }
     
     public void viewMap() {
-        mSphinx.getResultMapFragment().setData(getString(R.string.yanchu_didian_ditu), ActionLog.ResultMapYanchuDetail);
+        mFragmentManager.getResultMapFragment().setData(getString(R.string.yanchu_didian_ditu), ActionLog.ResultMapYanchuDetail);
         super.viewMap();
         Yanchu data = mDataList.get(mViewPager.getCurrentItem());
         List<Yanchu> list = new ArrayList<Yanchu>();
