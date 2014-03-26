@@ -30,12 +30,15 @@ public class ConnectivityChangeReceiver extends BroadcastReceiver{
             // true 代表网络断开   false 代表网络没有断开
             boolean noConnectivity = intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false);
             LogWrapper.d("NetCheckReceiver", "onReceive() noConnectivity="+noConnectivity);
-            if (noConnectivity == false &&
-                PullService.TRIGGER_MODE_NET.equals(PullService.getTriggerMode(context))) {
-                Calendar cal = Calendar.getInstance();
-                cal.setTimeInMillis(System.currentTimeMillis());
-                cal = Alarms.alarmAddMinutes(cal, TKConfig.PullServiceNetTriggerDelayTime);
-                Alarms.enableAlarm(context, cal, PullService.alarmAction);
+            // 网络已连接
+            if (noConnectivity == false) {
+                // 推送的网络触发
+                if (PullService.TRIGGER_MODE_NET.equals(PullService.getTriggerMode(context))) {
+                    Calendar cal = Calendar.getInstance();
+                    cal.setTimeInMillis(System.currentTimeMillis());
+                    cal = Alarms.alarmAddMinutes(cal, TKConfig.PullServiceNetTriggerDelayTime);
+                    Alarms.enableAlarm(context, cal, PullService.alarmAction);
+                }
             }
         }
     }
