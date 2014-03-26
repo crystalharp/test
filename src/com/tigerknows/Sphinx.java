@@ -427,7 +427,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         Label.init(Globals.g_metrics.widthPixels, Globals.g_metrics.heightPixels);
 
         mMapEngine = MapEngine.getInstance();
-        mFragmentManager = TKFragmentManager.getInstance(this);
+        mFragmentManager = new TKFragmentManager(this);
 
         CityInfo cityInfo = MapEngine.getCityInfo(CityInfo.CITY_ID_BEIJING);
         if (cityInfo.isAvailably() == false) {
