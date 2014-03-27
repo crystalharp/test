@@ -18,6 +18,7 @@ import com.tigerknows.ui.more.FavoriteFragment;
 import com.tigerknows.ui.hotel.HotelHomeFragment;
 import com.tigerknows.ui.traffic.BuslineResultLineFragment;
 import com.tigerknows.ui.traffic.TrafficSearchHistoryFragment;
+import com.tigerknows.ui.more.CommonPlaceFragment;
 import com.tigerknows.ui.more.HistoryFragment;
 import com.tigerknows.ui.more.GoCommentFragment;
 import com.tigerknows.ui.poi.CouponDetailFragment;
@@ -51,7 +52,6 @@ import com.tigerknows.ui.poi.NearbySearchFragment;
 import com.tigerknows.ui.hotel.HotelOrderSuccessFragment;
 import com.tigerknows.ui.poi.POIResultFragment;
 import com.tigerknows.ui.common.MeasureDistanceFragment;
-import com.tigerknows.ui.traffic.TrafficCommonPlaceFragment;
 
 
 /**
@@ -106,7 +106,7 @@ public class TKFragmentManager {
 	public static final int ID_view_hotel_order_success = 41;
 	public static final int ID_view_poi_result = 42;
 	public static final int ID_view_measure_distance = 43;
-	public static final int ID_view_traffic_common_places = 44;
+	public static final int ID_view_more_common_places = 44;
 	public static final int ID_max = 45;
 
 
@@ -156,7 +156,7 @@ public class TKFragmentManager {
 		HotelOrderSuccessFragment.class,
 		POIResultFragment.class,
 		MeasureDistanceFragment.class,
-		TrafficCommonPlaceFragment.class
+		CommonPlaceFragment.class
 	};
 
 
@@ -336,8 +336,8 @@ public class TKFragmentManager {
 		return getFragment(ID_view_measure_distance);
 	} 
 
-	public final TrafficCommonPlaceFragment getTrafficCommonPlaceFragment() {
-		return getFragment(ID_view_traffic_common_places);
+	public final CommonPlaceFragment getTrafficCommonPlaceFragment() {
+		return getFragment(ID_view_more_common_places);
 	} 
 
 //----generate end----

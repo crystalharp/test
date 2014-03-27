@@ -53,8 +53,8 @@ import com.tigerknows.provider.CommonPlaceTable.CommonPlace;
 import com.tigerknows.provider.HistoryWordTable;
 import com.tigerknows.provider.TrafficSearchHistoryTable.SearchHistory;
 import com.tigerknows.ui.BaseFragment;
+import com.tigerknows.ui.more.CommonPlaceFragment.CommonPlaceList;
 import com.tigerknows.ui.poi.InputSearchFragment;
-import com.tigerknows.ui.traffic.TrafficCommonPlaceFragment.CommonPlaceList;
 import com.tigerknows.ui.traffic.TrafficSearchHistoryFragment.SearchHistoryList;
 import com.tigerknows.util.Utility;
 import com.tigerknows.widget.LinearListAdapter;
@@ -1060,7 +1060,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
             
         case R.id.add_common_place:
 //            mActionLog.addAction(mActionTag, );
-            mSphinx.showView(TKFragmentManager.ID_view_traffic_common_places);
+            mSphinx.showView(TKFragmentManager.ID_view_more_common_places);
             break;
         
         case R.id.query_history_title:

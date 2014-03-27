@@ -1,8 +1,6 @@
 package com.tigerknows.widget;
 
 import com.tigerknows.R;
-import com.tigerknows.util.Utility;
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;

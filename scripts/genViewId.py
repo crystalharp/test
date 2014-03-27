@@ -21,7 +21,7 @@ IDs = {
 	"ID_view_traffic_busline_station_result":"com.tigerknows.ui.traffic.BuslineResultStationFragment",
 	"ID_view_traffic_busline_detail":"com.tigerknows.ui.traffic.BuslineDetailFragment",
 	"ID_view_traffic_home":"com.tigerknows.ui.traffic.TrafficQueryFragment",
-	"ID_view_traffic_common_places":"com.tigerknows.ui.traffic.TrafficCommonPlaceFragment",
+	"ID_view_more_common_places":"com.tigerknows.ui.more.CommonPlaceFragment",
 	"ID_view_traffic_search_history":"com.tigerknows.ui.traffic.TrafficSearchHistoryFragment",
 	"ID_view_traffic_fetch_favorite_poi":"com.tigerknows.ui.traffic.FetchFavoriteFragment",
 	"ID_view_subway_map":"com.tigerknows.ui.traffic.SubwayMapFragment",

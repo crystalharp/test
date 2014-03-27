@@ -1,4 +1,4 @@
-package com.tigerknows.ui.traffic;
+package com.tigerknows.ui.more;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -27,7 +27,7 @@ import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.ui.poi.InputSearchFragment;
 import com.tigerknows.ui.poi.InputSearchFragment.IResponsePOI;
 
-public class TrafficCommonPlaceFragment extends BaseFragment{
+public class CommonPlaceFragment extends BaseFragment{
 
     private ListView mCommonPlaceLsv;
     
@@ -85,7 +85,7 @@ public class TrafficCommonPlaceFragment extends BaseFragment{
         mAdapter.notifyDataSetChanged();
     }
 
-    public TrafficCommonPlaceFragment(Sphinx sphinx) {
+    public CommonPlaceFragment(Sphinx sphinx) {
         super(sphinx);
     }
 
@@ -144,19 +144,19 @@ public class TrafficCommonPlaceFragment extends BaseFragment{
             }
         }
         
-        void add(CommonPlace c) {
+        public void add(CommonPlace c) {
             mList.add(c);
             mTable.addCommonPlace(c);
         }
         
-        void setPOI(int pos, POI p) {
+        public void setPOI(int pos, POI p) {
             if (pos < mList.size()) {
                 mList.get(pos).poi = p;
                 mTable.updateDatabase(mList.get(pos));
             }
         }
         
-        void remove(int pos) {
+        public void remove(int pos) {
             if (pos < mList.size()) {
                 mList.get(pos).delete();
                 if (mList.get(pos).type == CommonPlace.TYPE_NORMAL) {
@@ -168,15 +168,15 @@ public class TrafficCommonPlaceFragment extends BaseFragment{
             }
         }
                 
-        boolean contains(CommonPlace c) {
+        public boolean contains(CommonPlace c) {
             return mList.contains(c);
         }
         
-        int size() {
+        public int size() {
             return mList.size();
         }
         
-        CommonPlace get(int pos) {
+        public CommonPlace get(int pos) {
             if (pos < mList.size()) {
                 return mList.get(pos);
             } else {
@@ -184,7 +184,7 @@ public class TrafficCommonPlaceFragment extends BaseFragment{
             }
         }
         
-        List<CommonPlace> getList() {
+        public List<CommonPlace> getList() {
             return mList;
         }
         

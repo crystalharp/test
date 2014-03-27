@@ -94,7 +94,6 @@ import android.widget.Toast;
 import com.tigerknows.android.app.TKActivity;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.CityInfo;
-import com.tigerknows.map.MapEngine;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.TrafficQuery;
 import com.tigerknows.ui.common.AddPictureActivity;
