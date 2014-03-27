@@ -548,6 +548,8 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
             } else if (mRequest == REQUEST_COMMON_PLACE) {
                 if (poi.getPosition() != null) {
                     mIResponsePOI.responsePOI(poi);
+                    //TODO: showCommonPlaceTitleDialog
+                    LogWrapper.d("Trap", "showCommonPlaceDialog_1");
                     mSphinx.showTip(R.string.setting_success, Toast.LENGTH_SHORT);
                     dismiss();
                 } else {
