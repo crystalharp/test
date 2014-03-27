@@ -82,7 +82,7 @@
         <item>超市;1</item>
         <item>商场;1</item>
         <item>品牌折扣;1</item>
-        <item>自定义;6</item>
+        <item>添加分类;6</item>
     </string-array>
             
     <string-array name="discover_categroy_type">
