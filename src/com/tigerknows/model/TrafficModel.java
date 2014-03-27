@@ -1438,29 +1438,60 @@ public class TrafficModel extends XMapData {
         
         private String title = null;
         private String lengthStr = null;
+        private int transferTimes = -1;
+        
+        private int getTransferStepNum() {
+            if (transferTimes == -1) {
+                transferTimes = 0;
+                for(int i = 0, size = stepList.size(); i < size; i++) {
+                    if (stepList.get(i).getType() == Step.TYPE_TRANSFER) {
+                        transferTimes++;
+                    }
+                }
+            }
+            return transferTimes;
+        }
         
         public String getTitle(Context context) {
-            if (title == null) {
-                String title = null;
+            return getTitle(context, -1);
+        }
+        
+        /**
+         * sectionLimit是每个线路的长度限制,控制这个值来形成xxx路/xxx...->xxx路的效果
+         * @param context
+         * @param sectionLimit
+         * @return
+         */
+        public String getTitle(Context context, int sectionLimit) {
+            String desStr = null;
+            if (this.title == null || sectionLimit > 0) {
+                String stepTitle = null;
+                int transTime = getTransferStepNum();
                 if (stepList != null) {
                     for(int i = 0, size = stepList.size(); i < size; i++) {
                         Step step = stepList.get(i);
                         if (Step.TYPE_TRANSFER == step.getType()) {
-                            if (title != null) {
-                                title = title + context.getString(R.string.traffic_transfer_arrow) + step.getTransferLineName();
+                            stepTitle = step.getTransferLineName();
+                            if (transTime > 1 && sectionLimit > 0 && sectionLimit < stepTitle.length() - 1) {
+                                stepTitle = stepTitle.substring(0, sectionLimit) + "...";
+                            }
+                            if (desStr != null) {
+                                desStr = desStr + context.getString(R.string.traffic_transfer_arrow) + stepTitle;
                             } else {
-                                title = step.getTransferLineName();
+                                desStr = stepTitle;
                             }
                         }
                     }
                 }
-                this.title = title;
                 //没有在换乘类型取到title并且有步行的信息，则说明步行可达。
-                if (title == null && stepList.size() != 0 && stepList.get(0).getType() == Step.TYPE_WALK) {
-                    this.title = context.getString(R.string.traffic_noneed_transfer);
+                if (desStr == null && stepList.size() != 0 && stepList.get(0).getType() == Step.TYPE_WALK) {
+                    desStr = context.getString(R.string.traffic_noneed_transfer);
+                }
+                if (sectionLimit <= 0) {
+                    this.title = desStr;
                 }
             }
-            return title;
+            return desStr;
         }
         
         public String getLengthStr(Context context) {

@@ -674,7 +674,13 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
             planHolder.tags.removeAllViews();
             List<PlanTag> tagList = plan.getPlanTagList();
             if (plan.getType() == TrafficQuery.QUERY_TYPE_TRANSFER) {
-                setTxvText(planHolder.title, plan.getTitle(sphinx));
+                String title = null;
+                if (titleSingleLine) {
+                    title = plan.getTitle(sphinx, 10);
+                } else {
+                    title = plan.getTitle(sphinx);
+                }
+                setTxvText(planHolder.title, title);
                 setTxvText(planHolder.txv1, plan.getExpectedBusTime());
                 setTxvText(planHolder.txv2, plan.getLengthStr(sphinx));
                 setTxvText(planHolder.txv3, plan.getWalkDistance4Transfer());
