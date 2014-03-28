@@ -31,6 +31,7 @@ import com.tigerknows.ui.alarm.AlarmAddFragment;
 import com.tigerknows.ui.poi.CustomCategoryFragment;
 import com.tigerknows.ui.traffic.SubwayMapFragment;
 import com.tigerknows.ui.common.BrowserFragment;
+import com.tigerknows.ui.common.EditTextFragment;
 import com.tigerknows.ui.traffic.TrafficQueryFragment;
 import com.tigerknows.ui.traffic.FetchFavoriteFragment;
 import com.tigerknows.ui.traffic.BuslineResultStationFragment;
@@ -72,42 +73,43 @@ public class TKFragmentManager {
 	public static final int ID_view_hotel_home = 7;
 	public static final int ID_view_traffic_busline_line_result = 8;
 	public static final int ID_view_traffic_search_history = 9;
-	public static final int ID_view_more_history = 10;
-	public static final int ID_view_more_go_comment = 11;
-	public static final int ID_view_coupon_detail = 12;
-	public static final int ID_view_traffic_result_transfer = 13;
-	public static final int ID_view_coupon_list = 14;
-	public static final int ID_view_hotel_order_detail_2 = 15;
-	public static final int ID_view_discover_child_list = 16;
-	public static final int ID_view_traffic_busline_detail = 17;
-	public static final int ID_view_alarm_add = 18;
-	public static final int ID_view_poi_custom_category = 19;
-	public static final int ID_view_hotel_order_detail = 20;
-	public static final int ID_view_subway_map = 21;
-	public static final int ID_view_browser = 22;
-	public static final int ID_view_traffic_home = 23;
-	public static final int ID_view_traffic_fetch_favorite_poi = 24;
-	public static final int ID_view_traffic_busline_station_result = 25;
-	public static final int ID_view_hotel_credit_assure = 26;
-	public static final int ID_view_user_home = 27;
-	public static final int ID_view_alarm_list = 28;
-	public static final int ID_view_infowindow = 29;
-	public static final int ID_view_result_map = 30;
-	public static final int ID_view_hotel_pick_location = 31;
-	public static final int ID_view_more_home = 32;
-	public static final int ID_view_poi_input_search = 33;
-	public static final int ID_view_more_my_order = 34;
-	public static final int ID_view_discover_zhanlan_detail = 35;
-	public static final int ID_view_discover_yanchu_detail = 36;
-	public static final int ID_view_discover_dianying_detail = 37;
-	public static final int ID_view_traffic_result_detail = 38;
-	public static final int ID_view_hotel_order_write = 39;
-	public static final int ID_view_poi_nearby_search = 40;
-	public static final int ID_view_hotel_order_success = 41;
-	public static final int ID_view_poi_result = 42;
-	public static final int ID_view_measure_distance = 43;
-	public static final int ID_view_more_common_places = 44;
-	public static final int ID_max = 45;
+	public static final int ID_view_more_common_places = 10;
+	public static final int ID_view_more_history = 11;
+	public static final int ID_view_more_go_comment = 12;
+	public static final int ID_view_coupon_detail = 13;
+	public static final int ID_view_traffic_result_transfer = 14;
+	public static final int ID_view_coupon_list = 15;
+	public static final int ID_view_hotel_order_detail_2 = 16;
+	public static final int ID_view_discover_child_list = 17;
+	public static final int ID_view_traffic_busline_detail = 18;
+	public static final int ID_view_alarm_add = 19;
+	public static final int ID_view_poi_custom_category = 20;
+	public static final int ID_view_hotel_order_detail = 21;
+	public static final int ID_view_subway_map = 22;
+	public static final int ID_view_browser = 23;
+	public static final int ID_view_traffic_home = 24;
+	public static final int ID_view_traffic_fetch_favorite_poi = 25;
+	public static final int ID_view_traffic_busline_station_result = 26;
+	public static final int ID_view_hotel_credit_assure = 27;
+	public static final int ID_view_user_home = 28;
+	public static final int ID_view_alarm_list = 29;
+	public static final int ID_view_infowindow = 30;
+	public static final int ID_view_result_map = 31;
+	public static final int ID_view_hotel_pick_location = 32;
+	public static final int ID_view_more_home = 33;
+	public static final int ID_view_poi_input_search = 34;
+	public static final int ID_view_more_my_order = 35;
+	public static final int ID_view_discover_zhanlan_detail = 36;
+	public static final int ID_view_discover_yanchu_detail = 37;
+	public static final int ID_view_discover_dianying_detail = 38;
+	public static final int ID_view_traffic_result_detail = 39;
+	public static final int ID_view_edit_text = 40;
+	public static final int ID_view_hotel_order_write = 41;
+	public static final int ID_view_poi_nearby_search = 42;
+	public static final int ID_view_hotel_order_success = 43;
+	public static final int ID_view_poi_result = 44;
+	public static final int ID_view_measure_distance = 45;
+	public static final int ID_max = 46;
 
 
 	private static final Class<?>[] ViewID2Class = {
@@ -122,6 +124,7 @@ public class TKFragmentManager {
 		HotelHomeFragment.class,
 		BuslineResultLineFragment.class,
 		TrafficSearchHistoryFragment.class,
+		CommonPlaceFragment.class,
 		HistoryFragment.class,
 		GoCommentFragment.class,
 		CouponDetailFragment.class,
@@ -151,12 +154,12 @@ public class TKFragmentManager {
 		YanchuDetailFragment.class,
 		DianyingDetailFragment.class,
 		TrafficDetailFragment.class,
+		EditTextFragment.class,
 		HotelOrderWriteFragment.class,
 		NearbySearchFragment.class,
 		HotelOrderSuccessFragment.class,
 		POIResultFragment.class,
-		MeasureDistanceFragment.class,
-		CommonPlaceFragment.class
+		MeasureDistanceFragment.class
 	};
 
 
@@ -198,6 +201,10 @@ public class TKFragmentManager {
 
 	public final TrafficSearchHistoryFragment getTrafficSearchHistoryFragment() {
 		return getFragment(ID_view_traffic_search_history);
+	} 
+
+	public final CommonPlaceFragment getCommonPlaceFragment() {
+		return getFragment(ID_view_more_common_places);
 	} 
 
 	public final HistoryFragment getHistoryFragment() {
@@ -316,6 +323,10 @@ public class TKFragmentManager {
 		return getFragment(ID_view_traffic_result_detail);
 	} 
 
+	public final EditTextFragment getEditTextFragment() {
+		return getFragment(ID_view_edit_text);
+	} 
+
 	public final HotelOrderWriteFragment getHotelOrderWriteFragment() {
 		return getFragment(ID_view_hotel_order_write);
 	} 
@@ -334,10 +345,6 @@ public class TKFragmentManager {
 
 	public final MeasureDistanceFragment getMeasureDistanceFragment() {
 		return getFragment(ID_view_measure_distance);
-	} 
-
-	public final CommonPlaceFragment getTrafficCommonPlaceFragment() {
-		return getFragment(ID_view_more_common_places);
 	} 
 
 //----generate end----

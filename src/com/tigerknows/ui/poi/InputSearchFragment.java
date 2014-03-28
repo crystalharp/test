@@ -8,6 +8,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.os.Bundle;
+import android.os.Message;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -58,6 +59,7 @@ import com.tigerknows.model.DataQuery.GeoCoderResponse;
 import com.tigerknows.provider.HistoryWordTable;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
+import com.tigerknows.ui.common.EditTextFragment.TextInputListener;
 import com.tigerknows.util.Utility;
 import com.tigerknows.widget.FilterListView;
 import com.tigerknows.widget.SuggestArrayAdapter.BtnEventHandler;
@@ -76,9 +78,10 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
     final public static int REQUEST_NONE = 0;
     final public static int REQUEST_TRAFFIC_START = 1;
     final public static int REQUEST_TRAFFIC_END = 2;
-    final public static int REQUEST_COMMON_PLACE = 3;
+    final public static int REQUEST_COMMON_PLACE_HOME = 3;
     final public static int REQUEST_ONLY_BUS_STATION = 4;
     final public static int REQUEST_ONLY_BUS_LINE = 5;
+    final public static int REQUEST_COMMON_PLACE_NORMAL = 6;
     
     private DataQuery mDataQuery;
     private int mCurMode;
@@ -119,7 +122,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
          * 返回POI
          * @param poi
          */
-        public void responsePOI(POI poi);
+        public void responsePOI(POI poi, Message message);
     }
     
     public InputSearchFragment(Sphinx sphinx) {
@@ -279,7 +282,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                 mKeywordEdt.setHint(getString(R.string.end_));
             } else if (mRequest == REQUEST_TRAFFIC_START) {
                 mKeywordEdt.setHint(getString(R.string.start_));
-            } else if (mRequest == REQUEST_COMMON_PLACE) {
+            } else if (mRequest == REQUEST_COMMON_PLACE_HOME || mRequest == REQUEST_COMMON_PLACE_NORMAL) {
                 mKeywordEdt.setHint(getString(R.string.traffic_search_hint));
             }
             break;
@@ -424,7 +427,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                 if (c != null && c.getPosition() != null) {
                     POI p = new POI();
                     p.setPosition(c.getPosition());
-                    if (mRequest == REQUEST_COMMON_PLACE) {
+                    if (mRequest == REQUEST_COMMON_PLACE_HOME || mRequest == REQUEST_COMMON_PLACE_NORMAL) {
                         p.setName(MapEngine.getInstance().getPositionName(c.getPosition()));
                     } else {
                         p.setName(getString(R.string.my_location));
@@ -514,7 +517,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                 if (mRequest == REQUEST_TRAFFIC_START || mRequest == REQUEST_TRAFFIC_END) {
                     POI poi = tkWord.toPOI();
                     responsePOI(poi);
-                } else if (mRequest == REQUEST_COMMON_PLACE) {
+                } else if (mRequest == REQUEST_COMMON_PLACE_HOME || mRequest == REQUEST_COMMON_PLACE_NORMAL) {
                     if (tkWord.position != null) {
                         POI poi = tkWord.toPOI();
                         responsePOI(poi);
@@ -535,7 +538,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
      * 返回POI，目前仅用于交通模式
      * @param poi
      */
-    public void responsePOI(POI poi) {
+    public void responsePOI(final POI poi) {
         if (poi == null || TextUtils.isEmpty(poi.getName())) {
             mSphinx.showTip(R.string.search_input_keyword, Toast.LENGTH_SHORT);
             return;
@@ -544,15 +547,30 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         if (mCurMode == MODE_TRAFFIC) {
 
             if (mRequest == REQUEST_TRAFFIC_START || mRequest == REQUEST_TRAFFIC_END) {
-                mIResponsePOI.responsePOI(poi);
+                mIResponsePOI.responsePOI(poi, null);
                 dismiss();
-            } else if (mRequest == REQUEST_COMMON_PLACE) {
+            } else if (mRequest == REQUEST_COMMON_PLACE_HOME) {
                 if (poi.getPosition() != null) {
-                    mIResponsePOI.responsePOI(poi);
-                    //TODO: showCommonPlaceTitleDialog
-                    LogWrapper.d("Trap", "showCommonPlaceDialog_1");
+                    mIResponsePOI.responsePOI(poi, null);
                     mSphinx.showTip(R.string.setting_success, Toast.LENGTH_SHORT);
                     dismiss();
+                } else {
+                    TKWord tkWord = new TKWord(TKWord.ATTRIBUTE_CLEANUP, poi.getName(), poi.getPosition(), poi.getAddress());
+                    submitGeoCoderQuery(tkWord);
+                }
+            } else if (mRequest == REQUEST_COMMON_PLACE_NORMAL) {
+                if (poi.getPosition() != null) {
+                	dismiss();
+                    mFragmentManager.getEditTextFragment().setDataNoInit(new TextInputListener() {
+						
+						@Override
+						public void AfterTextInput(String str) {
+							Message msg = new Message();
+							msg.obj = str;
+							mIResponsePOI.responsePOI(poi, msg);
+						}
+					}, mSphinx.getString(R.string.common_place_alias_empty_tip));
+                    mSphinx.showView(TKFragmentManager.ID_view_edit_text);
                 } else {
                     TKWord tkWord = new TKWord(TKWord.ATTRIBUTE_CLEANUP, poi.getName(), poi.getPosition(), poi.getAddress());
                     submitGeoCoderQuery(tkWord);

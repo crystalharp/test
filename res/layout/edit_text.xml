@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tkandroid ="http://schemas.android.com/apk/res/com.tigerknows"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" 
+    android:background="@color/normal_background"
+    >
+    <com.tigerknows.android.widget.TKEditText
+        android:id="@+id/body_edt"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        tkandroid:hint="@string/app_name"
+        tkandroid:maxLength="50"
+        tkandroid:imeOptions="actionDone"
+        >
+    </com.tigerknows.android.widget.TKEditText>
+</LinearLayout>

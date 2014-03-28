@@ -5,6 +5,7 @@ import java.util.List;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKFragmentManager;
@@ -37,13 +39,25 @@ public class CommonPlaceFragment extends BaseFragment{
     
     private int mClickedPos;
     
-    private IResponsePOI mCallback = new IResponsePOI() {
+    private IResponsePOI mModifyCallBack = new IResponsePOI() {
 
         @Override
-        public void responsePOI(POI poi) {
+        public void responsePOI(POI poi, Message message) {
+        	if(message != null){
+        		mList.setAlias(mClickedPos, (String)message.obj);
+        	}
             mList.setPOI(mClickedPos, poi);
             mAdapter.notifyDataSetChanged();
         }
+    };
+    
+    private IResponsePOI mAddCallBack = new IResponsePOI() {
+    	@Override
+    	public void responsePOI(POI poi, Message message) {
+    		CommonPlace c = new CommonPlace((String)message.obj, poi, CommonPlace.TYPE_NORMAL);
+            mList.add(c);
+            mAdapter.notifyDataSetChanged();    		
+    	}
     };
         
     private OnClickListener mDeleteBtnOnClickListenter = new View.OnClickListener() {
@@ -81,6 +95,22 @@ public class CommonPlaceFragment extends BaseFragment{
     public void onResume() {
         super.onResume();
         mTitleBtn.setText(R.string.set_common_place);
+        mRightBtn.setText(R.string.append_place);
+        mRightBtn.setVisibility(View.VISIBLE);
+        mRightBtn.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				mFragmentManager.getEditTextFragment().setData("", null, null);
+				mFragmentManager.getInputSearchFragment().setData(new DataQuery(mSphinx),
+                		null,
+                        InputSearchFragment.MODE_TRAFFIC,
+                        mAddCallBack,
+                        InputSearchFragment.REQUEST_COMMON_PLACE_NORMAL
+						);
+				mSphinx.showView(TKFragmentManager.ID_view_poi_input_search);
+			}
+		});
         mList.updateData();
         mAdapter.notifyDataSetChanged();
     }
@@ -112,11 +142,12 @@ public class CommonPlaceFragment extends BaseFragment{
                 }
 
                 DataQuery dataQuery = new DataQuery(mSphinx);
+                mFragmentManager.getEditTextFragment().setData(c.alias, null, null);
                 mFragmentManager.getInputSearchFragment().setData(dataQuery,
                 		keyWord,
                         InputSearchFragment.MODE_TRAFFIC,
-                        mCallback,
-                        InputSearchFragment.REQUEST_COMMON_PLACE);
+                        mModifyCallBack,
+                        c.type == CommonPlace.TYPE_FIXED ? InputSearchFragment.REQUEST_COMMON_PLACE_HOME : InputSearchFragment.REQUEST_COMMON_PLACE_NORMAL);
                 mSphinx.showView(TKFragmentManager.ID_view_poi_input_search);
             }
         });
@@ -154,6 +185,14 @@ public class CommonPlaceFragment extends BaseFragment{
                 mList.get(pos).poi = p;
                 mTable.updateDatabase(mList.get(pos));
             }
+        }
+        
+        public void setAlias(int pos, String a) {
+        	if (pos < mList.size()) {
+        		LogWrapper.d("Trap", "setAlias");
+        		mList.get(pos).alias = a;
+        		mTable.updateDatabase(mList.get(pos));
+        	}
         }
         
         public void remove(int pos) {

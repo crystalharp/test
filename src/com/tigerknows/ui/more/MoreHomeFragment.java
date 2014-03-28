@@ -393,7 +393,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
                 break;
             case R.id.common_place_btn:
                 addActionLog(ActionLog.MoreCommonPlace);
-                mSphinx.showView(mFragmentManager.getTrafficCommonPlaceFragment().getId());
+                mSphinx.showView(mFragmentManager.getCommonPlaceFragment().getId());
                 break;
             case R.id.manage_alarm_btn:
                 addActionLog(ActionLog.MoreAlarm);

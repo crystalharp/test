@@ -2,6 +2,7 @@ package com.tigerknows.provider;
 
 import java.util.List;
 
+import com.tendcloud.tenddata.al;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.xobject.XMap;
 import com.tigerknows.util.ByteUtil;
@@ -13,6 +14,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.text.TextUtils;
+import android.util.Log;
 
 
 public class CommonPlaceTable {
@@ -102,7 +104,7 @@ public class CommonPlaceTable {
     
     public int readCommonPlace(List<CommonPlace> list){
         int total = 0;
-        Cursor c = mDb.query(TABLE_NAME, null, null, null, null, null, ID + " DESC");
+        Cursor c = mDb.query(TABLE_NAME, null, null, null, null, null, ID + " ASC");
         if (c != null) {
             total = c.getCount();
             if (total > 0) {
@@ -197,6 +199,7 @@ public class CommonPlaceTable {
                 byte[] data = ByteUtil.xobjectToByte(c.poi.getData());
                 if (data.length > 0) {
                     values.put(POI, data);
+                    values.put(ALIAS, c.alias);
                 }
             } catch (Exception e) {
                 isFailed = true;

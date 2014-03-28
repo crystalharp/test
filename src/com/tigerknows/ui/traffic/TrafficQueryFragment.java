@@ -10,6 +10,7 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Message;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -400,12 +401,12 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
                             new InputSearchFragment.IResponsePOI(){
 
                                 @Override
-                                public void responsePOI(POI p) {
+                                public void responsePOI(POI p, Message message) {
                                     mCommonPlaces.setPOI(0, p);
                                     mCommonPlaceAdapter.refreshList(mCommonPlaces.getList());
                                 }
                             },
-                            InputSearchFragment.REQUEST_COMMON_PLACE);
+                            InputSearchFragment.REQUEST_COMMON_PLACE_HOME);
                     mSphinx.showView(TKFragmentManager.ID_view_poi_input_search);
                 } else {
                     mEnd.setPOI(c.poi);
@@ -1026,7 +1027,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
                     new InputSearchFragment.IResponsePOI(){
 
                         @Override
-                        public void responsePOI(POI p) {
+                        public void responsePOI(POI p, Message message) {
                             mEnd.setPOI(p);
                             autoStartQuery(true);
                         }
@@ -1049,7 +1050,7 @@ public class TrafficQueryFragment extends BaseFragment implements View.OnClickLi
                     new InputSearchFragment.IResponsePOI(){
 
                         @Override
-                        public void responsePOI(POI p) {
+                        public void responsePOI(POI p, Message message) {
                             mStart.setPOI(p);
                             autoStartQuery(true);
                         }

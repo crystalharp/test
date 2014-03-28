@@ -1361,8 +1361,12 @@
     <string name="search_perimeter">搜周边</string>
     <string name="query_line">查路线</string>
     <string name="confirm_place">确定地点</string>
+    <string name="append_place">添加地点</string>
     <string name="set_common_place">设置常用地点</string>
     <string name="click_set_place">点击设置常用地点</string>
+    <string name="set_common_place_alias">设置常用地点标题</string>
+    <string name="common_place_alias">常用地点标题</string>
+    <string name="common_place_alias_empty_tip">请设置常用地点标题</string>
     <string name="preference">偏好</string>
     <string name="transfer_map">公交地图</string>
     <string name="show_zoom_button">显示放大缩小按钮</string>

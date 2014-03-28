@@ -46,7 +46,8 @@ IDs = {
 	"ID_view_coupon_detail":"com.tigerknows.ui.poi.CouponDetailFragment",
 	"ID_view_measure_distance":"com.tigerknows.ui.common.MeasureDistanceFragment",
 	"ID_view_alarm_list":"com.tigerknows.ui.alarm.AlarmListFragment",
-	"ID_view_alarm_add":"com.tigerknows.ui.alarm.AlarmAddFragment"
+	"ID_view_alarm_add":"com.tigerknows.ui.alarm.AlarmAddFragment",
+	"ID_view_edit_text":"com.tigerknows.ui.common.EditTextFragment"
 
 		}
 
