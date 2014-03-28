@@ -98,7 +98,6 @@ public class CustomCategoryFragment extends BaseFragment {
 							mCurrentState = sb.toString();
 							imv.setImageResource(R.drawable.ic_custom_category_checked);
 						}
-						LogWrapper.d("Trap", mCurrentState);
 					}
 				});
 			}

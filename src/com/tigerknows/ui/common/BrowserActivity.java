@@ -118,7 +118,6 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
      */
     public static void checkFastAlipay(Activity activity, String url, ActionLog actionLog, String actionTag) {
         String info = URLDecoder.decode(url);
-        LogWrapper.d("Trap", info);
         String clientGoAlipay = TKConfig.getPref(activity, TKConfig.PREFS_CLIENT_GO_ALIPAY, "on");
         if(! "on".equalsIgnoreCase(clientGoAlipay)){
         	return;

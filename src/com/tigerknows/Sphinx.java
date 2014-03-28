@@ -1976,7 +1976,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 
             		    } else {
             			    TKConfig.setPref(mThis, TKConfig.PREFS_LAST_UPLOAD_APPLIST, String.valueOf(CalendarUtil.getExactTime(mThis)));
-            			    LogWrapper.d("Trap", "AppList Upload Success");
             		    }
             		}
             	}
@@ -3733,7 +3732,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     	for (int i = 0; i < pkgList.size(); i++){
     		PackageInfo pI = pkgList.get(i);
     		if(!pI.packageName.contains("com.android") && !pI.packageName.contains("com.google.android")){
-    			//LogWrapper.d("Trap", pI.packageName + "__" + manager.getApplicationLabel(pI.applicationInfo).toString() + "__" + pI.versionName + "__" + CalendarUtil.ymd8h.format(pI.firstInstallTime) + "__" + CalendarUtil.ymd8h.format(pI.lastUpdateTime) + "__" + String.valueOf(pI.applicationInfo.flags & 447));
     			s.append(Utility.joinFields("~",
     					safePlainTextEncode(pI.packageName),
     					safePlainTextEncode(manager.getApplicationLabel(pI.applicationInfo).toString()),

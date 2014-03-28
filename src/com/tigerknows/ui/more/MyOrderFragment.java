@@ -108,8 +108,6 @@ public class MyOrderFragment extends BaseFragment{
             return;
         }
         
-        LogWrapper.d("Trap", mActualOnCreate == true ? "Create" : "Resume");
-        
         List<Shangjia> list = new ArrayList<Shangjia>();
         List<Shangjia> shangjiaList = Shangjia.getShangjiaList();
         synchronized (shangjiaList) {

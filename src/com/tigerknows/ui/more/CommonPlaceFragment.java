@@ -189,7 +189,6 @@ public class CommonPlaceFragment extends BaseFragment{
         
         public void setAlias(int pos, String a) {
         	if (pos < mList.size()) {
-        		LogWrapper.d("Trap", "setAlias");
         		mList.get(pos).alias = a;
         		mTable.updateDatabase(mList.get(pos));
         	}
