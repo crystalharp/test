@@ -30,6 +30,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.TextView;
 
 public class DynamicTuangouPOI extends DynamicPOIViewTemplate{
@@ -128,7 +129,11 @@ public class DynamicTuangouPOI extends DynamicPOIViewTemplate{
                     TextView orgPriceTxv = (TextView) view.findViewById(R.id.org_price_txv);
                     TextView sourceTxv = (TextView) view.findViewById(R.id.source_txv);
                     TextView appointmentTxv = (TextView) view.findViewById(R.id.appointment_txv);
+                    Button viewBtn = (Button) view.findViewById(R.id.view_btn);
 
+                    viewBtn.setTag(data);
+                    viewBtn.setOnClickListener(mOnItemClickedListener);
+                    
                     Shangjia shangjia = Shangjia.getShangjiaById(tuangou.getSource(), mSphinx, mLoadedDrawableRun);
                     if (shangjia != null) {
                         sourceTxv.setText(getString(R.string.this_come_from_colon, shangjia.getName()));
