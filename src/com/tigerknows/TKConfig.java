@@ -760,6 +760,11 @@ public class TKConfig {
      * 上次点击的交通方式按钮id
      */
     public static final String PREFS_CHECKED_TRAFFIC_RADIOBUTTON = "prefs_checked_radiobutton";
+    
+    /**
+     * 推送的app完成下载
+     */
+    public static final String PREFS_APP_PUSH_DOWNLOAD_FINISHED = "prefs_app_push_download_finished";
 
     public static final String PREFS_HINT_HOME = "PREFS_HINT_HOME";
     public static final String PREFS_HINT_NEARBY_SEARCH = "PREFS_HINT_NEARBY_SEARCH";
