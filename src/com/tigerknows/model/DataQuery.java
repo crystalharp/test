@@ -3051,7 +3051,44 @@ public final class DataQuery extends BaseQuery {
             }
         }
     }
-    
+    public static class AppPushResponse extends Response {
+        // 0x02 x_map   应用推荐结果
+        public static final byte FIELD_LIST = 0x02;
+
+        private AppPushList list;
+
+        public AppPushResponse(XMap data) throws APIException {
+            super(data);
+            
+            if (this.data.containsKey(FIELD_LIST)) {
+                this.list = new AppPushList(this.data.getXMap(FIELD_LIST));
+            }
+        }
+        
+        public AppPushList getList() {
+            return list;
+        }
+        
+        public static class AppPushList extends BaseList {
+            
+            // 0x02 x_array<x_map>  应用推荐列表 
+            public static final byte FIELD_LIST = 0x02;
+            
+            public static final byte FIELD_TIME_INTERVAL = BaseList.FIELD_MESSAGE;
+            
+            private List<AppPush> list;
+
+            public AppPushList(XMap data) throws APIException {
+                super(data);
+                
+                list = getListFromData(FIELD_LIST, AppPush.Initializer);
+            }
+            
+            public List<AppPush> getList() {
+                return list;
+            }
+        }
+    }        
     protected void launchTest() {
         super.launchTest();
         String dataType = getParameter(SERVER_PARAMETER_DATA_TYPE);

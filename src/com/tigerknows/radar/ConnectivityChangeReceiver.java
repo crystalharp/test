@@ -10,6 +10,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
+import android.text.TextUtils;
 
 /**
  * 推送服务的联网触发
@@ -38,6 +39,9 @@ public class ConnectivityChangeReceiver extends BroadcastReceiver{
                     cal.setTimeInMillis(System.currentTimeMillis());
                     cal = Alarms.alarmAddMinutes(cal, TKConfig.PullServiceNetTriggerDelayTime);
                     Alarms.enableAlarm(context, cal, PullService.alarmAction);
+                }
+                if (!TextUtils.isEmpty(TKConfig.getPref(context, TKConfig.PREFS_APP_PUSH_DOWNLOAD_FINISHED, ""))){
+                	//TODO: 添加下载完成之后的界面显示
                 }
             }
         }
