@@ -27,10 +27,11 @@
         />
 
     <RelativeLayout 
+        android:id="@+id/info_rly"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/name_txv"
-        android:paddingBottom="8dp"
+        android:paddingBottom="4dp"
         >
         
 	    <TextView
@@ -72,31 +73,29 @@
 	        android:focusable="false"
 	        />
 	    
-	    <TextView
-	        android:id="@+id/appointment_txv"
+	    <ImageView
+	        android:id="@+id/appointment_imv"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:layout_marginLeft="8dp"
 	        android:layout_toRightOf="@id/org_price_txv"
-	        android:background="@drawable/bg_need_guarantee"
-	        android:textSize="10sp"
-	        android:textColor="@color/white"
-	        android:text="@string/mian_yu_yue"
-	        />
+	        android:src="@drawable/ic_no_need_reserve" />
 	
-	    <TextView
-	        android:id="@+id/source_txv"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_marginLeft="8dp"
-	        android:layout_toRightOf="@id/appointment_txv"
-	        android:textColor="@color/black_light"
-	        android:textSize="12sp"
-	        android:text="@string/app_name"
-	        android:singleLine="true"
-	        android:focusable="false"
-	        />
     </RelativeLayout>
+    
+    <TextView
+        android:id="@+id/source_txv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:paddingBottom="8dp"
+        android:layout_below="@id/info_rly"
+        android:textColor="@color/black_light"
+        android:textSize="12sp"
+        android:text="@string/app_name"
+        android:singleLine="true"
+        android:focusable="false"
+        />
 
     <Button
         android:id="@+id/view_btn"

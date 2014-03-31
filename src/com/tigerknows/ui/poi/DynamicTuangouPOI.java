@@ -127,7 +127,7 @@ public class DynamicTuangouPOI extends DynamicPOIViewTemplate{
                     TextView priceTxv = (TextView) view.findViewById(R.id.price_txv);
                     TextView orgPriceTxv = (TextView) view.findViewById(R.id.org_price_txv);
                     TextView sourceTxv = (TextView) view.findViewById(R.id.source_txv);
-                    TextView appointmentTxv = (TextView) view.findViewById(R.id.appointment_txv);
+                    View appointmentView = view.findViewById(R.id.appointment_imv);
                     Button viewBtn = (Button) view.findViewById(R.id.view_btn);
 
                     viewBtn.setTag(data);
@@ -145,9 +145,9 @@ public class DynamicTuangouPOI extends DynamicPOIViewTemplate{
                     orgPriceTxv.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
                     
                     if (tuangou.getAppointment() == 1) {
-                        appointmentTxv.setVisibility(View.VISIBLE);
+                        appointmentView.setVisibility(View.VISIBLE);
                     } else {
-                        appointmentTxv.setVisibility(View.GONE);
+                        appointmentView.setVisibility(View.GONE);
                     }
                 } catch (APIException e) {
                     // TODO Auto-generated catch block
