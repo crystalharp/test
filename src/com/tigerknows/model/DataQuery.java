@@ -220,7 +220,6 @@ public final class DataQuery extends BaseQuery {
 //            try {
 //                Quanguo_Filter_Area = new FilterArea(xmap);
 //            } catch (APIException e) {
-//                // TODO Auto-generated catch block
 //                e.printStackTrace();
 //            }
             
@@ -683,6 +682,8 @@ public final class DataQuery extends BaseQuery {
             okeys = Utility.mergeArray(okeys, new String[] {SERVER_PARAMETER_LONGITUDE,
                     SERVER_PARAMETER_LATITUDE});
             debugCheckParameters(ekeys, okeys);
+        } else if (DATA_TYPE_GEOCODER.equals(dataType)) { 
+            debugCheckParameters(ekeys, okeys);
         } else {
             throw APIException.wrapToMissingRequestParameterException("invalid data type.");
         }
@@ -873,6 +874,8 @@ public final class DataQuery extends BaseQuery {
         } else if (DATA_TYPE_HOTELVENDOR.equals(dataType)) { 
             addParameter(SERVER_PARAMETER_NEED_FIELD, getParameter(SERVER_PARAMETER_NEED_FIELD));
         } else if (DATA_TYPE_GEOCODER.equals(dataType)) {
+        } else if (DATA_TYPE_APP_PUSH.equals(dataType)) {
+        	
         }
         
         addParameter(SERVER_PARAMETER_TIME_STAMP, TIME_STAMP_FORMAT.format(Calendar.getInstance().getTime()));
@@ -988,7 +991,11 @@ public final class DataQuery extends BaseQuery {
             this.response = response;
         } else if (DATA_TYPE_HOTELVENDOR.equals(dataType)) {
             HotelVendorResponse response = new HotelVendorResponse(responseXMap);
-            this.response = response;        }
+            this.response = response;
+        } else if (DATA_TYPE_APP_PUSH.equals(dataType)) {
+        	AppPushResponse response = new AppPushResponse(responseXMap);
+        	this.response = response;
+        }
     }
     
     private void translateFilter(FilterResponse baseResponse, String dataType, String subDataType, List<Filter> filterList) throws APIException {
@@ -1689,7 +1696,6 @@ public final class DataQuery extends BaseQuery {
                 try {
                     Utility.writeFile(path, databaseVersion.getBytes(TKConfig.getEncoding()), true);
                 } catch (IOException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
                 Discover_Database_Version = databaseVersion;
@@ -2107,7 +2113,6 @@ public final class DataQuery extends BaseQuery {
                             categoryList.add(category);
                         }
                     } catch (JSONException e) {
-                        // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
                 }
@@ -2555,10 +2560,8 @@ public final class DataQuery extends BaseQuery {
                 xmlReader.parse(new InputSource(inputStream));
                 return handler.discoverConfigList;
             } catch (ParserConfigurationException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             } catch (SAXException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -2728,7 +2731,6 @@ public final class DataQuery extends BaseQuery {
                 
                 @Override
                 public int describeContents() {
-                    // TODO Auto-generated method stub
                     return 0;
                 }
 
@@ -3139,6 +3141,8 @@ public final class DataQuery extends BaseQuery {
             responseXMap = DataQueryTest.launchHotelVendorResponse(context, 10);
         } else if (DATA_TYPE_GEOCODER.equals(dataType)) {
             responseXMap = DataQueryTest.launchGeoCoderResponse();
+        } else if (DATA_TYPE_APP_PUSH.equals(dataType)) {
+        	responseXMap = DataQueryTest.launchAppPushResponse(context, 6);
         }
     }
 }

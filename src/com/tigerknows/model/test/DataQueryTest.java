@@ -5,11 +5,13 @@ import com.tigerknows.TKConfig;
 import com.tigerknows.android.app.TKApplication;
 import com.tigerknows.map.CityInfo;
 import com.tigerknows.map.MapEngine;
+import com.tigerknows.model.AppPush;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.Comment;
 import com.tigerknows.model.Coupon;
 import com.tigerknows.model.DataQuery.AlternativeResponse;
 import com.tigerknows.model.DataQuery.CouponResponse;
+import com.tigerknows.model.DataQuery.AppPushResponse.AppPushList;
 import com.tigerknows.model.DataQuery.CouponResponse.CouponList;
 import com.tigerknows.model.DataQuery.FilterConfigResponse;
 import com.tigerknows.model.DataQuery.DishResponse;
@@ -39,6 +41,7 @@ import com.tigerknows.model.Tuangou;
 import com.tigerknows.model.Yanchu;
 import com.tigerknows.model.Yingxun;
 import com.tigerknows.model.Zhanlan;
+import com.tigerknows.model.DataQuery.AppPushResponse;
 import com.tigerknows.model.DataQuery.BaseList;
 import com.tigerknows.model.DataQuery.DianyingResponse;
 import com.tigerknows.model.DataQuery.DiscoverResponse;
@@ -1095,6 +1098,45 @@ public class DataQueryTest {
             list.add(launchPOI("POI"+i+"POIPOIPOIPOIPOIPOIPOIPOIPOIPOIPOIPOIPOIPOIPOIPOIPOI"));
         }
         data.put(GeoCoderList.FIELD_POI_LIST, list);
+        return data;
+    }
+    
+    public static XMap launchAppPushResponse(Context context, int total) {
+    	XMap data = new XMap();
+    	BaseQueryTest.launchResponse(data);
+    	data.put(AppPushResponse.FIELD_LIST, launchAppPushList(context, total));
+    	return data;
+    }
+    
+    protected static XMap launchAppPushList(Context context, int total) {
+        XMap data = new XMap();
+        data.put(AppPushList.FIELD_TOTAL, total);
+        XArray<XMap> list = new XArray<XMap>();
+        for(int i = 0; i < total; i++) {
+            list.add(launchAppPush(context, i));
+        }
+        data.put(AppPushList.FIELD_LIST, list);
+        data.put(AppPushList.FIELD_TIME_INTERVAL, "3");
+        return data;
+    }
+    
+    protected static XMap launchAppPush(Context context, int index) {
+        XMap data = new XMap();
+        String[] desc = {"定位快，浏览地图速度快，加载地图速度快，地图渲染速度快。",
+        		"提供全国各省市详细手机地图包下载",
+        		"提供基站、WiFi热点、GPS多种定位方式和指南针",
+        		"全国近千万详细分类生活服务信息",
+        		"始终做最绿色，最安全，用户最放心的地图",
+        		"生活信息搜索、交通查询简便快捷，一步到位",
+        };
+        data.put(AppPush.FIELD_NAME, (index & 1) == 1  ? "老虎地图243" : "老虎地图581");
+        data.put(AppPush.FIELD_PACKAGE_NAME, "com.tigerknows");
+        data.put(AppPush.FIELD_ICON, index == 0 ? BaseQueryTest.PIC_URL : NoticeQueryTest.ICON_URL + index + ".png");
+        data.put(AppPush.FIELD_DESCRIPTION, desc[index % 6]);
+        data.put(AppPush.FIELD_PRIOR, index + "");
+        data.put(AppPush.FIELD_DOWNLOAD_URL, (index & 1) == 1
+        		? "http://client.tigerknows.net/dl/TigerMap-1-2.43.20120206A-ANDTKWWW.apk"
+        		: "http://client.tigerknows.net/dl/TigerMap-5.8.1.20140302A-ANDTKWWW.apk");
         return data;
     }
 }
