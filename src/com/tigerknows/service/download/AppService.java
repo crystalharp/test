@@ -91,6 +91,7 @@ public class AppService extends IntentService {
     @Override
     public void onDestroy() {
         stop = true;
+        LogWrapper.d(TAG, "onDestroy");
         super.onDestroy();
     }
     
@@ -164,7 +165,6 @@ public class AppService extends IntentService {
     }
      
     private static void download(Context context, String url) {
-        LogWrapper.d(TAG, "download url:" + url);
         if (!TextUtils.isEmpty(url)) {
             Intent service = new Intent(context, AppService.class);
             service.putExtra(EXTRA_URL, url);

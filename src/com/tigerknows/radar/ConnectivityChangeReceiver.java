@@ -11,6 +11,7 @@ import com.tigerknows.R;
 import com.tigerknows.TKConfig;
 import com.tigerknows.service.PullService;
 import com.tigerknows.service.download.AppService;
+import com.weibo.sdk.android.util.Utility;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -51,25 +52,31 @@ public class ConnectivityChangeReceiver extends BroadcastReceiver{
             LogWrapper.d("NetCheckReceiver", "onReceive() noConnectivity="+noConnectivity);
             // 网络已连接
             if (noConnectivity == false) {
-                // 推送的网络触发
+                // 消息推送的网络触发
                 if (PullService.TRIGGER_MODE_NET.equals(PullService.getTriggerMode(context))) {
                     Calendar cal = Calendar.getInstance();
                     cal.setTimeInMillis(System.currentTimeMillis());
                     cal = Alarms.alarmAddMinutes(cal, TKConfig.PullServiceNetTriggerDelayTime);
                     Alarms.enableAlarm(context, cal, PullService.alarmAction);
                 }
-                String filename = TKConfig.getPref(context, TKConfig.PREFS_APP_PUSH_DOWNLOAD_FINISHED, "");
-                if (!TextUtils.isEmpty(filename)){
-                	showNotification(context, filename);
-
-                	}
-
+                // 推送app的网络触发
+                if (Utility.isWifi(context)){
+                    String filename = TKConfig.getPref(context, TKConfig.PREFS_APP_PUSH_DOWNLOAD_FINISHED, "");
+                    if (!TextUtils.isEmpty(filename)){
+                        showNotification(context, filename);
+                    } else {
+                        AppService.checkAndDown(context);
+                    }
                 } else {
-                    AppService.checkAndDown(context);
-                    LogWrapper.d("Trap", "Step 1");
+                    // 网络变化后如果不是wifi就停止下载
+                    AppService.stopDownload(context);
                 }
+            } else {
+                // 网络断了就马上停止下载
+                AppService.stopDownload(context);
             }
         }
+    }
 
 	private void showNotification(Context context, String filename){
     	String path = AppService.getAppPath();
