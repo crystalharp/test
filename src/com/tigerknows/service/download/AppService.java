@@ -32,6 +32,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * 此类要独立运行,尽量不要与其他任何类共用代码
@@ -43,6 +44,8 @@ public class AppService extends IntentService {
     static final String TAG = "AppService";
 
     public static final String EXTRA_URL = "extra_url";
+    
+    public static final String DEFAULT_T_RANGE = "7";
     
     static final long RETRY_TIME = 6 *1000;
     
@@ -82,6 +85,7 @@ public class AppService extends IntentService {
             //已下载完成
             TKConfig.setPref(getApplicationContext(), TKConfig.PREFS_APP_PUSH_FINISHED_APP, tempFile.getName());
             TKConfig.setPref(getApplicationContext(), TKConfig.PREFS_APP_PUSH_FINISHED_TIME, String.valueOf(System.currentTimeMillis()));
+            resetT(getApplicationContext());
             LogWrapper.d(TAG, "download finished");
         }
         synchronized (sDownloadList) {
@@ -252,5 +256,26 @@ public class AppService extends IntentService {
         }
         
     }
-   
+    
+    // t为下载完成到弹出通知的间隔时间
+    public final static void resetT(Context ctx) {
+        int T = Integer.parseInt(TKConfig.getPref(ctx, TKConfig.PREFS_APP_PUSH_T_RANGE, DEFAULT_T_RANGE));
+        Random r = new Random(System.currentTimeMillis());
+        int t = r.nextInt(T) + 1;
+        TKConfig.setPref(ctx, TKConfig.PREFS_APP_PUSH_T, String.valueOf(t));
+    }
+    
+    // T为弹出时间的范围，下次弹出通知的时间t为[1,T]中的随机值
+    public final static void increaseTRange(Context ctx) {
+        int T = Integer.parseInt(TKConfig.getPref(ctx, TKConfig.PREFS_APP_PUSH_T_RANGE, DEFAULT_T_RANGE));
+        T = Math.min(T * 2, 14);
+        TKConfig.setPref(ctx, TKConfig.PREFS_APP_PUSH_T_RANGE, String.valueOf(T));
+    }
+    
+    public final static void decreaseTRange(Context ctx) {
+        int T = Integer.parseInt(TKConfig.getPref(ctx, TKConfig.PREFS_APP_PUSH_T_RANGE, DEFAULT_T_RANGE));
+        T = Math.max(T / 2, 2);
+        TKConfig.setPref(ctx, TKConfig.PREFS_APP_PUSH_T_RANGE, String.valueOf(T));
+    }
+    
 }
