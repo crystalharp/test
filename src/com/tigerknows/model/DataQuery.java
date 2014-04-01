@@ -684,6 +684,8 @@ public final class DataQuery extends BaseQuery {
             debugCheckParameters(ekeys, okeys);
         } else if (DATA_TYPE_GEOCODER.equals(dataType)) { 
             debugCheckParameters(ekeys, okeys);
+        } else if (DATA_TYPE_APP_PUSH.equals(dataType)) {
+            debugCheckParameters(ekeys, okeys);
         } else {
             throw APIException.wrapToMissingRequestParameterException("invalid data type.");
         }

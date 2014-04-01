@@ -5,6 +5,7 @@ import java.util.Calendar;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.TKConfig;
 import com.tigerknows.service.PullService;
+import com.tigerknows.service.download.AppService;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -42,6 +43,8 @@ public class ConnectivityChangeReceiver extends BroadcastReceiver{
                 }
                 if (!TextUtils.isEmpty(TKConfig.getPref(context, TKConfig.PREFS_APP_PUSH_DOWNLOAD_FINISHED, ""))){
                 	//TODO: 添加下载完成之后的界面显示
+                } else {
+                    AppService.checkAndDown(context);
                 }
             }
         }
