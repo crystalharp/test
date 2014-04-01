@@ -80,7 +80,8 @@ public class AppService extends IntentService {
         } while (tempFile == null && !stop);
         if(tempFile != null && !stop) {
             //已下载完成
-            TKConfig.setPref(getBaseContext(), TKConfig.PREFS_APP_PUSH_DOWNLOAD_FINISHED, tempFile.getName());
+            TKConfig.setPref(getApplicationContext(), TKConfig.PREFS_APP_PUSH_FINISHED_APP, tempFile.getName());
+            TKConfig.setPref(getApplicationContext(), TKConfig.PREFS_APP_PUSH_FINISHED_TIME, String.valueOf(System.currentTimeMillis()));
             LogWrapper.d(TAG, "download finished");
         }
         synchronized (sDownloadList) {
@@ -179,7 +180,8 @@ public class AppService extends IntentService {
     }
      
     public static void resetAppPush(Context ctx) {
-        TKConfig.setPref(ctx, TKConfig.PREFS_APP_PUSH_DOWNLOAD_FINISHED, "");
+        TKConfig.setPref(ctx, TKConfig.PREFS_APP_PUSH_FINISHED_APP, "");
+        TKConfig.setPref(ctx, TKConfig.PREFS_APP_PUSH_FINISHED_TIME, "");
     }
     
     public static String getAppPath() {

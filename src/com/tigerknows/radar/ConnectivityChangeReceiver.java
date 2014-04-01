@@ -61,7 +61,7 @@ public class ConnectivityChangeReceiver extends BroadcastReceiver{
                 }
                 // 推送app的网络触发
                 if (Utility.isWifi(context)){
-                    String filename = TKConfig.getPref(context, TKConfig.PREFS_APP_PUSH_DOWNLOAD_FINISHED, "");
+                    String filename = TKConfig.getPref(context, TKConfig.PREFS_APP_PUSH_FINISHED_APP, "");
                     if (!TextUtils.isEmpty(filename)){
                         showNotification(context, filename);
                     } else {

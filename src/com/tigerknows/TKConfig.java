@@ -762,9 +762,14 @@ public class TKConfig {
     public static final String PREFS_CHECKED_TRAFFIC_RADIOBUTTON = "prefs_checked_radiobutton";
     
     /**
-     * 推送的app完成下载
+     * 上次下载完成的推送app的名字
      */
-    public static final String PREFS_APP_PUSH_DOWNLOAD_FINISHED = "prefs_app_push_download_finished";
+    public static final String PREFS_APP_PUSH_FINISHED_APP = "prefs_app_push_finished_app";
+    
+    /**
+     * 上次下载完成推送app的时间
+     */
+    public static final String PREFS_APP_PUSH_FINISHED_TIME = "prefs_app_push_finished_time";
     
     /**
      * 上次通知推送的app的时间
