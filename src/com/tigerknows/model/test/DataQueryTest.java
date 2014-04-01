@@ -1122,17 +1122,16 @@ public class DataQueryTest {
     
     protected static XMap launchAppPush(Context context, int index) {
         XMap data = new XMap();
-        String[] desc = {"定位快，浏览地图速度快，加载地图速度快，地图渲染速度快。",
+        String[] desc = {"定位快，浏览地图速度快，加载地图速度快，地图渲染速度快",
         		"提供全国各省市详细手机地图包下载",
         		"提供基站、WiFi热点、GPS多种定位方式和指南针",
         		"全国近千万详细分类生活服务信息",
-        		"始终做最绿色，最安全，用户最放心的地图",
-        		"生活信息搜索、交通查询简便快捷，一步到位",
+        		"始终做最绿色，最安全，用户最放心的地图"
         };
         data.put(AppPush.FIELD_NAME, (index & 1) == 1  ? "老虎地图243" : "老虎地图581");
         data.put(AppPush.FIELD_PACKAGE_NAME, "com.tigerknows");
-        data.put(AppPush.FIELD_ICON, index == 0 ? BaseQueryTest.PIC_URL : NoticeQueryTest.ICON_URL + index + ".png");
-        data.put(AppPush.FIELD_DESCRIPTION, desc[index % 6]);
+        data.put(AppPush.FIELD_ICON, NoticeQueryTest.ICON_URL + (index-1) + ".png");
+        data.put(AppPush.FIELD_DESCRIPTION, desc[index % 5]);
         data.put(AppPush.FIELD_PRIOR, index + "");
         data.put(AppPush.FIELD_DOWNLOAD_URL, (index & 1) == 1
         		? "http://client.tigerknows.net/dl/TigerMap-1-2.43.20120206A-ANDTKWWW.apk"

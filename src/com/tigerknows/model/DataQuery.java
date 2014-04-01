@@ -3144,7 +3144,7 @@ public final class DataQuery extends BaseQuery {
         } else if (DATA_TYPE_GEOCODER.equals(dataType)) {
             responseXMap = DataQueryTest.launchGeoCoderResponse();
         } else if (DATA_TYPE_APP_PUSH.equals(dataType)) {
-        	responseXMap = DataQueryTest.launchAppPushResponse(context, 6);
+        	responseXMap = DataQueryTest.launchAppPushResponse(context, 5);
         }
     }
 }
