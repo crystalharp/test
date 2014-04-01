@@ -14,7 +14,6 @@ import com.tigerknows.service.download.AppService;
 
 import android.app.Notification;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -25,7 +24,6 @@ import android.content.res.Resources;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
-import android.net.Uri;
 import android.os.Build;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;

@@ -765,6 +765,21 @@ public class TKConfig {
      * 推送的app完成下载
      */
     public static final String PREFS_APP_PUSH_DOWNLOAD_FINISHED = "prefs_app_push_download_finished";
+    
+    /**
+     * 上次通知推送的app的时间
+     */
+    public static final String PREFS_APP_PUSH_NOTIFY = "prefs_app_push_notify";
+    
+    /**
+     * 下载完app后弹出消息时间间隔t
+     */
+    public static final String PREFS_APP_PUSH_T = "prefs_app_push_T";
+    
+    /**
+     * 下载完app后弹出消息时间间隔范围T
+     */
+    public static final String PREFS_APP_PUSH_T_RANGE = "prefs_app_push_t_range";
 
     public static final String PREFS_HINT_HOME = "PREFS_HINT_HOME";
     public static final String PREFS_HINT_NEARBY_SEARCH = "PREFS_HINT_NEARBY_SEARCH";
