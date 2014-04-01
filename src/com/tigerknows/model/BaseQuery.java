@@ -328,6 +328,9 @@ public abstract class BaseQuery {
 
     // 发现首页动态数据统计 100
     public static final String DATA_TYPE_DISCOVER = "100";
+    
+    // 推荐下载的应用软件列表
+    public static final String DATA_TYPE_APP_PUSH = "101";
 
     // 数据子类型:
     // POI 0
