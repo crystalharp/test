@@ -228,12 +228,9 @@ public class DownloadService extends IntentService {
                     }
                 }
             } while (tempFile == null && !stop && !currentDownloadItem.stop);
+            nm.cancel(currentDownloadItem.url.hashCode());
             synchronized (sDownloadList) {
-                DownloadItem downloadItem = sDownloadList.get(url);
-                if (downloadItem == null) {
-                    nm.cancel(currentDownloadItem.url.hashCode());
-                    sDownloadList.remove(url);
-                }
+                sDownloadList.remove(url);
             }
             if(tempFile != null && !stop && !currentDownloadItem.stop) {
                 DownloadedProcessor processor = processorMap.get(url);

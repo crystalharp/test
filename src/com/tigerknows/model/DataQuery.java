@@ -682,8 +682,6 @@ public final class DataQuery extends BaseQuery {
             okeys = Utility.mergeArray(okeys, new String[] {SERVER_PARAMETER_LONGITUDE,
                     SERVER_PARAMETER_LATITUDE});
             debugCheckParameters(ekeys, okeys);
-        } else if (DATA_TYPE_GEOCODER.equals(dataType)) { 
-            debugCheckParameters(ekeys, okeys);
         } else if (DATA_TYPE_APP_PUSH.equals(dataType)) {
             debugCheckParameters(ekeys, okeys);
         } else {

@@ -944,6 +944,7 @@ public abstract class BaseQuery {
                     e.printStackTrace();
                 }
                 if (responseXMap.containsKey((byte)250)) {
+                    responseXMap.remove((byte)250);
                     break;
                 }
             }

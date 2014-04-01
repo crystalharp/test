@@ -197,7 +197,6 @@ public class HttpUtils {
                             
                             @Override
                             public void onDismiss(DialogInterface dialog) {
-                                parameters.remove("test");
                                 parameters.add("test", "test");
                             }
                         });
@@ -211,6 +210,7 @@ public class HttpUtils {
                         e.printStackTrace();
                     }
                     if (parameters.getValue("test") != null) {
+                        parameters.remove("test");
                         break;
                     }
                 }

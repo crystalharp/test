@@ -44,33 +44,10 @@ public class AppService extends IntentService {
 
     public static final String EXTRA_URL = "extra_url";
     
-    public static final String EXTRA_PERCENT = "extra_percent";
-    
-    public static final String EXTRA_CMD = "extra_cmd";
-    
-    public static final String EXTRA_FILE = "extra_file";
-    
-    public static final String EXTRA_IS_DOWNLOADED = "extra_is_downloaded";
-    
     static final long RETRY_TIME = 6 *1000;
     
     private static ArrayList<String> sDownloadList = new ArrayList<String>();
-    
-    private static void download(Context context, String url) {
-        LogWrapper.d(TAG, "download url:" + url);
-        if (!TextUtils.isEmpty(url)) {
-            Intent service = new Intent(context, AppService.class);
-            service.putExtra(EXTRA_URL, url);
-            synchronized (sDownloadList) {
-                if(!sDownloadList.contains(url)) {// 若已正在下载，则必然已注册过，否则可新注册一个processor
-                    sDownloadList.add(url);
-                    context.startService(service);
-                    LogWrapper.d(TAG, "start service:");
-                }
-            }
-        }
-    }
-    
+   
     // 发现网络不是wifi的时候停止下载
     public static void stopDownload(Context ctx) {
         Intent service = new Intent(ctx, AppService.class);
@@ -109,6 +86,12 @@ public class AppService extends IntentService {
         synchronized (sDownloadList) {
             sDownloadList.remove(url);
         }
+    }
+     
+    @Override
+    public void onDestroy() {
+        stop = true;
+        super.onDestroy();
     }
     
     // 下载更新文件，成功返回File对象，否则返回null
@@ -179,23 +162,22 @@ public class AppService extends IntentService {
         }
         return null;
     }
-    
-    private static File createFileByUrl(String url) throws IOException {
-        File tempFile = null;
-        String path = getAppPath();
-        if (path == null) {
-            return tempFile;
+     
+    private static void download(Context context, String url) {
+        LogWrapper.d(TAG, "download url:" + url);
+        if (!TextUtils.isEmpty(url)) {
+            Intent service = new Intent(context, AppService.class);
+            service.putExtra(EXTRA_URL, url);
+            synchronized (sDownloadList) {
+                if(!sDownloadList.contains(url)) {// 若已正在下载，则必然已注册过，否则可新注册一个processor
+                    sDownloadList.add(url);
+                    context.startService(service);
+                    LogWrapper.d(TAG, "start service:");
+                }
+            }
         }
-        File rootFile = new File(path);
-        if (!rootFile.exists() && !rootFile.isDirectory())
-            rootFile.mkdir();
-        tempFile = new File(path, url.substring(url.lastIndexOf("/") + 1).replaceAll("[?]", "@"));
-        if (tempFile.exists() == false) {
-            tempFile.createNewFile();
-        }
-        return tempFile;
     }
-    
+     
     public static void resetAppPush(Context ctx) {
         TKConfig.setPref(ctx, TKConfig.PREFS_APP_PUSH_DOWNLOAD_FINISHED, "");
     }
@@ -205,7 +187,6 @@ public class AppService extends IntentService {
         String status = Environment.getExternalStorageState();
         if (status.equals(Environment.MEDIA_MOUNTED)) {
             File externalStorageDirectory = Environment.getExternalStorageDirectory();
-            //TODO:path
             path = externalStorageDirectory.getAbsolutePath() + "/app/";
         }
         LogWrapper.d(TAG, "get down path:" + path);
@@ -229,19 +210,35 @@ public class AppService extends IntentService {
     }
     
     public static void checkAndDown(Context ctx) {
-        
        new CheckDownRunnable(ctx).run();
     }
     
-    public static class CheckDownRunnable implements Runnable {
+    private static File createFileByUrl(String url) throws IOException {
+        File tempFile = null;
+        String path = getAppPath();
+        if (path == null) {
+            return tempFile;
+        }
+        File rootFile = new File(path);
+        if (!rootFile.exists() && !rootFile.isDirectory())
+            rootFile.mkdir();
+        tempFile = new File(path, url.substring(url.lastIndexOf("/") + 1).replaceAll("[?]", "@"));
+        if (tempFile.exists() == false) {
+            tempFile.createNewFile();
+        }
+        return tempFile;
+    }
+   
+    static class CheckDownRunnable implements Runnable {
 
         Context ctx;
+        
         public CheckDownRunnable (Context c) {
             ctx = c;
         }
+        
         @Override
         public void run() {
-            // TODO Auto-generated method stub
             LogWrapper.d(TAG, "checking");
             AppPushList list = checkAppPushList(ctx);
             LogWrapper.d(TAG, "list:" + list);
@@ -253,10 +250,5 @@ public class AppService extends IntentService {
         }
         
     }
-    
-    @Override
-    public void onDestroy() {
-        stop = true;
-        super.onDestroy();
-    }
+   
 }

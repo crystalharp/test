@@ -2211,11 +2211,11 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             boolean result = false;
             for(int i = mUIStack.size()-1; i >= 0; i--) {
                 if (mUIStack.get(i) == id) {
-                    mUIStack.remove(i);
                     BaseFragment baseFragment = getFragment(id);
                     if (baseFragment != null) {
                         baseFragment.dismiss();
                     }
+                    mUIStack.remove(i);
                     result = true;
                     break;
                 }
