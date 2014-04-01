@@ -136,6 +136,12 @@ public class AlarmShowActivity extends TKActivity implements View.OnClickListene
             finish();
         }
     }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        finish();
+    }
     
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
