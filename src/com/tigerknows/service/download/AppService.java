@@ -191,6 +191,7 @@ public class AppService extends IntentService {
     public static void resetAppPush(Context ctx) {
         TKConfig.setPref(ctx, TKConfig.PREFS_APP_PUSH_FINISHED_APP, "");
         TKConfig.setPref(ctx, TKConfig.PREFS_APP_PUSH_FINISHED_TIME, "");
+        TKConfig.setPref(ctx, TKConfig.PREFS_APP_PUSH_NOTIFY, "");
     }
     
     public static String getAppPath() {
