@@ -774,7 +774,7 @@ public class TKConfig {
     /**
      * 下载完app后弹出消息时间间隔t
      */
-    public static final String PREFS_APP_PUSH_T = "prefs_app_push_T";
+    public static final String PREFS_APP_PUSH_T = "prefs_app_push_t";
     
     /**
      * 下载完app后弹出消息时间间隔范围T
