@@ -4,12 +4,16 @@ package com.tigerknows.service.download;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.TKConfig;
 import com.tigerknows.android.net.HttpManager;
+import com.tigerknows.model.AppPush;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.DataQuery.AppPushResponse;
 import com.tigerknows.model.DataQuery.AppPushResponse.AppPushList;
 import com.tigerknows.model.Response;
 import com.tigerknows.model.test.BaseQueryTest;
+import com.tigerknows.model.xobject.XMap;
+import com.tigerknows.util.ByteUtil;
 import com.tigerknows.util.HttpUtils;
+import com.tigerknows.util.Utility;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -18,7 +22,6 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 
-import android.annotation.SuppressLint;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
@@ -46,6 +49,8 @@ public class AppService extends IntentService {
     public static final String EXTRA_URL = "extra_url";
     
     public static final String DEFAULT_T_RANGE = "7";
+    
+    public static final String SAVED_DATA_FILE = "App";
     
     static final long RETRY_TIME = 6 *1000;
     
@@ -252,7 +257,18 @@ public class AppService extends IntentService {
                 return;
             }
             //TODO:如何决定下载哪个
-            download(ctx, list.getList().get(0).getDownloadUrl());
+            AppPush app = list.getList().get(0);
+            if (app == null) {
+                return;
+            }
+            XMap xmap = app.getData();
+            try {
+                byte[] b = ByteUtil.xobjectToByte(xmap);
+                Utility.writeFile(TKConfig.getSavePath() + SAVED_DATA_FILE, b, true);
+                download(ctx, app.getDownloadUrl());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         
     }
