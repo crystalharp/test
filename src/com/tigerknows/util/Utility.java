@@ -16,6 +16,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.security.MessageDigest;
@@ -43,6 +46,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.AssetManager;
 import android.content.res.ColorStateList;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -63,6 +67,7 @@ import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.text.format.Time;
 import android.text.style.ForegroundColorSpan;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -1867,4 +1872,86 @@ public class Utility {
     	}
     	return newString;
     }
+    
+    /**
+     * 获取APK文件的程序图标
+     */
+    public static Drawable getUninstallAPKIcon(Context context, String apkPath) {  
+        String PATH_PackageParser = "android.content.pm.PackageParser";  
+        String PATH_AssetManager = "android.content.res.AssetManager";  
+        try {  
+            // apk包的文件路径  
+            // 这是一个Package 解释器, 是隐藏的  
+            // 构造函数的参数只有一个, apk文件的路径  
+            // PackageParser packageParser = new PackageParser(apkPath);  
+            Class<?> pkgParserCls = Class.forName(PATH_PackageParser);  
+            Class[] typeArgs = new Class[1];  
+            typeArgs[0] = String.class;  
+            Constructor<?> pkgParserCt = pkgParserCls.getConstructor(typeArgs);  
+            Object[] valueArgs = new Object[1];  
+            valueArgs[0] = apkPath;  
+            Object pkgParser = pkgParserCt.newInstance(valueArgs);  
+            Log.d("ANDROID_LAB", "pkgParser:" + pkgParser.toString());  
+            // 这个是与显示有关的, 里面涉及到一些像素显示等等, 我们使用默认的情况  
+            DisplayMetrics metrics = new DisplayMetrics();  
+            metrics.setToDefaults();  
+            // PackageParser.Package mPkgInfo = packageParser.parsePackage(new  
+            // File(apkPath), apkPath,  
+            // metrics, 0);  
+            typeArgs = new Class[4];  
+            typeArgs[0] = File.class;  
+            typeArgs[1] = String.class;  
+            typeArgs[2] = DisplayMetrics.class;  
+            typeArgs[3] = Integer.TYPE;  
+            Method pkgParser_parsePackageMtd = pkgParserCls.getDeclaredMethod("parsePackage", typeArgs);  
+            valueArgs = new Object[4];  
+            valueArgs[0] = new File(apkPath);  
+            valueArgs[1] = apkPath;  
+            valueArgs[2] = metrics;  
+            valueArgs[3] = 0;  
+            Object pkgParserPkg = pkgParser_parsePackageMtd.invoke(pkgParser, valueArgs);  
+            // 应用程序信息包, 这个公开的, 不过有些函数, 变量没公开  
+            // ApplicationInfo info = mPkgInfo.applicationInfo;  
+            Field appInfoFld = pkgParserPkg.getClass().getDeclaredField("applicationInfo");  
+            ApplicationInfo info = (ApplicationInfo) appInfoFld.get(pkgParserPkg);  
+            // Resources pRes = getResources();  
+            // AssetManager assmgr = new AssetManager();  
+            // assmgr.addAssetPath(apkPath);  
+            // Resources res = new Resources(assmgr, pRes.getDisplayMetrics(),  
+            // pRes.getConfiguration());  
+            Class<?> assetMagCls = Class.forName(PATH_AssetManager);  
+            Constructor<?> assetMagCt = assetMagCls.getConstructor((Class[]) null);  
+            Object assetMag = assetMagCt.newInstance((Object[]) null);  
+            typeArgs = new Class[1];  
+            typeArgs[0] = String.class;  
+            Method assetMag_addAssetPathMtd = assetMagCls.getDeclaredMethod("addAssetPath", typeArgs);  
+            valueArgs = new Object[1];  
+            valueArgs[0] = apkPath;  
+            assetMag_addAssetPathMtd.invoke(assetMag, valueArgs);  
+            Resources res = context.getResources();  
+            typeArgs = new Class[3];  
+            typeArgs[0] = assetMag.getClass();  
+            typeArgs[1] = res.getDisplayMetrics().getClass();  
+            typeArgs[2] = res.getConfiguration().getClass();  
+            Constructor<Resources> resCt = Resources.class.getConstructor(typeArgs);  
+            valueArgs = new Object[3];  
+            valueArgs[0] = assetMag;  
+            valueArgs[1] = res.getDisplayMetrics();  
+            valueArgs[2] = res.getConfiguration();  
+            res = (Resources) resCt.newInstance(valueArgs);  
+            CharSequence label = null;  
+            if (info.labelRes != 0) {  
+                    label = res.getText(info.labelRes);  
+            }  
+            // if (label == null) {  
+            // label = (info.nonLocalizedLabel != null) ? info.nonLocalizedLabel  
+            // : info.packageName;  
+            // }  
+            Log.d("ANDROID_LAB", "label=" + label);
+            return res.getDrawable(info.icon);
+        } catch (Exception e) {  
+            e.printStackTrace();  
+            return null;
+        }  
+    }  
 }
