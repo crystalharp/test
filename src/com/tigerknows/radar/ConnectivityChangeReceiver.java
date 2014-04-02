@@ -1,31 +1,17 @@
 package com.tigerknows.radar;
 
-import java.io.File;
 import java.util.Calendar;
 
-import com.decarta.android.util.LogWrapper;
-import com.tigerknows.R;
-import com.tigerknows.TKConfig;
-import com.tigerknows.service.PullService;
-import com.tigerknows.service.download.AppService;
-import com.tigerknows.util.CalendarUtil;
-import com.weibo.sdk.android.util.Utility;
-
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
-import android.net.Uri;
-import android.os.Build;
-import android.text.TextUtils;
-import android.widget.RemoteViews;
+
+import com.decarta.android.util.LogWrapper;
+import com.tigerknows.TKConfig;
+import com.tigerknows.service.PullService;
+import com.tigerknows.service.download.AppService;
+import com.weibo.sdk.android.util.Utility;
 
 /**
  * 推送服务的联网触发
@@ -57,11 +43,7 @@ public class ConnectivityChangeReceiver extends BroadcastReceiver{
                 }
                 // 推送app的网络触发
                 if (Utility.isWifi(context)){
-                    String filename = TKConfig.getPref(context, TKConfig.PREFS_APP_PUSH_FINISHED_APP, "");
-                    if (!TextUtils.isEmpty(filename)){
-                    	File f = new File(AppService.getAppPath() + filename);
-                    	checkNotification(context, f);
-                    } else {
+                    if (AppPushNotify.checkNotification(context) != 0){
                         AppService.checkAndDown(context);
                     }
                 } else {
@@ -75,98 +57,10 @@ public class ConnectivityChangeReceiver extends BroadcastReceiver{
         }
     }
     
-    private boolean checkNotification(Context context, File file){
 
-    	long tempLongTime;
-    	
-    	tempLongTime = Long.parseLong(TKConfig.getPref(context, TKConfig.PREFS_APP_PUSH_FINISHED_TIME));
-    	int finishTime = (int)(tempLongTime / 1000);
-    	
-    	String tempStr = TKConfig.getPref(context, TKConfig.PREFS_APP_PUSH_NOTIFY, "");
-    	int lastNotify = -1;
-    	if(!TextUtils.isEmpty(tempStr)){
-    		tempLongTime = Long.parseLong(tempStr);
-    		lastNotify = (int)(tempLongTime / 1000);
-    	}
 
-    	int t = Integer.parseInt(TKConfig.getPref(context, TKConfig.PREFS_APP_PUSH_T));
 
-    	tempLongTime = System.currentTimeMillis();
-    	Calendar now = Calendar.getInstance();
-    	now.setTimeInMillis(tempLongTime);
-    	int now_sec = (int)(tempLongTime / 1000);
-
-    	int hour = now.get(Calendar.HOUR_OF_DAY);
-    	if(lastNotify >= 0 && now_sec - lastNotify > AppService.DAY_SECS){
-    		if(file.exists()){
-    			file.delete();
-    		}
-    		AppService.increaseTRange(context);
-    		AppService.resetAppPush(context);
-    		AppService.checkAndDown(context);
-    		return false;
-    	}
-    	if(lastNotify < 0 && now_sec - finishTime < t && hour >= 9 && hour <= 20){
-    		TKConfig.setPref(context, TKConfig.PREFS_APP_PUSH_NOTIFY, String.valueOf(now_sec));
-    		showNotification(context, file);
-    		return true;
-    	}
-    	return false;
-    }
-
-	private void showNotification(Context context, File f){
-
-		if(f.exists() == false){
-			return;
-		}
-		PackageManager pm = context.getPackageManager();
-		PackageInfo pI = pm.getPackageArchiveInfo(f.getAbsolutePath(), PackageManager.GET_ACTIVITIES);
-		
-		if(pI == null){
-			return;
-		}
-		
-		// TODO: 添加该包名到历史通知应用列表
-		
-		String tickerText = pm.getApplicationLabel(pI.applicationInfo).toString();
-
-		Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setAction(android.content.Intent.ACTION_VIEW);
-        intent.setDataAndType(Uri.fromFile(f), "application/vnd.android.package-archive");
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-        
-	    NotificationManager nm = (NotificationManager)context.getSystemService(android.content.Context.NOTIFICATION_SERVICE);
-	    Notification notification = new Notification();
-        notification.icon = R.drawable.ic_releasetorefresh;
-        notification.tickerText = tickerText;
-        notification.when = System.currentTimeMillis();
-        notification.flags = Notification.FLAG_AUTO_CANCEL;
-
-        // 设置任务栏中下载进程显示的views
-        RemoteViews remoteViews = null;
-        // 4.0以上android系统才支持contentIntent=null
-        if (Build.VERSION.SDK_INT < 14) {
-            remoteViews = new RemoteViews(context.getPackageName(), R.layout.notification_progress_v13);
-        } else {
-            remoteViews = new RemoteViews(context.getPackageName(), R.layout.notification_progress);
-            remoteViews.setTextViewText(R.id.control_btn, context.getString(R.string.install));
-        }
-        int id = "AppPush".hashCode();
-        remoteViews.setTextViewText(R.id.name_txv, tickerText);
-        remoteViews.setTextViewText(R.id.process_txv, context.getString(R.string.download_complete_and_install));
-        Drawable icon = com.tigerknows.util.Utility.getUninstallAPKIcon(context, f.getAbsolutePath());
-        remoteViews.setImageViewBitmap(R.id.icon_imv, ((BitmapDrawable)icon).getBitmap());
-        notification.contentView = remoteViews;
-
-        PendingIntent pausePendingIntent = PendingIntent.getActivity(context, id, intent, 0);
-        notification.contentIntent = pausePendingIntent;
-        
-        // 取消此下载项可能存在的通知
-        nm.cancel(id);
-
-        // 将下载任务添加到任务栏中
-        nm.notify(id, notification);
-	}
+    
 
 }
 

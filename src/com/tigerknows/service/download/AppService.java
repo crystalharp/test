@@ -48,10 +48,6 @@ public class AppService extends IntentService {
 
     public static final String EXTRA_URL = "extra_url";
     
-    public static final int DAY_SECS = 86400;
-    
-    public static final String DEFAULT_T_RANGE = String.valueOf(7 * DAY_SECS);
-    
     public static final String SAVED_DATA_FILE = "App";
     
     static final long RETRY_TIME = 6 *1000;
@@ -89,10 +85,10 @@ public class AppService extends IntentService {
             }
         } while (tempFile == null && !stop);
         if(tempFile != null && !stop) {
-            //已下载完成
-            TKConfig.setPref(getApplicationContext(), TKConfig.PREFS_APP_PUSH_FINISHED_APP, tempFile.getName());
-            TKConfig.setPref(getApplicationContext(), TKConfig.PREFS_APP_PUSH_FINISHED_TIME, String.valueOf(System.currentTimeMillis()));
-            resetT(getApplicationContext());
+            //TODO: 已下载完成
+            //TKConfig.setPref(getApplicationContext(), TKConfig.PREFS_APP_PUSH_FINISHED_APP, tempFile.getName());
+            //TKConfig.setPref(getApplicationContext(), TKConfig.PREFS_APP_PUSH_FINISHED_TIME, String.valueOf(System.currentTimeMillis()));
+            //resetT(getApplicationContext());
             LogWrapper.d(TAG, "download finished");
         }
         synchronized (sDownloadList) {
@@ -190,12 +186,7 @@ public class AppService extends IntentService {
         }
     }
      
-    public static void resetAppPush(Context ctx) {
-        TKConfig.setPref(ctx, TKConfig.PREFS_APP_PUSH_FINISHED_APP, "");
-        TKConfig.setPref(ctx, TKConfig.PREFS_APP_PUSH_FINISHED_TIME, "");
-        TKConfig.setPref(ctx, TKConfig.PREFS_APP_PUSH_NOTIFY, "");
-    }
-    
+   
     public static String getAppPath() {
         String path = null;
         String status = Environment.getExternalStorageState();
@@ -276,25 +267,8 @@ public class AppService extends IntentService {
         
     }
     
-    // t为下载完成到弹出通知的间隔时间
-    public final static void resetT(Context ctx) {
-        int T = Integer.parseInt(TKConfig.getPref(ctx, TKConfig.PREFS_APP_PUSH_T_RANGE, DEFAULT_T_RANGE));
-        Random r = new Random(System.currentTimeMillis());
-        int t = r.nextInt(T - DAY_SECS) + DAY_SECS;
-        TKConfig.setPref(ctx, TKConfig.PREFS_APP_PUSH_T, String.valueOf(t));
-    }
+
     
-    // T为弹出时间的范围，下次弹出通知的时间t为[DAY_SECS,T]中的随机值
-    public final static void increaseTRange(Context ctx) {
-        int T = Integer.parseInt(TKConfig.getPref(ctx, TKConfig.PREFS_APP_PUSH_T_RANGE, DEFAULT_T_RANGE));
-        T = Math.min(T * 2, 14 * DAY_SECS);
-        TKConfig.setPref(ctx, TKConfig.PREFS_APP_PUSH_T_RANGE, String.valueOf(T));
-    }
-    
-    public final static void decreaseTRange(Context ctx) {
-        int T = Integer.parseInt(TKConfig.getPref(ctx, TKConfig.PREFS_APP_PUSH_T_RANGE, DEFAULT_T_RANGE));
-        T = Math.max(T / 2, 2 * DAY_SECS);
-        TKConfig.setPref(ctx, TKConfig.PREFS_APP_PUSH_T_RANGE, String.valueOf(T));
-    }
+
     
 }
