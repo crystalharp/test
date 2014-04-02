@@ -90,13 +90,13 @@ public class PackageInfoTable {
         return mDb.isOpen();
     }
     
-    public int readPackageInfo(List<PackageInfo> list){
+    public int readPackageInfo(List<RecordPackageInfo> list){
         int total = 0;
         Cursor c = mDb.query(TABLE_NAME, null, null, null, null, null, PACKAGE_NAME + " DESC");
         if (c != null) {
             total = c.getCount();
             if (total > 0) {
-                PackageInfo data;
+                RecordPackageInfo data;
                 c.moveToFirst();
                 for(int i = 0; i<total; i++) {
                     data = readFromCursor(c);
@@ -117,21 +117,21 @@ public class PackageInfoTable {
     }
     
 
-    public static PackageInfo readFromCursor(Cursor c) {
-        PackageInfo data = null;
+    public static RecordPackageInfo readFromCursor(Cursor c) {
+        RecordPackageInfo data = null;
         if (c != null) {
             if (c.getCount() > 0) {
                 String pname = c.getString(c.getColumnIndex(PACKAGE_NAME));
                 String fname = c.getString(c.getColumnIndex(FILE_NAME));
                 int installed = c.getInt(c.getColumnIndex(INSTALLED));
                 int time = c.getInt(c.getColumnIndex(NOTIFY_TIME));
-                data = new PackageInfo(pname, installed, time, fname);
+                data = new RecordPackageInfo(pname, installed, time, fname);
             }
         }
         return data;
     }
 
-    public boolean addPackageInfo(PackageInfo p) {
+    public boolean addPackageInfo(RecordPackageInfo p) {
         boolean isFailed = false;
         ContentValues values = new ContentValues();
         values.put(FILE_NAME, p.package_name);
@@ -149,12 +149,12 @@ public class PackageInfoTable {
     }
     
 
-    public int deletePackageInfo(PackageInfo p) {
+    public int deletePackageInfo(RecordPackageInfo p) {
 		int count = mDb.delete(TABLE_NAME,  "(" + PACKAGE_NAME + "=" + p.package_name + ")", null);
         return count;
     }
 
-    public int updateDatabase(PackageInfo p) {
+    public int updateDatabase(RecordPackageInfo p) {
         int count = 0;
         ContentValues values = new ContentValues();
         values.put(FILE_NAME, p.file_name);
@@ -165,27 +165,28 @@ public class PackageInfoTable {
     }
     
 
-    public static class PackageInfo {
+    public static class RecordPackageInfo {
+
         public String package_name;
         public String file_name;
         public int notify_time;
         public int installed;
         
         // 下载完的package
-        public PackageInfo(String pname, String fname) {
+        public RecordPackageInfo(String pname, String fname) {
             this(pname, 0, 0, fname);
         }
         
         // 扫描到的package
-        public PackageInfo(String pname) {
+        public RecordPackageInfo(String pname) {
             this(pname, 1, 0, null);
         }
         
-        public PackageInfo(String pname, int installed, int notify_time) {
+        public RecordPackageInfo(String pname, int installed, int notify_time) {
             this(pname, installed, notify_time, null);
         }
         
-        public PackageInfo(String pname, int installed, int notify_time, String fname) {
+        public RecordPackageInfo(String pname, int installed, int notify_time, String fname) {
             this.package_name = pname;
             this.installed = installed;
             this.notify_time = notify_time;

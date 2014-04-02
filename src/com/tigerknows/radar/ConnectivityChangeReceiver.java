@@ -59,8 +59,9 @@ public class ConnectivityChangeReceiver extends BroadcastReceiver{
                 }
                 // 推送app的网络触发
                 if (Utility.isWifi(context)){
-                    if (AppPushNotify.checkNotification(context) != 0){
-                        AppService.checkAndDown(context);
+                    int ret = AppPushNotify.checkNotification(context);
+                    if (ret != 0){
+                        AppService.checkAndDown(context, ret);
                     }
                 } else {
                     // 网络变化后如果不是wifi就停止下载

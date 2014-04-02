@@ -11,6 +11,7 @@ import com.tigerknows.model.DataQuery.AppPushResponse.AppPushList;
 import com.tigerknows.model.Response;
 import com.tigerknows.model.test.BaseQueryTest;
 import com.tigerknows.model.xobject.XMap;
+import com.tigerknows.provider.PackageInfoTable.RecordPackageInfo;
 import com.tigerknows.util.ByteUtil;
 import com.tigerknows.util.HttpUtils;
 import com.tigerknows.util.Utility;
@@ -25,6 +26,8 @@ import org.apache.http.client.methods.HttpUriRequest;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Environment;
 import android.text.TextUtils;
 
@@ -35,6 +38,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -199,7 +203,7 @@ public class AppService extends IntentService {
     }
     
     // 去服务器获取apppush列表
-    public static AppPushList checkAppPushList(Context ctx) {
+    public static AppPushList queryAppPushList(Context ctx) {
         DataQuery dataQuery = new DataQuery(ctx);
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_APP_PUSH);
         dataQuery.query();
@@ -214,8 +218,11 @@ public class AppService extends IntentService {
         return null;
     }
     
-    public static void checkAndDown(Context ctx) {
-       new CheckDownRunnable(ctx).run();
+    public static void checkAndDown(Context ctx, int status) {
+        if (status == 1) {
+            
+            new CheckDownRunnable(ctx).run();
+        }
     }
     
     private static File createFileByUrl(String url) throws IOException {
@@ -245,11 +252,18 @@ public class AppService extends IntentService {
         @Override
         public void run() {
             LogWrapper.d(TAG, "checking");
-            AppPushList list = checkAppPushList(ctx);
+            PackageManager manager = ctx.getPackageManager();
+            List <PackageInfo> pkgList = manager.getInstalledPackages(0);
+            // TODO: pwy:扫描本地包，对比数据库，不在本地数据库的包插入本地数据库
+            
+            // TODO：处理所有有文件名的包
+            AppPushList list = queryAppPushList(ctx);
+            // 可能要更新T
             LogWrapper.d(TAG, "list:" + list);
             if (list == null) {
                 return;
             }
+            // 更新T，list.getMessage();
             //TODO:如何决定下载哪个
             AppPush app = list.getList().get(0);
             if (app == null) {
