@@ -11,6 +11,7 @@ import com.tigerknows.model.DataQuery.AppPushResponse.AppPushList;
 import com.tigerknows.model.Response;
 import com.tigerknows.model.test.BaseQueryTest;
 import com.tigerknows.model.xobject.XMap;
+import com.tigerknows.provider.PackageInfoTable;
 import com.tigerknows.provider.PackageInfoTable.RecordPackageInfo;
 import com.tigerknows.util.ByteUtil;
 import com.tigerknows.util.HttpUtils;
@@ -52,11 +53,15 @@ public class AppService extends IntentService {
 
     public static final String EXTRA_URL = "extra_url";
     
+    public static final String EXTRA_PACKAGE_NAME = "package_name";
+    
     public static final String SAVED_DATA_FILE = "App";
     
     static final long RETRY_TIME = 6 *1000;
     
     private static ArrayList<String> sDownloadList = new ArrayList<String>();
+    
+    private static PackageInfoTable mRecordPkgTable = null;
    
     // 发现网络不是wifi的时候停止下载
     public static void stopDownload(Context ctx) {
@@ -76,6 +81,7 @@ public class AppService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         // 当时正在下载的，此时已下载完成。
         String url = intent.getStringExtra(EXTRA_URL);
+        String pname = intent.getStringExtra(EXTRA_PACKAGE_NAME);
         LogWrapper.d(TAG, "handle url:" + url);
         File tempFile = null;
         do {
@@ -89,7 +95,8 @@ public class AppService extends IntentService {
             }
         } while (tempFile == null && !stop);
         if(tempFile != null && !stop) {
-            //TODO: 已下载完成
+            RecordPackageInfo p = new RecordPackageInfo(pname, tempFile.getName());
+            mRecordPkgTable.addPackageInfo(p);
             LogWrapper.d(TAG, "download finished");
         }
         synchronized (sDownloadList) {
@@ -173,10 +180,11 @@ public class AppService extends IntentService {
         return null;
     }
      
-    private static void download(Context context, String url) {
+    private static void download(Context context, String url, String package_name) {
         if (!TextUtils.isEmpty(url)) {
             Intent service = new Intent(context, AppService.class);
             service.putExtra(EXTRA_URL, url);
+            service.putExtra(EXTRA_PACKAGE_NAME, package_name);
             synchronized (sDownloadList) {
                 if(!sDownloadList.contains(url)) {// 若已正在下载，则必然已注册过，否则可新注册一个processor
                     sDownloadList.add(url);
@@ -217,7 +225,11 @@ public class AppService extends IntentService {
     
     public static void checkAndDown(Context ctx, int status) {
         if (status == 1) {
-            
+            synchronized(sDownloadList) {
+                if (mRecordPkgTable == null) {
+                    mRecordPkgTable = new PackageInfoTable(ctx);
+                }
+            }
             new CheckDownRunnable(ctx).run();
         }
     }
@@ -269,14 +281,7 @@ public class AppService extends IntentService {
             if (app == null) {
                 return;
             }
-            XMap xmap = app.getData();
-            try {
-                byte[] b = ByteUtil.xobjectToByte(xmap);
-                Utility.writeFile(TKConfig.getSavePath() + SAVED_DATA_FILE, b, true);
-                download(ctx, app.getDownloadUrl());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            download(ctx, app.getDownloadUrl(), app.getPackageName());
         }
         
     }
