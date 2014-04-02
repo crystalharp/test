@@ -26,7 +26,7 @@ public class PackageInfoTable {
     // COLUMNS
     public static final String PACKAGE_NAME = "_pname";
     public static final String FILE_NAME = "_fname";
-    public static final String NOTIFY_TIME = "_noti_time";
+    public static final String NOTIFY_TIME = "_notify_time";
     public static final String INSTALLED = "_installed";
 
     //TODO:fix
@@ -124,7 +124,7 @@ public class PackageInfoTable {
                 String pname = c.getString(c.getColumnIndex(PACKAGE_NAME));
                 String fname = c.getString(c.getColumnIndex(FILE_NAME));
                 int installed = c.getInt(c.getColumnIndex(INSTALLED));
-                int time = c.getInt(c.getColumnIndex(NOTIFY_TIME));
+                long time = c.getLong(c.getColumnIndex(NOTIFY_TIME));
                 data = new RecordPackageInfo(pname, installed, time, fname);
             }
         }
@@ -169,7 +169,7 @@ public class PackageInfoTable {
 
         public String package_name;
         public String file_name;
-        public int notify_time;
+        public long notify_time;
         public int installed;
         
         // 下载完的package
@@ -182,11 +182,11 @@ public class PackageInfoTable {
             this(pname, 1, 0, null);
         }
         
-        public RecordPackageInfo(String pname, int installed, int notify_time) {
+        public RecordPackageInfo(String pname, int installed, long notify_time) {
             this(pname, installed, notify_time, null);
         }
         
-        public RecordPackageInfo(String pname, int installed, int notify_time, String fname) {
+        public RecordPackageInfo(String pname, int installed, long notify_time, String fname) {
             this.package_name = pname;
             this.installed = installed;
             this.notify_time = notify_time;
