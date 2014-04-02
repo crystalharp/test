@@ -76,14 +76,28 @@ public class ConnectivityChangeReceiver extends BroadcastReceiver{
     }
     
     private boolean checkNotification(Context context, File file){
-    	int finishTime = Integer.parseInt(TKConfig.getPref(context, TKConfig.PREFS_APP_PUSH_FINISHED_TIME));
-    	String last = TKConfig.getPref(context, TKConfig.PREFS_APP_PUSH_NOTIFY, "");
+
+    	long tempLongTime;
+    	
+    	tempLongTime = Long.parseLong(TKConfig.getPref(context, TKConfig.PREFS_APP_PUSH_FINISHED_TIME));
+    	int finishTime = (int)(tempLongTime / 1000);
+    	
+    	String tempStr = TKConfig.getPref(context, TKConfig.PREFS_APP_PUSH_NOTIFY, "");
+    	int lastNotify = -1;
+    	if(!TextUtils.isEmpty(tempStr)){
+    		tempLongTime = Long.parseLong(tempStr);
+    		lastNotify = (int)(tempLongTime / 1000);
+    	}
+
     	int t = Integer.parseInt(TKConfig.getPref(context, TKConfig.PREFS_APP_PUSH_T));
-    	long now_long = CalendarUtil.getExactTime(context);
+
+    	tempLongTime = CalendarUtil.getExactTime(context);
     	Calendar now = Calendar.getInstance();
-    	now.setTimeInMillis(now_long);
+    	now.setTimeInMillis(tempLongTime);
+    	int now_sec = (int)(tempLongTime / 1000);
+
     	int hour = now.get(Calendar.HOUR_OF_DAY);
-    	if(!TextUtils.isEmpty(last) && now_long - Integer.parseInt(last) > AppService.DAY_SECS){
+    	if(lastNotify >= 0 && now_sec - lastNotify > AppService.DAY_SECS){
     		if(file.exists()){
     			file.delete();
     		}
@@ -92,8 +106,8 @@ public class ConnectivityChangeReceiver extends BroadcastReceiver{
     		AppService.checkAndDown(context);
     		return false;
     	}
-    	if(TextUtils.isEmpty(last) && now_long - finishTime < t && hour >= 9 && hour <= 20){
-    		TKConfig.setPref(context, TKConfig.PREFS_APP_PUSH_NOTIFY, String.valueOf(now_long));
+    	if(lastNotify < 0 && now_sec - finishTime < t && hour >= 9 && hour <= 20){
+    		TKConfig.setPref(context, TKConfig.PREFS_APP_PUSH_NOTIFY, String.valueOf(now_sec));
     		showNotification(context, file);
     		return true;
     	}
