@@ -48,7 +48,9 @@ public class AppService extends IntentService {
 
     public static final String EXTRA_URL = "extra_url";
     
-    public static final String DEFAULT_T_RANGE = "7";
+    public static final int DAY_SECS = 86400;
+    
+    public static final String DEFAULT_T_RANGE = String.valueOf(7 * DAY_SECS);
     
     public static final String SAVED_DATA_FILE = "App";
     
@@ -191,6 +193,7 @@ public class AppService extends IntentService {
     public static void resetAppPush(Context ctx) {
         TKConfig.setPref(ctx, TKConfig.PREFS_APP_PUSH_FINISHED_APP, "");
         TKConfig.setPref(ctx, TKConfig.PREFS_APP_PUSH_FINISHED_TIME, "");
+        TKConfig.setPref(ctx, TKConfig.PREFS_APP_PUSH_NOTIFY, "");
     }
     
     public static String getAppPath() {
@@ -277,20 +280,20 @@ public class AppService extends IntentService {
     public final static void resetT(Context ctx) {
         int T = Integer.parseInt(TKConfig.getPref(ctx, TKConfig.PREFS_APP_PUSH_T_RANGE, DEFAULT_T_RANGE));
         Random r = new Random(System.currentTimeMillis());
-        int t = r.nextInt(T) + 1;
+        int t = r.nextInt(T - DAY_SECS) + DAY_SECS;
         TKConfig.setPref(ctx, TKConfig.PREFS_APP_PUSH_T, String.valueOf(t));
     }
     
-    // T为弹出时间的范围，下次弹出通知的时间t为[1,T]中的随机值
+    // T为弹出时间的范围，下次弹出通知的时间t为[DAY_SECS,T]中的随机值
     public final static void increaseTRange(Context ctx) {
         int T = Integer.parseInt(TKConfig.getPref(ctx, TKConfig.PREFS_APP_PUSH_T_RANGE, DEFAULT_T_RANGE));
-        T = Math.min(T * 2, 14);
+        T = Math.min(T * 2, 14 * DAY_SECS);
         TKConfig.setPref(ctx, TKConfig.PREFS_APP_PUSH_T_RANGE, String.valueOf(T));
     }
     
     public final static void decreaseTRange(Context ctx) {
         int T = Integer.parseInt(TKConfig.getPref(ctx, TKConfig.PREFS_APP_PUSH_T_RANGE, DEFAULT_T_RANGE));
-        T = Math.max(T / 2, 2);
+        T = Math.max(T / 2, 2 * DAY_SECS);
         TKConfig.setPref(ctx, TKConfig.PREFS_APP_PUSH_T_RANGE, String.valueOf(T));
     }
     

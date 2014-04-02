@@ -28,8 +28,6 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.decarta.Globals;
-import com.decarta.android.map.ItemizedOverlay;
-import com.decarta.android.map.OverlayItem;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
