@@ -2,8 +2,6 @@
 package com.tigerknows.model;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -12,7 +10,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.TKConfig;
@@ -33,7 +30,6 @@ import android.location.Location;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.telephony.NeighboringCellInfo;
-import android.telephony.TelephonyManager;
 
 /**
  * 定位服务类，实现定位查询、缓存定位、重用定位、历史定位功能、避免重复的定位查询
@@ -57,6 +53,13 @@ public class LocationQuery extends BaseQuery {
      * 历史的定位数据来源（存储在数据库中）
      */
     public static final String PROVIDER_HISTORY = "tkhistory";
+    
+    /**
+     * 扫描WIFI列表的时间间隔
+     */
+    public static final long SCAN_WIFI_INTERVAL = 32 * 1000;
+    
+    private long mLastScanWifiTime;
     
     /**
      * WIFI接入点列表的最低匹配率，大于此值才有效
@@ -137,57 +140,26 @@ public class LocationQuery extends BaseQuery {
         onlineLocationCache.clear();
         offlineLocationCache.clear();
     }
-    private Object wifiManagerClass = null;
-    private Method startScanMethod = null;
-    private boolean startScanMethodArg = true;
     
     public boolean startScanWifi() {
-        try
-        {
-          if (this.wifiManager.isWifiEnabled())
-          {
-            if ((this.startScanMethod != null) && (this.wifiManagerClass != null))
-              try
-              {
-                this.startScanMethod.invoke(this.wifiManagerClass, new Object[] { Boolean.valueOf(this.startScanMethodArg) });
-              }
-              catch (Exception localException1)
-              {
-                localException1.printStackTrace();
-                this.wifiManager.startScan();
-              }
-            else
-              this.wifiManager.startScan();
-            return true;
-          }
+        
+        long time = System.currentTimeMillis();
+        if (time - this.mLastScanWifiTime < SCAN_WIFI_INTERVAL) {
+            return false;
         }
-        catch (Exception localException2)
-        {
+        this.mLastScanWifiTime = time;
+        
+        if (this.wifiManager.isWifiEnabled()) {
+            return wifiManager.startScan();
         }
+        
         return false;
     }
 
     private LocationQuery(Context context) {
         super(context, API_TYPE_LOCATION_QUERY, VERSION);
         this.requestParameters = new ListRequestParameters();
-        this.wifiManager = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
-            
-        try {
-            Class localClass1 = Class.forName("android.net.wifi.WifiManager");
-            Field mService = localClass1.getDeclaredField("mService");
-            if (mService == null)
-                return;
-            mService.setAccessible(true);
-            this.wifiManagerClass = mService.get(this.wifiManager);
-            Class localClass2 = this.wifiManagerClass.getClass();
-            this.startScanMethod = localClass2.getDeclaredMethod("startScan", new Class[] { Boolean.TYPE });
-            if (this.startScanMethod == null)
-                return;
-            this.startScanMethod.setAccessible(true);
-        }
-        catch (Exception localException2)
-        {
-        }
+        this.wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
     }
 
     @Override
@@ -290,14 +262,14 @@ public class LocationQuery extends BaseQuery {
         }
     }
     
-    int time = 0;
-    int queryTime = 0;
+    private int getTime = 0;
+    private int queryTime = 0;
     
     /**
-     * 生成定位的绑定参数信息
+     * 获取网络基站及WIFI列表信息
      * @return
      */
-    LocationParameter makeLocationParameter() {
+    public LocationParameter makeLocationParameter() {
         LocationParameter locationParameter = new LocationParameter();
         locationParameter.mcc = TKConfig.getMCC();
         locationParameter.mnc = TKConfig.getMNC();
@@ -341,7 +313,7 @@ public class LocationQuery extends BaseQuery {
             Location location = null;
             location = queryCache(locationParameter, onlineLocationCache, true);
             
-            time++;
+            getTime++;
             if (location == null) {
                 queryTime++;
                 this.locationParameter = locationParameter; 
@@ -358,7 +330,7 @@ public class LocationQuery extends BaseQuery {
                 location = queryCache(locationParameter, offlineLocationCache, false);
             }
             
-            LogWrapper.i("LocationQuery", "getLocation() time:"+time+", queryTime:"+queryTime);
+            LogWrapper.i("LocationQuery", "getLocation() getTime:"+getTime+", queryTime:"+queryTime);
             
             return location;
         }
@@ -382,7 +354,7 @@ public class LocationQuery extends BaseQuery {
      * @param needWholeMatch
      * @return
      */
-    private Location queryCache(LocationParameter locationParameter, HashMap<LocationParameter, Location> cache, boolean needWholeMatch) {
+    public static Location queryCache(LocationParameter locationParameter, HashMap<LocationParameter, Location> cache, boolean needWholeMatch) {
         Location location = null;
         if (cache == null || cache.isEmpty()) {
             return location;
@@ -476,7 +448,7 @@ public class LocationQuery extends BaseQuery {
     }
     
     /**
-     * 定位的绑定参数信息，包括MNC、MCC、基站、WIFI接入点列表、邻近基站列表、时间戳信息
+     * 存储MNC、MCC、基站、WIFI接入点列表、邻近基站列表、时间戳信息
      * @author pengwenyue
      *
      */
@@ -507,14 +479,12 @@ public class LocationQuery extends BaseQuery {
         
         private volatile int hashCode = 0;
         
-        public List<ScanResult> scanResults;
-        
         public LocationParameter() {
             time = SIMPLE_DATE_FORMAT.format(Calendar.getInstance().getTime());
         }
         
         /**
-         * 比较基站及邻近基站列表信息是否相同
+         * 比较基站及邻近基站列表信息是否全部相同
          * @param other
          * @return
          */
@@ -534,9 +504,7 @@ public class LocationQuery extends BaseQuery {
                         && neighboringCellInfoList.size() == other.neighboringCellInfoList.size()) {
                     for(int i = neighboringCellInfoList.size()-1; i >= 0; i--) {
                         TKNeighboringCellInfo neighboringCellInfo = neighboringCellInfoList.get(i);
-                        TKNeighboringCellInfo otherNeighboringCellInfo = other.neighboringCellInfoList.get(i);
-                        if (neighboringCellInfo.lac != otherNeighboringCellInfo.lac
-                                || neighboringCellInfo.cid != neighboringCellInfo.cid) {
+                        if (other.neighboringCellInfoList.contains(neighboringCellInfo) == false) {
                             return false;
                         }
                     }
@@ -557,17 +525,7 @@ public class LocationQuery extends BaseQuery {
             if (other == null) {
                 return 0;
             }
-            if (wifiList != null && other.wifiList != null) {
-                int size = wifiList.size();
-                if (size == 0 || other.wifiList.size() == 0) {
-                    return 0;
-                }
-                float rate = 0;
-                int match = matchWifi(wifiList, other.wifiList);
-                rate = ((float)match)/size;
-                return rate;
-            }
-            return 0;
+            return matchWifi(wifiList, other.wifiList);
         }
         
         /**
@@ -576,24 +534,35 @@ public class LocationQuery extends BaseQuery {
          * @param list2
          * @return
          */
-        private int matchWifi(List<TKScanResult> list1, List<TKScanResult> list2) {
+        private float matchWifi(List<TKScanResult> list1, List<TKScanResult> list2) {
             int match = 0;
             if (list1 == null || list2 == null) {
                 return match;
             }
-            int size = list1.size();
-            int otherSize = list2.size();
-            for(int i = size-1; i >= 0; i--) {
-                String BSSID = list1.get(i).BSSID;
-                for(int j = otherSize-1; j >= 0; j--) {
-                    String otherBSSID = list2.get(j).BSSID;
-                    if (BSSID.equals(otherBSSID)) {
-                        match++;
-                        break;
-                    }
+            int size1 = list1.size();
+            int size2 = list2.size();
+            
+            if (size1 == 0 || size2 == 0) {
+                return 0;
+            }
+            
+            List<TKScanResult> listBig;
+            List<TKScanResult> listSmall;
+            
+            if (size1 > size2) {
+                listBig = list1;
+                listSmall = list2;
+            } else {
+                listBig = list2;
+                listSmall = list1;
+            }
+            
+            for(int i = listBig.size()-1; i >= 0; i--) {
+                if (listSmall.contains(listBig.get(i))) {
+                    match++;
                 }
             }
-            return match;
+            return ((float)match) / listBig.size();
         }
         
         @Override
@@ -603,14 +572,9 @@ public class LocationQuery extends BaseQuery {
             }
             if (object instanceof LocationParameter) {
                 LocationParameter other = (LocationParameter) object;
-                if (mnc == other.mnc &&
-                        mcc == other.mcc &&
-                        ((tkCellLocation != null && tkCellLocation.equals(other.tkCellLocation)) || 
-                                (tkCellLocation == null && other.tkCellLocation == null))) {
-                    if (equalsCellInfo(other)) {
-                        if (calculateWifiMatchRate(other) == 1) {
-                            return true;
-                        }
+                if (equalsCellInfo(other)) {
+                    if (calculateWifiMatchRate(other) == 1) {
+                        return true;
                     }
                 }
             }

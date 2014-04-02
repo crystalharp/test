@@ -9,6 +9,9 @@ import java.util.Calendar;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
+import com.tigerknows.common.ActionLog;
+import com.tigerknows.common.LocationUpload;
+import com.tigerknows.common.LogUpload;
 import com.tigerknows.service.PullService;
 import com.tigerknows.service.download.AppService;
 import com.weibo.sdk.android.util.Utility;
@@ -43,7 +46,7 @@ public class ConnectivityChangeReceiver extends BroadcastReceiver{
     private static final String netACTION="android.net.conn.CONNECTIVITY_CHANGE";
     
     @Override
-    public void onReceive(Context context, Intent intent) {
+    public void onReceive(final Context context, Intent intent) {
 
         if(intent.getAction().equals(netACTION)) {
             // Intent中ConnectivityManager.EXTRA_NO_CONNECTIVITY这个关键字表示着当前是否连接上了网络
@@ -52,6 +55,19 @@ public class ConnectivityChangeReceiver extends BroadcastReceiver{
             LogWrapper.d("NetCheckReceiver", "onReceive() noConnectivity="+noConnectivity);
             // 网络已连接
             if (noConnectivity == false) {
+                // 日志上传
+                new Thread(new Runnable() {
+                    
+                    @Override
+                    public void run() {
+                        LogUpload.upload(context,
+                                ActionLog.getInstance(context), 
+                                LocationUpload.getGpsInstance(context),
+                                LocationUpload.getNetworkInstance(context),
+                                LocationUpload.getNetworkTrackInstance(context));
+                        
+                    }
+                }).start();
                 // 消息推送的网络触发
                 if (PullService.TRIGGER_MODE_NET.equals(PullService.getTriggerMode(context))) {
                     Calendar cal = Calendar.getInstance();
