@@ -29,10 +29,6 @@ public class LocationService extends TKNetworkService {
     
     public static Location LOCATION_FOR_TEST;
     
-    public static final long SCAN_WIFI_INTERVAL = 32 * 1000;
-    
-    long lastScanTime = 0;
-    
     @Override
     public void onCreate() {
         super.onCreate();
@@ -136,11 +132,8 @@ public class LocationService extends TKNetworkService {
             return;
         }
         
-        long time = System.currentTimeMillis();
-        if (time - this.lastScanTime > SCAN_WIFI_INTERVAL) {
-            this.lastScanTime = time;
-            locationQuery.startScanWifi();
-        }
+        locationQuery.startScanWifi();
+        
         //TODO:获取当前位置信息
         Location location = locationQuery.getLocation();
         

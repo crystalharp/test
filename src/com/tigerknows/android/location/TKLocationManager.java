@@ -65,7 +65,8 @@ public class TKLocationManager {
     
     private Context context;
     private LocationManager locationManager;
-    private LocationListener locationListener;
+    private LocationListener locationListenerGPS;
+    private LocationListener locationListenerNetwork;
     private TigerknowsLocationManager networkLocationManager;
     private Location lastGpsLocation = null;
     private TKLocation lastGpsTKLocation = null;
@@ -77,6 +78,12 @@ public class TKLocationManager {
     private ArrayList<TKLocationListener> locationListenerList = new ArrayList<TKLocationListener>();
     private Object locationChangeLock = new Object();
     private Location lastLocation;
+    private int onCreateGPS = 0;
+    private int onResumeGPS = 0;
+    private int onCreateNetwork = 0;
+    private int onResumeNetwork = 0;
+    private int onCreateTigerknows = 0;
+    private int onResumeTigerknows = 0;
     
     public LocationUpload getGPSLocationUpload() {
         return gpsLocationUpload;
@@ -96,45 +103,80 @@ public class TKLocationManager {
         networkLocationManager.addLocationListener(new TigerknowsLocationListener());
         locationManager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
         
-        locationListener = new AndroidLocationListener();
+        locationListenerGPS = new AndroidLocationListener();
+        locationListenerNetwork = new AndroidLocationListener();
     }
     
-    private void prepareLocation() {
+    private void prepareLocation(String provider, LocationListener locationListener) {
         List<String> providers = locationManager.getAllProviders();
-        if (providers.contains(LocationManager.GPS_PROVIDER)) {
+        if (providers.contains(provider)) {
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, REQUEST_MIN_TIME, REQUEST_MIN_DISTANCE, locationListener);
         }
-        if (providers.contains(LocationManager.NETWORK_PROVIDER)) {
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, REQUEST_MIN_TIME, REQUEST_MIN_DISTANCE, locationListener);
-        }
-        networkLocationManager.bindService();
     }
     
-    private void removeUpdates() {
+    private void removeUpdates(String provider, LocationListener locationListener) {
         if (locationManager != null && locationListener != null) {
             locationManager.removeUpdates(locationListener);
-        }
-        
-        if (networkLocationManager != null) {
-            networkLocationManager.unbindService();
         }
     }
     
     public void onCreate() {
+        onCreate(true, true, true);
+    }
+    
+    public void onCreate(boolean gps, boolean network, boolean tigerknows) {
         synchronized (locationChangeLock) {
-            if (locationListenerList.size() == 0) {
-                gpsLocationUpload.onCreate();
-                networkLocationUpload.onCreate();
-                locationQuery.onCreate();
+            if (gps) {
+                if (onCreateGPS == 0) {
+                    gpsLocationUpload.onCreate();
+                }
+                onCreateGPS++;
+            }
+
+            if (network) {
+                if (onCreateNetwork == 0) {
+                    networkLocationUpload.onCreate();
+                }
+                onCreateNetwork++;
+            }
+            
+            if (tigerknows) {
+                if (onCreateTigerknows == 0) {
+                    locationQuery.onCreate();
+                }
+                onCreateTigerknows++;
             }
         }
     }
     
     public void onResume(TKLocationListener listener) {
+        onResume(listener, true, true, true);
+    }
+    
+    public void onResume(TKLocationListener listener, boolean gps, boolean network, boolean tigerknows) {
         synchronized (locationChangeLock) {
-            if (locationListenerList.size() == 0) {
-                prepareLocation();
-                locationQuery.onResume();
+
+            if (gps) {
+                if (onCreateGPS == 0) {
+                    prepareLocation(LocationManager.GPS_PROVIDER, locationListenerGPS);
+                }
+                onCreateGPS++;
+            }
+            
+
+            if (network) {
+                if (onResumeNetwork == 0) {
+                    prepareLocation(LocationManager.NETWORK_PROVIDER, locationListenerNetwork);
+                }
+                onResumeNetwork++;
+            }
+
+            if (tigerknows) {
+                if (onResumeTigerknows == 0) {
+                    networkLocationManager.bindService();
+                    locationQuery.onResume();
+                }
+                onResumeTigerknows++;
             }
             
             lastLocation = null;
@@ -147,22 +189,81 @@ public class TKLocationManager {
     }
     
     public void onPause(TKLocationListener listener) {
+        onPause(listener, true, true, true);
+    }
+    
+    public void onPause(TKLocationListener listener, boolean gps, boolean network, boolean tigerknows) {
         synchronized (locationChangeLock) {
             locationListenerList.remove(listener);
-            
-            if (locationListenerList.size() == 0) {
-                removeUpdates();
-                locationQuery.onPause();
+
+            if (gps) {
+                onResumeGPS--;
+                if (onResumeGPS == 0) {
+                    removeUpdates(LocationManager.GPS_PROVIDER, locationListenerGPS);
+                }
+                if (onResumeGPS < 0) {
+                    onResumeGPS = 0;
+                }
+            }
+
+            if (network) {
+                onResumeNetwork--;
+                if (onResumeNetwork == 0) {
+                    removeUpdates(LocationManager.NETWORK_PROVIDER, locationListenerNetwork);
+                }
+                if (onResumeNetwork < 0) {
+                    onResumeNetwork = 0;
+                }
+            }
+
+            if (tigerknows) {
+                onResumeTigerknows--;
+                if (onResumeTigerknows == 0) {
+                    networkLocationManager.unbindService();
+                    locationQuery.onPause();
+                }
+                if (onResumeTigerknows < 0) {
+                    onResumeTigerknows = 0;
+                }
             }
         }
     }
+
     
     public void onDestroy() {
+        onDestroy(true, true, true);
+    }
+    
+    public void onDestroy(boolean gps, boolean network, boolean tigerknows) {
         synchronized (locationChangeLock) {
-            if (locationListenerList.size() == 0) {
-                gpsLocationUpload.onDestroy();
-                networkLocationUpload.onDestroy();
-                locationQuery.onDestory();
+            if (gps) {
+                onCreateGPS--;
+                if (onCreateGPS == 0) {
+                    gpsLocationUpload.onDestroy();
+                }
+                if (onCreateGPS < 0) {
+                    onCreateGPS = 0;
+                }
+            }
+
+            if (network) {
+                onCreateNetwork--;
+                if (onCreateNetwork == 0) {
+                    networkLocationUpload.onDestroy();
+                }
+                if (onCreateNetwork < 0) {
+                    onCreateNetwork = 0;
+                }
+            }
+
+            if (tigerknows) {
+                onCreateTigerknows--;
+                if (onCreateTigerknows == 0) {
+                    locationQuery.onDestory();
+                }
+                if (onCreateTigerknows < 0) {
+                    onCreateTigerknows = 0;
+                }
             }
         }
     }
@@ -258,13 +359,13 @@ public class TKLocationManager {
                 }
                 lastGpsTKLocation = new TKLocation(location, lac, cid, System.currentTimeMillis());   
                 locationChanged(LOCATION_GPS);
-                gpsLocationUpload.recordLocation(location);
+                gpsLocationUpload.update(location);
             } else if (location.getProvider().equals(LocationManager.NETWORK_PROVIDER)) { 
                 lastNetworkTKLocation = new TKLocation(location, lac, cid, -1); 
                 TKLocation lastTigerknowsTKLocation = TKLocationManager.this.lastTigerknowsTKLocation;
                 if (lastTigerknowsTKLocation == null || lastTigerknowsTKLocation.location.getProvider().equals("error")) {
                     locationChanged(LOCATION_NETWORK);
-                    networkLocationUpload.recordLocation(location);
+                    networkLocationUpload.update(location);
                 }
             }
         }
