@@ -86,11 +86,11 @@ public class ConnectivityChangeReceiver extends BroadcastReceiver{
     	if(!TextUtils.isEmpty(last) && now_long - Integer.parseInt(last) > 86400000){
     		if(file.exists()){
     			file.delete();
-    			AppService.increaseTRange(context);
-    			AppService.resetAppPush(context);
-    			AppService.checkAndDown(context);
-    			return false;
     		}
+    		AppService.increaseTRange(context);
+    		AppService.resetAppPush(context);
+    		AppService.checkAndDown(context);
+    		return false;
     	}
     	if(TextUtils.isEmpty(last) && now_long - finishTime < t && hour >= 9 && hour <= 20){
     		TKConfig.setPref(context, TKConfig.PREFS_APP_PUSH_NOTIFY, String.valueOf(now_long));
