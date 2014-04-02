@@ -91,7 +91,7 @@ public class ConnectivityChangeReceiver extends BroadcastReceiver{
 
     	int t = Integer.parseInt(TKConfig.getPref(context, TKConfig.PREFS_APP_PUSH_T));
 
-    	tempLongTime = CalendarUtil.getExactTime(context);
+    	tempLongTime = System.currentTimeMillis();
     	Calendar now = Calendar.getInstance();
     	now.setTimeInMillis(tempLongTime);
     	int now_sec = (int)(tempLongTime / 1000);
