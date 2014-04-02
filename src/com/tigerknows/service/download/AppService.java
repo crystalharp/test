@@ -90,9 +90,6 @@ public class AppService extends IntentService {
         } while (tempFile == null && !stop);
         if(tempFile != null && !stop) {
             //TODO: 已下载完成
-            //TKConfig.setPref(getApplicationContext(), TKConfig.PREFS_APP_PUSH_FINISHED_APP, tempFile.getName());
-            //TKConfig.setPref(getApplicationContext(), TKConfig.PREFS_APP_PUSH_FINISHED_TIME, String.valueOf(System.currentTimeMillis()));
-            //resetT(getApplicationContext());
             LogWrapper.d(TAG, "download finished");
         }
         synchronized (sDownloadList) {
@@ -258,12 +255,15 @@ public class AppService extends IntentService {
             
             // TODO：处理所有有文件名的包
             AppPushList list = queryAppPushList(ctx);
-            // 可能要更新T
             LogWrapper.d(TAG, "list:" + list);
             if (list == null) {
                 return;
             }
             // 更新T，list.getMessage();
+            String tRange = list.getMessage();
+            if (!TextUtils.isEmpty(tRange)) {
+                TKConfig.setPref(ctx, TKConfig.PREFS_APP_PUSH_T, tRange);
+            }
             //TODO:如何决定下载哪个
             AppPush app = list.getList().get(0);
             if (app == null) {
