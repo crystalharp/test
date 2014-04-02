@@ -83,7 +83,7 @@ public class ConnectivityChangeReceiver extends BroadcastReceiver{
     	Calendar now = Calendar.getInstance();
     	now.setTimeInMillis(now_long);
     	int hour = now.get(Calendar.HOUR_OF_DAY);
-    	if(!TextUtils.isEmpty(last) && now_long - Integer.parseInt(last) > 86400000){
+    	if(!TextUtils.isEmpty(last) && now_long - Integer.parseInt(last) > AppService.DAY_SECS){
     		if(file.exists()){
     			file.delete();
     		}
