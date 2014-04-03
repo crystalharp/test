@@ -1,7 +1,10 @@
 package com.tigerknows.radar;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -17,8 +20,14 @@ import android.os.Build;
 import android.text.TextUtils;
 import android.widget.RemoteViews;
 
+import com.decarta.android.exception.APIException;
+import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
+import com.tigerknows.model.AppPush;
+import com.tigerknows.provider.PackageInfoTable;
+import com.tigerknows.provider.PackageInfoTable.RecordPackageInfo;
+import com.tigerknows.service.download.AppService;
 import com.tigerknows.service.download.ShowAppReceiver;
 
 public class AppPushNotify {
@@ -27,8 +36,6 @@ public class AppPushNotify {
 	
 	private static final String DEFAULT_T_RANGE = String.valueOf(7 * DAY_SECS);
     public static int checkNotification(Context context){
-
-    	// TODO: if...return 1;
     	
     	long tempLongTime;
     	
@@ -49,38 +56,53 @@ public class AppPushNotify {
     	now.setTimeInMillis(tempLongTime);
     	int now_sec = (int)(tempLongTime / 1000);
     	
-    	// TODO: get file name;
-    	File file = new File("/mnt/sdcard/app/Tiger.apk");
-
-    	int hour = now.get(Calendar.HOUR_OF_DAY);
-    	if(now_sec - lastNotify < t && hour >= 9 && hour <= 20){
-    		if(showNotification(context, file)){
-    	        TKConfig.setPref(context, TKConfig.PREFS_APP_PUSH_NOTIFY, String.valueOf(now_sec));
-    			return 0;
-    		}else{
-    			return 1;
-    		}
-    	}else{
-    		return 2;
-    	}
+    	List<RecordPackageInfo> pkgList = new ArrayList<RecordPackageInfo>();
+    	int n;
+		try {
+			PackageInfoTable piTable = new PackageInfoTable(context);
+			n = piTable.readPackageInfo(pkgList, 0, 0);
+			if(n == 0){
+				return 1;
+			}
+			RecordPackageInfo pkg = pkgList.get(0);
+			
+	    	File f = new File(AppService.getAppPath() + pkg.file_name);
+	    	LogWrapper.d("Trap", "Step 4:" + f.getAbsolutePath());
+	    	
+	    	if(f.exists() == false){
+	    		return 1;
+	    	}
+	    	PackageManager pm = context.getPackageManager();
+	    	PackageInfo pI = pm.getPackageArchiveInfo(f.getAbsolutePath(), PackageManager.GET_ACTIVITIES);
+	    	
+	    	if(pI == null){
+	    		return 1;
+	    	}			
+	    	int hour = now.get(Calendar.HOUR_OF_DAY);
+			if(now_sec - lastNotify < t && hour >= 9 && hour <= 20){
+				// 先将T翻倍，然后待监听到点击事件之后再除以4即可
+				increaseTRange(context);
+				showNotification(context, pkg, f, pI);
+				TKConfig.setPref(context, TKConfig.PREFS_APP_PUSH_NOTIFY, String.valueOf(now_sec));
+				pkg.notify_time = System.currentTimeMillis();
+				piTable.updateDatabase(pkg);
+				return 0;
+			}else{
+				return 2;
+			}
+		} catch (APIException e) {
+			e.printStackTrace();
+			return 40001;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return 40002;
+		}
     }	
-	public static boolean showNotification(Context context, File f){
-
-		if(f.exists() == false){
-			return false;
-		}
+    
+	public static void showNotification(Context context, RecordPackageInfo pkg, File f, PackageInfo pI){
+		
+		
 		PackageManager pm = context.getPackageManager();
-		PackageInfo pI = pm.getPackageArchiveInfo(f.getAbsolutePath(), PackageManager.GET_ACTIVITIES);
-		
-		if(pI == null){
-			return false;
-		}
-		
-		// TODO: 添加该包名到历史通知应用列表
-		
-		// 先将T翻倍，然后待监听到点击事件之后再除以4即可
-		increaseTRange(context);
-		
 		String tickerText = pm.getApplicationLabel(pI.applicationInfo).toString();
 
         Intent intent = new Intent(ShowAppReceiver.ACTION);
@@ -118,7 +140,7 @@ public class AppPushNotify {
         // 将下载任务添加到任务栏中
         nm.notify(id, notification);
 
-        return true;
+        return;
 	}
 
     // T为弹出时间的范围，下次弹出通知的时间t为[DAY_SECS,T]中的随机值
@@ -128,7 +150,7 @@ public class AppPushNotify {
         TKConfig.setPref(ctx, TKConfig.PREFS_APP_PUSH_T, String.valueOf(T));
     }
     
-    private static void decreaseTRange(Context ctx) {
+    public static void decreaseTRange(Context ctx) {
         int T = Integer.parseInt(TKConfig.getPref(ctx, TKConfig.PREFS_APP_PUSH_T, DEFAULT_T_RANGE));
         T = Math.max(T / 4, 2 * DAY_SECS);
         TKConfig.setPref(ctx, TKConfig.PREFS_APP_PUSH_T, String.valueOf(T));
