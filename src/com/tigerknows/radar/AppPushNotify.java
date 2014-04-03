@@ -19,6 +19,7 @@ import android.widget.RemoteViews;
 
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
+import com.tigerknows.service.download.ShowAppReceiver;
 
 public class AppPushNotify {
 	
@@ -83,10 +84,8 @@ public class AppPushNotify {
 		
 		String tickerText = pm.getApplicationLabel(pI.applicationInfo).toString();
 
-		Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setAction(android.content.Intent.ACTION_VIEW);
-        intent.setDataAndType(Uri.fromFile(f), "application/vnd.android.package-archive");
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+        Intent intent = new Intent(ShowAppReceiver.ACTION);
+        intent.setData(Uri.fromFile(f));
         
 	    NotificationManager nm = (NotificationManager)context.getSystemService(android.content.Context.NOTIFICATION_SERVICE);
 	    Notification notification = new Notification();
@@ -111,7 +110,7 @@ public class AppPushNotify {
         remoteViews.setImageViewBitmap(R.id.icon_imv, ((BitmapDrawable)icon).getBitmap());
         notification.contentView = remoteViews;
 
-        PendingIntent pausePendingIntent = PendingIntent.getActivity(context, id, intent, 0);
+        PendingIntent pausePendingIntent = PendingIntent.getBroadcast(context, id, intent, 0);
         notification.contentIntent = pausePendingIntent;
         
         // 取消此下载项可能存在的通知
