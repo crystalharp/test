@@ -13,12 +13,25 @@ import com.tigerknows.model.LocationQuery;
 import com.tigerknows.model.LocationQuery.LocationParameter;
 import com.tigerknows.util.Utility;
 
+import android.app.ActivityManager;
+import android.app.ActivityManager.RunningTaskInfo;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.location.GpsSatellite;
 import android.location.GpsStatus;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.IBinder;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 
 /**
@@ -32,6 +45,8 @@ public class CollectService extends TKService {
     public static final long RETRY_INTERVAL = 6 * 1000;
     
     private static final int CACHE_SIZE = 256;
+    
+    private static final String EXTRA_PAUSE_LOCATION_MANAGER = "EXTRA_PAUSE_LOCATION_MANAGER";
     
     private Context mContext;
     
@@ -67,7 +82,11 @@ public class CollectService extends TKService {
         }
     };
     
+    private BroadcastReceiver mBroadcastReceiver;
+    
     private boolean mTKLocationManagerOnCreate = false;
+    
+    private boolean mAddGpsStatusListener = false;
     
     @Override
     public void onCreate() {
@@ -86,7 +105,7 @@ public class CollectService extends TKService {
         mActivityManager = (ActivityManager)getSystemService(Context.ACTIVITY_SERVICE);
         initHomeAppList();
         mLocationManager =(LocationManager)getSystemService(Context.LOCATION_SERVICE);
-        // 状态监听
+        // 监听GPS定位请求的事件
         mGpsStatusListener = new GpsStatus.Listener() {
             public void onGpsStatusChanged(int event) {
                 switch (event) {
@@ -135,34 +154,107 @@ public class CollectService extends TKService {
         };
 
         mTKLocationManager = TKLocationManager.getInstatce(getApplicationContext());
-        mLocationManager.addGpsStatusListener(mGpsStatusListener);
+        
+        // 通过反射功能，监听GPS定位开关的广播
+        try {
+            Class classLocationManager = Class.forName("android.location.LocationManager");
+            final Field extraGpsEnabled = classLocationManager.getField("EXTRA_GPS_ENABLED");
+            final Field gpsEnabledChanged = classLocationManager.getField("GPS_ENABLED_CHANGE_ACTION");
+            if (classLocationManager != null && extraGpsEnabled != null && gpsEnabledChanged != null) {
+                mBroadcastReceiver = new BroadcastReceiver() {
+                    
+                    @Override
+                    public void onReceive(Context context, Intent intent) {
+                        try {
+                            boolean enabled = intent.getBooleanExtra((String)extraGpsEnabled.get(null), false);
+                            LogWrapper.d(TAG, "enabled:"+enabled);
+                            if (enabled) {
+                                addGpsStatusListener();
+                            } else {
+                                removeGpsStatusListener();
+                                pauseLocationManager();
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                };
+                registerReceiver(mBroadcastReceiver, new IntentFilter((String) gpsEnabledChanged.get(null)));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            addGpsStatusListener();
+        }
         
         new Thread(new Runnable() {
             
             @Override
             public void run() {
                 while (mStop == false) {
-                    mLocationQuery.startScanWifi();
-                    
-                    checkLocationParameter();
-                    boolean inAndroidHomeApp = inAndroidHomeApp();
-                    LogWrapper.d(TAG, "inAndroidHomeApp="+inAndroidHomeApp);
-                    if (inAndroidHomeApp) {
-                        mLocationManager.removeGpsStatusListener(mGpsStatusListener);
-                        pauseLocationManager();
-                    }
-                    
                     try {
                         Thread.sleep(RETRY_INTERVAL);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
+                    mLocationQuery.startScanWifi();
+                    
+                    checkLocationParameter();
+                    
+                    // 若当前应用是系统桌面则撤消对GPS的监听（此判断是因为高德地图（或类似应用）也与我们做相同的事情，导致死锁最后都不撤消对GPS的监听）
+                    if (mAddGpsStatusListener == false) {
+                        return;
+                    }
+                    boolean inAndroidHomeApp = inAndroidHomeApp();
+                    LogWrapper.d(TAG, "inAndroidHomeApp="+inAndroidHomeApp);
+                    if (inAndroidHomeApp) {
+                        removeGpsStatusListener();
+                        pauseLocationManager();
+                    }
+                    
                 }
                 
             }
         }).start();
     }
     
+    private void addGpsStatusListener() {
+        synchronized (mLocationManager) {
+            if (mAddGpsStatusListener == false) {
+                mLocationManager.addGpsStatusListener(mGpsStatusListener);
+            }
+            mAddGpsStatusListener = true;
+        }
+    }
+    
+    private void removeGpsStatusListener() {
+        synchronized (mLocationManager) {
+            if (mAddGpsStatusListener) {
+                mLocationManager.removeGpsStatusListener(mGpsStatusListener);
+            }
+            mAddGpsStatusListener = false;
+        }
+    }
+    
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        if (intent != null) {
+            if (intent.getBooleanExtra(EXTRA_PAUSE_LOCATION_MANAGER, false)) {
+                LogWrapper.d(TAG, "onStartCommand:pauseLocationManager");
+                pauseLocationManager();
+            }
+        }
+        return super.onStartCommand(intent, flags, startId);
+    }
+    
+    public static void pauseLocationManager(Context context) {
+        Intent service = new Intent(context, CollectService.class);
+        service.putExtra(EXTRA_PAUSE_LOCATION_MANAGER, true);
+        context.startService(service);
+    }
+
     /**
      * 撤消对GPS定位的监听
      */
@@ -180,7 +272,10 @@ public class CollectService extends TKService {
     public void onDestroy() {
         LogWrapper.d(TAG, "onDestroy");
         mStop = true;
-        mLocationManager.removeGpsStatusListener(mGpsStatusListener);
+        if (mBroadcastReceiver != null) {
+            unregisterReceiver(mBroadcastReceiver);
+        }
+        removeGpsStatusListener();
         pauseLocationManager();
         mLocationUpload.onDestroy();
         super.onDestroy();
@@ -207,7 +302,7 @@ public class CollectService extends TKService {
     /**
      * 判断当前界面是否是桌面
      */
-    public boolean inAndroidHomeApp(){
+    private boolean inAndroidHomeApp(){
         List<RunningTaskInfo> rti = mActivityManager.getRunningTasks(1);
         if (rti != null && rti.size() > 0) {
             return mHomePackageNames.contains(rti.get(0).topActivity.getPackageName());

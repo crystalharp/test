@@ -157,10 +157,10 @@ public class TKLocationManager {
         synchronized (locationChangeLock) {
 
             if (gps) {
-                if (onCreateGPS == 0) {
+                if (onResumeGPS == 0) {
                     prepareLocation(LocationManager.GPS_PROVIDER, locationListenerGPS);
                 }
-                onCreateGPS++;
+                onResumeGPS++;
             }
             
 
