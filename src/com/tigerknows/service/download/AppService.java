@@ -1,7 +1,9 @@
 
 package com.tigerknows.service.download;
 
+import com.decarta.android.exception.APIException;
 import com.decarta.android.util.LogWrapper;
+import com.decarta.example.AppUtil;
 import com.tigerknows.TKConfig;
 import com.tigerknows.android.net.HttpManager;
 import com.tigerknows.model.AppPush;
@@ -11,10 +13,10 @@ import com.tigerknows.model.DataQuery.AppPushResponse.AppPushList;
 import com.tigerknows.model.Response;
 import com.tigerknows.model.test.BaseQueryTest;
 import com.tigerknows.model.xobject.XMap;
-import com.tigerknows.util.ByteUtil;
+import com.tigerknows.provider.PackageInfoTable;
+import com.tigerknows.provider.PackageInfoTable.RecordPackageInfo;
+import com.tigerknows.radar.AppPushNotify;
 import com.tigerknows.util.HttpUtils;
-import com.tigerknows.util.Utility;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
@@ -25,6 +27,8 @@ import org.apache.http.client.methods.HttpUriRequest;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Environment;
 import android.text.TextUtils;
 
@@ -35,7 +39,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Random;
+import java.util.List;
 
 /**
  * 此类要独立运行,尽量不要与其他任何类共用代码
@@ -48,15 +52,23 @@ public class AppService extends IntentService {
 
     public static final String EXTRA_URL = "extra_url";
     
-    public static final int DAY_SECS = 86400;
+    public static final String EXTRA_PACKAGE_NAME = "package_name";
     
-    public static final String DEFAULT_T_RANGE = String.valueOf(7 * DAY_SECS);
+    public static final String EXTRA_NAME = "name";
+    
+    public static final String EXTRA_ICON = "icon";
+    
+    public static final String EXTRA_PRIOR = "prior";
+    
+    public static final String EXTRA_DESCRIPTION = "description";
     
     public static final String SAVED_DATA_FILE = "App";
     
     static final long RETRY_TIME = 6 *1000;
     
     private static ArrayList<String> sDownloadList = new ArrayList<String>();
+    
+    private static PackageInfoTable sRecordPkgTable = null;
    
     // 发现网络不是wifi的时候停止下载
     public static void stopDownload(Context ctx) {
@@ -76,6 +88,7 @@ public class AppService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         // 当时正在下载的，此时已下载完成。
         String url = intent.getStringExtra(EXTRA_URL);
+        String pname = intent.getStringExtra(EXTRA_PACKAGE_NAME);
         LogWrapper.d(TAG, "handle url:" + url);
         File tempFile = null;
         do {
@@ -89,10 +102,24 @@ public class AppService extends IntentService {
             }
         } while (tempFile == null && !stop);
         if(tempFile != null && !stop) {
-            //已下载完成
-            TKConfig.setPref(getApplicationContext(), TKConfig.PREFS_APP_PUSH_FINISHED_APP, tempFile.getName());
-            TKConfig.setPref(getApplicationContext(), TKConfig.PREFS_APP_PUSH_FINISHED_TIME, String.valueOf(System.currentTimeMillis()));
-            resetT(getApplicationContext());
+        	XMap xmap = new XMap();
+        	xmap.put(AppPush.FIELD_NAME, intent.getStringExtra(EXTRA_NAME));
+        	xmap.put(AppPush.FIELD_ICON, intent.getStringExtra(EXTRA_ICON));
+        	xmap.put(AppPush.FIELD_DESCRIPTION, intent.getStringExtra(EXTRA_DESCRIPTION));
+        	xmap.put(AppPush.FIELD_PRIOR, intent.getStringExtra(EXTRA_PRIOR));
+        	xmap.put(AppPush.FIELD_PACKAGE_NAME, pname);
+        	xmap.put(AppPush.FIELD_DOWNLOAD_URL, url);
+            try {
+            	AppPush app = new AppPush(xmap);
+            	RecordPackageInfo p = new RecordPackageInfo(pname, tempFile.getName(), app);
+				sRecordPkgTable.addPackageInfo(p);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (APIException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
             LogWrapper.d(TAG, "download finished");
         }
         synchronized (sDownloadList) {
@@ -176,10 +203,16 @@ public class AppService extends IntentService {
         return null;
     }
      
-    private static void download(Context context, String url) {
+    private static void download(Context context, AppPush app) {
+    	String url = app.getDownloadUrl();
         if (!TextUtils.isEmpty(url)) {
             Intent service = new Intent(context, AppService.class);
             service.putExtra(EXTRA_URL, url);
+            service.putExtra(EXTRA_PACKAGE_NAME, app.getPackageName());
+            service.putExtra(EXTRA_NAME, app.getName());
+            service.putExtra(EXTRA_PRIOR, app.getPrior());
+            service.putExtra(EXTRA_ICON, app.getIcon());
+            service.putExtra(EXTRA_DESCRIPTION, app.getDescription());
             synchronized (sDownloadList) {
                 if(!sDownloadList.contains(url)) {// 若已正在下载，则必然已注册过，否则可新注册一个processor
                     sDownloadList.add(url);
@@ -190,12 +223,7 @@ public class AppService extends IntentService {
         }
     }
      
-    public static void resetAppPush(Context ctx) {
-        TKConfig.setPref(ctx, TKConfig.PREFS_APP_PUSH_FINISHED_APP, "");
-        TKConfig.setPref(ctx, TKConfig.PREFS_APP_PUSH_FINISHED_TIME, "");
-        TKConfig.setPref(ctx, TKConfig.PREFS_APP_PUSH_NOTIFY, "");
-    }
-    
+   
     public static String getAppPath() {
         String path = null;
         String status = Environment.getExternalStorageState();
@@ -208,7 +236,7 @@ public class AppService extends IntentService {
     }
     
     // 去服务器获取apppush列表
-    public static AppPushList checkAppPushList(Context ctx) {
+    public static AppPushList queryAppPushList(Context ctx) {
         DataQuery dataQuery = new DataQuery(ctx);
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_APP_PUSH);
         dataQuery.query();
@@ -223,8 +251,16 @@ public class AppService extends IntentService {
         return null;
     }
     
-    public static void checkAndDown(Context ctx) {
-       new CheckDownRunnable(ctx).run();
+    public static void checkAndDown(Context ctx, int status) {
+        if (status == 1) {
+            synchronized(sDownloadList) {
+                if (sRecordPkgTable == null) {
+                    sRecordPkgTable = new PackageInfoTable(ctx);
+                }
+            }
+            Runnable r = new CheckDownRunnable(ctx);
+            r.run();
+        }
     }
     
     private static File createFileByUrl(String url) throws IOException {
@@ -254,47 +290,88 @@ public class AppService extends IntentService {
         @Override
         public void run() {
             LogWrapper.d(TAG, "checking");
-            AppPushList list = checkAppPushList(ctx);
+            PackageManager manager = ctx.getPackageManager();
+            List <PackageInfo> pkgList = manager.getInstalledPackages(0);
+            List <RecordPackageInfo> rPkgList = new ArrayList<RecordPackageInfo>();
+            int n = 0;
+			try {
+				n = sRecordPkgTable.readPackageInfo(rPkgList);
+	            long now = System.currentTimeMillis();
+	            if (n > 0) {
+	            	// 扫描本地包，对比数据库，不在本地数据库的包插入本地数据库
+	            	// TODO: pwy:是否可以优化一下？，另外可能需要sync加锁？
+	            	for (PackageInfo pI : pkgList){
+	            		boolean found = false;
+	            		for(RecordPackageInfo pkg : rPkgList){
+	            			if (TextUtils.equals(pI.packageName, pkg.package_name)){
+	            				pkg.installed = 1;
+	            				if(pkg.notify_time != 0){
+	            					// TODO: 将已通知且已安装的条目记录一下
+	            				}
+	            				sRecordPkgTable.updateDatabase(pkg);
+	            				found = true;
+	            				break;
+	            			}
+	            		}
+	            		if(found == false){
+	            			RecordPackageInfo p = new RecordPackageInfo(pI.packageName, 1, 0);
+	            			sRecordPkgTable.addPackageInfo(p);
+	            		}
+	            	}
+	            	// TODO: 将已通知且已安装的条目上传
+
+	            	// TODO：天骁检查一下这个逻辑是不是对的
+	            	// FIXME: 已检查，正确
+	            	// 维护下载过的条目的软件包信息
+	                for (RecordPackageInfo pkg : rPkgList) {
+	                    // 找出文件名不为空且通知(时间超过了时间间隔或未记录通知时间)的记录删除
+	                    if (!TextUtils.isEmpty(pkg.file_name)) {
+	                        if (pkg.notify_time == 0) {
+	                            // 未记录通知时间且有文件名,走到这里应该是pkg没有了,删掉记录
+	                            sRecordPkgTable.deletePackageInfo(pkg);
+	                            rPkgList.remove(pkg);
+	                        } else if ((now - pkg.notify_time)/1000 > AppPushNotify.DAY_SECS) {
+	                            // 通知的时间到现在已超过xxx,可能安装可能忽略,应该删掉软件包并更新记录
+	                            File file = new File(getAppPath() + pkg.file_name);
+	                            if (file.exists()) {
+	                                file.delete();
+	                            }
+	                            pkg.file_name = null;
+	                            sRecordPkgTable.updateDatabase(pkg);
+	                        }
+	                    }
+	                }
+	            }
+	        } catch (APIException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+            AppPushList list = queryAppPushList(ctx);
             LogWrapper.d(TAG, "list:" + list);
             if (list == null) {
                 return;
             }
-            //TODO:如何决定下载哪个
+            // 更新T，list.getMessage();
+            String tRange = list.getMessage();
+            if (!TextUtils.isEmpty(tRange)) {
+                TKConfig.setPref(ctx, TKConfig.PREFS_APP_PUSH_T, tRange);
+            }
+            //TODO:pwy: 需要找一个不在本地数据库中的优先级最高的包来进行下载
             AppPush app = list.getList().get(0);
             if (app == null) {
                 return;
             }
-            XMap xmap = app.getData();
-            try {
-                byte[] b = ByteUtil.xobjectToByte(xmap);
-                Utility.writeFile(TKConfig.getSavePath() + SAVED_DATA_FILE, b, true);
-                download(ctx, app.getDownloadUrl());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            download(ctx, app);
         }
         
     }
     
-    // t为下载完成到弹出通知的间隔时间
-    public final static void resetT(Context ctx) {
-        int T = Integer.parseInt(TKConfig.getPref(ctx, TKConfig.PREFS_APP_PUSH_T_RANGE, DEFAULT_T_RANGE));
-        Random r = new Random(System.currentTimeMillis());
-        int t = r.nextInt(T - DAY_SECS) + DAY_SECS;
-        TKConfig.setPref(ctx, TKConfig.PREFS_APP_PUSH_T, String.valueOf(t));
-    }
+
     
-    // T为弹出时间的范围，下次弹出通知的时间t为[DAY_SECS,T]中的随机值
-    public final static void increaseTRange(Context ctx) {
-        int T = Integer.parseInt(TKConfig.getPref(ctx, TKConfig.PREFS_APP_PUSH_T_RANGE, DEFAULT_T_RANGE));
-        T = Math.min(T * 2, 14 * DAY_SECS);
-        TKConfig.setPref(ctx, TKConfig.PREFS_APP_PUSH_T_RANGE, String.valueOf(T));
-    }
-    
-    public final static void decreaseTRange(Context ctx) {
-        int T = Integer.parseInt(TKConfig.getPref(ctx, TKConfig.PREFS_APP_PUSH_T_RANGE, DEFAULT_T_RANGE));
-        T = Math.max(T / 2, 2 * DAY_SECS);
-        TKConfig.setPref(ctx, TKConfig.PREFS_APP_PUSH_T_RANGE, String.valueOf(T));
-    }
+
     
 }

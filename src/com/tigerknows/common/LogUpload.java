@@ -390,6 +390,7 @@ public class LogUpload {
      * 在Acitivty执行onCreate()时调用
      */
     public void onCreate() {
+        LogWrapper.d(TAG, "onCreate");
         synchronized (mLock) {
             if (onCreate) {
                 return;
@@ -411,6 +412,7 @@ public class LogUpload {
      * 在主Acitivty执行onDestroy()时调用
      */
     public void onDestroy() {
+        LogWrapper.d(TAG, "onDestroy");
         synchronized (mLock) {
             write(mUploading);
             onCreate = false;

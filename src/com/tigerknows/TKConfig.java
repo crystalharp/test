@@ -762,16 +762,6 @@ public class TKConfig {
     public static final String PREFS_CHECKED_TRAFFIC_RADIOBUTTON = "prefs_checked_radiobutton";
     
     /**
-     * 上次下载完成的推送app的名字
-     */
-    public static final String PREFS_APP_PUSH_FINISHED_APP = "prefs_app_push_finished_app";
-    
-    /**
-     * 上次下载完成推送app的时间
-     */
-    public static final String PREFS_APP_PUSH_FINISHED_TIME = "prefs_app_push_finished_time";
-    
-    /**
      * 上次通知推送的app的时间
      */
     public static final String PREFS_APP_PUSH_NOTIFY = "prefs_app_push_notify";
@@ -781,11 +771,6 @@ public class TKConfig {
      */
     public static final String PREFS_APP_PUSH_T = "prefs_app_push_t";
     
-    /**
-     * 下载完app后弹出消息时间间隔范围T
-     */
-    public static final String PREFS_APP_PUSH_T_RANGE = "prefs_app_push_t_range";
-
     public static final String PREFS_HINT_HOME = "PREFS_HINT_HOME";
     public static final String PREFS_HINT_NEARBY_SEARCH = "PREFS_HINT_NEARBY_SEARCH";
     public static final String PREFS_HINT_RESULT_MAP = "PREFS_HINT_RESULT_MAP";

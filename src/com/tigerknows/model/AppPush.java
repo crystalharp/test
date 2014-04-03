@@ -66,6 +66,41 @@ public class AppPush extends BaseData{
 		super(data);
 		init(data, true);
 	}
+	/**
+	 * 把AppPush订单转化成XMap
+	 * 所有的域必须存在并合法，否则报APIExecption
+	 * @return
+	 * @throws APIException
+	 */	
+	public XMap toXMapForStorage() throws APIException{
+		XMap map = new XMap();
+		if(name != null){
+			map.put(FIELD_NAME, name);
+		}else{
+			throw new APIException("FIELD_NAME");
+		}
+		if(packageName != null){
+			map.put(FIELD_PACKAGE_NAME, packageName);
+		}else{
+			throw new APIException("FIELD_PACKAGE_NAME");
+		}
+		if(icon != null){
+			map.put(FIELD_ICON, icon);
+		}else{
+			throw new APIException("FIELD_ICON");
+		}
+		if(description != null){
+			map.put(FIELD_DESCRIPTION, description);
+		}else{
+			throw new APIException("FIELD_DESCRIPTION");
+		}
+		if(downloadUrl != null){
+			map.put(FIELD_DOWNLOAD_URL, downloadUrl);
+		}else{
+			throw new APIException("FIELD_DOWNLOAD_URL");
+		}		
+		return map;
+	}
 	
 	public void init(XMap data, boolean reset) throws APIException{
 		super.init(data, reset);

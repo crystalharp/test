@@ -13,25 +13,12 @@ import com.tigerknows.model.LocationQuery;
 import com.tigerknows.model.LocationQuery.LocationParameter;
 import com.tigerknows.util.Utility;
 
-import android.app.ActivityManager;
-import android.app.ActivityManager.RunningTaskInfo;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
-import android.location.GpsSatellite;
 import android.location.GpsStatus;
 import android.location.Location;
 import android.location.LocationManager;
-import android.os.IBinder;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.List;
 
 
 /**
@@ -58,7 +45,7 @@ public class CollectService extends TKService {
     
     private LinkedHashMap<LocationParameter, Location> mLocationCache = new LinkedHashMap<LocationParameter, Location>(CACHE_SIZE * 2, 0.75f, true);
     
-    private Location mLocation = new Location(LocationManager.GPS_PROVIDER);
+    private Location mLocation = new Location(LocationManager.NETWORK_PROVIDER);
     
     private LocationUpload mLocationUpload;
     
@@ -80,8 +67,6 @@ public class CollectService extends TKService {
         }
     };
     
-    private BroadcastReceiver mBroadcastReceiver;
-    
     private boolean mTKLocationManagerOnCreate = false;
     
     @Override
@@ -96,6 +81,7 @@ public class CollectService extends TKService {
         mLocation.setLongitude(99.99999d);
         mLocationQuery = LocationQuery.getInstance(mContext);
         mLocationUpload = LocationUpload.getNetworkTrackInstance(mContext);
+        mLocationUpload.onCreate();
 
         mActivityManager = (ActivityManager)getSystemService(Context.ACTIVITY_SERVICE);
         initHomeAppList();
@@ -107,12 +93,12 @@ public class CollectService extends TKService {
 
 //                    // 第一次定位
 //                    case GpsStatus.GPS_EVENT_FIRST_FIX:
-//                        LogWrapper.i(TAG, "第一次定位");
+//                        LogWrapper.i(TAG, "GPS_EVENT_FIRST_FIX");
 //                        break;
 //
 //                    // 卫星状态改变
 //                    case GpsStatus.GPS_EVENT_SATELLITE_STATUS:
-//                        LogWrapper.i(TAG, "卫星状态改变");
+//                        LogWrapper.i(TAG, "GPS_EVENT_SATELLITE_STATUS");
 //                        // 获取当前状态
 //                        GpsStatus gpsStatus = mLocationManager.getGpsStatus(null);
 //                        // 获取卫星颗数的默认最大值
@@ -129,7 +115,7 @@ public class CollectService extends TKService {
 
                     // 定位启动
                     case GpsStatus.GPS_EVENT_STARTED:
-                        LogWrapper.i(TAG, "定位启动");
+                        LogWrapper.i(TAG, "GPS_EVENT_STARTED");
                         synchronized (mTKLocationManager) {
                             if (mTKLocationManagerOnCreate == false) {
                                 mTKLocationManager.onCreate(true, false, false);
@@ -141,7 +127,7 @@ public class CollectService extends TKService {
 
                     // 定位结束
                     case GpsStatus.GPS_EVENT_STOPPED:
-                        LogWrapper.i(TAG, "定位结束");
+                        LogWrapper.i(TAG, "GPS_EVENT_STOPPED");
                         pauseLocationManager();
                         break;
                 }
@@ -149,37 +135,7 @@ public class CollectService extends TKService {
         };
 
         mTKLocationManager = TKLocationManager.getInstatce(getApplicationContext());
-        
-        // 通过反射功能，监听GPS定位的请求广播
-        try {
-            Class classLocationManager = Class.forName("android.location.LocationManager");
-            final Field extraGpsEnabled = classLocationManager.getField("EXTRA_GPS_ENABLED");
-            final Field gpsEnabledChanged = classLocationManager.getField("GPS_ENABLED_CHANGE_ACTION");
-            if (classLocationManager != null && extraGpsEnabled != null && gpsEnabledChanged != null) {
-                mBroadcastReceiver = new BroadcastReceiver() {
-                    
-                    @Override
-                    public void onReceive(Context context, Intent intent) {
-                        try {
-                            boolean enabled = intent.getBooleanExtra((String)extraGpsEnabled.get(null), false);
-                            LogWrapper.d(TAG, "enabled:"+enabled);
-                            if (enabled) {
-                                mLocationManager.addGpsStatusListener(mGpsStatusListener);
-                            } else {
-                                mLocationManager.removeGpsStatusListener(mGpsStatusListener);
-                                pauseLocationManager();
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                };
-                registerReceiver(mBroadcastReceiver, new IntentFilter((String) gpsEnabledChanged.get(null)));
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        mLocationManager.addGpsStatusListener(mGpsStatusListener);
         
         new Thread(new Runnable() {
             
@@ -189,8 +145,6 @@ public class CollectService extends TKService {
                     mLocationQuery.startScanWifi();
                     
                     checkLocationParameter();
-                    
-                    // 若当前应用是系统桌面则撤消对GPS的监听（此判断是因为高德地图（或类似应用）也与我们做相同的事情，导致死锁最后都不撤消对GPS的监听）
                     boolean inAndroidHomeApp = inAndroidHomeApp();
                     LogWrapper.d(TAG, "inAndroidHomeApp="+inAndroidHomeApp);
                     if (inAndroidHomeApp) {
@@ -213,7 +167,7 @@ public class CollectService extends TKService {
      * 撤消对GPS定位的监听
      */
     private void pauseLocationManager() {
-        synchronized (mLocationManager) {
+        synchronized (mTKLocationManager) {
             if (mTKLocationManagerOnCreate) {
                 mTKLocationManager.onPause(mLocationListener, true, false, false);
                 mTKLocationManager.onDestroy(true, false, false);
@@ -226,11 +180,9 @@ public class CollectService extends TKService {
     public void onDestroy() {
         LogWrapper.d(TAG, "onDestroy");
         mStop = true;
-        if (mBroadcastReceiver != null) {
-            unregisterReceiver(mBroadcastReceiver);
-            mLocationManager.removeGpsStatusListener(mGpsStatusListener);
-            pauseLocationManager();
-        }
+        mLocationManager.removeGpsStatusListener(mGpsStatusListener);
+        pauseLocationManager();
+        mLocationUpload.onDestroy();
         super.onDestroy();
     }
     

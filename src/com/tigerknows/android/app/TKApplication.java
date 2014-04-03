@@ -23,6 +23,8 @@ public class TKApplication extends Application {
 
     private static TKApplication sMe;
     
+    private int mTimeTicks = 0;
+    
     public TKApplication() {
         sMe = this;
     }
@@ -48,7 +50,12 @@ public class TKApplication extends Application {
             
             @Override
             public void onReceive(Context context, Intent intent) {
-                TKApplication.this.startService(service);
+                if (mTimeTicks % 10 == 0) {
+                    TKApplication.this.startService(service);
+                    mTimeTicks = 0;
+                } else {
+                    mTimeTicks++;
+                }
             }
         }, filter); 
     }

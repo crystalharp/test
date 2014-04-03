@@ -3,6 +3,7 @@ package com.tigerknows.common;
 
 import java.util.List;
 
+import com.decarta.android.util.LogWrapper;
 import com.tigerknows.TKConfig;
 import com.tigerknows.model.FeedbackUpload;
 import com.tigerknows.model.LocationQuery;
@@ -105,6 +106,7 @@ public class LocationUpload extends LogUpload {
     }
     
     public void record(Location location, LocationParameter locationParameter) {
+        LogWrapper.d(TAG, "record():" + location.getProvider() + "," + locationParameter);
         synchronized (mLock) {
             if (mStringBuilder == null) {
                 return;
