@@ -11,6 +11,7 @@ import com.tigerknows.common.LocationUpload;
 import com.tigerknows.common.LogUpload;
 import com.tigerknows.service.PullService;
 import com.tigerknows.service.download.AppService;
+import com.tigerknows.service.download.ShowAppReceiver;
 import com.tigerknows.util.CalendarUtil;
 import com.weibo.sdk.android.util.Utility;
 
@@ -147,9 +148,8 @@ public class ConnectivityChangeReceiver extends BroadcastReceiver{
 		String tickerText = pm.getApplicationLabel(pI.applicationInfo).toString();
 
 		Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setAction(android.content.Intent.ACTION_VIEW);
-        intent.setDataAndType(Uri.fromFile(f), "application/vnd.android.package-archive");
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+        intent.setAction(ShowAppReceiver.ACTION);
+        intent.setData(Uri.fromFile(f));
         
 	    NotificationManager nm = (NotificationManager)context.getSystemService(android.content.Context.NOTIFICATION_SERVICE);
 	    Notification notification = new Notification();
@@ -174,7 +174,7 @@ public class ConnectivityChangeReceiver extends BroadcastReceiver{
         remoteViews.setImageViewBitmap(R.id.icon_imv, ((BitmapDrawable)icon).getBitmap());
         notification.contentView = remoteViews;
 
-        PendingIntent pausePendingIntent = PendingIntent.getActivity(context, id, intent, 0);
+        PendingIntent pausePendingIntent = PendingIntent.getBroadcast(context, id, intent, 0);
         notification.contentIntent = pausePendingIntent;
         
         // 取消此下载项可能存在的通知
