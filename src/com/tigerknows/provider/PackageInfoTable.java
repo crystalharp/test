@@ -34,7 +34,6 @@ public class PackageInfoTable {
     public static final String INSTALLED = "_installed";
     public static final String APPPUSH = "_app_push";
 
-    //TODO:fix
     // DB NAME
     protected static final String DATABASE_NAME = "packageinfoDB";
 
