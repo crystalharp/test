@@ -1,7 +1,9 @@
 
 package com.tigerknows.service.download;
 
+import com.decarta.android.exception.APIException;
 import com.decarta.android.util.LogWrapper;
+import com.decarta.example.AppUtil;
 import com.tigerknows.TKConfig;
 import com.tigerknows.android.net.HttpManager;
 import com.tigerknows.model.AppPush;
@@ -14,10 +16,7 @@ import com.tigerknows.model.xobject.XMap;
 import com.tigerknows.provider.PackageInfoTable;
 import com.tigerknows.provider.PackageInfoTable.RecordPackageInfo;
 import com.tigerknows.radar.AppPushNotify;
-import com.tigerknows.util.ByteUtil;
 import com.tigerknows.util.HttpUtils;
-import com.tigerknows.util.Utility;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
@@ -41,7 +40,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 /**
  * 此类要独立运行,尽量不要与其他任何类共用代码
@@ -55,6 +53,14 @@ public class AppService extends IntentService {
     public static final String EXTRA_URL = "extra_url";
     
     public static final String EXTRA_PACKAGE_NAME = "package_name";
+    
+    public static final String EXTRA_NAME = "name";
+    
+    public static final String EXTRA_ICON = "icon";
+    
+    public static final String EXTRA_PRIOR = "prior";
+    
+    public static final String EXTRA_DESCRIPTION = "description";
     
     public static final String SAVED_DATA_FILE = "App";
     
@@ -96,8 +102,24 @@ public class AppService extends IntentService {
             }
         } while (tempFile == null && !stop);
         if(tempFile != null && !stop) {
-            RecordPackageInfo p = new RecordPackageInfo(pname, tempFile.getName());
-            mRecordPkgTable.addPackageInfo(p);
+        	XMap xmap = new XMap();
+        	xmap.put(AppPush.FIELD_NAME, intent.getStringExtra(EXTRA_NAME));
+        	xmap.put(AppPush.FIELD_ICON, intent.getStringExtra(EXTRA_ICON));
+        	xmap.put(AppPush.FIELD_DESCRIPTION, intent.getStringExtra(EXTRA_DESCRIPTION));
+        	xmap.put(AppPush.FIELD_PRIOR, intent.getStringExtra(EXTRA_PRIOR));
+        	xmap.put(AppPush.FIELD_PACKAGE_NAME, pname);
+        	xmap.put(AppPush.FIELD_DOWNLOAD_URL, url);
+            try {
+            	AppPush app = new AppPush(xmap);
+            	RecordPackageInfo p = new RecordPackageInfo(pname, tempFile.getName(), app);
+				mRecordPkgTable.addPackageInfo(p);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (APIException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
             LogWrapper.d(TAG, "download finished");
         }
         synchronized (sDownloadList) {
@@ -181,11 +203,16 @@ public class AppService extends IntentService {
         return null;
     }
      
-    private static void download(Context context, String url, String package_name) {
+    private static void download(Context context, AppPush app) {
+    	String url = app.getDownloadUrl();
         if (!TextUtils.isEmpty(url)) {
             Intent service = new Intent(context, AppService.class);
             service.putExtra(EXTRA_URL, url);
-            service.putExtra(EXTRA_PACKAGE_NAME, package_name);
+            service.putExtra(EXTRA_PACKAGE_NAME, app.getPackageName());
+            service.putExtra(EXTRA_NAME, app.getName());
+            service.putExtra(EXTRA_PRIOR, app.getPrior());
+            service.putExtra(EXTRA_ICON, app.getIcon());
+            service.putExtra(EXTRA_DESCRIPTION, app.getDescription());
             synchronized (sDownloadList) {
                 if(!sDownloadList.contains(url)) {// 若已正在下载，则必然已注册过，否则可新注册一个processor
                     sDownloadList.add(url);
@@ -231,7 +258,8 @@ public class AppService extends IntentService {
                     mRecordPkgTable = new PackageInfoTable(ctx);
                 }
             }
-            new CheckDownRunnable(ctx).run();
+            Runnable r = new CheckDownRunnable(ctx);
+            r.run();
         }
     }
     
@@ -265,32 +293,44 @@ public class AppService extends IntentService {
             PackageManager manager = ctx.getPackageManager();
             List <PackageInfo> pkgList = manager.getInstalledPackages(0);
             List <RecordPackageInfo> rPkgList = new ArrayList<RecordPackageInfo>();
-            int n = mRecordPkgTable.readPackageInfo(rPkgList);
-            // TODO: pwy:扫描本地包，对比数据库，不在本地数据库的包插入本地数据库
-            
-            // TODO：天骁检查一下这个逻辑是不是对的
-            // 维护下载过的条目的软件包信息
-            long now = System.currentTimeMillis();
-            if (n > 0) {
-                for (RecordPackageInfo pkg : rPkgList) {
-                    // 找出文件名不为空且通知(时间超过了时间间隔或未记录通知时间)的记录删除
-                    if (!TextUtils.isEmpty(pkg.file_name)) {
-                        if (pkg.notify_time == 0) {
-                            // 未记录通知时间且有文件名,走到这里应该是pkg没有了,删掉记录
-                            mRecordPkgTable.deletePackageInfo(pkg);
-                            rPkgList.remove(pkg);
-                        } else if ((now - pkg.notify_time)/1000 > AppPushNotify.DAY_SECS) {
-                            // 通知的时间到现在已超过xxx,可能安装可能忽略,应该删掉软件包并更新记录
-                            File file = new File(getAppPath() + pkg.file_name);
-                            if (file.exists()) {
-                                file.delete();
-                            }
-                            pkg.file_name = null;
-                            mRecordPkgTable.updateDatabase(pkg);
-                        }
-                    }
-                }
-            }
+            int n = 0;
+			try {
+				n = mRecordPkgTable.readPackageInfo(rPkgList);
+	            // TODO: pwy:扫描本地包，对比数据库，不在本地数据库的包插入本地数据库
+	            
+	            // TODO：天骁检查一下这个逻辑是不是对的
+				// FIXME: 已检查，正确
+	            // 维护下载过的条目的软件包信息
+	            long now = System.currentTimeMillis();
+	            if (n > 0) {
+	                for (RecordPackageInfo pkg : rPkgList) {
+	                    // 找出文件名不为空且通知(时间超过了时间间隔或未记录通知时间)的记录删除
+	                    if (!TextUtils.isEmpty(pkg.file_name)) {
+	                        if (pkg.notify_time == 0) {
+	                            // 未记录通知时间且有文件名,走到这里应该是pkg没有了,删掉记录
+	                            mRecordPkgTable.deletePackageInfo(pkg);
+	                            rPkgList.remove(pkg);
+	                        } else if ((now - pkg.notify_time)/1000 > AppPushNotify.DAY_SECS) {
+	                            // 通知的时间到现在已超过xxx,可能安装可能忽略,应该删掉软件包并更新记录
+	                            File file = new File(getAppPath() + pkg.file_name);
+	                            if (file.exists()) {
+	                                file.delete();
+	                            }
+	                            pkg.file_name = null;
+	                            pkg.app_push = null;
+	                            mRecordPkgTable.updateDatabase(pkg);
+	                        }
+	                    }
+	                }
+	            }
+	        } catch (APIException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
             AppPushList list = queryAppPushList(ctx);
             LogWrapper.d(TAG, "list:" + list);
             if (list == null) {
@@ -306,7 +346,7 @@ public class AppService extends IntentService {
             if (app == null) {
                 return;
             }
-            download(ctx, app.getDownloadUrl(), app.getPackageName());
+            download(ctx, app);
         }
         
     }

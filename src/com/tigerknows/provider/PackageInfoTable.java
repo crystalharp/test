@@ -1,7 +1,11 @@
 package com.tigerknows.provider;
 
+import java.io.IOException;
 import java.util.List;
 
+import com.decarta.android.exception.APIException;
+import com.tigerknows.crypto.DataEncryptor;
+import com.tigerknows.model.AppPush;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.xobject.XMap;
 import com.tigerknows.util.ByteUtil;
@@ -28,6 +32,7 @@ public class PackageInfoTable {
     public static final String FILE_NAME = "_fname";
     public static final String NOTIFY_TIME = "_notify_time";
     public static final String INSTALLED = "_installed";
+    public static final String APPPUSH = "_app_push";
 
     //TODO:fix
     // DB NAME
@@ -43,7 +48,8 @@ public class PackageInfoTable {
             + PACKAGE_NAME + " TEXT PRIMARY KEY, "
             + FILE_NAME + " TEXT, "
             + NOTIFY_TIME + " INTEGER, "
-            + INSTALLED + " INTEGER )";
+            + INSTALLED + " INTEGER, "
+            + APPPUSH + " BLOB )";
 
     public Context mCtx;
 
@@ -90,7 +96,7 @@ public class PackageInfoTable {
         return mDb.isOpen();
     }
     
-    public int readPackageInfo(List<RecordPackageInfo> list){
+    public int readPackageInfo(List<RecordPackageInfo> list) throws APIException, IOException{
         int total = 0;
         Cursor c = mDb.query(TABLE_NAME, null, null, null, null, null, PACKAGE_NAME + " DESC");
         if (c != null) {
@@ -117,7 +123,7 @@ public class PackageInfoTable {
     }
     
 
-    public static RecordPackageInfo readFromCursor(Cursor c) {
+    public static RecordPackageInfo readFromCursor(Cursor c) throws APIException, IOException {
         RecordPackageInfo data = null;
         if (c != null) {
             if (c.getCount() > 0) {
@@ -125,19 +131,27 @@ public class PackageInfoTable {
                 String fname = c.getString(c.getColumnIndex(FILE_NAME));
                 int installed = c.getInt(c.getColumnIndex(INSTALLED));
                 long time = c.getLong(c.getColumnIndex(NOTIFY_TIME));
-                data = new RecordPackageInfo(pname, installed, time, fname);
+            	DataEncryptor dataEncryptor = DataEncryptor.getInstance();
+            	byte[] decrypted = c.getBlob(c.getColumnIndex(APPPUSH));
+            	dataEncryptor.decrypt(decrypted);
+            	XMap appPushXMap = (XMap)ByteUtil.byteToXObject(decrypted);
+                data = new RecordPackageInfo(pname, installed, time, fname, new AppPush(appPushXMap));
             }
         }
         return data;
     }
 
-    public boolean addPackageInfo(RecordPackageInfo p) {
+    public boolean addPackageInfo(RecordPackageInfo p) throws IOException, APIException {
         boolean isFailed = false;
         ContentValues values = new ContentValues();
         values.put(FILE_NAME, p.package_name);
         values.put(NOTIFY_TIME, p.notify_time);
         values.put(PACKAGE_NAME, p.package_name);
         values.put(INSTALLED, p.installed);
+        DataEncryptor dataEncryptor = DataEncryptor.getInstance();
+        byte[] encrypted = ByteUtil.xobjectToByte(p.app_push.toXMapForStorage());
+        dataEncryptor.encrypt(encrypted);
+        values.put(APPPUSH, encrypted);
         if (!isFailed) {
             long result = mDb.insert(TABLE_NAME, null, values);
             if (result == -1) {
@@ -154,12 +168,16 @@ public class PackageInfoTable {
         return count;
     }
 
-    public int updateDatabase(RecordPackageInfo p) {
+    public int updateDatabase(RecordPackageInfo p) throws IOException, APIException {
         int count = 0;
         ContentValues values = new ContentValues();
         values.put(FILE_NAME, p.file_name);
         values.put(INSTALLED, p.installed);
         values.put(NOTIFY_TIME, p.notify_time);
+        DataEncryptor dataEncryptor = DataEncryptor.getInstance();
+        byte[] encrypted = ByteUtil.xobjectToByte(p.app_push.toXMapForStorage());
+        dataEncryptor.encrypt(encrypted);
+        values.put(APPPUSH, encrypted);
         count = mDb.update(TABLE_NAME, values, "(" + PACKAGE_NAME + "=" + p.package_name + ")", null);
         return count;
     }
@@ -171,26 +189,28 @@ public class PackageInfoTable {
         public String file_name;
         public long notify_time;
         public int installed;
+        public AppPush app_push;
         
         // 下载完的package
-        public RecordPackageInfo(String pname, String fname) {
-            this(pname, 0, 0, fname);
+        public RecordPackageInfo(String pname, String fname, AppPush app_push) {
+            this(pname, 0, 0, fname, app_push);
         }
         
         // 扫描到的package
         public RecordPackageInfo(String pname) {
-            this(pname, 1, 0, null);
+            this(pname, 1, 0, null, null);
         }
         
-        public RecordPackageInfo(String pname, int installed, long notify_time) {
-            this(pname, installed, notify_time, null);
-        }
+//        public RecordPackageInfo(String pname, int installed, long notify_time) {
+//            this(pname, installed, notify_time, null, null);
+//        }
         
-        public RecordPackageInfo(String pname, int installed, long notify_time, String fname) {
+        public RecordPackageInfo(String pname, int installed, long notify_time, String fname, AppPush app_push) {
             this.package_name = pname;
             this.installed = installed;
             this.notify_time = notify_time;
             this.file_name = fname;
+            this.app_push = app_push;
         }
         
     }
