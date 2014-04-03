@@ -3,7 +3,6 @@ package com.tigerknows.service.download;
 
 import com.decarta.android.exception.APIException;
 import com.decarta.android.util.LogWrapper;
-import com.decarta.example.AppUtil;
 import com.tigerknows.TKConfig;
 import com.tigerknows.android.net.HttpManager;
 import com.tigerknows.model.AppPush;
@@ -114,10 +113,8 @@ public class AppService extends IntentService {
             	RecordPackageInfo p = new RecordPackageInfo(pname, tempFile.getName(), app);
 				sRecordPkgTable.addPackageInfo(p);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (APIException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
             LogWrapper.d(TAG, "download finished");
@@ -316,8 +313,31 @@ public class AppService extends IntentService {
             if (!TextUtils.isEmpty(tRange)) {
                 TKConfig.setPref(ctx, TKConfig.PREFS_APP_PUSH_T, tRange);
             }
-            //TODO:pwy: 需要找一个不在本地数据库中的优先级最高的包来进行下载
-            AppPush app = list.getList().get(0);
+            // 找一个不在本地数据库中的优先级最高的包来进行下载, appList已在服务器端排好序
+            List<AppPush> appList = list.getList();
+            List <RecordPackageInfo> rPkgList = new ArrayList<RecordPackageInfo>();
+        	try {
+                sRecordPkgTable.readPackageInfo(rPkgList);
+            } catch (APIException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            int n = appList.size();
+            AppPush app = null;
+            boolean found;
+            for (int i = 0; i < n; i++) {
+                app = appList.get(i);
+                found = false;
+                for (RecordPackageInfo pkg : rPkgList) {
+                    if (TextUtils.equals(pkg.package_name, app.getPackageName())) {
+                        found = true;
+                    }
+                }
+                if (found) {
+                    break;
+                }
+            }
             if (app == null) {
                 return;
             }
