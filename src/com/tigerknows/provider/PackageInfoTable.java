@@ -197,13 +197,10 @@ public class PackageInfoTable {
         }
         
         // 扫描到的package
-        public RecordPackageInfo(String pname) {
-            this(pname, 1, 0, null, null);
-        }
         
-//        public RecordPackageInfo(String pname, int installed, long notify_time) {
-//            this(pname, installed, notify_time, null, null);
-//        }
+        public RecordPackageInfo(String pname, int installed, long notify_time) {
+            this(pname, installed, notify_time, null, null);
+        }
         
         public RecordPackageInfo(String pname, int installed, long notify_time, String fname, AppPush app_push) {
             this.package_name = pname;

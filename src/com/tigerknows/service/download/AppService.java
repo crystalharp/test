@@ -68,7 +68,7 @@ public class AppService extends IntentService {
     
     private static ArrayList<String> sDownloadList = new ArrayList<String>();
     
-    private static PackageInfoTable mRecordPkgTable = null;
+    private static PackageInfoTable sRecordPkgTable = null;
    
     // 发现网络不是wifi的时候停止下载
     public static void stopDownload(Context ctx) {
@@ -112,7 +112,7 @@ public class AppService extends IntentService {
             try {
             	AppPush app = new AppPush(xmap);
             	RecordPackageInfo p = new RecordPackageInfo(pname, tempFile.getName(), app);
-				mRecordPkgTable.addPackageInfo(p);
+				sRecordPkgTable.addPackageInfo(p);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -254,8 +254,8 @@ public class AppService extends IntentService {
     public static void checkAndDown(Context ctx, int status) {
         if (status == 1) {
             synchronized(sDownloadList) {
-                if (mRecordPkgTable == null) {
-                    mRecordPkgTable = new PackageInfoTable(ctx);
+                if (sRecordPkgTable == null) {
+                    sRecordPkgTable = new PackageInfoTable(ctx);
                 }
             }
             Runnable r = new CheckDownRunnable(ctx);
@@ -295,20 +295,40 @@ public class AppService extends IntentService {
             List <RecordPackageInfo> rPkgList = new ArrayList<RecordPackageInfo>();
             int n = 0;
 			try {
-				n = mRecordPkgTable.readPackageInfo(rPkgList);
-	            // TODO: pwy:扫描本地包，对比数据库，不在本地数据库的包插入本地数据库
-	            
-	            // TODO：天骁检查一下这个逻辑是不是对的
-				// FIXME: 已检查，正确
-	            // 维护下载过的条目的软件包信息
+				n = sRecordPkgTable.readPackageInfo(rPkgList);
 	            long now = System.currentTimeMillis();
 	            if (n > 0) {
+	            	// 扫描本地包，对比数据库，不在本地数据库的包插入本地数据库
+	            	// TODO: pwy:是否可以优化一下？，另外可能需要sync加锁？
+	            	for (PackageInfo pI : pkgList){
+	            		boolean found = false;
+	            		for(RecordPackageInfo pkg : rPkgList){
+	            			if (TextUtils.equals(pI.packageName, pkg.package_name)){
+	            				pkg.installed = 1;
+	            				if(pkg.notify_time != 0){
+	            					// TODO: 将已通知且已安装的条目记录一下
+	            				}
+	            				sRecordPkgTable.updateDatabase(pkg);
+	            				found = true;
+	            				break;
+	            			}
+	            		}
+	            		if(found == false){
+	            			RecordPackageInfo p = new RecordPackageInfo(pI.packageName, 1, 0);
+	            			sRecordPkgTable.addPackageInfo(p);
+	            		}
+	            	}
+	            	// TODO: 将已通知且已安装的条目上传
+
+	            	// TODO：天骁检查一下这个逻辑是不是对的
+	            	// FIXME: 已检查，正确
+	            	// 维护下载过的条目的软件包信息
 	                for (RecordPackageInfo pkg : rPkgList) {
 	                    // 找出文件名不为空且通知(时间超过了时间间隔或未记录通知时间)的记录删除
 	                    if (!TextUtils.isEmpty(pkg.file_name)) {
 	                        if (pkg.notify_time == 0) {
 	                            // 未记录通知时间且有文件名,走到这里应该是pkg没有了,删掉记录
-	                            mRecordPkgTable.deletePackageInfo(pkg);
+	                            sRecordPkgTable.deletePackageInfo(pkg);
 	                            rPkgList.remove(pkg);
 	                        } else if ((now - pkg.notify_time)/1000 > AppPushNotify.DAY_SECS) {
 	                            // 通知的时间到现在已超过xxx,可能安装可能忽略,应该删掉软件包并更新记录
@@ -317,8 +337,7 @@ public class AppService extends IntentService {
 	                                file.delete();
 	                            }
 	                            pkg.file_name = null;
-	                            pkg.app_push = null;
-	                            mRecordPkgTable.updateDatabase(pkg);
+	                            sRecordPkgTable.updateDatabase(pkg);
 	                        }
 	                    }
 	                }
