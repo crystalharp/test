@@ -290,63 +290,19 @@ public class AppService extends IntentService {
         @Override
         public void run() {
             LogWrapper.d(TAG, "checking");
-            PackageManager manager = ctx.getPackageManager();
-            List <PackageInfo> pkgList = manager.getInstalledPackages(0);
-            List <RecordPackageInfo> rPkgList = new ArrayList<RecordPackageInfo>();
-            int n = 0;
-			try {
-				n = sRecordPkgTable.readPackageInfo(rPkgList);
-	            long now = System.currentTimeMillis();
-	            if (n > 0) {
-	            	// 扫描本地包，对比数据库，不在本地数据库的包插入本地数据库
-	            	// TODO: pwy:是否可以优化一下？，另外可能需要sync加锁？
-	            	for (PackageInfo pI : pkgList){
-	            		boolean found = false;
-	            		for(RecordPackageInfo pkg : rPkgList){
-	            			if (TextUtils.equals(pI.packageName, pkg.package_name)){
-	            				pkg.installed = 1;
-	            				if(pkg.notify_time != 0){
-	            					// TODO: 将已通知且已安装的条目记录一下
-	            				}
-	            				sRecordPkgTable.updateDatabase(pkg);
-	            				found = true;
-	            				break;
-	            			}
-	            		}
-	            		if(found == false){
-	            			RecordPackageInfo p = new RecordPackageInfo(pI.packageName, 1, 0);
-	            			sRecordPkgTable.addPackageInfo(p);
-	            		}
-	            	}
-	            	// TODO: 将已通知且已安装的条目上传
 
-	            	// TODO：天骁检查一下这个逻辑是不是对的
-	            	// FIXME: 已检查，正确
-	            	// 维护下载过的条目的软件包信息
-	                for (RecordPackageInfo pkg : rPkgList) {
-	                    // 找出文件名不为空且通知(时间超过了时间间隔或未记录通知时间)的记录删除
-	                    if (!TextUtils.isEmpty(pkg.file_name)) {
-	                        if (pkg.notify_time == 0) {
-	                            // 未记录通知时间且有文件名,走到这里应该是pkg没有了,删掉记录
-	                            sRecordPkgTable.deletePackageInfo(pkg);
-	                            rPkgList.remove(pkg);
-	                        } else if ((now - pkg.notify_time)/1000 > AppPushNotify.DAY_SECS) {
-	                            // 通知的时间到现在已超过xxx,可能安装可能忽略,应该删掉软件包并更新记录
-	                            File file = new File(getAppPath() + pkg.file_name);
-	                            if (file.exists()) {
-	                                file.delete();
-	                            }
-	                            pkg.file_name = null;
-	                            sRecordPkgTable.updateDatabase(pkg);
-	                        }
-	                    }
-	                }
-	            }
+			try {
+            	// 扫描本地包，对比数据库，不在本地数据库的包插入本地数据库
+				checkLocalInstalled();
+				
+				// 找出文件名不为空且通知(时间超过了时间间隔或未记录通知时间)的记录删除
+				resetUserDeleted();
+				
+                // 找出文件名不为空且已通知(但时间超过了时间间隔)的记录删除
+				resetIgnoredNotify();
 	        } catch (APIException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
@@ -368,10 +324,69 @@ public class AppService extends IntentService {
             download(ctx, app);
         }
         
+        private void checkLocalInstalled() throws APIException, IOException{
+            PackageManager manager = ctx.getPackageManager();
+            List <PackageInfo> pkgList = manager.getInstalledPackages(0);
+            List <RecordPackageInfo> rPkgList = new ArrayList<RecordPackageInfo>();
+        	int n = sRecordPkgTable.readPackageInfo(rPkgList);
+            if (n > 0) {
+            	// TODO: pwy:是否可以优化一下？，另外可能需要sync加锁？
+            	for (PackageInfo pI : pkgList){
+            		boolean found = false;
+            		for(RecordPackageInfo pkg : rPkgList){
+            			if (TextUtils.equals(pI.packageName, pkg.package_name)){
+            				pkg.installed = 1;
+            				if(pkg.notify_time != 0){
+            					// TODO: 将已通知且已安装的条目记录一下
+            				}
+            				sRecordPkgTable.updateDatabase(pkg);
+            				found = true;
+            				break;
+            			}
+            		}
+            		if(found == false){
+            			RecordPackageInfo p = new RecordPackageInfo(pI.packageName, 1, 0);
+            			sRecordPkgTable.addPackageInfo(p);
+            		}
+            	}
+            	// TODO: 将已通知且已安装的条目上传
+            }
+        }
+        
+        private void resetUserDeleted() throws APIException, IOException{
+            List <RecordPackageInfo> rPkgList = new ArrayList<RecordPackageInfo>();
+            int n = sRecordPkgTable.readPackageInfo(rPkgList, -1, 0);
+            long now = System.currentTimeMillis();
+            if (n > 0) {
+                for (RecordPackageInfo pkg : rPkgList) {
+                    if (!TextUtils.isEmpty(pkg.file_name)) {
+                        sRecordPkgTable.deletePackageInfo(pkg);
+                    }
+                }
+            }            	
+        }
+            
+        private void resetIgnoredNotify() throws APIException, IOException{
+            List <RecordPackageInfo> rPkgList = new ArrayList<RecordPackageInfo>();
+            int n = sRecordPkgTable.readPackageInfo(rPkgList, -1, 1);
+            long now = System.currentTimeMillis();
+            if (n > 0) {
+
+                for (RecordPackageInfo pkg : rPkgList) {
+                    if (!TextUtils.isEmpty(pkg.file_name)) {
+                    	if ((now - pkg.notify_time)/1000 > AppPushNotify.DAY_SECS) {
+                            File file = new File(getAppPath() + pkg.file_name);
+                            if (file.exists()) {
+                                file.delete();
+                            }
+                            pkg.file_name = null;
+                            sRecordPkgTable.updateDatabase(pkg);
+                        }
+                    }
+                }
+            }        	
+        }
+        
     }
-    
-
-    
-
     
 }

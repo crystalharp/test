@@ -77,7 +77,6 @@ public class AppPushNotify {
 		}
 		
 		// TODO: 添加该包名到历史通知应用列表
-		// TODO: 监听点击事件
 		
 		// 先将T翻倍，然后待监听到点击事件之后再除以4即可
 		increaseTRange(context);

@@ -97,19 +97,44 @@ public class PackageInfoTable {
     }
     
     public int readPackageInfo(List<RecordPackageInfo> list) throws APIException, IOException{
+    	return readPackageInfo(list, null);
+    }
+    
+    /**
+     * 
+     * @param list
+     * @param installValue, -1 if select all
+     * @param notifyValue, -1 if select all
+     */
+    public int readPackageInfo(List<RecordPackageInfo> list, int installValue, int notifyValue) throws APIException, IOException{
+    	StringBuilder sb = new StringBuilder("");
+    	if(installValue >= 0){
+    		sb.append(" " + INSTALLED + "=" + installValue);
+    	}
+    	if(notifyValue >= 0){
+    		if(sb.toString().length() != 0){
+    			sb.append(" and");
+    		}
+    		sb.append(" " + NOTIFY_TIME + (notifyValue == 1 ? "<>" : "=") + "0");
+    	}
+    	if(sb.toString().length() == 0){
+    		return readPackageInfo(list, null);
+    	}else{
+    		return readPackageInfo(list, sb.toString());
+    	}
+    }
+    
+    private int readPackageInfo(List<RecordPackageInfo> list, String selection) throws APIException, IOException{
         int total = 0;
-        Cursor c = mDb.query(TABLE_NAME, null, null, null, null, null, PACKAGE_NAME + " DESC");
+        Cursor c = mDb.query(TABLE_NAME, null, selection, null, null, null, PACKAGE_NAME + " DESC");
+        list.clear();
         if (c != null) {
             total = c.getCount();
             if (total > 0) {
-                RecordPackageInfo data;
                 c.moveToFirst();
                 for(int i = 0; i<total; i++) {
-                    data = readFromCursor(c);
+                	RecordPackageInfo data = readFromCursor(c);
                     if (data != null) {
-                        if (list.contains(data)) {
-                            list.remove(data);
-                        }
                         list.add(data);
                     }
                     c.moveToNext();
@@ -117,8 +142,6 @@ public class PackageInfoTable {
             }
             c.close();
         }
-        
-        
         return total;
     }
     
