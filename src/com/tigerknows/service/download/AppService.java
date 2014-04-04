@@ -16,6 +16,8 @@ import com.tigerknows.provider.PackageInfoTable;
 import com.tigerknows.provider.PackageInfoTable.RecordPackageInfo;
 import com.tigerknows.radar.AppPushNotify;
 import com.tigerknows.util.HttpUtils;
+import com.weibo.sdk.android.WeiboParameters;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
@@ -109,13 +111,14 @@ public class AppService extends TKService {
                     return;
                 }
                 url = app.getDownloadUrl();
-                if (url == null) {
+                String imgUrl = app.getIcon();
+                if (url == null || imgUrl == null) {
                     return;
                 }
 
                 File tempFile = null;
                 do {
-                    tempFile = downFile(url);
+                    tempFile = downFile(ctx, url, imgUrl);
                     if (!stop) {
                         try {
                             Thread.sleep(RETRY_TIME);
@@ -153,7 +156,7 @@ public class AppService extends TKService {
     }
     
     // 下载更新文件，成功返回File对象，否则返回null
-    private File downFile(String url) {
+    private File downFile(Context context, String url, String imageUrl) {
         try {
             if (BaseQueryTest.UnallowedAccessNetwork) {
                 Thread.sleep(5000);
@@ -208,6 +211,15 @@ public class AppService extends TKService {
                     bos.close();
                     is.close();
                     bis.close();
+                    
+                    File imgFile = createFileByUrl(url);
+                    HttpClient httpClient = HttpManager.getNewHttpClient();
+                    byte[] data = HttpManager.openUrl(context, httpClient, imageUrl, "GET", new WeiboParameters());
+                    File file=new File(getAppPath(), imgFile.getName());
+                    FileOutputStream out=new FileOutputStream(file);
+                    out.write(data);
+                    out.close();
+                    
                     if (!stop) {
                         return tempFile;
                     } else {
