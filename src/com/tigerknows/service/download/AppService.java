@@ -337,14 +337,15 @@ public class AppService extends TKService {
         AppPush app = null;
         boolean found;
         for (int i = 0; i < n; i++) {
-            app = appList.get(i);
+            AppPush tmpApp = appList.get(i);
             found = false;
             for (RecordPackageInfo pkg : rPkgList) {
                 if (TextUtils.equals(pkg.package_name, app.getPackageName())) {
                     found = true;
                 }
             }
-            if (found) {
+            if (!found) {
+                app = tmpApp;
                 break;
             }
         }
