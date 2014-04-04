@@ -32,7 +32,7 @@ import com.tigerknows.service.download.ShowAppReceiver;
 
 public class AppPushNotify {
 	
-	public static final int DAY_SECS = TKConfig.UseFastAppPush ? 60 : 86400;
+	public static final int DAY_SECS = TKConfig.UseFastAppPush ? 3 : 86400;
 	
 	private static final String DEFAULT_T_RANGE = String.valueOf(7 * DAY_SECS);
     public static int checkNotification(Context context){
@@ -42,11 +42,12 @@ public class AppPushNotify {
     	String tempStr = TKConfig.getPref(context, TKConfig.PREFS_APP_PUSH_NOTIFY, "");
     	int lastNotify = (int)(System.currentTimeMillis()/1000 - 5 * DAY_SECS);
     	if(!TextUtils.isEmpty(tempStr)){
-    		tempLongTime = Long.parseLong(tempStr);
-    		lastNotify = (int)(tempLongTime / 1000);
+    		lastNotify = Integer.parseInt(tempStr);
+    	}else{
+    		TKConfig.setPref(context, TKConfig.PREFS_APP_PUSH_NOTIFY, String.valueOf(lastNotify));
     	}
 
-    	int t = Integer.parseInt(TKConfig.getPref(context, TKConfig.PREFS_APP_PUSH_T, String.valueOf(DAY_SECS * 7)));
+    	int t = Integer.parseInt(TKConfig.getPref(context, TKConfig.PREFS_APP_PUSH_T, DEFAULT_T_RANGE));
     	if(t > 14 * DAY_SECS){
     		t = 14 * DAY_SECS;
     	}
@@ -67,7 +68,6 @@ public class AppPushNotify {
 			RecordPackageInfo pkg = pkgList.get(0);
 			
 	    	File f = new File(AppService.getAppPath() + pkg.file_name);
-	    	LogWrapper.d("Trap", "Step 1:" + AppService.getAppPath() + pkg.file_name);
 	    	LogWrapper.d("Trap", "Step 1:" + f.getAbsolutePath());
 	    	
 	    	if(f.exists() == false){
@@ -81,16 +81,16 @@ public class AppPushNotify {
 	    	if(pI == null){
 	    		return 1;
 	    	}			
-	    	LogWrapper.d("Trap", "Step 3: " + TKConfig.getPref(context, TKConfig.PREFS_APP_PUSH_T));
+	    	LogWrapper.d("Trap", "Step 3: " + (t - (now_sec - lastNotify)) );
 	    	int hour = now.get(Calendar.HOUR_OF_DAY);
-			if(now_sec - lastNotify < t && hour >= 9 && hour <= 20){
+			if(now_sec - lastNotify > t && hour >= 9 && hour <= 20){
 				// 先将T翻倍，然后待监听到点击事件之后再除以4即可
+				LogWrapper.d("Trap", "Step 4:" + TKConfig.getPref(context, TKConfig.PREFS_APP_PUSH_T, DEFAULT_T_RANGE));
 				increaseTRange(context);
-		    	LogWrapper.d("Trap", "Step 4:" + TKConfig.getPref(context, TKConfig.PREFS_APP_PUSH_T));
 				showNotification(context, pkg, f);
 				TKConfig.setPref(context, TKConfig.PREFS_APP_PUSH_NOTIFY, String.valueOf(now_sec));
 				pkg.notify_time = System.currentTimeMillis();
-				piTable.updateDatabase(pkg);
+				//piTable.updateDatabase(pkg);
 				return 0;
 			}else{
 				return 2;

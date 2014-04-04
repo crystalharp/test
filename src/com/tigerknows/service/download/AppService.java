@@ -73,12 +73,15 @@ public class AppService extends TKService {
                 String url = null;
                 try {
                     // 扫描本地包，对比数据库，不在本地数据库的包插入本地数据库
+                	LogWrapper.d(TAG, "checkLocalInstalled");
                     checkLocalInstalled(ctx);
 
                     // 找出文件名不为空且通知(时间超过了时间间隔或未记录通知时间)的记录删除
+                    LogWrapper.d(TAG, "checkUserDeleted");
                     resetUserDeleted();
 
                     // 找出文件名不为空且已通知(但时间超过了时间间隔)的记录删除
+                    LogWrapper.d(TAG, "resetIgnoredNotify");
                     resetIgnoredNotify();
                     
                     AppPushList list = queryAppPushList(ctx);
@@ -94,6 +97,7 @@ public class AppService extends TKService {
 
                     // 找一个不在本地数据库中的优先级最高的包来进行下载, appList已在服务器端排好序
                     List<AppPush> appList = list.getList();
+                    LogWrapper.d(TAG, "selectApp");
                     app = selectApp(appList);
                 } catch (APIException e) {
                     e.printStackTrace();
@@ -131,7 +135,7 @@ public class AppService extends TKService {
                     }
                     LogWrapper.d(TAG, "download finished");
                 }
-            }}).run();
+            }}).start();
 
     }
     
@@ -269,20 +273,27 @@ public class AppService extends TKService {
 
     private void checkLocalInstalled(Context ctx) throws APIException, IOException{
         PackageManager manager = ctx.getPackageManager();
+        LogWrapper.d(TAG, "是卡在这步呢？");
         List <PackageInfo> pkgList = manager.getInstalledPackages(0);
+        LogWrapper.d(TAG, "还是卡在这步呢？");
         List <RecordPackageInfo> rPkgList = new ArrayList<RecordPackageInfo>();
+        LogWrapper.d(TAG, "还是这步呢？");
         int n = sRecordPkgTable.readPackageInfo(rPkgList);
+        LogWrapper.d(TAG, "还是这个循环呢？");
         if (n > 0) {
             // TODO: pwy:是否可以优化一下？，另外可能需要sync加锁？
             for (PackageInfo pI : pkgList){
                 boolean found = false;
                 for(RecordPackageInfo pkg : rPkgList){
                     if (TextUtils.equals(pI.packageName, pkg.package_name)){
-                        pkg.installed = 1;
+                    	if(pkg.installed != 1){
+                    		// 尝试减少更新数据库的次数
+                    		pkg.installed = 1;
+                    		sRecordPkgTable.updateDatabase(pkg);
+                    	}
                         if(pkg.notify_time != 0){
                             // TODO: 将已通知且已安装的条目记录一下
                         }
-                        sRecordPkgTable.updateDatabase(pkg);
                         found = true;
                         break;
                     }
@@ -340,7 +351,7 @@ public class AppService extends TKService {
             AppPush tmpApp = appList.get(i);
             found = false;
             for (RecordPackageInfo pkg : rPkgList) {
-                if (TextUtils.equals(pkg.package_name, app.getPackageName())) {
+                if (TextUtils.equals(pkg.package_name, tmpApp.getPackageName())) {
                     found = true;
                 }
             }

@@ -1,6 +1,7 @@
 package com.tigerknows.service.download;
 
 import com.decarta.android.util.LogWrapper;
+import com.tigerknows.radar.AppPushNotify;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -17,7 +18,8 @@ public class ShowAppReceiver extends BroadcastReceiver{
 
         LogWrapper.d(TAG, "onReceive() " + intent);
         if (intent != null && intent.getData() != null) {
-            // TODO： fengtianxiao 更新一个pref 
+        	LogWrapper.d(TAG, "onReceived() " + intent);
+            AppPushNotify.decreaseTRange(context);
             Intent installApp = new Intent(Intent.ACTION_VIEW);
             installApp.setAction(android.content.Intent.ACTION_VIEW);
             installApp.setDataAndType(intent.getData(), "application/vnd.android.package-archive");

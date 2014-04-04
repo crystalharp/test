@@ -6,7 +6,6 @@ import java.util.List;
 import com.decarta.android.exception.APIException;
 import com.tigerknows.crypto.DataEncryptor;
 import com.tigerknows.model.AppPush;
-import com.tigerknows.model.POI;
 import com.tigerknows.model.xobject.XMap;
 import com.tigerknows.util.ByteUtil;
 
@@ -16,7 +15,6 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.text.TextUtils;
 
 
 public class PackageInfoTable {

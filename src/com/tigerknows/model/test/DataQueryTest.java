@@ -1116,7 +1116,7 @@ public class DataQueryTest {
             list.add(launchAppPush(context, i));
         }
         data.put(AppPushList.FIELD_LIST, list);
-        data.put(AppPushList.FIELD_TIME_INTERVAL, "3");
+        data.put(AppPushList.FIELD_TIME_INTERVAL, "");
         return data;
     }
     
@@ -1129,8 +1129,8 @@ public class DataQueryTest {
         		"始终做最绿色，最安全，用户最放心的地图"
         };
         data.put(AppPush.FIELD_NAME, (index & 1) == 1  ? "老虎地图243" : "老虎地图581");
-        data.put(AppPush.FIELD_PACKAGE_NAME, "com.tigerknows");
-        data.put(AppPush.FIELD_ICON, NoticeQueryTest.ICON_URL + (index-1) + ".png");
+        data.put(AppPush.FIELD_PACKAGE_NAME, "com.tigerknows" + index);
+        data.put(AppPush.FIELD_ICON, NoticeQueryTest.ICON_URL + (index+1) + ".png");
         data.put(AppPush.FIELD_DESCRIPTION, desc[index % 5]);
         data.put(AppPush.FIELD_PRIOR, index + "");
         data.put(AppPush.FIELD_DOWNLOAD_URL, (index & 1) == 1
