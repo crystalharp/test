@@ -88,6 +88,7 @@ public class PackageInfoTable {
     }
 
     public void close() {
+    	mDb.close();
         mDbHelper.close();
     }
     
@@ -170,7 +171,7 @@ public class PackageInfoTable {
     public boolean addPackageInfo(RecordPackageInfo p) throws IOException, APIException {
         boolean isFailed = false;
         ContentValues values = new ContentValues();
-        values.put(FILE_NAME, p.package_name);
+        values.put(FILE_NAME, p.file_name);
         values.put(NOTIFY_TIME, p.notify_time);
         values.put(PACKAGE_NAME, p.package_name);
         values.put(INSTALLED, p.installed);

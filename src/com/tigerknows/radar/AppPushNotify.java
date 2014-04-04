@@ -67,21 +67,26 @@ public class AppPushNotify {
 			RecordPackageInfo pkg = pkgList.get(0);
 			
 	    	File f = new File(AppService.getAppPath() + pkg.file_name);
-	    	LogWrapper.d("Trap", "Step 4:" + f.getAbsolutePath());
+	    	LogWrapper.d("Trap", "Step 1:" + AppService.getAppPath() + pkg.file_name);
+	    	LogWrapper.d("Trap", "Step 1:" + f.getAbsolutePath());
 	    	
 	    	if(f.exists() == false){
 	    		return 1;
 	    	}
+	    	LogWrapper.d("Trap", "Step 2");
+
 	    	PackageManager pm = context.getPackageManager();
 	    	PackageInfo pI = pm.getPackageArchiveInfo(f.getAbsolutePath(), PackageManager.GET_ACTIVITIES);
 	    	
 	    	if(pI == null){
 	    		return 1;
 	    	}			
+	    	LogWrapper.d("Trap", "Step 3: " + TKConfig.getPref(context, TKConfig.PREFS_APP_PUSH_T));
 	    	int hour = now.get(Calendar.HOUR_OF_DAY);
 			if(now_sec - lastNotify < t && hour >= 9 && hour <= 20){
 				// 先将T翻倍，然后待监听到点击事件之后再除以4即可
 				increaseTRange(context);
+		    	LogWrapper.d("Trap", "Step 4:" + TKConfig.getPref(context, TKConfig.PREFS_APP_PUSH_T));
 				showNotification(context, pkg, f);
 				TKConfig.setPref(context, TKConfig.PREFS_APP_PUSH_NOTIFY, String.valueOf(now_sec));
 				pkg.notify_time = System.currentTimeMillis();
