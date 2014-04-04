@@ -510,6 +510,8 @@ public class BaseQueryTest {
         layout.addView(closeSubwaymapDataCheckChb);
         final CheckBox useSunCompassChb = new CheckBox(activity);
         layout.addView(useSunCompassChb);
+        final CheckBox fastAppPushTextChb = new CheckBox(activity);
+        layout.addView(fastAppPushTextChb);
         
         // TODO: add new VIEW OF test options here before this comment 
         
@@ -883,6 +885,16 @@ public class BaseQueryTest {
         	@Override
 			public void onClick(View v) {
 				TKConfig.UseSunCompassCheck = useSunCompassChb.isChecked();
+			}
+		});
+        
+        fastAppPushTextChb.setChecked(TKConfig.UseFastAppPush);
+        fastAppPushTextChb.setText("let 1min be a day in app push");
+        fastAppPushTextChb.setOnClickListener(new OnClickListener() {
+
+        	@Override
+			public void onClick(View v) {
+				TKConfig.UseFastAppPush = fastAppPushTextChb.isChecked();
 			}
 		});
         

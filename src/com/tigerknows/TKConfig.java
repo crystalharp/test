@@ -900,7 +900,12 @@ public class TKConfig {
      * 是否使用太阳指南针的有效性检测
      */
     public static boolean UseSunCompassCheck = false;
-
+    
+    /**
+     * 是否对应用推荐进行快速测试
+     */
+    public static boolean UseFastAppPush = false;
+    
     /**
      * 初始化ClientUid、共用的网络请求参数（imsi、imsi、mcc、mnc）
      * @param context

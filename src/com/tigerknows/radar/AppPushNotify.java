@@ -32,7 +32,7 @@ import com.tigerknows.service.download.ShowAppReceiver;
 
 public class AppPushNotify {
 	
-	public static final int DAY_SECS = 86400;
+	public static final int DAY_SECS = TKConfig.UseFastAppPush ? 60 : 86400;
 	
 	private static final String DEFAULT_T_RANGE = String.valueOf(7 * DAY_SECS);
     public static int checkNotification(Context context){
@@ -82,7 +82,7 @@ public class AppPushNotify {
 			if(now_sec - lastNotify < t && hour >= 9 && hour <= 20){
 				// 先将T翻倍，然后待监听到点击事件之后再除以4即可
 				increaseTRange(context);
-				showNotification(context, pkg, f, pI);
+				showNotification(context, pkg, f);
 				TKConfig.setPref(context, TKConfig.PREFS_APP_PUSH_NOTIFY, String.valueOf(now_sec));
 				pkg.notify_time = System.currentTimeMillis();
 				piTable.updateDatabase(pkg);
@@ -99,11 +99,10 @@ public class AppPushNotify {
 		}
     }	
     
-	public static void showNotification(Context context, RecordPackageInfo pkg, File f, PackageInfo pI){
+	public static void showNotification(Context context, RecordPackageInfo pkg, File f){
 		
 		
-		PackageManager pm = context.getPackageManager();
-		String tickerText = pm.getApplicationLabel(pI.applicationInfo).toString();
+		AppPush app = pkg.app_push;
 
         Intent intent = new Intent(ShowAppReceiver.ACTION);
         intent.setData(Uri.fromFile(f));
@@ -111,7 +110,7 @@ public class AppPushNotify {
 	    NotificationManager nm = (NotificationManager)context.getSystemService(android.content.Context.NOTIFICATION_SERVICE);
 	    Notification notification = new Notification();
         notification.icon = R.drawable.ic_releasetorefresh;
-        notification.tickerText = tickerText;
+        notification.tickerText = app.getDescription();
         notification.when = System.currentTimeMillis();
         notification.flags = Notification.FLAG_AUTO_CANCEL;
 
@@ -125,8 +124,8 @@ public class AppPushNotify {
             remoteViews.setTextViewText(R.id.control_btn, context.getString(R.string.install));
         }
         int id = "AppPush".hashCode();
-        remoteViews.setTextViewText(R.id.name_txv, tickerText);
-        remoteViews.setTextViewText(R.id.process_txv, context.getString(R.string.download_complete_and_install));
+        remoteViews.setTextViewText(R.id.name_txv, app.getName());
+        remoteViews.setTextViewText(R.id.process_txv, app.getDescription());
         Drawable icon = com.tigerknows.util.Utility.getUninstallAPKIcon(context, f.getAbsolutePath());
         remoteViews.setImageViewBitmap(R.id.icon_imv, ((BitmapDrawable)icon).getBitmap());
         notification.contentView = remoteViews;
