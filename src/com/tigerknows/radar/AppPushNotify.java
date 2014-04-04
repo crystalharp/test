@@ -40,10 +40,11 @@ public class AppPushNotify {
     	long tempLongTime;
     	
     	String tempStr = TKConfig.getPref(context, TKConfig.PREFS_APP_PUSH_NOTIFY, "");
-    	int lastNotify = (int)(System.currentTimeMillis()/1000 - 5 * DAY_SECS);
+    	int lastNotify = (int)(System.currentTimeMillis()/1000);
     	if(!TextUtils.isEmpty(tempStr)){
     		lastNotify = Integer.parseInt(tempStr);
     	}else{
+    		// 首次安装软件之后，记录当前时刻；于是首次弹出通知的时刻必须距首次安装（网络触发）的T时间以上
     		TKConfig.setPref(context, TKConfig.PREFS_APP_PUSH_NOTIFY, String.valueOf(lastNotify));
     	}
 

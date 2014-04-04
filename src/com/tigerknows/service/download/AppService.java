@@ -273,13 +273,9 @@ public class AppService extends TKService {
 
     private void checkLocalInstalled(Context ctx) throws APIException, IOException{
         PackageManager manager = ctx.getPackageManager();
-        LogWrapper.d(TAG, "是卡在这步呢？");
         List <PackageInfo> pkgList = manager.getInstalledPackages(0);
-        LogWrapper.d(TAG, "还是卡在这步呢？");
         List <RecordPackageInfo> rPkgList = new ArrayList<RecordPackageInfo>();
-        LogWrapper.d(TAG, "还是这步呢？");
         int n = sRecordPkgTable.readPackageInfo(rPkgList);
-        LogWrapper.d(TAG, "还是这个循环呢？");
         if (n > 0) {
             // TODO: pwy:是否可以优化一下？，另外可能需要sync加锁？
             for (PackageInfo pI : pkgList){
