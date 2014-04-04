@@ -5,10 +5,12 @@
 package com.tigerknows.service;
 
 import com.decarta.android.util.LogWrapper;
+import com.tigerknows.TKConfig;
 import com.tigerknows.android.app.TKService;
 import com.tigerknows.android.location.TKLocationListener;
 import com.tigerknows.android.location.TKLocationManager;
 import com.tigerknows.common.LocationUpload;
+import com.tigerknows.model.BootstrapModel;
 import com.tigerknows.model.LocationQuery;
 import com.tigerknows.model.LocationQuery.LocationParameter;
 import com.tigerknows.util.Utility;
@@ -88,6 +90,8 @@ public class CollectService extends TKService {
     
     private boolean mAddGpsStatusListener = false;
     
+    private static boolean sCanListenerGps = true;
+    
     @Override
     public void onCreate() {
         LogWrapper.d(TAG, "onCreate");
@@ -135,13 +139,7 @@ public class CollectService extends TKService {
                     // 定位启动
                     case GpsStatus.GPS_EVENT_STARTED:
                         LogWrapper.i(TAG, "GPS_EVENT_STARTED");
-                        synchronized (mTKLocationManager) {
-                            if (mTKLocationManagerOnCreate == false) {
-                                mTKLocationManager.onCreate(true, false, false);
-                                mTKLocationManager.onResume(mLocationListener, true, false, false);
-                            }
-                            mTKLocationManagerOnCreate = true;
-                        }
+                        resumeLocationManager();
                         break;
 
                     // 定位结束
@@ -169,10 +167,11 @@ public class CollectService extends TKService {
                             boolean enabled = intent.getBooleanExtra((String)extraGpsEnabled.get(null), false);
                             LogWrapper.d(TAG, "enabled:"+enabled);
                             if (enabled) {
-                                addGpsStatusListener();
+//                                addGpsStatusListener();
+//                                resumeLocationManager();
                             } else {
-                                removeGpsStatusListener();
-                                pauseLocationManager();
+//                                removeGpsStatusListener();
+//                                pauseLocationManager();
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -185,9 +184,9 @@ public class CollectService extends TKService {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+//        if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             addGpsStatusListener();
-        }
+//        }
         
         new Thread(new Runnable() {
             
@@ -199,19 +198,16 @@ public class CollectService extends TKService {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    mLocationQuery.startScanWifi();
                     
                     checkLocationParameter();
                     
                     // 若当前应用是系统桌面则撤消对GPS的监听（此判断是因为高德地图（或类似应用）也与我们做相同的事情，导致死锁最后都不撤消对GPS的监听）
-                    if (mAddGpsStatusListener == false) {
-                        return;
-                    }
-                    boolean inAndroidHomeApp = inAndroidHomeApp();
-                    LogWrapper.d(TAG, "inAndroidHomeApp="+inAndroidHomeApp);
-                    if (inAndroidHomeApp) {
-                        removeGpsStatusListener();
-                        pauseLocationManager();
+                    if (mTKLocationManagerOnCreate) {
+                        boolean inAndroidHomeApp = inAndroidHomeApp();
+                        LogWrapper.d(TAG, "inAndroidHomeApp="+inAndroidHomeApp);
+                        if (inAndroidHomeApp) {
+                            pauseLocationManager();
+                        }
                     }
                     
                 }
@@ -221,6 +217,7 @@ public class CollectService extends TKService {
     }
     
     private void addGpsStatusListener() {
+        LogWrapper.d(TAG, "addGpsStatusListener");
         synchronized (mLocationManager) {
             if (mAddGpsStatusListener == false) {
                 mLocationManager.addGpsStatusListener(mGpsStatusListener);
@@ -230,6 +227,7 @@ public class CollectService extends TKService {
     }
     
     private void removeGpsStatusListener() {
+        LogWrapper.d(TAG, "removeGpsStatusListener");
         synchronized (mLocationManager) {
             if (mAddGpsStatusListener) {
                 mLocationManager.removeGpsStatusListener(mGpsStatusListener);
@@ -242,7 +240,6 @@ public class CollectService extends TKService {
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent != null) {
             if (intent.getBooleanExtra(EXTRA_PAUSE_LOCATION_MANAGER, false)) {
-                LogWrapper.d(TAG, "onStartCommand:pauseLocationManager");
                 pauseLocationManager();
             }
         }
@@ -250,15 +247,40 @@ public class CollectService extends TKService {
     }
     
     public static void pauseLocationManager(Context context) {
+        LogWrapper.d(TAG, "static pauseLocationManager");
+        sCanListenerGps = false;
         Intent service = new Intent(context, CollectService.class);
         service.putExtra(EXTRA_PAUSE_LOCATION_MANAGER, true);
         context.startService(service);
+    }
+    
+    public static void resumeLocationManager(Context context) {
+        LogWrapper.d(TAG, "static resumeLocationManager");
+        sCanListenerGps = true;
+    }
+    
+    private void resumeLocationManager() {
+        LogWrapper.d(TAG, "resumeLocationManager");
+        if (sCanListenerGps == false) {
+            return;
+        }
+        if (!TKConfig.isSwitch(BootstrapModel.FIELD_COLLECT_GPS_INFO)) {
+            return;
+        }
+        synchronized (mTKLocationManager) {
+            if (mTKLocationManagerOnCreate == false) {
+                mTKLocationManager.onCreate(true, false, false);
+                mTKLocationManager.onResume(mLocationListener, true, false, false);
+            }
+            mTKLocationManagerOnCreate = true;
+        }
     }
 
     /**
      * 撤消对GPS定位的监听
      */
     private void pauseLocationManager() {
+        LogWrapper.d(TAG, "pauseLocationManager");
         synchronized (mTKLocationManager) {
             if (mTKLocationManagerOnCreate) {
                 mTKLocationManager.onPause(mLocationListener, true, false, false);
@@ -315,27 +337,30 @@ public class CollectService extends TKService {
      * 遍历缓存定位列表，记录当前网络基站、邻近基站、WIFI列表信息
      */
     private void checkLocationParameter() {
-        synchronized (this) {
-            LocationParameter locationParameter = mLocationQuery.makeLocationParameter();
-            
-            if (Utility.mccMncLacCidValid(locationParameter.mcc,
-                                          locationParameter.mnc,
-                                          locationParameter.tkCellLocation.lac,
-                                          locationParameter.tkCellLocation.cid) == false &&
-                   (locationParameter.wifiList == null ||
-                       locationParameter.wifiList.size() == 0)) {
-                return;
-            }
-    
-            Location location = LocationQuery.queryCache(locationParameter, mLocationCache, false);
-            
-            mCheckTime++;
-            if (location == null) {
-                mRecordTime++;
-                mLocationUpload.record(mLocation, locationParameter);
-                mLocationCache.put(locationParameter, mLocation);
-            }
-            LogWrapper.i(TAG, "checkLocationParameter() mCheckTime:"+ mCheckTime + ", mRecordTime:"+mRecordTime);
+        if (!TKConfig.isSwitch(BootstrapModel.FIELD_COLLECT_NETWORK_INFO)) {
+            return;
         }
+        mLocationQuery.startScanWifi();
+        
+        LocationParameter locationParameter = mLocationQuery.makeLocationParameter();
+        
+        if (Utility.mccMncLacCidValid(locationParameter.mcc,
+                                      locationParameter.mnc,
+                                      locationParameter.tkCellLocation.lac,
+                                      locationParameter.tkCellLocation.cid) == false &&
+               (locationParameter.wifiList == null ||
+                   locationParameter.wifiList.size() == 0)) {
+            return;
+        }
+
+        Location location = LocationQuery.queryCache(locationParameter, mLocationCache, false);
+        
+        mCheckTime++;
+        if (location == null) {
+            mRecordTime++;
+            mLocationUpload.record(mLocation, locationParameter);
+            mLocationCache.put(locationParameter, mLocation);
+        }
+        LogWrapper.i(TAG, "checkLocationParameter() mCheckTime:"+ mCheckTime + ", mRecordTime:"+mRecordTime);
     }
 }

@@ -42,6 +42,15 @@ public class BootstrapModel extends XMapData {
     // 0x06  x_map  参见启动展示内容  
     public static final byte FIELD_STARTUP_DISPLAY = 0x06;
     
+    // 0x05 String 是否推送应用，值为on或off
+    public static final byte FIELD_APP_PUSH = 0x07;
+    
+    // 0x05 String 是否采集网络信息，值为on或off
+    public static final byte FIELD_COLLECT_NETWORK_INFO = 0x08;
+    
+    // 0x05 String 是否附着第三方应用采集GPS信息，值为on或off
+    public static final byte FIELD_COLLECT_GPS_INFO = 0x09;
+    
     // 0x01     XArray<XMap>    推广信息列表，参见单个推广信息
     public static final byte FIELD_STARTUP_DISPLAY_LIST = 0x01;
     
@@ -51,6 +60,9 @@ public class BootstrapModel extends XMapData {
     private String uploadLog;
     private String goAlipay;
     private List<StartupDisplay> startupDisplayList;
+    private String appPush;
+    private String collectNetworkInfo;
+    private String collectGPSInfo;
 
     public SoftwareUpdate getSoftwareUpdate() {
         return softwareUpdate;
@@ -84,6 +96,18 @@ public class BootstrapModel extends XMapData {
         return startupDisplayList;
     }
 
+    public String getAppPush() {
+        return appPush;
+    }
+
+    public String getCollectNetworkInfo() {
+        return collectNetworkInfo;
+    }
+
+    public String getCollectGPSInfo() {
+        return collectGPSInfo;
+    }
+
     public BootstrapModel(XMap data) throws APIException {
         super(data);
         
@@ -115,6 +139,9 @@ public class BootstrapModel extends XMapData {
 
             this.startupDisplayList = getListFromData(xmap, FIELD_STARTUP_DISPLAY_LIST, StartupDisplay.Initializer, null);
         }
+        this.appPush = getStringFromData(FIELD_APP_PUSH);
+        this.collectNetworkInfo = getStringFromData(FIELD_COLLECT_NETWORK_INFO);
+        this.collectGPSInfo = getStringFromData(FIELD_COLLECT_GPS_INFO);
      }
     
     public static class SoftwareUpdate extends XMapData {

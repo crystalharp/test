@@ -117,6 +117,7 @@ import com.tigerknows.model.BootstrapModel.StartupDisplay;
 import com.tigerknows.model.test.BaseQueryTest;
 import com.tigerknows.provider.HistoryWordTable;
 import com.tigerknows.radar.TKNotificationManager;
+import com.tigerknows.service.CollectService;
 import com.tigerknows.service.MapDownloadService;
 import com.tigerknows.service.MapStatsService;
 import com.tigerknows.service.SuggestLexiconService;
@@ -1142,6 +1143,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 	protected void onStart() {
 		super.onStart();
 		BaseQuery.sClentStatus = BaseQuery.CLIENT_STATUS_START;
+        CollectService.pauseLocationManager(mThis);
 
         IntentFilter intentFilter= new IntentFilter(MapEngine.ACTION_REMOVE_CITY_MAP_DATA);
         registerReceiver(mRemoveCityMapDataBroadcastReceiver, intentFilter);
@@ -1878,6 +1880,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         BaseQuery.sClentStatus = BaseQuery.CLIENT_STATUS_STOP;
         LogWrapper.i(TAG, "onStop");
 
+        CollectService.resumeLocationManager(mThis);
         if(mMapView != null)
         	mMapView.pause();
         MapEngine.cleanEngineCache();

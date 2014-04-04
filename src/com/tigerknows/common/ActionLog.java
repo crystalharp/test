@@ -5,6 +5,7 @@ package com.tigerknows.common;
 
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.TKConfig;
+import com.tigerknows.model.BootstrapModel;
 import com.tigerknows.model.FeedbackUpload;
 import com.tigerknows.util.CalendarUtil;
 
@@ -872,7 +873,7 @@ public class ActionLog extends LogUpload {
 
     @Override
     protected boolean canUpload() {
-        return TKConfig.getUserActionTrack().equals("on");
+        return TKConfig.isSwitch(BootstrapModel.FIELD_UPLOAD_LOG);
     }
 
     @Override

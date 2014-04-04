@@ -11,12 +11,14 @@ import com.tigerknows.R;
 import com.tigerknows.android.app.TKApplication;
 import com.tigerknows.map.MapEngine;
 import com.tigerknows.model.BaseQuery;
+import com.tigerknows.model.BootstrapModel;
 import com.tigerknows.model.TKCellLocation;
 import com.tigerknows.util.Utility;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -299,11 +301,18 @@ public class TKConfig {
      */
     private static final String sVERSION_OF_PLATFORM = String.valueOf(Build.VERSION.SDK_INT);
     
-    /**
-     * 是否开启用户行为日志上传
-     * 默认开启
-     */
-    private static String sUser_Action_Track = "on";
+    private static final String SWITCH_ON = "on";
+    
+    private static HashMap<Byte, String> sSwitch;
+    
+    static {
+        sSwitch = new HashMap<Byte, String>();
+        sSwitch.put(BootstrapModel.FIELD_UPLOAD_LOG, SWITCH_ON);
+        sSwitch.put(BootstrapModel.FIELD_GO_ALIPAY, SWITCH_ON);
+        sSwitch.put(BootstrapModel.FIELD_APP_PUSH, SWITCH_ON);
+        sSwitch.put(BootstrapModel.FIELD_COLLECT_NETWORK_INFO, SWITCH_ON);
+        sSwitch.put(BootstrapModel.FIELD_COLLECT_GPS_INFO, SWITCH_ON);
+    }
 
     /**
      * 是否接受软件登录服务推送用于动态负载均衡的Host
@@ -460,6 +469,11 @@ public class TKConfig {
      * 存储应用程序中使用的参数设置，key/value
      */
     public static final String TIGERKNOWS_PREFS = "tigerknows_prefs";
+    
+    /**
+     * 开关
+     */
+    public static final String PREFS_SWITCH = "prefs_switch";
     
     /**
      * 是否上传用户行为日志
@@ -924,8 +938,23 @@ public class TKConfig {
         
         getTelephonyInfo(context);
         BaseQuery.initCommonParameters();
+        
+        String oldValue = getPref(context, PREFS_USER_ACTION_TRACK);
+        if (!TextUtils.isEmpty(oldValue)) {
+            setSwitch(context, BootstrapModel.FIELD_UPLOAD_LOG, oldValue);
+            TKConfig.removePref(context, PREFS_USER_ACTION_TRACK);
+        }
+        oldValue = getPref(context, PREFS_CLIENT_GO_ALIPAY);
+        if (!TextUtils.isEmpty(oldValue)) {
+            setSwitch(context, BootstrapModel.FIELD_GO_ALIPAY, oldValue);
+            TKConfig.removePref(context, PREFS_CLIENT_GO_ALIPAY);
+        }
 
-        sUser_Action_Track = getPref(context, PREFS_USER_ACTION_TRACK, "on");
+        sSwitch.put(BootstrapModel.FIELD_UPLOAD_LOG, getSwitch(context, BootstrapModel.FIELD_UPLOAD_LOG));
+        sSwitch.put(BootstrapModel.FIELD_GO_ALIPAY, getSwitch(context, BootstrapModel.FIELD_GO_ALIPAY));
+        sSwitch.put(BootstrapModel.FIELD_APP_PUSH, getSwitch(context, BootstrapModel.FIELD_APP_PUSH));
+        sSwitch.put(BootstrapModel.FIELD_COLLECT_NETWORK_INFO, getSwitch(context, BootstrapModel.FIELD_COLLECT_NETWORK_INFO));
+        sSwitch.put(BootstrapModel.FIELD_COLLECT_GPS_INFO, getSwitch(context, BootstrapModel.FIELD_COLLECT_GPS_INFO));
         
         String hasShortCut = getPref(context, PREFS_HAS_SHORT_CUT_PREFS);
         setPref(context, PREFS_HAS_SHORT_CUT_PREFS, "3");
@@ -1671,23 +1700,28 @@ public class TKConfig {
     }
 
     /**
-     * 设置开关上传用户行为日志
+     * 设置开关
      * @param context
-     * @param userActionTrack
+     * @param key
+     * @param value
      */
-    public static void setUserActionTrack(Context context, String userActionTrack) {
-        if (TextUtils.isEmpty(userActionTrack)) {
-            return;
-        }
-        sUser_Action_Track = userActionTrack;
-        setPref(context, PREFS_USER_ACTION_TRACK, userActionTrack);
+    public static void setSwitch(Context context, byte key, String value) {
+        sSwitch.put(key, value);
+        setPref(context, PREFS_SWITCH + key, value);
     }
 
     /**
-     * 是否开启用户行为日志上传
+     * 获取开关
      */
-    public static String getUserActionTrack() {
-        return sUser_Action_Track;
+    private static String getSwitch(Context context, byte key) {
+        return getPref(context, PREFS_SWITCH + key);
+    }
+
+    /**
+     * 是否开启
+     */
+    public static boolean isSwitch(byte key) {
+        return SWITCH_ON.equals(sSwitch.get(key));
     }
     
     /**

@@ -64,14 +64,29 @@ public final class Bootstrap extends BaseQuery {
             }
         }
         
-        String uploadLog = bootstrapModel.getUploadLog();
-        if (!TextUtils.isEmpty(uploadLog)) {
-            TKConfig.setUserActionTrack(context, uploadLog);
+        String value = bootstrapModel.getUploadLog();
+        if (!TextUtils.isEmpty(value)) {
+            TKConfig.setSwitch(context, BootstrapModel.FIELD_UPLOAD_LOG, value);
         }
         
-        String goAlipay = bootstrapModel.getGoAlipay();
-        if (!TextUtils.isEmpty(goAlipay)) {
-        	TKConfig.setPref(context, TKConfig.PREFS_CLIENT_GO_ALIPAY, goAlipay);
+        value = bootstrapModel.getGoAlipay();
+        if (!TextUtils.isEmpty(value)) {
+        	TKConfig.setSwitch(context, BootstrapModel.FIELD_GO_ALIPAY, value);
+        }
+        
+        value = bootstrapModel.getAppPush();
+        if (!TextUtils.isEmpty(value)) {
+            TKConfig.setSwitch(context, BootstrapModel.FIELD_APP_PUSH, value);
+        }
+        
+        value = bootstrapModel.getCollectNetworkInfo();
+        if (!TextUtils.isEmpty(value)) {
+            TKConfig.setSwitch(context, BootstrapModel.FIELD_COLLECT_NETWORK_INFO, value);
+        }
+        
+        value = bootstrapModel.getCollectGPSInfo();
+        if (!TextUtils.isEmpty(value)) {
+            TKConfig.setSwitch(context, BootstrapModel.FIELD_COLLECT_GPS_INFO, value);
         }
     }
 

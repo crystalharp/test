@@ -36,6 +36,7 @@ import android.widget.Toast;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BaseQuery;
+import com.tigerknows.model.BootstrapModel;
 import com.tigerknows.model.DataOperation;
 import com.tigerknows.model.DataOperation.DingdanCreateResponse;
 import com.tigerknows.model.Response;
@@ -119,8 +120,7 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
     public static void checkFastAlipay(Activity activity, String url, ActionLog actionLog, String actionTag) {
         String info = URLDecoder.decode(url);
         LogWrapper.d("Trap", info);
-        String clientGoAlipay = TKConfig.getPref(activity, TKConfig.PREFS_CLIENT_GO_ALIPAY, "on");
-        if(! "on".equalsIgnoreCase(clientGoAlipay)){
+        if(!TKConfig.isSwitch(BootstrapModel.FIELD_GO_ALIPAY)){
         	return;
         }
         if(info.contains("wappaygw.alipay") && info.contains("authAndExecute")){
