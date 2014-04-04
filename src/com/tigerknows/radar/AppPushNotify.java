@@ -59,7 +59,7 @@ public class AppPushNotify {
     	List<RecordPackageInfo> pkgList = new ArrayList<RecordPackageInfo>();
     	int n;
 		try {
-			PackageInfoTable piTable = new PackageInfoTable(context);
+			PackageInfoTable piTable = PackageInfoTable.getInstance(context);
 			n = piTable.readPackageInfo(pkgList, 0, 0);
 			if(n == 0){
 				return 1;
