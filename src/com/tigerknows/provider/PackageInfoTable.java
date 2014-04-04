@@ -155,9 +155,13 @@ public class PackageInfoTable {
                 long time = c.getLong(c.getColumnIndex(NOTIFY_TIME));
             	DataEncryptor dataEncryptor = DataEncryptor.getInstance();
             	byte[] decrypted = c.getBlob(c.getColumnIndex(APPPUSH));
-            	dataEncryptor.decrypt(decrypted);
-            	XMap appPushXMap = (XMap)ByteUtil.byteToXObject(decrypted);
-                data = new RecordPackageInfo(pname, installed, time, fname, new AppPush(appPushXMap));
+            	if(decrypted == null){
+                    data = new RecordPackageInfo(pname, installed, time, fname, null);
+            	}else{
+            		dataEncryptor.decrypt(decrypted);
+            		XMap appPushXMap = (XMap)ByteUtil.byteToXObject(decrypted);
+            		data = new RecordPackageInfo(pname, installed, time, fname, new AppPush(appPushXMap));
+            	}
             }
         }
         return data;
@@ -171,7 +175,7 @@ public class PackageInfoTable {
         values.put(PACKAGE_NAME, p.package_name);
         values.put(INSTALLED, p.installed);
         DataEncryptor dataEncryptor = DataEncryptor.getInstance();
-        byte[] encrypted = ByteUtil.xobjectToByte(p.app_push.toXMapForStorage());
+        byte[] encrypted = ByteUtil.xobjectToByte(p.app_push == null ? null : p.app_push.toXMapForStorage());
         dataEncryptor.encrypt(encrypted);
         values.put(APPPUSH, encrypted);
         if (!isFailed) {
@@ -186,7 +190,7 @@ public class PackageInfoTable {
     
 
     public int deletePackageInfo(RecordPackageInfo p) {
-		int count = mDb.delete(TABLE_NAME,  "(" + PACKAGE_NAME + "=" + p.package_name + ")", null);
+		int count = mDb.delete(TABLE_NAME,  "(" + PACKAGE_NAME + "='" + p.package_name + "')", null);
         return count;
     }
 
@@ -197,10 +201,10 @@ public class PackageInfoTable {
         values.put(INSTALLED, p.installed);
         values.put(NOTIFY_TIME, p.notify_time);
         DataEncryptor dataEncryptor = DataEncryptor.getInstance();
-        byte[] encrypted = ByteUtil.xobjectToByte(p.app_push.toXMapForStorage());
+        byte[] encrypted = ByteUtil.xobjectToByte(p.app_push == null ? null : p.app_push.toXMapForStorage());
         dataEncryptor.encrypt(encrypted);
         values.put(APPPUSH, encrypted);
-        count = mDb.update(TABLE_NAME, values, "(" + PACKAGE_NAME + "=" + p.package_name + ")", null);
+        count = mDb.update(TABLE_NAME, values, "(" + PACKAGE_NAME + "='" + p.package_name + "')", null);
         return count;
     }
     

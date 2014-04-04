@@ -45,18 +45,26 @@ public class DataEncryptor {
     }
 
     public void encrypt(byte[] data, int offset) {
+        if (data == null)
+            return;
         translate(data, offset, data.length - offset);
     }
 
     public void decrypt(byte[] data, int offset) {
+        if (data == null)
+            return;
         translate(data, offset, data.length - offset);
     }
 
     public void encrypt(byte[] data) {
+        if (data == null)
+            return;
         translate(data, 0, data.length);
     }
 
     public void decrypt(byte[] data) {
+        if (data == null)
+            return;
         translate(data, 0, data.length);
     }
 
