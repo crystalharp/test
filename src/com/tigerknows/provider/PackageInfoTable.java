@@ -23,6 +23,8 @@ public class PackageInfoTable {
     
     static final String TAG = "PackageInfoTable";
     
+    static PackageInfoTable tbl = null;
+    
     // HELPERS
     private DatabaseHelper mDbHelper;
     private SQLiteDatabase mDb;
@@ -52,13 +54,20 @@ public class PackageInfoTable {
 
     public Context mCtx;
 
+    public static PackageInfoTable getInstance(Context context) {
+        if (tbl == null) {
+            tbl = new PackageInfoTable(context);
+        }
+        return tbl;
+    }
+    
     /**
      * constructor
      * 
      * @param context
      * 
      */
-    public PackageInfoTable(Context context) {
+    private PackageInfoTable(Context context) {
         this.mCtx = context;
         open();
     }

@@ -66,7 +66,7 @@ public class AppService extends TKService {
                 LogWrapper.d(TAG, "checking");
                 Context ctx = getApplicationContext();
                 if (sRecordPkgTable == null) {
-                    sRecordPkgTable = new PackageInfoTable(ctx);
+                    sRecordPkgTable = PackageInfoTable.getInstance(ctx);
                 }
 
                 AppPush app = null;
