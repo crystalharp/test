@@ -358,10 +358,7 @@
             </intent-filter>
         </receiver>
         
-        <receiver android:name="com.tigerknows.service.download.ShowAppReceiver">
-            <intent-filter>
-               <action android:name="action.com.tigerknows.service.download.ShowAppReceiver" />
-            </intent-filter>
+        <receiver android:name="com.tigerknows.service.download.ShowAppReceiver" android:exported="false">
         </receiver>
         
         <service android:name="com.tigerknows.service.PullService">

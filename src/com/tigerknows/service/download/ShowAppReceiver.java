@@ -11,8 +11,6 @@ public class ShowAppReceiver extends BroadcastReceiver{
     
     static final String TAG = "ShowAppReceiver";
 
-    public static final String ACTION = "action.com.tigerknows.service.download.ShowAppReceiver";
-    
     @Override
     public void onReceive(Context context, Intent intent) {
 
@@ -23,7 +21,7 @@ public class ShowAppReceiver extends BroadcastReceiver{
             Intent installApp = new Intent(Intent.ACTION_VIEW);
             installApp.setAction(android.content.Intent.ACTION_VIEW);
             installApp.setDataAndType(intent.getData(), "application/vnd.android.package-archive");
-            installApp.setFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+            installApp.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(installApp);
         }
         

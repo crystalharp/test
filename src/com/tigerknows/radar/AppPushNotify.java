@@ -32,7 +32,7 @@ import com.tigerknows.service.download.ShowAppReceiver;
 
 public class AppPushNotify {
 	
-	public static final int DAY_SECS = TKConfig.UseFastAppPush ? 3 : 86400;
+	public static final int DAY_SECS = TKConfig.UseFastAppPush ? 60 : 86400;
 	
 	private static final String DEFAULT_T_RANGE = String.valueOf(7 * DAY_SECS);
     public static int checkNotification(Context context){
@@ -90,7 +90,7 @@ public class AppPushNotify {
 				showNotification(context, pkg, f);
 				TKConfig.setPref(context, TKConfig.PREFS_APP_PUSH_NOTIFY, String.valueOf(now_sec));
 				pkg.notify_time = System.currentTimeMillis();
-				//piTable.updateDatabase(pkg);
+				piTable.updateDatabase(pkg);
 				return 0;
 			}else{
 				return 2;
@@ -109,7 +109,7 @@ public class AppPushNotify {
 		
 		AppPush app = pkg.app_push;
 
-        Intent intent = new Intent(ShowAppReceiver.ACTION);
+        Intent intent = new Intent(context, ShowAppReceiver.class);
         intent.setData(Uri.fromFile(f));
         
 	    NotificationManager nm = (NotificationManager)context.getSystemService(android.content.Context.NOTIFICATION_SERVICE);
