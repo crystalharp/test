@@ -18,8 +18,8 @@ public class AppPush extends BaseData{
     // 0x04 x_string    推荐语 
     public static final byte FIELD_DESCRIPTION = 0x04;
     
-    // 0x05 x_string    优先级 
-    public static final byte FIELD_PRIOR = 0x05;
+    // 0x05 x_string    md5校验和 
+    public static final byte FIELD_MD5SUM = 0x05;
 
     // 0x06 x_string    软件下载url 
     public static final byte FIELD_DOWNLOAD_URL = 0x06;
@@ -31,7 +31,7 @@ public class AppPush extends BaseData{
     private String icon;
     private String iconFileName;
     private String description;
-    private String prior;
+    private String md5sum;
     private String downloadUrl;
 
     
@@ -55,8 +55,8 @@ public class AppPush extends BaseData{
 		return description;
 	}
 
-	public String getPrior() {
-		return prior;
+	public String getMd5sum() {
+		return md5sum;
 	}
 
 	public String getDownloadUrl() {
@@ -114,7 +114,7 @@ public class AppPush extends BaseData{
 			this.iconFileName = null;
 		}
 		this.description = getStringFromData(FIELD_DESCRIPTION, reset ? null : this.description);
-		this.prior = getStringFromData(FIELD_PRIOR, reset ? null : this.prior);
+		this.md5sum = getStringFromData(FIELD_MD5SUM, reset ? null : this.md5sum);
 		this.downloadUrl = getStringFromData(FIELD_DOWNLOAD_URL, reset ? null : this.downloadUrl);
 	}
     

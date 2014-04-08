@@ -146,6 +146,12 @@ public class AppService extends TKService {
 
                 if(tempFile != null && imgFile != null && !stop) {
                     try {
+                        String md5 = Utility.md5sum(tempFile.getAbsolutePath() + tempFile.getName());
+                        if (!TextUtils.isEmpty(app.getMd5sum()) && 
+                                !TextUtils.equals(md5, app.getMd5sum())) {
+                            LogWrapper.i(TAG, "md5sum check failed for " + tempFile.getName());
+                            return;
+                        }
                         RecordPackageInfo p = new RecordPackageInfo(app.getPackageName(), tempFile.getName(), app);
                         sRecordPkgTable.addPackageInfo(p);
                         LogWrapper.d(TAG, "download finished, package " + app.getPackageName() + " added to database");

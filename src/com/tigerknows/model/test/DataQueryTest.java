@@ -1132,7 +1132,7 @@ public class DataQueryTest {
         data.put(AppPush.FIELD_PACKAGE_NAME, "com.tigerknows" + index);
         data.put(AppPush.FIELD_ICON, NoticeQueryTest.ICON_URL + (index+1) + ".png");
         data.put(AppPush.FIELD_DESCRIPTION, desc[index % 5]);
-        data.put(AppPush.FIELD_PRIOR, index + "");
+        data.put(AppPush.FIELD_MD5SUM, index + "");
         data.put(AppPush.FIELD_DOWNLOAD_URL, (index & 1) == 1
         		? "http://client.tigerknows.net/dl/TigerMap-1-2.43.20120206A-ANDTKWWW.apk"
         		: "http://client.tigerknows.net/dl/TigerMap-5.8.1.20140302A-ANDTKWWW.apk");
