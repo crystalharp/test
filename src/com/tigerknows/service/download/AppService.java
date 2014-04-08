@@ -94,6 +94,7 @@ public class AppService extends TKService {
                     // 更新T，list.getMessage();
                     String tRange = list.getMessage();
                     if (!TextUtils.isEmpty(tRange)) {
+                        LogWrapper.d(TAG, "server changed value T to " + tRange);
                         TKConfig.setPref(ctx, TKConfig.PREFS_APP_PUSH_T, tRange);
                     }
 
@@ -224,14 +225,6 @@ public class AppService extends TKService {
                     bos.close();
                     is.close();
                     bis.close();
-                    
-//                    File imgFile = createFileByUrl(imageUrl);
-//                    HttpClient httpClient = HttpManager.getNewHttpClient();
-//                    byte[] data = HttpManager.openUrl(context, httpClient, imageUrl, "GET", new WeiboParameters());
-//                    File file=new File(getAppPath(), imgFile.getName());
-//                    FileOutputStream out=new FileOutputStream(file);
-//                    out.write(data);
-//                    out.close();
                     
                     if (!stop) {
                         return tempFile;
