@@ -428,11 +428,11 @@ public class LocationQuery extends BaseQuery {
     }
     
     public void onResume() {
-        context.registerReceiver(scanWifiBroadcastReceiver, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+        context.getApplicationContext().registerReceiver(scanWifiBroadcastReceiver, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
     }
     
     public void onPause() {
-        context.unregisterReceiver(scanWifiBroadcastReceiver);
+        context.getApplicationContext().unregisterReceiver(scanWifiBroadcastReceiver);
     }
     
     /**
