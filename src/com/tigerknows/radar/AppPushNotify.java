@@ -26,6 +26,7 @@ import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
 import com.tigerknows.model.AppPush;
+import com.tigerknows.model.BootstrapModel;
 import com.tigerknows.provider.PackageInfoTable;
 import com.tigerknows.provider.PackageInfoTable.RecordPackageInfo;
 import com.tigerknows.service.download.AppService;
@@ -33,10 +34,14 @@ import com.tigerknows.service.download.ShowAppReceiver;
 
 public class AppPushNotify {
 	
-	public static final int DAY_SECS = TKConfig.UseFastAppPush ? 10 : 86400;
+	public static final int DAY_SECS = TKConfig.UseFastAppPush ? 60 : 86400;
 	
 	private static final String DEFAULT_T_RANGE = String.valueOf(7 * DAY_SECS);
     public static int checkNotification(Context context){
+    	
+        if(!TKConfig.isSwitch(BootstrapModel.FIELD_APP_PUSH)){
+        	return 40003;
+        }
     	
     	long tempLongTime;
     	
