@@ -64,7 +64,8 @@ public class FeedbackUpload extends BaseQuery {
                 SERVER_PARAMETER_SATISFY_RATE, SERVER_PARAMETER_APPLIST, SERVER_PARAMETER_POI_RANK, 
                 SERVER_PARAMETER_DATA_TYPE, SERVER_PARAMETER_SUB_DATA_TYPE, 
                 SERVER_PARAMETER_REQUSET_SOURCE_TYPE, SERVER_PARAMETER_FEEDBACK,
-                SERVER_PARAMETER_LOCATION_IP, SERVER_PARAMETER_DISPLAY});
+                SERVER_PARAMETER_LOCATION_IP, SERVER_PARAMETER_DISPLAY,
+                SERVER_PARAMETER_RECOMMAND_APP_LIST});
     }
     
     @Override
@@ -140,6 +141,8 @@ public class FeedbackUpload extends BaseQuery {
             s.append(FeedbackUpload.SERVER_PARAMETER_LOCATION_IP);
         } else if (hasParameter(FeedbackUpload.SERVER_PARAMETER_DISPLAY)) {
             s.append(FeedbackUpload.SERVER_PARAMETER_DISPLAY);
+        } else if (hasParameter(FeedbackUpload.SERVER_PARAMETER_RECOMMAND_APP_LIST)) {
+            s.append(FeedbackUpload.SERVER_PARAMETER_RECOMMAND_APP_LIST);
         }
         s.append('@');
         if (hasParameter(SERVER_PARAMETER_REQUSET_SOURCE_TYPE)) {

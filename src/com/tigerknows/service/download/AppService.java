@@ -342,7 +342,7 @@ public class AppService extends TKService {
                     @Override
                     public void run() {
                         query.query();
-                    }}).run();
+                    }}).start();
             }
         }
     }
