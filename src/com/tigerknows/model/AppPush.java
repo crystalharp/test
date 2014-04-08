@@ -110,6 +110,8 @@ public class AppPush extends BaseData{
 		this.icon = getStringFromData(FIELD_ICON, reset ? null : this.name);
 		if (this.icon != null) {
 			this.iconFileName = this.icon.substring(this.icon.lastIndexOf("/") + 1).replaceAll("[?]", "@");
+		}else{
+			this.iconFileName = null;
 		}
 		this.description = getStringFromData(FIELD_DESCRIPTION, reset ? null : this.description);
 		this.prior = getStringFromData(FIELD_PRIOR, reset ? null : this.prior);

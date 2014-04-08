@@ -36,7 +36,7 @@ public class AppPushNotify {
 	
 	public static final int DAY_SECS = TKConfig.UseFastAppPush ? 60 : 86400;
 	
-	private static final String DEFAULT_T_RANGE = String.valueOf(7 * DAY_SECS);
+	private static final String DEFAULT_T_RANGE = "7";
     public static int checkNotification(Context context){
     	
         if(!TKConfig.isSwitch(BootstrapModel.FIELD_APP_PUSH)){
@@ -49,12 +49,13 @@ public class AppPushNotify {
     	int lastNotify = (int)(System.currentTimeMillis()/1000);
     	if(!TextUtils.isEmpty(tempStr)){
     		lastNotify = Integer.parseInt(tempStr);
+    		LogWrapper.d("Trap", "Step 0: " + String.valueOf(lastNotify));
     	}else{
     		// 首次安装软件之后，记录当前时刻；于是首次弹出通知的时刻必须距首次安装（网络触发）的T时间以上
     		TKConfig.setPref(context, TKConfig.PREFS_APP_PUSH_NOTIFY, String.valueOf(lastNotify));
     	}
 
-    	int t = Integer.parseInt(TKConfig.getPref(context, TKConfig.PREFS_APP_PUSH_T, DEFAULT_T_RANGE));
+    	int t = Integer.parseInt(TKConfig.getPref(context, TKConfig.PREFS_APP_PUSH_T, DEFAULT_T_RANGE)) * DAY_SECS;
     	if(t > 14 * DAY_SECS){
     		t = 14 * DAY_SECS;
     	}
@@ -121,20 +122,16 @@ public class AppPushNotify {
         
 	    NotificationManager nm = (NotificationManager)context.getSystemService(android.content.Context.NOTIFICATION_SERVICE);
 	    Notification notification = new Notification();
-        notification.icon = R.drawable.ic_releasetorefresh;
+        notification.icon = R.drawable.transparent_ic;
         notification.tickerText = app.getDescription();
         notification.when = System.currentTimeMillis();
         notification.flags = Notification.FLAG_AUTO_CANCEL;
 
         // 设置任务栏中下载进程显示的views
         RemoteViews remoteViews = null;
-        // 4.0以上android系统才支持contentIntent=null
-        if (Build.VERSION.SDK_INT < 14) {
-            remoteViews = new RemoteViews(context.getPackageName(), R.layout.notification_progress_v13);
-        } else {
-            remoteViews = new RemoteViews(context.getPackageName(), R.layout.notification_progress);
-            remoteViews.setTextViewText(R.id.control_btn, context.getString(R.string.install));
-        }
+
+        remoteViews = new RemoteViews(context.getPackageName(), R.layout.notification_normal_v13);
+
         int id = "AppPush".hashCode();
         remoteViews.setTextViewText(R.id.name_txv, app.getName());
         remoteViews.setTextViewText(R.id.process_txv, app.getDescription());
@@ -148,6 +145,7 @@ public class AppPushNotify {
         	remoteViews.setImageViewBitmap(R.id.icon_imv, ((BitmapDrawable)icon).getBitmap());
         	LogWrapper.d("Trap", "LocalImg");
         }
+        
         notification.contentView = remoteViews;
 
         PendingIntent pausePendingIntent = PendingIntent.getBroadcast(context, id, intent, 0);
@@ -165,13 +163,13 @@ public class AppPushNotify {
     // T为弹出时间的范围，下次弹出通知的时间t为[DAY_SECS,T]中的随机值
     private static void increaseTRange(Context ctx) {
         int T = Integer.parseInt(TKConfig.getPref(ctx, TKConfig.PREFS_APP_PUSH_T, DEFAULT_T_RANGE));
-        T = Math.min(T * 2, 28 * DAY_SECS);
+        T = Math.min(T * 2, 28);
         TKConfig.setPref(ctx, TKConfig.PREFS_APP_PUSH_T, String.valueOf(T));
     }
     
     public static void decreaseTRange(Context ctx) {
         int T = Integer.parseInt(TKConfig.getPref(ctx, TKConfig.PREFS_APP_PUSH_T, DEFAULT_T_RANGE));
-        T = Math.max(T / 4, 2 * DAY_SECS);
+        T = Math.max(T / 4, 2);
         TKConfig.setPref(ctx, TKConfig.PREFS_APP_PUSH_T, String.valueOf(T));
     }	
 }
