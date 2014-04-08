@@ -8,6 +8,7 @@ import com.tigerknows.TKConfig;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.MapEngine;
 import com.tigerknows.map.label.SingleRectLabel;
+import com.tigerknows.model.BootstrapModel;
 import com.tigerknows.service.CollectService;
 
 import android.app.Application;
@@ -50,6 +51,11 @@ public class TKApplication extends Application {
             
             @Override
             public void onReceive(Context context, Intent intent) {
+                if (!TKConfig.isSwitch(BootstrapModel.FIELD_COLLECT_NETWORK_INFO) &&
+                        !TKConfig.isSwitch(BootstrapModel.FIELD_COLLECT_GPS_INFO)) {
+                    stopService(service);
+                    return;
+                }
                 if (mTimeTicks % 10 == 0) {
                     TKApplication.this.startService(service);
                     mTimeTicks = 0;

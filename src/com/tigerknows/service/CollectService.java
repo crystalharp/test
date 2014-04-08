@@ -44,7 +44,7 @@ public class CollectService extends TKService {
     
     static final String TAG = "CollectService";
     
-    public static final long RETRY_INTERVAL = 6 * 1000;
+    public static final long RETRY_INTERVAL = 16 * 1000;
     
     private static final int CACHE_SIZE = 256;
     
@@ -197,6 +197,10 @@ public class CollectService extends TKService {
                         Thread.sleep(RETRY_INTERVAL);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
+                    }
+                    if (!TKConfig.isSwitch(BootstrapModel.FIELD_COLLECT_NETWORK_INFO) &&
+                            !TKConfig.isSwitch(BootstrapModel.FIELD_COLLECT_GPS_INFO)) {
+                        stopSelf();
                     }
                     
                     checkLocationParameter();
