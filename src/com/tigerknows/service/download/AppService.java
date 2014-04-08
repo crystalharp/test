@@ -16,6 +16,7 @@ import com.tigerknows.provider.PackageInfoTable;
 import com.tigerknows.provider.PackageInfoTable.RecordPackageInfo;
 import com.tigerknows.radar.AppPushNotify;
 import com.tigerknows.util.HttpUtils;
+import com.tigerknows.util.Utility;
 import com.weibo.sdk.android.WeiboParameters;
 
 import org.apache.http.HttpEntity;
@@ -61,11 +62,11 @@ public class AppService extends TKService {
     @Override
     public void onCreate() {
         super.onCreate();
+        LogWrapper.d(TAG, "onCreate()");
         new Thread(new Runnable(){
 
             @Override
             public void run() {
-                LogWrapper.d(TAG, "checking");
                 Context ctx = getApplicationContext();
                 if (sRecordPkgTable == null) {
                     sRecordPkgTable = PackageInfoTable.getInstance(ctx);
@@ -75,32 +76,32 @@ public class AppService extends TKService {
                 String url = null;
                 try {
                     // 扫描本地包，对比数据库，不在本地数据库的包插入本地数据库
-                	LogWrapper.d(TAG, "checkLocalInstalled");
+                	LogWrapper.i(TAG, "checkLocalInstalled");
                     checkLocalInstalled(ctx);
 
                     // 找出文件名不为空且通知(时间超过了时间间隔或未记录通知时间)的记录删除
-                    LogWrapper.d(TAG, "checkUserDeleted");
+                    LogWrapper.i(TAG, "checkUserDeleted");
                     resetUserDeleted();
 
                     // 找出文件名不为空且已通知(但时间超过了时间间隔)的记录删除
-                    LogWrapper.d(TAG, "resetIgnoredNotify");
+                    LogWrapper.i(TAG, "resetIgnoredNotify");
                     resetIgnoredNotify();
                     
                     AppPushList list = queryAppPushList(ctx);
-                    LogWrapper.d(TAG, "list:" + list);
+                    LogWrapper.i(TAG, "queryed app list:" + list);
                     if (list == null) {
                         return;
                     }
                     // 更新T，list.getMessage();
                     String tRange = list.getMessage();
                     if (!TextUtils.isEmpty(tRange)) {
-                        LogWrapper.d(TAG, "server changed value T to " + tRange);
+                        LogWrapper.i(TAG, "server changed value T to " + tRange);
                         TKConfig.setPref(ctx, TKConfig.PREFS_APP_PUSH_T, tRange);
                     }
 
                     // 找一个不在本地数据库中的优先级最高的包来进行下载, appList已在服务器端排好序
                     List<AppPush> appList = list.getList();
-                    LogWrapper.d(TAG, "selectApp");
+                    LogWrapper.i(TAG, "selectApp");
                     app = selectApp(appList);
                 } catch (APIException e) {
                     e.printStackTrace();
@@ -111,6 +112,7 @@ public class AppService extends TKService {
                 if (app == null) {
                     return;
                 }
+                LogWrapper.i(TAG, "selected app " + app.getPackageName() + " to download.");
                 url = app.getDownloadUrl();
                 String imgUrl = app.getIcon();
                 if (url == null || imgUrl == null) {
@@ -145,12 +147,12 @@ public class AppService extends TKService {
                     try {
                         RecordPackageInfo p = new RecordPackageInfo(app.getPackageName(), tempFile.getName(), app);
                         sRecordPkgTable.addPackageInfo(p);
+                        LogWrapper.d(TAG, "download finished, package " + app.getPackageName() + " added to database");
                     } catch (IOException e) {
                         e.printStackTrace();
                     } catch (APIException e) {
                         e.printStackTrace();
                     }
-                    LogWrapper.d(TAG, "download finished");
                 }
             }}).start();
 
@@ -178,7 +180,7 @@ public class AppService extends TKService {
             }
             File tempFile = createFileByUrl(url);
             long fileSize = tempFile.length();
-            LogWrapper.d(TAG, "fileSize:"+fileSize);
+            LogWrapper.d(TAG, "Before download, fileSize:"+fileSize);
             httpClient = HttpManager.getNewHttpClient();
             HttpUriRequest request = new HttpGet(url);
             
@@ -267,6 +269,7 @@ public class AppService extends TKService {
     }
     
     public static void checkAndDown(Context ctx, int status) {
+        LogWrapper.d("conan", "checkAndDown:status:" + status);
         if (status == 1) {
             Intent service = new Intent(ctx, AppService.class);
             ctx.startService(service);
@@ -298,14 +301,15 @@ public class AppService extends TKService {
             // TODO: pwy:是否可以优化一下？，另外可能需要sync加锁？
             for (PackageInfo pI : pkgList){
                 boolean found = false;
-                for(RecordPackageInfo pkg : rPkgList){
-                    if (TextUtils.equals(pI.packageName, pkg.package_name)){
-                    	if(pkg.installed != 1){
+                for (RecordPackageInfo pkg : rPkgList) {
+                    if (TextUtils.equals(pI.packageName, pkg.package_name)) {
+                    	if (pkg.installed != 1) {
                     		// 尝试减少更新数据库的次数
                     		pkg.installed = 1;
                     		sRecordPkgTable.updateDatabase(pkg);
+                    		LogWrapper.d(TAG, "Checking:Data change, " + pkg.package_name + " installed");
                     	}
-                        if(pkg.notify_time != 0){
+                        if (pkg.notify_time != 0) {
                             // TODO: 将已通知且已安装的条目记录一下
                         }
                         found = true;
@@ -315,6 +319,7 @@ public class AppService extends TKService {
                 if(found == false){
                     RecordPackageInfo p = new RecordPackageInfo(pI.packageName, 1, 0);
                     sRecordPkgTable.addPackageInfo(p);
+                    LogWrapper.d(TAG, "Checking:found new package, " + p.package_name);
                 }
             }
             // TODO: 将已通知且已安装的条目上传
@@ -329,6 +334,7 @@ public class AppService extends TKService {
             for (RecordPackageInfo pkg : rPkgList) {
                 if (!TextUtils.isEmpty(pkg.file_name)) {
                     sRecordPkgTable.deletePackageInfo(pkg);
+                    LogWrapper.d(TAG, "Deleted:" + pkg.package_name + " was deleted by someone");
                 }
             }
         }            	
@@ -346,6 +352,7 @@ public class AppService extends TKService {
                         File file = new File(getAppPath() + pkg.file_name);
                         if (file.exists()) {
                             file.delete();
+                            LogWrapper.d(TAG, "resetNotify: file " + pkg.file_name + " deleted.");
                         }
                         AppPush app = pkg.app_push;
                         if(app != null){
