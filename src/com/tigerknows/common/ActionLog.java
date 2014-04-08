@@ -146,6 +146,25 @@ public class ActionLog extends LogUpload {
     
     public static final String Launcher = "FI";
     
+    public static final String Net_Exception_oahn_ttsftr = "BA";
+    public static final String Net_Exception_oahn_ttsftr_Str = "org.apache.http.NoHttpResponseException: The target server failed to respond";
+    public static final String Net_Exception_oahch = "BB";
+    public static final String Net_Exception_oahch_Str = "org.apache.http.conn.HttpHostConnectException: Connection to ";
+    public static final String Net_Exception_oahcc = "BC";
+    public static final String Net_Exception_oahcc_Str = "org.apache.http.conn.ConnectTimeoutException: Connect to ";
+    public static final String Net_Exception_jnu_utrhnaawh1 = "BD";
+    public static final String Net_Exception_jnu_utrhnaawh1_Str = "java.net.UnknownHostException: Unable to resolve host";
+    public static final String Net_Exception_jnu_utrhnaawh2 = "BE";
+    public static final String Net_Exception_jnu_utrhnaawh2_Str = ": No address associated with hostname";
+    public static final String Net_Exception_jnu = "BF";
+    public static final String Net_Exception_jnu_Str = "java.net.UnknownHostException:";
+    public static final String Net_Exception_jnste = "BG";
+    public static final String Net_Exception_jnste_Str = "java.net.SocketTimeoutException";
+    public static final String Net_Exception_jnse = "BH";
+    public static final String Net_Exception_jnse_Str = " java.net.SocketException";
+    public static final String Net_Exception_jiihe = "BI";
+    public static final String Net_Exception_jiihe_Str = "java.io.IOException: HTTP error:";
+    
     // POI主页 
     public static final String Home = "AA";
     
@@ -902,6 +921,27 @@ public class ActionLog extends LogUpload {
     
     public void addNetworkAction(String apiType, long reqTime, long revTime, long resTime, String fail, String detail, int signal, String radioType, boolean isStop, String uuid, long reqSize, long revSize, boolean isReTry) {
         try {
+            if (fail != null && fail.length() > 16) {
+                if (fail.indexOf(Net_Exception_oahn_ttsftr_Str) != -1) {
+                    fail = fail.replace(Net_Exception_oahn_ttsftr_Str, Net_Exception_oahn_ttsftr);
+                } else if (fail.indexOf(Net_Exception_oahch_Str) != -1) {
+                    fail = fail.replace(Net_Exception_oahch_Str, Net_Exception_oahch);
+                } else if (fail.indexOf(Net_Exception_oahcc_Str) != -1) {
+                    fail = fail.replace(Net_Exception_oahcc_Str, Net_Exception_oahcc);
+                } else if (fail.indexOf(Net_Exception_jnu_utrhnaawh1_Str) != -1) {
+                    fail = fail.replace(Net_Exception_jnu_utrhnaawh1_Str, Net_Exception_jnu_utrhnaawh1);
+                } else if (fail.indexOf(Net_Exception_jnu_utrhnaawh2_Str) != -1) {
+                    fail = fail.replace(Net_Exception_jnu_utrhnaawh2_Str, Net_Exception_jnu_utrhnaawh2);
+                } else if (fail.indexOf(Net_Exception_jnu_Str) != -1) {
+                    fail = fail.replace(Net_Exception_jnu_Str, Net_Exception_jnu);
+                } else if (fail.indexOf(Net_Exception_jnste_Str) != -1) {
+                    fail = fail.replace(Net_Exception_jnste_Str, Net_Exception_jnste);
+                } else if (fail.indexOf(Net_Exception_jnse_Str) != -1) {
+                    fail = fail.replace(Net_Exception_jnse_Str, Net_Exception_jnse);
+                } else if (fail.indexOf(Net_Exception_jiihe_Str) != -1) {
+                    fail = fail.replace(Net_Exception_jiihe_Str, Net_Exception_jiihe);
+                }
+            }
             addAction(NetworkAction, apiType, String.valueOf(reqTime - mStartMillis), String.valueOf(revTime - mStartMillis), String.valueOf(resTime-mStartMillis), fail, detail, signal, radioType, isStop, uuid, reqSize, revSize, isReTry);
         } catch (Exception e) {
             LogWrapper.e(TAG, e.getMessage());
