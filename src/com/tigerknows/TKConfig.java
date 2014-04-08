@@ -1714,7 +1714,7 @@ public class TKConfig {
      * 获取开关
      */
     private static String getSwitch(Context context, byte key) {
-        return getPref(context, PREFS_SWITCH + key);
+        return getPref(context, PREFS_SWITCH + key, sSwitch.get(key));
     }
 
     /**
