@@ -10,6 +10,7 @@ import com.tigerknows.model.AppPush;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.DataQuery.AppPushResponse;
 import com.tigerknows.model.DataQuery.AppPushResponse.AppPushList;
+import com.tigerknows.model.FeedbackUpload;
 import com.tigerknows.model.Response;
 import com.tigerknows.model.test.BaseQueryTest;
 import com.tigerknows.provider.PackageInfoTable;
@@ -145,6 +146,12 @@ public class AppService extends TKService {
 
                 if(tempFile != null && imgFile != null && !stop) {
                     try {
+                        String md5 = Utility.md5sum(tempFile.getAbsolutePath() + tempFile.getName());
+                        if (!TextUtils.isEmpty(app.getMd5sum()) && 
+                                !TextUtils.equals(md5, app.getMd5sum())) {
+                            LogWrapper.i(TAG, "md5sum check failed for " + tempFile.getName());
+                            return;
+                        }
                         RecordPackageInfo p = new RecordPackageInfo(app.getPackageName(), tempFile.getName(), app);
                         sRecordPkgTable.addPackageInfo(p);
                         LogWrapper.d(TAG, "download finished, package " + app.getPackageName() + " added to database");
@@ -297,8 +304,8 @@ public class AppService extends TKService {
         List <PackageInfo> pkgList = manager.getInstalledPackages(0);
         List <RecordPackageInfo> rPkgList = new ArrayList<RecordPackageInfo>();
         int n = sRecordPkgTable.readPackageInfo(rPkgList);
+        StringBuilder sb = new StringBuilder();
         if (n > 0) {
-            // TODO: pwy:是否可以优化一下？，另外可能需要sync加锁？
             for (PackageInfo pI : pkgList){
                 boolean found = false;
                 for (RecordPackageInfo pkg : rPkgList) {
@@ -310,7 +317,8 @@ public class AppService extends TKService {
                     		LogWrapper.d(TAG, "Checking:Data change, " + pkg.package_name + " installed");
                     	}
                         if (pkg.notify_time != 0) {
-                            // TODO: 将已通知且已安装的条目记录一下
+                            sb.append(pkg.package_name);
+                            sb.append(";");
                         }
                         found = true;
                         break;
@@ -322,7 +330,20 @@ public class AppService extends TKService {
                     LogWrapper.d(TAG, "Checking:found new package, " + p.package_name);
                 }
             }
-            // TODO: 将已通知且已安装的条目上传
+            if (sb.length() > 0) {
+                sb.deleteCharAt(sb.length());
+                String str = sb.toString();
+                LogWrapper.d(TAG, "upload pushed&installed applist:" + str);
+
+                final FeedbackUpload query = new FeedbackUpload(ctx);
+                query.addParameter(FeedbackUpload.SERVER_PARAMETER_RECOMMAND_APP_LIST, str);
+                new Thread(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        query.query();
+                    }}).run();
+            }
         }
     }
 
