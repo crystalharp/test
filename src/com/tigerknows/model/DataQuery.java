@@ -132,7 +132,7 @@ public final class DataQuery extends BaseQuery {
     // ext  String  true    扩展搜索，当前支持busline，表示支持优先展示公交线路搜索结果 
     public static final String SERVER_PARAMETER_EXT = "ext";
     
-    public static final String EXT_BUSLINE = "busline;mix";
+    public static final String EXT_BUSLINE = "busline;mix;cityshift";
     
     public static final String EXT_FILTER = "cf";
     
@@ -923,14 +923,33 @@ public final class DataQuery extends BaseQuery {
         String subDataType = getParameter(SERVER_PARAMETER_SUB_DATA_TYPE);
         if (DATA_TYPE_POI.equals(dataType)) {
 
-            FilterResponse filterResponse = null;
+            POIResponse filterResponse = null;
             if (SUB_DATA_TYPE_POI.equals(subDataType)) {
                 filterResponse = new POIResponse(responseXMap);
             } else if (SUB_DATA_TYPE_HOTEL.equals(subDataType)) {
                 filterResponse = new POIResponse(responseXMap);
             }
-            translateFilter(filterResponse, dataType, subDataType, filterList);
+
+            // 判断第一个POI的所属城市与当前筛选项的是否一致，并进行相应调整
+            int cityId = this.cityId;
+            POI poi = null;
+            if (filterResponse != null) {
+                if (filterResponse.aPOIList != null && filterResponse.aPOIList.list != null && filterResponse.aPOIList.list.size() > 0) {
+                    poi = filterResponse.aPOIList.list.get(0);
+                } else if (filterResponse.bPOIList != null && filterResponse.bPOIList.list != null && filterResponse.bPOIList.list.size() > 0) {
+                    poi = filterResponse.bPOIList.list.get(0);
+                }
+                FilterArea filterArea = Filter_Area;
+                if (poi != null && filterArea != null) {
+                    cityId = MapEngine.getCityId(poi.getPosition());
+                    if (cityId != CityInfo.CITY_ID_INVALID && cityId != filterArea.cityId) {
+                        initStaticField(dataType, subDataType, context, cityId);
+                    }
+                }
+                translateFilter(filterResponse, dataType, subDataType, filterList, cityId);
+            }
             this.response = filterResponse;
+            
         } else if (DATA_TYPE_TUANGOU.equals(dataType)) {
             TuangouResponse response = new TuangouResponse(responseXMap);
             translateFilter(response, dataType, subDataType, filterList);
@@ -999,6 +1018,10 @@ public final class DataQuery extends BaseQuery {
     }
     
     private void translateFilter(FilterResponse baseResponse, String dataType, String subDataType, List<Filter> filterList) throws APIException {
+        translateFilter(baseResponse, dataType, subDataType, filterList, cityId);
+    }
+    
+    private void translateFilter(FilterResponse baseResponse, String dataType, String subDataType, List<Filter> filterList, int cityId) throws APIException {
         filterList.clear();
         synchronized (Filter_Lock) {
             try {      
