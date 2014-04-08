@@ -38,6 +38,9 @@ public class FeedbackUpload extends BaseQuery {
     public static final String SERVER_PARAMETER_APPLIST = "applist";
     
     public static final String SERVER_PARAMETER_POI_RANK = "poirank";
+    
+    // recommand    string  false   用户安装的推荐应用列表 
+    public static final String SERVER_PARAMETER_RECOMMAND_APP_LIST = "recommand";
 
     // lip=时间，纬度坐标，经度坐标，精度范围
     public static final String SERVER_PARAMETER_LOCATION_IP = "lip";
