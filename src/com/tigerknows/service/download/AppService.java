@@ -118,7 +118,7 @@ public class AppService extends TKService {
 
                 File tempFile = null;
                 do {
-                    tempFile = downFile(ctx, url, imgUrl);
+                    tempFile = downFile(ctx, url);
                     if (!stop) {
                         try {
                             Thread.sleep(RETRY_TIME);
@@ -127,7 +127,20 @@ public class AppService extends TKService {
                         }
                     }
                 } while (tempFile == null && !stop);
-                if(tempFile != null && !stop) {
+                
+                File imgFile = null;
+                do {
+                	imgFile = downFile(ctx, imgUrl);
+                    if (!stop) {
+                        try {
+                            Thread.sleep(RETRY_TIME);
+                        } catch (InterruptedException e1) {
+                            e1.printStackTrace();
+                        }
+                    }
+                } while (imgFile == null && !stop);                
+
+                if(tempFile != null && imgFile != null && !stop) {
                     try {
                         RecordPackageInfo p = new RecordPackageInfo(app.getPackageName(), tempFile.getName(), app);
                         sRecordPkgTable.addPackageInfo(p);
@@ -156,7 +169,7 @@ public class AppService extends TKService {
     }
     
     // 下载更新文件，成功返回File对象，否则返回null
-    private File downFile(Context context, String url, String imageUrl) {
+    private File downFile(Context context, String url) {
         try {
             if (BaseQueryTest.UnallowedAccessNetwork) {
                 Thread.sleep(5000);
@@ -212,13 +225,13 @@ public class AppService extends TKService {
                     is.close();
                     bis.close();
                     
-                    File imgFile = createFileByUrl(url);
-                    HttpClient httpClient = HttpManager.getNewHttpClient();
-                    byte[] data = HttpManager.openUrl(context, httpClient, imageUrl, "GET", new WeiboParameters());
-                    File file=new File(getAppPath(), imgFile.getName());
-                    FileOutputStream out=new FileOutputStream(file);
-                    out.write(data);
-                    out.close();
+//                    File imgFile = createFileByUrl(imageUrl);
+//                    HttpClient httpClient = HttpManager.getNewHttpClient();
+//                    byte[] data = HttpManager.openUrl(context, httpClient, imageUrl, "GET", new WeiboParameters());
+//                    File file=new File(getAppPath(), imgFile.getName());
+//                    FileOutputStream out=new FileOutputStream(file);
+//                    out.write(data);
+//                    out.close();
                     
                     if (!stop) {
                         return tempFile;
@@ -340,6 +353,13 @@ public class AppService extends TKService {
                         File file = new File(getAppPath() + pkg.file_name);
                         if (file.exists()) {
                             file.delete();
+                        }
+                        AppPush app = pkg.app_push;
+                        if(app != null){
+                        	File imgFile = new File(getAppPath() + app.getIconFileName());
+                        	if(imgFile.exists()){
+                        		imgFile.delete();
+                        	}
                         }
                         pkg.file_name = null;
                         sRecordPkgTable.updateDatabase(pkg);

@@ -2,6 +2,7 @@ package com.tigerknows.model;
 
 import com.decarta.android.exception.APIException;
 import com.tigerknows.model.xobject.XMap;
+import com.tigerknows.service.download.AppService;
 
 public class AppPush extends BaseData{
 	
@@ -28,14 +29,14 @@ public class AppPush extends BaseData{
 	private String name;
     private String packageName;
     private String icon;
+    private String iconFileName;
     private String description;
     private String prior;
     private String downloadUrl;
-    private TKDrawable iconTKDrawable;
 
     
-    public TKDrawable getIconTKDrawable() {
-		return iconTKDrawable;
+    public String getIconFileName() {
+		return iconFileName;
 	}
 
 	public String getName() {
@@ -108,9 +109,7 @@ public class AppPush extends BaseData{
 		this.packageName = getStringFromData(FIELD_PACKAGE_NAME, reset ? null : this.packageName);
 		this.icon = getStringFromData(FIELD_ICON, reset ? null : this.name);
 		if (this.icon != null) {
-			TKDrawable tkDrawable = new TKDrawable();
-			tkDrawable.setUrl(this.icon);
-			iconTKDrawable = tkDrawable;
+			this.iconFileName = this.icon.substring(this.icon.lastIndexOf("/") + 1).replaceAll("[?]", "@");
 		}
 		this.description = getStringFromData(FIELD_DESCRIPTION, reset ? null : this.description);
 		this.prior = getStringFromData(FIELD_PRIOR, reset ? null : this.prior);
