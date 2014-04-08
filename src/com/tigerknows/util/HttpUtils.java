@@ -197,6 +197,7 @@ public class HttpUtils {
                             
                             @Override
                             public void onDismiss(DialogInterface dialog) {
+                                parameters.remove("test");
                                 parameters.add("test", "test");
                             }
                         });
