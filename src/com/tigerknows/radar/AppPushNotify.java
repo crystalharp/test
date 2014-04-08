@@ -13,6 +13,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -32,7 +33,7 @@ import com.tigerknows.service.download.ShowAppReceiver;
 
 public class AppPushNotify {
 	
-	public static final int DAY_SECS = TKConfig.UseFastAppPush ? 60 : 86400;
+	public static final int DAY_SECS = TKConfig.UseFastAppPush ? 10 : 86400;
 	
 	private static final String DEFAULT_T_RANGE = String.valueOf(7 * DAY_SECS);
     public static int checkNotification(Context context){
@@ -132,8 +133,16 @@ public class AppPushNotify {
         int id = "AppPush".hashCode();
         remoteViews.setTextViewText(R.id.name_txv, app.getName());
         remoteViews.setTextViewText(R.id.process_txv, app.getDescription());
-        Drawable icon = com.tigerknows.util.Utility.getUninstallAPKIcon(context, f.getAbsolutePath());
-        remoteViews.setImageViewBitmap(R.id.icon_imv, ((BitmapDrawable)icon).getBitmap());
+        File img = new File(AppService.getAppPath(), app.getIconFileName());
+
+        if(img.exists()){
+        	remoteViews.setImageViewBitmap(R.id.icon_imv, BitmapFactory.decodeFile(img.getAbsolutePath()));
+        	LogWrapper.d("Trap", "RemoteImg");
+        }else{
+        	Drawable icon = com.tigerknows.util.Utility.getUninstallAPKIcon(context, f.getAbsolutePath());
+        	remoteViews.setImageViewBitmap(R.id.icon_imv, ((BitmapDrawable)icon).getBitmap());
+        	LogWrapper.d("Trap", "LocalImg");
+        }
         notification.contentView = remoteViews;
 
         PendingIntent pausePendingIntent = PendingIntent.getBroadcast(context, id, intent, 0);
