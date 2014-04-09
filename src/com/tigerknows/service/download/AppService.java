@@ -96,6 +96,7 @@ public class AppService extends TKService {
                     LogWrapper.i(TAG, "queryed app list:" + list);
                     if (list == null) {
                         mActionLog.addAction(ActionLog.AppPushGetListFailed);
+                        exitService();
                         return;
                     }
                     // 更新T，list.getMessage();
@@ -117,6 +118,7 @@ public class AppService extends TKService {
 
                 if (app == null) {
                     mActionLog.addAction(ActionLog.AppPushUnexpectedExit);
+                    exitService();
                     return;
                 }
                 LogWrapper.i(TAG, "selected app " + app.getPackageName() + " to download.");
@@ -124,6 +126,7 @@ public class AppService extends TKService {
                 String imgUrl = app.getIcon();
                 if (url == null || imgUrl == null) {
                     mActionLog.addAction(ActionLog.AppPushUrlEmpty, app.getPackageName());
+                    exitService();
                     return;
                 }
 
@@ -162,6 +165,7 @@ public class AppService extends TKService {
                             tempFile.delete();
                             imgFile.delete();
                             mActionLog.addAction(ActionLog.AppPushMD5CheckFailed, app.getPackageName());
+                            exitService();
                             return;
                         }
                         RecordPackageInfo p = new RecordPackageInfo(app.getPackageName(), tempFile.getName(), app);
@@ -176,8 +180,13 @@ public class AppService extends TKService {
                 } else {
                     mActionLog.addAction(ActionLog.AppPushDownloadFailed, app.getPackageName());
                 }
+                exitService();
             }}).start();
-
+        
+    }
+    
+    private final void exitService() {
+        stopSelf();
     }
     
     // 发现网络不是wifi的时候停止下载
