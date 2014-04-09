@@ -1036,6 +1036,9 @@ public class DishActivity extends BaseActivity implements View.OnClickListener, 
                 Category category = mCategoryList.get(i);
                 List<Long> idList = category.getDishList();
                 category.firstDishIndex = -1;
+                if (idList == null) {
+                    continue;
+                }
                 for (int n = 0, total = idList.size(); n < total; n++) {
                     long id = idList.get(n);
                     for(int j = 0, count = mAllList.size(); j < count; j++) {
