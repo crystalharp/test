@@ -811,8 +811,13 @@ public class ActionLog extends LogUpload {
     
     // 应用推荐
     public static final String AppPush = "FI";
-    public static final String AppPushGetList = "BA";
-    public static final String AppPushDownload = "BB";
+    public static final String AppPushUnexpectedExit = AppPush + "BA";
+    public static final String AppPushGetListFailed = AppPush + "BB";
+    public static final String AppPushDownloadFailed = AppPush + "BC";
+    public static final String AppPushMD5CheckFailed = AppPush + "BD";
+    public static final String AppPushUrlEmpty = AppPush + "BE";
+    public static final String AppPushDownloadSucceed = AppPush + "BF";
+    public static final String AppPushNetWorkSwitchExit = AppPush + "BG";
     public static final String AppPushNotify = "BK";
     public static final String AppPushClick = "BL";
     
