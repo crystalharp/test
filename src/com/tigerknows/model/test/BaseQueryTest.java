@@ -548,7 +548,18 @@ public class BaseQueryTest {
                 Class<ActivityManager> activityManagerClass=ActivityManager.class;
                 ActivityManager activityManager=(ActivityManager) activity.getSystemService(Context.ACTIVITY_SERVICE);
 
-                Method clearDataMethod=activityManagerClass.getMethods()[0];
+                Method clearDataMethod = null;
+                Method[] methods = activityManagerClass.getMethods();
+                for(Method method : methods) {
+                    if (method.getName().equals("clearApplicationUserData")) {
+                        clearDataMethod = method;
+                        break;
+                    }
+                }
+                
+                if (clearDataMethod == null) {
+                    return;
+                }
 
                 Object iPackageDataObserverObject = Proxy.newProxyInstance(
                     Settings.class.getClassLoader(), new Class[]{iPackageDataObserverClass},
