@@ -1809,6 +1809,7 @@ public class Utility {
             fis.close();
             return toHexString(md5.digest());   
         } catch (Exception e) {
+        	e.printStackTrace();
             return null;
         }
     }
