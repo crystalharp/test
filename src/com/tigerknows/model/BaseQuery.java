@@ -398,8 +398,7 @@ public abstract class BaseQuery {
         requestParameters.add(sCommonParameters);
 
         requestParameters.add("c", String.valueOf(cityId));
-        requestParameters.add("e", TKConfig.getIMEI());
-        requestParameters.add("d", TKConfig.getIMSI());
+        addDeviceParameters();
         TKCellLocation tkCellLocation = TKConfig.getCellLocation();
         int mcc = TKConfig.getMCC();
         int mnc = TKConfig.getMNC();
@@ -620,6 +619,12 @@ public abstract class BaseQuery {
         }
     }
     
+    protected void addDeviceParameters() {
+        requestParameters.add("e", TKConfig.getIMEI());
+        requestParameters.add("d", TKConfig.getIMSI());
+        requestParameters.add("mac", TKConfig.MAC);
+    }
+    
     protected void addUUIDParameter() {
         String uuid = UUID.randomUUID().toString();
         requestParameters.add(SERVER_PARAMETER_UUID, uuid);
@@ -630,7 +635,7 @@ public abstract class BaseQuery {
      * 放在OptionalKeys里面的key也可以在某些query中放在EssentialKey中作为必要的key来检查，不影响可选key
      * 这样原来的addSession(false)可以不用再理会，而addSession(true)在自己的必选key中加入即可。
      */
-    String[] CommonOptionalKeys = new String[]{"lc", "lx", "ly", "lt", "mcc", "mnc", "lac", 
+    String[] CommonOptionalKeys = new String[]{"mac", "lc", "lx", "ly", "lt", "mcc", "mnc", "lac", 
             "ci", "ss", "at", "v", "info", "dsrc", "ddst", "dv", "sc", "sg", "si", "sv", "vd", 
             "ec", "vp", SERVER_PARAMETER_CLIENT_STATUS, SERVER_PARAMETER_SESSION_ID,
             SERVER_PARAMETER_CENTER_LONGITUDE, SERVER_PARAMETER_CENTER_LATITUDE};

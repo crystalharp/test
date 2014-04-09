@@ -82,6 +82,7 @@ public class MapMetaFileDownload extends BaseQuery {
 
     @Override
     protected void addCommonParameters() {
+        addDeviceParameters();
         addParameter(SERVER_PARAMETER_API_TYPE, apiType);
         addParameter(SERVER_PARAMETER_VERSION, version);
         addParameter(SERVER_PARAMETER_DOWNLOAD_TYPE, downloadType);

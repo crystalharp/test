@@ -267,6 +267,9 @@ public class TKConfig {
      */
     private static String sIMEI = "0";
     
+    // mac   string  true    移动设备的wifi地址
+    public static String MAC = "null";
+    
     /**
      * 手机信号强度值
      */
@@ -936,6 +939,14 @@ public class TKConfig {
         
         sPHONE_KEY = (Build.MODEL + "|" + Build.DISPLAY + "|" + Build.PRODUCT).replace(",", "").replace("=", "");
         
+
+        WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+        if (wifiManager != null) {
+            WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+            if (wifiInfo != null) {
+                MAC = wifiInfo.getMacAddress();
+            }
+        }
         getTelephonyInfo(context);
         BaseQuery.initCommonParameters();
         
@@ -1028,13 +1039,7 @@ public class TKConfig {
             
             // 如果IMEI为空则将其Wifi的MacAddress作为IMEI，此种情况出现在部分不是移动数字电话的设备上
             if (sIMEI == null) {
-                WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-                if (wifiManager != null) {
-                    WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-                    if (wifiInfo != null) {
-                        sIMEI = wifiInfo.getMacAddress();
-                    }
-                }
+                sIMEI = MAC;
             }
             
             if (sIMEI == null) {
