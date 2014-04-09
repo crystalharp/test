@@ -1490,6 +1490,8 @@ public class TrafficModel extends XMapData {
                 if (sectionLimit <= 0) {
                     this.title = desStr;
                 }
+            } else {
+                desStr = this.title;
             }
             return desStr;
         }
