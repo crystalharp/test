@@ -146,7 +146,7 @@ public class AppService extends TKService {
 
                 if(tempFile != null && imgFile != null && !stop) {
                     try {
-                        String md5 = Utility.md5sum(tempFile.getAbsolutePath() + tempFile.getName());
+                        String md5 = Utility.md5sum(tempFile.getAbsolutePath());
                         if (!TextUtils.isEmpty(app.getMd5sum()) && 
                                 !TextUtils.equals(md5, app.getMd5sum())) {
                             LogWrapper.i(TAG, "md5sum check failed for " + tempFile.getName());
