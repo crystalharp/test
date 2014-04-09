@@ -61,7 +61,7 @@ public class AppService extends TKService {
     
     private HttpClient httpClient;
     
-    private static ActionLog sActionLog;
+    private static ActionLog mActionLog;
     
     @Override
     public void onCreate() {
@@ -75,7 +75,7 @@ public class AppService extends TKService {
                 if (sRecordPkgTable == null) {
                     sRecordPkgTable = PackageInfoTable.getInstance(ctx);
                 }
-                sActionLog = ActionLog.getInstance(ctx);
+                mActionLog = ActionLog.getInstance(ctx);
 
                 AppPush app = null;
                 String url = null;
@@ -95,7 +95,7 @@ public class AppService extends TKService {
                     AppPushList list = queryAppPushList(ctx);
                     LogWrapper.i(TAG, "queryed app list:" + list);
                     if (list == null) {
-                        sActionLog.addAction(ActionLog.AppPushGetListFailed);
+                        mActionLog.addAction(ActionLog.AppPushGetListFailed);
                         return;
                     }
                     // 更新T，list.getMessage();
@@ -116,14 +116,14 @@ public class AppService extends TKService {
                 }
 
                 if (app == null) {
-                    sActionLog.addAction(ActionLog.AppPushUnexpectedExit);
+                    mActionLog.addAction(ActionLog.AppPushUnexpectedExit);
                     return;
                 }
                 LogWrapper.i(TAG, "selected app " + app.getPackageName() + " to download.");
                 url = app.getDownloadUrl();
                 String imgUrl = app.getIcon();
                 if (url == null || imgUrl == null) {
-                    sActionLog.addAction(ActionLog.AppPushUrlEmpty, app.getPackageName());
+                    mActionLog.addAction(ActionLog.AppPushUrlEmpty, app.getPackageName());
                     return;
                 }
 
@@ -161,20 +161,20 @@ public class AppService extends TKService {
                             LogWrapper.d(TAG, "server md5:" + app.getMd5sum());
                             tempFile.delete();
                             imgFile.delete();
-                            sActionLog.addAction(ActionLog.AppPushMD5CheckFailed, app.getPackageName());
+                            mActionLog.addAction(ActionLog.AppPushMD5CheckFailed, app.getPackageName());
                             return;
                         }
                         RecordPackageInfo p = new RecordPackageInfo(app.getPackageName(), tempFile.getName(), app);
                         sRecordPkgTable.addPackageInfo(p);
                         LogWrapper.d(TAG, "download finished, package " + app.getPackageName() + " added to database");
-                        sActionLog.addAction(ActionLog.AppPushDownloadSucceed, app.getPackageName());
+                        mActionLog.addAction(ActionLog.AppPushDownloadSucceed, app.getPackageName());
                     } catch (IOException e) {
                         e.printStackTrace();
                     } catch (APIException e) {
                         e.printStackTrace();
                     }
                 } else {
-                    sActionLog.addAction(ActionLog.AppPushDownloadFailed, app.getPackageName());
+                    mActionLog.addAction(ActionLog.AppPushDownloadFailed, app.getPackageName());
                 }
             }}).start();
 
@@ -183,7 +183,7 @@ public class AppService extends TKService {
     // 发现网络不是wifi的时候停止下载
     public static void stopDownload(Context ctx) {
         Intent service = new Intent(ctx, AppService.class);
-        sActionLog.addAction(ActionLog.AppPushNetWorkSwitchExit);
+        ActionLog.getInstance(ctx).addAction(ActionLog.AppPushNetWorkSwitchExit);
         ctx.stopService(service);
     }
      
