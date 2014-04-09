@@ -1398,14 +1398,14 @@
     <string name="alarm_add_by_bus_line">按线路添加</string>
     <string name="alarm_add_tip">设置闹铃需要打开 GPS 定位系统\n设置闹铃不会耗费网络流量\n乘坐地铁时 GPS 信号较弱，请慎用公交闹铃\n闹铃打开时，关闭 GPS 可能造成定位偏差\n关闭软件公交闹铃将停止运行</string>
     <string name="range">距离</string> 
-    <string name="alarm_empty_tip">公交闹钟为空\n点击右上角添加闹铃按钮去添加</string>
+    <string name="alarm_empty_tip">公交闹铃为空\n点击右上角添加闹铃按钮去添加</string>
     <string name="exit_app_for_exist_alarm">再按一次回到桌面，公交闹铃将保持到站提醒</string>
     <string name="alarm_add_success_and_view">设置成功，请在更多中查看公交闹铃</string>
     <string name="alarm_add_success">公交闹铃设置成功</string>
     <string name="alarm_delete_tip">确定要删除此闹铃吗？</string>
     <string name="nearby_bus_line">附近线路</string>
     <string name="nearby_bus_station">附近站点</string>
-    <string name="setting_alarm_range">设置闹钟距离</string>
-    <string name="setting_alarm_station">设定闹钟站点</string>
+    <string name="setting_alarm_range">设置闹铃距离</string>
+    <string name="setting_alarm_station">设定闹铃站点</string>
     <string name="setting_alarm_no_station">无换乘车站可选</string>
 </resources>
