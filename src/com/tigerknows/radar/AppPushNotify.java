@@ -17,7 +17,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Build;
 import android.text.TextUtils;
 import android.widget.RemoteViews;
 
@@ -34,7 +33,7 @@ import com.tigerknows.service.download.ShowAppReceiver;
 
 public class AppPushNotify {
 	
-	public static final int DAY_SECS = TKConfig.UseFastAppPush ? 60 : 86400;
+	public static int DAY_SECS = TKConfig.UseFastAppPush ? 60 : 86400;
 	
 	private static final String DEFAULT_T_RANGE = "7";
     public static int checkNotification(Context context){
