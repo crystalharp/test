@@ -809,6 +809,13 @@ public class ActionLog extends LogUpload {
     public static final String MeasureDistanceRevocation = "BA";
     public static final String MeasureDistanceClear = "BB";
     
+    // 应用推荐
+    public static final String AppPush = "FI";
+    public static final String AppPushGetList = "BA";
+    public static final String AppPushDownload = "BB";
+    public static final String AppPushNotify = "BK";
+    public static final String AppPushClick = "BL";
+    
     public static final String AlarmList = "CO";
     public static final String AlarmListStatus = "BA";
     public static final String AlarmListRange = "BB";
