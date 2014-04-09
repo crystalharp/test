@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="com.tigerknows" android:installLocation="auto"
-      android:versionName="5.10.20130528A" android:versionCode="510">
+      android:versionName="5.8.3.20140408A" android:versionCode="583">
       <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"></uses-permission>
       <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"></uses-permission>
       <uses-permission android:name="android.permission.READ_PHONE_STATE"/>

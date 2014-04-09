@@ -185,17 +185,17 @@ public class TKConfig {
     /**
      * 网络请求参数中的客户端软件版本
      */
-    private static String sCLIENT_SOFT_VERSION = "5.30.20130723A";
+    private static String sCLIENT_SOFT_VERSION = "5.8.3.20140408A";
     
     /**
      * 关于我们界面中的客户端软件发布版本
      */
     
-    public static final String CLIENT_SOFT_VERSION = "5.30";
+    public static final String CLIENT_SOFT_VERSION = "5.8.3";
     /**
      * 关于我们界面中的客户端软件发布日期
      */
-    public static final String CLIENT_SOFT_RELEASE_DATE = "2013-07-23";
+    public static final String CLIENT_SOFT_RELEASE_DATE = "2014-04-08";
     
     /**
      * 手机产品信息，包括品牌、型号、软件版本等信息
