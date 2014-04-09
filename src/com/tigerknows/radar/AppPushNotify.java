@@ -22,6 +22,7 @@ import android.widget.RemoteViews;
 
 import com.decarta.android.exception.APIException;
 import com.decarta.android.util.LogWrapper;
+import com.tigerknows.common.ActionLog;
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
 import com.tigerknows.model.AppPush;
@@ -36,6 +37,9 @@ public class AppPushNotify {
 	public static int DAY_SECS = TKConfig.UseFastAppPush ? 60 : 86400;
 	
 	private static final String DEFAULT_T_RANGE = "7";
+	
+	private static ActionLog sActionLog;
+	
     public static int checkNotification(Context context){
     	
         if(!TKConfig.isSwitch(BootstrapModel.FIELD_APP_PUSH)){
@@ -43,6 +47,8 @@ public class AppPushNotify {
         }
     	
     	long tempLongTime;
+    	
+    	sActionLog = ActionLog.getInstance(context);
     	
     	String tempStr = TKConfig.getPref(context, TKConfig.PREFS_APP_PUSH_NOTIFY, "");
     	int lastNotify = (int)(System.currentTimeMillis()/1000);
@@ -155,6 +161,8 @@ public class AppPushNotify {
 
         // 将下载任务添加到任务栏中
         nm.notify(id, notification);
+        
+        sActionLog.addAction(ActionLog.AppPush + ActionLog.AppPushNotify);
 
         return;
 	}
