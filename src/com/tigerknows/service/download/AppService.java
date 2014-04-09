@@ -150,6 +150,10 @@ public class AppService extends TKService {
                         if (!TextUtils.isEmpty(app.getMd5sum()) && 
                                 !TextUtils.equals(md5, app.getMd5sum())) {
                             LogWrapper.i(TAG, "md5sum check failed for " + tempFile.getName());
+                            LogWrapper.d(TAG, "file md5:" + md5);
+                            LogWrapper.d(TAG, "server md5:" + app.getMd5sum());
+                            tempFile.delete();
+                            imgFile.delete();
                             return;
                         }
                         RecordPackageInfo p = new RecordPackageInfo(app.getPackageName(), tempFile.getName(), app);
