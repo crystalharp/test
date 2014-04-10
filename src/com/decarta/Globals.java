@@ -132,6 +132,8 @@ public class Globals {
     
     public static int g_ApiVersion = android.os.Build.VERSION.SDK_INT;
     
+    public static String g_Screen;
+    
     static {    	
     	HashMap<Integer, XYInteger> pic = new HashMap<Integer, XYInteger>();
     	pic.put(TKConfig.PICTURE_DISCOVER_HOME, new XYInteger(538, 478));
@@ -206,7 +208,7 @@ public class Globals {
         // 读取屏幕参数，如高宽、密度
         WindowManager winMan=(WindowManager)context.getSystemService(Context.WINDOW_SERVICE);
         Display display=winMan.getDefaultDisplay();
-        display.getMetrics(Globals.g_metrics);
+        display.getMetrics(g_metrics);
         
         if(Globals.g_metrics.density >= 1.5f) {
         	CONFIG.TILE_SIZE = 512;
@@ -220,6 +222,22 @@ public class Globals {
             return;
         }
         init = true;
+        
+        StringBuilder s = new StringBuilder();
+        s.append(g_metrics.widthPixels);
+        s.append("_");
+        s.append(g_metrics.heightPixels);
+        s.append("_");
+        s.append(g_metrics.density);
+        s.append("_");
+        s.append(g_metrics.xdpi);
+        s.append("_");
+        s.append(g_metrics.ydpi);
+        s.append("_");
+        s.append(g_metrics.densityDpi);
+        s.append("_");
+        s.append(g_metrics.scaledDensity);
+        g_Screen = s.toString();
         
         Globals.g_My_Location_City_Info = null;
         Globals.g_My_Location = null;

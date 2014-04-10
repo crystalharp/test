@@ -385,6 +385,7 @@ public abstract class BaseQuery {
         sCommonParameters.add("pk", TKConfig.getPhoneKey());
         sCommonParameters.add("vs", TKConfig.getClientSoftVersion());
         sCommonParameters.add("vp", TKConfig.getVersionOfPlatform());
+        sCommonParameters.add("appname", "com.tigerknows");
     }
     
     protected void addCommonParameters() {
@@ -397,6 +398,7 @@ public abstract class BaseQuery {
     protected void addCommonParameters(int cityId) {
         requestParameters.add(sCommonParameters);
 
+        requestParameters.add("screen", Globals.g_Screen);
         requestParameters.add("c", String.valueOf(cityId));
         addDeviceParameters();
         TKCellLocation tkCellLocation = TKConfig.getCellLocation();
@@ -630,12 +632,12 @@ public abstract class BaseQuery {
         requestParameters.add(SERVER_PARAMETER_UUID, uuid);
     }
     
-    String[] CommonEssentialKeys = new String[]{"c", "e", "d", "m", "vs", "pk", "clientuid", "uuid"};
+    String[] CommonEssentialKeys = new String[]{"c", "e", "d", "m", "vs", "pk", "clientuid", "uuid", "appname"};
     /**
      * 放在OptionalKeys里面的key也可以在某些query中放在EssentialKey中作为必要的key来检查，不影响可选key
      * 这样原来的addSession(false)可以不用再理会，而addSession(true)在自己的必选key中加入即可。
      */
-    String[] CommonOptionalKeys = new String[]{"mac", "lc", "lx", "ly", "lt", "mcc", "mnc", "lac", 
+    String[] CommonOptionalKeys = new String[]{"screen", "mac", "lc", "lx", "ly", "lt", "mcc", "mnc", "lac", 
             "ci", "ss", "at", "v", "info", "dsrc", "ddst", "dv", "sc", "sg", "si", "sv", "vd", 
             "ec", "vp", SERVER_PARAMETER_CLIENT_STATUS, SERVER_PARAMETER_SESSION_ID,
             SERVER_PARAMETER_CENTER_LONGITUDE, SERVER_PARAMETER_CENTER_LATITUDE};
