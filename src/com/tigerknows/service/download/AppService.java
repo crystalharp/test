@@ -330,45 +330,45 @@ public class AppService extends TKService {
         List <RecordPackageInfo> rPkgList = new ArrayList<RecordPackageInfo>();
         int n = sRecordPkgTable.readPackageInfo(rPkgList);
         StringBuilder sb = new StringBuilder();
-        if (n > 0) {
-            for (PackageInfo pI : pkgList){
-                boolean found = false;
-                for (RecordPackageInfo pkg : rPkgList) {
-                    if (TextUtils.equals(pI.packageName, pkg.package_name)) {
-                    	if (pkg.installed != 1) {
-                    		// 尝试减少更新数据库的次数
-                    		pkg.installed = 1;
-                    		sRecordPkgTable.updateDatabase(pkg);
-                    		LogWrapper.d(TAG, "Checking:Data change, " + pkg.package_name + " installed");
-                    	}
-                        if (pkg.notify_time != 0) {
-                            sb.append(pkg.package_name);
-                            sb.append(";");
-                        }
-                        found = true;
-                        break;
-                    }
-                }
-                if(found == false){
-                    RecordPackageInfo p = new RecordPackageInfo(pI.packageName, 1, 0);
-                    sRecordPkgTable.addPackageInfo(p);
-                    LogWrapper.d(TAG, "Checking:found new package, " + p.package_name);
-                }
+        for (PackageInfo pI : pkgList){
+            boolean found = false;
+            if(n > 0){
+            	for (RecordPackageInfo pkg : rPkgList) {
+            		if (TextUtils.equals(pI.packageName, pkg.package_name)) {
+            			if (pkg.installed != 1) {
+            				// 尝试减少更新数据库的次数
+            				pkg.installed = 1;
+            				sRecordPkgTable.updateDatabase(pkg);
+            				LogWrapper.d(TAG, "Checking:Data change, " + pkg.package_name + " installed");
+            			}
+            			if (pkg.notify_time != 0) {
+            				sb.append(pkg.package_name);
+            				sb.append(";");
+            			}
+            			found = true;
+            			break;
+            		}
+            	}
             }
-            if (sb.length() > 0) {
-                sb.deleteCharAt(sb.length());
-                String str = sb.toString();
-                LogWrapper.d(TAG, "upload pushed&installed applist:" + str);
-
-                final FeedbackUpload query = new FeedbackUpload(ctx);
-                query.addParameter(FeedbackUpload.SERVER_PARAMETER_RECOMMAND_APP_LIST, str);
-                new Thread(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        query.query();
-                    }}).start();
+            if(found == false){
+                RecordPackageInfo p = new RecordPackageInfo(pI.packageName, 1, 0);
+                sRecordPkgTable.addPackageInfo(p);
+                LogWrapper.d(TAG, "Checking:found new package, " + p.package_name);
             }
+        }
+        if (sb.length() > 0) {
+            sb.deleteCharAt(sb.length() - 1);
+            String str = sb.toString();
+            LogWrapper.d(TAG, "upload pushed&installed applist:" + str);
+
+            final FeedbackUpload query = new FeedbackUpload(ctx);
+            query.addParameter(FeedbackUpload.SERVER_PARAMETER_RECOMMAND_APP_LIST, str);
+            new Thread(new Runnable() {
+
+                @Override
+                public void run() {
+                    query.query();
+                }}).start();
         }
     }
 
