@@ -350,6 +350,9 @@
             <intent-filter>
                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.PHONE_STATE" />
+            </intent-filter>
         </receiver>
         
         <receiver android:name="com.tigerknows.radar.RadarReceiver">

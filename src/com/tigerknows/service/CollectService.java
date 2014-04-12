@@ -44,7 +44,9 @@ public class CollectService extends TKService {
     
     static final String TAG = "CollectService";
     
-    public static final long RETRY_INTERVAL = 16 * 1000;
+    public static final long RETRY_INTERVAL = 2 * 1000;
+    
+    public static final long RETRY_CHECK_LOCATION_INTERVAL = 16 * 1000;
     
     private static final int CACHE_SIZE = 256;
     
@@ -60,6 +62,8 @@ public class CollectService extends TKService {
     
     private boolean mStop;
     
+    private long mLastCheckLocationTime;
+    
     private LinkedHashMap<LocationParameter, Location> mLocationCache = new LinkedHashMap<LocationParameter, Location>(CACHE_SIZE * 2, 0.75f, true);
     
     private Location mLocation = new Location(LocationManager.NETWORK_PROVIDER);
@@ -69,6 +73,8 @@ public class CollectService extends TKService {
     private ActivityManager mActivityManager;
     
     private List<String> mHomePackageNames = new ArrayList<String>();
+    
+    private String mCurrentAppName;
     
     private LocationManager mLocationManager;
     
@@ -139,12 +145,14 @@ public class CollectService extends TKService {
                     // 定位启动
                     case GpsStatus.GPS_EVENT_STARTED:
                         LogWrapper.i(TAG, "GPS_EVENT_STARTED");
+                        mCurrentAppName = getCurrentAppName();
                         resumeLocationManager();
                         break;
 
                     // 定位结束
                     case GpsStatus.GPS_EVENT_STOPPED:
                         LogWrapper.i(TAG, "GPS_EVENT_STOPPED");
+                        mCurrentAppName = null;
                         pauseLocationManager();
                         break;
                 }
@@ -203,13 +211,20 @@ public class CollectService extends TKService {
                         stopSelf();
                     }
                     
-                    checkLocationParameter();
+                    long time = System.currentTimeMillis();
+                    if (time - mLastCheckLocationTime > RETRY_CHECK_LOCATION_INTERVAL) {
+                        checkLocationParameter();
+                        mLastCheckLocationTime = time;
+                    }
                     
                     // 若当前应用是系统桌面则撤消对GPS的监听（此判断是因为高德地图（或类似应用）也与我们做相同的事情，导致死锁最后都不撤消对GPS的监听）
                     if (mTKLocationManagerOnCreate) {
-                        boolean inAndroidHomeApp = inAndroidHomeApp();
+                        String currentAppName = getCurrentAppName();
+                        boolean inAndroidHomeApp = inAndroidHomeApp(currentAppName);
                         LogWrapper.d(TAG, "inAndroidHomeApp="+inAndroidHomeApp);
-                        if (inAndroidHomeApp) {
+                        if (inAndroidHomeApp || 
+                                mCurrentAppName == null ||
+                                !mCurrentAppName.equals(currentAppName)) {
                             pauseLocationManager();
                         }
                     }
@@ -328,12 +343,20 @@ public class CollectService extends TKService {
     /**
      * 判断当前界面是否是桌面
      */
-    private boolean inAndroidHomeApp(){
+    private boolean inAndroidHomeApp(String appName){
+        return mHomePackageNames.contains(appName);
+    }
+    
+    /**
+     * 获取当前应用的名称
+     * @return
+     */
+    private String getCurrentAppName(){
         List<RunningTaskInfo> rti = mActivityManager.getRunningTasks(1);
         if (rti != null && rti.size() > 0) {
-            return mHomePackageNames.contains(rti.get(0).topActivity.getPackageName());
+            return rti.get(0).topActivity.getPackageName();
         } else {
-            return false;
+            return null;
         }
     }
     
