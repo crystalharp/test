@@ -92,6 +92,9 @@ public class TrafficOverlayHelper {
 	            if (itemizedOverlay != null) {
 	                Object o = itemizedOverlay.get(0).getAssociatedObject();
 	                if (o == plan) {
+	                    itemizedOverlay.focuseOverlayItem(null);
+	                    mapView.removeShapesByName(Shape.HIGHLIGHT_SHAPE);
+	                    mapView.refreshMap();
 	                    return;
 	                }
 	            }
@@ -333,8 +336,8 @@ public class TrafficOverlayHelper {
 		ItemizedOverlay itemizedOverlay = mapview.getCurrentOverlay();
 		if (itemizedOverlay.getName().equals(ItemizedOverlay.TRAFFIC_OVERLAY)) {
         	// 高亮选中的Step
-    		OverlayItem focusedItem = mapview.getCurrentOverlay().getItemByFocused();
-    		OverlayItem nextItem = mapview.getCurrentOverlay().getNextItem(focusedItem);
+    		OverlayItem focusedItem = itemizedOverlay.getItemByFocused();
+    		OverlayItem nextItem = itemizedOverlay.getNextItem(focusedItem);
     		
     		if (focusedItem != null
     		        && nextItem != null) {
