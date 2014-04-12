@@ -394,7 +394,7 @@ public class AppService extends TKService {
 
             for (RecordPackageInfo pkg : rPkgList) {
                 if (!TextUtils.isEmpty(pkg.file_name)) {
-                    if ((now - pkg.notify_time)/1000 > AppPushNotify.DAY_SECS) {
+                    if ((now - pkg.notify_time)/1000 > AppPushNotify.get_DAY_SECS()) {
                         File file = new File(getAppPath() + pkg.file_name);
                         if (file.exists()) {
                             file.delete();

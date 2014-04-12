@@ -34,11 +34,16 @@ import com.tigerknows.service.download.ShowAppReceiver;
 
 public class AppPushNotify {
 	
-	public static int DAY_SECS = TKConfig.UseFastAppPush ? 60 : 86400;
-	
 	private static final String DEFAULT_T_RANGE = "7";
 	
 	private static ActionLog sActionLog;
+	
+	/**
+	 * @return TestMode ? 60 : 86400
+	 */
+	public static int get_DAY_SECS(){
+		return TKConfig.UseFastAppPush ? 60 : 86400;
+	}
 	
     public static int checkNotification(Context context){
     	
@@ -60,9 +65,9 @@ public class AppPushNotify {
     		TKConfig.setPref(context, TKConfig.PREFS_APP_PUSH_NOTIFY, String.valueOf(lastNotify));
     	}
 
-    	int t = Integer.parseInt(TKConfig.getPref(context, TKConfig.PREFS_APP_PUSH_T, DEFAULT_T_RANGE)) * DAY_SECS;
-    	if(t > 14 * DAY_SECS){
-    		t = 14 * DAY_SECS;
+    	int t = Integer.parseInt(TKConfig.getPref(context, TKConfig.PREFS_APP_PUSH_T, DEFAULT_T_RANGE)) * get_DAY_SECS();
+    	if(t > 14 * get_DAY_SECS()){
+    		t = 14 * get_DAY_SECS();
     	}
 
     	tempLongTime = System.currentTimeMillis();
