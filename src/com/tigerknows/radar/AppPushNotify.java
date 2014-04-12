@@ -171,6 +171,14 @@ public class AppPushNotify {
 
         return;
 	}
+	
+	public static void cancelNotification(Context ctx) {
+
+	    NotificationManager nm = (NotificationManager)ctx.getSystemService(android.content.Context.NOTIFICATION_SERVICE);
+	    int id = "AppPush".hashCode();
+	    nm.cancel(id);
+        
+	}
 
     // T为弹出时间的范围，下次弹出通知的时间t为[DAY_SECS,T]中的随机值
     private static void increaseTRange(Context ctx) {

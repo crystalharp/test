@@ -90,7 +90,7 @@ public class AppService extends TKService {
 
                     // 找出文件名不为空且已通知(但时间超过了时间间隔)的记录删除
                     LogWrapper.i(TAG, "resetIgnoredNotify");
-                    resetIgnoredNotify();
+                    resetIgnoredNotify(ctx);
                     
                     AppPushList list = queryAppPushList(ctx);
                     LogWrapper.i(TAG, "queryed app list:" + list);
@@ -386,7 +386,7 @@ public class AppService extends TKService {
         }            	
     }
 
-    private void resetIgnoredNotify() throws APIException, IOException{
+    private void resetIgnoredNotify(Context ctx) throws APIException, IOException{
         List <RecordPackageInfo> rPkgList = new ArrayList<RecordPackageInfo>();
         int n = sRecordPkgTable.readPackageInfo(rPkgList, -1, 1);
         long now = System.currentTimeMillis();
@@ -398,6 +398,7 @@ public class AppService extends TKService {
                         File file = new File(getAppPath() + pkg.file_name);
                         if (file.exists()) {
                             file.delete();
+                            AppPushNotify.cancelNotification(ctx);
                             LogWrapper.d(TAG, "resetNotify: file " + pkg.file_name + " deleted.");
                         }
                         AppPush app = pkg.app_push;
