@@ -289,6 +289,7 @@ public class AppService extends TKService {
         DataQuery dataQuery = new DataQuery(ctx);
         dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_APP_PUSH);
         dataQuery.query();
+        LogWrapper.d(TAG, TKConfig.getQueryHost());
         Response response = dataQuery.getResponse();
         if (response != null && response instanceof AppPushResponse) {
             int resCode = response.getResponseCode();

@@ -111,6 +111,10 @@ public class AppPushNotify {
 				piTable.updateDatabase(pkg);
 				return 0;
 			}else{
+				if(now_sec - lastNotify < 0){
+					// 防止用户因曾经修改系统时间至未来，而导致通知弹不来的问题
+					TKConfig.setPref(context, TKConfig.PREFS_APP_PUSH_NOTIFY, String.valueOf(now_sec));
+				}
 				return 2;
 			}
 		} catch (APIException e) {
